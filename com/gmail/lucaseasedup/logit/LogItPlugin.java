@@ -31,7 +31,6 @@ import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import static org.bukkit.ChatColor.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -104,7 +103,13 @@ public final class LogItPlugin extends JavaPlugin
         prb = new PropertyResourceBundle(new InputStreamReader(jarFile.getInputStream(jarEntry), "UTF-8"));
     }
     
-    public static String getMessage(String label, boolean allowColorCodes)
+    /**
+     * Returns a message with the secified label.
+     * 
+     * @param label Message label.
+     * @return Message.
+     */
+    public static String getMessage(String label)
     {
         String message;
         
@@ -117,23 +122,7 @@ public final class LogItPlugin extends JavaPlugin
             return label;
         }
         
-        if (!allowColorCodes)
-        {
-            message = ChatColor.stripColor(message);
-        }
-        
         return message;
-    }
-    
-    /**
-     * Returns a non-colour message with the secified label.
-     * 
-     * @param label Message label.
-     * @return Message.
-     */
-    public static String getMessage(String label)
-    {
-        return getMessage(label, false);
     }
     
     public static String formatColorCodes(String s)
@@ -239,7 +228,7 @@ public final class LogItPlugin extends JavaPlugin
     
     public static void log(Level level, String message)
     {
-        Logger.getLogger("Minecraft").log(level, "[LogIt] " + message);
+        Logger.getLogger("Minecraft").log(level, "[LogIt] " + stripColor(message));
         
         if (level.equals(SEVERE))
         {

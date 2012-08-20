@@ -47,27 +47,27 @@ public class PlayerEventListener implements Listener
         
         if (player.getName().trim().isEmpty())
         {
-            event.disallow(KICK_OTHER, getMessage("USERNAME_BLANK", true));
+            event.disallow(KICK_OTHER, getMessage("USERNAME_BLANK"));
         }
         else if (!player.getName().matches(core.getConfig().getUsernameRegex()))
         {
-            event.disallow(KICK_OTHER, getMessage("USERNAME_INVALID", true));
+            event.disallow(KICK_OTHER, getMessage("USERNAME_INVALID"));
         }
         else if (player.getName().length() < core.getConfig().getUsernameMinLength())
         {
-            event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_SHORT", true).replace("%min-length%", String.valueOf(core.getConfig().getUsernameMinLength())));
+            event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getUsernameMinLength())));
         }
         else if (player.getName().length() > core.getConfig().getUsernameMaxLength())
         {
-            event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_LONG", true).replace("%max-length%", String.valueOf(core.getConfig().getUsernameMaxLength())));
+            event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_LONG").replace("%max-length%", String.valueOf(core.getConfig().getUsernameMaxLength())));
         }
         else if (core.getConfig().getUsernameProhibitedUsernames().contains(player.getName().toLowerCase()))
         {
-            event.disallow(KICK_OTHER, getMessage("USERNAME_PROHIBITED", true));
+            event.disallow(KICK_OTHER, getMessage("USERNAME_PROHIBITED"));
         }
         else if (isPlayerOnline(player.getName()))
         {
-            event.disallow(KICK_OTHER, getMessage("USERNAME_ALREADY_USED", true));
+            event.disallow(KICK_OTHER, getMessage("USERNAME_ALREADY_USED"));
         }
     }
     
@@ -91,7 +91,7 @@ public class PlayerEventListener implements Listener
         }
         else
         {
-            broadcastMessage(getMessage("JOIN", true).replace("%player%", player.getName()) + SpawnWorldInfoGenerator.getInstance().generate(player));
+            broadcastMessage(getMessage("JOIN").replace("%player%", player.getName()) + SpawnWorldInfoGenerator.getInstance().generate(player));
         }
         
         if (core.isPlayerForcedToLogin(player))

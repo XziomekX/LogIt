@@ -50,7 +50,7 @@ public class SessionManager implements Runnable
                 
                 if (l != null && !player.hasPermission("logit.out-of-session.timeout.exempt") && l < (core.getConfig().getOutOfSessionTimeout() * -20L))
                 {
-                    player.kickPlayer(getMessage("OUT_OF_SESSION_TIMEOUT", true));
+                    player.kickPlayer(getMessage("OUT_OF_SESSION_TIMEOUT"));
                 }
                 else
                 {
@@ -93,11 +93,11 @@ public class SessionManager implements Runnable
         {
             if (core.getConfig().getForceLogin() && !player.hasPermission("logit.login.exempt"))
             {
-                broadcastMessage(getMessage("JOIN", true).replace("%player%", player.getName()) + SpawnWorldInfoGenerator.getInstance().generate(player));
+                broadcastMessage(getMessage("JOIN").replace("%player%", player.getName()) + SpawnWorldInfoGenerator.getInstance().generate(player));
             }
             else
             {
-                player.sendMessage(getMessage("LOGGED_IN_SELF", true));
+                player.sendMessage(getMessage("LOGGED_IN_SELF"));
             }
             
             if (core.getConfig().getVerbose())
@@ -115,11 +115,11 @@ public class SessionManager implements Runnable
         {
             if (core.getConfig().getForceLogin() && !player.hasPermission("logit.login.exempt"))
             {
-                broadcastMessage(getMessage("QUIT", true).replace("%player%", player.getName()));
+                broadcastMessage(getMessage("QUIT").replace("%player%", player.getName()));
             }
             else
             {
-                player.sendMessage(getMessage("LOGGED_OUT_SELF", true));
+                player.sendMessage(getMessage("LOGGED_OUT_SELF"));
             }
             
             if (core.getConfig().getVerbose())

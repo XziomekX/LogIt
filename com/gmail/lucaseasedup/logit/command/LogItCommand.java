@@ -53,11 +53,11 @@ public class LogItCommand implements CommandExecutor
         {
             if (p != null && !p.hasPermission("logit"))
             {
-                s.sendMessage(getMessage("NO_PERMS", true));
+                s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
             
-            s.sendMessage(getMessage("TYPE_FOR_HELP", p != null));
+            s.sendMessage(getMessage("TYPE_FOR_HELP"));
             
             return true;
         }
@@ -65,24 +65,24 @@ public class LogItCommand implements CommandExecutor
         {
             if (p != null && !p.hasPermission("logit.help"))
             {
-                s.sendMessage(getMessage("NO_PERMS", true));
+                s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
 
             if (p == null || p.hasPermission("logit.help"))
-                s.sendMessage(getMessage("CMD_HELP", p != null).replace("%cmd%", "/logit help").replace("%desc%", "Displays help for LogIt."));
+                s.sendMessage(getMessage("CMD_HELP").replace("%cmd%", "/logit help").replace("%desc%", "Displays help for LogIt."));
             if (p == null || p.hasPermission("logit.version"))
-                s.sendMessage(getMessage("CMD_HELP", p != null).replace("%cmd%", "/logit version").replace("%desc%", "Shows current version of LogIt."));
+                s.sendMessage(getMessage("CMD_HELP").replace("%cmd%", "/logit version").replace("%desc%", "Shows current version of LogIt."));
             if (p == null || p.hasPermission("logit.reload"))
-                s.sendMessage(getMessage("CMD_HELP", p != null).replace("%cmd%", "/logit reload").replace("%desc%", "Reloads LogIt."));
+                s.sendMessage(getMessage("CMD_HELP").replace("%cmd%", "/logit reload").replace("%desc%", "Reloads LogIt."));
             if (p == null || p.hasPermission("logit.purge"))
-                s.sendMessage(getMessage("CMD_HELP", p != null).replace("%cmd%", "/logit purge").replace("%desc%", "Purges the database."));
+                s.sendMessage(getMessage("CMD_HELP").replace("%cmd%", "/logit purge").replace("%desc%", "Purges the database."));
             if (p != null && p.hasPermission("logit.setwr"))
-                s.sendMessage(getMessage("CMD_HELP", true).replace("%cmd%", "/logit setwr").replace("%desc%", "Sets the waiting room to your position."));
+                s.sendMessage(getMessage("CMD_HELP").replace("%cmd%", "/logit setwr").replace("%desc%", "Sets the waiting room to your position."));
             if (p != null && p.hasPermission("logit.gotowr"))
-                s.sendMessage(getMessage("CMD_HELP", true).replace("%cmd%", "/logit gotowr").replace("%desc%", "Teleports you to the waiting room."));
+                s.sendMessage(getMessage("CMD_HELP").replace("%cmd%", "/logit gotowr").replace("%desc%", "Teleports you to the waiting room."));
             if (p == null || p.hasPermission("logit.globalpass"))
-                s.sendMessage(getMessage("CMD_HELP", p != null).replace("%cmd%", "/logit globalpass <password>").replace("%desc%", "Changes the global password."));
+                s.sendMessage(getMessage("CMD_HELP").replace("%cmd%", "/logit globalpass <password>").replace("%desc%", "Changes the global password."));
             
             return true;
         }
@@ -90,11 +90,11 @@ public class LogItCommand implements CommandExecutor
         {
             if (p != null && !p.hasPermission("logit.version"))
             {
-                s.sendMessage(getMessage("NO_PERMS", true));
+                s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
             
-            s.sendMessage(getMessage("VERSION", p != null).replace("%version%", core.getPlugin().getVersion()));
+            s.sendMessage(getMessage("PLUGIN_VERSION").replace("%version%", core.getPlugin().getVersion()));
             
             return true;
         }
@@ -102,19 +102,16 @@ public class LogItCommand implements CommandExecutor
         {
             if (p != null && !p.hasPermission("logit.reload"))
             {
-                s.sendMessage(getMessage("NO_PERMS", true));
+                s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
 
             core.restart();
             
             if (p != null)
-                s.sendMessage(getMessage("RELOADED", true));
+                s.sendMessage(getMessage("RELOADED"));
             
-            if (core.getConfig().getVerbose())
-            {
-                log(INFO, getMessage("RELOADED"));
-            }
+            log(INFO, getMessage("RELOADED"));
             
             return true;
         }
@@ -122,7 +119,7 @@ public class LogItCommand implements CommandExecutor
         {
             if (p != null && !p.hasPermission("logit.purge"))
             {
-                s.sendMessage(getMessage("NO_PERMS", true));
+                s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
             
@@ -133,7 +130,7 @@ public class LogItCommand implements CommandExecutor
             catch (SQLException ex)
             {
                 if (p != null)
-                    s.sendMessage(getMessage("FAILED_DB_PURGE", true));
+                    s.sendMessage(getMessage("FAILED_DB_PURGE"));
                 
                 log(INFO, getMessage("FAILED_DB_PURGE"));
                 
@@ -141,12 +138,9 @@ public class LogItCommand implements CommandExecutor
             }
             
             if (p != null)
-                s.sendMessage(getMessage("DB_PURGED", true));
+                s.sendMessage(getMessage("DB_PURGED"));
             
-            if (core.getConfig().getVerbose())
-            {
-                log(INFO, getMessage("DB_PURGED"));
-            }
+            log(INFO, getMessage("DB_PURGED"));
             
             return true;
         }
@@ -159,14 +153,14 @@ public class LogItCommand implements CommandExecutor
             }
             if (p != null && !p.hasPermission("logit.setwr"))
             {
-                s.sendMessage(getMessage("NO_PERMS", true));
+                s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
             
             core.getConfig().setWaitingRoomLocation(p.getLocation());
             core.getConfig().save();
             
-            p.sendMessage(getMessage("WAITING_ROOM_SET", true));
+            p.sendMessage(getMessage("WAITING_ROOM_SET"));
             
             if (core.getConfig().getVerbose())
             {
@@ -184,7 +178,7 @@ public class LogItCommand implements CommandExecutor
             }
             if (p != null && !p.hasPermission("logit.gotowr"))
             {
-                s.sendMessage(getMessage("NO_PERMS", true));
+                s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
             
@@ -196,17 +190,17 @@ public class LogItCommand implements CommandExecutor
         {
             if (p != null && !p.hasPermission("logit.globalpass"))
             {
-                s.sendMessage(getMessage("NO_PERMS", true));
+                s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
             if (args.length < 2)
             {
-                s.sendMessage(getMessage("PARAM_MISSING", p != null).replace("%param%", "password"));
+                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
                 return true;
             }
             if (args[1].length() < core.getConfig().getPasswordMinLength())
             {
-                s.sendMessage(getMessage("PASSWORD_TOO_SHORT", p != null).replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
+                s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
                 return true;
             }
             
@@ -214,12 +208,9 @@ public class LogItCommand implements CommandExecutor
             core.getConfig().save();
             
             if (p != null)
-                s.sendMessage(getMessage("GLOBALPASS_CHANGED", true));
+                s.sendMessage(getMessage("GLOBALPASS_CHANGED"));
             
-            if (core.getConfig().getVerbose())
-            {
-                log(INFO, getMessage("GLOBALPASS_CHANGED"));
-            }
+            log(INFO, getMessage("GLOBALPASS_CHANGED"));
             
             return true;
         }
@@ -228,11 +219,11 @@ public class LogItCommand implements CommandExecutor
         {
             if (p != null && !p.hasPermission("logit"))
             {
-                s.sendMessage(getMessage("NO_PERMS", true));
+                s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
             
-            s.sendMessage(getMessage("TYPE_FOR_HELP", p != null));
+            s.sendMessage(getMessage("TYPE_FOR_HELP"));
         }
         
         return true;

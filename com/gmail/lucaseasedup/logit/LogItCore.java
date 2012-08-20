@@ -172,7 +172,7 @@ public final class LogItCore
         
         if (notify)
         {
-            sendMessage(username, getMessage("REGISTERED_SELF", true));
+            sendMessage(username, getMessage("REGISTERED_SELF"));
             
             if (config.getVerbose())
             {
@@ -205,7 +205,7 @@ public final class LogItCore
         
         if (notify)
         {
-            sendMessage(username, getMessage("UNREGISTERED_SELF", true));
+            sendMessage(username, getMessage("UNREGISTERED_SELF"));
             
             if (config.getVerbose())
             {
@@ -234,7 +234,7 @@ public final class LogItCore
         
         if (notify)
         {
-            sendMessage(username, getMessage("PASSWORD_CHANGED_SELF", true));
+            sendMessage(username, getMessage("PASSWORD_CHANGED_SELF"));
             
             if (config.getVerbose())
             {
@@ -282,11 +282,11 @@ public final class LogItCore
     {
         if (isRegistered(player))
         {
-            player.sendMessage(getMessage("PLEASE_LOGIN", true));
+            player.sendMessage(getMessage("PLEASE_LOGIN"));
         }
         else
         {
-            player.sendMessage(getMessage("PLEASE_REGISTER", true));
+            player.sendMessage(getMessage("PLEASE_REGISTER"));
         }
     }
     

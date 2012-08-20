@@ -19,8 +19,7 @@
 package com.gmail.lucaseasedup.logit.command;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
-import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
-import static java.util.logging.Level.INFO;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -50,7 +49,7 @@ public class ChangePassCommand implements CommandExecutor
         
         if ((args.length > 2 && !args[0].equals("-x")) || args.length > 3)
         {
-            s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION", p != null));
+            s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
             return true;
         }
         
@@ -58,27 +57,27 @@ public class ChangePassCommand implements CommandExecutor
         {
             if (p != null && !p.hasPermission("logit.changepass.others"))
             {
-                s.sendMessage(getMessage("NO_PERMS", true));
+                s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
             if (args.length < 2)
             {
-                s.sendMessage(getMessage("PARAM_MISSING", p != null).replace("%param%", "player"));
+                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
                 return true;
             }
             if (args.length < 3)
             {
-                s.sendMessage(getMessage("PARAM_MISSING", p != null).replace("%param%", "newpassword"));
+                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "newpassword"));
                 return true;
             }
             if (!core.isRegistered(args[1]))
             {
-                s.sendMessage(getMessage("NOT_REGISTERED_OTHERS", p != null).replace("%player%", args[1]));
+                s.sendMessage(getMessage("NOT_REGISTERED_OTHERS").replace("%player%", args[1]));
                 return true;
             }
             if (args[2].length() < core.getConfig().getPasswordMinLength())
             {
-                s.sendMessage(getMessage("PASSWORD_TOO_SHORT", p != null).replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
+                s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
                 return true;
             }
             
@@ -86,7 +85,7 @@ public class ChangePassCommand implements CommandExecutor
             
             if (p != null)
             {
-                p.sendMessage(getMessage("PASSWORD_CHANGED_OTHERS", true).replace("%player%", args[1]));
+                p.sendMessage(getMessage("PASSWORD_CHANGED_OTHERS").replace("%player%", args[1]));
             }
         }
         else
@@ -98,32 +97,32 @@ public class ChangePassCommand implements CommandExecutor
             }
             if (!p.hasPermission("logit.changepass.self"))
             {
-                s.sendMessage(getMessage("NO_PERMS", true));
+                s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
             if (args.length < 1)
             {
-                s.sendMessage(getMessage("PARAM_MISSING", true).replace("%param%", "oldpassword"));
+                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "oldpassword"));
                 return true;
             }
             if (args.length < 2)
             {
-                s.sendMessage(getMessage("PARAM_MISSING", true).replace("%param%", "newpassword"));
+                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "newpassword"));
                 return true;
             }
             if (!core.isRegistered(p))
             {
-                s.sendMessage(getMessage("NOT_REGISTERED_SELF", true));
+                s.sendMessage(getMessage("NOT_REGISTERED_SELF"));
                 return true;
             }
             if (!core.checkPassword(p.getName(), args[0]))
             {
-                s.sendMessage(getMessage("INCORRECT_PASSWORD", true));
+                s.sendMessage(getMessage("INCORRECT_PASSWORD"));
                 return true;
             }
             if (args[1].length() < core.getConfig().getPasswordMinLength())
             {
-                s.sendMessage(getMessage("PASSWORD_TOO_SHORT", true).replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
+                s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
                 return true;
             }
             

@@ -41,7 +41,7 @@ public class SpawnWorldInfoGenerator
         if (!core.getConfig().getShowSpawnWorldInfo())
             return "";
         
-        return " " + formatColorCodes(getMessage("IN_WORLD", true).replace("%world%", getWorldAlias(player.getWorld())));
+        return " " + formatColorCodes(getMessage("IN_WORLD").replace("%world%", getWorldAlias(player.getWorld())));
     }
     
     protected String getWorldAlias(World world)

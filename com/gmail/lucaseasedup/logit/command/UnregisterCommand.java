@@ -19,8 +19,7 @@
 package com.gmail.lucaseasedup.logit.command;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
-import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
-import static java.util.logging.Level.INFO;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -50,7 +49,7 @@ public class UnregisterCommand implements CommandExecutor
         
         if ((args.length > 1 && !args[0].equals("-x")) || args.length > 2)
         {
-            s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION", p != null));
+            s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
             return true;
         }
         
@@ -58,17 +57,17 @@ public class UnregisterCommand implements CommandExecutor
         {
             if (p != null && !p.hasPermission("logit.unregister.others"))
             {
-                s.sendMessage(getMessage("NO_PERMS", true));
+                s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
             if (args.length < 2)
             {
-                s.sendMessage(getMessage("PARAM_MISSING", p != null).replace("%param%", "player"));
+                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
                 return true;
             }
             if (!core.isRegistered(args[1]))
             {
-                s.sendMessage(getMessage("NOT_REGISTERED_OTHERS", p != null).replace("%player%", args[1]));
+                s.sendMessage(getMessage("NOT_REGISTERED_OTHERS").replace("%player%", args[1]));
                 return true;
             }
             
@@ -76,7 +75,7 @@ public class UnregisterCommand implements CommandExecutor
             
             if (p != null && !core.getConfig().getForceLogin())
             {
-                p.sendMessage(getMessage("UNREGISTERED_OTHERS", true).replace("%player%", args[1]));
+                p.sendMessage(getMessage("UNREGISTERED_OTHERS").replace("%player%", args[1]));
             }
         }
         else
@@ -88,22 +87,22 @@ public class UnregisterCommand implements CommandExecutor
             }
             if (!p.hasPermission("logit.unregister.self"))
             {
-                s.sendMessage(getMessage("NO_PERMS", true));
+                s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
             if (args.length < 1)
             {
-                s.sendMessage(getMessage("PARAM_MISSING", true).replace("%param%", "password"));
+                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
                 return true;
             }
             if (!core.isRegistered(p))
             {
-                s.sendMessage(getMessage("NOT_REGISTERED_SELF", true));
+                s.sendMessage(getMessage("NOT_REGISTERED_SELF"));
                 return true;
             }
             if (!core.checkPassword(p.getName(), args[0]))
             {
-                p.sendMessage(getMessage("INCORRECT_PASSWORD", true));
+                p.sendMessage(getMessage("INCORRECT_PASSWORD"));
                 return true;
             }
             

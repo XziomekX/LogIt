@@ -20,7 +20,6 @@ package com.gmail.lucaseasedup.logit.command;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
-import static java.util.logging.Level.INFO;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -50,7 +49,7 @@ public class LogoutCommand implements CommandExecutor
         
         if ((args.length > 0 && !args[0].equals("-x")) || args.length > 2)
         {
-            s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION", p != null));
+            s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
             return true;
         }
         
@@ -58,22 +57,22 @@ public class LogoutCommand implements CommandExecutor
         {
             if (p != null && !p.hasPermission("logit.logout.others"))
             {
-                s.sendMessage(getMessage("NO_PERMS", true));
+                s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
             if (args.length < 2)
             {
-                s.sendMessage(getMessage("PARAM_MISSING", p != null).replace("%param%", "player"));
+                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
                 return true;
             }
             if (!isPlayerOnline(args[1]))
             {
-                s.sendMessage(getMessage("NOT_ONLINE", p != null).replace("%player%", args[1]));
+                s.sendMessage(getMessage("NOT_ONLINE").replace("%player%", args[1]));
                 return true;
             }
             if (!core.getSessionManager().isSessionAlive(args[1]))
             {
-                s.sendMessage(getMessage("NOT_LOGGED_IN_OTHERS", p != null).replace("%player%", args[1]));
+                s.sendMessage(getMessage("NOT_LOGGED_IN_OTHERS").replace("%player%", args[1]));
                 return true;
             }
             
@@ -82,7 +81,7 @@ public class LogoutCommand implements CommandExecutor
             
             if (p != null && !core.getConfig().getForceLogin())
             {
-                p.sendMessage(getMessage("LOGGED_OUT_OTHERS", true).replace("%player%", args[1]));
+                p.sendMessage(getMessage("LOGGED_OUT_OTHERS").replace("%player%", args[1]));
             }
         }
         else
@@ -94,12 +93,12 @@ public class LogoutCommand implements CommandExecutor
             }
             if (!p.hasPermission("logit.logout.self"))
             {
-                s.sendMessage(getMessage("NO_PERMS", true));
+                s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
             if (!core.getSessionManager().isSessionAlive(p))
             {
-                s.sendMessage(getMessage("NOT_LOGGED_IN_SELF", true));
+                s.sendMessage(getMessage("NOT_LOGGED_IN_SELF"));
                 return true;
             }
             
