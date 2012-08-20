@@ -1,0 +1,224 @@
+package com.gmail.lucaseasedup.logit.command;
+
+import com.gmail.lucaseasedup.logit.LogItCore;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
+import java.sql.SQLException;
+import static java.util.logging.Level.INFO;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+public class LogItCommand implements CommandExecutor
+{
+    public LogItCommand(LogItCore core)
+    {
+        this.core = core;
+    }
+    
+    @Override
+    public boolean onCommand(CommandSender s, Command cmd, String label, String[] args)
+    {
+        if (!cmd.getName().equalsIgnoreCase("logit"))
+            return false;
+        
+        Player p = null;
+        try
+        {
+            p = (Player) s;
+        }
+        catch (ClassCastException ex)
+        {
+        }
+        
+        if (args.length == 0 || args.length > 2)
+        {
+            if (p != null && !p.hasPermission("logit"))
+            {
+                s.sendMessage(getMessage("NO_PERMS", true));
+                return true;
+            }
+            
+            s.sendMessage(getMessage("TYPE_FOR_HELP", p != null));
+            
+            return true;
+        }
+        else if (args[0].equalsIgnoreCase("help") && args.length == 1)
+        {
+            if (p != null && !p.hasPermission("logit.help"))
+            {
+                s.sendMessage(getMessage("NO_PERMS", true));
+                return true;
+            }
+
+            if (p == null || p.hasPermission("logit.help"))
+                s.sendMessage(getMessage("CMD_HELP", p != null).replace("%cmd%", "/logit help").replace("%desc%", "Displays help for LogIt."));
+            if (p == null || p.hasPermission("logit.version"))
+                s.sendMessage(getMessage("CMD_HELP", p != null).replace("%cmd%", "/logit version").replace("%desc%", "Shows current version of LogIt."));
+            if (p == null || p.hasPermission("logit.reload"))
+                s.sendMessage(getMessage("CMD_HELP", p != null).replace("%cmd%", "/logit reload").replace("%desc%", "Reloads LogIt."));
+            if (p == null || p.hasPermission("logit.purge"))
+                s.sendMessage(getMessage("CMD_HELP", p != null).replace("%cmd%", "/logit purge").replace("%desc%", "Purges the database."));
+            if (p != null && p.hasPermission("logit.setwr"))
+                s.sendMessage(getMessage("CMD_HELP", true).replace("%cmd%", "/logit setwr").replace("%desc%", "Sets the waiting room to your position."));
+            if (p != null && p.hasPermission("logit.gotowr"))
+                s.sendMessage(getMessage("CMD_HELP", true).replace("%cmd%", "/logit gotowr").replace("%desc%", "Teleports you to the waiting room."));
+            if (p == null || p.hasPermission("logit.globalpass"))
+                s.sendMessage(getMessage("CMD_HELP", p != null).replace("%cmd%", "/logit globalpass <password>").replace("%desc%", "Changes the global password."));
+            
+            return true;
+        }
+        else if (args[0].equalsIgnoreCase("version") && args.length == 1)
+        {
+            if (p != null && !p.hasPermission("logit.version"))
+            {
+                s.sendMessage(getMessage("NO_PERMS", true));
+                return true;
+            }
+            
+            s.sendMessage(getMessage("VERSION", p != null).replace("%version%", core.getPlugin().getVersion()));
+            
+            return true;
+        }
+        else if (args[0].equalsIgnoreCase("reload") && args.length == 1)
+        {
+            if (p != null && !p.hasPermission("logit.reload"))
+            {
+                s.sendMessage(getMessage("NO_PERMS", true));
+                return true;
+            }
+
+            core.restart();
+            
+            if (p != null)
+                s.sendMessage(getMessage("RELOADED", true));
+            
+            if (core.getConfig().getVerbose())
+            {
+                log(INFO, getMessage("RELOADED"));
+            }
+            
+            return true;
+        }
+        else if (args[0].equalsIgnoreCase("purge") && args.length == 1)
+        {
+            if (p != null && !p.hasPermission("logit.purge"))
+            {
+                s.sendMessage(getMessage("NO_PERMS", true));
+                return true;
+            }
+            
+            try
+            {
+                core.purge();
+            }
+            catch (SQLException ex)
+            {
+                if (p != null)
+                    s.sendMessage(getMessage("FAILED_DB_PURGE", true));
+                
+                log(INFO, getMessage("FAILED_DB_PURGE"));
+                
+                return true;
+            }
+            
+            if (p != null)
+                s.sendMessage(getMessage("DB_PURGED", true));
+            
+            if (core.getConfig().getVerbose())
+            {
+                log(INFO, getMessage("DB_PURGED"));
+            }
+            
+            return true;
+        }
+        else if (args[0].equalsIgnoreCase("setwr") && args.length == 1)
+        {
+            if (p == null)
+            {
+                s.sendMessage(getMessage("ONLY_PLAYERS"));
+                return true;
+            }
+            if (p != null && !p.hasPermission("logit.setwr"))
+            {
+                s.sendMessage(getMessage("NO_PERMS", true));
+                return true;
+            }
+            
+            core.getConfig().setWaitingRoomLocation(p.getLocation());
+            core.getConfig().save();
+            
+            p.sendMessage(getMessage("WAITING_ROOM_SET", true));
+            
+            if (core.getConfig().getVerbose())
+            {
+                log(INFO, getMessage("WAITING_ROOM_SET"));
+            }
+            
+            return true;
+        }
+        else if (args[0].equalsIgnoreCase("gotowr") && args.length == 1)
+        {
+            if (p == null)
+            {
+                s.sendMessage(getMessage("ONLY_PLAYERS"));
+                return true;
+            }
+            if (p != null && !p.hasPermission("logit.gotowr"))
+            {
+                s.sendMessage(getMessage("NO_PERMS", true));
+                return true;
+            }
+            
+            p.teleport(core.getConfig().getWaitingRoomLocation());
+            
+            return true;
+        }
+        else if (args[0].equalsIgnoreCase("globalpass") && args.length <= 2)
+        {
+            if (p != null && !p.hasPermission("logit.globalpass"))
+            {
+                s.sendMessage(getMessage("NO_PERMS", true));
+                return true;
+            }
+            if (args.length < 2)
+            {
+                s.sendMessage(getMessage("PARAM_MISSING", p != null).replace("%param%", "password"));
+                return true;
+            }
+            if (args[1].length() < core.getConfig().getPasswordMinLength())
+            {
+                s.sendMessage(getMessage("PASSWORD_TOO_SHORT", p != null).replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
+                return true;
+            }
+            
+            core.getConfig().setGlobalPasswordHash(hash(args[1]));
+            core.getConfig().save();
+            
+            if (p != null)
+                s.sendMessage(getMessage("GLOBALPASS_CHANGED", true));
+            
+            if (core.getConfig().getVerbose())
+            {
+                log(INFO, getMessage("GLOBALPASS_CHANGED"));
+            }
+            
+            return true;
+        }
+        
+        if (true)
+        {
+            if (p != null && !p.hasPermission("logit"))
+            {
+                s.sendMessage(getMessage("NO_PERMS", true));
+                return true;
+            }
+            
+            s.sendMessage(getMessage("TYPE_FOR_HELP", p != null));
+        }
+        
+        return true;
+    }
+    
+    private LogItCore core;
+}

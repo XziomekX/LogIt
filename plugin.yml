@@ -1,0 +1,127 @@
+name: LogIt
+version: 0.2.0
+author: LucasEasedUp
+main: com.gmail.lucaseasedup.logit.LogItPlugin
+softdepend: [Multiverse-Core]
+
+commands:
+  logit:
+    description: LogIt generic command.
+    usage: /<command> [help|version|reload|purge|setwr|gotowr|globalpass <password>]
+
+  login:
+    description: Logs you in.
+    usage: /<command> <password>
+    aliases: [l]
+
+  register:
+    description: Registers you.
+    usage: /<command> <password>
+    aliases: [reg]
+
+  unregister:
+    description: Unregisters you.
+    usage: /<command> <password>
+
+  logout:
+    description: Logs you out.
+    usage: /<command>
+
+  changepass:
+    description: Changes your password.
+    usage: /<command> <oldpassword> <newpassword>
+
+permissions:
+  logit.*:
+    default: false
+    children:
+      logit.admin: true
+  logit.player:
+    default: not op
+    children:
+      logit: true
+      logit.help: true
+      logit.version: true
+      logit.login.self: true
+      logit.logout.self: true
+      logit.register.self: true
+      logit.unregister.self: true
+      logit.changepass.self: true
+  logit.mod:
+    default: op
+    children:
+      logit.player: true
+      logit.gotowr: true
+      logit.login.others: true
+      logit.logout.others: true
+      logit.register.others: true
+      logit.unregister.others: true
+      logit.changepass.others: true
+  logit.admin:
+    default: false
+    children:
+      logit.mod: true
+      logit.reload: true
+      logit.purge: true
+      logit.setwr: true
+      logit.globalpass: true
+  logit:
+    default: true
+  logit.help:
+    default: true
+  logit.version:
+    default: true
+  logit.reload:
+    default: false
+  logit.purge:
+    default: false
+  logit.setwr:
+    default: false
+  logit.gotowr:
+    default: false
+  logit.globalpass:
+    default: false
+  logit.login:
+    default: false
+    children:
+      logit.login.self: true
+  logit.login.self:
+    default: false
+  logit.login.others:
+    default: false
+  logit.login.exempt:
+    default: false
+  logit.logout:
+    default: false
+    children:
+      logit.logout.self: true
+  logit.logout.self:
+    default: false
+  logit.logout.others:
+    default: false
+  logit.register:
+    default: false
+    children:
+      logit.register.self: true
+  logit.register.self:
+    default: false
+  logit.register.others:
+    default: false
+  logit.unregister:
+    default: false
+    children:
+      logit.unregister.self: true
+  logit.unregister.self:
+    default: false
+  logit.unregister.others:
+    default: false
+  logit.changepass:
+    default: false
+    children:
+      logit.changepass.self: true
+  logit.changepass.self:
+    default: false
+  logit.changepass.others:
+    default: false
+  logit.out-of-session.timeout.exempt:
+    default: false
