@@ -3,6 +3,7 @@ version: 0.2.0
 author: LucasEasedUp
 main: com.gmail.lucaseasedup.logit.LogItPlugin
 softdepend: [Multiverse-Core]
+database: true
 
 commands:
   logit:

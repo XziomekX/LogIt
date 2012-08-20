@@ -74,13 +74,15 @@ public class LogItConfiguration
         plugin.getConfig().set("waiting-room.location.z",               plugin.getConfig().getDouble("waiting-room.location.z", 0.0));
         plugin.getConfig().set("waiting-room.location.yaw",             plugin.getConfig().getDouble("waiting-room.location.yaw", 0.0));
         plugin.getConfig().set("waiting-room.location.pitch",           plugin.getConfig().getDouble("waiting-room.location.pitch", 0.0));
-        plugin.getConfig().set("mysql.host",                            plugin.getConfig().getString("mysql.host", "jdbc:mysql://localhost:3306/"));
-        plugin.getConfig().set("mysql.user",                            plugin.getConfig().getString("mysql.user", "root"));
-        plugin.getConfig().set("mysql.password",                        plugin.getConfig().getString("mysql.password", ""));
-        plugin.getConfig().set("mysql.database",                        plugin.getConfig().getString("mysql.database", ""));
-        plugin.getConfig().set("mysql.table",                           plugin.getConfig().getString("mysql.table", "logit"));
-        plugin.getConfig().set("mysql.columns.username",                plugin.getConfig().getString("mysql.columns.username", "username"));
-        plugin.getConfig().set("mysql.columns.password",                plugin.getConfig().getString("mysql.columns.password", "password"));
+        plugin.getConfig().set("storage.type",                          plugin.getConfig().getString("storage.type", "sqlite"));
+        plugin.getConfig().set("storage.sqlite.filename",               plugin.getConfig().getString("storage.sqlite.filename", "jdbc:sqlite:plugins/LogIt/LogIt.db"));
+        plugin.getConfig().set("storage.mysql.host",                    plugin.getConfig().getString("storage.mysql.host", "jdbc:mysql://localhost:3306/"));
+        plugin.getConfig().set("storage.mysql.user",                    plugin.getConfig().getString("storage.mysql.user", "root"));
+        plugin.getConfig().set("storage.mysql.password",                plugin.getConfig().getString("storage.mysql.password", ""));
+        plugin.getConfig().set("storage.mysql.database",                plugin.getConfig().getString("storage.mysql.database", ""));
+        plugin.getConfig().set("storage.table",                         plugin.getConfig().getString("storage.table", "logit"));
+        plugin.getConfig().set("storage.columns.username",              plugin.getConfig().getString("storage.columns.username", "username"));
+        plugin.getConfig().set("storage.columns.password",              plugin.getConfig().getString("storage.columns.password", "password"));
         
         plugin.saveConfig();
     }
@@ -296,40 +298,61 @@ public class LogItConfiguration
     {
         return (float) plugin.getConfig().getDouble("waiting-room.location.pitch");
     }
+    
+    public StorageType getStorageType()
+    {
+        String s = plugin.getConfig().getString("storage.type");
+        
+        if (s.equalsIgnoreCase("sqlite"))
+        {
+            return StorageType.SQLITE;
+        }
+        else if (s.equalsIgnoreCase("mysql"))
+        {
+            return StorageType.MYSQL;
+        }
+        else
+            return StorageType.NULL;
+    }
+    
+    public String getStorageSqliteFilename()
+    {
+        return plugin.getConfig().getString("storage.sqlite.filename");
+    }
+    
+    public String getStorageMysqlHost()
+    {
+        return plugin.getConfig().getString("storage.mysql.host");
+    }
 
-    public String getMysqlHost()
+    public String getStorageMysqlUser()
     {
-        return plugin.getConfig().getString("mysql.host");
+        return plugin.getConfig().getString("storage.mysql.user");
     }
 
-    public String getMysqlUser()
+    public String getStorageMysqlPassword()
     {
-        return plugin.getConfig().getString("mysql.user");
-    }
-
-    public String getMysqlPassword()
-    {
-        return plugin.getConfig().getString("mysql.password");
+        return plugin.getConfig().getString("storage.mysql.password");
     }
     
-    public String getMysqlDatabase()
+    public String getStorageMysqlDatabase()
     {
-        return plugin.getConfig().getString("mysql.database");
+        return plugin.getConfig().getString("storage.mysql.database");
     }
     
-    public String getMysqlTable()
+    public String getStorageTable()
     {
-        return plugin.getConfig().getString("mysql.table");
+        return plugin.getConfig().getString("storage.table");
     }
     
-    public String getMysqlColumnsUsername()
+    public String getStorageColumnsUsername()
     {
-        return plugin.getConfig().getString("mysql.columns.username");
+        return plugin.getConfig().getString("storage.columns.username");
     }
     
-    public String getMysqlColumnsPassword()
+    public String getStorageColumnsPassword()
     {
-        return plugin.getConfig().getString("mysql.columns.password");
+        return plugin.getConfig().getString("storage.columns.password");
     }
     
     public void setGlobalPasswordHash(String hash)
@@ -345,6 +368,11 @@ public class LogItConfiguration
         plugin.getConfig().set("waiting-room.location.z", location.getZ());
         plugin.getConfig().set("waiting-room.location.yaw", location.getYaw());
         plugin.getConfig().set("waiting-room.location.pitch", location.getPitch());
+    }
+    
+    public static enum StorageType
+    {
+        NULL, SQLITE, MYSQL
     }
     
     private LogItPlugin plugin;

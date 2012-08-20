@@ -18,10 +18,12 @@
  */
 package com.gmail.lucaseasedup.logit;
 
+import com.gmail.lucaseasedup.logit.LogItConfiguration.StorageType;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
 import com.gmail.lucaseasedup.logit.command.*;
 import com.gmail.lucaseasedup.logit.db.Database;
 import com.gmail.lucaseasedup.logit.db.MySqlDatabase;
+import com.gmail.lucaseasedup.logit.db.SqliteDatabase;
 import com.gmail.lucaseasedup.logit.event.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -51,8 +53,10 @@ public final class LogItCore
         {
             load();
         }
-        
-        config.load();
+        else
+        {
+            config.load();
+        }
         
         if (config.getStopIfOnlineModeEnabled() && Bukkit.getServer().getOnlineMode())
         {
@@ -68,7 +72,16 @@ public final class LogItCore
         
         try
         {
-            database.connect(config.getMysqlHost(), config.getMysqlUser(), config.getMysqlPassword(), config.getMysqlDatabase());
+            if (config.getStorageType().equals(StorageType.SQLITE))
+            {
+                database.connect(config.getStorageSqliteFilename(), null, null, null);
+            }
+            else if (config.getStorageType().equals(StorageType.MYSQL))
+            {
+                database.connect(config.getStorageMysqlHost(), config.getStorageMysqlUser(), config.getStorageMysqlPassword(), config.getStorageMysqlDatabase());
+            }
+            else
+                return;
         }
         catch (SQLException ex)
         {
@@ -79,7 +92,7 @@ public final class LogItCore
         
         try
         {
-            database.create(config.getMysqlTable(), config.getMysqlColumnsUsername() + " varchar(16) NOT NULL, " + config.getMysqlColumnsPassword() + " varchar(32) NOT NULL");
+            database.create(config.getStorageTable(), config.getStorageColumnsUsername() + " varchar(16) NOT NULL, " + config.getStorageColumnsPassword() + " varchar(32) NOT NULL");
         }
         catch (SQLException ex)
         {
@@ -150,7 +163,7 @@ public final class LogItCore
         
         try
         {
-            database.insert(config.getMysqlTable(), "\"" + username.toLowerCase() + "\", \"" + hash + "\"");
+            database.insert(config.getStorageTable(), "\"" + username.toLowerCase() + "\", \"" + hash + "\"");
         }
         catch (SQLException ex)
         {
@@ -183,7 +196,7 @@ public final class LogItCore
         
         try
         {
-            database.delete(config.getMysqlTable(), config.getMysqlColumnsUsername() + " = \"" + username.toLowerCase() + "\"");
+            database.delete(config.getStorageTable(), config.getStorageColumnsUsername() + " = \"" + username.toLowerCase() + "\"");
         }
         catch (SQLException ex)
         {
@@ -212,7 +225,7 @@ public final class LogItCore
         
         try
         {
-            database.update(config.getMysqlTable(), config.getMysqlColumnsPassword() + " = \"" + hash + "\"", config.getMysqlColumnsUsername() + " = \"" + username.toLowerCase() + "\"");
+            database.update(config.getStorageTable(), config.getStorageColumnsPassword() + " = \"" + hash + "\"", config.getStorageColumnsUsername() + " = \"" + username.toLowerCase() + "\"");
         }
         catch (SQLException ex)
         {
@@ -261,7 +274,7 @@ public final class LogItCore
     
     public void purge() throws SQLException
     {
-        database.truncate(config.getMysqlTable());
+        database.truncate(config.getStorageTable());
         passwords.clear();
     }
     
@@ -321,13 +334,13 @@ public final class LogItCore
         
         try
         {
-            try (ResultSet rs = database.select(config.getMysqlTable(), "*"))
+            try (ResultSet rs = database.select(config.getStorageTable(), "*"))
             {
                 assert rs.getMetaData().getColumnCount() == 1;
                 
                 while (rs.next())
                 {
-                    passwords.put(rs.getString(config.getMysqlColumnsUsername()), rs.getString(config.getMysqlColumnsPassword()));
+                    passwords.put(rs.getString(config.getStorageColumnsUsername()), rs.getString(config.getStorageColumnsPassword()));
                 }
             }
         }
@@ -340,7 +353,22 @@ public final class LogItCore
     private void load()
     {
         config = new LogItConfiguration(plugin);
-        database = new MySqlDatabase();
+        config.load();
+        
+        if (config.getStorageType().equals(StorageType.SQLITE))
+        {
+            database = new SqliteDatabase();
+        }
+        else if (config.getStorageType().equals(StorageType.MYSQL))
+        {
+            database = new MySqlDatabase();
+        }
+        else if (config.getStorageType().equals(StorageType.NULL))
+        {
+            log(SEVERE, getMessage("NULL_STORAGE_TYPE"));
+            
+            return;
+        }
         
         Bukkit.getServer().getPluginManager().registerEvents(new TickEventListener(this), plugin);
         Bukkit.getServer().getPluginManager().registerEvents(new BlockEventListener(this), plugin);
