@@ -49,6 +49,7 @@ public class LogItConfiguration
         plugin.getConfig().set("password.min-length",                   plugin.getConfig().getInt("password.min-length", 3));
         plugin.getConfig().set("global-password-hash",                  plugin.getConfig().getString("global-password-hash", ""));
         plugin.getConfig().set("login-fails-to-kick",                   plugin.getConfig().getInt("login-fails-to-kick", 3));
+        plugin.getConfig().set("hashing-algorithm",                     plugin.getConfig().getString("hashing-algorithm", "md5"));
         plugin.getConfig().set("out-of-session.allowed-commands",       plugin.getConfig().getStringList("out-of-session.allowed-commands"));
         plugin.getConfig().set("out-of-session.timeout",                plugin.getConfig().getLong("out-of-session.timeout", 30L));
         plugin.getConfig().set("out-of-session.event-prevention.move",  plugin.getConfig().getBoolean("out-of-session.event-prevention.move", true));
@@ -161,6 +162,38 @@ public class LogItConfiguration
     public int getLoginFailsToKick()
     {
         return plugin.getConfig().getInt("login-fails-to-kick");
+    }
+    
+    public String getHashingAlgorithm()
+    {
+        String s = plugin.getConfig().getString("hashing-algorithm");
+        
+        if (s.equalsIgnoreCase("md2"))
+        {
+            return "MD2";
+        }
+        else if (s.equalsIgnoreCase("md5"))
+        {
+            return "MD5";
+        }
+        else if (s.equalsIgnoreCase("sha-1"))
+        {
+            return "SHA-1";
+        }
+        else if (s.equalsIgnoreCase("sha-256"))
+        {
+            return "SHA-256";
+        }
+        else if (s.equalsIgnoreCase("sha-384"))
+        {
+            return "SHA-384";
+        }
+        else if (s.equalsIgnoreCase("sha-512"))
+        {
+            return "SHA-512";
+        }
+        else
+            return null;
     }
     
     public List<String> getOutOfSessionAllowedCommands()

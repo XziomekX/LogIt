@@ -77,7 +77,7 @@ public class SqliteDatabase implements Database
     @Override
     public boolean truncate(String table) throws SQLException
     {
-        return statement.execute("TRUNCATE TABLE " + table + ";");
+        return statement.execute("DELETE FROM " + table + ";");
     }
     
     @Override

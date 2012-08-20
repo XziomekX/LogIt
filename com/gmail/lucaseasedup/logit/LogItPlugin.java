@@ -21,8 +21,6 @@ package com.gmail.lucaseasedup.logit;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.PropertyResourceBundle;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -152,37 +150,6 @@ public final class LogItPlugin extends JavaPlugin
         s = s.replace("&r", RESET.toString());
         
         return s;
-    }
-    
-    /**
-     * Creates a hash from the given string.
-     * 
-     * @param string String.
-     * @return Hash.
-     */
-    public static String hash(String string)
-    {
-        MessageDigest md;
-        
-        try
-        {
-            md = MessageDigest.getInstance("MD5");
-        }
-        catch (NoSuchAlgorithmException ex)
-        {
-            return null;
-        }
-        
-        md.update(string.getBytes());
-        byte bytes[] = md.digest();
-        StringBuilder sb = new StringBuilder();
-        
-        for (byte b : bytes)
-        {
-            sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
-        }
-        
-        return sb.toString();
     }
     
     public static boolean isPlayerOnline(String username)

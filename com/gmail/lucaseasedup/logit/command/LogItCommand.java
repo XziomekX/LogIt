@@ -22,6 +22,7 @@ import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
 import java.sql.SQLException;
 import static java.util.logging.Level.INFO;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -108,10 +109,13 @@ public class LogItCommand implements CommandExecutor
 
             core.restart();
             
-            if (p != null)
-                s.sendMessage(getMessage("RELOADED"));
-            
-            log(INFO, getMessage("RELOADED"));
+            if (Bukkit.getPluginManager().isPluginEnabled("LogIt"))
+            {
+                if (p != null)
+                    s.sendMessage(getMessage("RELOADED"));
+
+                log(INFO, getMessage("RELOADED"));
+            }
             
             return true;
         }
@@ -204,7 +208,7 @@ public class LogItCommand implements CommandExecutor
                 return true;
             }
             
-            core.getConfig().setGlobalPasswordHash(hash(args[1]));
+            core.getConfig().setGlobalPasswordHash(core.hash(args[1]));
             core.getConfig().save();
             
             if (p != null)

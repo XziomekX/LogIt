@@ -25,6 +25,8 @@ import com.gmail.lucaseasedup.logit.db.Database;
 import com.gmail.lucaseasedup.logit.db.MySqlDatabase;
 import com.gmail.lucaseasedup.logit.db.SqliteDatabase;
 import com.gmail.lucaseasedup.logit.event.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -53,10 +55,8 @@ public final class LogItCore
         {
             load();
         }
-        else
-        {
-            config.load();
-        }
+        
+        config.load();
         
         if (config.getStopIfOnlineModeEnabled() && Bukkit.getServer().getOnlineMode())
         {
@@ -65,7 +65,29 @@ public final class LogItCore
                 log(INFO, getMessage("ONLINEMODE_ENABLED"));
             }
             
-            stop();
+            Bukkit.getPluginManager().disablePlugin(Bukkit.getPluginManager().getPlugin("LogIt"));
+            
+            return;
+        }
+        
+        if (config.getStorageType().equals(StorageType.SQLITE))
+        {
+            database = new SqliteDatabase();
+        }
+        else if (config.getStorageType().equals(StorageType.MYSQL))
+        {
+            database = new MySqlDatabase();
+        }
+        else if (config.getStorageType().equals(StorageType.NULL))
+        {
+            log(SEVERE, getMessage("NULL_STORAGE_TYPE"));
+            
+            return;
+        }
+        
+        if (config.getHashingAlgorithm() == null)
+        {
+            log(SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM"));
             
             return;
         }
@@ -80,8 +102,6 @@ public final class LogItCore
             {
                 database.connect(config.getStorageMysqlHost(), config.getStorageMysqlUser(), config.getStorageMysqlPassword(), config.getStorageMysqlDatabase());
             }
-            else
-                return;
         }
         catch (SQLException ex)
         {
@@ -92,7 +112,7 @@ public final class LogItCore
         
         try
         {
-            database.create(config.getStorageTable(), config.getStorageColumnsUsername() + " varchar(16) NOT NULL, " + config.getStorageColumnsPassword() + " varchar(32) NOT NULL");
+            database.create(config.getStorageTable(), config.getStorageColumnsUsername() + " varchar(16) NOT NULL, " + config.getStorageColumnsPassword() + " varchar(256) NOT NULL");
         }
         catch (SQLException ex)
         {
@@ -313,6 +333,37 @@ public final class LogItCore
         player.teleport(l);
     }
     
+    /**
+     * Creates a hash from the given string using the algorithm specified in the config file.
+     * 
+     * @param string String.
+     * @return Hash.
+     */
+    public String hash(String string)
+    {
+        MessageDigest md;
+        
+        try
+        {
+            md = MessageDigest.getInstance(config.getHashingAlgorithm());
+        }
+        catch (NoSuchAlgorithmException ex)
+        {
+            return null;
+        }
+        
+        md.update(string.getBytes());
+        byte bytes[] = md.digest();
+        StringBuilder sb = new StringBuilder();
+        
+        for (byte b : bytes)
+        {
+            sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
+        }
+        
+        return sb.toString();
+    }
+    
     public SessionManager getSessionManager()
     {
         return sessionManager;
@@ -353,22 +404,6 @@ public final class LogItCore
     private void load()
     {
         config = new LogItConfiguration(plugin);
-        config.load();
-        
-        if (config.getStorageType().equals(StorageType.SQLITE))
-        {
-            database = new SqliteDatabase();
-        }
-        else if (config.getStorageType().equals(StorageType.MYSQL))
-        {
-            database = new MySqlDatabase();
-        }
-        else if (config.getStorageType().equals(StorageType.NULL))
-        {
-            log(SEVERE, getMessage("NULL_STORAGE_TYPE"));
-            
-            return;
-        }
         
         Bukkit.getServer().getPluginManager().registerEvents(new TickEventListener(this), plugin);
         Bukkit.getServer().getPluginManager().registerEvents(new BlockEventListener(this), plugin);
