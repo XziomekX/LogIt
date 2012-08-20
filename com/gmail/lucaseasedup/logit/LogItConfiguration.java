@@ -168,7 +168,11 @@ public class LogItConfiguration
     {
         String s = plugin.getConfig().getString("hashing-algorithm");
         
-        if (s.equalsIgnoreCase("md2"))
+        if (s.equalsIgnoreCase("plain"))
+        {
+            return "PLAIN";
+        }
+        else if (s.equalsIgnoreCase("md2"))
         {
             return "MD2";
         }

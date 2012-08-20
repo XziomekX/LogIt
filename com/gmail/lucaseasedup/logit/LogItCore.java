@@ -341,6 +341,11 @@ public final class LogItCore
      */
     public String hash(String string)
     {
+        if (config.getHashingAlgorithm().equals("PLAIN"))
+        {
+            return string;
+        }
+        
         MessageDigest md;
         
         try
