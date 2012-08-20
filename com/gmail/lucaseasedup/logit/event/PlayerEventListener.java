@@ -61,6 +61,10 @@ public class PlayerEventListener implements Listener
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_LONG", true).replace("%max-length%", String.valueOf(core.getConfig().getUsernameMaxLength())));
         }
+        else if (core.getConfig().getUsernameProhibitedUsernames().contains(player.getName().toLowerCase()))
+        {
+            event.disallow(KICK_OTHER, getMessage("USERNAME_PROHIBITED", true));
+        }
         else if (isPlayerOnline(player.getName()))
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_ALREADY_USED", true));

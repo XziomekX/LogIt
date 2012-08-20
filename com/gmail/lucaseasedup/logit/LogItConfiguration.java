@@ -45,6 +45,7 @@ public class LogItConfiguration
         plugin.getConfig().set("username.regex",                        plugin.getConfig().getString("username.regex", "[A-Za-z0-9_]+"));
         plugin.getConfig().set("username.min-length",                   plugin.getConfig().getInt("username.min-length", 2));
         plugin.getConfig().set("username.max-length",                   plugin.getConfig().getInt("username.max-length", 16));
+        plugin.getConfig().set("username.prohibited-usernames",         plugin.getConfig().getStringList("username.prohibited-usernames"));
         plugin.getConfig().set("password.min-length",                   plugin.getConfig().getInt("password.min-length", 3));
         plugin.getConfig().set("global-password-hash",                  plugin.getConfig().getString("global-password-hash", ""));
         plugin.getConfig().set("login-fails-to-kick",                   plugin.getConfig().getInt("login-fails-to-kick", 3));
@@ -140,6 +141,11 @@ public class LogItConfiguration
     public int getUsernameMaxLength()
     {
         return plugin.getConfig().getInt("username.max-length");
+    }
+    
+    public List<String> getUsernameProhibitedUsernames()
+    {
+        return plugin.getConfig().getStringList("username.prohibited-usernames");
     }
     
     public int getPasswordMinLength()
