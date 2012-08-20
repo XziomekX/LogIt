@@ -18,6 +18,7 @@
  */
 package com.gmail.lucaseasedup.logit;
 
+import static com.gmail.lucaseasedup.logit.LogItConfiguration.HashingAlgorithm.*;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -164,40 +165,44 @@ public class LogItConfiguration
         return plugin.getConfig().getInt("login-fails-to-kick");
     }
     
-    public String getHashingAlgorithm()
+    public HashingAlgorithm getHashingAlgorithm()
     {
         String s = plugin.getConfig().getString("hashing-algorithm");
         
         if (s.equalsIgnoreCase("plain"))
         {
-            return "PLAIN";
+            return PLAIN;
         }
         else if (s.equalsIgnoreCase("md2"))
         {
-            return "MD2";
+            return MD2;
         }
         else if (s.equalsIgnoreCase("md5"))
         {
-            return "MD5";
+            return MD5;
         }
         else if (s.equalsIgnoreCase("sha-1"))
         {
-            return "SHA-1";
+            return SHA1;
         }
         else if (s.equalsIgnoreCase("sha-256"))
         {
-            return "SHA-256";
+            return SHA256;
         }
         else if (s.equalsIgnoreCase("sha-384"))
         {
-            return "SHA-384";
+            return SHA384;
         }
         else if (s.equalsIgnoreCase("sha-512"))
         {
-            return "SHA-512";
+            return SHA512;
+        }
+        else if (s.equalsIgnoreCase("whirlpool"))
+        {
+            return WHIRLPOOL;
         }
         else
-            return null;
+            return UNKNOWN;
     }
     
     public List<String> getOutOfSessionAllowedCommands()
@@ -355,7 +360,7 @@ public class LogItConfiguration
             return StorageType.MYSQL;
         }
         else
-            return StorageType.NULL;
+            return StorageType.UNKNOWN;
     }
     
     public String getStorageSqliteFilename()
@@ -413,9 +418,14 @@ public class LogItConfiguration
         plugin.getConfig().set("waiting-room.location.pitch", location.getPitch());
     }
     
+    public static enum HashingAlgorithm
+    {
+        UNKNOWN, PLAIN, MD2, MD5, SHA1, SHA256, SHA384, SHA512, WHIRLPOOL
+    }
+    
     public static enum StorageType
     {
-        NULL, SQLITE, MYSQL
+        UNKNOWN, SQLITE, MYSQL
     }
     
     private LogItPlugin plugin;

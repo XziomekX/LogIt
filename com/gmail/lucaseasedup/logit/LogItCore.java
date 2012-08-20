@@ -18,6 +18,7 @@
  */
 package com.gmail.lucaseasedup.logit;
 
+import static com.gmail.lucaseasedup.logit.LogItConfiguration.HashingAlgorithm.*;
 import com.gmail.lucaseasedup.logit.LogItConfiguration.StorageType;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
 import com.gmail.lucaseasedup.logit.command.*;
@@ -25,8 +26,7 @@ import com.gmail.lucaseasedup.logit.db.Database;
 import com.gmail.lucaseasedup.logit.db.MySqlDatabase;
 import com.gmail.lucaseasedup.logit.db.SqliteDatabase;
 import com.gmail.lucaseasedup.logit.event.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import static com.gmail.lucaseasedup.logit.hash.HashGenerator.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -78,14 +78,14 @@ public final class LogItCore
         {
             database = new MySqlDatabase();
         }
-        else if (config.getStorageType().equals(StorageType.NULL))
+        else if (config.getStorageType().equals(StorageType.UNKNOWN))
         {
-            log(SEVERE, getMessage("NULL_STORAGE_TYPE"));
+            log(SEVERE, getMessage("UNKNOWN_STORAGE_TYPE"));
             
             return;
         }
         
-        if (config.getHashingAlgorithm() == null)
+        if (config.getHashingAlgorithm().equals(UNKNOWN))
         {
             log(SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM"));
             
@@ -341,32 +341,40 @@ public final class LogItCore
      */
     public String hash(String string)
     {
-        if (config.getHashingAlgorithm().equals("PLAIN"))
+        if (config.getHashingAlgorithm().equals(PLAIN))
         {
             return string;
         }
-        
-        MessageDigest md;
-        
-        try
+        if (config.getHashingAlgorithm().equals(MD2))
         {
-            md = MessageDigest.getInstance(config.getHashingAlgorithm());
+            return getMd2(string);
         }
-        catch (NoSuchAlgorithmException ex)
+        else if (config.getHashingAlgorithm().equals(MD5))
         {
+            return getMd5(string);
+        }
+        else if (config.getHashingAlgorithm().equals(SHA1))
+        {
+            return getSha1(string);
+        }
+        else if (config.getHashingAlgorithm().equals(SHA256))
+        {
+            return getSha256(string);
+        }
+        else if (config.getHashingAlgorithm().equals(SHA384))
+        {
+            return getSha384(string);
+        }
+        else if (config.getHashingAlgorithm().equals(SHA512))
+        {
+            return getSha512(string);
+        }
+        else if (config.getHashingAlgorithm().equals(WHIRLPOOL))
+        {
+            return getWhirlpool(string);
+        }
+        else
             return null;
-        }
-        
-        md.update(string.getBytes());
-        byte bytes[] = md.digest();
-        StringBuilder sb = new StringBuilder();
-        
-        for (byte b : bytes)
-        {
-            sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
-        }
-        
-        return sb.toString();
     }
     
     public SessionManager getSessionManager()
