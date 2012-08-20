@@ -54,7 +54,7 @@ public class SessionManager implements Runnable
                 }
                 else
                 {
-                    sessions.put(username, l - 40L);
+                    sessions.put(username, l - 20L);
                 }
             }
         }
