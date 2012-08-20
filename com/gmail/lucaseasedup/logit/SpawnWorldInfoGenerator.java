@@ -18,7 +18,6 @@
  */
 package com.gmail.lucaseasedup.logit;
 
-import static com.gmail.lucaseasedup.logit.LogItPlugin.formatColorCodes;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import org.bukkit.Bukkit;
@@ -41,7 +40,7 @@ public class SpawnWorldInfoGenerator
         if (!core.getConfig().getShowSpawnWorldInfo())
             return "";
         
-        return " " + formatColorCodes(getMessage("IN_WORLD").replace("%world%", getWorldAlias(player.getWorld())));
+        return " " + getMessage("IN_WORLD").replace("%world%", getWorldAlias(player.getWorld()));
     }
     
     protected String getWorldAlias(World world)
