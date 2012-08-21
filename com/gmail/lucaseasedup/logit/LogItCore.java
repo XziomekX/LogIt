@@ -67,7 +67,14 @@ public final class LogItCore
         if (config.getStopIfOnlineModeEnabled() && Bukkit.getServer().getOnlineMode())
         {
             log(INFO, getMessage("ONLINEMODE_ENABLED"));
-            Bukkit.getPluginManager().disablePlugin(Bukkit.getPluginManager().getPlugin("LogIt"));
+            plugin.disable();
+            
+            return;
+        }
+        
+        if (config.getHashingAlgorithm().equals(UNKNOWN))
+        {
+            log(SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM"));
             
             return;
         }
@@ -83,13 +90,6 @@ public final class LogItCore
         else if (config.getStorageType().equals(StorageType.UNKNOWN))
         {
             log(SEVERE, getMessage("UNKNOWN_STORAGE_TYPE"));
-            
-            return;
-        }
-        
-        if (config.getHashingAlgorithm().equals(UNKNOWN))
-        {
-            log(SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM"));
             
             return;
         }
@@ -177,7 +177,13 @@ public final class LogItCore
     public void register(String username, String password, boolean notify)
     {
         if (isRegistered(username))
+        {
             throw new RuntimeException("Player already registered.");
+        }
+        else if (isPlayerOnline(username))
+        {
+            username = getPlayer(username).getName();
+        }
         
         String hash = hash(password);
         
@@ -195,16 +201,23 @@ public final class LogItCore
         if (notify)
         {
             sendMessage(username, getMessage("REGISTERED_SELF"));
-            
-            log(INFO, getMessage("REGISTERED_OTHERS").replace("%player%", username));
         }
+        
+        log(INFO, getMessage("REGISTERED_OTHERS").replace("%player%", username));
     }
     
     public void unregister(String username, boolean notify)
     {
         if (!isRegistered(username))
+        {
             throw new RuntimeException("Player not registered.");
+        }
+        else if (isPlayerOnline(username))
+        {
+            username = getPlayer(username).getName();
+        }
         
+        // Put the player into the waiting room, if they are online.
         if (isPlayerOnline(username) && sessionManager.isSessionAlive(username) && config.getForceLogin())
         {
             putIntoWaitingRoom(getPlayer(username));
@@ -225,18 +238,23 @@ public final class LogItCore
         if (notify)
         {
             sendMessage(username, getMessage("UNREGISTERED_SELF"));
-            
-            log(INFO, getMessage("UNREGISTERED_OTHERS").replace("%player%", username));
         }
+        
+        log(INFO, getMessage("UNREGISTERED_OTHERS").replace("%player%", username));
     }
     
     public void changePassword(String username, String newPassword, boolean notify)
     {
         if (!isRegistered(username))
+        {
             throw new RuntimeException("Player not registered.");
+        }
+        else if (isPlayerOnline(username))
+        {
+            username = getPlayer(username).getName();
+        }
         
         String hash = hash(newPassword);
-        
         passwords.put(username.toLowerCase(), hash);
         
         try
@@ -251,9 +269,9 @@ public final class LogItCore
         if (notify)
         {
             sendMessage(username, getMessage("PASSWORD_CHANGED_SELF"));
-            
-            log(INFO, getMessage("PASSWORD_CHANGED_OTHERS").replace("%player%", username));
         }
+        
+        log(INFO, getMessage("PASSWORD_CHANGED_OTHERS").replace("%player%", username));
     }
     
     public boolean checkPassword(String username, String password)
@@ -388,10 +406,10 @@ public final class LogItCore
         
         if (level.equals(SEVERE))
         {
-            Bukkit.getPluginManager().disablePlugin(Bukkit.getPluginManager().getPlugin("LogIt"));
+            plugin.disable();
         }
         
-        if (!config.getVerbose() && level.intValue() <= INFO.intValue())
+        if (!config.getVerbose() && level.intValue() <= FINE.intValue())
         {
             return;
         }

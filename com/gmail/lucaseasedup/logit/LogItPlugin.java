@@ -62,6 +62,11 @@ public final class LogItPlugin extends JavaPlugin
         }
     }
     
+    public void disable()
+    {
+        getServer().getPluginManager().disablePlugin(this);
+    }
+    
     public LogItCore getCore()
     {
         return core;

@@ -19,9 +19,9 @@
 package com.gmail.lucaseasedup.logit.command;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
-import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import java.sql.SQLException;
-import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -69,21 +69,39 @@ public class LogItCommand implements CommandExecutor
                 s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
-
+            
             if (p == null || p.hasPermission("logit.help"))
-                s.sendMessage(getMessage("CMD_HELP").replace("%cmd%", "/logit help").replace("%desc%", "Displays help for LogIt."));
+            {
+                s.sendMessage(getLogItSubcommandHelp("help", null));
+            }
             if (p == null || p.hasPermission("logit.version"))
-                s.sendMessage(getMessage("CMD_HELP").replace("%cmd%", "/logit version").replace("%desc%", "Shows current version of LogIt."));
+            {
+                s.sendMessage(getLogItSubcommandHelp("version", null));
+            }
             if (p == null || p.hasPermission("logit.reload"))
-                s.sendMessage(getMessage("CMD_HELP").replace("%cmd%", "/logit reload").replace("%desc%", "Reloads LogIt."));
+            {
+                s.sendMessage(getLogItSubcommandHelp("reload", null));
+            }
             if (p == null || p.hasPermission("logit.purge"))
-                s.sendMessage(getMessage("CMD_HELP").replace("%cmd%", "/logit purge").replace("%desc%", "Purges the database."));
+            {
+                s.sendMessage(getLogItSubcommandHelp("purge", null));
+            }
             if (p != null && p.hasPermission("logit.setwr"))
-                s.sendMessage(getMessage("CMD_HELP").replace("%cmd%", "/logit setwr").replace("%desc%", "Sets the waiting room to your position."));
+            {
+                s.sendMessage(getLogItSubcommandHelp("setwr", null));
+            }
             if (p != null && p.hasPermission("logit.gotowr"))
-                s.sendMessage(getMessage("CMD_HELP").replace("%cmd%", "/logit gotowr").replace("%desc%", "Teleports you to the waiting room."));
+            {
+                s.sendMessage(getLogItSubcommandHelp("gotowr", null));
+            }
             if (p == null || p.hasPermission("logit.globalpass"))
-                s.sendMessage(getMessage("CMD_HELP").replace("%cmd%", "/logit globalpass <password>").replace("%desc%", "Changes the global password."));
+            {
+                s.sendMessage(getLogItSubcommandHelp("globalpass", "<password>"));
+            }
+            if (p == null || p.hasPermission("logit.remglobalpass"))
+            {
+                s.sendMessage(getLogItSubcommandHelp("remglobalpass", null));
+            }
             
             return true;
         }
@@ -113,7 +131,7 @@ public class LogItCommand implements CommandExecutor
             {
                 if (p != null)
                     s.sendMessage(getMessage("RELOADED"));
-
+                
                 core.log(INFO, getMessage("RELOADED"));
             }
             
@@ -136,7 +154,7 @@ public class LogItCommand implements CommandExecutor
                 if (p != null)
                     s.sendMessage(getMessage("FAILED_DB_PURGE"));
                 
-                core.log(INFO, getMessage("FAILED_DB_PURGE"));
+                core.log(WARNING, getMessage("FAILED_DB_PURGE"));
                 
                 return true;
             }
@@ -215,6 +233,24 @@ public class LogItCommand implements CommandExecutor
             
             return true;
         }
+        else if (args[0].equalsIgnoreCase("remglobalpass") && args.length == 1)
+        {
+            if (p != null && !p.hasPermission("logit.remglobalpass"))
+            {
+                s.sendMessage(getMessage("NO_PERMS"));
+                return true;
+            }
+            
+            core.getConfig().setGlobalPasswordHash("");
+            core.getConfig().save();
+            
+            if (p != null)
+                s.sendMessage(getMessage("GLOBALPASS_REMOVED"));
+            
+            core.log(INFO, getMessage("GLOBALPASS_REMOVED"));
+            
+            return true;
+        }
         
         if (true)
         {
@@ -228,6 +264,22 @@ public class LogItCommand implements CommandExecutor
         }
         
         return true;
+    }
+    
+    private String getLogItSubcommandHelp(String subcommand, String params)
+    {
+        String line = getMessage("CMD_HELP");
+        
+        if (params != null)
+        {
+            line = line.replace("%cmd%", "logit " + subcommand + " " + params);
+        }
+        else
+        {
+            line = line.replace("%cmd%", "logit " + subcommand);
+        }
+        
+        return line.replace("%desc%", getMessage("DESC_" + subcommand.toUpperCase()));
     }
     
     private LogItCore core;

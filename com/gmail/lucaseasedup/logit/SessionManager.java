@@ -18,7 +18,8 @@
  */
 package com.gmail.lucaseasedup.logit;
 
-import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.broadcastMessage;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import java.util.HashMap;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
@@ -99,9 +100,9 @@ public class SessionManager implements Runnable
             {
                 player.sendMessage(getMessage("LOGGED_IN_SELF"));
             }
-            
-            core.log(Level.INFO, getMessage("LOGGED_IN_OTHERS").replace("%player%", player.getName()));
         }
+        
+        core.log(Level.INFO, getMessage("LOGGED_IN_OTHERS").replace("%player%", player.getName()));
     }
     
     public void endSession(Player player, boolean notify)
@@ -118,9 +119,9 @@ public class SessionManager implements Runnable
             {
                 player.sendMessage(getMessage("LOGGED_OUT_SELF"));
             }
-            
-            core.log(Level.INFO, getMessage("LOGGED_OUT_OTHERS").replace("%player%", player.getName()));
         }
+        
+        core.log(Level.INFO, getMessage("LOGGED_OUT_OTHERS").replace("%player%", player.getName()));
     }
     
     private LogItCore core;
