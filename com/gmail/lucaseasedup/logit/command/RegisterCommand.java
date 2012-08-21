@@ -47,7 +47,7 @@ public class RegisterCommand implements CommandExecutor
         {
         }
         
-        if ((args.length > 1 && !args[0].equals("-x")) || args.length > 3)
+        if ((args.length > 2 && !args[0].equals("-x")) || args.length > 3)
         {
             s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
             return true;
@@ -105,6 +105,11 @@ public class RegisterCommand implements CommandExecutor
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
                 return true;
             }
+            if (args.length < 2)
+            {
+                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
+                return true;
+            }
             if (core.isRegistered(p))
             {
                 p.sendMessage(getMessage("ALREADY_REGISTERED_SELF"));
@@ -113,6 +118,11 @@ public class RegisterCommand implements CommandExecutor
             if (args[0].length() < core.getConfig().getPasswordMinLength())
             {
                 s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
+                return true;
+            }
+            if (!args[0].equals(args[1]))
+            {
+                s.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
                 return true;
             }
             

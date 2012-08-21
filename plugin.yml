@@ -17,7 +17,7 @@ commands:
 
   register:
     description: Registers you.
-    usage: /<command> <password>
+    usage: /<command> <password> <confirmpassword>
     aliases: [reg]
 
   unregister:
@@ -30,7 +30,7 @@ commands:
 
   changepass:
     description: Changes your password.
-    usage: /<command> <oldpassword> <newpassword>
+    usage: /<command> <oldpassword> <newpassword> <confirmpassword>
 
 permissions:
   logit.*:

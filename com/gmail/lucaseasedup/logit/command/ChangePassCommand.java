@@ -47,7 +47,7 @@ public class ChangePassCommand implements CommandExecutor
         {
         }
         
-        if ((args.length > 2 && !args[0].equals("-x")) || args.length > 3)
+        if (args.length > 3)
         {
             s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
             return true;
@@ -110,6 +110,11 @@ public class ChangePassCommand implements CommandExecutor
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "newpassword"));
                 return true;
             }
+            if (args.length < 3)
+            {
+                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
+                return true;
+            }
             if (!core.isRegistered(p))
             {
                 s.sendMessage(getMessage("NOT_REGISTERED_SELF"));
@@ -123,6 +128,11 @@ public class ChangePassCommand implements CommandExecutor
             if (args[1].length() < core.getConfig().getPasswordMinLength())
             {
                 s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
+                return true;
+            }
+            if (!args[1].equals(args[2]))
+            {
+                s.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
                 return true;
             }
             
