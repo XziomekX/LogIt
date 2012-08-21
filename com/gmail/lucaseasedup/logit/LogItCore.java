@@ -27,11 +27,17 @@ import com.gmail.lucaseasedup.logit.db.MySqlDatabase;
 import com.gmail.lucaseasedup.logit.db.SqliteDatabase;
 import com.gmail.lucaseasedup.logit.event.*;
 import static com.gmail.lucaseasedup.logit.hash.HashGenerator.*;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.logging.Level;
 import static java.util.logging.Level.*;
 import org.bukkit.Bukkit;
+import static org.bukkit.ChatColor.stripColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -60,11 +66,7 @@ public final class LogItCore
         
         if (config.getStopIfOnlineModeEnabled() && Bukkit.getServer().getOnlineMode())
         {
-            if (config.getVerbose())
-            {
-                log(INFO, getMessage("ONLINEMODE_ENABLED"));
-            }
-            
+            log(INFO, getMessage("ONLINEMODE_ENABLED"));
             Bukkit.getPluginManager().disablePlugin(Bukkit.getPluginManager().getPlugin("LogIt"));
             
             return;
@@ -96,7 +98,7 @@ public final class LogItCore
         {
             if (config.getStorageType().equals(StorageType.SQLITE))
             {
-                database.connect(config.getStorageSqliteFilename(), null, null, null);
+                database.connect("jdbc:sqlite:" + plugin.getDataFolder() + "/" + config.getStorageSqliteFilename(), null, null, null);
             }
             else if (config.getStorageType().equals(StorageType.MYSQL))
             {
@@ -194,10 +196,7 @@ public final class LogItCore
         {
             sendMessage(username, getMessage("REGISTERED_SELF"));
             
-            if (config.getVerbose())
-            {
-                log(INFO, getMessage("REGISTERED_OTHERS").replace("%player%", username));
-            }
+            log(INFO, getMessage("REGISTERED_OTHERS").replace("%player%", username));
         }
     }
     
@@ -227,10 +226,7 @@ public final class LogItCore
         {
             sendMessage(username, getMessage("UNREGISTERED_SELF"));
             
-            if (config.getVerbose())
-            {
-                log(INFO, getMessage("UNREGISTERED_OTHERS").replace("%player%", username));
-            }
+            log(INFO, getMessage("UNREGISTERED_OTHERS").replace("%player%", username));
         }
     }
     
@@ -256,10 +252,7 @@ public final class LogItCore
         {
             sendMessage(username, getMessage("PASSWORD_CHANGED_SELF"));
             
-            if (config.getVerbose())
-            {
-                log(INFO, getMessage("PASSWORD_CHANGED_OTHERS").replace("%player%", username));
-            }
+            log(INFO, getMessage("PASSWORD_CHANGED_OTHERS").replace("%player%", username));
         }
     }
     
@@ -375,6 +368,40 @@ public final class LogItCore
         }
         else
             return null;
+    }
+    
+    public void log(Level level, String message)
+    {
+        if (config.getLogToFileEnabled())
+        {
+            Date date = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            
+            try (FileWriter fw = new FileWriter(plugin.getDataFolder() + "/" + config.getLogToFileFilename(), true))
+            {
+                fw.write(sdf.format(date) + " [" + level.getName() + "] " + stripColor(message) + "\n");
+            }
+            catch (IOException ex)
+            {
+            }
+        }
+        
+        if (level.equals(SEVERE))
+        {
+            Bukkit.getPluginManager().disablePlugin(Bukkit.getPluginManager().getPlugin("LogIt"));
+        }
+        
+        if (!config.getVerbose() && level.intValue() <= INFO.intValue())
+        {
+            return;
+        }
+        
+        plugin.getLogger().log(level, stripColor(message));
+    }
+    
+    public String getVersion()
+    {
+        return plugin.getDescription().getVersion();
     }
     
     public SessionManager getSessionManager()

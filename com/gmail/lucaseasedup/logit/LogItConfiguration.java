@@ -18,7 +18,6 @@
  */
 package com.gmail.lucaseasedup.logit;
 
-import static com.gmail.lucaseasedup.logit.LogItConfiguration.HashingAlgorithm.*;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -40,7 +39,9 @@ public class LogItConfiguration
         
         plugin.getConfig().set("stop-if.online-mode-enabled",           plugin.getConfig().getBoolean("stop-if.online-mode-enabled", true));
         plugin.getConfig().set("locale",                                plugin.getConfig().getString("locale", "en"));
-        plugin.getConfig().set("verbose",                               plugin.getConfig().getBoolean("verbose", false));
+        plugin.getConfig().set("verbose",                               plugin.getConfig().getBoolean("verbose", true));
+        plugin.getConfig().set("log-to-file.enabled",                   plugin.getConfig().getBoolean("log-to-file.enabled", false));
+        plugin.getConfig().set("log-to-file.filename",                  plugin.getConfig().getString("log-to-file.filename", "debug.log"));
         plugin.getConfig().set("force-login",                           plugin.getConfig().getBoolean("force-login", true));
         plugin.getConfig().set("force-login-in-worlds",                 plugin.getConfig().getStringList("force-login-in-worlds"));
         plugin.getConfig().set("username.regex",                        plugin.getConfig().getString("username.regex", "[A-Za-z0-9_]+"));
@@ -78,7 +79,7 @@ public class LogItConfiguration
         plugin.getConfig().set("waiting-room.location.yaw",             plugin.getConfig().getDouble("waiting-room.location.yaw", 0.0));
         plugin.getConfig().set("waiting-room.location.pitch",           plugin.getConfig().getDouble("waiting-room.location.pitch", 0.0));
         plugin.getConfig().set("storage.type",                          plugin.getConfig().getString("storage.type", "sqlite"));
-        plugin.getConfig().set("storage.sqlite.filename",               plugin.getConfig().getString("storage.sqlite.filename", "jdbc:sqlite:plugins/LogIt/LogIt.db"));
+        plugin.getConfig().set("storage.sqlite.filename",               plugin.getConfig().getString("storage.sqlite.filename", "LogIt.db"));
         plugin.getConfig().set("storage.mysql.host",                    plugin.getConfig().getString("storage.mysql.host", "jdbc:mysql://localhost:3306/"));
         plugin.getConfig().set("storage.mysql.user",                    plugin.getConfig().getString("storage.mysql.user", "root"));
         plugin.getConfig().set("storage.mysql.password",                plugin.getConfig().getString("storage.mysql.password", ""));
@@ -113,6 +114,16 @@ public class LogItConfiguration
     public boolean getVerbose()
     {
         return plugin.getConfig().getBoolean("verbose");
+    }
+    
+    public boolean getLogToFileEnabled()
+    {
+        return plugin.getConfig().getBoolean("log-to-file.enabled");
+    }
+    
+    public String getLogToFileFilename()
+    {
+        return plugin.getConfig().getString("log-to-file.filename");
     }
     
     public boolean getForceLogin()
@@ -171,38 +182,38 @@ public class LogItConfiguration
         
         if (s.equalsIgnoreCase("plain"))
         {
-            return PLAIN;
+            return HashingAlgorithm.PLAIN;
         }
         else if (s.equalsIgnoreCase("md2"))
         {
-            return MD2;
+            return HashingAlgorithm.MD2;
         }
         else if (s.equalsIgnoreCase("md5"))
         {
-            return MD5;
+            return HashingAlgorithm.MD5;
         }
         else if (s.equalsIgnoreCase("sha-1"))
         {
-            return SHA1;
+            return HashingAlgorithm.SHA1;
         }
         else if (s.equalsIgnoreCase("sha-256"))
         {
-            return SHA256;
+            return HashingAlgorithm.SHA256;
         }
         else if (s.equalsIgnoreCase("sha-384"))
         {
-            return SHA384;
+            return HashingAlgorithm.SHA384;
         }
         else if (s.equalsIgnoreCase("sha-512"))
         {
-            return SHA512;
+            return HashingAlgorithm.SHA512;
         }
         else if (s.equalsIgnoreCase("whirlpool"))
         {
-            return WHIRLPOOL;
+            return HashingAlgorithm.WHIRLPOOL;
         }
         else
-            return UNKNOWN;
+            return HashingAlgorithm.UNKNOWN;
     }
     
     public List<String> getOutOfSessionAllowedCommands()

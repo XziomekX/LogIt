@@ -95,7 +95,7 @@ public class LogItCommand implements CommandExecutor
                 return true;
             }
             
-            s.sendMessage(getMessage("PLUGIN_VERSION").replace("%version%", core.getPlugin().getVersion()));
+            s.sendMessage(getMessage("PLUGIN_VERSION").replace("%version%", core.getVersion()));
             
             return true;
         }
@@ -114,7 +114,7 @@ public class LogItCommand implements CommandExecutor
                 if (p != null)
                     s.sendMessage(getMessage("RELOADED"));
 
-                log(INFO, getMessage("RELOADED"));
+                core.log(INFO, getMessage("RELOADED"));
             }
             
             return true;
@@ -136,7 +136,7 @@ public class LogItCommand implements CommandExecutor
                 if (p != null)
                     s.sendMessage(getMessage("FAILED_DB_PURGE"));
                 
-                log(INFO, getMessage("FAILED_DB_PURGE"));
+                core.log(INFO, getMessage("FAILED_DB_PURGE"));
                 
                 return true;
             }
@@ -144,7 +144,7 @@ public class LogItCommand implements CommandExecutor
             if (p != null)
                 s.sendMessage(getMessage("DB_PURGED"));
             
-            log(INFO, getMessage("DB_PURGED"));
+            core.log(INFO, getMessage("DB_PURGED"));
             
             return true;
         }
@@ -166,10 +166,7 @@ public class LogItCommand implements CommandExecutor
             
             p.sendMessage(getMessage("WAITING_ROOM_SET"));
             
-            if (core.getConfig().getVerbose())
-            {
-                log(INFO, getMessage("WAITING_ROOM_SET"));
-            }
+            core.log(INFO, getMessage("WAITING_ROOM_SET"));
             
             return true;
         }
@@ -214,7 +211,7 @@ public class LogItCommand implements CommandExecutor
             if (p != null)
                 s.sendMessage(getMessage("GLOBALPASS_CHANGED"));
             
-            log(INFO, getMessage("GLOBALPASS_CHANGED"));
+            core.log(INFO, getMessage("GLOBALPASS_CHANGED"));
             
             return true;
         }

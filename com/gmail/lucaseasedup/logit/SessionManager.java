@@ -100,10 +100,7 @@ public class SessionManager implements Runnable
                 player.sendMessage(getMessage("LOGGED_IN_SELF"));
             }
             
-            if (core.getConfig().getVerbose())
-            {
-                log(Level.INFO, getMessage("LOGGED_IN_OTHERS").replace("%player%", player.getName()));
-            }
+            core.log(Level.INFO, getMessage("LOGGED_IN_OTHERS").replace("%player%", player.getName()));
         }
     }
     
@@ -122,10 +119,7 @@ public class SessionManager implements Runnable
                 player.sendMessage(getMessage("LOGGED_OUT_SELF"));
             }
             
-            if (core.getConfig().getVerbose())
-            {
-                log(Level.INFO, getMessage("LOGGED_OUT_OTHERS").replace("%player%", player.getName()));
-            }
+            core.log(Level.INFO, getMessage("LOGGED_OUT_OTHERS").replace("%player%", player.getName()));
         }
     }
     

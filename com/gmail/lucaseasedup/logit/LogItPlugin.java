@@ -24,10 +24,7 @@ import java.io.InputStreamReader;
 import java.util.PropertyResourceBundle;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
-import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import static org.bukkit.ChatColor.*;
 import org.bukkit.entity.Player;
@@ -43,18 +40,13 @@ public final class LogItPlugin extends JavaPlugin
     @Override
     public void onEnable()
     {
-        //dataFolder = getDataFolder();
-        //
-        //if (!dataFolder.exists())
-        //    dataFolder.mkdir();
-        //
         try
         {
             loadMessages();
         }
         catch (IOException ex)
         {
-            log(WARNING, "Could not load messages.");
+            getLogger().log(WARNING, "Could not load messages.");
         }
         
         core = LogItCore.getInstance();
@@ -68,11 +60,6 @@ public final class LogItPlugin extends JavaPlugin
         {
             core.stop();
         }
-    }
-    
-    public String getVersion()
-    {
-        return getDescription().getVersion();
     }
     
     public LogItCore getCore()
@@ -193,18 +180,7 @@ public final class LogItPlugin extends JavaPlugin
         }
     }
     
-    public static void log(Level level, String message)
-    {
-        Logger.getLogger("Minecraft").log(level, "[LogIt] " + stripColor(message));
-        
-        if (level.equals(SEVERE))
-        {
-            Bukkit.getPluginManager().disablePlugin(Bukkit.getPluginManager().getPlugin("LogIt"));
-        }
-    }
-    
     private static PropertyResourceBundle prb;
     
-    //private File dataFolder;
     private LogItCore core;
 }
