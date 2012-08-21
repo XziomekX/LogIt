@@ -1,5 +1,5 @@
 name: LogIt
-version: 0.2.0
+version: 0.2.5
 author: LucasEasedUp
 main: com.gmail.lucaseasedup.logit.LogItPlugin
 softdepend: [Multiverse-Core]
