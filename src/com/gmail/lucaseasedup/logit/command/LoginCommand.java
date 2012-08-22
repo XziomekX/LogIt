@@ -78,7 +78,7 @@ public class LoginCommand implements CommandExecutor
             
             core.getSessionManager().startSession(getPlayer(args[1]), true);
             
-            if (p != null && !core.getConfig().getForceLogin())
+            if (!core.getConfig().getForceLogin())
             {
                 p.sendMessage(getMessage("LOGGED_IN_OTHERS").replace("%player%", args[1]));
             }

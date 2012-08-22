@@ -72,7 +72,7 @@ public class LogoutCommand implements CommandExecutor
             
             core.getSessionManager().endSession(getPlayer(args[1]), true);
             
-            if (p != null && !core.getConfig().getForceLogin())
+            if (!core.getConfig().getForceLogin())
             {
                 p.sendMessage(getMessage("LOGGED_OUT_OTHERS").replace("%player%", args[1]));
             }
