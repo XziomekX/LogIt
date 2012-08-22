@@ -83,14 +83,17 @@ public class PlayerEventListener implements Listener
             @Override
             public void run()
             {
+                if (core.getSessionManager().getSession(player) == null)
+                {
+                    core.getSessionManager().createSession(player);
+                }
+                
                 if (core.getSessionManager().isSessionAlive(player) || !core.getConfig().getForceLogin() || player.hasPermission("logit.login.exempt"))
                 {
                     broadcastMessage(getMessage("JOIN").replace("%player%", player.getName()) + SpawnWorldInfoGenerator.getInstance().generate(player));
                 }
                 else
                 {
-                    core.getSessionManager().createSession(player);
-                    
                     if (core.getConfig().getForceLogin() && core.getConfig().getWaitingRoomEnabled())
                     {
                         core.putIntoWaitingRoom(player);

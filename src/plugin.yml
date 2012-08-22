@@ -8,7 +8,7 @@ database: true
 commands:
   logit:
     description: LogIt generic command.
-    usage: /<command> [help|version|reload|purge|setwr|gotowr|globalpass <password>|remglobalpass]
+    usage: /<command> [help|version|reload|purge|setwr|gotowr|globalpass <set <password>|remove>]
 
   login:
     description: Logs you in.
@@ -65,8 +65,7 @@ permissions:
       logit.reload: true
       logit.purge: true
       logit.setwr: true
-      logit.globalpass: true
-      logit.remglobalpass: true
+      logit.globalpass.*: true
   logit:
     default: true
   logit.help:
@@ -81,9 +80,14 @@ permissions:
     default: false
   logit.gotowr:
     default: false
-  logit.globalpass:
+  logit.globalpass.*:
     default: false
-  logit.remglobalpass:
+    children:
+      logit.globalpass.set: true
+      logit.globalpass.remove: true
+  logit.globalpass.set:
+    default: false
+  logit.globalpass.remove:
     default: false
   logit.login:
     default: false

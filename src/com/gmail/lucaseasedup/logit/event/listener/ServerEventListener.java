@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 
@@ -62,6 +63,7 @@ public class ServerEventListener implements Listener
         for (Player player : players)
         {
             core.getSessionManager().destroySession(player);
+            Bukkit.getServer().getPluginManager().callEvent(new PlayerQuitEvent(player, null));
         }
     }
     

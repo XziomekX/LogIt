@@ -51,19 +51,7 @@ public class LogItCommand implements CommandExecutor
         {
         }
         
-        if (args.length == 0 || args.length > 2)
-        {
-            if (p != null && !p.hasPermission("logit"))
-            {
-                s.sendMessage(getMessage("NO_PERMS"));
-                return true;
-            }
-            
-            s.sendMessage(getMessage("TYPE_FOR_HELP"));
-            
-            return true;
-        }
-        else if (args[0].equalsIgnoreCase("help") && args.length == 1)
+        if (args[0].equalsIgnoreCase("help") && args.length == 1)
         {
             if (p != null && !p.hasPermission("logit.help"))
             {
@@ -205,63 +193,63 @@ public class LogItCommand implements CommandExecutor
             
             return true;
         }
-        else if (args[0].equalsIgnoreCase("globalpass") && args.length <= 2)
+        else if (args[0].equalsIgnoreCase("globalpass") && args.length > 1 && args.length <= 3)
         {
-            if (p != null && !p.hasPermission("logit.globalpass"))
+            if (args[1].equalsIgnoreCase("set"))
             {
-                s.sendMessage(getMessage("NO_PERMS"));
+                if (p != null && !p.hasPermission("logit.globalpass.set"))
+                {
+                    s.sendMessage(getMessage("NO_PERMS"));
+                    return true;
+                }
+                if (args.length < 3)
+                {
+                    s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+                    return true;
+                }
+                if (args[2].length() < core.getConfig().getPasswordMinLength())
+                {
+                    s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
+                    return true;
+                }
+
+                core.getConfig().setGlobalPasswordHash(core.hash(args[2]));
+                core.getConfig().save();
+
+                if (p != null)
+                    s.sendMessage(getMessage("GLOBALPASS_CHANGED"));
+
+                core.log(INFO, getMessage("GLOBALPASS_CHANGED"));
+
                 return true;
             }
-            if (args.length < 2)
+            else if (args[1].equalsIgnoreCase("remove") && args.length == 2)
             {
-                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+                if (p != null && !p.hasPermission("logit.globalpass.remove"))
+                {
+                    s.sendMessage(getMessage("NO_PERMS"));
+                    return true;
+                }
+
+                core.getConfig().setGlobalPasswordHash("");
+                core.getConfig().save();
+
+                if (p != null)
+                    s.sendMessage(getMessage("GLOBALPASS_REMOVED"));
+
+                core.log(INFO, getMessage("GLOBALPASS_REMOVED"));
+
                 return true;
             }
-            if (args[1].length() < core.getConfig().getPasswordMinLength())
-            {
-                s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
-                return true;
-            }
-            
-            core.getConfig().setGlobalPasswordHash(core.hash(args[1]));
-            core.getConfig().save();
-            
-            if (p != null)
-                s.sendMessage(getMessage("GLOBALPASS_CHANGED"));
-            
-            core.log(INFO, getMessage("GLOBALPASS_CHANGED"));
-            
-            return true;
-        }
-        else if (args[0].equalsIgnoreCase("remglobalpass") && args.length == 1)
-        {
-            if (p != null && !p.hasPermission("logit.remglobalpass"))
-            {
-                s.sendMessage(getMessage("NO_PERMS"));
-                return true;
-            }
-            
-            core.getConfig().setGlobalPasswordHash("");
-            core.getConfig().save();
-            
-            if (p != null)
-                s.sendMessage(getMessage("GLOBALPASS_REMOVED"));
-            
-            core.log(INFO, getMessage("GLOBALPASS_REMOVED"));
-            
-            return true;
         }
         
-        if (true)
+        if (p != null && !p.hasPermission("logit"))
         {
-            if (p != null && !p.hasPermission("logit"))
-            {
-                s.sendMessage(getMessage("NO_PERMS"));
-                return true;
-            }
-            
-            s.sendMessage(getMessage("TYPE_FOR_HELP"));
+            s.sendMessage(getMessage("NO_PERMS"));
+            return true;
         }
+
+        s.sendMessage(getMessage("TYPE_FOR_HELP"));
         
         return true;
     }
