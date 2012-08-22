@@ -48,13 +48,7 @@ public class LoginCommand implements CommandExecutor
         {
         }
         
-        if ((args.length > 1 && !args[0].equals("-x")) || args.length > 2)
-        {
-            s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
-            return true;
-        }
-        
-        if (args.length > 0 && args[0].equals("-x"))
+        if (args.length > 0 && args[0].equals("-x") && args.length <= 2)
         {
             if (p != null && ((core.isPlayerForcedToLogin(p) && !core.getSessionManager().isSessionAlive(p)) || !p.hasPermission("logit.login.others")))
             {
@@ -71,7 +65,7 @@ public class LoginCommand implements CommandExecutor
                 s.sendMessage(getMessage("NOT_ONLINE").replace("%player%", args[1]));
                 return true;
             }
-            if (!core.isRegistered(args[1]))
+            if (!core.isPlayerRegistered(args[1]))
             {
                 s.sendMessage(getMessage("NOT_REGISTERED_OTHERS").replace("%player%", args[1]));
                 return true;
@@ -88,8 +82,10 @@ public class LoginCommand implements CommandExecutor
             {
                 p.sendMessage(getMessage("LOGGED_IN_OTHERS").replace("%player%", args[1]));
             }
+            
+            return true;
         }
-        else
+        else if (args.length <= 1)
         {
             if (p == null)
             {
@@ -106,7 +102,7 @@ public class LoginCommand implements CommandExecutor
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
                 return true;
             }
-            if (!core.isRegistered(p.getName()))
+            if (!core.isPlayerRegistered(p.getName()))
             {
                 p.sendMessage(getMessage("NOT_REGISTERED_SELF"));
                 return true;
@@ -116,7 +112,7 @@ public class LoginCommand implements CommandExecutor
                 p.sendMessage(getMessage("ALREADY_LOGGED_IN_SELF"));
                 return true;
             }
-            if (!core.checkPassword(p.getName(), args[0]) && !core.checkGlobalPassword(args[0]))
+            if (!core.checkPlayerPassword(p.getName(), args[0]) && !core.checkGlobalPassword(args[0]))
             {
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
                 
@@ -137,7 +133,11 @@ public class LoginCommand implements CommandExecutor
             }
             
             core.getSessionManager().startSession(p, true);
+            
+            return true;
         }
+        
+        s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
         
         return true;
     }

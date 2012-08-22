@@ -47,13 +47,7 @@ public class UnregisterCommand implements CommandExecutor
         {
         }
         
-        if ((args.length > 1 && !args[0].equals("-x")) || args.length > 2)
-        {
-            s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
-            return true;
-        }
-        
-        if (args.length > 0 && args[0].equals("-x"))
+        if (args.length > 0 && args[0].equals("-x") && args.length <= 2)
         {
             if (p != null && !p.hasPermission("logit.unregister.others"))
             {
@@ -65,20 +59,22 @@ public class UnregisterCommand implements CommandExecutor
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
                 return true;
             }
-            if (!core.isRegistered(args[1]))
+            if (!core.isPlayerRegistered(args[1]))
             {
                 s.sendMessage(getMessage("NOT_REGISTERED_OTHERS").replace("%player%", args[1]));
                 return true;
             }
             
-            core.unregister(args[1], true);
+            core.unregisterPlayer(args[1], true);
             
             if (p != null && !core.getConfig().getForceLogin())
             {
                 p.sendMessage(getMessage("UNREGISTERED_OTHERS").replace("%player%", args[1]));
             }
+            
+            return true;
         }
-        else
+        else if (args.length <= 1)
         {
             if (p == null)
             {
@@ -95,19 +91,24 @@ public class UnregisterCommand implements CommandExecutor
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
                 return true;
             }
-            if (!core.isRegistered(p))
+            if (!core.isPlayerRegistered(p))
             {
                 s.sendMessage(getMessage("NOT_REGISTERED_SELF"));
                 return true;
             }
-            if (!core.checkPassword(p.getName(), args[0]))
+            if (!core.checkPlayerPassword(p.getName(), args[0]))
             {
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
                 return true;
             }
             
-            core.unregister(p.getName(), true);
+            core.getSessionManager().endSession(p, true);
+            core.unregisterPlayer(p.getName(), true);
+            
+            return true;
         }
+        
+        s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
         
         return true;
     }

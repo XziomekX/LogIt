@@ -47,13 +47,7 @@ public class LogoutCommand implements CommandExecutor
         {
         }
         
-        if ((args.length > 0 && !args[0].equals("-x")) || args.length > 2)
-        {
-            s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
-            return true;
-        }
-        
-        if (args.length > 0 && args[0].equals("-x"))
+        if (args.length > 0 && args[0].equals("-x") && args.length <= 2)
         {
             if (p != null && !p.hasPermission("logit.logout.others"))
             {
@@ -82,8 +76,10 @@ public class LogoutCommand implements CommandExecutor
             {
                 p.sendMessage(getMessage("LOGGED_OUT_OTHERS").replace("%player%", args[1]));
             }
+            
+            return true;
         }
-        else
+        else if (args.length == 0)
         {
             if (p == null)
             {
@@ -102,7 +98,11 @@ public class LogoutCommand implements CommandExecutor
             }
             
             core.getSessionManager().endSession(p, true);
+            
+            return true;
         }
+        
+        s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
         
         return true;
     }

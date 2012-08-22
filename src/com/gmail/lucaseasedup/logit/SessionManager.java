@@ -140,11 +140,6 @@ public class SessionManager implements Runnable
     
     public void startSession(Player player, boolean notify)
     {
-        if (getSession(player) == null)
-        {
-            createSession(player.getName());
-        }
-        
         getSession(player).start();
         
         core.takeOutOfWaitingRoom(player);

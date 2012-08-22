@@ -49,6 +49,7 @@ public class LogItConfiguration
         plugin.getConfig().set("username.max-length",                   plugin.getConfig().getInt("username.max-length", 16));
         plugin.getConfig().set("username.prohibited-usernames",         plugin.getConfig().getStringList("username.prohibited-usernames"));
         plugin.getConfig().set("password.min-length",                   plugin.getConfig().getInt("password.min-length", 3));
+        plugin.getConfig().set("password.max-length",                   plugin.getConfig().getInt("password.max-length", 25));
         plugin.getConfig().set("global-password-hash",                  plugin.getConfig().getString("global-password-hash", ""));
         plugin.getConfig().set("login-fails-to-kick",                   plugin.getConfig().getInt("login-fails-to-kick", 3));
         plugin.getConfig().set("hashing-algorithm",                     plugin.getConfig().getString("hashing-algorithm", "md5"));
@@ -166,7 +167,12 @@ public class LogItConfiguration
     {
         return plugin.getConfig().getInt("password.min-length");
     }
-
+    
+    public int getPasswordMaxLength()
+    {
+        return plugin.getConfig().getInt("password.max-length");
+    }
+    
     public String getGlobalPasswordHash()
     {
         return plugin.getConfig().getString("global-password-hash");

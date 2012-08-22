@@ -47,13 +47,7 @@ public class ChangePassCommand implements CommandExecutor
         {
         }
         
-        if (args.length > 3)
-        {
-            s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
-            return true;
-        }
-        
-        if (args.length > 0 && args[0].equals("-x"))
+        if (args.length > 0 && args[0].equals("-x") && args.length <= 3)
         {
             if (p != null && !p.hasPermission("logit.changepass.others"))
             {
@@ -70,7 +64,7 @@ public class ChangePassCommand implements CommandExecutor
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "newpassword"));
                 return true;
             }
-            if (!core.isRegistered(args[1]))
+            if (!core.isPlayerRegistered(args[1]))
             {
                 s.sendMessage(getMessage("NOT_REGISTERED_OTHERS").replace("%player%", args[1]));
                 return true;
@@ -80,15 +74,22 @@ public class ChangePassCommand implements CommandExecutor
                 s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
                 return true;
             }
+            if (args[2].length() > core.getConfig().getPasswordMaxLength())
+            {
+                s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%", String.valueOf(core.getConfig().getPasswordMaxLength())));
+                return true;
+            }
             
-            core.changePassword(args[1], args[2], true);
+            core.changePlayerPassword(args[1], args[2], true);
             
             if (p != null)
             {
                 p.sendMessage(getMessage("PASSWORD_CHANGED_OTHERS").replace("%player%", args[1]));
             }
+            
+            return true;
         }
-        else
+        else if (args.length <= 3)
         {
             if (p == null)
             {
@@ -115,12 +116,12 @@ public class ChangePassCommand implements CommandExecutor
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
                 return true;
             }
-            if (!core.isRegistered(p))
+            if (!core.isPlayerRegistered(p))
             {
                 s.sendMessage(getMessage("NOT_REGISTERED_SELF"));
                 return true;
             }
-            if (!core.checkPassword(p.getName(), args[0]))
+            if (!core.checkPlayerPassword(p.getName(), args[0]))
             {
                 s.sendMessage(getMessage("INCORRECT_PASSWORD"));
                 return true;
@@ -130,14 +131,23 @@ public class ChangePassCommand implements CommandExecutor
                 s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
                 return true;
             }
+            if (args[1].length() > core.getConfig().getPasswordMaxLength())
+            {
+                s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%", String.valueOf(core.getConfig().getPasswordMaxLength())));
+                return true;
+            }
             if (!args[1].equals(args[2]))
             {
                 s.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
                 return true;
             }
             
-            core.changePassword(p.getName(), args[1], true);
+            core.changePlayerPassword(p.getName(), args[1], true);
+            
+            return true;
         }
+        
+        s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
         
         return true;
     }

@@ -212,15 +212,19 @@ public class LogItCommand implements CommandExecutor
                     s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
                     return true;
                 }
-
-                core.getConfig().setGlobalPasswordHash(core.hash(args[2]));
-                core.getConfig().save();
-
+                if (args[2].length() > core.getConfig().getPasswordMaxLength())
+                {
+                    s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%", String.valueOf(core.getConfig().getPasswordMaxLength())));
+                    return true;
+                }
+                
+                core.changeGlobalPassword(args[2]);
+                
                 if (p != null)
+                {
                     s.sendMessage(getMessage("GLOBALPASS_CHANGED"));
-
-                core.log(INFO, getMessage("GLOBALPASS_CHANGED"));
-
+                }
+                
                 return true;
             }
             else if (args[1].equalsIgnoreCase("remove") && args.length == 2)
@@ -230,15 +234,14 @@ public class LogItCommand implements CommandExecutor
                     s.sendMessage(getMessage("NO_PERMS"));
                     return true;
                 }
-
-                core.getConfig().setGlobalPasswordHash("");
-                core.getConfig().save();
-
+                
+                core.removeGlobalPassword();
+                
                 if (p != null)
+                {
                     s.sendMessage(getMessage("GLOBALPASS_REMOVED"));
-
-                core.log(INFO, getMessage("GLOBALPASS_REMOVED"));
-
+                }
+                
                 return true;
             }
         }
@@ -246,10 +249,11 @@ public class LogItCommand implements CommandExecutor
         if (p != null && !p.hasPermission("logit"))
         {
             s.sendMessage(getMessage("NO_PERMS"));
-            return true;
         }
-
-        s.sendMessage(getMessage("TYPE_FOR_HELP"));
+        else
+        {
+            s.sendMessage(getMessage("TYPE_FOR_HELP"));
+        }
         
         return true;
     }

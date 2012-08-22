@@ -47,13 +47,7 @@ public class RegisterCommand implements CommandExecutor
         {
         }
         
-        if ((args.length > 2 && !args[0].equals("-x")) || args.length > 3)
-        {
-            s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
-            return true;
-        }
-        
-        if (args.length > 0 && args[0].equals("-x"))
+        if (args.length > 0 && args[0].equals("-x") && args.length <= 3)
         {
             if (p != null && ((core.isPlayerForcedToLogin(p) && !core.getSessionManager().isSessionAlive(p)) || !p.hasPermission("logit.register.others")))
             {
@@ -70,7 +64,7 @@ public class RegisterCommand implements CommandExecutor
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
                 return true;
             }
-            if (core.isRegistered(args[1]))
+            if (core.isPlayerRegistered(args[1]))
             {
                 s.sendMessage(getMessage("ALREADY_REGISTERED_OTHERS").replace("%player%", args[1]));
                 return true;
@@ -80,15 +74,22 @@ public class RegisterCommand implements CommandExecutor
                 s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
                 return true;
             }
+            if (args[2].length() > core.getConfig().getPasswordMaxLength())
+            {
+                s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%", String.valueOf(core.getConfig().getPasswordMaxLength())));
+                return true;
+            }
             
-            core.register(args[1], args[2], true);
+            core.registerPlayer(args[1], args[2], true);
             
             if (p != null && !core.getConfig().getForceLogin())
             {
                 p.sendMessage(getMessage("REGISTERED_OTHERS").replace("%player%", args[1]));
             }
+            
+            return true;
         }
-        else
+        else if (args.length <= 2)
         {
             if (p == null)
             {
@@ -110,7 +111,7 @@ public class RegisterCommand implements CommandExecutor
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
                 return true;
             }
-            if (core.isRegistered(p))
+            if (core.isPlayerRegistered(p))
             {
                 p.sendMessage(getMessage("ALREADY_REGISTERED_SELF"));
                 return true;
@@ -120,15 +121,24 @@ public class RegisterCommand implements CommandExecutor
                 s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
                 return true;
             }
+            if (args[0].length() > core.getConfig().getPasswordMaxLength())
+            {
+                s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%", String.valueOf(core.getConfig().getPasswordMaxLength())));
+                return true;
+            }
             if (!args[0].equals(args[1]))
             {
                 s.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
                 return true;
             }
             
-            core.register(p.getName(), args[0], !core.getConfig().getForceLogin());
+            core.registerPlayer(p.getName(), args[0], !core.getConfig().getForceLogin());
             core.getSessionManager().startSession(p, true);
+            
+            return true;
         }
+        
+        s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
         
         return true;
     }

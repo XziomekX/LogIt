@@ -164,19 +164,19 @@ public final class LogItCore
         start();
     }
     
-    public boolean isRegistered(String username)
+    public boolean isPlayerRegistered(String username)
     {
         return passwords.containsKey(username.toLowerCase());
     }
     
-    public boolean isRegistered(Player player)
+    public boolean isPlayerRegistered(Player player)
     {
-        return isRegistered(player.getName());
+        return isPlayerRegistered(player.getName());
     }
     
-    public void register(String username, String password, boolean notify)
+    public void registerPlayer(String username, String password, boolean notify)
     {
-        if (isRegistered(username))
+        if (isPlayerRegistered(username))
         {
             throw new RuntimeException("Player already registered.");
         }
@@ -206,21 +206,15 @@ public final class LogItCore
         log(INFO, getMessage("REGISTERED_OTHERS").replace("%player%", username));
     }
     
-    public void unregister(String username, boolean notify)
+    public void unregisterPlayer(String username, boolean notify)
     {
-        if (!isRegistered(username))
+        if (!isPlayerRegistered(username))
         {
             throw new RuntimeException("Player not registered.");
         }
         else if (isPlayerOnline(username))
         {
             username = getPlayerName(username);
-        }
-        
-        // Put the player into the waiting room, if they are online.
-        if (isPlayerOnline(username) && sessionManager.isSessionAlive(username) && config.getForceLogin())
-        {
-            sessionManager.endSession(getPlayer(username), true);
         }
         
         passwords.remove(username.toLowerCase());
@@ -242,9 +236,9 @@ public final class LogItCore
         log(INFO, getMessage("UNREGISTERED_OTHERS").replace("%player%", username));
     }
     
-    public void changePassword(String username, String newPassword, boolean notify)
+    public void changePlayerPassword(String username, String newPassword, boolean notify)
     {
-        if (!isRegistered(username))
+        if (!isPlayerRegistered(username))
         {
             throw new RuntimeException("Player not registered.");
         }
@@ -273,15 +267,31 @@ public final class LogItCore
         log(INFO, getMessage("PASSWORD_CHANGED_OTHERS").replace("%player%", username));
     }
     
-    public boolean checkPassword(String username, String password)
+    public boolean checkPlayerPassword(String username, String password)
     {
-        if (!isRegistered(username))
+        if (!isPlayerRegistered(username))
             throw new RuntimeException("Player not registered.");
         
         String currentHash = passwords.get(username.toLowerCase());
         String hashToBeChecked = hash(password);
         
         return (currentHash != null) && (hashToBeChecked != null) && currentHash.equals(hashToBeChecked);
+    }
+    
+    public void changeGlobalPassword(String newPassword)
+    {
+        config.setGlobalPasswordHash(hash(newPassword));
+        config.save();
+        
+        log(INFO, getMessage("GLOBALPASS_CHANGED"));
+    }
+    
+    public void removeGlobalPassword()
+    {
+        config.setGlobalPasswordHash("");
+        config.save();
+        
+        log(INFO, getMessage("GLOBALPASS_REMOVED"));
     }
     
     public boolean checkGlobalPassword(String password)
@@ -304,7 +314,7 @@ public final class LogItCore
     
     public void sendForceLoginMessage(Player player)
     {
-        if (isRegistered(player))
+        if (isPlayerRegistered(player))
         {
             player.sendMessage(getMessage("PLEASE_LOGIN"));
         }

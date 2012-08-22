@@ -182,9 +182,11 @@ public class PlayerEventListener implements Listener
         if (!core.getConfig().getOutOfSessionEventPreventionCommandPreprocess())
             return;
         
+        String message = event.getMessage();
+        
         for (String command : core.getConfig().getOutOfSessionAllowedCommands())
         {
-            if (event.getMessage().equalsIgnoreCase("/" + command) || event.getMessage().startsWith("/" + command + " "))
+            if (message.startsWith("/login ") || message.startsWith("/register ") || message.equalsIgnoreCase("/" + command) || message.startsWith("/" + command + " "))
             {
                 return;
             }
