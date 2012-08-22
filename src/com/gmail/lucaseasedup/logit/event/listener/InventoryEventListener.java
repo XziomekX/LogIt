@@ -1,5 +1,5 @@
 /*
- * BlockEventListener.java
+ * InventoryEventListener.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,52 +16,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event;
+package com.gmail.lucaseasedup.logit.event.listener;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
 /**
  * @author LucasEasedUp
  */
-public class BlockEventListener implements Listener
+public class InventoryEventListener implements Listener
 {
-    public BlockEventListener(LogItCore core)
+    public InventoryEventListener(LogItCore core)
     {
         this.core = core;
     }
     
     @EventHandler
-    private void onPlace(BlockPlaceEvent event)
+    private void onClick(InventoryClickEvent event)
     {
-        Player player = event.getPlayer();
+        if (!(event.getWhoClicked() instanceof Player))
+            return;
         
-        if (!core.getConfig().getOutOfSessionEventPreventionBlockPlace())
+        Player player = (Player) event.getWhoClicked();
+        
+        if (!core.getConfig().getOutOfSessionEventPreventionInventoryClick())
             return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            core.sendEventPreventionMessage(player);
-        }
-    }
-    
-    @EventHandler
-    private void onBreak(BlockBreakEvent event)
-    {
-        Player player = event.getPlayer();
-        
-        if (!core.getConfig().getOutOfSessionEventPreventionBlockBreak())
-            return;
-        
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
-        {
-            event.setCancelled(true);
-            core.sendEventPreventionMessage(player);
         }
     }
     

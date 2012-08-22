@@ -62,6 +62,11 @@ public final class LogItPlugin extends JavaPlugin
         }
     }
     
+    public void enable()
+    {
+        getServer().getPluginManager().enablePlugin(this);
+    }
+    
     public void disable()
     {
         getServer().getPluginManager().disablePlugin(this);
@@ -152,6 +157,24 @@ public final class LogItPlugin extends JavaPlugin
     public static Player getPlayer(String username)
     {
         return Bukkit.getServer().getPlayerExact(username);
+    }
+    
+    /**
+     * Returns a case-correct username.
+     * 
+     * @param username Username.
+     * @return Case-correct username.
+     */
+    public static String getPlayerName(String username)
+    {
+        if (isPlayerOnline(username))
+        {
+            return getPlayer(username).getName();
+        }
+        else
+        {
+            return username;
+        }
     }
     
     /**

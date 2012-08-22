@@ -21,7 +21,8 @@ package com.gmail.lucaseasedup.logit.command;
 import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import java.sql.SQLException;
-import static java.util.logging.Level.*;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.WARNING;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -113,7 +114,7 @@ public class LogItCommand implements CommandExecutor
                 return true;
             }
             
-            s.sendMessage(getMessage("PLUGIN_VERSION").replace("%version%", core.getVersion()));
+            s.sendMessage(getMessage("PLUGIN_VERSION").replace("%version%", core.getPlugin().getDescription().getVersion()));
             
             return true;
         }
@@ -183,7 +184,6 @@ public class LogItCommand implements CommandExecutor
             core.getConfig().save();
             
             p.sendMessage(getMessage("WAITING_ROOM_SET"));
-            
             core.log(INFO, getMessage("WAITING_ROOM_SET"));
             
             return true;

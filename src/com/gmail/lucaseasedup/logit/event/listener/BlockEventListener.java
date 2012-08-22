@@ -1,5 +1,5 @@
 /*
- * InventoryEventListener.java
+ * BlockEventListener.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,38 +16,52 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event;
+package com.gmail.lucaseasedup.logit.event.listener;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 
 /**
  * @author LucasEasedUp
  */
-public class InventoryEventListener implements Listener
+public class BlockEventListener implements Listener
 {
-    public InventoryEventListener(LogItCore core)
+    public BlockEventListener(LogItCore core)
     {
         this.core = core;
     }
     
     @EventHandler
-    private void onClick(InventoryClickEvent event)
+    private void onPlace(BlockPlaceEvent event)
     {
-        if (!(event.getWhoClicked() instanceof Player))
-            return;
+        Player player = event.getPlayer();
         
-        Player player = (Player) event.getWhoClicked();
-        
-        if (!core.getConfig().getOutOfSessionEventPreventionInventoryClick())
+        if (!core.getConfig().getOutOfSessionEventPreventionBlockPlace())
             return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
+            core.sendForceLoginMessage(player);
+        }
+    }
+    
+    @EventHandler
+    private void onBreak(BlockBreakEvent event)
+    {
+        Player player = event.getPlayer();
+        
+        if (!core.getConfig().getOutOfSessionEventPreventionBlockBreak())
+            return;
+        
+        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        {
+            event.setCancelled(true);
+            core.sendForceLoginMessage(player);
         }
     }
     

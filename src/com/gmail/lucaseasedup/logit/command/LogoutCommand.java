@@ -76,7 +76,6 @@ public class LogoutCommand implements CommandExecutor
                 return true;
             }
             
-            core.putIntoWaitingRoom(getPlayer(args[1]));
             core.getSessionManager().endSession(getPlayer(args[1]), true);
             
             if (p != null && !core.getConfig().getForceLogin())
@@ -100,11 +99,6 @@ public class LogoutCommand implements CommandExecutor
             {
                 s.sendMessage(getMessage("NOT_LOGGED_IN_SELF"));
                 return true;
-            }
-            
-            if (core.getConfig().getForceLogin())
-            {
-                core.putIntoWaitingRoom(p);
             }
             
             core.getSessionManager().endSession(p, true);

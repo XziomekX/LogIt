@@ -52,8 +52,9 @@ public class LogItConfiguration
         plugin.getConfig().set("global-password-hash",                  plugin.getConfig().getString("global-password-hash", ""));
         plugin.getConfig().set("login-fails-to-kick",                   plugin.getConfig().getInt("login-fails-to-kick", 3));
         plugin.getConfig().set("hashing-algorithm",                     plugin.getConfig().getString("hashing-algorithm", "md5"));
+        plugin.getConfig().set("session-lifetime",                      plugin.getConfig().getInt("session-lifetime", 600));
         plugin.getConfig().set("out-of-session.allowed-commands",       plugin.getConfig().getStringList("out-of-session.allowed-commands"));
-        plugin.getConfig().set("out-of-session.timeout",                plugin.getConfig().getLong("out-of-session.timeout", 30L));
+        plugin.getConfig().set("out-of-session.timeout",                plugin.getConfig().getInt("out-of-session.timeout", 30));
         plugin.getConfig().set("out-of-session.event-prevention.move",  plugin.getConfig().getBoolean("out-of-session.event-prevention.move", true));
         plugin.getConfig().set("out-of-session.event-prevention.toggle-sneak", plugin.getConfig().getBoolean("out-of-session.event-prevention.toggle-sneak", true));
         plugin.getConfig().set("out-of-session.event-prevention.block-place", plugin.getConfig().getBoolean("out-of-session.event-prevention.block-place", true));
@@ -216,14 +217,19 @@ public class LogItConfiguration
             return HashingAlgorithm.UNKNOWN;
     }
     
+    public int getSessionLifetime()
+    {
+        return plugin.getConfig().getInt("session-lifetime");
+    }
+    
     public List<String> getOutOfSessionAllowedCommands()
     {
         return plugin.getConfig().getStringList("out-of-session.allowed-commands");
     }
     
-    public long getOutOfSessionTimeout()
+    public int getOutOfSessionTimeout()
     {
-        return (long) plugin.getConfig().getDouble("out-of-session.timeout");
+        return plugin.getConfig().getInt("out-of-session.timeout");
     }
     
     public boolean getOutOfSessionEventPreventionMove()
@@ -417,6 +423,11 @@ public class LogItConfiguration
     public void setGlobalPasswordHash(String hash)
     {
         plugin.getConfig().set("global-password-hash", hash);
+    }
+    
+    public void setWaitingRoomEnabled(boolean status)
+    {
+        plugin.getConfig().set("waiting-room.enabled", status);
     }
     
     public void setWaitingRoomLocation(Location location)

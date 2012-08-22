@@ -25,7 +25,7 @@ import com.gmail.lucaseasedup.logit.command.*;
 import com.gmail.lucaseasedup.logit.db.Database;
 import com.gmail.lucaseasedup.logit.db.MySqlDatabase;
 import com.gmail.lucaseasedup.logit.db.SqliteDatabase;
-import com.gmail.lucaseasedup.logit.event.*;
+import com.gmail.lucaseasedup.logit.event.listener.*;
 import static com.gmail.lucaseasedup.logit.hash.HashGenerator.*;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -182,7 +182,7 @@ public final class LogItCore
         }
         else if (isPlayerOnline(username))
         {
-            username = getPlayer(username).getName();
+            username = getPlayerName(username);
         }
         
         String hash = hash(password);
@@ -214,13 +214,12 @@ public final class LogItCore
         }
         else if (isPlayerOnline(username))
         {
-            username = getPlayer(username).getName();
+            username = getPlayerName(username);
         }
         
         // Put the player into the waiting room, if they are online.
         if (isPlayerOnline(username) && sessionManager.isSessionAlive(username) && config.getForceLogin())
         {
-            putIntoWaitingRoom(getPlayer(username));
             sessionManager.endSession(getPlayer(username), true);
         }
         
@@ -251,7 +250,7 @@ public final class LogItCore
         }
         else if (isPlayerOnline(username))
         {
-            username = getPlayer(username).getName();
+            username = getPlayerName(username);
         }
         
         String hash = hash(newPassword);
@@ -303,13 +302,7 @@ public final class LogItCore
         return isPlayerForcedToLogin(getPlayer(username));
     }
     
-    public void purge() throws SQLException
-    {
-        database.truncate(config.getStorageTable());
-        passwords.clear();
-    }
-    
-    public void sendEventPreventionMessage(Player player)
+    public void sendForceLoginMessage(Player player)
     {
         if (isRegistered(player))
         {
@@ -319,6 +312,12 @@ public final class LogItCore
         {
             player.sendMessage(getMessage("PLEASE_REGISTER"));
         }
+    }
+    
+    public void purge() throws SQLException
+    {
+        database.truncate(config.getStorageTable());
+        passwords.clear();
     }
     
     public boolean isInWaitingRoom(Player player)
@@ -417,11 +416,6 @@ public final class LogItCore
         plugin.getLogger().log(level, stripColor(message));
     }
     
-    public String getVersion()
-    {
-        return plugin.getDescription().getVersion();
-    }
-    
     public SessionManager getSessionManager()
     {
         return sessionManager;
@@ -441,16 +435,13 @@ public final class LogItCore
     {
         passwords.clear();
         
-        try
+        try (ResultSet rs = database.select(config.getStorageTable(), "*"))
         {
-            try (ResultSet rs = database.select(config.getStorageTable(), "*"))
+            assert rs.getMetaData().getColumnCount() == 1;
+
+            while (rs.next())
             {
-                assert rs.getMetaData().getColumnCount() == 1;
-                
-                while (rs.next())
-                {
-                    passwords.put(rs.getString(config.getStorageColumnsUsername()), rs.getString(config.getStorageColumnsPassword()));
-                }
+                passwords.put(rs.getString(config.getStorageColumnsUsername()), rs.getString(config.getStorageColumnsPassword()));
             }
         }
         catch (SQLException ex)
@@ -464,10 +455,12 @@ public final class LogItCore
         config = new LogItConfiguration(plugin);
         
         Bukkit.getServer().getPluginManager().registerEvents(new TickEventListener(this), plugin);
+        Bukkit.getServer().getPluginManager().registerEvents(new ServerEventListener(this), plugin);
         Bukkit.getServer().getPluginManager().registerEvents(new BlockEventListener(this), plugin);
         Bukkit.getServer().getPluginManager().registerEvents(new EntityEventListener(this), plugin);
         Bukkit.getServer().getPluginManager().registerEvents(new PlayerEventListener(this), plugin);
         Bukkit.getServer().getPluginManager().registerEvents(new InventoryEventListener(this), plugin);
+        Bukkit.getServer().getPluginManager().registerEvents(new SessionEventListener(this), plugin);
         
         plugin.getCommand("logit").setExecutor(new LogItCommand(this));
         plugin.getCommand("login").setExecutor(new LoginCommand(this));

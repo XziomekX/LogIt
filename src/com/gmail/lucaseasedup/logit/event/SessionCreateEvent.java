@@ -1,5 +1,5 @@
 /*
- * TickEventListener.java
+ * SessionCreateEvent.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -18,38 +18,29 @@
  */
 package com.gmail.lucaseasedup.logit.event;
 
-import com.gmail.lucaseasedup.logit.LogItCore;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
+import com.gmail.lucaseasedup.logit.Session;
+import org.bukkit.event.HandlerList;
 
 /**
  * @author LucasEasedUp
  */
-public class TickEventListener implements Listener
+public class SessionCreateEvent extends SessionEvent
 {
-    public TickEventListener(LogItCore core)
+    public SessionCreateEvent(String username, Session session)
     {
-        this.core = core;
+        super(username, session);
     }
     
-    @EventHandler
-    private void onTick(TickEvent event)
+    @Override
+    public HandlerList getHandlers()
     {
-        if (!core.getConfig().getOutOfSessionEventPreventionAirDepletion())
-            return;
-        
-        Player[] players = Bukkit.getServer().getOnlinePlayers();
-        
-        for (Player player : players)
-        {
-            if (!core.getSessionManager().isSessionAlive(player))
-            {
-                player.setRemainingAir(player.getMaximumAir());
-            }
-        }
+        return handlers;
     }
     
-    private LogItCore core;
+    public static HandlerList getHandlerList()
+    {
+        return handlers;
+    }
+    
+    private static final HandlerList handlers = new HandlerList();
 }
