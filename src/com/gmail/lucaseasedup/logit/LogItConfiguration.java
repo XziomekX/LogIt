@@ -70,6 +70,7 @@ public class LogItConfiguration
         plugin.getConfig().set("password.max-length",                   plugin.getConfig().getInt("password.max-length", 25));
         plugin.getConfig().set("global-password-hash",                  plugin.getConfig().getString("global-password-hash", ""));
         plugin.getConfig().set("login-fails-to-kick",                   plugin.getConfig().getInt("login-fails-to-kick", 3));
+        plugin.getConfig().set("kick-unregistered",                     plugin.getConfig().getBoolean("kick-unregistered", false));
         plugin.getConfig().set("hashing-algorithm",                     plugin.getConfig().getString("hashing-algorithm", "md5"));
         plugin.getConfig().set("session-lifetime",                      plugin.getConfig().getInt("session-lifetime", 600));
         plugin.getConfig().set("show-spawn-world-info",                 plugin.getConfig().getBoolean("show-spawn-world-info", true));
@@ -271,6 +272,11 @@ public class LogItConfiguration
     public int getLoginFailsToKick()
     {
         return plugin.getConfig().getInt("login-fails-to-kick");
+    }
+    
+    public boolean getKickUnregistered()
+    {
+        return plugin.getConfig().getBoolean("kick-unregistered");
     }
     
     public HashingAlgorithm getHashingAlgorithm()

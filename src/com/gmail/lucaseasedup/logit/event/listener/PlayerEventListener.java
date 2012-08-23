@@ -69,6 +69,10 @@ public class PlayerEventListener implements Listener
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_ALREADY_USED"));
         }
+        else if (!core.isPlayerRegistered(player))
+        {
+            event.disallow(KICK_OTHER, getMessage("KICK_UNREGISTERED"));
+        }
     }
     
     @EventHandler(priority = HIGHEST)
@@ -92,12 +96,9 @@ public class PlayerEventListener implements Listener
                 {
                     broadcastMessage(getMessage("JOIN").replace("%player%", player.getName()) + SpawnWorldInfoGenerator.getInstance().generate(player));
                 }
-                else
+                else if (core.getConfig().getForceLoginGlobal() && core.getConfig().getWaitingRoomEnabled())
                 {
-                    if (core.getConfig().getForceLoginGlobal() && core.getConfig().getWaitingRoomEnabled())
-                    {
-                        core.putIntoWaitingRoom(player);
-                    }
+                    core.putIntoWaitingRoom(player);
                 }
                 
                 if (core.isPlayerForcedToLogin(player) && !core.getSessionManager().isSessionAlive(player))

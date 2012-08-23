@@ -341,9 +341,6 @@ public final class LogItCore
     
     public void putIntoWaitingRoom(Player player)
     {
-        if (!config.getWaitingRoomEnabled() || !isPlayerForcedToLogin(player))
-            return;
-        
         waitingRoom.put(player.getName().toLowerCase(), player.getLocation().clone());
         player.teleport(config.getWaitingRoomLocation());
     }
