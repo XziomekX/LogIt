@@ -88,13 +88,13 @@ public class PlayerEventListener implements Listener
                     core.getSessionManager().createSession(player);
                 }
                 
-                if (core.getSessionManager().isSessionAlive(player) || !core.getConfig().getForceLogin() || player.hasPermission("logit.login.exempt"))
+                if (core.getSessionManager().isSessionAlive(player) || !core.getConfig().getForceLoginGlobal() || player.hasPermission("logit.login.exempt"))
                 {
                     broadcastMessage(getMessage("JOIN").replace("%player%", player.getName()) + SpawnWorldInfoGenerator.getInstance().generate(player));
                 }
                 else
                 {
-                    if (core.getConfig().getForceLogin() && core.getConfig().getWaitingRoomEnabled())
+                    if (core.getConfig().getForceLoginGlobal() && core.getConfig().getWaitingRoomEnabled())
                     {
                         core.putIntoWaitingRoom(player);
                     }
@@ -138,7 +138,7 @@ public class PlayerEventListener implements Listener
     {
         Player player = event.getPlayer();
         
-        if (!core.getConfig().getOutOfSessionEventPreventionMove())
+        if (!core.getConfig().getForceLoginPreventMove())
             return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
@@ -152,7 +152,7 @@ public class PlayerEventListener implements Listener
     {
         Player player = event.getPlayer();
         
-        if (!core.getConfig().getOutOfSessionEventPreventionToggleSneak())
+        if (!core.getConfig().getForceLoginPreventToggleSneak())
             return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
@@ -166,7 +166,7 @@ public class PlayerEventListener implements Listener
     {
         Player player = event.getPlayer();
         
-        if (!core.getConfig().getOutOfSessionEventPreventionChat())
+        if (!core.getConfig().getForceLoginPreventChat())
             return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
@@ -179,7 +179,7 @@ public class PlayerEventListener implements Listener
     @EventHandler
     private void onCommandPreprocess(PlayerCommandPreprocessEvent event)
     {
-        if (!core.getConfig().getOutOfSessionEventPreventionCommandPreprocess())
+        if (!core.getConfig().getForceLoginPreventCommandPreprocess())
             return;
         
         String message = event.getMessage();
@@ -189,7 +189,7 @@ public class PlayerEventListener implements Listener
             return;
         }
         
-        for (String command : core.getConfig().getOutOfSessionAllowedCommands())
+        for (String command : core.getConfig().getForceLoginAllowedCommands())
         {
             if (message.equalsIgnoreCase("/" + command) || message.startsWith("/" + command + " "))
             {
@@ -211,7 +211,7 @@ public class PlayerEventListener implements Listener
     {
         Player player = event.getPlayer();
         
-        if (!core.getConfig().getOutOfSessionEventPreventionInteract())
+        if (!core.getConfig().getForceLoginPreventInteract())
             return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
@@ -232,7 +232,7 @@ public class PlayerEventListener implements Listener
     {
         Player player = event.getPlayer();
         
-        if (!core.getConfig().getOutOfSessionEventPreventionInteractEntity())
+        if (!core.getConfig().getForceLoginPreventInteractEntity())
             return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
@@ -247,7 +247,7 @@ public class PlayerEventListener implements Listener
     {
         Player player = event.getPlayer();
         
-        if (!core.getConfig().getOutOfSessionEventPreventionPickupItem())
+        if (!core.getConfig().getForceLoginPreventPickupItem())
             return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
@@ -261,7 +261,7 @@ public class PlayerEventListener implements Listener
     {
         Player player = event.getPlayer();
         
-        if (!core.getConfig().getOutOfSessionEventPreventionDropItem())
+        if (!core.getConfig().getForceLoginPreventDropItem())
             return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))

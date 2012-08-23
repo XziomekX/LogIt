@@ -67,9 +67,9 @@ public class SessionManager implements Runnable
                     session.updateStatus(20L);
                 }
             }
-            else if (core.getConfig().getOutOfSessionTimeout() >= 0L && isPlayerOnline(username) && core.isPlayerForcedToLogin(username))
+            else if (core.getConfig().getForceLoginTimeout() >= 0L && isPlayerOnline(username) && core.isPlayerForcedToLogin(username))
             {
-                if (session.getStatus() < (core.getConfig().getOutOfSessionTimeout() * -20L) && !player.hasPermission("logit.out-of-session.timeout.exempt"))
+                if (session.getStatus() < (core.getConfig().getForceLoginTimeout() * -20L) && !player.hasPermission("logit.out-of-session.timeout.exempt"))
                 {
                     player.kickPlayer(getMessage("OUT_OF_SESSION_TIMEOUT"));
                 }
@@ -146,7 +146,7 @@ public class SessionManager implements Runnable
         
         if (notify)
         {
-            if (core.getConfig().getForceLogin() && !player.hasPermission("logit.login.exempt"))
+            if (core.getConfig().getForceLoginGlobal() && !player.hasPermission("logit.login.exempt"))
             {
                 broadcastMessage(getMessage("JOIN").replace("%player%", player.getName()) + SpawnWorldInfoGenerator.getInstance().generate(player));
             }
@@ -164,14 +164,14 @@ public class SessionManager implements Runnable
     {
         getSession(player).end();
         
-        if (core.getConfig().getForceLogin() && core.getConfig().getWaitingRoomEnabled())
+        if (core.getConfig().getForceLoginGlobal() && core.getConfig().getWaitingRoomEnabled())
         {
             core.putIntoWaitingRoom(player);
         }
         
         if (notify)
         {
-            if (core.getConfig().getForceLogin() && !player.hasPermission("logit.login.exempt"))
+            if (core.getConfig().getForceLoginGlobal() && !player.hasPermission("logit.login.exempt"))
             {
                 broadcastMessage(getMessage("QUIT").replace("%player%", player.getName()));
             }

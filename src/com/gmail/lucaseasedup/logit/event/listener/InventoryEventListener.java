@@ -42,7 +42,7 @@ public class InventoryEventListener implements Listener
         
         Player player = (Player) event.getWhoClicked();
         
-        if (!core.getConfig().getOutOfSessionEventPreventionInventoryClick())
+        if (!core.getConfig().getForceLoginPreventInventoryClick())
             return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))

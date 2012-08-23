@@ -38,7 +38,7 @@ public class TickEventListener implements Listener
     @EventHandler
     private void onTick(TickEvent event)
     {
-        if (!core.getConfig().getOutOfSessionEventPreventionAirDepletion())
+        if (!core.getConfig().getForceLoginPreventAirDepletion())
             return;
         
         Player[] players = Bukkit.getServer().getOnlinePlayers();

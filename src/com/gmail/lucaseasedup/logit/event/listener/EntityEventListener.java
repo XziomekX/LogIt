@@ -45,7 +45,7 @@ public class EntityEventListener implements Listener
         
         Player player = (Player) event.getEntity();
         
-        if (!core.getConfig().getOutOfSessionEventPreventionDamageIn())
+        if (!core.getConfig().getForceLoginPreventDamageIn())
             return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
@@ -62,7 +62,7 @@ public class EntityEventListener implements Listener
         
         Player player = (Player) event.getDamager();
         
-        if (!core.getConfig().getOutOfSessionEventPreventionDamageOut())
+        if (!core.getConfig().getForceLoginPreventDamageOut())
             return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
@@ -79,7 +79,7 @@ public class EntityEventListener implements Listener
         
         Player player = (Player) event.getEntity();
         
-        if (!core.getConfig().getOutOfSessionEventPreventionRegainHealth())
+        if (!core.getConfig().getForceLoginPreventRegainHealth())
             return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
@@ -96,7 +96,7 @@ public class EntityEventListener implements Listener
         
         Player player = (Player) event.getEntity();
         
-        if (!core.getConfig().getOutOfSessionEventPreventionFoodLevelChange())
+        if (!core.getConfig().getForceLoginPreventFoodLevelChange())
             return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))

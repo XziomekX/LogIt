@@ -162,6 +162,8 @@ public final class LogItCore
     {
         stop();
         start();
+        
+        log(INFO, getMessage("RELOADED"));
     }
     
     public boolean isPlayerRegistered(String username)
@@ -301,7 +303,7 @@ public final class LogItCore
     
     public boolean isPlayerForcedToLogin(Player player)
     {
-        return (config.getForceLogin() || config.getForceLoginInWorld(player.getWorld())) && !player.hasPermission("logit.login.exempt");
+        return (config.getForceLoginGlobal() || config.getForceLoginInWorld(player.getWorld())) && !player.hasPermission("logit.login.exempt");
     }
     
     public boolean isPlayerForcedToLogin(String username)
@@ -328,6 +330,8 @@ public final class LogItCore
     {
         database.truncate(config.getStorageTable());
         passwords.clear();
+        
+        log(INFO, getMessage("DB_PURGED"));
     }
     
     public boolean isInWaitingRoom(Player player)

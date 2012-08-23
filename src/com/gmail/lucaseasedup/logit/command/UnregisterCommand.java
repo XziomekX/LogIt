@@ -67,7 +67,7 @@ public class UnregisterCommand implements CommandExecutor
             
             core.unregisterPlayer(args[1], true);
             
-            if (p != null && !core.getConfig().getForceLogin())
+            if (p != null && !core.getConfig().getForceLoginGlobal())
             {
                 p.sendMessage(getMessage("UNREGISTERED_OTHERS").replace("%player%", args[1]));
             }

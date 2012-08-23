@@ -113,15 +113,12 @@ public class LogItCommand implements CommandExecutor
                 s.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
-
+            
             core.restart();
             
-            if (Bukkit.getPluginManager().isPluginEnabled("LogIt"))
+            if (p != null && Bukkit.getPluginManager().isPluginEnabled("LogIt"))
             {
-                if (p != null)
-                    s.sendMessage(getMessage("RELOADED"));
-                
-                core.log(INFO, getMessage("RELOADED"));
+                s.sendMessage(getMessage("RELOADED"));
             }
             
             return true;
@@ -141,7 +138,9 @@ public class LogItCommand implements CommandExecutor
             catch (SQLException ex)
             {
                 if (p != null)
+                {
                     s.sendMessage(getMessage("FAILED_DB_PURGE"));
+                }
                 
                 core.log(WARNING, getMessage("FAILED_DB_PURGE"));
                 
@@ -149,9 +148,9 @@ public class LogItCommand implements CommandExecutor
             }
             
             if (p != null)
+            {
                 s.sendMessage(getMessage("DB_PURGED"));
-            
-            core.log(INFO, getMessage("DB_PURGED"));
+            }
             
             return true;
         }

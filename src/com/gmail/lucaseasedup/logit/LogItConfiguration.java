@@ -42,8 +42,26 @@ public class LogItConfiguration
         plugin.getConfig().set("verbose",                               plugin.getConfig().getBoolean("verbose", false));
         plugin.getConfig().set("log-to-file.enabled",                   plugin.getConfig().getBoolean("log-to-file.enabled", false));
         plugin.getConfig().set("log-to-file.filename",                  plugin.getConfig().getString("log-to-file.filename", "debug.log"));
-        plugin.getConfig().set("force-login",                           plugin.getConfig().getBoolean("force-login", true));
-        plugin.getConfig().set("force-login-in-worlds",                 plugin.getConfig().getStringList("force-login-in-worlds"));
+        plugin.getConfig().set("force-login.global",                    plugin.getConfig().getBoolean("force-login.global", true));
+        plugin.getConfig().set("force-login.in-worlds",                 plugin.getConfig().getStringList("force-login.in-worlds"));
+        plugin.getConfig().set("force-login.allowed-commands",          plugin.getConfig().getStringList("force-login.allowed-commands"));
+        plugin.getConfig().set("force-login.timeout",                   plugin.getConfig().getInt("force-login.timeout", 30));
+        plugin.getConfig().set("force-login.prevent.move",              plugin.getConfig().getBoolean("force-login.prevent.move", true));
+        plugin.getConfig().set("force-login.prevent.toggle-sneak",      plugin.getConfig().getBoolean("force-login.prevent.toggle-sneak", true));
+        plugin.getConfig().set("force-login.prevent.block-place",       plugin.getConfig().getBoolean("force-login.prevent.block-place", true));
+        plugin.getConfig().set("force-login.prevent.block-break",       plugin.getConfig().getBoolean("force-login.prevent.block-break", true));
+        plugin.getConfig().set("force-login.prevent.damage-in",         plugin.getConfig().getBoolean("force-login.prevent.damage-in", true));
+        plugin.getConfig().set("force-login.prevent.damage-out",        plugin.getConfig().getBoolean("force-login.prevent.damage-out", true));
+        plugin.getConfig().set("force-login.prevent.regain-health",     plugin.getConfig().getBoolean("force-login.prevent.regain-health", true));
+        plugin.getConfig().set("force-login.prevent.food-level-change", plugin.getConfig().getBoolean("force-login.prevent.food-level-change", true));
+        plugin.getConfig().set("force-login.prevent.chat",              plugin.getConfig().getBoolean("force-login.prevent.chat", true));
+        plugin.getConfig().set("force-login.prevent.command-preprocess", plugin.getConfig().getBoolean("force-login.prevent.command-preprocess", true));
+        plugin.getConfig().set("force-login.prevent.pickup-item",       plugin.getConfig().getBoolean("force-login.prevent.pickup-item", true));
+        plugin.getConfig().set("force-login.prevent.drop-item",         plugin.getConfig().getBoolean("force-login.prevent.drop-item", true));
+        plugin.getConfig().set("force-login.prevent.interact",          plugin.getConfig().getBoolean("force-login.prevent.interact", true));
+        plugin.getConfig().set("force-login.prevent.interact-entity",   plugin.getConfig().getBoolean("force-login.prevent.interact-entity", true));
+        plugin.getConfig().set("force-login.prevent.inventory-click",   plugin.getConfig().getBoolean("force-login.prevent.inventory-click", true));
+        plugin.getConfig().set("force-login.prevent.air-depletion",     plugin.getConfig().getBoolean("force-login.prevent.air-depletion", true));
         plugin.getConfig().set("username.regex",                        plugin.getConfig().getString("username.regex", "[A-Za-z0-9_]+"));
         plugin.getConfig().set("username.min-length",                   plugin.getConfig().getInt("username.min-length", 2));
         plugin.getConfig().set("username.max-length",                   plugin.getConfig().getInt("username.max-length", 16));
@@ -54,24 +72,6 @@ public class LogItConfiguration
         plugin.getConfig().set("login-fails-to-kick",                   plugin.getConfig().getInt("login-fails-to-kick", 3));
         plugin.getConfig().set("hashing-algorithm",                     plugin.getConfig().getString("hashing-algorithm", "md5"));
         plugin.getConfig().set("session-lifetime",                      plugin.getConfig().getInt("session-lifetime", 600));
-        plugin.getConfig().set("out-of-session.allowed-commands",       plugin.getConfig().getStringList("out-of-session.allowed-commands"));
-        plugin.getConfig().set("out-of-session.timeout",                plugin.getConfig().getInt("out-of-session.timeout", 30));
-        plugin.getConfig().set("out-of-session.event-prevention.move",  plugin.getConfig().getBoolean("out-of-session.event-prevention.move", true));
-        plugin.getConfig().set("out-of-session.event-prevention.toggle-sneak", plugin.getConfig().getBoolean("out-of-session.event-prevention.toggle-sneak", true));
-        plugin.getConfig().set("out-of-session.event-prevention.block-place", plugin.getConfig().getBoolean("out-of-session.event-prevention.block-place", true));
-        plugin.getConfig().set("out-of-session.event-prevention.block-break", plugin.getConfig().getBoolean("out-of-session.event-prevention.block-break", true));
-        plugin.getConfig().set("out-of-session.event-prevention.damage-in", plugin.getConfig().getBoolean("out-of-session.event-prevention.damage-in", true));
-        plugin.getConfig().set("out-of-session.event-prevention.damage-out", plugin.getConfig().getBoolean("out-of-session.event-prevention.damage-out", true));
-        plugin.getConfig().set("out-of-session.event-prevention.regain-health", plugin.getConfig().getBoolean("out-of-session.event-prevention.regain-health", true));
-        plugin.getConfig().set("out-of-session.event-prevention.food-level-change", plugin.getConfig().getBoolean("out-of-session.event-prevention.food-level-change", true));
-        plugin.getConfig().set("out-of-session.event-prevention.chat",  plugin.getConfig().getBoolean("out-of-session.event-prevention.chat", true));
-        plugin.getConfig().set("out-of-session.event-prevention.command-preprocess", plugin.getConfig().getBoolean("out-of-session.event-prevention.command-preprocess", true));
-        plugin.getConfig().set("out-of-session.event-prevention.pickup-item", plugin.getConfig().getBoolean("out-of-session.event-prevention.pickup-item", true));
-        plugin.getConfig().set("out-of-session.event-prevention.drop-item", plugin.getConfig().getBoolean("out-of-session.event-prevention.drop-item", true));
-        plugin.getConfig().set("out-of-session.event-prevention.interact", plugin.getConfig().getBoolean("out-of-session.event-prevention.interact", true));
-        plugin.getConfig().set("out-of-session.event-prevention.interact-entity", plugin.getConfig().getBoolean("out-of-session.event-prevention.interact-entity", true));
-        plugin.getConfig().set("out-of-session.event-prevention.inventory-click", plugin.getConfig().getBoolean("out-of-session.event-prevention.inventory-click", true));
-        plugin.getConfig().set("out-of-session.event-prevention.air-depletion", plugin.getConfig().getBoolean("out-of-session.event-prevention.air-depletion", true));
         plugin.getConfig().set("show-spawn-world-info",                 plugin.getConfig().getBoolean("show-spawn-world-info", true));
         plugin.getConfig().set("waiting-room.enabled",                  plugin.getConfig().getBoolean("waiting-room.enabled", false));
         plugin.getConfig().set("waiting-room.location.world",           plugin.getConfig().getString("waiting-room.location.world", "world"));
@@ -128,19 +128,109 @@ public class LogItConfiguration
         return plugin.getConfig().getString("log-to-file.filename");
     }
     
-    public boolean getForceLogin()
+    public boolean getForceLoginGlobal()
     {
-        return plugin.getConfig().getBoolean("force-login");
+        return plugin.getConfig().getBoolean("force-login.global");
     }
     
     public List<String> getForceLoginInWorlds()
     {
-        return plugin.getConfig().getStringList("force-login-in-worlds");
+        return plugin.getConfig().getStringList("force-login.in-worlds");
     }
     
     public boolean getForceLoginInWorld(World world)
     {
         return getForceLoginInWorlds().contains(world.getName());
+    }
+    
+    public List<String> getForceLoginAllowedCommands()
+    {
+        return plugin.getConfig().getStringList("force-login.allowed-commands");
+    }
+    
+    public int getForceLoginTimeout()
+    {
+        return plugin.getConfig().getInt("force-login.timeout");
+    }
+    
+    public boolean getForceLoginPreventMove()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.move");
+    }
+    
+    public boolean getForceLoginPreventToggleSneak()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.toggle-sneak");
+    }
+    
+    public boolean getForceLoginPreventBlockPlace()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.block-place");
+    }
+    
+    public boolean getForceLoginPreventBlockBreak()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.block-break");
+    }
+    
+    public boolean getForceLoginPreventDamageIn()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.damage-in");
+    }
+    
+    public boolean getForceLoginPreventDamageOut()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.damage-out");
+    }
+    
+    public boolean getForceLoginPreventRegainHealth()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.regain-health");
+    }
+    
+    public boolean getForceLoginPreventFoodLevelChange()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.food-level-change");
+    }
+        
+    public boolean getForceLoginPreventChat()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.chat");
+    }
+        
+    public boolean getForceLoginPreventCommandPreprocess()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.command-preprocess");
+    }
+        
+    public boolean getForceLoginPreventPickupItem()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.pickup-item");
+    }
+        
+    public boolean getForceLoginPreventDropItem()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.drop-item");
+    }
+        
+    public boolean getForceLoginPreventInteract()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.interact");
+    }
+        
+    public boolean getForceLoginPreventInteractEntity()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.interact-entity");
+    }
+        
+    public boolean getForceLoginPreventInventoryClick()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.inventory-click");
+    }
+    
+    public boolean getForceLoginPreventAirDepletion()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.air-depletion");
     }
     
     public String getUsernameRegex()
@@ -226,96 +316,6 @@ public class LogItConfiguration
     public int getSessionLifetime()
     {
         return plugin.getConfig().getInt("session-lifetime");
-    }
-    
-    public List<String> getOutOfSessionAllowedCommands()
-    {
-        return plugin.getConfig().getStringList("out-of-session.allowed-commands");
-    }
-    
-    public int getOutOfSessionTimeout()
-    {
-        return plugin.getConfig().getInt("out-of-session.timeout");
-    }
-    
-    public boolean getOutOfSessionEventPreventionMove()
-    {
-        return plugin.getConfig().getBoolean("out-of-session.event-prevention.move");
-    }
-    
-    public boolean getOutOfSessionEventPreventionToggleSneak()
-    {
-        return plugin.getConfig().getBoolean("out-of-session.event-prevention.toggle-sneak");
-    }
-    
-    public boolean getOutOfSessionEventPreventionBlockPlace()
-    {
-        return plugin.getConfig().getBoolean("out-of-session.event-prevention.block-place");
-    }
-    
-    public boolean getOutOfSessionEventPreventionBlockBreak()
-    {
-        return plugin.getConfig().getBoolean("out-of-session.event-prevention.block-break");
-    }
-    
-    public boolean getOutOfSessionEventPreventionDamageIn()
-    {
-        return plugin.getConfig().getBoolean("out-of-session.event-prevention.damage-in");
-    }
-    
-    public boolean getOutOfSessionEventPreventionDamageOut()
-    {
-        return plugin.getConfig().getBoolean("out-of-session.event-prevention.damage-out");
-    }
-    
-    public boolean getOutOfSessionEventPreventionRegainHealth()
-    {
-        return plugin.getConfig().getBoolean("out-of-session.event-prevention.regain-health");
-    }
-    
-    public boolean getOutOfSessionEventPreventionFoodLevelChange()
-    {
-        return plugin.getConfig().getBoolean("out-of-session.event-prevention.food-level-change");
-    }
-        
-    public boolean getOutOfSessionEventPreventionChat()
-    {
-        return plugin.getConfig().getBoolean("out-of-session.event-prevention.chat");
-    }
-        
-    public boolean getOutOfSessionEventPreventionCommandPreprocess()
-    {
-        return plugin.getConfig().getBoolean("out-of-session.event-prevention.command-preprocess");
-    }
-        
-    public boolean getOutOfSessionEventPreventionPickupItem()
-    {
-        return plugin.getConfig().getBoolean("out-of-session.event-prevention.pickup-item");
-    }
-        
-    public boolean getOutOfSessionEventPreventionDropItem()
-    {
-        return plugin.getConfig().getBoolean("out-of-session.event-prevention.drop-item");
-    }
-        
-    public boolean getOutOfSessionEventPreventionInteract()
-    {
-        return plugin.getConfig().getBoolean("out-of-session.event-prevention.interact");
-    }
-        
-    public boolean getOutOfSessionEventPreventionInteractEntity()
-    {
-        return plugin.getConfig().getBoolean("out-of-session.event-prevention.interact-entity");
-    }
-        
-    public boolean getOutOfSessionEventPreventionInventoryClick()
-    {
-        return plugin.getConfig().getBoolean("out-of-session.event-prevention.inventory-click");
-    }
-    
-    public boolean getOutOfSessionEventPreventionAirDepletion()
-    {
-        return plugin.getConfig().getBoolean("out-of-session.event-prevention.air-depletion");
     }
     
     public boolean getShowSpawnWorldInfo()

@@ -82,7 +82,7 @@ public class RegisterCommand implements CommandExecutor
             
             core.registerPlayer(args[1], args[2], true);
             
-            if (p != null && !core.getConfig().getForceLogin())
+            if (p != null && !core.getConfig().getForceLoginGlobal())
             {
                 p.sendMessage(getMessage("REGISTERED_OTHERS").replace("%player%", args[1]));
             }
@@ -132,7 +132,7 @@ public class RegisterCommand implements CommandExecutor
                 return true;
             }
             
-            core.registerPlayer(p.getName(), args[0], !core.getConfig().getForceLogin());
+            core.registerPlayer(p.getName(), args[0], !core.getConfig().getForceLoginGlobal());
             core.getSessionManager().startSession(p, true);
             
             return true;
