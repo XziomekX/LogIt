@@ -152,5 +152,5 @@ public class ChangePassCommand implements CommandExecutor
         return true;
     }
     
-    private LogItCore core;
+    private final LogItCore core;
 }

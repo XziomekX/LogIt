@@ -271,5 +271,5 @@ public class PlayerEventListener implements Listener
         }
     }
     
-    private LogItCore core;
+    private final LogItCore core;
 }

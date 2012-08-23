@@ -52,5 +52,5 @@ public class TickEventListener implements Listener
         }
     }
     
-    private LogItCore core;
+    private final LogItCore core;
 }

@@ -51,5 +51,5 @@ public class InventoryEventListener implements Listener
         }
     }
     
-    private LogItCore core;
+    private final LogItCore core;
 }

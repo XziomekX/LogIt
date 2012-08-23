@@ -113,5 +113,5 @@ public class UnregisterCommand implements CommandExecutor
         return true;
     }
     
-    private LogItCore core;
+    private final LogItCore core;
 }

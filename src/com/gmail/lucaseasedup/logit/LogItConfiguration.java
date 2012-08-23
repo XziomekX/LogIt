@@ -456,5 +456,5 @@ public class LogItConfiguration
         UNKNOWN, SQLITE, MYSQL
     }
     
-    private LogItPlugin plugin;
+    private final LogItPlugin plugin;
 }

@@ -67,5 +67,5 @@ public class ServerEventListener implements Listener
         }
     }
     
-    private LogItCore core;
+    private final LogItCore core;
 }

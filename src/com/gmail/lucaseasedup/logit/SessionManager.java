@@ -185,7 +185,7 @@ public class SessionManager implements Runnable
         core.log(Level.FINE, getMessage("LOGGED_OUT_OTHERS").replace("%player%", player.getName()));
     }
     
-    private LogItCore core;
+    private final LogItCore core;
     
     private HashMap<String, Session> sessions = new HashMap<>();
 }

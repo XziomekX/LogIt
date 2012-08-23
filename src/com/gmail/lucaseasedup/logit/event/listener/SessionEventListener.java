@@ -31,5 +31,5 @@ public class SessionEventListener implements Listener
         this.core = core;
     }
     
-    private LogItCore core;
+    private final LogItCore core;
 }

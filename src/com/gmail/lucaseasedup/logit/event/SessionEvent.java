@@ -56,6 +56,6 @@ public abstract class SessionEvent extends Event
     
     private static final HandlerList handlers = new HandlerList();
     
-    private String username;
-    private Session session;
+    private final String username;
+    private final Session session;
 }

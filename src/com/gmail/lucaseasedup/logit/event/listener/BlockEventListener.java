@@ -65,5 +65,5 @@ public class BlockEventListener implements Listener
         }
     }
     
-    private LogItCore core;
+    private final LogItCore core;
 }

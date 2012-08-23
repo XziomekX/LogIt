@@ -105,5 +105,5 @@ public class EntityEventListener implements Listener
         }
     }
     
-    private LogItCore core;
+    private final LogItCore core;
 }

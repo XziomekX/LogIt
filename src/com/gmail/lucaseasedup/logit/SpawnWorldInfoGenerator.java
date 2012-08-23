@@ -63,5 +63,5 @@ public class SpawnWorldInfoGenerator
         private static final SpawnWorldInfoGenerator INSTANCE = new SpawnWorldInfoGenerator();
     }
     
-    private LogItCore core;
+    private final LogItCore core;
 }

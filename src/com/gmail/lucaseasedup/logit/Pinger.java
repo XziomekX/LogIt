@@ -43,5 +43,5 @@ public class Pinger implements Runnable
         }
     }
     
-    private Database database;
+    private final Database database;
 }

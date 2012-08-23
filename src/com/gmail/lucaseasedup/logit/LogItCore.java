@@ -496,7 +496,7 @@ public final class LogItCore
         private static final LogItCore INSTANCE = new LogItCore((LogItPlugin) Bukkit.getPluginManager().getPlugin("LogIt"));
     }
     
-    private LogItPlugin plugin;
+    private final LogItPlugin plugin;
     
     private boolean loaded = false;
     private boolean started = false;

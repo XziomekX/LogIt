@@ -142,7 +142,7 @@ public class LoginCommand implements CommandExecutor
         return true;
     }
     
-    private LogItCore core;
+    private final LogItCore core;
     
     private HashMap<String, Integer> loginRetries = new HashMap<>();
 }

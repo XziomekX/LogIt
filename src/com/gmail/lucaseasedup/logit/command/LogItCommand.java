@@ -273,5 +273,5 @@ public class LogItCommand implements CommandExecutor
         return line.replace("%desc%", getMessage("DESC_" + subcommand.replace(" ", "_").toUpperCase()));
     }
     
-    private LogItCore core;
+    private final LogItCore core;
 }
