@@ -69,7 +69,7 @@ public class PlayerEventListener implements Listener
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_ALREADY_USED"));
         }
-        else if (!core.isPlayerRegistered(player))
+        else if (!core.isPlayerRegistered(player) && core.getConfig().getKickUnregistered())
         {
             event.disallow(KICK_OTHER, getMessage("KICK_UNREGISTERED"));
         }
@@ -94,7 +94,15 @@ public class PlayerEventListener implements Listener
                 
                 if (core.getSessionManager().isSessionAlive(player) || !core.getConfig().getForceLoginGlobal() || player.hasPermission("logit.login.exempt"))
                 {
-                    broadcastMessage(getMessage("JOIN").replace("%player%", player.getName()) + SpawnWorldInfoGenerator.getInstance().generate(player));
+                    String spawnWorldInfo = SpawnWorldInfoGenerator.getInstance().generate(player);
+                    
+                    for (Player p : Bukkit.getServer().getOnlinePlayers())
+                    {
+                        if (!p.equals(player))
+                        {
+                            p.sendMessage(getMessage("JOIN").replace("%player%", player.getName()) + spawnWorldInfo);
+                        }
+                    }
                 }
                 else if (core.getConfig().getForceLoginGlobal() && core.getConfig().getWaitingRoomEnabled())
                 {

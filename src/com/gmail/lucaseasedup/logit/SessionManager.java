@@ -69,7 +69,7 @@ public class SessionManager implements Runnable
             }
             else if (core.getConfig().getForceLoginTimeout() >= 0L && isPlayerOnline(username) && core.isPlayerForcedToLogin(username))
             {
-                if (session.getStatus() < (core.getConfig().getForceLoginTimeout() * -20L) && !player.hasPermission("logit.out-of-session.timeout.exempt"))
+                if (session.getStatus() < (core.getConfig().getForceLoginTimeout() * -20L) && !player.hasPermission("logit.force-login.timeout.exempt"))
                 {
                     player.kickPlayer(getMessage("OUT_OF_SESSION_TIMEOUT"));
                 }
