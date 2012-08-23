@@ -83,13 +83,13 @@ public class LogItCommand implements CommandExecutor
             {
                 s.sendMessage(getLogItSubcommandHelp("gotowr", null));
             }
-            if (p == null || p.hasPermission("logit.globalpass"))
+            if (p == null || p.hasPermission("logit.globalpass.set"))
             {
-                s.sendMessage(getLogItSubcommandHelp("globalpass", "<password>"));
+                s.sendMessage(getLogItSubcommandHelp("globalpass set", "<password>"));
             }
-            if (p == null || p.hasPermission("logit.remglobalpass"))
+            if (p == null || p.hasPermission("logit.globalpass.remove"))
             {
-                s.sendMessage(getLogItSubcommandHelp("remglobalpass", null));
+                s.sendMessage(getLogItSubcommandHelp("globalpass remove", null));
             }
             
             return true;
@@ -271,7 +271,7 @@ public class LogItCommand implements CommandExecutor
             line = line.replace("%cmd%", "logit " + subcommand);
         }
         
-        return line.replace("%desc%", getMessage("DESC_" + subcommand.toUpperCase()));
+        return line.replace("%desc%", getMessage("DESC_" + subcommand.replace(" ", "_").toUpperCase()));
     }
     
     private LogItCore core;
