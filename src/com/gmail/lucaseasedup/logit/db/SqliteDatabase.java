@@ -81,6 +81,19 @@ public class SqliteDatabase implements Database
     }
     
     @Override
+    public boolean isConnected()
+    {
+        try
+        {
+            return !connection.isClosed();
+        }
+        catch (SQLException ex)
+        {
+            return false;
+        }
+    }
+    
+    @Override
     public void close() throws SQLException
     {
         if (connection != null)

@@ -35,5 +35,6 @@ public interface Database
     public boolean update(String table, String set, String where) throws SQLException;
     public boolean delete(String table, String where) throws SQLException;
     public boolean truncate(String table) throws SQLException;
+    public boolean isConnected();
     public void close() throws SQLException;
 }

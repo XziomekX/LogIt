@@ -414,17 +414,20 @@ public final class LogItCore
             }
         }
         
+        if (config.getVerbose() || level.intValue() > FINE.intValue())
+        {
+            plugin.getLogger().log(level, stripColor(message));
+        }
+        
         if (level.equals(SEVERE))
         {
             plugin.disable();
         }
-        
-        if (!config.getVerbose() && level.intValue() <= FINE.intValue())
-        {
-            return;
-        }
-        
-        plugin.getLogger().log(level, stripColor(message));
+    }
+    
+    public Database getDatabase()
+    {
+        return database;
     }
     
     public SessionManager getSessionManager()

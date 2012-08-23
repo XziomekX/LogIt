@@ -99,7 +99,7 @@ public class SessionManager implements Runnable
     {
         Session session = sessions.put(username.toLowerCase(), new Session());
         
-        Bukkit.getServer().getPluginManager().callEvent(new SessionCreateEvent(username.toLowerCase(), session));
+        Bukkit.getServer().getPluginManager().callEvent(new SessionCreateEvent(username, session));
         core.log(Level.FINE, getMessage("SESSION_CREATED").replace("%player%", getPlayerName(username)));
     }
     
@@ -110,9 +110,9 @@ public class SessionManager implements Runnable
     
     public void destroySession(String username)
     {
-        sessions.remove(username.toLowerCase());
+        Session session = sessions.remove(username.toLowerCase());
         
-        Bukkit.getServer().getPluginManager().callEvent(new SessionDestroyEvent(username.toLowerCase(), null));
+        Bukkit.getServer().getPluginManager().callEvent(new SessionDestroyEvent(username, session));
         core.log(Level.FINE, getMessage("SESSION_DESTROYED").replace("%player%", getPlayerName(username)));
     }
     

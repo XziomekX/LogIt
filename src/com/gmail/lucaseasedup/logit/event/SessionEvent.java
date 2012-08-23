@@ -29,7 +29,7 @@ public abstract class SessionEvent extends Event
 {
     public SessionEvent(String username, Session session)
     {
-        this.username = username;
+        this.username = username.toLowerCase();
         this.session = session;
     }
     
