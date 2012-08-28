@@ -1,5 +1,5 @@
 /*
- * Session.java
+ * AccountEventListener.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,32 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit;
+package com.gmail.lucaseasedup.logit.event.listener;
+
+import com.gmail.lucaseasedup.logit.LogItCore;
+import org.bukkit.event.Listener;
 
 /**
  * @author LucasEasedUp
  */
-public class Session
+public class AccountEventListener implements Listener
 {
-    public long getStatus()
+    public AccountEventListener(LogItCore core)
     {
-        return status;
+        this.core = core;
     }
     
-    public void setStatus(long status)
-    {
-        this.status = status;
-    }
-    
-    public void updateStatus(long update)
-    {
-        status += update;
-    }
-
-    public boolean isAlive()
-    {
-        return status >= 0L;
-    }
-    
-    private long status = -1L;
+    private final LogItCore core;
 }

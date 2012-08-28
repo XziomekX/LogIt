@@ -23,7 +23,6 @@ import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import java.sql.SQLException;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.WARNING;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -51,7 +50,9 @@ public class LogItCommand implements CommandExecutor
         {
         }
         
-        if (args[0].equalsIgnoreCase("help") && args.length == 1)
+        String subcommand = (args.length > 0) ? args[0] : "";
+        
+        if (subcommand.equalsIgnoreCase("help") && args.length == 1)
         {
             if (p != null && !p.hasPermission("logit.help"))
             {
@@ -94,7 +95,7 @@ public class LogItCommand implements CommandExecutor
             
             return true;
         }
-        else if (args[0].equalsIgnoreCase("version") && args.length == 1)
+        else if (subcommand.equalsIgnoreCase("version") && args.length == 1)
         {
             if (p != null && !p.hasPermission("logit.version"))
             {
@@ -106,7 +107,7 @@ public class LogItCommand implements CommandExecutor
             
             return true;
         }
-        else if (args[0].equalsIgnoreCase("reload") && args.length == 1)
+        else if (subcommand.equalsIgnoreCase("reload") && args.length == 1)
         {
             if (p != null && !p.hasPermission("logit.reload"))
             {
@@ -116,14 +117,14 @@ public class LogItCommand implements CommandExecutor
             
             core.restart();
             
-            if (p != null && Bukkit.getPluginManager().isPluginEnabled("LogIt"))
+            if (p != null && core.getPlugin().isEnabled())
             {
                 s.sendMessage(getMessage("RELOADED"));
             }
             
             return true;
         }
-        else if (args[0].equalsIgnoreCase("purge") && args.length == 1)
+        else if (subcommand.equalsIgnoreCase("purge") && args.length == 1)
         {
             if (p != null && !p.hasPermission("logit.purge"))
             {
@@ -133,28 +134,26 @@ public class LogItCommand implements CommandExecutor
             
             try
             {
-                core.purge();
+                core.getAccountManager().purge();
             }
             catch (SQLException ex)
             {
                 if (p != null)
                 {
-                    s.sendMessage(getMessage("FAILED_DB_PURGE"));
+                    s.sendMessage(getMessage("PURGE_FAIL"));
                 }
-                
-                core.log(WARNING, getMessage("FAILED_DB_PURGE"));
                 
                 return true;
             }
             
             if (p != null)
             {
-                s.sendMessage(getMessage("DB_PURGED"));
+                s.sendMessage(getMessage("PURGE_SUCCESS"));
             }
             
             return true;
         }
-        else if (args[0].equalsIgnoreCase("setwr") && args.length == 1)
+        else if (subcommand.equalsIgnoreCase("setwr") && args.length == 1)
         {
             if (p == null)
             {
@@ -175,7 +174,7 @@ public class LogItCommand implements CommandExecutor
             
             return true;
         }
-        else if (args[0].equalsIgnoreCase("gotowr") && args.length == 1)
+        else if (subcommand.equalsIgnoreCase("gotowr") && args.length == 1)
         {
             if (p == null)
             {
@@ -192,7 +191,7 @@ public class LogItCommand implements CommandExecutor
             
             return true;
         }
-        else if (args[0].equalsIgnoreCase("globalpass") && args.length > 1 && args.length <= 3)
+        else if (subcommand.equalsIgnoreCase("globalpass") && args.length > 1 && args.length <= 3)
         {
             if (args[1].equalsIgnoreCase("set"))
             {
@@ -208,12 +207,16 @@ public class LogItCommand implements CommandExecutor
                 }
                 if (args[2].length() < core.getConfig().getPasswordMinLength())
                 {
-                    s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
+                    s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
+                            String.valueOf(core.getConfig().getPasswordMinLength())));
+                    
                     return true;
                 }
                 if (args[2].length() > core.getConfig().getPasswordMaxLength())
                 {
-                    s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%", String.valueOf(core.getConfig().getPasswordMaxLength())));
+                    s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
+                            String.valueOf(core.getConfig().getPasswordMaxLength())));
+                    
                     return true;
                 }
                 
@@ -221,7 +224,7 @@ public class LogItCommand implements CommandExecutor
                 
                 if (p != null)
                 {
-                    s.sendMessage(getMessage("GLOBALPASS_CHANGED"));
+                    s.sendMessage(getMessage("GLOBALPASS_SET_SUCCESS"));
                 }
                 
                 return true;
@@ -238,7 +241,7 @@ public class LogItCommand implements CommandExecutor
                 
                 if (p != null)
                 {
-                    s.sendMessage(getMessage("GLOBALPASS_REMOVED"));
+                    s.sendMessage(getMessage("GLOBALPASS_REMOVE_SUCCESS"));
                 }
                 
                 return true;
@@ -257,7 +260,7 @@ public class LogItCommand implements CommandExecutor
         return true;
     }
     
-    private String getLogItSubcommandHelp(String subcommand, String params)
+    private static String getLogItSubcommandHelp(String subcommand, String params)
     {
         String line = getMessage("CMD_HELP");
         

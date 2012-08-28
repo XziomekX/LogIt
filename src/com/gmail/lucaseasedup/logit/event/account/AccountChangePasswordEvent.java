@@ -1,5 +1,5 @@
 /*
- * SessionEndEvent.java
+ * AccountChangePasswordEvent.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,31 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event;
-
-import com.gmail.lucaseasedup.logit.Session;
-import org.bukkit.event.HandlerList;
+package com.gmail.lucaseasedup.logit.event.account;
 
 /**
  * @author LucasEasedUp
  */
-public class SessionEndEvent extends SessionEvent
+public class AccountChangePasswordEvent extends AccountEvent
 {
-    public SessionEndEvent(String username, Session session)
+    public AccountChangePasswordEvent(String username)
     {
-        super(username, session);
+        super(username);
     }
-    
-    @Override
-    public HandlerList getHandlers()
-    {
-        return handlers;
-    }
-    
-    public static HandlerList getHandlerList()
-    {
-        return handlers;
-    }
-    
-    private static final HandlerList handlers = new HandlerList();
 }

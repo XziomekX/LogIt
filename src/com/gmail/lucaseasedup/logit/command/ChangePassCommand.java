@@ -64,28 +64,30 @@ public class ChangePassCommand implements CommandExecutor
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "newpassword"));
                 return true;
             }
-            if (!core.isPlayerRegistered(args[1]))
+            if (!core.getAccountManager().isAccountCreated(args[1]))
             {
-                s.sendMessage(getMessage("NOT_REGISTERED_OTHERS").replace("%player%", args[1]));
+                s.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS").replace("%player%", args[1]));
                 return true;
             }
             if (args[2].length() < core.getConfig().getPasswordMinLength())
             {
-                s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
+                s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
+                        String.valueOf(core.getConfig().getPasswordMinLength())));
+                
                 return true;
             }
             if (args[2].length() > core.getConfig().getPasswordMaxLength())
             {
-                s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%", String.valueOf(core.getConfig().getPasswordMaxLength())));
+                s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
+                        String.valueOf(core.getConfig().getPasswordMaxLength())));
+                
                 return true;
             }
             
-            core.changePlayerPassword(args[1], args[2], true);
+            core.getAccountManager().changeAccountPassword(args[1], args[2]);
+            core.getAccountManager().saveAccounts();
             
-            if (p != null)
-            {
-                p.sendMessage(getMessage("PASSWORD_CHANGED_OTHERS").replace("%player%", args[1]));
-            }
+            s.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_OTHERS").replace("%player%", args[1]));
             
             return true;
         }
@@ -98,51 +100,56 @@ public class ChangePassCommand implements CommandExecutor
             }
             if (!p.hasPermission("logit.changepass.self"))
             {
-                s.sendMessage(getMessage("NO_PERMS"));
+                p.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
             if (args.length < 1)
             {
-                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "oldpassword"));
+                p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "oldpassword"));
                 return true;
             }
             if (args.length < 2)
             {
-                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "newpassword"));
+                p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "newpassword"));
                 return true;
             }
             if (args.length < 3)
             {
-                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
+                p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
                 return true;
             }
-            if (!core.isPlayerRegistered(p))
+            if (!core.getAccountManager().isAccountCreated(p.getName()))
             {
-                s.sendMessage(getMessage("NOT_REGISTERED_SELF"));
+                p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
                 return true;
             }
-            if (!core.checkPlayerPassword(p.getName(), args[0]))
+            if (!core.getAccountManager().checkAccountPassword(p.getName(), args[0]))
             {
-                s.sendMessage(getMessage("INCORRECT_PASSWORD"));
+                p.sendMessage(getMessage("INCORRECT_PASSWORD"));
                 return true;
             }
             if (args[1].length() < core.getConfig().getPasswordMinLength())
             {
-                s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
+                p.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
+                        String.valueOf(core.getConfig().getPasswordMinLength())));
+                
                 return true;
             }
             if (args[1].length() > core.getConfig().getPasswordMaxLength())
             {
-                s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%", String.valueOf(core.getConfig().getPasswordMaxLength())));
+                p.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
+                        String.valueOf(core.getConfig().getPasswordMaxLength())));
+                
                 return true;
             }
             if (!args[1].equals(args[2]))
             {
-                s.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
+                p.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
                 return true;
             }
             
-            core.changePlayerPassword(p.getName(), args[1], true);
+            core.getAccountManager().changeAccountPassword(p.getName(), args[1]);
+            core.getAccountManager().saveAccounts();
             
             return true;
         }

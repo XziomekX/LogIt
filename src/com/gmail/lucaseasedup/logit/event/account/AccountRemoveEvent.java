@@ -1,5 +1,5 @@
 /*
- * Session.java
+ * AccountUnregisterEvent.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,32 +16,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit;
+package com.gmail.lucaseasedup.logit.event.account;
+
+import com.gmail.lucaseasedup.logit.GeneralResult;
+import static com.gmail.lucaseasedup.logit.GeneralResult.SUCCESS;
 
 /**
  * @author LucasEasedUp
  */
-public class Session
+public class AccountRemoveEvent extends AccountEvent
 {
-    public long getStatus()
+    public AccountRemoveEvent(String username, GeneralResult result)
     {
-        return status;
+        super(username);
+        
+        this.result = result;
     }
     
-    public void setStatus(long status)
+    public boolean isSuccessful()
     {
-        this.status = status;
+        if (result.equals(SUCCESS))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     
-    public void updateStatus(long update)
-    {
-        status += update;
-    }
-
-    public boolean isAlive()
-    {
-        return status >= 0L;
-    }
-    
-    private long status = -1L;
+    private final GeneralResult result;
 }

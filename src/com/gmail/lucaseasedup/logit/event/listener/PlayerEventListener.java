@@ -55,11 +55,13 @@ public class PlayerEventListener implements Listener
         }
         else if (player.getName().length() < core.getConfig().getUsernameMinLength())
         {
-            event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getUsernameMinLength())));
+            event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_SHORT").replace("%min-length%",
+                    String.valueOf(core.getConfig().getUsernameMinLength())));
         }
         else if (player.getName().length() > core.getConfig().getUsernameMaxLength())
         {
-            event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_LONG").replace("%max-length%", String.valueOf(core.getConfig().getUsernameMaxLength())));
+            event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_LONG").replace("%max-length%",
+                    String.valueOf(core.getConfig().getUsernameMaxLength())));
         }
         else if (core.getConfig().getUsernameProhibitedUsernames().contains(player.getName().toLowerCase()))
         {
@@ -69,7 +71,7 @@ public class PlayerEventListener implements Listener
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_ALREADY_USED"));
         }
-        else if (!core.isPlayerRegistered(player) && core.getConfig().getKickUnregistered())
+        else if (!core.getAccountManager().isAccountCreated(player.getName()) && core.getConfig().getKickUnregistered())
         {
             event.disallow(KICK_OTHER, getMessage("KICK_UNREGISTERED"));
         }
@@ -92,7 +94,8 @@ public class PlayerEventListener implements Listener
                     core.getSessionManager().createSession(player);
                 }
                 
-                if (core.getSessionManager().isSessionAlive(player) || !core.getConfig().getForceLoginGlobal() || player.hasPermission("logit.login.exempt"))
+                if (core.getSessionManager().isSessionAlive(player) || !core.getConfig().getForceLoginGlobal()
+                        || player.hasPermission("logit.login.exempt"))
                 {
                     String spawnWorldInfo = SpawnWorldInfoGenerator.getInstance().generate(player);
                     
@@ -106,7 +109,7 @@ public class PlayerEventListener implements Listener
                 }
                 else if (core.getConfig().getForceLoginGlobal() && core.getConfig().getWaitingRoomEnabled())
                 {
-                    core.putIntoWaitingRoom(player);
+                    core.getWaitingRoom().put(player);
                 }
                 
                 if (core.isPlayerForcedToLogin(player) && !core.getSessionManager().isSessionAlive(player))
@@ -126,10 +129,10 @@ public class PlayerEventListener implements Listener
         
         if (core.getSessionManager().isSessionAlive(player))
         {
-            broadcastMessage(getMessage("QUIT").replace("%player%", player.getName()) + SpawnWorldInfoGenerator.getInstance().generate(player));
+            broadcastMessage(getMessage("QUIT").replace("%player%", player.getName()));
         }
         
-        core.takeOutOfWaitingRoom(player);
+        core.getWaitingRoom().remove(player);
     }
     
     @EventHandler
@@ -139,7 +142,7 @@ public class PlayerEventListener implements Listener
         
         event.setLeaveMessage(null);
         
-        core.takeOutOfWaitingRoom(player);
+        core.getWaitingRoom().remove(player);
     }
     
     @EventHandler

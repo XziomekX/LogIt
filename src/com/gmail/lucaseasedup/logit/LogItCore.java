@@ -19,7 +19,6 @@
 package com.gmail.lucaseasedup.logit;
 
 import static com.gmail.lucaseasedup.logit.LogItConfiguration.HashingAlgorithm.*;
-import com.gmail.lucaseasedup.logit.LogItConfiguration.StorageType;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
 import com.gmail.lucaseasedup.logit.command.*;
 import com.gmail.lucaseasedup.logit.db.Database;
@@ -29,17 +28,15 @@ import com.gmail.lucaseasedup.logit.event.listener.*;
 import static com.gmail.lucaseasedup.logit.hash.HashGenerator.*;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.logging.Level;
 import static java.util.logging.Level.*;
 import org.bukkit.Bukkit;
 import static org.bukkit.ChatColor.stripColor;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 
 /**
  * @author LucasEasedUp
@@ -64,9 +61,9 @@ public final class LogItCore
         
         config.load();
         
-        if (config.getStopIfOnlineModeEnabled() && Bukkit.getServer().getOnlineMode())
+        if (plugin.getServer().getOnlineMode() && config.getStopIfOnlineModeEnabled())
         {
-            log(INFO, getMessage("ONLINEMODE_ENABLED"));
+            log(FINE, getMessage("ONLINEMODE_ENABLED"));
             plugin.disable();
             
             return;
@@ -75,64 +72,69 @@ public final class LogItCore
         if (config.getHashingAlgorithm().equals(UNKNOWN))
         {
             log(SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM"));
-            
-            return;
-        }
-        
-        if (config.getStorageType().equals(StorageType.SQLITE))
-        {
-            database = new SqliteDatabase();
-        }
-        else if (config.getStorageType().equals(StorageType.MYSQL))
-        {
-            database = new MySqlDatabase();
-        }
-        else if (config.getStorageType().equals(StorageType.UNKNOWN))
-        {
-            log(SEVERE, getMessage("UNKNOWN_STORAGE_TYPE"));
+            plugin.disable();
             
             return;
         }
         
         try
         {
-            if (config.getStorageType().equals(StorageType.SQLITE))
+            switch (config.getStorageType())
             {
-                database.connect("jdbc:sqlite:" + plugin.getDataFolder() + "/" + config.getStorageSqliteFilename(), null, null, null);
+                case SQLITE:
+                {
+                    database = new SqliteDatabase();
+                    database.connect("jdbc:sqlite:" + plugin.getDataFolder() + "/" + config.getStorageSqliteFilename(), null, null, null);
+                    
+                    break;
+                }
+                case MYSQL:
+                {
+                    database = new MySqlDatabase();
+                    database.connect(config.getStorageMysqlHost(), config.getStorageMysqlUser(), config.getStorageMysqlPassword(),
+                        config.getStorageMysqlDatabase());
+                    
+                    break;
+                }
+                default:
+                {
+                    log(SEVERE, getMessage("UNKNOWN_STORAGE_TYPE"));
+                    plugin.disable();
+                    
+                    return;
+                }
             }
-            else if (config.getStorageType().equals(StorageType.MYSQL))
-            {
-                database.connect(config.getStorageMysqlHost(), config.getStorageMysqlUser(), config.getStorageMysqlPassword(), config.getStorageMysqlDatabase());
-            }
+            
+            pinger = new Pinger(database);
         }
         catch (SQLException ex)
         {
-            log(SEVERE, getMessage("FAILED_DB_CONNECT"));
+            log(SEVERE, getMessage("DB_CONNECT_FAIL"));
+            plugin.disable();
             
             return;
         }
         
         try
         {
-            database.create(config.getStorageTable(), config.getStorageColumnsUsername() + " varchar(16) NOT NULL, " + config.getStorageColumnsPassword() + " varchar(256) NOT NULL");
+            database.create(config.getStorageTable(), config.getStorageColumnsUsername() + " varchar(16) NOT NULL, "
+                    + config.getStorageColumnsPassword() + " varchar(256) NOT NULL");
         }
         catch (SQLException ex)
         {
-            log(SEVERE, getMessage("FAILED_DB_CREATE_TABLE"));
+            log(SEVERE, getMessage("DB_CREATE_TABLE_FAIL"));
+            plugin.disable();
             
             return;
         }
         
-        loadData();
+        // Load accounts.
+        accountManager = new AccountManager(this);
+        accountManager.loadAccounts();
         
-        pinger = new Pinger(database);
-        pingerTaskId = Bukkit.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, pinger, 0L, 2400L);
-        
-        sessionManager = new SessionManager(this);
-        sessionManagerTaskId = Bukkit.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, sessionManager, 0L, 20L);
-        
-        tickEventCaller = new TickEventCaller();
-        tickEventCallerTaskId = Bukkit.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, tickEventCaller, 0L, 1L);
+        pingerTaskId          = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, pinger, 0L, 2400L);
+        sessionManagerTaskId  = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, sessionManager, 0L, 20L);
+        tickEventCallerTaskId = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, tickEventCaller, 0L, 1L);
         
         started = true;
     }
@@ -148,12 +150,12 @@ public final class LogItCore
         }
         catch (SQLException ex)
         {
-            log(WARNING, getMessage("FAILED_DB_DISCONNECT"));
+            log(WARNING, getMessage("DB_CLOSE_FAIL"));
         }
         
-        Bukkit.getServer().getScheduler().cancelTask(pingerTaskId);
-        Bukkit.getServer().getScheduler().cancelTask(sessionManagerTaskId);
-        Bukkit.getServer().getScheduler().cancelTask(tickEventCallerTaskId);
+        plugin.getServer().getScheduler().cancelTask(pingerTaskId);
+        plugin.getServer().getScheduler().cancelTask(sessionManagerTaskId);
+        plugin.getServer().getScheduler().cancelTask(tickEventCallerTaskId);
         
         started = false;
     }
@@ -166,157 +168,49 @@ public final class LogItCore
         log(INFO, getMessage("RELOADED"));
     }
     
-    public boolean isPlayerRegistered(String username)
+    public void changeGlobalPassword(String password)
     {
-        return passwords.containsKey(username.toLowerCase());
-    }
-    
-    public boolean isPlayerRegistered(Player player)
-    {
-        return isPlayerRegistered(player.getName());
-    }
-    
-    public void registerPlayer(String username, String password, boolean notify)
-    {
-        if (isPlayerRegistered(username))
-        {
-            throw new RuntimeException("Player already registered.");
-        }
-        else if (isPlayerOnline(username))
-        {
-            username = getPlayerName(username);
-        }
-        
-        String hash = hash(password);
-        
-        passwords.put(username.toLowerCase(), hash);
-        
-        try
-        {
-            database.insert(config.getStorageTable(), "\"" + username.toLowerCase() + "\", \"" + hash + "\"");
-        }
-        catch (SQLException ex)
-        {
-            log(WARNING, getMessage("FAILED_SAVE_DATA"));
-        }
-        
-        if (notify)
-        {
-            sendMessage(username, getMessage("REGISTERED_SELF"));
-        }
-        
-        log(INFO, getMessage("REGISTERED_OTHERS").replace("%player%", username));
-    }
-    
-    public void unregisterPlayer(String username, boolean notify)
-    {
-        if (!isPlayerRegistered(username))
-        {
-            throw new RuntimeException("Player not registered.");
-        }
-        else if (isPlayerOnline(username))
-        {
-            username = getPlayerName(username);
-        }
-        
-        passwords.remove(username.toLowerCase());
-        
-        try
-        {
-            database.delete(config.getStorageTable(), config.getStorageColumnsUsername() + " = \"" + username.toLowerCase() + "\"");
-        }
-        catch (SQLException ex)
-        {
-            log(WARNING, getMessage("FAILED_SAVE_DATA"));
-        }
-        
-        if (notify)
-        {
-            sendMessage(username, getMessage("UNREGISTERED_SELF"));
-        }
-        
-        log(INFO, getMessage("UNREGISTERED_OTHERS").replace("%player%", username));
-    }
-    
-    public void changePlayerPassword(String username, String newPassword, boolean notify)
-    {
-        if (!isPlayerRegistered(username))
-        {
-            throw new RuntimeException("Player not registered.");
-        }
-        else if (isPlayerOnline(username))
-        {
-            username = getPlayerName(username);
-        }
-        
-        String hash = hash(newPassword);
-        passwords.put(username.toLowerCase(), hash);
-        
-        try
-        {
-            database.update(config.getStorageTable(), config.getStorageColumnsPassword() + " = \"" + hash + "\"", config.getStorageColumnsUsername() + " = \"" + username.toLowerCase() + "\"");
-        }
-        catch (SQLException ex)
-        {
-            log(WARNING, getMessage("FAILED_SAVE_DATA"));
-        }
-        
-        if (notify)
-        {
-            sendMessage(username, getMessage("PASSWORD_CHANGED_SELF"));
-        }
-        
-        log(INFO, getMessage("PASSWORD_CHANGED_OTHERS").replace("%player%", username));
-    }
-    
-    public boolean checkPlayerPassword(String username, String password)
-    {
-        if (!isPlayerRegistered(username))
-            throw new RuntimeException("Player not registered.");
-        
-        String currentHash = passwords.get(username.toLowerCase());
-        String hashToBeChecked = hash(password);
-        
-        return (currentHash != null) && (hashToBeChecked != null) && currentHash.equals(hashToBeChecked);
-    }
-    
-    public void changeGlobalPassword(String newPassword)
-    {
-        config.setGlobalPasswordHash(hash(newPassword));
+        config.setGlobalPassword(hash(password));
         config.save();
         
-        log(INFO, getMessage("GLOBALPASS_CHANGED"));
-    }
-    
-    public void removeGlobalPassword()
-    {
-        config.setGlobalPasswordHash("");
-        config.save();
-        
-        log(INFO, getMessage("GLOBALPASS_REMOVED"));
+        log(INFO, getMessage("GLOBALPASS_SET_SUCCESS"));
     }
     
     public boolean checkGlobalPassword(String password)
     {
-        return hash(password).equalsIgnoreCase(config.getGlobalPasswordHash());
+        return config.getGlobalPassword().equals(hash(password));
+    }
+    
+    /**
+     * Removes the global password.
+     */
+    public void removeGlobalPassword()
+    {
+        config.setGlobalPassword("");
+        config.save();
+        
+        log(INFO, getMessage("GLOBALPASS_REMOVE_SUCCESS"));
     }
     
     public boolean isPlayerForcedToLogin(Player player)
     {
-        return (config.getForceLoginGlobal() || config.getForceLoginInWorld(player.getWorld())) && !player.hasPermission("logit.login.exempt");
+        return (config.getForceLoginGlobal() || config.getForceLoginInWorld(player.getWorld()))
+                && !player.hasPermission("logit.login.exempt");
     }
     
     public boolean isPlayerForcedToLogin(String username)
     {
         if (!isPlayerOnline(username))
+        {
             throw new RuntimeException("Player not online.");
+        }
         
         return isPlayerForcedToLogin(getPlayer(username));
     }
     
     public void sendForceLoginMessage(Player player)
     {
-        if (isPlayerRegistered(player))
+        if (accountManager.isAccountCreated(player.getName()))
         {
             player.sendMessage(getMessage("PLEASE_LOGIN"));
         }
@@ -326,36 +220,8 @@ public final class LogItCore
         }
     }
     
-    public void purge() throws SQLException
-    {
-        database.truncate(config.getStorageTable());
-        passwords.clear();
-        
-        log(INFO, getMessage("DB_PURGED"));
-    }
-    
-    public boolean isInWaitingRoom(Player player)
-    {
-        return waitingRoom.containsKey(player.getName().toLowerCase());
-    }
-    
-    public void putIntoWaitingRoom(Player player)
-    {
-        waitingRoom.put(player.getName().toLowerCase(), player.getLocation().clone());
-        player.teleport(config.getWaitingRoomLocation());
-    }
-    
-    public void takeOutOfWaitingRoom(Player player)
-    {
-        if (!isInWaitingRoom(player))
-            return;
-        
-        Location l = waitingRoom.remove(player.getName().toLowerCase());
-        player.teleport(l);
-    }
-    
     /**
-     * Creates a hash from the given string using the algorithm specified in the config file.
+     * Creates a hash from the given string using algorithm specified in the config file.
      * 
      * @param string String.
      * @return Hash.
@@ -398,16 +264,22 @@ public final class LogItCore
             return null;
     }
     
+    /**
+     * Logs a message.
+     * 
+     * @param level Message level.
+     * @param message Message to be logged.
+     */
     public void log(Level level, String message)
     {
         if (config.getLogToFileEnabled())
         {
-            Date date = new Date();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date             date = new Date();
+            SimpleDateFormat sdf  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             
-            try (FileWriter fw = new FileWriter(plugin.getDataFolder() + "/" + config.getLogToFileFilename(), true))
+            try (FileWriter fileWriter = new FileWriter(plugin.getDataFolder() + "/" + config.getLogToFileFilename(), true))
             {
-                fw.write(sdf.format(date) + " [" + level.getName() + "] " + stripColor(message) + "\n");
+                fileWriter.write(sdf.format(date) + " [" + level.getName() + "] " + stripColor(message) + "\n");
             }
             catch (IOException ex)
             {
@@ -418,16 +290,31 @@ public final class LogItCore
         {
             plugin.getLogger().log(level, stripColor(message));
         }
-        
-        if (level.equals(SEVERE))
-        {
-            plugin.disable();
-        }
+    }
+    
+    /**
+     * Provides shortcut to the Bukkit.getServer().getPluginManager().callEvent() method.
+     * 
+     * @param event Event to be called.
+     */
+    public void callEvent(Event event)
+    {
+        Bukkit.getServer().getPluginManager().callEvent(event);
+    }
+
+    public WaitingRoom getWaitingRoom()
+    {
+        return waitingRoom;
     }
     
     public Database getDatabase()
     {
         return database;
+    }
+
+    public AccountManager getAccountManager()
+    {
+        return accountManager;
     }
     
     public SessionManager getSessionManager()
@@ -445,43 +332,30 @@ public final class LogItCore
         return config;
     }
     
-    private void loadData()
-    {
-        passwords.clear();
-        
-        try (ResultSet rs = database.select(config.getStorageTable(), "*"))
-        {
-            assert rs.getMetaData().getColumnCount() == 1;
-
-            while (rs.next())
-            {
-                passwords.put(rs.getString(config.getStorageColumnsUsername()), rs.getString(config.getStorageColumnsPassword()));
-            }
-        }
-        catch (SQLException ex)
-        {
-            log(WARNING, getMessage("FAILED_LOAD_DATA"));
-        }
-    }
-    
     private void load()
     {
         config = new LogItConfiguration(plugin);
         
-        Bukkit.getServer().getPluginManager().registerEvents(new TickEventListener(this), plugin);
-        Bukkit.getServer().getPluginManager().registerEvents(new ServerEventListener(this), plugin);
-        Bukkit.getServer().getPluginManager().registerEvents(new BlockEventListener(this), plugin);
-        Bukkit.getServer().getPluginManager().registerEvents(new EntityEventListener(this), plugin);
-        Bukkit.getServer().getPluginManager().registerEvents(new PlayerEventListener(this), plugin);
-        Bukkit.getServer().getPluginManager().registerEvents(new InventoryEventListener(this), plugin);
-        Bukkit.getServer().getPluginManager().registerEvents(new SessionEventListener(this), plugin);
+        // Register event listeners.
+        plugin.getServer().getPluginManager().registerEvents(new TickEventListener(this), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new ServerEventListener(this), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new BlockEventListener(this), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new EntityEventListener(this), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new PlayerEventListener(this), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new InventoryEventListener(this), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new AccountEventListener(this), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new SessionEventListener(this), plugin);
         
+        // Set command executors.
         plugin.getCommand("logit").setExecutor(new LogItCommand(this));
         plugin.getCommand("login").setExecutor(new LoginCommand(this));
         plugin.getCommand("logout").setExecutor(new LogoutCommand(this));
         plugin.getCommand("register").setExecutor(new RegisterCommand(this));
         plugin.getCommand("unregister").setExecutor(new UnregisterCommand(this));
         plugin.getCommand("changepass").setExecutor(new ChangePassCommand(this));
+        
+        sessionManager = new SessionManager(this);
+        waitingRoom = new WaitingRoom();
         
         loaded = true;
     }
@@ -504,15 +378,15 @@ public final class LogItCore
     private LogItConfiguration config;
     private Database database;
     
-    private HashMap<String, String> passwords = new HashMap<>();
-    private HashMap<String, Location> waitingRoom = new HashMap<>();
-    
     private Pinger pinger;
     private int pingerTaskId;
     
     private SessionManager sessionManager;
     private int sessionManagerTaskId;
     
-    private TickEventCaller tickEventCaller;
+    private TickEventCaller tickEventCaller = new TickEventCaller();
     private int tickEventCallerTaskId;
+    
+    private AccountManager accountManager;
+    private WaitingRoom waitingRoom;
 }

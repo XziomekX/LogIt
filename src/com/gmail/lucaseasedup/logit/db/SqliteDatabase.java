@@ -23,7 +23,7 @@ import java.sql.*;
 /**
  * @author LucasEasedUp
  */
-public class SqliteDatabase implements Database
+public class SqliteDatabase implements Database, AutoCloseable
 {
     @Override
     public void connect(String host, String user, String password, String database) throws SQLException

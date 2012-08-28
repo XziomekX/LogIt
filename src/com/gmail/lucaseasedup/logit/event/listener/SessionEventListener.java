@@ -19,6 +19,12 @@
 package com.gmail.lucaseasedup.logit.event.listener;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
+import com.gmail.lucaseasedup.logit.SpawnWorldInfoGenerator;
+import com.gmail.lucaseasedup.logit.event.session.SessionEndEvent;
+import com.gmail.lucaseasedup.logit.event.session.SessionStartEvent;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 /**
@@ -29,6 +35,50 @@ public class SessionEventListener implements Listener
     public SessionEventListener(LogItCore core)
     {
         this.core = core;
+    }
+    
+    @EventHandler
+    private void onStart(SessionStartEvent event)
+    {
+        if (isPlayerOnline(event.getUsername()))
+        {
+            Player player = getPlayer(event.getUsername());
+            
+            core.getWaitingRoom().remove(player);
+            
+            if (core.getConfig().getForceLoginGlobal() && !player.hasPermission("logit.login.exempt"))
+            {
+                broadcastMessage(getMessage("JOIN").replace("%player%", player.getName())
+                        + SpawnWorldInfoGenerator.getInstance().generate(player));
+            }
+            else
+            {
+                player.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
+            }
+        }
+    }
+    
+    @EventHandler
+    private void onEnd(SessionEndEvent event)
+    {
+        if (isPlayerOnline(event.getUsername()))
+        {
+            Player player = getPlayer(event.getUsername());
+            
+            if (core.getConfig().getForceLoginGlobal() && core.getConfig().getWaitingRoomEnabled())
+            {
+                core.getWaitingRoom().put(player);
+            }
+            
+            if (core.getConfig().getForceLoginGlobal() && !player.hasPermission("logit.login.exempt"))
+            {
+                broadcastMessage(getMessage("QUIT").replace("%player%", player.getName()));
+            }
+            else
+            {
+                player.sendMessage(getMessage("END_SESSION_SUCCESS_SELF"));
+            }
+        }
     }
     
     private final LogItCore core;

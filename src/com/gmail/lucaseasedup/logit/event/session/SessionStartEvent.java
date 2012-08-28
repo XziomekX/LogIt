@@ -1,5 +1,5 @@
 /*
- * Session.java
+ * SessionStartEvent.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,32 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit;
+package com.gmail.lucaseasedup.logit.event.session;
+
+import com.gmail.lucaseasedup.logit.Session;
 
 /**
  * @author LucasEasedUp
  */
-public class Session
+public class SessionStartEvent extends SessionEvent
 {
-    public long getStatus()
+    public SessionStartEvent(String username, Session session)
     {
-        return status;
+        super(username, session);
     }
-    
-    public void setStatus(long status)
-    {
-        this.status = status;
-    }
-    
-    public void updateStatus(long update)
-    {
-        status += update;
-    }
-
-    public boolean isAlive()
-    {
-        return status >= 0L;
-    }
-    
-    private long status = -1L;
 }

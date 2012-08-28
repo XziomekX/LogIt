@@ -65,23 +65,20 @@ public class LoginCommand implements CommandExecutor
                 s.sendMessage(getMessage("NOT_ONLINE").replace("%player%", args[1]));
                 return true;
             }
-            if (!core.isPlayerRegistered(args[1]))
+            if (!core.getAccountManager().isAccountCreated(args[1]))
             {
-                s.sendMessage(getMessage("NOT_REGISTERED_OTHERS").replace("%player%", args[1]));
+                s.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS").replace("%player%", args[1]));
                 return true;
             }
             if (core.getSessionManager().isSessionAlive(args[1]))
             {
-                s.sendMessage(getMessage("ALREADY_LOGGED_IN_OTHERS").replace("%player%", args[1]));
+                s.sendMessage(getMessage("START_SESSION_ALREADY_OTHERS").replace("%player%", args[1]));
                 return true;
             }
             
-            core.getSessionManager().startSession(getPlayer(args[1]), true);
+            core.getSessionManager().startSession(getPlayer(args[1]));
             
-            if (!core.getConfig().getForceLoginGlobal())
-            {
-                p.sendMessage(getMessage("LOGGED_IN_OTHERS").replace("%player%", args[1]));
-            }
+            s.sendMessage(getMessage("START_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
             
             return true;
         }
@@ -99,20 +96,20 @@ public class LoginCommand implements CommandExecutor
             }
             if (args.length < 1)
             {
-                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+                p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
                 return true;
             }
-            if (!core.isPlayerRegistered(p.getName()))
+            if (!core.getAccountManager().isAccountCreated(p.getName()))
             {
-                p.sendMessage(getMessage("NOT_REGISTERED_SELF"));
+                p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS"));
                 return true;
             }
             if (core.getSessionManager().isSessionAlive(p.getName()))
             {
-                p.sendMessage(getMessage("ALREADY_LOGGED_IN_SELF"));
+                p.sendMessage(getMessage("START_SESSION_ALREADY_SELF"));
                 return true;
             }
-            if (!core.checkPlayerPassword(p.getName(), args[0]) && !core.checkGlobalPassword(args[0]))
+            if (!core.getAccountManager().checkAccountPassword(p.getName(), args[0]) && !core.checkGlobalPassword(args[0]))
             {
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
                 
@@ -132,7 +129,7 @@ public class LoginCommand implements CommandExecutor
                 return true;
             }
             
-            core.getSessionManager().startSession(p, true);
+            core.getSessionManager().startSession(p);
             
             return true;
         }

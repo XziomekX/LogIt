@@ -19,14 +19,12 @@
 package com.gmail.lucaseasedup.logit;
 
 import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
-import com.gmail.lucaseasedup.logit.event.SessionCreateEvent;
-import com.gmail.lucaseasedup.logit.event.SessionDestroyEvent;
-import com.gmail.lucaseasedup.logit.event.SessionEndEvent;
-import com.gmail.lucaseasedup.logit.event.SessionStartEvent;
+import com.gmail.lucaseasedup.logit.event.session.SessionCreateEvent;
+import com.gmail.lucaseasedup.logit.event.session.SessionDestroyEvent;
+import com.gmail.lucaseasedup.logit.event.session.SessionEndEvent;
+import com.gmail.lucaseasedup.logit.event.session.SessionStartEvent;
 import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import org.bukkit.Bukkit;
+import static java.util.logging.Level.FINE;
 import org.bukkit.entity.Player;
 
 /**
@@ -42,12 +40,12 @@ public class SessionManager implements Runnable
     @Override
     public void run()
     {
-        for (Entry<String, Session> entry : sessions.entrySet())
+        long forceLoginTimeoutTicks = (core.getConfig().getForceLoginTimeout() > 0L) ? core.getConfig().getForceLoginTimeout() * -20L : 0L;
+        
+        for (String username : sessions.keySet())
         {
-            String username = entry.getKey();
-            Session session = entry.getValue();
-            
-            Player player = getPlayer(username);
+            Session session = sessions.get(username);
+            Player  player = getPlayer(username);
             
             if (session.getStatus() >= 0L)
             {
@@ -55,7 +53,7 @@ public class SessionManager implements Runnable
                 {
                     if (isPlayerOnline(username))
                     {
-                        session.reset();
+                        session.setStatus(0L);
                     }
                     else
                     {
@@ -67,9 +65,10 @@ public class SessionManager implements Runnable
                     session.updateStatus(20L);
                 }
             }
-            else if (core.getConfig().getForceLoginTimeout() >= 0L && isPlayerOnline(username) && core.isPlayerForcedToLogin(username))
+            else if (isPlayerOnline(username))
             {
-                if (session.getStatus() < (core.getConfig().getForceLoginTimeout() * -20L) && !player.hasPermission("logit.force-login.timeout.exempt"))
+                if (session.getStatus() <= forceLoginTimeoutTicks && forceLoginTimeoutTicks > 0L
+                        && core.isPlayerForcedToLogin(username) && !player.hasPermission("logit.force-login.timeout.exempt"))
                 {
                     player.kickPlayer(getMessage("OUT_OF_SESSION_TIMEOUT"));
                 }
@@ -95,12 +94,28 @@ public class SessionManager implements Runnable
         return getSession(player.getName());
     }
     
+    public boolean isSessionAlive(String username)
+    {
+        Session session = getSession(username);
+        
+        return (session != null) ? session.isAlive() : false;
+    }
+    
+    public boolean isSessionAlive(Player player)
+    {
+        return isSessionAlive(player.getName());
+    }
+    
     public void createSession(String username)
     {
-        Session session = sessions.put(username.toLowerCase(), new Session());
+        Session session = new Session();
+        sessions.put(username.toLowerCase(), session);
         
-        Bukkit.getServer().getPluginManager().callEvent(new SessionCreateEvent(username, session));
-        core.log(Level.FINE, getMessage("SESSION_CREATED").replace("%player%", getPlayerName(username)));
+        // Notify about the session creation.
+        core.log(FINE, getMessage("SESSION_CREATE_SUCCESS").replace("%player%", username));
+        
+        // Call the appropriate event.
+        core.callEvent(new SessionCreateEvent(username, session));
     }
     
     public void createSession(Player player)
@@ -112,8 +127,11 @@ public class SessionManager implements Runnable
     {
         Session session = sessions.remove(username.toLowerCase());
         
-        Bukkit.getServer().getPluginManager().callEvent(new SessionDestroyEvent(username, session));
-        core.log(Level.FINE, getMessage("SESSION_DESTROYED").replace("%player%", getPlayerName(username)));
+        // Notify about the session destruction.
+        core.log(FINE, getMessage("SESSION_DESTROY_SUCCESS").replace("%player%", username));
+        
+        // Call the appropriate event.
+        core.callEvent(new SessionDestroyEvent(username, session));
     }
     
     public void destroySession(Player player)
@@ -121,71 +139,41 @@ public class SessionManager implements Runnable
         destroySession(player.getName());
     }
     
-    public boolean isSessionAlive(String username)
+    public void startSession(String username)
     {
         Session session = getSession(username);
+        session.setStatus(0L);
         
-        if (session == null)
-        {
-            return false;
-        }
+        // Notify about the session start.
+        core.log(FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
         
-        return session.getStatus() >= 0L;
+        // Call the appropriate event.
+        core.callEvent(new SessionStartEvent(username, session));
     }
     
-    public boolean isSessionAlive(Player player)
+    public void startSession(Player player)
     {
-        return isSessionAlive(player.getName());
+        startSession(player.getName());
     }
     
-    public void startSession(Player player, boolean notify)
+    public void endSession(String username)
     {
-        getSession(player).start();
+        Session session = getSession(username);
+        session.setStatus(-1L);
         
-        core.takeOutOfWaitingRoom(player);
+        // Notify about the session end.
+        core.log(FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
         
-        if (notify)
-        {
-            if (core.getConfig().getForceLoginGlobal() && !player.hasPermission("logit.login.exempt"))
-            {
-                broadcastMessage(getMessage("JOIN").replace("%player%", player.getName()) + SpawnWorldInfoGenerator.getInstance().generate(player));
-            }
-            else
-            {
-                player.sendMessage(getMessage("LOGGED_IN_SELF"));
-            }
-        }
-        
-        Bukkit.getServer().getPluginManager().callEvent(new SessionStartEvent(player.getName().toLowerCase(), getSession(player)));
-        core.log(Level.FINE, getMessage("LOGGED_IN_OTHERS").replace("%player%", player.getName()));
+        // Call the appropriate event.
+        core.callEvent(new SessionEndEvent(username, session));
     }
     
-    public void endSession(Player player, boolean notify)
+    public void endSession(Player player)
     {
-        getSession(player).end();
-        
-        if (core.getConfig().getForceLoginGlobal() && core.getConfig().getWaitingRoomEnabled())
-        {
-            core.putIntoWaitingRoom(player);
-        }
-        
-        if (notify)
-        {
-            if (core.getConfig().getForceLoginGlobal() && !player.hasPermission("logit.login.exempt"))
-            {
-                broadcastMessage(getMessage("QUIT").replace("%player%", player.getName()));
-            }
-            else
-            {
-                player.sendMessage(getMessage("LOGGED_OUT_SELF"));
-            }
-        }
-        
-        Bukkit.getServer().getPluginManager().callEvent(new SessionEndEvent(player.getName().toLowerCase(), getSession(player)));
-        core.log(Level.FINE, getMessage("LOGGED_OUT_OTHERS").replace("%player%", player.getName()));
+        endSession(player.getName());
     }
     
     private final LogItCore core;
     
-    private HashMap<String, Session> sessions = new HashMap<>();
+    private final HashMap<String, Session> sessions = new HashMap<>();
 }

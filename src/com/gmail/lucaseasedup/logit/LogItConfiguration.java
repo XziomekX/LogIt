@@ -68,11 +68,11 @@ public class LogItConfiguration
         plugin.getConfig().set("username.prohibited-usernames",         plugin.getConfig().getStringList("username.prohibited-usernames"));
         plugin.getConfig().set("password.min-length",                   plugin.getConfig().getInt("password.min-length", 3));
         plugin.getConfig().set("password.max-length",                   plugin.getConfig().getInt("password.max-length", 25));
-        plugin.getConfig().set("global-password-hash",                  plugin.getConfig().getString("global-password-hash", ""));
+        plugin.getConfig().set("global-password",                       plugin.getConfig().getString("global-password", ""));
         plugin.getConfig().set("login-fails-to-kick",                   plugin.getConfig().getInt("login-fails-to-kick", 3));
         plugin.getConfig().set("kick-unregistered",                     plugin.getConfig().getBoolean("kick-unregistered", false));
         plugin.getConfig().set("hashing-algorithm",                     plugin.getConfig().getString("hashing-algorithm", "md5"));
-        plugin.getConfig().set("session-lifetime",                      plugin.getConfig().getInt("session-lifetime", 600));
+        plugin.getConfig().set("session-lifetime",                      plugin.getConfig().getInt("session-lifetime", 0));
         plugin.getConfig().set("show-spawn-world-info",                 plugin.getConfig().getBoolean("show-spawn-world-info", true));
         plugin.getConfig().set("waiting-room.enabled",                  plugin.getConfig().getBoolean("waiting-room.enabled", false));
         plugin.getConfig().set("waiting-room.location.world",           plugin.getConfig().getString("waiting-room.location.world", "world"));
@@ -264,9 +264,9 @@ public class LogItConfiguration
         return plugin.getConfig().getInt("password.max-length");
     }
     
-    public String getGlobalPasswordHash()
+    public String getGlobalPassword()
     {
-        return plugin.getConfig().getString("global-password-hash");
+        return plugin.getConfig().getString("global-password");
     }
     
     public int getLoginFailsToKick()
@@ -432,9 +432,9 @@ public class LogItConfiguration
         return plugin.getConfig().getString("storage.columns.password");
     }
     
-    public void setGlobalPasswordHash(String hash)
+    public void setGlobalPassword(String password)
     {
-        plugin.getConfig().set("global-password-hash", hash);
+        plugin.getConfig().set("global-password", password);
     }
     
     public void setWaitingRoomEnabled(boolean status)

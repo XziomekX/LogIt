@@ -1,5 +1,5 @@
 /*
- * SessionCreateEvent.java
+ * SessionEvent.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,25 +16,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event;
+package com.gmail.lucaseasedup.logit.event.session;
 
 import com.gmail.lucaseasedup.logit.Session;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
  * @author LucasEasedUp
  */
-public class SessionCreateEvent extends SessionEvent
+public abstract class SessionEvent extends Event
 {
-    public SessionCreateEvent(String username, Session session)
+    public SessionEvent(String username, Session session)
     {
-        super(username, session);
+        this.username = username.toLowerCase();
+        this.session = session;
     }
     
     @Override
     public HandlerList getHandlers()
     {
         return handlers;
+    }
+
+    public String getUsername()
+    {
+        return username;
+    }
+    
+    public Session getSession()
+    {
+        return session;
     }
     
     public static HandlerList getHandlerList()
@@ -43,4 +55,7 @@ public class SessionCreateEvent extends SessionEvent
     }
     
     private static final HandlerList handlers = new HandlerList();
+    
+    private final String username;
+    private final Session session;
 }

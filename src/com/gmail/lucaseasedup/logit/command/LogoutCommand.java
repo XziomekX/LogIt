@@ -66,16 +66,13 @@ public class LogoutCommand implements CommandExecutor
             }
             if (!core.getSessionManager().isSessionAlive(args[1]))
             {
-                s.sendMessage(getMessage("NOT_LOGGED_IN_OTHERS").replace("%player%", args[1]));
+                s.sendMessage(getMessage("START_SESSION_NOT_OTHERS").replace("%player%", args[1]));
                 return true;
             }
             
-            core.getSessionManager().endSession(getPlayer(args[1]), true);
+            core.getSessionManager().endSession(getPlayer(args[1]));
             
-            if (!core.getConfig().getForceLoginGlobal())
-            {
-                p.sendMessage(getMessage("LOGGED_OUT_OTHERS").replace("%player%", args[1]));
-            }
+            s.sendMessage(getMessage("END_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
             
             return true;
         }
@@ -88,16 +85,16 @@ public class LogoutCommand implements CommandExecutor
             }
             if (!p.hasPermission("logit.logout.self"))
             {
-                s.sendMessage(getMessage("NO_PERMS"));
+                p.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
             if (!core.getSessionManager().isSessionAlive(p))
             {
-                s.sendMessage(getMessage("NOT_LOGGED_IN_SELF"));
+                p.sendMessage(getMessage("START_SESSION_NOT_SELF"));
                 return true;
             }
             
-            core.getSessionManager().endSession(p, true);
+            core.getSessionManager().endSession(p);
             
             return true;
         }

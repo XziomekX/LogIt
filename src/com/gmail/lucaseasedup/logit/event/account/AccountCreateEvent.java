@@ -1,5 +1,5 @@
 /*
- * SessionDestroyEvent.java
+ * AccountRegisterEvent.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,31 +16,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event;
+package com.gmail.lucaseasedup.logit.event.account;
 
-import com.gmail.lucaseasedup.logit.Session;
-import org.bukkit.event.HandlerList;
+import com.gmail.lucaseasedup.logit.GeneralResult;
+import static com.gmail.lucaseasedup.logit.GeneralResult.SUCCESS;
 
 /**
  * @author LucasEasedUp
  */
-public class SessionDestroyEvent extends SessionEvent
+public class AccountCreateEvent extends AccountEvent
 {
-    public SessionDestroyEvent(String username, Session session)
+    public AccountCreateEvent(String username, GeneralResult result)
     {
-        super(username, session);
+        super(username);
+        
+        this.result = result;
     }
     
-    @Override
-    public HandlerList getHandlers()
+    public boolean isSuccessful()
     {
-        return handlers;
+        if (result.equals(SUCCESS))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     
-    public static HandlerList getHandlerList()
-    {
-        return handlers;
-    }
-    
-    private static final HandlerList handlers = new HandlerList();
+    private final GeneralResult result;
 }

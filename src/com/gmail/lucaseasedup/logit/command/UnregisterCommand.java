@@ -59,18 +59,20 @@ public class UnregisterCommand implements CommandExecutor
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
                 return true;
             }
-            if (!core.isPlayerRegistered(args[1]))
+            if (!core.getAccountManager().isAccountCreated(args[1]))
             {
-                s.sendMessage(getMessage("NOT_REGISTERED_OTHERS").replace("%player%", args[1]));
+                s.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS").replace("%player%", args[1]));
+                return true;
+            }
+            if (p != null && p.getName().equalsIgnoreCase(args[1]))
+            {
+                s.sendMessage(getMessage("REMOVE_ACCOUNT_INDIRECT_SELF"));
                 return true;
             }
             
-            core.unregisterPlayer(args[1], true);
+            core.getAccountManager().removeAccount(args[1]);
             
-            if (p != null && !core.getConfig().getForceLoginGlobal())
-            {
-                p.sendMessage(getMessage("UNREGISTERED_OTHERS").replace("%player%", args[1]));
-            }
+            s.sendMessage(getMessage("REMOVE_ACCOUNT_SUCCESS_OTHERS").replace("%player%", args[1]));
             
             return true;
         }
@@ -83,27 +85,27 @@ public class UnregisterCommand implements CommandExecutor
             }
             if (!p.hasPermission("logit.unregister.self"))
             {
-                s.sendMessage(getMessage("NO_PERMS"));
+                p.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
             if (args.length < 1)
             {
-                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+                p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
                 return true;
             }
-            if (!core.isPlayerRegistered(p))
+            if (!core.getAccountManager().isAccountCreated(p.getName()))
             {
-                s.sendMessage(getMessage("NOT_REGISTERED_SELF"));
+                p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
                 return true;
             }
-            if (!core.checkPlayerPassword(p.getName(), args[0]))
+            if (!core.getAccountManager().checkAccountPassword(p.getName(), args[0]))
             {
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
                 return true;
             }
             
-            core.getSessionManager().endSession(p, true);
-            core.unregisterPlayer(p.getName(), true);
+            core.getSessionManager().endSession(p);
+            core.getAccountManager().removeAccount(p.getName());
             
             return true;
         }

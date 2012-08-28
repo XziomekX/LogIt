@@ -23,7 +23,7 @@ import java.sql.*;
 /**
  * @author LucasEasedUp
  */
-public class MySqlDatabase implements Database
+public class MySqlDatabase implements Database, AutoCloseable
 {
     @Override
     public void connect(String host, String user, String password, String database) throws SQLException

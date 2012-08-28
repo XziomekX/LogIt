@@ -23,8 +23,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 
@@ -48,7 +46,12 @@ public class ServerEventListener implements Listener
         
         for (Player player : players)
         {
-            Bukkit.getServer().getPluginManager().callEvent(new PlayerJoinEvent(player, null));
+            core.getSessionManager().createSession(player);
+            
+            if (core.isPlayerForcedToLogin(player))
+            {
+                core.sendForceLoginMessage(player);
+            }
         }
     }
     
@@ -62,8 +65,8 @@ public class ServerEventListener implements Listener
         
         for (Player player : players)
         {
+            core.getWaitingRoom().remove(player);
             core.getSessionManager().destroySession(player);
-            Bukkit.getServer().getPluginManager().callEvent(new PlayerQuitEvent(player, null));
         }
     }
     

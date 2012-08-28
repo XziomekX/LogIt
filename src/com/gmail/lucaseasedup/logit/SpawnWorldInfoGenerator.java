@@ -32,25 +32,30 @@ public class SpawnWorldInfoGenerator
 {
     private SpawnWorldInfoGenerator()
     {
-        core = LogItCore.getInstance();
     }
     
     public String generate(Player player)
     {
-        if (!core.getConfig().getShowSpawnWorldInfo())
+        if (!LogItCore.getInstance().getConfig().getShowSpawnWorldInfo())
+        {
             return "";
+        }
         
         return " " + getMessage("IN_WORLD").replace("%world%", getWorldAlias(player.getWorld()));
     }
     
     protected String getWorldAlias(World world)
     {
-        Plugin p = Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
+        Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
         
-        if (p == null)
+        if (plugin == null)
+        {
             return world.getName();
-        
-        return ((MultiverseCore) p).getMVWorldManager().getMVWorld(world).getAlias();
+        }
+        else
+        {
+            return ((MultiverseCore) plugin).getMVWorldManager().getMVWorld(world).getAlias();
+        }
     }
     
     public static SpawnWorldInfoGenerator getInstance()
@@ -62,6 +67,4 @@ public class SpawnWorldInfoGenerator
     {
         private static final SpawnWorldInfoGenerator INSTANCE = new SpawnWorldInfoGenerator();
     }
-    
-    private final LogItCore core;
 }

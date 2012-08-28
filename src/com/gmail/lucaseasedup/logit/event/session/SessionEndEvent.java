@@ -1,5 +1,5 @@
 /*
- * SessionStartEvent.java
+ * SessionEndEvent.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,31 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event;
+package com.gmail.lucaseasedup.logit.event.session;
 
 import com.gmail.lucaseasedup.logit.Session;
-import org.bukkit.event.HandlerList;
 
 /**
  * @author LucasEasedUp
  */
-public class SessionStartEvent extends SessionEvent
+public class SessionEndEvent extends SessionEvent
 {
-    public SessionStartEvent(String username, Session session)
+    public SessionEndEvent(String username, Session session)
     {
         super(username, session);
     }
-    
-    @Override
-    public HandlerList getHandlers()
-    {
-        return handlers;
-    }
-    
-    public static HandlerList getHandlerList()
-    {
-        return handlers;
-    }
-    
-    private static final HandlerList handlers = new HandlerList();
 }
