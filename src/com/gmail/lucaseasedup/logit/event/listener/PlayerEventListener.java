@@ -25,7 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import static org.bukkit.event.EventPriority.HIGHEST;
+import static org.bukkit.event.EventPriority.*;
 import org.bukkit.event.Listener;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
 import org.bukkit.event.player.*;
@@ -40,7 +40,7 @@ public class PlayerEventListener implements Listener
         this.core = core;
     }
     
-    @EventHandler
+    @EventHandler(priority = LOWEST)
     private void onLogin(PlayerLoginEvent event)
     {
         Player player = event.getPlayer();
@@ -84,16 +84,16 @@ public class PlayerEventListener implements Listener
         
         event.setJoinMessage(null);
         
+        if (core.getSessionManager().getSession(player) == null)
+        {
+            core.getSessionManager().createSession(player);
+        }
+        
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(core.getPlugin(), new Runnable()
         {
             @Override
             public void run()
             {
-                if (core.getSessionManager().getSession(player) == null)
-                {
-                    core.getSessionManager().createSession(player);
-                }
-                
                 if (core.getSessionManager().isSessionAlive(player) || !core.getConfig().getForceLoginGlobal()
                         || player.hasPermission("logit.login.exempt"))
                 {

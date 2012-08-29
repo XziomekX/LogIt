@@ -71,6 +71,7 @@ public class LogItConfiguration
         plugin.getConfig().set("global-password",                       plugin.getConfig().getString("global-password", ""));
         plugin.getConfig().set("login-fails-to-kick",                   plugin.getConfig().getInt("login-fails-to-kick", 3));
         plugin.getConfig().set("kick-unregistered",                     plugin.getConfig().getBoolean("kick-unregistered", false));
+        plugin.getConfig().set("accounts-per-ip",                       plugin.getConfig().getInt("accounts-per-ip", 3));
         plugin.getConfig().set("hashing-algorithm",                     plugin.getConfig().getString("hashing-algorithm", "md5"));
         plugin.getConfig().set("session-lifetime",                      plugin.getConfig().getInt("session-lifetime", 0));
         plugin.getConfig().set("show-spawn-world-info",                 plugin.getConfig().getBoolean("show-spawn-world-info", true));
@@ -90,6 +91,7 @@ public class LogItConfiguration
         plugin.getConfig().set("storage.table",                         plugin.getConfig().getString("storage.table", "logit"));
         plugin.getConfig().set("storage.columns.username",              plugin.getConfig().getString("storage.columns.username", "username"));
         plugin.getConfig().set("storage.columns.password",              plugin.getConfig().getString("storage.columns.password", "password"));
+        plugin.getConfig().set("storage.columns.ip",                    plugin.getConfig().getString("storage.columns.ip", "ip"));
         
         plugin.saveConfig();
     }
@@ -279,6 +281,11 @@ public class LogItConfiguration
         return plugin.getConfig().getBoolean("kick-unregistered");
     }
     
+    public int getAccountsPerIp()
+    {
+        return plugin.getConfig().getInt("accounts-per-ip");
+    }
+    
     public HashingAlgorithm getHashingAlgorithm()
     {
         String s = plugin.getConfig().getString("hashing-algorithm");
@@ -316,7 +323,9 @@ public class LogItConfiguration
             return HashingAlgorithm.WHIRLPOOL;
         }
         else
+        {
             return HashingAlgorithm.UNKNOWN;
+        }
     }
     
     public int getSessionLifetime()
@@ -336,12 +345,12 @@ public class LogItConfiguration
     
     public Location getWaitingRoomLocation()
     {
-        World world = Bukkit.getServer().getWorld(plugin.getConfig().getString("waiting-room.location.world"));
+        World  world = Bukkit.getServer().getWorld(plugin.getConfig().getString("waiting-room.location.world"));
         double x = plugin.getConfig().getDouble("waiting-room.location.x");
         double y = plugin.getConfig().getDouble("waiting-room.location.y");
         double z = plugin.getConfig().getDouble("waiting-room.location.z");
-        float yaw = (float) plugin.getConfig().getDouble("waiting-room.location.yaw");
-        float pitch = (float) plugin.getConfig().getDouble("waiting-room.location.pitch");
+        float  yaw = (float) plugin.getConfig().getDouble("waiting-room.location.yaw");
+        float  pitch = (float) plugin.getConfig().getDouble("waiting-room.location.pitch");
         
         return new Location(world, x, y, z, yaw, pitch);
     }
@@ -389,7 +398,9 @@ public class LogItConfiguration
             return StorageType.MYSQL;
         }
         else
+        {
             return StorageType.UNKNOWN;
+        }
     }
     
     public String getStorageSqliteFilename()
@@ -430,6 +441,11 @@ public class LogItConfiguration
     public String getStorageColumnsPassword()
     {
         return plugin.getConfig().getString("storage.columns.password");
+    }
+    
+    public String getStorageColumnsIp()
+    {
+        return plugin.getConfig().getString("storage.columns.ip");
     }
     
     public void setGlobalPassword(String password)

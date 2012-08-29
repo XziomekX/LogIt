@@ -104,12 +104,12 @@ public class RegisterCommand implements CommandExecutor
             }
             if (args.length < 1)
             {
-                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+                p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
                 return true;
             }
             if (args.length < 2)
             {
-                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
+                p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
                 return true;
             }
             if (core.getAccountManager().isAccountCreated(p.getName()))
@@ -119,26 +119,36 @@ public class RegisterCommand implements CommandExecutor
             }
             if (args[0].length() < core.getConfig().getPasswordMinLength())
             {
-                s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
+                p.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
                         String.valueOf(core.getConfig().getPasswordMinLength())));
                 
                 return true;
             }
             if (args[0].length() > core.getConfig().getPasswordMaxLength())
             {
-                s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
+                p.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
                         String.valueOf(core.getConfig().getPasswordMaxLength())));
                 
                 return true;
             }
             if (!args[0].equals(args[1]))
             {
-                s.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
+                p.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
                 return true;
             }
             
-            core.getAccountManager().createAccount(p.getName(), args[0]);
-            core.getSessionManager().startSession(p);
+            String ip = p.getAddress().getAddress().getHostAddress();
+            
+            if (core.getAccountManager().countAccountsPerIp(ip) >= core.getConfig().getAccountsPerIp())
+            {
+                p.sendMessage(getMessage("ACCOUNTS_PER_IP_LIMIT"));
+            }
+            else
+            {
+                core.getAccountManager().createAccount(p.getName(), args[0]);
+                core.getAccountManager().attachIp(p.getName(), ip);
+                core.getSessionManager().startSession(p);
+            }
             
             return true;
         }

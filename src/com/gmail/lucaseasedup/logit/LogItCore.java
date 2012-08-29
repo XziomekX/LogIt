@@ -118,7 +118,8 @@ public final class LogItCore
         try
         {
             database.create(config.getStorageTable(), config.getStorageColumnsUsername() + " varchar(16) NOT NULL, "
-                    + config.getStorageColumnsPassword() + " varchar(256) NOT NULL");
+                    + config.getStorageColumnsPassword() + " varchar(256) NOT NULL, "
+                    + config.getStorageColumnsIp() + " varchar(64) NOT NULL");
         }
         catch (SQLException ex)
         {
@@ -132,6 +133,7 @@ public final class LogItCore
         accountManager = new AccountManager(this);
         accountManager.loadAccounts();
         
+        // Schedule tasks.
         pingerTaskId          = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, pinger, 0L, 2400L);
         sessionManagerTaskId  = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, sessionManager, 0L, 20L);
         tickEventCallerTaskId = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, tickEventCaller, 0L, 1L);
@@ -146,6 +148,7 @@ public final class LogItCore
         
         try
         {
+            // Disconnect from the database.
             database.close();
         }
         catch (SQLException ex)
@@ -153,6 +156,7 @@ public final class LogItCore
             log(WARNING, getMessage("DB_CLOSE_FAIL"));
         }
         
+        // Cancel tasks.
         plugin.getServer().getScheduler().cancelTask(pingerTaskId);
         plugin.getServer().getScheduler().cancelTask(sessionManagerTaskId);
         plugin.getServer().getScheduler().cancelTask(tickEventCallerTaskId);
@@ -168,6 +172,11 @@ public final class LogItCore
         log(INFO, getMessage("RELOADED"));
     }
     
+    /**
+     * Changes the global password.
+     * 
+     * @param password New global password;
+     */
     public void changeGlobalPassword(String password)
     {
         config.setGlobalPassword(hash(password));
@@ -228,40 +237,45 @@ public final class LogItCore
      */
     public String hash(String string)
     {
-        if (config.getHashingAlgorithm().equals(PLAIN))
+        switch (config.getHashingAlgorithm())
         {
-            return string;
+            case PLAIN:
+            {
+                return string;
+            }
+            case MD2:
+            {
+                return getMd2(string);
+            }
+            case MD5:
+            {
+                return getMd5(string);
+            }
+            case SHA1:
+            {
+                return getSha1(string);
+            }
+            case SHA256:
+            {
+                return getSha256(string);
+            }
+            case SHA384:
+            {
+                return getSha384(string);
+            }
+            case SHA512:
+            {
+                return getSha512(string);
+            }
+            case WHIRLPOOL:
+            {
+                return getWhirlpool(string);
+            }
+            default:
+            {
+                return null;
+            }
         }
-        if (config.getHashingAlgorithm().equals(MD2))
-        {
-            return getMd2(string);
-        }
-        else if (config.getHashingAlgorithm().equals(MD5))
-        {
-            return getMd5(string);
-        }
-        else if (config.getHashingAlgorithm().equals(SHA1))
-        {
-            return getSha1(string);
-        }
-        else if (config.getHashingAlgorithm().equals(SHA256))
-        {
-            return getSha256(string);
-        }
-        else if (config.getHashingAlgorithm().equals(SHA384))
-        {
-            return getSha384(string);
-        }
-        else if (config.getHashingAlgorithm().equals(SHA512))
-        {
-            return getSha512(string);
-        }
-        else if (config.getHashingAlgorithm().equals(WHIRLPOOL))
-        {
-            return getWhirlpool(string);
-        }
-        else
-            return null;
     }
     
     /**

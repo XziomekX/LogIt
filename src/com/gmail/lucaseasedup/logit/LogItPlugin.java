@@ -84,16 +84,19 @@ public final class LogItPlugin extends JavaPlugin
      */
     private void loadMessages() throws IOException
     {
-        String suffix = "_" + getConfig().getString("locale", "en");
-        
-        JarFile jarFile = new JarFile(getFile());
+        String   suffix = "_" + getConfig().getString("locale", "en");
+        JarFile  jarFile = new JarFile(getFile());
         JarEntry jarEntry = jarFile.getJarEntry("messages" + suffix + ".properties");
         
         if (jarEntry == null)
+        {
             jarEntry = jarFile.getJarEntry("messages.properties");
+        }
         
         if (jarEntry == null)
+        {
             throw new FileNotFoundException();
+        }
         
         prb = new PropertyResourceBundle(new InputStreamReader(jarFile.getInputStream(jarEntry), "UTF-8"));
     }

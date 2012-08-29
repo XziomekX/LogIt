@@ -22,7 +22,6 @@ import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import java.sql.SQLException;
 import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.WARNING;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

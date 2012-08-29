@@ -24,6 +24,7 @@ import com.gmail.lucaseasedup.logit.event.session.SessionDestroyEvent;
 import com.gmail.lucaseasedup.logit.event.session.SessionEndEvent;
 import com.gmail.lucaseasedup.logit.event.session.SessionStartEvent;
 import java.util.HashMap;
+import java.util.Iterator;
 import static java.util.logging.Level.FINE;
 import org.bukkit.entity.Player;
 
@@ -40,10 +41,11 @@ public class SessionManager implements Runnable
     @Override
     public void run()
     {
-        long forceLoginTimeoutTicks = (core.getConfig().getForceLoginTimeout() > 0L) ? core.getConfig().getForceLoginTimeout() * -20L : 0L;
+        long forceLoginTimeoutTicks = (core.getConfig().getForceLoginTimeout() > 0L) ? (core.getConfig().getForceLoginTimeout() * -20L) : 0L;
         
-        for (String username : sessions.keySet())
+        for (Iterator<String> it = sessions.keySet().iterator(); it.hasNext();)
         {
+            String  username = it.next();
             Session session = sessions.get(username);
             Player  player = getPlayer(username);
             
@@ -94,6 +96,12 @@ public class SessionManager implements Runnable
         return getSession(player.getName());
     }
     
+    /**
+     * Checks if the session of a player with the specified player is alive.
+     * 
+     * @param username Username.
+     * @return True, if alive.
+     */
     public boolean isSessionAlive(String username)
     {
         Session session = getSession(username);
@@ -101,11 +109,22 @@ public class SessionManager implements Runnable
         return (session != null) ? session.isAlive() : false;
     }
     
+    /**
+     * Checks if the session of the specified player is alive.
+     * 
+     * @param player Player.
+     * @return True, if alive.
+     */
     public boolean isSessionAlive(Player player)
     {
         return isSessionAlive(player.getName());
     }
     
+    /**
+     * Creates a session for a player with the specified username.
+     * 
+     * @param username Username.
+     */
     public void createSession(String username)
     {
         Session session = new Session();
@@ -118,11 +137,21 @@ public class SessionManager implements Runnable
         core.callEvent(new SessionCreateEvent(username, session));
     }
     
+    /**
+     * Creates a session for the specified player.
+     * 
+     * @param player Player
+     */
     public void createSession(Player player)
     {
         createSession(player.getName());
     }
     
+    /**
+     * Destroys session belonging to a player with the specified username.
+     * 
+     * @param username Username.
+     */
     public void destroySession(String username)
     {
         Session session = sessions.remove(username.toLowerCase());
@@ -134,11 +163,21 @@ public class SessionManager implements Runnable
         core.callEvent(new SessionDestroyEvent(username, session));
     }
     
+    /**
+     * Destroys session belonging to the specified player.
+     * 
+     * @param player Player.
+     */
     public void destroySession(Player player)
     {
         destroySession(player.getName());
     }
     
+    /**
+     * Starts the session of a player with the specified username.
+     * 
+     * @param username Username.
+     */
     public void startSession(String username)
     {
         Session session = getSession(username);
@@ -151,11 +190,21 @@ public class SessionManager implements Runnable
         core.callEvent(new SessionStartEvent(username, session));
     }
     
+    /**
+     * Starts the session of the specified player.
+     * 
+     * @param player Player.
+     */
     public void startSession(Player player)
     {
         startSession(player.getName());
     }
     
+    /**
+     * Ends the session of a player with the specified username.
+     * 
+     * @param username Username.
+     */
     public void endSession(String username)
     {
         Session session = getSession(username);
@@ -168,6 +217,11 @@ public class SessionManager implements Runnable
         core.callEvent(new SessionEndEvent(username, session));
     }
     
+    /**
+     * Ends the session of the specified player.
+     * 
+     * @param player Player.
+     */
     public void endSession(Player player)
     {
         endSession(player.getName());

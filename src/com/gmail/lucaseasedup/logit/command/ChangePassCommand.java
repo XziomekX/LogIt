@@ -85,7 +85,6 @@ public class ChangePassCommand implements CommandExecutor
             }
             
             core.getAccountManager().changeAccountPassword(args[1], args[2]);
-            core.getAccountManager().saveAccounts();
             
             s.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_OTHERS").replace("%player%", args[1]));
             
@@ -149,7 +148,6 @@ public class ChangePassCommand implements CommandExecutor
             }
             
             core.getAccountManager().changeAccountPassword(p.getName(), args[1]);
-            core.getAccountManager().saveAccounts();
             
             return true;
         }

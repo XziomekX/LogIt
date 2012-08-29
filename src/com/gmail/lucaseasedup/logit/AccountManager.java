@@ -18,10 +18,8 @@
  */
 package com.gmail.lucaseasedup.logit;
 
-import static com.gmail.lucaseasedup.logit.GeneralResult.FAILURE;
-import static com.gmail.lucaseasedup.logit.GeneralResult.SUCCESS;
-import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
-import static com.gmail.lucaseasedup.logit.LogItPlugin.sendMessage;
+import static com.gmail.lucaseasedup.logit.GeneralResult.*;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
 import com.gmail.lucaseasedup.logit.db.Database;
 import com.gmail.lucaseasedup.logit.event.account.AccountChangePasswordEvent;
 import com.gmail.lucaseasedup.logit.event.account.AccountCreateEvent;
@@ -38,18 +36,31 @@ public class AccountManager
 {
     public AccountManager(LogItCore core)
     {
-        this.core = core;
-        this.database = core.getDatabase();
-        this.storageTable = core.getConfig().getStorageTable();
-        this.storageColumnsUsername = core.getConfig().getStorageColumnsUsername();
-        this.storageColumnsPassword = core.getConfig().getStorageColumnsPassword();
+        this.core           = core;
+        this.database       = core.getDatabase();
+        this.table          = core.getConfig().getStorageTable();
+        this.columnUsername = core.getConfig().getStorageColumnsUsername();
+        this.columnPassword = core.getConfig().getStorageColumnsPassword();
+        this.columnIp       = core.getConfig().getStorageColumnsIp();
     }
     
+    /**
+     * Checks if an account with the specified username is created.
+     * 
+     * @param username Username.
+     * @return True, if an account exists.
+     */
     public boolean isAccountCreated(String username)
     {
         return passwords.containsKey(username.toLowerCase());
     }
     
+    /**
+     * Creates a new account with the given username and password.
+     * 
+     * @param username Username.
+     * @param password Password.
+     */
     public void createAccount(String username, String password)
     {
         if (passwords.containsKey(username.toLowerCase()))
@@ -59,9 +70,11 @@ public class AccountManager
         
         try
         {
+            // Hash the given password.
             String hash = core.hash(password);
             
-            database.insert(storageTable, "\"" + username.toLowerCase() + "\", \"" + hash + "\"");
+            // Create account.
+            database.insert(table, "\"" + username.toLowerCase() + "\", \"" + hash + "\", \"\"");
             passwords.put(username.toLowerCase(), hash);
             
             // Notify about the account creation.
@@ -82,6 +95,11 @@ public class AccountManager
         }
     }
     
+    /**
+     * Removes an account with the specified username.
+     * 
+     * @param username Username.
+     */
     public void removeAccount(String username)
     {
         if (!passwords.containsKey(username.toLowerCase()))
@@ -91,7 +109,8 @@ public class AccountManager
         
         try
         {
-            database.delete(storageTable, storageColumnsUsername + " = \"" + username.toLowerCase() + "\"");
+            // Remove account.
+            database.delete(table, columnUsername + " = \"" + username.toLowerCase() + "\"");
             passwords.remove(username.toLowerCase());
             
             // Notify about the account removal.
@@ -117,6 +136,12 @@ public class AccountManager
         return passwords.get(username.toLowerCase()).equals(core.hash(password));
     }
     
+    /**
+     * Changes password of an account with the specified username.
+     * 
+     * @param username Username.
+     * @param password New password.
+     */
     public void changeAccountPassword(String username, String password)
     {
         if (!passwords.containsKey(username.toLowerCase()))
@@ -124,23 +149,87 @@ public class AccountManager
             throw new RuntimeException("Account does not exist.");
         }
         
-        passwords.put(username.toLowerCase(), core.hash(password));
+        String hash = core.hash(password);
         
-        // Notify about the password change.
-        sendMessage(username, getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
-        core.log(FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
+        try
+        {
+            // Change password.
+            database.update(table, columnPassword + " = \"" + hash + "\"", columnUsername + " = \"" + username.toLowerCase() + "\"");
+            passwords.put(username.toLowerCase(), hash);
         
-        // Call the appropriate event.
-        core.callEvent(new AccountChangePasswordEvent(username));
+            // Notify about the password change.
+            sendMessage(username, getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
+            core.log(FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
+        
+            // Call the appropriate event.
+            core.callEvent(new AccountChangePasswordEvent(username, SUCCESS));
+        }
+        catch (SQLException ex)
+        {
+            // Notify about the failure.
+            sendMessage(username, getMessage("CHANGE_PASSWORD_FAIL_SELF"));
+            core.log(FINE, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username));
+            
+            // Call the appropriate event.
+            core.callEvent(new AccountChangePasswordEvent(username, FAILURE));
+        }
     }
     
+    /**
+     * Attaches IP address to an account with the specified username.
+     * 
+     * @param username Username.
+     * @param ip IP address.
+     */
+    public void attachIp(String username, String ip)
+    {
+        if (!passwords.containsKey(username.toLowerCase()))
+        {
+            throw new RuntimeException("Account does not exist.");
+        }
+        
+        try
+        {
+            // Attach the given ip.
+            database.update(table, columnIp + " = \"" + ip + "\"", columnUsername + " = \"" + username.toLowerCase() + "\"");
+            ips.put(username.toLowerCase(), ip);
+        }
+        catch (SQLException ex)
+        {
+        }
+    }
+    
+    public int countAccountsPerIp(String ip)
+    {
+        int counter = 0;
+        
+        for (String s : ips.values())
+        {
+            if (s.equals(ip))
+            {
+                counter++;
+            }
+        }
+        
+        return counter;
+    }
+    
+    /**
+     * Purges the database from accounts.
+     * 
+     * @throws SQLException Thrown, if database truncation failed.
+     */
     public void purge() throws SQLException
     {
         try
         {
-            database.truncate(storageTable);
+            // Clear the database.
+            database.truncate(table);
+            
+            // Clear the local hash map.
             passwords.clear();
             
+            // Notify about purging.
             core.log(INFO, getMessage("PURGE_SUCCESS"));
         }
         catch (SQLException ex)
@@ -148,22 +237,26 @@ public class AccountManager
             // Log failure.
             core.log(WARNING, getMessage("PURGE_FAIL"));
             
-            // Pass the exception out of this scope.
+            // Pass the exception off this scope.
             throw ex;
         }
     }
     
+    /**
+     * Loads accounts from the database.
+     */
     public void loadAccounts()
     {
         passwords.clear();
         
-        try (ResultSet rs = database.select(storageTable, "*"))
+        try (ResultSet rs = database.select(table, "*"))
         {
             assert rs.getMetaData().getColumnCount() == 1;
-
+            
             while (rs.next())
             {
-                passwords.put(rs.getString(storageColumnsUsername), rs.getString(storageColumnsPassword));
+                passwords.put(rs.getString(columnUsername), rs.getString(columnPassword));
+                ips.put(rs.getString(columnUsername), rs.getString(columnIp));
             }
         }
         catch (SQLException ex)
@@ -172,27 +265,13 @@ public class AccountManager
         }
     }
     
-    public void saveAccounts()
-    {
-        try
-        {
-            for (String username : passwords.keySet())
-            {
-                database.update(storageTable, storageColumnsPassword + " = \"" + passwords.get(username) + "\"",
-                        storageColumnsUsername + " = \"" + username + "\"");
-            }
-        }
-        catch (SQLException ex)
-        {
-            core.log(WARNING, getMessage("SAVE_ACCOUNTS_FAIL"));
-        }
-    }
-    
     private final LogItCore core;
     private final Database database;
-    private final String storageTable;
-    private final String storageColumnsUsername;
-    private final String storageColumnsPassword;
+    private final String table;
+    private final String columnUsername;
+    private final String columnPassword;
+    private final String columnIp;
     
     private final HashMap<String, String> passwords = new HashMap<>();
+    private final HashMap<String, String> ips = new HashMap<>();
 }
