@@ -21,6 +21,7 @@ package com.gmail.lucaseasedup.logit.event.listener;
 import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
 import com.gmail.lucaseasedup.logit.SpawnWorldInfoGenerator;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -194,11 +195,29 @@ public class PlayerEventListener implements Listener
         if (!core.getConfig().getForceLoginPreventCommandPreprocess())
             return;
         
-        String message = event.getMessage();
+        String       message = event.getMessage();
+        List<String> loginAliases = core.getPlugin().getCommand("login").getAliases();
+        List<String> registerAliases = core.getPlugin().getCommand("register").getAliases();
         
         if (message.startsWith("/login ") || message.startsWith("/register "))
         {
             return;
+        }
+        
+        for (String alias : loginAliases)
+        {
+            if (message.startsWith("/" + alias + " "))
+            {
+                return;
+            }
+        }
+        
+        for (String alias : registerAliases)
+        {
+            if (message.startsWith("/" + alias + " "))
+            {
+                return;
+            }
         }
         
         for (String command : core.getConfig().getForceLoginAllowedCommands())

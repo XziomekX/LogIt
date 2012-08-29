@@ -63,7 +63,7 @@ public class AccountManager
      */
     public void createAccount(String username, String password)
     {
-        if (passwords.containsKey(username.toLowerCase()))
+        if (isAccountCreated(username))
         {
             throw new RuntimeException("Account already exists.");
         }
@@ -76,6 +76,7 @@ public class AccountManager
             // Create account.
             database.insert(table, "\"" + username.toLowerCase() + "\", \"" + hash + "\", \"\"");
             passwords.put(username.toLowerCase(), hash);
+            ips.put(username.toLowerCase(), "");
             
             // Notify about the account creation.
             sendMessage(username, getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
@@ -102,7 +103,7 @@ public class AccountManager
      */
     public void removeAccount(String username)
     {
-        if (!passwords.containsKey(username.toLowerCase()))
+        if (!isAccountCreated(username))
         {
             throw new RuntimeException("Account does not exist.");
         }
@@ -112,6 +113,7 @@ public class AccountManager
             // Remove account.
             database.delete(table, columnUsername + " = \"" + username.toLowerCase() + "\"");
             passwords.remove(username.toLowerCase());
+            ips.remove(username.toLowerCase());
             
             // Notify about the account removal.
             sendMessage(username, getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
@@ -133,6 +135,11 @@ public class AccountManager
     
     public boolean checkAccountPassword(String username, String password)
     {
+        if (!isAccountCreated(username))
+        {
+            throw new RuntimeException("Account does not exist.");
+        }
+        
         return passwords.get(username.toLowerCase()).equals(core.hash(password));
     }
     
@@ -144,7 +151,7 @@ public class AccountManager
      */
     public void changeAccountPassword(String username, String password)
     {
-        if (!passwords.containsKey(username.toLowerCase()))
+        if (!isAccountCreated(username))
         {
             throw new RuntimeException("Account does not exist.");
         }
@@ -183,7 +190,7 @@ public class AccountManager
      */
     public void attachIp(String username, String ip)
     {
-        if (!passwords.containsKey(username.toLowerCase()))
+        if (!isAccountCreated(username))
         {
             throw new RuntimeException("Account does not exist.");
         }
@@ -199,6 +206,12 @@ public class AccountManager
         }
     }
     
+    /**
+     * Returns number of accounts with the given IP.
+     * 
+     * @param ip IP address.
+     * @return Number of accounts with the given IP.
+     */
     public int countAccountsPerIp(String ip)
     {
         int counter = 0;
@@ -226,8 +239,9 @@ public class AccountManager
             // Clear the database.
             database.truncate(table);
             
-            // Clear the local hash map.
+            // Clear the local hash maps.
             passwords.clear();
+            ips.clear();
             
             // Notify about purging.
             core.log(INFO, getMessage("PURGE_SUCCESS"));
@@ -247,7 +261,9 @@ public class AccountManager
      */
     public void loadAccounts()
     {
+        // Clear the local hash maps.
         passwords.clear();
+        ips.clear();
         
         try (ResultSet rs = database.select(table, "*"))
         {
@@ -261,6 +277,7 @@ public class AccountManager
         }
         catch (SQLException ex)
         {
+            // Log failure.
             core.log(WARNING, getMessage("LOAD_ACCOUNTS_FAIL"));
         }
     }
