@@ -82,13 +82,14 @@ public class PlayerEventListener implements Listener
     @EventHandler(priority = HIGHEST)
     private void onJoin(PlayerJoinEvent event)
     {
-        final Player player = event.getPlayer();
+        final Player player   = event.getPlayer();
+        final String username = player.getName();
         
         event.setJoinMessage(null);
         
-        if (core.getSessionManager().getSession(player.getName()) == null)
+        if (core.getSessionManager().getSession(username) == null)
         {
-            core.getSessionManager().createSession(player);
+            core.getSessionManager().createSession(username);
         }
         
         Bukkit.getScheduler().scheduleSyncDelayedTask(core.getPlugin(), new Runnable()
@@ -96,18 +97,17 @@ public class PlayerEventListener implements Listener
             @Override
             public void run()
             {
-                if (core.getSessionManager().isSessionAlive(player) || !core.getConfig().getForceLoginGlobal()
+                if (core.getSessionManager().isSessionAlive(username) || !core.getConfig().getForceLoginGlobal()
                         || player.hasPermission("logit.login.exempt"))
                 {
-                    broadcastMessage(getMessage("JOIN").replace("%player%", player.getName()) + SpawnWorldInfoGenerator.generate(player),
-                            player);
+                    broadcastMessage(getMessage("JOIN").replace("%player%", username) + SpawnWorldInfoGenerator.generate(player), player);
                 }
-                else if (core.getConfig().getForceLoginGlobal() && core.getConfig().getWaitingRoomEnabled())
+                else if (core.getConfig().getForceLoginGlobal() && core.getConfig().isWaitingRoomEnabled())
                 {
                     core.getWaitingRoom().put(player);
                 }
                 
-                if (core.isPlayerForcedToLogin(player) && !core.getSessionManager().isSessionAlive(player))
+                if (core.isPlayerForcedToLogin(player) && !core.getSessionManager().isSessionAlive(username))
                 {
                     core.sendForceLoginMessage(player);
                 }
@@ -143,11 +143,11 @@ public class PlayerEventListener implements Listener
     @EventHandler
     private void onMove(PlayerMoveEvent event)
     {
-        Player player = event.getPlayer();
-        
         if (!core.getConfig().getForceLoginPreventMove())
             return;
         
+        Player player = event.getPlayer();
+
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
             event.setTo(event.getFrom());
@@ -157,10 +157,10 @@ public class PlayerEventListener implements Listener
     @EventHandler
     private void onToggleSneak(PlayerToggleSneakEvent event)
     {
-        Player player = event.getPlayer();
-        
         if (!core.getConfig().getForceLoginPreventToggleSneak())
             return;
+        
+        Player player = event.getPlayer();
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
@@ -171,10 +171,10 @@ public class PlayerEventListener implements Listener
     @EventHandler
     private void onChat(AsyncPlayerChatEvent event)
     {
-        Player player = event.getPlayer();
-        
         if (!core.getConfig().getForceLoginPreventChat())
             return;
+        
+        Player player = event.getPlayer();
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
@@ -193,11 +193,13 @@ public class PlayerEventListener implements Listener
         List<String> loginAliases = core.getPlugin().getCommand("login").getAliases();
         List<String> registerAliases = core.getPlugin().getCommand("register").getAliases();
         
+        // Check if the sent command starts with "/login" or "/register".
         if (message.startsWith("/login ") || message.startsWith("/register "))
         {
             return;
         }
         
+        // Check if the sent command starts with any of "/login" aliases.
         for (String alias : loginAliases)
         {
             if (message.startsWith("/" + alias + " "))
@@ -206,6 +208,7 @@ public class PlayerEventListener implements Listener
             }
         }
         
+        // Check if the sent command starts with any of "/register" aliases.
         for (String alias : registerAliases)
         {
             if (message.startsWith("/" + alias + " "))
@@ -214,6 +217,7 @@ public class PlayerEventListener implements Listener
             }
         }
         
+        // Check if the sent command is one of the allowed in the config.
         for (String command : core.getConfig().getForceLoginAllowedCommands())
         {
             if (message.equalsIgnoreCase("/" + command) || message.startsWith("/" + command + " "))
@@ -234,17 +238,18 @@ public class PlayerEventListener implements Listener
     @EventHandler
     private void onInteract(PlayerInteractEvent event)
     {
-        Player player = event.getPlayer();
-        
         if (!core.getConfig().getForceLoginPreventInteract())
             return;
+        
+        Player player = event.getPlayer();
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
             
-            // Check if not on a pressure plate to prevent spamming.
             Block clickedBlock = event.getClickedBlock();
+            
+            // Check if not on a pressure plate to prevent spamming.
             if (clickedBlock == null || (clickedBlock.getTypeId() != 70 && clickedBlock.getTypeId() != 72))
             {
                 core.sendForceLoginMessage(player);
@@ -255,10 +260,10 @@ public class PlayerEventListener implements Listener
     @EventHandler
     private void onInteractEntity(PlayerInteractEntityEvent event)
     {
-        Player player = event.getPlayer();
-        
         if (!core.getConfig().getForceLoginPreventInteractEntity())
             return;
+        
+        Player player = event.getPlayer();
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
@@ -270,10 +275,10 @@ public class PlayerEventListener implements Listener
     @EventHandler
     private void onPickupItem(PlayerPickupItemEvent event)
     {
-        Player player = event.getPlayer();
-        
         if (!core.getConfig().getForceLoginPreventPickupItem())
             return;
+        
+        Player player = event.getPlayer();
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
@@ -284,10 +289,10 @@ public class PlayerEventListener implements Listener
     @EventHandler
     private void onDropItem(PlayerDropItemEvent event)
     {
-        Player player = event.getPlayer();
-        
         if (!core.getConfig().getForceLoginPreventDropItem())
             return;
+        
+        Player player = event.getPlayer();
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {

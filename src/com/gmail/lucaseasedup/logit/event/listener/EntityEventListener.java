@@ -40,13 +40,10 @@ public class EntityEventListener implements Listener
     @EventHandler
     private void onDamageIn(EntityDamageEvent event)
     {
-        if (!(event.getEntity() instanceof Player))
+        if (!core.getConfig().getForceLoginPreventDamageIn() || !(event.getEntity() instanceof Player))
             return;
         
         Player player = (Player) event.getEntity();
-        
-        if (!core.getConfig().getForceLoginPreventDamageIn())
-            return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
@@ -57,13 +54,10 @@ public class EntityEventListener implements Listener
     @EventHandler
     private void onDamageOut(EntityDamageByEntityEvent event)
     {
-        if (!(event.getDamager() instanceof Player))
+        if (!core.getConfig().getForceLoginPreventDamageOut() || !(event.getDamager() instanceof Player))
             return;
         
         Player player = (Player) event.getDamager();
-        
-        if (!core.getConfig().getForceLoginPreventDamageOut())
-            return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
@@ -74,13 +68,10 @@ public class EntityEventListener implements Listener
     @EventHandler
     private void onRegainHealth(EntityRegainHealthEvent event)
     {
-        if (!(event.getEntity() instanceof Player))
+        if (!core.getConfig().getForceLoginPreventRegainHealth() || !(event.getEntity() instanceof Player))
             return;
         
         Player player = (Player) event.getEntity();
-        
-        if (!core.getConfig().getForceLoginPreventRegainHealth())
-            return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
@@ -91,13 +82,10 @@ public class EntityEventListener implements Listener
     @EventHandler
     private void onFoodLevelChange(FoodLevelChangeEvent event)
     {
-        if (!(event.getEntity() instanceof Player))
+        if (!core.getConfig().getForceLoginPreventFoodLevelChange() || !(event.getEntity() instanceof Player))
             return;
         
         Player player = (Player) event.getEntity();
-        
-        if (!core.getConfig().getForceLoginPreventFoodLevelChange())
-            return;
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {

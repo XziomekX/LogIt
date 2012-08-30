@@ -26,87 +26,88 @@ import org.bukkit.World;
 /**
  * @author LucasEasedUp
  */
-public class LogItConfiguration
+public final class LogItConfiguration
 {
     public LogItConfiguration(LogItPlugin plugin)
     {
         this.plugin = plugin;
     }
     
+    /**
+     * Loads settings from file and fills missing ones with default values.
+     */
     public void load()
     {
         plugin.reloadConfig();
         
-        plugin.getConfig().set("stop-if.online-mode-enabled",           plugin.getConfig().getBoolean("stop-if.online-mode-enabled", true));
-        plugin.getConfig().set("locale",                                plugin.getConfig().getString("locale", "en"));
-        plugin.getConfig().set("verbose",                               plugin.getConfig().getBoolean("verbose", false));
-        plugin.getConfig().set("log-to-file.enabled",                   plugin.getConfig().getBoolean("log-to-file.enabled", false));
-        plugin.getConfig().set("log-to-file.filename",                  plugin.getConfig().getString("log-to-file.filename", "debug.log"));
-        plugin.getConfig().set("force-login.global",                    plugin.getConfig().getBoolean("force-login.global", true));
-        plugin.getConfig().set("force-login.in-worlds",                 plugin.getConfig().getStringList("force-login.in-worlds"));
-        plugin.getConfig().set("force-login.allowed-commands",          plugin.getConfig().getStringList("force-login.allowed-commands"));
-        plugin.getConfig().set("force-login.timeout",                   plugin.getConfig().getInt("force-login.timeout", 30));
-        plugin.getConfig().set("force-login.prevent.move",              plugin.getConfig().getBoolean("force-login.prevent.move", true));
-        plugin.getConfig().set("force-login.prevent.toggle-sneak",      plugin.getConfig().getBoolean("force-login.prevent.toggle-sneak", true));
-        plugin.getConfig().set("force-login.prevent.block-place",       plugin.getConfig().getBoolean("force-login.prevent.block-place", true));
-        plugin.getConfig().set("force-login.prevent.block-break",       plugin.getConfig().getBoolean("force-login.prevent.block-break", true));
-        plugin.getConfig().set("force-login.prevent.damage-in",         plugin.getConfig().getBoolean("force-login.prevent.damage-in", true));
-        plugin.getConfig().set("force-login.prevent.damage-out",        plugin.getConfig().getBoolean("force-login.prevent.damage-out", true));
-        plugin.getConfig().set("force-login.prevent.regain-health",     plugin.getConfig().getBoolean("force-login.prevent.regain-health", true));
-        plugin.getConfig().set("force-login.prevent.food-level-change", plugin.getConfig().getBoolean("force-login.prevent.food-level-change", true));
-        plugin.getConfig().set("force-login.prevent.chat",              plugin.getConfig().getBoolean("force-login.prevent.chat", true));
-        plugin.getConfig().set("force-login.prevent.command-preprocess", plugin.getConfig().getBoolean("force-login.prevent.command-preprocess", true));
-        plugin.getConfig().set("force-login.prevent.pickup-item",       plugin.getConfig().getBoolean("force-login.prevent.pickup-item", true));
-        plugin.getConfig().set("force-login.prevent.drop-item",         plugin.getConfig().getBoolean("force-login.prevent.drop-item", true));
-        plugin.getConfig().set("force-login.prevent.interact",          plugin.getConfig().getBoolean("force-login.prevent.interact", true));
-        plugin.getConfig().set("force-login.prevent.interact-entity",   plugin.getConfig().getBoolean("force-login.prevent.interact-entity", true));
-        plugin.getConfig().set("force-login.prevent.inventory-click",   plugin.getConfig().getBoolean("force-login.prevent.inventory-click", true));
-        plugin.getConfig().set("force-login.prevent.air-depletion",     plugin.getConfig().getBoolean("force-login.prevent.air-depletion", true));
-        plugin.getConfig().set("username.regex",                        plugin.getConfig().getString("username.regex", "[A-Za-z0-9_]+"));
-        plugin.getConfig().set("username.min-length",                   plugin.getConfig().getInt("username.min-length", 2));
-        plugin.getConfig().set("username.max-length",                   plugin.getConfig().getInt("username.max-length", 16));
-        plugin.getConfig().set("username.prohibited-usernames",         plugin.getConfig().getStringList("username.prohibited-usernames"));
-        plugin.getConfig().set("password.min-length",                   plugin.getConfig().getInt("password.min-length", 3));
-        plugin.getConfig().set("password.max-length",                   plugin.getConfig().getInt("password.max-length", 25));
-        plugin.getConfig().set("global-password",                       plugin.getConfig().getString("global-password", ""));
-        plugin.getConfig().set("login-fails-to-kick",                   plugin.getConfig().getInt("login-fails-to-kick", 3));
-        plugin.getConfig().set("kick-unregistered",                     plugin.getConfig().getBoolean("kick-unregistered", false));
-        plugin.getConfig().set("accounts-per-ip",                       plugin.getConfig().getInt("accounts-per-ip", 3));
-        plugin.getConfig().set("hashing-algorithm",                     plugin.getConfig().getString("hashing-algorithm", "md5"));
-        plugin.getConfig().set("session-lifetime",                      plugin.getConfig().getInt("session-lifetime", 0));
-        plugin.getConfig().set("show-spawn-world-info",                 plugin.getConfig().getBoolean("show-spawn-world-info", true));
-        plugin.getConfig().set("waiting-room.enabled",                  plugin.getConfig().getBoolean("waiting-room.enabled", false));
-        plugin.getConfig().set("waiting-room.location.world",           plugin.getConfig().getString("waiting-room.location.world", "world"));
-        plugin.getConfig().set("waiting-room.location.x",               plugin.getConfig().getDouble("waiting-room.location.x", 0.0));
-        plugin.getConfig().set("waiting-room.location.y",               plugin.getConfig().getDouble("waiting-room.location.y", 0.0));
-        plugin.getConfig().set("waiting-room.location.z",               plugin.getConfig().getDouble("waiting-room.location.z", 0.0));
-        plugin.getConfig().set("waiting-room.location.yaw",             plugin.getConfig().getDouble("waiting-room.location.yaw", 0.0));
-        plugin.getConfig().set("waiting-room.location.pitch",           plugin.getConfig().getDouble("waiting-room.location.pitch", 0.0));
-        plugin.getConfig().set("storage.type",                          plugin.getConfig().getString("storage.type", "sqlite"));
-        plugin.getConfig().set("storage.sqlite.filename",               plugin.getConfig().getString("storage.sqlite.filename", "LogIt.db"));
-        plugin.getConfig().set("storage.mysql.host",                    plugin.getConfig().getString("storage.mysql.host", "jdbc:mysql://localhost:3306/"));
-        plugin.getConfig().set("storage.mysql.user",                    plugin.getConfig().getString("storage.mysql.user", "root"));
-        plugin.getConfig().set("storage.mysql.password",                plugin.getConfig().getString("storage.mysql.password", ""));
-        plugin.getConfig().set("storage.mysql.database",                plugin.getConfig().getString("storage.mysql.database", ""));
-        plugin.getConfig().set("storage.table",                         plugin.getConfig().getString("storage.table", "logit"));
-        plugin.getConfig().set("storage.columns.username",              plugin.getConfig().getString("storage.columns.username", "username"));
-        plugin.getConfig().set("storage.columns.password",              plugin.getConfig().getString("storage.columns.password", "password"));
-        plugin.getConfig().set("storage.columns.ip",                    plugin.getConfig().getString("storage.columns.ip", "ip"));
+        plugin.getConfig().set("stop-if.online-mode-enabled",            plugin.getConfig().getBoolean("stop-if.online-mode-enabled", true));
+        plugin.getConfig().set("locale",                                 plugin.getConfig().getString("locale", "en"));
+        plugin.getConfig().set("verbose",                                plugin.getConfig().getBoolean("verbose", false));
+        plugin.getConfig().set("log-to-file.enabled",                    plugin.getConfig().getBoolean("log-to-file.enabled", false));
+        plugin.getConfig().set("log-to-file.filename",                   plugin.getConfig().getString("log-to-file.filename", "debug.log"));
+        plugin.getConfig().set("force-login.global",                     plugin.getConfig().getBoolean("force-login.global", true));
+        plugin.getConfig().set("force-login.in-worlds",                  plugin.getConfig().getStringList("force-login.in-worlds"));
+        plugin.getConfig().set("force-login.allowed-commands",           plugin.getConfig().getStringList("force-login.allowed-commands"));
+        plugin.getConfig().set("force-login.timeout",                    plugin.getConfig().getInt("force-login.timeout", 30));
+        plugin.getConfig().set("force-login.prevent.move",               plugin.getConfig().getBoolean("force-login.prevent.move", true));
+        plugin.getConfig().set("force-login.prevent.toggle-sneak",       plugin.getConfig().getBoolean("force-login.prevent.toggle-sneak", true)); 
+        plugin.getConfig().set("force-login.prevent.block-place",        plugin.getConfig().getBoolean("force-login.prevent.block-place", true));
+        plugin.getConfig().set("force-login.prevent.block-break",        plugin.getConfig().getBoolean("force-login.prevent.block-break", true));
+        plugin.getConfig().set("force-login.prevent.damage-in",          plugin.getConfig().getBoolean("force-login.prevent.damage-in", true));
+        plugin.getConfig().set("force-login.prevent.damage-out",         plugin.getConfig().getBoolean("force-login.prevent.damage-out", true));
+        plugin.getConfig().set("force-login.prevent.regain-health",      plugin.getConfig().getBoolean("force-login.prevent.regain-health", true)); 
+        plugin.getConfig().set("force-login.prevent.food-level-change",  plugin.getConfig().getBoolean("force-login.prevent.food-level-change", true)); 
+        plugin.getConfig().set("force-login.prevent.chat",               plugin.getConfig().getBoolean("force-login.prevent.chat", true));
+        plugin.getConfig().set("force-login.prevent.command-preprocess", plugin.getConfig().getBoolean("force-login.prevent.command-preprocess", true)); 
+        plugin.getConfig().set("force-login.prevent.pickup-item",        plugin.getConfig().getBoolean("force-login.prevent.pickup-item", true));
+        plugin.getConfig().set("force-login.prevent.drop-item",          plugin.getConfig().getBoolean("force-login.prevent.drop-item", true));
+        plugin.getConfig().set("force-login.prevent.interact",           plugin.getConfig().getBoolean("force-login.prevent.interact", true));
+        plugin.getConfig().set("force-login.prevent.interact-entity",    plugin.getConfig().getBoolean("force-login.prevent.interact-entity", true)); 
+        plugin.getConfig().set("force-login.prevent.inventory-click",    plugin.getConfig().getBoolean("force-login.prevent.inventory-click", true)); 
+        plugin.getConfig().set("force-login.prevent.air-depletion",      plugin.getConfig().getBoolean("force-login.prevent.air-depletion", true)); 
+        plugin.getConfig().set("username.regex",                         plugin.getConfig().getString("username.regex", "[A-Za-z0-9_]+"));
+        plugin.getConfig().set("username.min-length",                    plugin.getConfig().getInt("username.min-length", 2));
+        plugin.getConfig().set("username.max-length",                    plugin.getConfig().getInt("username.max-length", 16));
+        plugin.getConfig().set("username.prohibited-usernames",          plugin.getConfig().getStringList("username.prohibited-usernames"));
+        plugin.getConfig().set("password.min-length",                    plugin.getConfig().getInt("password.min-length", 3));
+        plugin.getConfig().set("password.max-length",                    plugin.getConfig().getInt("password.max-length", 25));
+        plugin.getConfig().set("password.global-password",               plugin.getConfig().getString("password.global-password", ""));
+        plugin.getConfig().set("login-fails-to-kick",                    plugin.getConfig().getInt("login-fails-to-kick", 3));
+        plugin.getConfig().set("kick-unregistered",                      plugin.getConfig().getBoolean("kick-unregistered", false));
+        plugin.getConfig().set("accounts-per-ip",                        plugin.getConfig().getInt("accounts-per-ip", 3));
+        plugin.getConfig().set("hashing-algorithm",                      plugin.getConfig().getString("hashing-algorithm", "md5"));
+        plugin.getConfig().set("session-lifetime",                       plugin.getConfig().getInt("session-lifetime", 0));
+        plugin.getConfig().set("show-spawn-world-info",                  plugin.getConfig().getBoolean("show-spawn-world-info", true));
+        plugin.getConfig().set("waiting-room.enabled",                   plugin.getConfig().getBoolean("waiting-room.enabled", false));
+        plugin.getConfig().set("waiting-room.location.world",            plugin.getConfig().getString("waiting-room.location.world", "world"));
+        plugin.getConfig().set("waiting-room.location.x",                plugin.getConfig().getDouble("waiting-room.location.x", 0.0));
+        plugin.getConfig().set("waiting-room.location.y",                plugin.getConfig().getDouble("waiting-room.location.y", 0.0));
+        plugin.getConfig().set("waiting-room.location.z",                plugin.getConfig().getDouble("waiting-room.location.z", 0.0));
+        plugin.getConfig().set("waiting-room.location.yaw",              plugin.getConfig().getDouble("waiting-room.location.yaw", 0.0));
+        plugin.getConfig().set("waiting-room.location.pitch",            plugin.getConfig().getDouble("waiting-room.location.pitch", 0.0));
+        plugin.getConfig().set("storage.type",                           plugin.getConfig().getString("storage.type", "sqlite"));
+        plugin.getConfig().set("storage.sqlite.filename",                plugin.getConfig().getString("storage.sqlite.filename", "LogIt.db"));
+        plugin.getConfig().set("storage.mysql.host",                     plugin.getConfig().getString("storage.mysql.host", "jdbc:mysql://localhost:3306/")); 
+        plugin.getConfig().set("storage.mysql.user",                     plugin.getConfig().getString("storage.mysql.user", "root"));
+        plugin.getConfig().set("storage.mysql.password",                 plugin.getConfig().getString("storage.mysql.password", ""));
+        plugin.getConfig().set("storage.mysql.database",                 plugin.getConfig().getString("storage.mysql.database", ""));
+        plugin.getConfig().set("storage.table",                          plugin.getConfig().getString("storage.table", "logit"));
+        plugin.getConfig().set("storage.columns.username",               plugin.getConfig().getString("storage.columns.username", "username"));
+        plugin.getConfig().set("storage.columns.password",               plugin.getConfig().getString("storage.columns.password", "password"));
+        plugin.getConfig().set("storage.columns.ip",                     plugin.getConfig().getString("storage.columns.ip", "ip"));
         
         plugin.saveConfig();
     }
     
-    public void reload()
-    {
-        load();
-    }
-    
+    /**
+     * Saves configuration.
+     */
     public void save()
     {
         plugin.saveConfig();
     }
     
-    public boolean getStopIfOnlineModeEnabled()
+    public boolean isStopOnOnlineModeEnabled()
     {
         return plugin.getConfig().getBoolean("stop-if.online-mode-enabled");
     }
@@ -266,9 +267,17 @@ public class LogItConfiguration
         return plugin.getConfig().getInt("password.max-length");
     }
     
+    /**
+     * Returns the global password.
+     * 
+     * Please, note that this may not be a plain form of a password.
+     * It is hashed using a hashing algorithm specified in the config.
+     * 
+     * @return Global password.
+     */
     public String getGlobalPassword()
     {
-        return plugin.getConfig().getString("global-password");
+        return plugin.getConfig().getString("password.global-password");
     }
     
     public int getLoginFailsToKick()
@@ -333,12 +342,12 @@ public class LogItConfiguration
         return plugin.getConfig().getInt("session-lifetime");
     }
     
-    public boolean getShowSpawnWorldInfo()
+    public boolean isShowSpawnWorldInfoEnabled()
     {
         return plugin.getConfig().getBoolean("show-spawn-world-info");
     }
     
-    public boolean getWaitingRoomEnabled()
+    public boolean isWaitingRoomEnabled()
     {
         return plugin.getConfig().getBoolean("waiting-room.enabled");
     }
@@ -403,27 +412,27 @@ public class LogItConfiguration
         }
     }
     
-    public String getStorageSqliteFilename()
+    public String getSqliteFilename()
     {
         return plugin.getConfig().getString("storage.sqlite.filename");
     }
     
-    public String getStorageMysqlHost()
+    public String getMysqlHost()
     {
         return plugin.getConfig().getString("storage.mysql.host");
     }
 
-    public String getStorageMysqlUser()
+    public String getMysqlUser()
     {
         return plugin.getConfig().getString("storage.mysql.user");
     }
 
-    public String getStorageMysqlPassword()
+    public String getMysqlPassword()
     {
         return plugin.getConfig().getString("storage.mysql.password");
     }
     
-    public String getStorageMysqlDatabase()
+    public String getMysqlDatabase()
     {
         return plugin.getConfig().getString("storage.mysql.database");
     }
@@ -450,7 +459,7 @@ public class LogItConfiguration
     
     public void setGlobalPassword(String password)
     {
-        plugin.getConfig().set("global-password", password);
+        plugin.getConfig().set("password.global-password", password);
     }
     
     public void setWaitingRoomEnabled(boolean status)

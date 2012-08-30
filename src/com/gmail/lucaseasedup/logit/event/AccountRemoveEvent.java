@@ -19,7 +19,6 @@
 package com.gmail.lucaseasedup.logit.event;
 
 import com.gmail.lucaseasedup.logit.GeneralResult;
-import static com.gmail.lucaseasedup.logit.GeneralResult.SUCCESS;
 
 /**
  * @author LucasEasedUp
@@ -28,22 +27,6 @@ public class AccountRemoveEvent extends AccountEvent
 {
     public AccountRemoveEvent(String username, GeneralResult result)
     {
-        super(username);
-        
-        this.result = result;
+        super(username, result);
     }
-    
-    public boolean isSuccessful()
-    {
-        if (result.equals(SUCCESS))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    
-    private final GeneralResult result;
 }

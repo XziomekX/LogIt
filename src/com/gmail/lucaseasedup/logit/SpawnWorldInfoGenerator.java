@@ -35,7 +35,7 @@ public class SpawnWorldInfoGenerator
     
     public static String generate(Player player)
     {
-        if (!LogItCore.getInstance().getConfig().getShowSpawnWorldInfo())
+        if (!LogItCore.getInstance().getConfig().isShowSpawnWorldInfoEnabled())
         {
             return "";
         }

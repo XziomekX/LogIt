@@ -38,10 +38,10 @@ public class BlockEventListener implements Listener
     @EventHandler
     private void onPlace(BlockPlaceEvent event)
     {
-        Player player = event.getPlayer();
-        
         if (!core.getConfig().getForceLoginPreventBlockPlace())
             return;
+        
+        Player player = event.getPlayer();
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
@@ -53,10 +53,10 @@ public class BlockEventListener implements Listener
     @EventHandler
     private void onBreak(BlockBreakEvent event)
     {
-        Player player = event.getPlayer();
-        
         if (!core.getConfig().getForceLoginPreventBlockBreak())
             return;
+        
+        Player player = event.getPlayer();
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {

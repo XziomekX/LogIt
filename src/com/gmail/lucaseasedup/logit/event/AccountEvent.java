@@ -18,17 +18,21 @@
  */
 package com.gmail.lucaseasedup.logit.event;
 
+import com.gmail.lucaseasedup.logit.GeneralResult;
+import static com.gmail.lucaseasedup.logit.GeneralResult.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
 
 /**
  * @author LucasEasedUp
  */
 public abstract class AccountEvent extends Event
 {
-    public AccountEvent(String username)
+    public AccountEvent(String username, GeneralResult result)
     {
         this.username = username.toLowerCase();
+        this.result   = result;
     }
     
     @Override
@@ -42,6 +46,22 @@ public abstract class AccountEvent extends Event
         return username;
     }
     
+    public boolean isSuccessful()
+    {
+        if (result.equals(SUCCESS))
+        {
+            return true;
+        }
+        else if (result.equals(FAILURE))
+        {
+            return false;
+        }
+        else
+        {
+            throw new RuntimeException("Unknown result.");
+        }
+    }
+    
     public static HandlerList getHandlerList()
     {
         return handlers;
@@ -50,4 +70,5 @@ public abstract class AccountEvent extends Event
     private static final HandlerList handlers = new HandlerList();
     
     private final String username;
+    private final GeneralResult result;
 }

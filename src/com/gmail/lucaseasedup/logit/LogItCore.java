@@ -43,7 +43,7 @@ import org.bukkit.event.Event;
  * 
  * @author LucasEasedUp
  */
-public final class LogItCore
+public class LogItCore
 {
     private LogItCore(LogItPlugin plugin)
     {
@@ -69,7 +69,7 @@ public final class LogItCore
         // Load config.
         config.load();
         
-        if (plugin.getServer().getOnlineMode() && config.getStopIfOnlineModeEnabled())
+        if (plugin.getServer().getOnlineMode() && config.isStopOnOnlineModeEnabled())
         {
             log(FINE, getMessage("ONLINEMODE_ENABLED"));
             plugin.disable();
@@ -93,15 +93,15 @@ public final class LogItCore
                 case SQLITE:
                 {
                     database = new SqliteDatabase();
-                    database.connect("jdbc:sqlite:" + plugin.getDataFolder() + "/" + config.getStorageSqliteFilename(), null, null, null);
+                    database.connect("jdbc:sqlite:" + plugin.getDataFolder() + "/" + config.getSqliteFilename(), null, null, null);
                     
                     break;
                 }
                 case MYSQL:
                 {
                     database = new MySqlDatabase();
-                    database.connect(config.getStorageMysqlHost(), config.getStorageMysqlUser(), config.getStorageMysqlPassword(),
-                        config.getStorageMysqlDatabase());
+                    database.connect(config.getMysqlHost(), config.getMysqlUser(), config.getMysqlPassword(),
+                        config.getMysqlDatabase());
                     
                     break;
                 }
@@ -343,16 +343,6 @@ public final class LogItCore
         }
     }
     
-    /**
-     * Provides shortcut to the Bukkit.getServer().getPluginManager().callEvent() method.
-     * 
-     * @param event Event to be called.
-     */
-    public void callEvent(Event event)
-    {
-        Bukkit.getServer().getPluginManager().callEvent(event);
-    }
-
     public WaitingRoom getWaitingRoom()
     {
         return waitingRoom;
@@ -406,6 +396,7 @@ public final class LogItCore
         plugin.getCommand("changepass").setExecutor(new ChangePassCommand(this));
         
         sessionManager = new SessionManager(this);
+        tickEventCaller = new TickEventCaller();
         waitingRoom = new WaitingRoom();
         
         loaded = true;
@@ -440,7 +431,7 @@ public final class LogItCore
     private SessionManager sessionManager;
     private int sessionManagerTaskId;
     
-    private TickEventCaller tickEventCaller = new TickEventCaller();
+    private TickEventCaller tickEventCaller;
     private int tickEventCallerTaskId;
     
     private AccountManager accountManager;

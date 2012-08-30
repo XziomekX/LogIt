@@ -37,15 +37,12 @@ public class InventoryEventListener implements Listener
     @EventHandler
     private void onClick(InventoryClickEvent event)
     {
-        if (!(event.getWhoClicked() instanceof Player))
+        if (!core.getConfig().getForceLoginPreventInventoryClick() || !(event.getWhoClicked() instanceof Player))
             return;
         
         Player player = (Player) event.getWhoClicked();
         
-        if (!core.getConfig().getForceLoginPreventInventoryClick())
-            return;
-        
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        if (!core.getSessionManager().isSessionAlive(player.getName()) && core.isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
         }

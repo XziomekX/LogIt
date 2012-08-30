@@ -33,6 +33,6 @@ public class TickEventCaller implements Runnable
     @Override
     public void run()
     {
-        Bukkit.getServer().getPluginManager().callEvent(new TickEvent());
+        Bukkit.getPluginManager().callEvent(new TickEvent());
     }
 }

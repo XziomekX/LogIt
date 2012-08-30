@@ -41,11 +41,9 @@ public class TickEventListener implements Listener
         if (!core.getConfig().getForceLoginPreventAirDepletion())
             return;
         
-        Player[] players = Bukkit.getOnlinePlayers();
-        
-        for (Player player : players)
+        for (Player player : Bukkit.getOnlinePlayers())
         {
-            if (!core.getSessionManager().isSessionAlive(player))
+            if (!core.getSessionManager().isSessionAlive(player.getName()))
             {
                 player.setRemainingAir(player.getMaximumAir());
             }

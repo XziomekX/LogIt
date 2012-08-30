@@ -19,31 +19,23 @@
 package com.gmail.lucaseasedup.logit.event;
 
 import com.gmail.lucaseasedup.logit.GeneralResult;
-import static com.gmail.lucaseasedup.logit.GeneralResult.SUCCESS;
 
 /**
  * @author LucasEasedUp
  */
 public class AccountCreateEvent extends AccountEvent
 {
-    public AccountCreateEvent(String username, GeneralResult result)
+    public AccountCreateEvent(String username, String password, GeneralResult result)
     {
-        super(username);
+        super(username, result);
         
-        this.result = result;
+        this.password = password;
     }
-    
-    public boolean isSuccessful()
+
+    public String getPassword()
     {
-        if (result.equals(SUCCESS))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return password;
     }
     
-    private final GeneralResult result;
+    private final String password;
 }

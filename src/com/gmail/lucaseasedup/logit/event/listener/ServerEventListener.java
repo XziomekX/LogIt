@@ -20,6 +20,7 @@ package com.gmail.lucaseasedup.logit.event.listener;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
 import org.bukkit.Bukkit;
+import static org.bukkit.event.EventPriority.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -46,7 +47,7 @@ public class ServerEventListener implements Listener
         
         for (Player player : players)
         {
-            core.getSessionManager().createSession(player);
+            core.getSessionManager().createSession(player.getName());
             
             if (core.isPlayerForcedToLogin(player))
             {
@@ -55,7 +56,7 @@ public class ServerEventListener implements Listener
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = HIGHEST)
     private void onPluginDisable(PluginDisableEvent event)
     {
         if (!event.getPlugin().equals(core.getPlugin()))
@@ -66,7 +67,7 @@ public class ServerEventListener implements Listener
         for (Player player : players)
         {
             core.getWaitingRoom().remove(player);
-            core.getSessionManager().destroySession(player);
+            core.getSessionManager().destroySession(player.getName());
         }
     }
     

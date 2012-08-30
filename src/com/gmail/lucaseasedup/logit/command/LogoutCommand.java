@@ -71,7 +71,7 @@ public class LogoutCommand implements CommandExecutor
                 return true;
             }
             
-            core.getSessionManager().endSession(getPlayer(args[1]));
+            core.getSessionManager().endSession(args[1]);
             
             s.sendMessage(getMessage("END_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
             
@@ -89,13 +89,13 @@ public class LogoutCommand implements CommandExecutor
                 p.sendMessage(getMessage("NO_PERMS"));
                 return true;
             }
-            if (!core.getSessionManager().isSessionAlive(p))
+            if (!core.getSessionManager().isSessionAlive(p.getName()))
             {
                 p.sendMessage(getMessage("START_SESSION_NOT_SELF"));
                 return true;
             }
             
-            core.getSessionManager().endSession(p);
+            core.getSessionManager().endSession(p.getName());
             
             return true;
         }

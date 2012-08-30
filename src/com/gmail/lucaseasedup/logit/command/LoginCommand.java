@@ -20,7 +20,7 @@ package com.gmail.lucaseasedup.logit.command;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
-import static com.gmail.lucaseasedup.logit.MessageSender.*;
+import static com.gmail.lucaseasedup.logit.MessageSender.isPlayerOnline;
 import java.util.HashMap;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -77,7 +77,7 @@ public class LoginCommand implements CommandExecutor
                 return true;
             }
             
-            core.getSessionManager().startSession(getPlayer(args[1]));
+            core.getSessionManager().startSession(args[1]);
             
             s.sendMessage(getMessage("START_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
             
@@ -130,7 +130,7 @@ public class LoginCommand implements CommandExecutor
                 return true;
             }
             
-            core.getSessionManager().startSession(p);
+            core.getSessionManager().startSession(p.getName());
             
             return true;
         }
@@ -142,5 +142,5 @@ public class LoginCommand implements CommandExecutor
     
     private final LogItCore core;
     
-    private HashMap<String, Integer> loginRetries = new HashMap<>();
+    private final HashMap<String, Integer> loginRetries = new HashMap<>();
 }

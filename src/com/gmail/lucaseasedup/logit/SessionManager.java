@@ -18,7 +18,7 @@
  */
 package com.gmail.lucaseasedup.logit;
 
-import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
 import static com.gmail.lucaseasedup.logit.MessageSender.*;
 import com.gmail.lucaseasedup.logit.event.SessionCreateEvent;
 import com.gmail.lucaseasedup.logit.event.SessionDestroyEvent;
@@ -47,8 +47,8 @@ public class SessionManager implements Runnable
         for (Iterator<String> it = sessions.keySet().iterator(); it.hasNext();)
         {
             String  username = it.next();
-            Session session = sessions.get(username);
             Player  player = getPlayer(username);
+            Session session = sessions.get(username);
             
             if (session.getStatus() >= 0L)
             {
@@ -96,14 +96,6 @@ public class SessionManager implements Runnable
     }
     
     /**
-     * Returns a session attached to the username of the specified player.
-     */
-    public Session getSession(Player player)
-    {
-        return getSession(player.getName());
-    }
-    
-    /**
      * Checks if the session of a player with the specified player is alive.
      * 
      * @param username Username.
@@ -130,10 +122,13 @@ public class SessionManager implements Runnable
     /**
      * Creates a session for a player with the specified username.
      * 
+     * If session already exists, it will be ignored and overridden.
+     * 
      * @param username Username.
      */
     public void createSession(String username)
     {
+        // Create session.
         Session session = new Session();
         sessions.put(username.toLowerCase(), session);
         
@@ -141,43 +136,29 @@ public class SessionManager implements Runnable
         core.log(FINE, getMessage("CREATE_SESSION_SUCCESS_LOG").replace("%player%", username));
         
         // Call the appropriate event.
-        core.callEvent(new SessionCreateEvent(username, session));
-    }
-    
-    /**
-     * Creates a session for the specified player.
-     * 
-     * @param player Player
-     */
-    public void createSession(Player player)
-    {
-        createSession(player.getName());
+        callEvent(new SessionCreateEvent(username, session));
     }
     
     /**
      * Destroys session belonging to a player with the specified username.
      * 
+     * If session does not exist, no action will be taken.
+     * 
      * @param username Username.
      */
     public void destroySession(String username)
     {
+        if (getSession(username) == null)
+            return;
+        
+        // Destroy session.
         Session session = sessions.remove(username.toLowerCase());
         
         // Notify about the session destruction.
         core.log(FINE, getMessage("DESTROY_SESSION_SUCCESS_LOG").replace("%player%", getPlayerName(username)));
         
         // Call the appropriate event.
-        core.callEvent(new SessionDestroyEvent(username, session));
-    }
-    
-    /**
-     * Destroys session belonging to the specified player.
-     * 
-     * @param player Player.
-     */
-    public void destroySession(Player player)
-    {
-        destroySession(player.getName());
+        callEvent(new SessionDestroyEvent(username, session));
     }
     
     /**
@@ -187,6 +168,12 @@ public class SessionManager implements Runnable
      */
     public void startSession(String username)
     {
+        if (getSession(username) == null)
+        {
+            throw new RuntimeException("Session does not exist.");
+        }
+        
+        // Start session.
         Session session = getSession(username);
         session.setStatus(0L);
         
@@ -195,17 +182,7 @@ public class SessionManager implements Runnable
         core.log(FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
         
         // Call the appropriate event.
-        core.callEvent(new SessionStartEvent(username, session));
-    }
-    
-    /**
-     * Starts the session of the specified player.
-     * 
-     * @param player Player.
-     */
-    public void startSession(Player player)
-    {
-        startSession(player.getName());
+        callEvent(new SessionStartEvent(username, session));
     }
     
     /**
@@ -215,6 +192,12 @@ public class SessionManager implements Runnable
      */
     public void endSession(String username)
     {
+        if (getSession(username) == null)
+        {
+            throw new RuntimeException("Session does not exist.");
+        }
+        
+        // End session.
         Session session = getSession(username);
         session.setStatus(-1L);
         
@@ -223,17 +206,7 @@ public class SessionManager implements Runnable
         core.log(FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
         
         // Call the appropriate event.
-        core.callEvent(new SessionEndEvent(username, session));
-    }
-    
-    /**
-     * Ends the session of the specified player.
-     * 
-     * @param player Player.
-     */
-    public void endSession(Player player)
-    {
-        endSession(player.getName());
+        callEvent(new SessionEndEvent(username, session));
     }
     
     private final LogItCore core;

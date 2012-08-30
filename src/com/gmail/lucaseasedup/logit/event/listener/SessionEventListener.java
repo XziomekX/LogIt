@@ -26,6 +26,7 @@ import com.gmail.lucaseasedup.logit.event.SessionEndEvent;
 import com.gmail.lucaseasedup.logit.event.SessionStartEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import static org.bukkit.event.EventPriority.LOWEST;
 import org.bukkit.event.Listener;
 
 /**
@@ -38,12 +39,14 @@ public class SessionEventListener implements Listener
         this.core = core;
     }
     
-    @EventHandler
+    @EventHandler(priority = LOWEST)
     private void onStart(SessionStartEvent event)
     {
-        if (isPlayerOnline(event.getUsername()))
+        String username = event.getUsername();
+        
+        if (isPlayerOnline(username))
         {
-            Player player = getPlayer(event.getUsername());
+            Player player = getPlayer(username);
             
             core.getWaitingRoom().remove(player);
             
@@ -54,14 +57,16 @@ public class SessionEventListener implements Listener
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = LOWEST)
     private void onEnd(SessionEndEvent event)
     {
-        if (isPlayerOnline(event.getUsername()))
+        String username = event.getUsername();
+        
+        if (isPlayerOnline(username))
         {
-            Player player = getPlayer(event.getUsername());
+            Player player = getPlayer(username);
             
-            if (core.getConfig().getForceLoginGlobal() && core.getConfig().getWaitingRoomEnabled())
+            if (core.getConfig().getForceLoginGlobal() && core.getConfig().isWaitingRoomEnabled())
             {
                 core.getWaitingRoom().put(player);
             }

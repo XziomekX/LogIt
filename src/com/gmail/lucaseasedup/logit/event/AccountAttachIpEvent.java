@@ -19,7 +19,6 @@
 package com.gmail.lucaseasedup.logit.event;
 
 import com.gmail.lucaseasedup.logit.GeneralResult;
-import static com.gmail.lucaseasedup.logit.GeneralResult.SUCCESS;
 
 /**
  * @author LucasEasedUp
@@ -28,29 +27,15 @@ public class AccountAttachIpEvent extends AccountEvent
 {
     public AccountAttachIpEvent(String username, String ip, GeneralResult result)
     {
-        super(username);
+        super(username, result);
         
         this.ip = ip;
-        this.result = result;
     }
-
+    
     public String getIp()
     {
         return ip;
     }
     
-    public boolean isSuccessful()
-    {
-        if (result.equals(SUCCESS))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    
     private final String ip;
-    private final GeneralResult result;
 }

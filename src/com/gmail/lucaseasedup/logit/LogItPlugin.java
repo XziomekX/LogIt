@@ -25,7 +25,9 @@ import java.util.PropertyResourceBundle;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import static java.util.logging.Level.WARNING;
+import org.bukkit.Bukkit;
 import static org.bukkit.ChatColor.*;
+import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -175,6 +177,16 @@ public final class LogItPlugin extends JavaPlugin
         s = s.replace("&r", RESET.toString());
         
         return s;
+    }
+    
+    /**
+     * Provides shortcut to the Bukkit.getServer().getPluginManager().callEvent() method.
+     * 
+     * @param event Event to be called.
+     */
+    public static void callEvent(Event event)
+    {
+        Bukkit.getPluginManager().callEvent(event);
     }
     
     private static PropertyResourceBundle prb;

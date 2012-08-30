@@ -19,7 +19,7 @@
 package com.gmail.lucaseasedup.logit;
 
 import static com.gmail.lucaseasedup.logit.GeneralResult.*;
-import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
 import static com.gmail.lucaseasedup.logit.MessageSender.sendMessage;
 import com.gmail.lucaseasedup.logit.db.Database;
 import com.gmail.lucaseasedup.logit.event.AccountAttachIpEvent;
@@ -41,9 +41,9 @@ public class AccountManager
         this.core           = core;
         this.database       = core.getDatabase();
         this.table          = core.getConfig().getStorageTable();
-        this.columnUsername = core.getConfig().getStorageUsernameColumn();
-        this.columnPassword = core.getConfig().getStoragePasswordColumn();
-        this.columnIp       = core.getConfig().getStorageIpColumn();
+        this.usernameColumn = core.getConfig().getStorageUsernameColumn();
+        this.passwordColumn = core.getConfig().getStoragePasswordColumn();
+        this.ipColumn       = core.getConfig().getStorageIpColumn();
     }
     
     /**
@@ -60,6 +60,8 @@ public class AccountManager
     /**
      * Creates a new account with the given username and password.
      * 
+     * The given password will be hashed using an algorithm specified in the config.
+     * 
      * @param username Username.
      * @param password Password.
      */
@@ -70,11 +72,11 @@ public class AccountManager
             throw new RuntimeException("Account already exists.");
         }
         
+        // Hash the given password.
+        String hash = core.hash(password);
+        
         try
         {
-            // Hash the given password.
-            String hash = core.hash(password);
-            
             // Create account.
             database.insert(table, "\"" + username.toLowerCase() + "\", \"" + hash + "\", \"\"");
             passwords.put(username.toLowerCase(), hash);
@@ -85,7 +87,7 @@ public class AccountManager
             core.log(FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
             
             // Call the appropriate event.
-            core.callEvent(new AccountCreateEvent(username, SUCCESS));
+            callEvent(new AccountCreateEvent(username, hash, SUCCESS));
         }
         catch (SQLException ex)
         {
@@ -94,7 +96,7 @@ public class AccountManager
             core.log(WARNING, getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username));
             
             // Call the appropriate event.
-            core.callEvent(new AccountCreateEvent(username, FAILURE));
+            callEvent(new AccountCreateEvent(username, hash, FAILURE));
         }
     }
     
@@ -113,7 +115,7 @@ public class AccountManager
         try
         {
             // Remove account.
-            database.delete(table, columnUsername + " = \"" + username.toLowerCase() + "\"");
+            database.delete(table, usernameColumn + " = \"" + username.toLowerCase() + "\"");
             passwords.remove(username.toLowerCase());
             ips.remove(username.toLowerCase());
             
@@ -122,7 +124,7 @@ public class AccountManager
             core.log(FINE, getMessage("REMOVE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
             
             // Call the appropriate event.
-            core.callEvent(new AccountRemoveEvent(username, SUCCESS));
+            callEvent(new AccountRemoveEvent(username, SUCCESS));
         }
         catch (SQLException ex)
         {
@@ -131,12 +133,14 @@ public class AccountManager
             core.log(WARNING, getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username));
             
             // Call the appropriate event.
-            core.callEvent(new AccountRemoveEvent(username, FAILURE));
+            callEvent(new AccountRemoveEvent(username, FAILURE));
         }
     }
     
     /**
      * Checks if the given password matches that of account with the specified username.
+     * 
+     * The given password will be hashed using an algorithm specified in the config.
      * 
      * @param username Username.
      * @param password Password to check
@@ -155,6 +159,8 @@ public class AccountManager
     /**
      * Changes password of an account with the specified username.
      * 
+     * The given password will be hashed using an algorithm specified in the config.
+     * 
      * @param username Username.
      * @param password New password.
      */
@@ -165,12 +171,13 @@ public class AccountManager
             throw new RuntimeException("Account does not exist.");
         }
         
+        // Hash the given password.
         String hash = core.hash(password);
         
         try
         {
             // Change password.
-            database.update(table, columnPassword + " = \"" + hash + "\"", columnUsername + " = \"" + username.toLowerCase() + "\"");
+            database.update(table, passwordColumn + " = \"" + hash + "\"", usernameColumn + " = \"" + username.toLowerCase() + "\"");
             passwords.put(username.toLowerCase(), hash);
             
             // Notify about the password change.
@@ -178,7 +185,7 @@ public class AccountManager
             core.log(FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
             
             // Call the appropriate event.
-            core.callEvent(new AccountChangePasswordEvent(username, SUCCESS));
+            callEvent(new AccountChangePasswordEvent(username, hash, SUCCESS));
         }
         catch (SQLException ex)
         {
@@ -187,7 +194,7 @@ public class AccountManager
             core.log(FINE, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username));
             
             // Call the appropriate event.
-            core.callEvent(new AccountChangePasswordEvent(username, FAILURE));
+            callEvent(new AccountChangePasswordEvent(username, hash, FAILURE));
         }
     }
     
@@ -207,14 +214,14 @@ public class AccountManager
         try
         {
             // Attach the given ip.
-            database.update(table, columnIp + " = \"" + ip + "\"", columnUsername + " = \"" + username.toLowerCase() + "\"");
+            database.update(table, ipColumn + " = \"" + ip + "\"", usernameColumn + " = \"" + username.toLowerCase() + "\"");
             ips.put(username.toLowerCase(), ip);
             
             // Notify about the attachment.
             core.log(FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username).replace("%ip%", ip));
             
             // Call the appropriate event.
-            core.callEvent(new AccountAttachIpEvent(username, ip, SUCCESS));
+            callEvent(new AccountAttachIpEvent(username, ip, SUCCESS));
         }
         catch (SQLException ex)
         {
@@ -222,18 +229,23 @@ public class AccountManager
             core.log(FINE, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username).replace("%ip%", ip));
             
             // Call the appropriate event.
-            core.callEvent(new AccountAttachIpEvent(username, ip, FAILURE));
+            callEvent(new AccountAttachIpEvent(username, ip, FAILURE));
         }
     }
     
     /**
-     * Returns number of accounts with the given IP.
+     * Returns number of accounts with the given IP. If "ip" is an empty string, the returned value is 0.
      * 
      * @param ip IP address.
      * @return Number of accounts with the given IP.
      */
     public int countAccountsPerIp(String ip)
     {
+        if (ip.isEmpty())
+        {
+            return 0;
+        }
+        
         int counter = 0;
         
         for (String s : ips.values())
@@ -291,8 +303,8 @@ public class AccountManager
             
             while (rs.next())
             {
-                passwords.put(rs.getString(columnUsername), rs.getString(columnPassword));
-                ips.put(rs.getString(columnUsername), rs.getString(columnIp));
+                passwords.put(rs.getString(usernameColumn), rs.getString(passwordColumn));
+                ips.put(rs.getString(usernameColumn), rs.getString(ipColumn));
             }
             
             // Notify about the number of loaded accounts.
@@ -308,9 +320,9 @@ public class AccountManager
     private final LogItCore core;
     private final Database database;
     private final String table;
-    private final String columnUsername;
-    private final String columnPassword;
-    private final String columnIp;
+    private final String usernameColumn;
+    private final String passwordColumn;
+    private final String ipColumn;
     
     private final HashMap<String, String> passwords = new HashMap<>();
     private final HashMap<String, String> ips = new HashMap<>();

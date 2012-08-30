@@ -147,7 +147,7 @@ public class RegisterCommand implements CommandExecutor
             {
                 core.getAccountManager().createAccount(p.getName(), args[0]);
                 core.getAccountManager().attachIp(p.getName(), ip);
-                core.getSessionManager().startSession(p);
+                core.getSessionManager().startSession(p.getName());
             }
             
             return true;
