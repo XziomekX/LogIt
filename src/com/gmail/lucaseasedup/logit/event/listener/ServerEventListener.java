@@ -42,7 +42,7 @@ public class ServerEventListener implements Listener
         if (!event.getPlugin().equals(core.getPlugin()))
             return;
         
-        Player[] players = Bukkit.getServer().getOnlinePlayers();
+        Player[] players = Bukkit.getOnlinePlayers();
         
         for (Player player : players)
         {
@@ -61,7 +61,7 @@ public class ServerEventListener implements Listener
         if (!event.getPlugin().equals(core.getPlugin()))
             return;
         
-        Player[] players = Bukkit.getServer().getOnlinePlayers();
+        Player[] players = Bukkit.getOnlinePlayers();
         
         for (Player player : players)
         {

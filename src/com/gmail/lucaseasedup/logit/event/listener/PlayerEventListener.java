@@ -19,7 +19,8 @@
 package com.gmail.lucaseasedup.logit.event.listener;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
-import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
+import static com.gmail.lucaseasedup.logit.MessageSender.*;
 import com.gmail.lucaseasedup.logit.SpawnWorldInfoGenerator;
 import java.util.List;
 import org.bukkit.Bukkit;
@@ -64,7 +65,7 @@ public class PlayerEventListener implements Listener
             event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_LONG").replace("%max-length%",
                     String.valueOf(core.getConfig().getUsernameMaxLength())));
         }
-        else if (core.getConfig().getUsernameProhibitedUsernames().contains(player.getName().toLowerCase()))
+        else if (core.getConfig().getProhibitedUsernames().contains(player.getName().toLowerCase()))
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_PROHIBITED"));
         }
@@ -85,12 +86,12 @@ public class PlayerEventListener implements Listener
         
         event.setJoinMessage(null);
         
-        if (core.getSessionManager().getSession(player) == null)
+        if (core.getSessionManager().getSession(player.getName()) == null)
         {
             core.getSessionManager().createSession(player);
         }
         
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(core.getPlugin(), new Runnable()
+        Bukkit.getScheduler().scheduleSyncDelayedTask(core.getPlugin(), new Runnable()
         {
             @Override
             public void run()
@@ -98,15 +99,8 @@ public class PlayerEventListener implements Listener
                 if (core.getSessionManager().isSessionAlive(player) || !core.getConfig().getForceLoginGlobal()
                         || player.hasPermission("logit.login.exempt"))
                 {
-                    String spawnWorldInfo = SpawnWorldInfoGenerator.getInstance().generate(player);
-                    
-                    for (Player p : Bukkit.getServer().getOnlinePlayers())
-                    {
-                        if (!p.equals(player))
-                        {
-                            p.sendMessage(getMessage("JOIN").replace("%player%", player.getName()) + spawnWorldInfo);
-                        }
-                    }
+                    broadcastMessage(getMessage("JOIN").replace("%player%", player.getName()) + SpawnWorldInfoGenerator.generate(player),
+                            player);
                 }
                 else if (core.getConfig().getForceLoginGlobal() && core.getConfig().getWaitingRoomEnabled())
                 {

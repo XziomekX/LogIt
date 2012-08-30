@@ -25,9 +25,7 @@ import java.util.PropertyResourceBundle;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import static java.util.logging.Level.WARNING;
-import org.bukkit.Bukkit;
 import static org.bukkit.ChatColor.*;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -42,13 +40,17 @@ public final class LogItPlugin extends JavaPlugin
     {
         try
         {
+            // Load messages from the file.
             loadMessages();
         }
         catch (IOException ex)
         {
+            // If messages could not be loaded, just log the failure.
+            // They're not nessesary for LogIt to work.
             getLogger().log(WARNING, "Could not load messages.");
         }
         
+        // Start the core!
         core = LogItCore.getInstance();
         core.start();
     }
@@ -62,16 +64,30 @@ public final class LogItPlugin extends JavaPlugin
         }
     }
     
+    /**
+     * Enables LogIt.
+     */
     public void enable()
     {
         getServer().getPluginManager().enablePlugin(this);
     }
     
+    /**
+     * Disables LogIt.
+     */
     public void disable()
     {
         getServer().getPluginManager().disablePlugin(this);
     }
     
+    /**
+     * Returns the LogIt core.
+     * 
+     * It is not the preferred way to get the core. You should use LogItCore.getInstance() instead,
+     * although getCore() works exactly the same.
+     * 
+     * @return The LogIt core.
+     */
     public LogItCore getCore()
     {
         return core;
@@ -80,7 +96,10 @@ public final class LogItPlugin extends JavaPlugin
     /**
      * Loads messages from the file.
      * 
-     * @throws IOException
+     * First, it tries to load a messages_{locale}.properties file (where {locale} is a value from the config file).
+     * If it does not exist, it tries to load a messages.properties file. If this fails too, it throws a FileNotFoundException.
+     * 
+     * @throws IOException Thrown, if no file has been found, or there was an error while reading.
      */
     private void loadMessages() throws IOException
     {
@@ -123,6 +142,12 @@ public final class LogItPlugin extends JavaPlugin
         return message;
     }
     
+    /**
+     * Replaces macros with their ChatColor equivalents.
+     * 
+     * @param s String to be formatted.
+     * @return Formatted string.
+     */
     public static String formatColorCodes(String s)
     {
         s = s.replace("&0", BLACK.toString());
@@ -152,66 +177,10 @@ public final class LogItPlugin extends JavaPlugin
         return s;
     }
     
-    public static boolean isPlayerOnline(String username)
-    {
-        return (getPlayer(username) != null) ? true : false;
-    }
-    
-    public static Player getPlayer(String username)
-    {
-        return Bukkit.getServer().getPlayerExact(username);
-    }
-    
-    /**
-     * Returns a case-correct username.
-     * 
-     * @param username Username.
-     * @return Case-correct username.
-     */
-    public static String getPlayerName(String username)
-    {
-        if (isPlayerOnline(username))
-        {
-            return getPlayer(username).getName();
-        }
-        else
-        {
-            return username;
-        }
-    }
-    
-    /**
-     * Sends the given message to a player.
-     * 
-     * @param username Player's username.
-     * @param message Message.
-     */
-    public static void sendMessage(String username, String message)
-    {
-        Player player = getPlayer(username);
-        
-        if (player != null)
-        {
-            player.sendMessage(message);
-        }
-    }
-    
-    /**
-     * Sends the given message to all online players.
-     * 
-     * @param message Message.
-     */
-    public static void broadcastMessage(String message)
-    {
-        Player[] players = Bukkit.getServer().getOnlinePlayers();
-        
-        for (Player player : players)
-        {
-            player.sendMessage(message);
-        }
-    }
-    
     private static PropertyResourceBundle prb;
     
+    /**
+     * The LogIt core instance.
+     */
     private LogItCore core;
 }

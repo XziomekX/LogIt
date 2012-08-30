@@ -1,5 +1,5 @@
 /*
- * SessionDestroyEvent.java
+ * SessionEndEvent.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,16 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event.session;
+package com.gmail.lucaseasedup.logit.event;
 
 import com.gmail.lucaseasedup.logit.Session;
 
 /**
  * @author LucasEasedUp
  */
-public class SessionDestroyEvent extends SessionEvent
+public class SessionEndEvent extends SessionEvent
 {
-    public SessionDestroyEvent(String username, Session session)
+    public SessionEndEvent(String username, Session session)
     {
         super(username, session);
     }

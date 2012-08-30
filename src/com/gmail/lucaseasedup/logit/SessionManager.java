@@ -18,11 +18,12 @@
  */
 package com.gmail.lucaseasedup.logit;
 
-import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
-import com.gmail.lucaseasedup.logit.event.session.SessionCreateEvent;
-import com.gmail.lucaseasedup.logit.event.session.SessionDestroyEvent;
-import com.gmail.lucaseasedup.logit.event.session.SessionEndEvent;
-import com.gmail.lucaseasedup.logit.event.session.SessionStartEvent;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
+import static com.gmail.lucaseasedup.logit.MessageSender.*;
+import com.gmail.lucaseasedup.logit.event.SessionCreateEvent;
+import com.gmail.lucaseasedup.logit.event.SessionDestroyEvent;
+import com.gmail.lucaseasedup.logit.event.SessionEndEvent;
+import com.gmail.lucaseasedup.logit.event.SessionStartEvent;
 import java.util.HashMap;
 import java.util.Iterator;
 import static java.util.logging.Level.FINE;
@@ -70,7 +71,7 @@ public class SessionManager implements Runnable
             else if (isPlayerOnline(username))
             {
                 if (session.getStatus() <= forceLoginTimeoutTicks && forceLoginTimeoutTicks > 0L
-                        && core.isPlayerForcedToLogin(username) && !player.hasPermission("logit.force-login.timeout.exempt"))
+                        && core.isPlayerForcedToLogin(player) && !player.hasPermission("logit.force-login.timeout.exempt"))
                 {
                     player.kickPlayer(getMessage("OUT_OF_SESSION_TIMEOUT"));
                 }
@@ -86,11 +87,17 @@ public class SessionManager implements Runnable
         }
     }
     
+    /**
+     * Returns a session attached to the specified username.
+     */
     public Session getSession(String username)
     {
         return sessions.get(username.toLowerCase());
     }
     
+    /**
+     * Returns a session attached to the username of the specified player.
+     */
     public Session getSession(Player player)
     {
         return getSession(player.getName());
@@ -131,7 +138,7 @@ public class SessionManager implements Runnable
         sessions.put(username.toLowerCase(), session);
         
         // Notify about the session creation.
-        core.log(FINE, getMessage("SESSION_CREATE_SUCCESS").replace("%player%", username));
+        core.log(FINE, getMessage("CREATE_SESSION_SUCCESS_LOG").replace("%player%", username));
         
         // Call the appropriate event.
         core.callEvent(new SessionCreateEvent(username, session));
@@ -157,7 +164,7 @@ public class SessionManager implements Runnable
         Session session = sessions.remove(username.toLowerCase());
         
         // Notify about the session destruction.
-        core.log(FINE, getMessage("SESSION_DESTROY_SUCCESS").replace("%player%", username));
+        core.log(FINE, getMessage("DESTROY_SESSION_SUCCESS_LOG").replace("%player%", getPlayerName(username)));
         
         // Call the appropriate event.
         core.callEvent(new SessionDestroyEvent(username, session));
@@ -184,6 +191,7 @@ public class SessionManager implements Runnable
         session.setStatus(0L);
         
         // Notify about the session start.
+        sendMessage(username, getMessage("START_SESSION_SUCCESS_SELF"));
         core.log(FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
         
         // Call the appropriate event.
@@ -211,6 +219,7 @@ public class SessionManager implements Runnable
         session.setStatus(-1L);
         
         // Notify about the session end.
+        sendMessage(username, getMessage("END_SESSION_SUCCESS_SELF"));
         core.log(FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
         
         // Call the appropriate event.

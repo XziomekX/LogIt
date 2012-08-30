@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event.account;
+package com.gmail.lucaseasedup.logit.event;
 
 import com.gmail.lucaseasedup.logit.GeneralResult;
 import static com.gmail.lucaseasedup.logit.GeneralResult.SUCCESS;

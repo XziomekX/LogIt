@@ -19,11 +19,13 @@
 package com.gmail.lucaseasedup.logit;
 
 import static com.gmail.lucaseasedup.logit.GeneralResult.*;
-import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
+import static com.gmail.lucaseasedup.logit.MessageSender.sendMessage;
 import com.gmail.lucaseasedup.logit.db.Database;
-import com.gmail.lucaseasedup.logit.event.account.AccountChangePasswordEvent;
-import com.gmail.lucaseasedup.logit.event.account.AccountCreateEvent;
-import com.gmail.lucaseasedup.logit.event.account.AccountRemoveEvent;
+import com.gmail.lucaseasedup.logit.event.AccountAttachIpEvent;
+import com.gmail.lucaseasedup.logit.event.AccountChangePasswordEvent;
+import com.gmail.lucaseasedup.logit.event.AccountCreateEvent;
+import com.gmail.lucaseasedup.logit.event.AccountRemoveEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -39,9 +41,9 @@ public class AccountManager
         this.core           = core;
         this.database       = core.getDatabase();
         this.table          = core.getConfig().getStorageTable();
-        this.columnUsername = core.getConfig().getStorageColumnsUsername();
-        this.columnPassword = core.getConfig().getStorageColumnsPassword();
-        this.columnIp       = core.getConfig().getStorageColumnsIp();
+        this.columnUsername = core.getConfig().getStorageUsernameColumn();
+        this.columnPassword = core.getConfig().getStoragePasswordColumn();
+        this.columnIp       = core.getConfig().getStorageIpColumn();
     }
     
     /**
@@ -133,6 +135,13 @@ public class AccountManager
         }
     }
     
+    /**
+     * Checks if the given password matches that of account with the specified username.
+     * 
+     * @param username Username.
+     * @param password Password to check
+     * @return True, if they match.
+     */
     public boolean checkAccountPassword(String username, String password)
     {
         if (!isAccountCreated(username))
@@ -163,11 +172,11 @@ public class AccountManager
             // Change password.
             database.update(table, columnPassword + " = \"" + hash + "\"", columnUsername + " = \"" + username.toLowerCase() + "\"");
             passwords.put(username.toLowerCase(), hash);
-        
+            
             // Notify about the password change.
             sendMessage(username, getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
             core.log(FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
-        
+            
             // Call the appropriate event.
             core.callEvent(new AccountChangePasswordEvent(username, SUCCESS));
         }
@@ -200,9 +209,20 @@ public class AccountManager
             // Attach the given ip.
             database.update(table, columnIp + " = \"" + ip + "\"", columnUsername + " = \"" + username.toLowerCase() + "\"");
             ips.put(username.toLowerCase(), ip);
+            
+            // Notify about the attachment.
+            core.log(FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username).replace("%ip%", ip));
+            
+            // Call the appropriate event.
+            core.callEvent(new AccountAttachIpEvent(username, ip, SUCCESS));
         }
         catch (SQLException ex)
         {
+            // Log failure.
+            core.log(FINE, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username).replace("%ip%", ip));
+            
+            // Call the appropriate event.
+            core.callEvent(new AccountAttachIpEvent(username, ip, FAILURE));
         }
     }
     
@@ -274,6 +294,9 @@ public class AccountManager
                 passwords.put(rs.getString(columnUsername), rs.getString(columnPassword));
                 ips.put(rs.getString(columnUsername), rs.getString(columnIp));
             }
+            
+            // Notify about the number of loaded accounts.
+            core.log(FINE, getMessage("LOAD_ACCOUNTS_SUCCESS").replace("%num%", String.valueOf(passwords.size())));
         }
         catch (SQLException ex)
         {

@@ -104,7 +104,11 @@ public class UnregisterCommand implements CommandExecutor
                 return true;
             }
             
-            core.getSessionManager().endSession(p);
+            if (core.getSessionManager().isSessionAlive(p))
+            {
+                core.getSessionManager().endSession(p);
+            }
+            
             core.getAccountManager().removeAccount(p.getName());
             
             return true;

@@ -23,7 +23,6 @@ import com.onarandombox.MultiverseCore.MultiverseCore;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 /**
  * @author LucasEasedUp
@@ -34,7 +33,7 @@ public class SpawnWorldInfoGenerator
     {
     }
     
-    public String generate(Player player)
+    public static String generate(Player player)
     {
         if (!LogItCore.getInstance().getConfig().getShowSpawnWorldInfo())
         {
@@ -44,27 +43,13 @@ public class SpawnWorldInfoGenerator
         return " " + getMessage("IN_WORLD").replace("%world%", getWorldAlias(player.getWorld()));
     }
     
-    protected String getWorldAlias(World world)
+    protected static String getWorldAlias(World world)
     {
-        Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
-        
-        if (plugin == null)
+        if (!Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core"))
         {
             return world.getName();
         }
-        else
-        {
-            return ((MultiverseCore) plugin).getMVWorldManager().getMVWorld(world).getAlias();
-        }
-    }
-    
-    public static SpawnWorldInfoGenerator getInstance()
-    {
-        return SpawnWorldInfoGenerator.WorldInfoGeneratorHolder.INSTANCE;
-    }
-    
-    private static class WorldInfoGeneratorHolder
-    {
-        private static final SpawnWorldInfoGenerator INSTANCE = new SpawnWorldInfoGenerator();
+        
+        return ((MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core")).getMVWorldManager().getMVWorld(world).getAlias();
     }
 }

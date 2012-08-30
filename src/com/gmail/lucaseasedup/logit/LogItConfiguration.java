@@ -121,12 +121,12 @@ public class LogItConfiguration
         return plugin.getConfig().getBoolean("verbose");
     }
     
-    public boolean getLogToFileEnabled()
+    public boolean isLogToFileEnabled()
     {
         return plugin.getConfig().getBoolean("log-to-file.enabled");
     }
     
-    public String getLogToFileFilename()
+    public String getLogFilename()
     {
         return plugin.getConfig().getString("log-to-file.filename");
     }
@@ -251,7 +251,7 @@ public class LogItConfiguration
         return plugin.getConfig().getInt("username.max-length");
     }
     
-    public List<String> getUsernameProhibitedUsernames()
+    public List<String> getProhibitedUsernames()
     {
         return plugin.getConfig().getStringList("username.prohibited-usernames");
     }
@@ -433,17 +433,17 @@ public class LogItConfiguration
         return plugin.getConfig().getString("storage.table");
     }
     
-    public String getStorageColumnsUsername()
+    public String getStorageUsernameColumn()
     {
         return plugin.getConfig().getString("storage.columns.username");
     }
     
-    public String getStorageColumnsPassword()
+    public String getStoragePasswordColumn()
     {
         return plugin.getConfig().getString("storage.columns.password");
     }
     
-    public String getStorageColumnsIp()
+    public String getStorageIpColumn()
     {
         return plugin.getConfig().getString("storage.columns.ip");
     }

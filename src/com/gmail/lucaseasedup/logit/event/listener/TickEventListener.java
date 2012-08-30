@@ -41,7 +41,7 @@ public class TickEventListener implements Listener
         if (!core.getConfig().getForceLoginPreventAirDepletion())
             return;
         
-        Player[] players = Bukkit.getServer().getOnlinePlayers();
+        Player[] players = Bukkit.getOnlinePlayers();
         
         for (Player player : players)
         {

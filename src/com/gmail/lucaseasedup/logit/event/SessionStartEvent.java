@@ -1,5 +1,5 @@
 /*
- * SessionCreateEvent.java
+ * SessionStartEvent.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,16 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event.session;
+package com.gmail.lucaseasedup.logit.event;
 
 import com.gmail.lucaseasedup.logit.Session;
 
 /**
  * @author LucasEasedUp
  */
-public class SessionCreateEvent extends SessionEvent
+public class SessionStartEvent extends SessionEvent
 {
-    public SessionCreateEvent(String username, Session session)
+    public SessionStartEvent(String username, Session session)
     {
         super(username, session);
     }
