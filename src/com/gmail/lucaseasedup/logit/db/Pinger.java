@@ -1,5 +1,5 @@
 /*
- * Session.java
+ * Pinger.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,32 +16,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit;
+package com.gmail.lucaseasedup.logit.db;
+
+import com.gmail.lucaseasedup.logit.db.Database;
+import java.sql.SQLException;
 
 /**
  * @author LucasEasedUp
  */
-public class Session
+public class Pinger implements Runnable
 {
-    public long getStatus()
+    public Pinger(Database database)
     {
-        return status;
+        this.database = database;
     }
     
-    public void setStatus(long status)
+    @Override
+    public void run()
     {
-        this.status = status;
+        try
+        {
+            database.executeStatement("SELECT 1");
+        }
+        catch (SQLException ex)
+        {
+        }
     }
     
-    public void updateStatus(long update)
-    {
-        status += update;
-    }
-
-    public boolean isAlive()
-    {
-        return status >= 0L;
-    }
-    
-    private long status = -1L;
+    private final Database database;
 }

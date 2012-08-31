@@ -16,16 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit;
+package com.gmail.lucaseasedup.logit.account;
 
 import static com.gmail.lucaseasedup.logit.GeneralResult.*;
+import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
-import static com.gmail.lucaseasedup.logit.util.MessageSender.sendMessage;
 import com.gmail.lucaseasedup.logit.db.Database;
-import com.gmail.lucaseasedup.logit.event.AccountAttachIpEvent;
-import com.gmail.lucaseasedup.logit.event.AccountChangePasswordEvent;
-import com.gmail.lucaseasedup.logit.event.AccountCreateEvent;
-import com.gmail.lucaseasedup.logit.event.AccountRemoveEvent;
+import static com.gmail.lucaseasedup.logit.util.MessageSender.sendMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -166,7 +163,7 @@ public class AccountManager
      * @param username Username.
      * @param password New password.
      */
-    public void changeAccountPassword(String username, String password)
+    public void changeAccountPassword(String username, String newPassword)
     {
         if (!isAccountCreated(username))
         {
@@ -174,20 +171,23 @@ public class AccountManager
         }
         
         // Hash the given password.
-        String hash = core.hash(password);
+        newPassword = core.hash(newPassword);
+        
+        // Back up old password.
+        String oldPassword = passwords.get(username.toLowerCase());
         
         try
         {
             // Change password.
-            database.update(table, passwordColumn + " = \"" + hash + "\"", usernameColumn + " = \"" + username.toLowerCase() + "\"");
-            passwords.put(username.toLowerCase(), hash);
+            database.update(table, passwordColumn + " = \"" + newPassword + "\"", usernameColumn + " = \"" + username.toLowerCase() + "\"");
+            passwords.put(username.toLowerCase(), newPassword);
             
             // Notify about the password change.
             sendMessage(username, getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
             core.log(FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
             
             // Call the appropriate event.
-            callEvent(new AccountChangePasswordEvent(username, hash, SUCCESS));
+            callEvent(new AccountChangePasswordEvent(username, oldPassword, newPassword, SUCCESS));
         }
         catch (SQLException ex)
         {
@@ -196,7 +196,7 @@ public class AccountManager
             core.log(FINE, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username));
             
             // Call the appropriate event.
-            callEvent(new AccountChangePasswordEvent(username, hash, FAILURE));
+            callEvent(new AccountChangePasswordEvent(username, oldPassword, newPassword, FAILURE));
         }
     }
     

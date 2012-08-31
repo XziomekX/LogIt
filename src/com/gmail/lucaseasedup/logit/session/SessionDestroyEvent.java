@@ -1,5 +1,5 @@
 /*
- * AccountRegisterEvent.java
+ * SessionDestroyEvent.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,26 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event;
+package com.gmail.lucaseasedup.logit.session;
 
-import com.gmail.lucaseasedup.logit.GeneralResult;
+import com.gmail.lucaseasedup.logit.session.Session;
 
 /**
  * @author LucasEasedUp
  */
-public class AccountCreateEvent extends AccountEvent
+public class SessionDestroyEvent extends SessionEvent
 {
-    public AccountCreateEvent(String username, String password, GeneralResult result)
+    public SessionDestroyEvent(String username, Session session)
     {
-        super(username, result);
-        
-        this.password = password;
+        super(username, session);
     }
-
-    public String getPassword()
-    {
-        return password;
-    }
-    
-    private final String password;
 }

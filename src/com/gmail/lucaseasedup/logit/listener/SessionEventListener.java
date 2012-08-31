@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event.listener;
+package com.gmail.lucaseasedup.logit.listener;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
-import com.gmail.lucaseasedup.logit.event.SessionEndEvent;
-import com.gmail.lucaseasedup.logit.event.SessionStartEvent;
+import com.gmail.lucaseasedup.logit.session.SessionEndEvent;
+import com.gmail.lucaseasedup.logit.session.SessionStartEvent;
 import static com.gmail.lucaseasedup.logit.util.MessageSender.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

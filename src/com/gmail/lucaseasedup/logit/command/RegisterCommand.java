@@ -39,6 +39,7 @@ public class RegisterCommand implements CommandExecutor
             return false;
         
         Player p = null;
+        
         try
         {
             p = (Player) s;
@@ -49,24 +50,29 @@ public class RegisterCommand implements CommandExecutor
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 3)
         {
-            if (p != null && ((core.isPlayerForcedToLogin(p) && !core.getSessionManager().isSessionAlive(p)) || !p.hasPermission("logit.register.others")))
+            if (p != null && ((core.isPlayerForcedToLogin(p) && !core.getSessionManager().isSessionAlive(p))
+                    || !p.hasPermission("logit.register.others")))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
+                
                 return true;
             }
             if (args.length < 2)
             {
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
+                
                 return true;
             }
             if (args.length < 3)
             {
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+                
                 return true;
             }
             if (core.getAccountManager().isAccountCreated(args[1]))
             {
                 s.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_OTHERS").replace("%player%", args[1]));
+                
                 return true;
             }
             if (args[2].length() < core.getConfig().getPasswordMinLength())
@@ -95,26 +101,31 @@ public class RegisterCommand implements CommandExecutor
             if (p == null)
             {
                 s.sendMessage(getMessage("ONLY_PLAYERS"));
+                
                 return true;
             }
             if (!p.hasPermission("logit.register.self"))
             {
                 p.sendMessage(getMessage("NO_PERMS"));
+                
                 return true;
             }
             if (args.length < 1)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+                
                 return true;
             }
             if (args.length < 2)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
+                
                 return true;
             }
             if (core.getAccountManager().isAccountCreated(p.getName()))
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_SELF"));
+                
                 return true;
             }
             if (args[0].length() < core.getConfig().getPasswordMinLength())
@@ -134,6 +145,7 @@ public class RegisterCommand implements CommandExecutor
             if (!args[0].equals(args[1]))
             {
                 p.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
+                
                 return true;
             }
             

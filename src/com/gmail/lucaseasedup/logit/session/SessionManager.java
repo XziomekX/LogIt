@@ -16,13 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit;
+package com.gmail.lucaseasedup.logit.session;
 
+import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
-import com.gmail.lucaseasedup.logit.event.SessionCreateEvent;
-import com.gmail.lucaseasedup.logit.event.SessionDestroyEvent;
-import com.gmail.lucaseasedup.logit.event.SessionEndEvent;
-import com.gmail.lucaseasedup.logit.event.SessionStartEvent;
 import static com.gmail.lucaseasedup.logit.util.MessageSender.*;
 import java.util.HashMap;
 import java.util.Iterator;

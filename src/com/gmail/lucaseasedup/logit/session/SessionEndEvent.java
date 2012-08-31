@@ -1,5 +1,5 @@
 /*
- * AccountChangePasswordEvent.java
+ * SessionEndEvent.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,26 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event;
+package com.gmail.lucaseasedup.logit.session;
 
-import com.gmail.lucaseasedup.logit.GeneralResult;
+import com.gmail.lucaseasedup.logit.session.Session;
 
 /**
  * @author LucasEasedUp
  */
-public class AccountAttachIpEvent extends AccountEvent
+public class SessionEndEvent extends SessionEvent
 {
-    public AccountAttachIpEvent(String username, String ip, GeneralResult result)
+    public SessionEndEvent(String username, Session session)
     {
-        super(username, result);
-        
-        this.ip = ip;
+        super(username, session);
     }
-    
-    public String getIp()
-    {
-        return ip;
-    }
-    
-    private final String ip;
 }

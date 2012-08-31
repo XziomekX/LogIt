@@ -39,6 +39,7 @@ public class UnregisterCommand implements CommandExecutor
             return false;
         
         Player p = null;
+        
         try
         {
             p = (Player) s;
@@ -52,21 +53,25 @@ public class UnregisterCommand implements CommandExecutor
             if (p != null && !p.hasPermission("logit.unregister.others"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
+                
                 return true;
             }
             if (args.length < 2)
             {
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
+                
                 return true;
             }
             if (!core.getAccountManager().isAccountCreated(args[1]))
             {
                 s.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS").replace("%player%", args[1]));
+                
                 return true;
             }
             if (p != null && p.getName().equalsIgnoreCase(args[1]))
             {
                 s.sendMessage(getMessage("REMOVE_ACCOUNT_INDIRECT_SELF"));
+                
                 return true;
             }
             
@@ -81,26 +86,31 @@ public class UnregisterCommand implements CommandExecutor
             if (p == null)
             {
                 s.sendMessage(getMessage("ONLY_PLAYERS"));
+                
                 return true;
             }
             if (!p.hasPermission("logit.unregister.self"))
             {
                 p.sendMessage(getMessage("NO_PERMS"));
+                
                 return true;
             }
             if (args.length < 1)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+                
                 return true;
             }
             if (!core.getAccountManager().isAccountCreated(p.getName()))
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
+                
                 return true;
             }
             if (!core.getAccountManager().checkAccountPassword(p.getName(), args[0]))
             {
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
+                
                 return true;
             }
             

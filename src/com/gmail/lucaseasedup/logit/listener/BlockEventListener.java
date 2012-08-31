@@ -1,5 +1,5 @@
 /*
- * ServerEventListener.java
+ * BlockEventListener.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,59 +16,53 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event.listener;
+package com.gmail.lucaseasedup.logit.listener;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.util.MessageSender.sendForceLoginMessage;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import static org.bukkit.event.EventPriority.HIGHEST;
 import org.bukkit.event.Listener;
-import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.event.server.PluginEnableEvent;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 
 /**
  * @author LucasEasedUp
  */
-public class ServerEventListener implements Listener
+public class BlockEventListener implements Listener
 {
-    public ServerEventListener(LogItCore core)
+    public BlockEventListener(LogItCore core)
     {
         this.core = core;
     }
     
     @EventHandler
-    private void onPluginEnable(PluginEnableEvent event)
+    private void onPlace(BlockPlaceEvent event)
     {
-        if (!event.getPlugin().equals(core.getPlugin()))
+        if (!core.getConfig().getForceLoginPreventBlockPlace())
             return;
         
-        Player[] players = Bukkit.getOnlinePlayers();
+        Player player = event.getPlayer();
         
-        for (Player player : players)
+        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
-            core.getSessionManager().createSession(player.getName());
-            
-            if (core.isPlayerForcedToLogin(player))
-            {
-                sendForceLoginMessage(player, core.getAccountManager());
-            }
+            event.setCancelled(true);
+            sendForceLoginMessage(player, core.getAccountManager());
         }
     }
     
-    @EventHandler(priority = HIGHEST)
-    private void onPluginDisable(PluginDisableEvent event)
+    @EventHandler
+    private void onBreak(BlockBreakEvent event)
     {
-        if (!event.getPlugin().equals(core.getPlugin()))
+        if (!core.getConfig().getForceLoginPreventBlockBreak())
             return;
         
-        Player[] players = Bukkit.getOnlinePlayers();
+        Player player = event.getPlayer();
         
-        for (Player player : players)
+        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
-            core.getWaitingRoom().remove(player);
-            core.getSessionManager().destroySession(player.getName());
+            event.setCancelled(true);
+            sendForceLoginMessage(player, core.getAccountManager());
         }
     }
     

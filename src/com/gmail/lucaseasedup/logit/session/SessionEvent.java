@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event;
+package com.gmail.lucaseasedup.logit.session;
 
-import com.gmail.lucaseasedup.logit.Session;
+import com.gmail.lucaseasedup.logit.session.Session;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 

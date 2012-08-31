@@ -1,5 +1,5 @@
 /*
- * AccountEvent.java
+ * TickEvent.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,50 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event;
+package com.gmail.lucaseasedup.logit;
 
-import com.gmail.lucaseasedup.logit.GeneralResult;
-import static com.gmail.lucaseasedup.logit.GeneralResult.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
 
 /**
  * @author LucasEasedUp
  */
-public abstract class AccountEvent extends Event
+public class TickEvent extends Event
 {
-    public AccountEvent(String username, GeneralResult result)
+    public TickEvent()
     {
-        this.username = username.toLowerCase();
-        this.result   = result;
     }
     
     @Override
     public HandlerList getHandlers()
     {
         return handlers;
-    }
-
-    public String getUsername()
-    {
-        return username;
-    }
-    
-    public boolean isSuccessful()
-    {
-        if (result.equals(SUCCESS))
-        {
-            return true;
-        }
-        else if (result.equals(FAILURE))
-        {
-            return false;
-        }
-        else
-        {
-            throw new RuntimeException("Unknown result.");
-        }
     }
     
     public static HandlerList getHandlerList()
@@ -68,7 +42,4 @@ public abstract class AccountEvent extends Event
     }
     
     private static final HandlerList handlers = new HandlerList();
-    
-    private final String username;
-    private final GeneralResult result;
 }

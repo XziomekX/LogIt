@@ -1,5 +1,5 @@
 /*
- * TickEvent.java
+ * AccountEventListener.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,30 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event;
+package com.gmail.lucaseasedup.logit.listener;
 
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+import com.gmail.lucaseasedup.logit.LogItCore;
+import org.bukkit.event.Listener;
 
 /**
  * @author LucasEasedUp
  */
-public class TickEvent extends Event
+public class AccountEventListener implements Listener
 {
-    public TickEvent()
+    public AccountEventListener(LogItCore core)
     {
+        this.core = core;
     }
     
-    @Override
-    public HandlerList getHandlers()
-    {
-        return handlers;
-    }
-    
-    public static HandlerList getHandlerList()
-    {
-        return handlers;
-    }
-    
-    private static final HandlerList handlers = new HandlerList();
+    private final LogItCore core;
 }

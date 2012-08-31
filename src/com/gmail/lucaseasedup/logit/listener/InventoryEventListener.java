@@ -1,5 +1,5 @@
 /*
- * AccountEventListener.java
+ * InventoryEventListener.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,19 +16,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event.listener;
+package com.gmail.lucaseasedup.logit.listener;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
 /**
  * @author LucasEasedUp
  */
-public class AccountEventListener implements Listener
+public class InventoryEventListener implements Listener
 {
-    public AccountEventListener(LogItCore core)
+    public InventoryEventListener(LogItCore core)
     {
         this.core = core;
+    }
+    
+    @EventHandler
+    private void onClick(InventoryClickEvent event)
+    {
+        if (!core.getConfig().getForceLoginPreventInventoryClick() || !(event.getWhoClicked() instanceof Player))
+            return;
+        
+        Player player = (Player) event.getWhoClicked();
+        
+        if (!core.getSessionManager().isSessionAlive(player.getName()) && core.isPlayerForcedToLogin(player))
+        {
+            event.setCancelled(true);
+        }
     }
     
     private final LogItCore core;

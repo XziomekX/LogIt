@@ -1,5 +1,5 @@
 /*
- * SessionCreateEvent.java
+ * AccountUnregisterEvent.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,17 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event;
+package com.gmail.lucaseasedup.logit.account;
 
-import com.gmail.lucaseasedup.logit.Session;
+import com.gmail.lucaseasedup.logit.GeneralResult;
 
 /**
  * @author LucasEasedUp
  */
-public class SessionCreateEvent extends SessionEvent
+public class AccountRemoveEvent extends AccountEvent
 {
-    public SessionCreateEvent(String username, Session session)
+    public AccountRemoveEvent(String username, GeneralResult result)
     {
-        super(username, session);
+        super(username, result);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * AccountChangePasswordEvent.java
+ * Session.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,26 +16,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event;
-
-import com.gmail.lucaseasedup.logit.GeneralResult;
+package com.gmail.lucaseasedup.logit.session;
 
 /**
  * @author LucasEasedUp
  */
-public class AccountChangePasswordEvent extends AccountEvent
+public class Session
 {
-    public AccountChangePasswordEvent(String username, String password, GeneralResult result)
+    public long getStatus()
     {
-        super(username, result);
-        
-        this.password = password;
+        return status;
     }
     
-    public String getPassword()
+    public void setStatus(long status)
     {
-        return password;
+        this.status = status;
     }
     
-    private final String password;
+    public void updateStatus(long update)
+    {
+        status += update;
+    }
+
+    public boolean isAlive()
+    {
+        return status >= 0L;
+    }
+    
+    private long status = -1L;
 }

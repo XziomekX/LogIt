@@ -18,7 +18,6 @@
  */
 package com.gmail.lucaseasedup.logit;
 
-import com.gmail.lucaseasedup.logit.event.TickEvent;
 import org.bukkit.Bukkit;
 
 /**

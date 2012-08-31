@@ -41,6 +41,7 @@ public class LogItCommand implements CommandExecutor
             return false;
         
         Player p = null;
+        
         try
         {
             p = (Player) s;
@@ -56,6 +57,7 @@ public class LogItCommand implements CommandExecutor
             if (p != null && !p.hasPermission("logit.help"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
+                
                 return true;
             }
             
@@ -99,6 +101,7 @@ public class LogItCommand implements CommandExecutor
             if (p != null && !p.hasPermission("logit.version"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
+                
                 return true;
             }
             
@@ -111,6 +114,7 @@ public class LogItCommand implements CommandExecutor
             if (p != null && !p.hasPermission("logit.reload"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
+                
                 return true;
             }
             
@@ -128,6 +132,7 @@ public class LogItCommand implements CommandExecutor
             if (p != null && !p.hasPermission("logit.purge"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
+                
                 return true;
             }
             
@@ -157,11 +162,13 @@ public class LogItCommand implements CommandExecutor
             if (p == null)
             {
                 s.sendMessage(getMessage("ONLY_PLAYERS"));
+                
                 return true;
             }
             if (p != null && !p.hasPermission("logit.setwr"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
+                
                 return true;
             }
             
@@ -178,11 +185,13 @@ public class LogItCommand implements CommandExecutor
             if (p == null)
             {
                 s.sendMessage(getMessage("ONLY_PLAYERS"));
+                
                 return true;
             }
             if (p != null && !p.hasPermission("logit.gotowr"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
+                
                 return true;
             }
             
@@ -233,6 +242,7 @@ public class LogItCommand implements CommandExecutor
                 if (p != null && !p.hasPermission("logit.globalpass.remove"))
                 {
                     s.sendMessage(getMessage("NO_PERMS"));
+                    
                     return true;
                 }
                 

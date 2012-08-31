@@ -39,6 +39,7 @@ public class ChangePassCommand implements CommandExecutor
             return false;
         
         Player p = null;
+        
         try
         {
             p = (Player) s;
@@ -52,34 +53,36 @@ public class ChangePassCommand implements CommandExecutor
             if (p != null && !p.hasPermission("logit.changepass.others"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
+                
                 return true;
             }
             if (args.length < 2)
             {
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
+                
                 return true;
             }
             if (args.length < 3)
             {
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "newpassword"));
+                
                 return true;
             }
             if (!core.getAccountManager().isAccountCreated(args[1]))
             {
                 s.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS").replace("%player%", args[1]));
+                
                 return true;
             }
             if (args[2].length() < core.getConfig().getPasswordMinLength())
             {
-                s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
-                        String.valueOf(core.getConfig().getPasswordMinLength())));
+                s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
                 
                 return true;
             }
             if (args[2].length() > core.getConfig().getPasswordMaxLength())
             {
-                s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
-                        String.valueOf(core.getConfig().getPasswordMaxLength())));
+                s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%", String.valueOf(core.getConfig().getPasswordMaxLength())));
                 
                 return true;
             }
@@ -95,55 +98,61 @@ public class ChangePassCommand implements CommandExecutor
             if (p == null)
             {
                 s.sendMessage(getMessage("ONLY_PLAYERS"));
+                
                 return true;
             }
             if (!p.hasPermission("logit.changepass.self"))
             {
                 p.sendMessage(getMessage("NO_PERMS"));
+                
                 return true;
             }
             if (args.length < 1)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "oldpassword"));
+                
                 return true;
             }
             if (args.length < 2)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "newpassword"));
+                
                 return true;
             }
             if (args.length < 3)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
+                
                 return true;
             }
             if (!core.getAccountManager().isAccountCreated(p.getName()))
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
+                
                 return true;
             }
             if (!core.getAccountManager().checkAccountPassword(p.getName(), args[0]))
             {
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
+                
                 return true;
             }
             if (args[1].length() < core.getConfig().getPasswordMinLength())
             {
-                p.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
-                        String.valueOf(core.getConfig().getPasswordMinLength())));
+                p.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
                 
                 return true;
             }
             if (args[1].length() > core.getConfig().getPasswordMaxLength())
             {
-                p.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
-                        String.valueOf(core.getConfig().getPasswordMaxLength())));
+                p.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%", String.valueOf(core.getConfig().getPasswordMaxLength())));
                 
                 return true;
             }
             if (!args[1].equals(args[2]))
             {
                 p.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
+                
                 return true;
             }
             

@@ -1,5 +1,5 @@
 /*
- * AccountUnregisterEvent.java
+ * AccountChangePasswordEvent.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,17 +16,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit.event;
+package com.gmail.lucaseasedup.logit.account;
 
 import com.gmail.lucaseasedup.logit.GeneralResult;
 
 /**
  * @author LucasEasedUp
  */
-public class AccountRemoveEvent extends AccountEvent
+public class AccountChangePasswordEvent extends AccountEvent
 {
-    public AccountRemoveEvent(String username, GeneralResult result)
+    public AccountChangePasswordEvent(String username, String oldPassword, String newPassword, GeneralResult result)
     {
         super(username, result);
+        
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
     }
+
+    public String getOldPassword()
+    {
+        return oldPassword;
+    }
+
+    public String getNewPassword()
+    {
+        return newPassword;
+    }
+    
+    private final String oldPassword;
+    private final String newPassword;
 }

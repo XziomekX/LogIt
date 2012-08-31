@@ -1,5 +1,5 @@
 /*
- * Pinger.java
+ * AccountChangePasswordEvent.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -16,32 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit;
+package com.gmail.lucaseasedup.logit.account;
 
-import com.gmail.lucaseasedup.logit.db.Database;
-import java.sql.SQLException;
+import com.gmail.lucaseasedup.logit.GeneralResult;
 
 /**
  * @author LucasEasedUp
  */
-public class Pinger implements Runnable
+public class AccountAttachIpEvent extends AccountEvent
 {
-    public Pinger(Database database)
+    public AccountAttachIpEvent(String username, String ip, GeneralResult result)
     {
-        this.database = database;
+        super(username, result);
+        
+        this.ip = ip;
     }
     
-    @Override
-    public void run()
+    public String getIp()
     {
-        try
-        {
-            database.executeStatement("SELECT 1");
-        }
-        catch (SQLException ex)
-        {
-        }
+        return ip;
     }
     
-    private final Database database;
+    private final String ip;
 }
