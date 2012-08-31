@@ -20,7 +20,7 @@ package com.gmail.lucaseasedup.logit.command;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
-import static com.gmail.lucaseasedup.logit.MessageSender.isPlayerOnline;
+import static com.gmail.lucaseasedup.logit.util.MessageSender.isPlayerOnline;
 import java.util.HashMap;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

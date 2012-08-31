@@ -20,8 +20,7 @@ package com.gmail.lucaseasedup.logit.event.listener;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
-import static com.gmail.lucaseasedup.logit.MessageSender.*;
-import com.gmail.lucaseasedup.logit.SpawnWorldInfoGenerator;
+import static com.gmail.lucaseasedup.logit.util.MessageSender.*;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
@@ -100,7 +99,7 @@ public class PlayerEventListener implements Listener
                 if (core.getSessionManager().isSessionAlive(username) || !core.getConfig().getForceLoginGlobal()
                         || player.hasPermission("logit.login.exempt"))
                 {
-                    broadcastMessage(getMessage("JOIN").replace("%player%", username) + SpawnWorldInfoGenerator.generate(player), player);
+                    broadcastJoinMessage(player, core.getConfig());
                 }
                 else if (core.getConfig().getForceLoginGlobal() && core.getConfig().isWaitingRoomEnabled())
                 {
@@ -109,7 +108,7 @@ public class PlayerEventListener implements Listener
                 
                 if (core.isPlayerForcedToLogin(player) && !core.getSessionManager().isSessionAlive(username))
                 {
-                    core.sendForceLoginMessage(player);
+                    sendForceLoginMessage(player, core.getAccountManager());
                 }
             }
         }, 1L);
@@ -124,7 +123,7 @@ public class PlayerEventListener implements Listener
         
         if (core.getSessionManager().isSessionAlive(player))
         {
-            broadcastMessage(getMessage("QUIT").replace("%player%", player.getName()));
+            broadcastQuitMessage(player);
         }
         
         core.getWaitingRoom().remove(player);
@@ -179,7 +178,7 @@ public class PlayerEventListener implements Listener
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            core.sendForceLoginMessage(player);
+            sendForceLoginMessage(player, core.getAccountManager());
         }
     }
     
@@ -231,7 +230,7 @@ public class PlayerEventListener implements Listener
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            core.sendForceLoginMessage(player);
+            sendForceLoginMessage(player, core.getAccountManager());
         }
     }
     
@@ -252,7 +251,7 @@ public class PlayerEventListener implements Listener
             // Check if not on a pressure plate to prevent spamming.
             if (clickedBlock == null || (clickedBlock.getTypeId() != 70 && clickedBlock.getTypeId() != 72))
             {
-                core.sendForceLoginMessage(player);
+                sendForceLoginMessage(player, core.getAccountManager());
             }
         }
     }
@@ -268,7 +267,7 @@ public class PlayerEventListener implements Listener
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            core.sendForceLoginMessage(player);
+            sendForceLoginMessage(player, core.getAccountManager());
         }
     }
     
@@ -297,7 +296,7 @@ public class PlayerEventListener implements Listener
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            core.sendForceLoginMessage(player);
+            sendForceLoginMessage(player, core.getAccountManager());
         }
     }
     

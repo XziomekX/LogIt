@@ -20,7 +20,7 @@ package com.gmail.lucaseasedup.logit;
 
 import static com.gmail.lucaseasedup.logit.GeneralResult.*;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
-import static com.gmail.lucaseasedup.logit.MessageSender.sendMessage;
+import static com.gmail.lucaseasedup.logit.util.MessageSender.sendMessage;
 import com.gmail.lucaseasedup.logit.db.Database;
 import com.gmail.lucaseasedup.logit.event.AccountAttachIpEvent;
 import com.gmail.lucaseasedup.logit.event.AccountChangePasswordEvent;
@@ -32,14 +32,16 @@ import java.util.HashMap;
 import static java.util.logging.Level.*;
 
 /**
+ * Account manager.
+ * 
  * @author LucasEasedUp
  */
 public class AccountManager
 {
-    public AccountManager(LogItCore core)
+    public AccountManager(LogItCore core, Database database)
     {
         this.core           = core;
-        this.database       = core.getDatabase();
+        this.database       = database;
         this.table          = core.getConfig().getStorageTable();
         this.usernameColumn = core.getConfig().getStorageUsernameColumn();
         this.passwordColumn = core.getConfig().getStoragePasswordColumn();

@@ -16,8 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit;
+package com.gmail.lucaseasedup.logit.util;
 
+import com.gmail.lucaseasedup.logit.AccountManager;
+import com.gmail.lucaseasedup.logit.LogItConfiguration;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -62,8 +65,8 @@ public class MessageSender
     /**
      * Sends the given message to all online players, except for a player specified as a first parameter.
      * 
-     * @param player Player to be omitted in broadcasting.
      * @param message Message.
+     * @param player Player to be omitted in broadcasting.
      */
     public static void broadcastMessage(String message, Player player)
     {
@@ -73,6 +76,52 @@ public class MessageSender
             {
                 p.sendMessage(message);
             }
+        }
+    }
+    
+    /**
+     * Broadcasts a join message.
+     * 
+     * @param player Player who joined.
+     */
+    public static void broadcastJoinMessage(Player player, LogItConfiguration config)
+    {
+        String message = getMessage("JOIN");
+        
+        message = message.replace("%player%", player.getName());
+        message = message.replace("%in_world%", (config.isShowSpawnWorldInfoEnabled()) ? SpawnWorldInfoGenerator.generate(player) : "");
+        
+        broadcastMessage(message, player);
+    }
+    
+    /**
+     * Broadcasts a quit message.
+     * 
+     * @param player Player who quit.
+     */
+    public static void broadcastQuitMessage(Player player)
+    {
+        String message = getMessage("QUIT");
+        
+        message = message.replace("%player%", player.getName());
+        
+        broadcastMessage(message, player);
+    }
+    
+    /**
+     * Sends a message to the specified player telling them to either login or register.
+     * 
+     * @param player Player.
+     */
+    public static void sendForceLoginMessage(Player player, AccountManager accountManager)
+    {
+        if (accountManager.isAccountCreated(player.getName()))
+        {
+            player.sendMessage(getMessage("PLEASE_LOGIN"));
+        }
+        else
+        {
+            player.sendMessage(getMessage("PLEASE_REGISTER"));
         }
     }
     

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.gmail.lucaseasedup.logit;
+package com.gmail.lucaseasedup.logit.util;
 
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import com.onarandombox.MultiverseCore.MultiverseCore;
@@ -35,15 +35,10 @@ public class SpawnWorldInfoGenerator
     
     public static String generate(Player player)
     {
-        if (!LogItCore.getInstance().getConfig().isShowSpawnWorldInfoEnabled())
-        {
-            return "";
-        }
-        
-        return " " + getMessage("IN_WORLD").replace("%world%", getWorldAlias(player.getWorld()));
+        return getMessage("IN_WORLD").replace("%world%", getWorldAlias(player.getWorld()));
     }
     
-    protected static String getWorldAlias(World world)
+    public static String getWorldAlias(World world)
     {
         if (!Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core"))
         {

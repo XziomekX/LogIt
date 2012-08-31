@@ -27,19 +27,37 @@ import org.bukkit.entity.Player;
  */
 public class WaitingRoom
 {
-    public WaitingRoom()
+    public WaitingRoom(LogItCore core)
     {
+        this.core = core;
     }
     
+    /**
+     * Puts a player into the waiting room.
+     * 
+     * If the player is already in the waiting room, no action will be taken.
+     * 
+     * @param player Player.
+     */
     public void put(Player player)
     {
+        if (contains(player))
+            return;
+        
         // Back up player's location.
         locations.put(player, player.getLocation().clone());
         
         // Put the player into the waiting room.
-        player.teleport(LogItCore.getInstance().getConfig().getWaitingRoomLocation());
+        player.teleport(core.getConfig().getWaitingRoomLocation());
     }
     
+    /**
+     * Takes a player out of waiting room.
+     * 
+     * If the player is not in the waiting room, no action will be taken.
+     * 
+     * @param player Player.
+     */
     public void remove(Player player)
     {
         if (!contains(player))
@@ -49,10 +67,18 @@ public class WaitingRoom
         player.teleport(locations.remove(player));
     }
     
+    /**
+     * Check if a player is in the waiting room.
+     * 
+     * @param player Player.
+     * @return True, if the player is in the waiting room.
+     */
     public boolean contains(Player player)
     {
         return locations.containsKey(player);
     }
+    
+    private final LogItCore core;
     
     private final HashMap<Player, Location> locations = new HashMap<>();
 }

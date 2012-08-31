@@ -19,11 +19,11 @@
 package com.gmail.lucaseasedup.logit;
 
 import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
-import static com.gmail.lucaseasedup.logit.MessageSender.*;
 import com.gmail.lucaseasedup.logit.event.SessionCreateEvent;
 import com.gmail.lucaseasedup.logit.event.SessionDestroyEvent;
 import com.gmail.lucaseasedup.logit.event.SessionEndEvent;
 import com.gmail.lucaseasedup.logit.event.SessionStartEvent;
+import static com.gmail.lucaseasedup.logit.util.MessageSender.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import static java.util.logging.Level.FINE;

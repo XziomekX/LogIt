@@ -19,11 +19,9 @@
 package com.gmail.lucaseasedup.logit.event.listener;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
-import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
-import static com.gmail.lucaseasedup.logit.MessageSender.*;
-import com.gmail.lucaseasedup.logit.SpawnWorldInfoGenerator;
 import com.gmail.lucaseasedup.logit.event.SessionEndEvent;
 import com.gmail.lucaseasedup.logit.event.SessionStartEvent;
+import static com.gmail.lucaseasedup.logit.util.MessageSender.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import static org.bukkit.event.EventPriority.LOWEST;
@@ -52,7 +50,7 @@ public class SessionEventListener implements Listener
             
             if (core.getConfig().getForceLoginGlobal() && !player.hasPermission("logit.login.exempt"))
             {
-                broadcastMessage(getMessage("JOIN").replace("%player%", player.getName()) + SpawnWorldInfoGenerator.generate(player), player);
+                broadcastJoinMessage(player, core.getConfig());
             }
         }
     }
@@ -73,7 +71,7 @@ public class SessionEventListener implements Listener
             
             if (core.getConfig().getForceLoginGlobal() && !player.hasPermission("logit.login.exempt"))
             {
-                broadcastMessage(getMessage("QUIT").replace("%player%", player.getName()), player);
+                broadcastQuitMessage(player);
             }
         }
     }

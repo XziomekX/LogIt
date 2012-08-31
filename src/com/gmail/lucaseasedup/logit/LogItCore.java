@@ -26,6 +26,7 @@ import com.gmail.lucaseasedup.logit.db.MySqlDatabase;
 import com.gmail.lucaseasedup.logit.db.SqliteDatabase;
 import com.gmail.lucaseasedup.logit.event.listener.*;
 import static com.gmail.lucaseasedup.logit.hash.HashGenerator.*;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -36,7 +37,6 @@ import static java.util.logging.Level.*;
 import org.bukkit.Bukkit;
 import static org.bukkit.ChatColor.stripColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 
 /**
  * The LogIt core.
@@ -55,14 +55,13 @@ public class LogItCore
      */
     public void start()
     {
+        // If LogIt has already been started, return at this point.
         if (started)
-        {
-            // If LogIt has already been started, return at this point.
             return;
-        }
+        
+        // If LogIt hasn't been loaded yet, do it now.
         if (!loaded)
         {
-            // If LogIt hasn't been loaded yet, do it now.
             load();
         }
         
@@ -100,8 +99,7 @@ public class LogItCore
                 case MYSQL:
                 {
                     database = new MySqlDatabase();
-                    database.connect(config.getMysqlHost(), config.getMysqlUser(), config.getMysqlPassword(),
-                        config.getMysqlDatabase());
+                    database.connect(config.getMysqlHost(), config.getMysqlUser(), config.getMysqlPassword(), config.getMysqlDatabase());
                     
                     break;
                 }
@@ -144,7 +142,7 @@ public class LogItCore
                 .replace("%ha%", config.getHashingAlgorithm().name()));
         
         // Load accounts.
-        accountManager = new AccountManager(this);
+        accountManager = new AccountManager(this, database);
         accountManager.loadAccounts();
         
         // Schedule tasks.
@@ -161,11 +159,9 @@ public class LogItCore
      */
     public void stop()
     {
+        // If LogIt is not started, return at this point.
         if (!started)
-        {
-            // If LogIt is not started, return at this point.
             return;
-        }
         
         try
         {
@@ -245,25 +241,7 @@ public class LogItCore
      */
     public boolean isPlayerForcedToLogin(Player player)
     {
-        return (config.getForceLoginGlobal() || config.getForceLoginInWorld(player.getWorld()))
-                && !player.hasPermission("logit.login.exempt");
-    }
-    
-    /**
-     * Sends a message to the specified player telling them to either login or register.
-     * 
-     * @param player Player.
-     */
-    public void sendForceLoginMessage(Player player)
-    {
-        if (accountManager.isAccountCreated(player.getName()))
-        {
-            player.sendMessage(getMessage("PLEASE_LOGIN"));
-        }
-        else
-        {
-            player.sendMessage(getMessage("PLEASE_REGISTER"));
-        }
+        return (config.getForceLoginGlobal() || config.getForceLoginInWorld(player.getWorld())) && !player.hasPermission("logit.login.exempt");
     }
     
     /**
@@ -328,7 +306,7 @@ public class LogItCore
             Date             date = new Date();
             SimpleDateFormat sdf  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             
-            try (FileWriter fileWriter = new FileWriter(plugin.getDataFolder() + "/" + config.getLogFilename(), true))
+            try (FileWriter fileWriter = new FileWriter(new File(plugin.getDataFolder(), config.getLogFilename()), true))
             {
                 fileWriter.write(sdf.format(date) + " [" + level.getName() + "] " + stripColor(message) + "\n");
             }
@@ -397,7 +375,7 @@ public class LogItCore
         
         sessionManager = new SessionManager(this);
         tickEventCaller = new TickEventCaller();
-        waitingRoom = new WaitingRoom();
+        waitingRoom = new WaitingRoom(this);
         
         loaded = true;
     }
@@ -409,13 +387,10 @@ public class LogItCore
      */
     public static LogItCore getInstance()
     {
-        return LogItCore.LogItCoreHolder.INSTANCE;
+        return INSTANCE;
     }
     
-    private static class LogItCoreHolder
-    {
-        private static final LogItCore INSTANCE = new LogItCore((LogItPlugin) Bukkit.getPluginManager().getPlugin("LogIt"));
-    }
+    private static final LogItCore INSTANCE = new LogItCore((LogItPlugin) Bukkit.getPluginManager().getPlugin("LogIt"));
     
     private final LogItPlugin plugin;
     

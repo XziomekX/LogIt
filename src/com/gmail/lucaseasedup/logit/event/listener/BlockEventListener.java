@@ -19,6 +19,7 @@
 package com.gmail.lucaseasedup.logit.event.listener;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
+import static com.gmail.lucaseasedup.logit.util.MessageSender.sendForceLoginMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -46,7 +47,7 @@ public class BlockEventListener implements Listener
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            core.sendForceLoginMessage(player);
+            sendForceLoginMessage(player, core.getAccountManager());
         }
     }
     
@@ -61,7 +62,7 @@ public class BlockEventListener implements Listener
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            core.sendForceLoginMessage(player);
+            sendForceLoginMessage(player, core.getAccountManager());
         }
     }
     
