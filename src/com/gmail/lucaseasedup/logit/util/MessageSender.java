@@ -84,12 +84,12 @@ public class MessageSender
      * 
      * @param player Player who joined.
      */
-    public static void broadcastJoinMessage(Player player, LogItConfiguration config)
+    public static void broadcastJoinMessage(Player player, boolean showSpawnWorldInfo)
     {
         String message = getMessage("JOIN");
         
         message = message.replace("%player%", player.getName());
-        message = message.replace("%in_world%", (config.isShowSpawnWorldInfoEnabled()) ? SpawnWorldInfoGenerator.generate(player) : "");
+        message = message.replace("%in_world%", (showSpawnWorldInfo) ? SpawnWorldInfoGenerator.generate(player) : "");
         
         broadcastMessage(message, player);
     }

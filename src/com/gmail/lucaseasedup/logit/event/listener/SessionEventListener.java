@@ -50,7 +50,7 @@ public class SessionEventListener implements Listener
             
             if (core.getConfig().getForceLoginGlobal() && !player.hasPermission("logit.login.exempt"))
             {
-                broadcastJoinMessage(player, core.getConfig());
+                broadcastJoinMessage(player, core.getConfig().isShowSpawnWorldInfoEnabled());
             }
         }
     }

@@ -99,7 +99,7 @@ public class PlayerEventListener implements Listener
                 if (core.getSessionManager().isSessionAlive(username) || !core.getConfig().getForceLoginGlobal()
                         || player.hasPermission("logit.login.exempt"))
                 {
-                    broadcastJoinMessage(player, core.getConfig());
+                    broadcastJoinMessage(player, core.getConfig().isShowSpawnWorldInfoEnabled());
                 }
                 else if (core.getConfig().getForceLoginGlobal() && core.getConfig().isWaitingRoomEnabled())
                 {
