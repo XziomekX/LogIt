@@ -66,6 +66,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("force-login.prevent.interact-entity",    plugin.getConfig().getBoolean("force-login.prevent.interact-entity", true)); 
         plugin.getConfig().set("force-login.prevent.inventory-click",    plugin.getConfig().getBoolean("force-login.prevent.inventory-click", true)); 
         plugin.getConfig().set("force-login.prevent.air-depletion",      plugin.getConfig().getBoolean("force-login.prevent.air-depletion", true)); 
+        plugin.getConfig().set("session-lifetime",                       plugin.getConfig().getInt("session-lifetime", 0));
         plugin.getConfig().set("username.regex",                         plugin.getConfig().getString("username.regex", "[A-Za-z0-9_]+"));
         plugin.getConfig().set("username.min-length",                    plugin.getConfig().getInt("username.min-length", 2));
         plugin.getConfig().set("username.max-length",                    plugin.getConfig().getInt("username.max-length", 16));
@@ -77,7 +78,6 @@ public final class LogItConfiguration
         plugin.getConfig().set("kick-unregistered",                      plugin.getConfig().getBoolean("kick-unregistered", false));
         plugin.getConfig().set("accounts-per-ip",                        plugin.getConfig().getInt("accounts-per-ip", 3));
         plugin.getConfig().set("hashing-algorithm",                      plugin.getConfig().getString("hashing-algorithm", "md5"));
-        plugin.getConfig().set("session-lifetime",                       plugin.getConfig().getInt("session-lifetime", 0));
         plugin.getConfig().set("show-spawn-world-info",                  plugin.getConfig().getBoolean("show-spawn-world-info", true));
         plugin.getConfig().set("waiting-room.enabled",                   plugin.getConfig().getBoolean("waiting-room.enabled", false));
         plugin.getConfig().set("waiting-room.location.world",            plugin.getConfig().getString("waiting-room.location.world", "world"));
@@ -239,6 +239,11 @@ public final class LogItConfiguration
         return plugin.getConfig().getBoolean("force-login.prevent.air-depletion");
     }
     
+    public long getSessionLifetime()
+    {
+        return plugin.getConfig().getInt("session-lifetime") * 20L;
+    }
+    
     public String getUsernameRegex()
     {
         return plugin.getConfig().getString("username.regex");
@@ -337,11 +342,6 @@ public final class LogItConfiguration
         {
             return HashingAlgorithm.UNKNOWN;
         }
-    }
-    
-    public int getSessionLifetime()
-    {
-        return plugin.getConfig().getInt("session-lifetime");
     }
     
     public boolean isShowSpawnWorldInfoEnabled()

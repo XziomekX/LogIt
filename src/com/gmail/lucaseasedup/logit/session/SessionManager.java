@@ -49,7 +49,7 @@ public class SessionManager implements Runnable
             
             if (session.getStatus() >= 0L)
             {
-                if (session.getStatus() > (core.getConfig().getSessionLifetime() * 20L))
+                if (session.getStatus() > core.getConfig().getSessionLifetime())
                 {
                     if (isPlayerOnline(username))
                     {
