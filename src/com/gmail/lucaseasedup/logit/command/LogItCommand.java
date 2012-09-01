@@ -37,9 +37,6 @@ public class LogItCommand implements CommandExecutor
     @Override
     public boolean onCommand(CommandSender s, Command cmd, String label, String[] args)
     {
-        if (!cmd.getName().equalsIgnoreCase("logit"))
-            return false;
-        
         Player p = null;
         
         try
