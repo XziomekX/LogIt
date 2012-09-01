@@ -20,6 +20,7 @@ package com.gmail.lucaseasedup.logit.command;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import static java.util.logging.Level.*;
@@ -79,9 +80,13 @@ public class LogItCommand implements CommandExecutor
             {
                 s.sendMessage(getLogItSubcommandHelp("backup force", null));
             }
+            if (p == null || p.hasPermission("logit.backup.restore"))
+            {
+                s.sendMessage(getLogItSubcommandHelp("backup restore", "<filename>"));
+            }
             if (p == null || p.hasPermission("logit.backup.remove"))
             {
-                s.sendMessage(getLogItSubcommandHelp("backup remove", "<filename>"));
+                s.sendMessage(getLogItSubcommandHelp("backup remove", "<amount>"));
             }
             if (p != null && p.hasPermission("logit.setwr"))
             {
@@ -217,17 +222,53 @@ public class LogItCommand implements CommandExecutor
                     {
                         s.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS"));
                     }
-
+                    
                     core.log(INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
                 }
-                catch (SQLException ex)
+                catch (FileNotFoundException|SQLException ex)
                 {
                     if (p != null)
                     {
                         s.sendMessage(getMessage("RESTORE_BACKUP_FAIL"));
                     }
-
+                    
                     core.log(WARNING, getMessage("RESTORE_BACKUP_FAIL"));
+                }
+            }
+            else if (args[1].equalsIgnoreCase("remove"))
+            {
+                if (p != null && !p.hasPermission("logit.backup.remove"))
+                {
+                    s.sendMessage(getMessage("NO_PERMS"));
+                    
+                    return true;
+                }
+                if (args.length < 3)
+                {
+                    s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "amount"));
+                    
+                    return true;
+                }
+                
+                try
+                {
+                    core.getBackupManager().removeBackups(Integer.parseInt(args[2]));
+                    
+                    if (p != null)
+                    {
+                        s.sendMessage(getMessage("REMOVE_BACKUPS_SUCCESS"));
+                    }
+
+                    core.log(INFO, getMessage("REMOVE_BACKUPS_SUCCESS"));
+                }
+                catch (NumberFormatException|IOException ex)
+                {
+                    if (p != null)
+                    {
+                        s.sendMessage(getMessage("REMOVE_BACKUPS_FAIL"));
+                    }
+
+                    core.log(WARNING, getMessage("REMOVE_BACKUPS_FAIL"));
                 }
             }
             

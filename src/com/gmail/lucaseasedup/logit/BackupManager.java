@@ -22,10 +22,12 @@ import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import com.gmail.lucaseasedup.logit.db.Database;
 import com.gmail.lucaseasedup.logit.db.SqliteDatabase;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import static java.util.logging.Level.*;
 
@@ -46,12 +48,12 @@ public class BackupManager implements Runnable
     @Override
     public void run()
     {
-        if (!core.getConfig().isBackupEnabled())
+        if (!core.getConfig().isScheduledBackupEnabled())
             return;
         
         timer.run();
         
-        if (timer.getElapsed() >= core.getConfig().getBackupInterval())
+        if (timer.getElapsed() >= core.getConfig().getScheduledBackupInterval())
         {
             try
             {
@@ -103,9 +105,26 @@ public class BackupManager implements Runnable
         }
     }
     
-    public void removeBackup()
+    /**
+     * Removes a certain amount of backups starting from the oldest.
+     * 
+     * @param amount Amount of backups to delete.
+     * @throws IOException
+     */
+    public void removeBackups(int amount) throws IOException
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        File[] backups = core.getConfig().getBackupPath().listFiles();
+        
+        // Sort backups alphabetically.
+        Arrays.sort(backups);
+        
+        for (int i = 0; i < amount; i++)
+        {
+            if (i < backups.length)
+            {
+                backups[i].delete();
+            }
+        }
     }
     
     /**
@@ -115,11 +134,18 @@ public class BackupManager implements Runnable
      * @param filename Backup filename.
      * @throws SQLException
      */
-    public void restoreBackup(Database database, String filename) throws SQLException
+    public void restoreBackup(Database database, String filename) throws FileNotFoundException, SQLException
     {
+        File backupFile = new File(core.getConfig().getBackupPath(), filename);
+        
+        if (!backupFile.exists())
+        {
+            throw new FileNotFoundException();
+        }
+        
         try (SqliteDatabase backupDatabase = new SqliteDatabase())
         {
-            backupDatabase.connect("jdbc:sqlite:" + new File(core.getConfig().getBackupPath(), filename), null, null, null);
+            backupDatabase.connect("jdbc:sqlite:" + backupFile, null, null, null);
             
             // Clear the table before restoring.
             database.truncate(core.getConfig().getStorageTable());

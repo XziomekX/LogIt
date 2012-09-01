@@ -93,10 +93,10 @@ public final class LogItConfiguration
         plugin.getConfig().set("storage.mysql.password",                 plugin.getConfig().getString("storage.mysql.password", ""));
         plugin.getConfig().set("storage.mysql.database",                 plugin.getConfig().getString("storage.mysql.database", ""));
         plugin.getConfig().set("storage.table",                          plugin.getConfig().getString("storage.table", "logit"));
-        plugin.getConfig().set("backup.enabled",                         plugin.getConfig().getBoolean("backup.enabled", false));
-        plugin.getConfig().set("backup.interval",                        plugin.getConfig().getInt("backup.interval", 7200));
         plugin.getConfig().set("backup.path",                            plugin.getConfig().getString("backup.path", "backup"));
         plugin.getConfig().set("backup.file-format",                     plugin.getConfig().getString("backup.file-format", "yyyy-MM-dd_HH-mm-ss'.db'"));
+        plugin.getConfig().set("backup.schedule.enabled",                plugin.getConfig().getBoolean("backup.schedule.enabled", false));
+        plugin.getConfig().set("backup.schedule.interval",               plugin.getConfig().getInt("backup.schedule.interval", 7200));
         
         plugin.saveConfig();
     }
@@ -444,16 +444,6 @@ public final class LogItConfiguration
         return plugin.getConfig().getString("storage.table");
     }
     
-    public boolean isBackupEnabled()
-    {
-        return plugin.getConfig().getBoolean("backup.enabled");
-    }
-    
-    public long getBackupInterval()
-    {
-        return plugin.getConfig().getInt("backup.interval") * 20L;
-    }
-    
     public File getBackupPath()
     {
         return new File(plugin.getDataFolder(), plugin.getConfig().getString("backup.path"));
@@ -462,6 +452,16 @@ public final class LogItConfiguration
     public String getBackupFileFormat()
     {
         return plugin.getConfig().getString("backup.file-format");
+    }
+    
+    public boolean isScheduledBackupEnabled()
+    {
+        return plugin.getConfig().getBoolean("backup.schedule.enabled");
+    }
+    
+    public long getScheduledBackupInterval()
+    {
+        return plugin.getConfig().getInt("backup.schedule.interval") * 20L;
     }
     
     public void setGlobalPassword(String password)
