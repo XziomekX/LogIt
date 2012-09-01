@@ -154,9 +154,9 @@ public final class LogItConfiguration
         return plugin.getConfig().getStringList("force-login.allowed-commands");
     }
     
-    public int getForceLoginTimeout()
+    public long getForceLoginTimeout()
     {
-        return plugin.getConfig().getInt("force-login.timeout");
+        return plugin.getConfig().getInt("force-login.timeout") * 20L;
     }
     
     public boolean getForceLoginPreventMove()

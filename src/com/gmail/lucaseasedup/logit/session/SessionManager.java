@@ -39,7 +39,7 @@ public class SessionManager implements Runnable
     @Override
     public void run()
     {
-        long forceLoginTimeoutTicks = (core.getConfig().getForceLoginTimeout() > 0L) ? (core.getConfig().getForceLoginTimeout() * -20L) : 0L;
+        long forceLoginTimeoutTicks = (core.getConfig().getForceLoginTimeout() > 0L) ? (-core.getConfig().getForceLoginTimeout()) : 0L;
         
         for (Iterator<String> it = sessions.keySet().iterator(); it.hasNext();)
         {
