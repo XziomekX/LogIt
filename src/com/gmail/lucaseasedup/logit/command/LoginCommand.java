@@ -121,27 +121,35 @@ public class LoginCommand implements CommandExecutor
             }
             if (!core.getAccountManager().checkAccountPassword(p.getName(), args[0]) && !core.checkGlobalPassword(args[0]))
             {
+                String username = p.getName().toLowerCase();
+                
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
                 
-                if (!loginRetries.containsKey(p.getName().toLowerCase()))
-                {
-                    loginRetries.put(p.getName().toLowerCase(), 1);
-                }
-                else
-                {
-                    loginRetries.put(p.getName().toLowerCase(), loginRetries.get(p.getName().toLowerCase()) + 1);
-                }
+                failedLoginsToKick.put(username, (failedLoginsToKick.get(username) != null) ? failedLoginsToKick.get(username) + 1 : 1);
+                failedLoginsToBan.put(username, (failedLoginsToBan.get(username) != null) ? failedLoginsToBan.get(username) + 1 : 1);
                 
-                if (loginRetries.get(p.getName().toLowerCase()) >= core.getConfig().getLoginFailsToKick())
+                if (failedLoginsToBan.get(username) >= core.getConfig().getLoginFailsToBan())
+                {
+                    p.setBanned(true);
+                    p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS"));
+                    
+                    failedLoginsToKick.remove(username);
+                    failedLoginsToBan.remove(username);
+                }
+                else if (failedLoginsToKick.get(username) >= core.getConfig().getLoginFailsToKick())
                 {
                     p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS"));
-                    loginRetries.remove(p.getName().toLowerCase());
+                    
+                    failedLoginsToKick.remove(username);
                 }
                 
                 return true;
             }
             
             core.getSessionManager().startSession(p.getName());
+            
+            failedLoginsToKick.remove(p.getName().toLowerCase());
+            failedLoginsToBan.remove(p.getName().toLowerCase());
             
             return true;
         }
@@ -153,5 +161,6 @@ public class LoginCommand implements CommandExecutor
     
     private final LogItCore core;
     
-    private final HashMap<String, Integer> loginRetries = new HashMap<>();
+    private final HashMap<String, Integer> failedLoginsToKick = new HashMap<>();
+    private final HashMap<String, Integer> failedLoginsToBan = new HashMap<>();
 }

@@ -75,6 +75,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("password.max-length",                    plugin.getConfig().getInt("password.max-length", 25));
         plugin.getConfig().set("password.global-password",               plugin.getConfig().getString("password.global-password", ""));
         plugin.getConfig().set("login-fails-to-kick",                    plugin.getConfig().getInt("login-fails-to-kick", 3));
+        plugin.getConfig().set("login-fails-to-ban",                     plugin.getConfig().getInt("login-fails-to-ban", 9));
         plugin.getConfig().set("kick-unregistered",                      plugin.getConfig().getBoolean("kick-unregistered", false));
         plugin.getConfig().set("accounts-per-ip",                        plugin.getConfig().getInt("accounts-per-ip", 3));
         plugin.getConfig().set("hashing-algorithm",                      plugin.getConfig().getString("hashing-algorithm", "md5"));
@@ -290,6 +291,11 @@ public final class LogItConfiguration
     public int getLoginFailsToKick()
     {
         return plugin.getConfig().getInt("login-fails-to-kick");
+    }
+    
+    public int getLoginFailsToBan()
+    {
+        return plugin.getConfig().getInt("login-fails-to-ban");
     }
     
     public boolean getKickUnregistered()
