@@ -23,13 +23,23 @@ package com.gmail.lucaseasedup.logit;
  */
 public class Timer implements Runnable
 {
+    public Timer(long interval)
+    {
+        this.interval = interval;
+    }
+    
     @Override
     public void run()
     {
         if (running)
         {
-            elapsed++;
+            elapsed += interval;
         }
+    }
+    
+    public long getInterval()
+    {
+        return interval;
     }
     
     public boolean isRunning()
@@ -37,7 +47,7 @@ public class Timer implements Runnable
         return running;
     }
     
-    public int getElapsed()
+    public long getElapsed()
     {
         return elapsed;
     }
@@ -46,7 +56,7 @@ public class Timer implements Runnable
     {
         if (!running)
         {
-            elapsed = 0;
+            elapsed = 0L;
             running = true;
         }
     }
@@ -63,9 +73,11 @@ public class Timer implements Runnable
     
     public void reset()
     {
-        elapsed = 0;
+        elapsed = 0L;
     }
     
+    private final long interval;
+    
     private boolean running = false;
-    private int elapsed = 0;
+    private long elapsed = 0L;
 }

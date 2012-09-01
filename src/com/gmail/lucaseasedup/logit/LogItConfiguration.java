@@ -18,6 +18,7 @@
  */
 package com.gmail.lucaseasedup.logit;
 
+import java.io.File;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -92,9 +93,10 @@ public final class LogItConfiguration
         plugin.getConfig().set("storage.mysql.password",                 plugin.getConfig().getString("storage.mysql.password", ""));
         plugin.getConfig().set("storage.mysql.database",                 plugin.getConfig().getString("storage.mysql.database", ""));
         plugin.getConfig().set("storage.table",                          plugin.getConfig().getString("storage.table", "logit"));
-        plugin.getConfig().set("storage.columns.username",               plugin.getConfig().getString("storage.columns.username", "username"));
-        plugin.getConfig().set("storage.columns.password",               plugin.getConfig().getString("storage.columns.password", "password"));
-        plugin.getConfig().set("storage.columns.ip",                     plugin.getConfig().getString("storage.columns.ip", "ip"));
+        plugin.getConfig().set("backup.enabled",                         plugin.getConfig().getBoolean("backup.enabled", false));
+        plugin.getConfig().set("backup.interval",                        plugin.getConfig().getInt("backup.interval", 7200));
+        plugin.getConfig().set("backup.path",                            plugin.getConfig().getString("backup.path", "backup"));
+        plugin.getConfig().set("backup.file-format",                     plugin.getConfig().getString("backup.file-format", "yyyy-MM-dd_HH-mm-ss'.db'"));
         
         plugin.saveConfig();
     }
@@ -442,19 +444,24 @@ public final class LogItConfiguration
         return plugin.getConfig().getString("storage.table");
     }
     
-    public String getStorageUsernameColumn()
+    public boolean isBackupEnabled()
     {
-        return plugin.getConfig().getString("storage.columns.username");
+        return plugin.getConfig().getBoolean("backup.enabled");
     }
     
-    public String getStoragePasswordColumn()
+    public long getBackupInterval()
     {
-        return plugin.getConfig().getString("storage.columns.password");
+        return plugin.getConfig().getInt("backup.interval") * 20L;
     }
     
-    public String getStorageIpColumn()
+    public File getBackupPath()
     {
-        return plugin.getConfig().getString("storage.columns.ip");
+        return new File(plugin.getDataFolder(), plugin.getConfig().getString("backup.path"));
+    }
+    
+    public String getBackupFileFormat()
+    {
+        return plugin.getConfig().getString("backup.file-format");
     }
     
     public void setGlobalPassword(String password)

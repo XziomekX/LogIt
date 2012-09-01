@@ -20,8 +20,9 @@ package com.gmail.lucaseasedup.logit.command;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
+import java.io.IOException;
 import java.sql.SQLException;
-import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -154,6 +155,78 @@ public class LogItCommand implements CommandExecutor
             
             return true;
         }
+        else if (subcommand.equalsIgnoreCase("backup") && args.length > 1 && args.length <= 3)
+        {
+            if (args[1].equalsIgnoreCase("force") && args.length == 2)
+            {
+                if (p != null && !p.hasPermission("logit.backup.force"))
+                {
+                    s.sendMessage(getMessage("NO_PERMS"));
+                    
+                    return true;
+                }
+                
+                try
+                {
+                    core.getBackupManager().createBackup(core.getDatabase());
+
+                    if (p != null)
+                    {
+                        s.sendMessage(getMessage("CREATE_BACKUP_SUCCESS"));
+                    }
+                    
+                    core.log(INFO, getMessage("CREATE_BACKUP_SUCCESS"));
+                }
+                catch (IOException|SQLException ex)
+                {
+                    if (p != null)
+                    {
+                        s.sendMessage(getMessage("CREATE_BACKUP_FAIL"));
+                    }
+                    
+                    core.log(WARNING, getMessage("CREATE_BACKUP_FAIL"));
+                }
+            }
+            else if (args[1].equalsIgnoreCase("restore"))
+            {
+                if (p != null && !p.hasPermission("logit.backup.restore"))
+                {
+                    s.sendMessage(getMessage("NO_PERMS"));
+                    
+                    return true;
+                }
+                if (args.length < 3)
+                {
+                    s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "filename"));
+                    
+                    return true;
+                }
+                
+                try
+                {
+                    core.getBackupManager().restoreBackup(core.getDatabase(), args[2]);
+                    core.getAccountManager().loadAccounts();
+                    
+                    if (p != null)
+                    {
+                        s.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS"));
+                    }
+
+                    core.log(INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
+                }
+                catch (SQLException ex)
+                {
+                    if (p != null)
+                    {
+                        s.sendMessage(getMessage("RESTORE_BACKUP_FAIL"));
+                    }
+
+                    core.log(WARNING, getMessage("RESTORE_BACKUP_FAIL"));
+                }
+            }
+            
+            return true;
+        }
         else if (subcommand.equalsIgnoreCase("setwr") && args.length == 1)
         {
             if (p == null)
@@ -203,11 +276,13 @@ public class LogItCommand implements CommandExecutor
                 if (p != null && !p.hasPermission("logit.globalpass.set"))
                 {
                     s.sendMessage(getMessage("NO_PERMS"));
+                    
                     return true;
                 }
                 if (args.length < 3)
                 {
                     s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+                    
                     return true;
                 }
                 if (args[2].length() < core.getConfig().getPasswordMinLength())

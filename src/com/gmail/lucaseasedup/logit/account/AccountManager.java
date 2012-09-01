@@ -40,9 +40,6 @@ public class AccountManager
         this.core           = core;
         this.database       = database;
         this.table          = core.getConfig().getStorageTable();
-        this.usernameColumn = core.getConfig().getStorageUsernameColumn();
-        this.passwordColumn = core.getConfig().getStoragePasswordColumn();
-        this.ipColumn       = core.getConfig().getStorageIpColumn();
     }
     
     /**
@@ -114,7 +111,7 @@ public class AccountManager
         try
         {
             // Remove account.
-            database.delete(table, usernameColumn + " = \"" + username.toLowerCase() + "\"");
+            database.delete(table, "username = \"" + username.toLowerCase() + "\"");
             passwords.remove(username.toLowerCase());
             ips.remove(username.toLowerCase());
             
@@ -179,7 +176,7 @@ public class AccountManager
         try
         {
             // Change password.
-            database.update(table, passwordColumn + " = \"" + newPassword + "\"", usernameColumn + " = \"" + username.toLowerCase() + "\"");
+            database.update(table, "password = \"" + newPassword + "\"", "username = \"" + username.toLowerCase() + "\"");
             passwords.put(username.toLowerCase(), newPassword);
             
             // Notify about the password change.
@@ -216,7 +213,7 @@ public class AccountManager
         try
         {
             // Attach the given ip.
-            database.update(table, ipColumn + " = \"" + ip + "\"", usernameColumn + " = \"" + username.toLowerCase() + "\"");
+            database.update(table, "ip = \"" + ip + "\"", "username = \"" + username.toLowerCase() + "\"");
             ips.put(username.toLowerCase(), ip);
             
             // Notify about the attachment.
@@ -305,8 +302,8 @@ public class AccountManager
             
             while (rs.next())
             {
-                passwords.put(rs.getString(usernameColumn), rs.getString(passwordColumn));
-                ips.put(rs.getString(usernameColumn), rs.getString(ipColumn));
+                passwords.put(rs.getString("username"), rs.getString("password"));
+                ips.put(rs.getString("username"), rs.getString("ip"));
             }
             
             // Notify about the number of loaded accounts.
@@ -322,9 +319,6 @@ public class AccountManager
     private final LogItCore core;
     private final Database database;
     private final String table;
-    private final String usernameColumn;
-    private final String passwordColumn;
-    private final String ipColumn;
     
     private final HashMap<String, String> passwords = new HashMap<>();
     private final HashMap<String, String> ips = new HashMap<>();

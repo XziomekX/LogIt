@@ -114,8 +114,6 @@ public class LogItCore
                     return;
                 }
             }
-            
-            pinger = new Pinger(database);
         }
         catch (SQLException ex)
         {
@@ -125,12 +123,13 @@ public class LogItCore
             return;
         }
         
+        // Set up database pinger.
+        pinger = new Pinger(database);
+        
         try
         {
             // Create a table for LogIt, if it does not exist.
-            database.create(config.getStorageTable(), config.getStorageUsernameColumn() + " varchar(16) NOT NULL, "
-                    + config.getStoragePasswordColumn() + " varchar(256) NOT NULL, "
-                    + config.getStorageIpColumn() + " varchar(64) NOT NULL");
+            database.create(config.getStorageTable(), "username varchar(16) NOT NULL, password varchar(256) NOT NULL, ip varchar(64) NOT NULL");
         }
         catch (SQLException ex)
         {
@@ -144,14 +143,18 @@ public class LogItCore
         log(FINE, getMessage("PLUGIN_START_SUCCESS").replace("%st%", config.getStorageType().name())
                 .replace("%ha%", config.getHashingAlgorithm().name()));
         
-        // Load accounts.
+        // Set up account manager and load accounts.
         accountManager = new AccountManager(this, database);
         accountManager.loadAccounts();
+        
+        // Set up backup manager.
+        backupManager = new BackupManager(this, database);
         
         // Schedule tasks.
         pingerTaskId          = Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, pinger, 0L, 2400L);
         sessionManagerTaskId  = Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, sessionManager, 0L, 20L);
         tickEventCallerTaskId = Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, tickEventCaller, 0L, 1L);
+        backupManagerTaskId   = Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, backupManager, 0L, 40L);
         
         // Set started to true to prevent starting multiple times.
         started = true;
@@ -180,6 +183,7 @@ public class LogItCore
         Bukkit.getScheduler().cancelTask(pingerTaskId);
         Bukkit.getScheduler().cancelTask(sessionManagerTaskId);
         Bukkit.getScheduler().cancelTask(tickEventCallerTaskId);
+        Bukkit.getScheduler().cancelTask(backupManagerTaskId);
         
         // Log.
         log(FINE, getMessage("PLUGIN_STOP_SUCCESS"));
@@ -334,6 +338,11 @@ public class LogItCore
         return database;
     }
 
+    public BackupManager getBackupManager()
+    {
+        return backupManager;
+    }
+    
     public AccountManager getAccountManager()
     {
         return accountManager;
@@ -411,6 +420,9 @@ public class LogItCore
     
     private TickEventCaller tickEventCaller;
     private int tickEventCallerTaskId;
+    
+    private BackupManager backupManager;
+    private int backupManagerTaskId;
     
     private AccountManager accountManager;
     private WaitingRoom waitingRoom;
