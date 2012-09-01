@@ -75,6 +75,14 @@ public class LogItCommand implements CommandExecutor
             {
                 s.sendMessage(getLogItSubcommandHelp("purge", null));
             }
+            if (p == null || p.hasPermission("logit.backup.force"))
+            {
+                s.sendMessage(getLogItSubcommandHelp("backup force", null));
+            }
+            if (p == null || p.hasPermission("logit.backup.remove"))
+            {
+                s.sendMessage(getLogItSubcommandHelp("backup remove", "<filename>"));
+            }
             if (p != null && p.hasPermission("logit.setwr"))
             {
                 s.sendMessage(getLogItSubcommandHelp("setwr", null));
@@ -137,6 +145,11 @@ public class LogItCommand implements CommandExecutor
             try
             {
                 core.getAccountManager().purge();
+                
+                if (p != null)
+                {
+                    s.sendMessage(getMessage("PURGE_SUCCESS"));
+                }
             }
             catch (SQLException ex)
             {
@@ -144,13 +157,6 @@ public class LogItCommand implements CommandExecutor
                 {
                     s.sendMessage(getMessage("PURGE_FAIL"));
                 }
-                
-                return true;
-            }
-            
-            if (p != null)
-            {
-                s.sendMessage(getMessage("PURGE_SUCCESS"));
             }
             
             return true;
@@ -169,7 +175,7 @@ public class LogItCommand implements CommandExecutor
                 try
                 {
                     core.getBackupManager().createBackup(core.getDatabase());
-
+                    
                     if (p != null)
                     {
                         s.sendMessage(getMessage("CREATE_BACKUP_SUCCESS"));
