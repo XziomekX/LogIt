@@ -131,14 +131,14 @@ public class LoginCommand implements CommandExecutor
                 if (failedLoginsToBan.get(username) >= core.getConfig().getLoginFailsToBan())
                 {
                     p.setBanned(true);
-                    p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS"));
+                    p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS_BAN"));
                     
                     failedLoginsToKick.remove(username);
                     failedLoginsToBan.remove(username);
                 }
                 else if (failedLoginsToKick.get(username) >= core.getConfig().getLoginFailsToKick())
                 {
-                    p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS"));
+                    p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS_KICK"));
                     
                     failedLoginsToKick.remove(username);
                 }
