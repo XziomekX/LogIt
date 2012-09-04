@@ -32,6 +32,11 @@ public class SqliteDatabase implements Database, AutoCloseable
         statement = connection.createStatement();
     }
     
+    public void connect(String host) throws SQLException
+    {
+        connect(host, null, null, null);
+    }
+    
     @Override
     public boolean executeStatement(String sql) throws SQLException
     {
