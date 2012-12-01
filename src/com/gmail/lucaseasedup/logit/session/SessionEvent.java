@@ -18,7 +18,6 @@
  */
 package com.gmail.lucaseasedup.logit.session;
 
-import com.gmail.lucaseasedup.logit.session.Session;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 

@@ -41,7 +41,7 @@ public class Whirlpool
         "\u163A\u6909\u70B6\ud0Ed\ucc42\u98A4\u285c\uF886";
 
     private static long[][] C = new long[8][256];
-    private static long[]  rc = new long[R + 1];
+    private static long[] rc = new long[R + 1];
 
     static
     {
@@ -140,14 +140,14 @@ public class Whirlpool
         for (int i = 0, j = 0; i < 8; i++, j += 8)
         {
             block[i] =
-                (((long)buffer[j    ]        ) << 56) ^
-                (((long)buffer[j + 1] & 0xffL) << 48) ^
-                (((long)buffer[j + 2] & 0xffL) << 40) ^
-                (((long)buffer[j + 3] & 0xffL) << 32) ^
-                (((long)buffer[j + 4] & 0xffL) << 24) ^
-                (((long)buffer[j + 5] & 0xffL) << 16) ^
-                (((long)buffer[j + 6] & 0xffL) <<  8) ^
-                (((long)buffer[j + 7] & 0xffL)      );
+                (((long) buffer[j    ]        ) << 56) ^
+                (((long) buffer[j + 1] & 0xffL) << 48) ^
+                (((long) buffer[j + 2] & 0xffL) << 40) ^
+                (((long) buffer[j + 3] & 0xffL) << 32) ^
+                (((long) buffer[j + 4] & 0xffL) << 24) ^
+                (((long) buffer[j + 5] & 0xffL) << 16) ^
+                (((long) buffer[j + 6] & 0xffL) <<  8) ^
+                (((long) buffer[j + 7] & 0xffL)      );
         }
         /*
          * compute and apply K^0 to the cipher state:
@@ -182,7 +182,7 @@ public class Whirlpool
                 L[i] = K[i];
                 for (int t = 0, s = 56; t < 8; t++, s -= 8)
                 {
-                    L[i] ^= C[t][(int)(state[(i - t) & 7] >>> s) & 0xff];
+                    L[i] ^= C[t][(int) (state[(i - t) & 7] >>> s) & 0xff];
                 }
             }
             System.arraycopy(L, 0, state, 0, 8);
@@ -201,7 +201,7 @@ public class Whirlpool
      */
     public void NESSIEinit()
     {
-        Arrays.fill(bitLength, (byte)0);
+        Arrays.fill(bitLength, (byte) 0);
         bufferBits = bufferPos = 0;
         buffer[0] = 0; // it's only necessary to cleanup buffer[bufferPos].
         Arrays.fill(hash, 0L); // initial value
@@ -218,15 +218,15 @@ public class Whirlpool
     public void NESSIEadd(byte[] source, long sourceBits)
     {
         int sourcePos = 0; // index of leftmost source byte containing data (1 to 8 bits).
-        int sourceGap = (8 - ((int)sourceBits & 7)) & 7; // space on source[sourcePos].
+        int sourceGap = (8 - ((int) sourceBits & 7)) & 7; // space on source[sourcePos].
         int bufferRem = bufferBits & 7; // occupied bits on buffer[bufferPos].
         int b;
         // tally the length of the added data:
         long value = sourceBits;
         for (int i = 31, carry = 0; i >= 0; i--)
         {
-            carry += (bitLength[i] & 0xff) + ((int)value & 0xff);
-            bitLength[i] = (byte)carry;
+            carry += (bitLength[i] & 0xff) + ((int) value & 0xff);
+            bitLength[i] = (byte) carry;
             carry >>>= 8;
             value >>>= 8;
         }
@@ -236,19 +236,21 @@ public class Whirlpool
             // take a byte from the source:
             b = ((source[sourcePos] << sourceGap) & 0xff) |
                 ((source[sourcePos + 1] & 0xff) >>> (8 - sourceGap));
-            if (b < 0 || b >= 256) {
+            
+            if (b < 0 || b >= 256)
                 throw new RuntimeException("LOGIC ERROR");
-            }
+            
             // process this byte:
             buffer[bufferPos++] |= b >>> bufferRem;
             bufferBits += 8 - bufferRem; // bufferBits = 8*bufferPos;
-            if (bufferBits == 512) {
+            if (bufferBits == 512)
+            {
                 // process data block:
                 processBuffer();
                 // reset buffer:
                 bufferBits = bufferPos = 0;
             }
-            buffer[bufferPos] = (byte)((b << (8 - bufferRem)) & 0xff);
+            buffer[bufferPos] = (byte) ((b << (8 - bufferRem)) & 0xff);
             bufferBits += bufferRem;
             // proceed to remaining data:
             sourceBits -= 8;
@@ -266,6 +268,7 @@ public class Whirlpool
         {
             b = 0;
         }
+        
         if (bufferRem + sourceBits < 8)
         {
             // all remaining data fits on buffer[bufferPos], and there still remains some space.
@@ -284,8 +287,8 @@ public class Whirlpool
                 // reset buffer:
                 bufferBits = bufferPos = 0;
             }
-            buffer[bufferPos] = (byte)((b << (8 - bufferRem)) & 0xff);
-            bufferBits += (int)sourceBits;
+            buffer[bufferPos] = (byte) ((b << (8 - bufferRem)) & 0xff);
+            bufferBits += (int) sourceBits;
         }
     }
 
@@ -300,8 +303,10 @@ public class Whirlpool
         buffer[bufferPos] |= 0x80 >>> (bufferBits & 7);
         bufferPos++; // all remaining bits on the current byte are set to zero.
         // pad with zero bits to complete 512N + 256 bits:
-        if (bufferPos > 32) {
-            while (bufferPos < 64) {
+        if (bufferPos > 32)
+        {
+            while (bufferPos < 64)
+            {
                 buffer[bufferPos++] = 0;
             }
             // process data block:
@@ -309,7 +314,8 @@ public class Whirlpool
             // reset buffer:
             bufferPos = 0;
         }
-        while (bufferPos < 32) {
+        while (bufferPos < 32)
+        {
             buffer[bufferPos++] = 0;
         }
         // append bit length of hashed data:
@@ -317,7 +323,8 @@ public class Whirlpool
         // process data block:
         processBuffer();
         // return the completed message digest:
-        for (int i = 0, j = 0; i < 8; i++, j += 8) {
+        for (int i = 0, j = 0; i < 8; i++, j += 8)
+        {
             long h = hash[i];
             digest[j    ] = (byte)(h >>> 56);
             digest[j + 1] = (byte)(h >>> 48);
@@ -333,30 +340,37 @@ public class Whirlpool
     /**
      * Delivers string input data to the hashing algorithm.
      * 
-     * @param    source        plaintext data to hash (ASCII text string).
+     * @param source plaintext data to hash (ASCII text string).
      * 
      * This method maintains the invariant: bufferBits < 512
      */
     public void NESSIEadd(String source)
     {
-        if (source.length() > 0) {
+        if (source.length() > 0)
+        {
             byte[] data = new byte[source.length()];
-            for (int i = 0; i < source.length(); i++) {
+            
+            for (int i = 0; i < source.length(); i++)
+            {
                 data[i] = (byte)source.charAt(i);
             }
-            NESSIEadd(data, 8*data.length);
+            
+            NESSIEadd(data, 8 * data.length);
         }
     }
 
     public static String display(byte[] array)
     {
-        char[] val = new char[2*array.length];
+        char[] val = new char[2 * array.length];
         String hex = "0123456789ABCDEF";
-        for (int i = 0; i < array.length; i++) {
+        
+        for (int i = 0; i < array.length; i++)
+        {
             int b = array[i] & 0xff;
             val[2*i] = hex.charAt(b >>> 4);
             val[2*i + 1] = hex.charAt(b & 15);
         }
+        
         return String.valueOf(val);
     }
 }

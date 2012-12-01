@@ -128,10 +128,11 @@ public class BackupManager implements Runnable
     }
     
     /**
-     * Restores a backup with the specified filename from the directory specified in the config.
+     * Restores a backup with the specified filename in the directory specified in the config.
      * 
      * @param database Database to be affected by the backup.
      * @param filename Backup filename.
+     * @throws FileNotFoundException When the backup does not exist.
      * @throws SQLException
      */
     public void restoreBackup(Database database, String filename) throws FileNotFoundException, SQLException
@@ -139,13 +140,11 @@ public class BackupManager implements Runnable
         File backupFile = new File(core.getConfig().getBackupPath(), filename);
         
         if (!backupFile.exists())
-        {
             throw new FileNotFoundException();
-        }
         
         try (SqliteDatabase backupDatabase = new SqliteDatabase())
         {
-            backupDatabase.connect("jdbc:sqlite:" + backupFile, null, null, null);
+            backupDatabase.connect("jdbc:sqlite:" + backupFile);
             
             // Clear the table before restoring.
             database.truncate(core.getConfig().getStorageTable());
@@ -160,6 +159,23 @@ public class BackupManager implements Runnable
                 }
             }
         }
+    }
+    
+    /**
+     * Restores the newest backup in the directory specified in the config.
+     * 
+     * @param database Database to be affected by the backup.
+     * @throws FileNotFoundException When there are not backups.
+     * @throws SQLException
+     */
+    public void restoreBackup(Database database) throws FileNotFoundException, SQLException
+    {
+        File[] backups = core.getConfig().getBackupPath().listFiles();
+        
+        // Sort backups alphabetically.
+        Arrays.sort(backups);
+        
+        this.restoreBackup(database, backups[0].getName());
     }
     
     private final LogItCore core;

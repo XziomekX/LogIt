@@ -32,6 +32,7 @@ import com.gmail.lucaseasedup.logit.session.SessionManager;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -64,9 +65,7 @@ public class LogItCore
         
         // If LogIt hasn't been loaded yet, do it now.
         if (!loaded)
-        {
             load();
-        }
         
         // Load config.
         config.load();
@@ -129,7 +128,10 @@ public class LogItCore
         try
         {
             // Create a table for LogIt, if it does not exist.
-            database.create(config.getStorageTable(), "username varchar(16) NOT NULL, password varchar(256) NOT NULL, ip varchar(64) NOT NULL");
+            database.create(config.getStorageTable(), "username varchar(16) NOT NULL,"
+                                                    + "salt varchar(20) NOT NULL,"
+                                                    + "password varchar(256) NOT NULL,"
+                                                    + "ip varchar(64)");
         }
         catch (SQLException ex)
         {
@@ -240,8 +242,9 @@ public class LogItCore
     }
     
     /**
-     * Checks if the specified player is forced to login (by either "force-login" being set to true,
-     * the player being in a world with forced login or having the "logit.login.exempt" permission).
+     * Checks if the player is forced to login (by either "force-login" being set to true, or
+     * the player being in a world with forced login). If the player has the "logit.login.exempt"
+     * permission, it always returns false.
      * 
      * @param player Player.
      * @return True, if the specified player has to log in.
@@ -300,6 +303,21 @@ public class LogItCore
         }
     }
     
+    public String hash(String string, String salt)
+    {
+        return this.hash(string + salt);
+    }
+    
+    public String generateSalt()
+    {
+        SecureRandom sr   = new SecureRandom();
+        byte[]       salt = new byte[20];
+        
+        sr.nextBytes(salt);
+        
+        return new String(salt);
+    }
+    
     /**
      * Logs a message.
      * 
@@ -322,10 +340,7 @@ public class LogItCore
             }
         }
         
-        if (config.getVerbose() || level.intValue() > FINE.intValue())
-        {
-            plugin.getLogger().log(level, stripColor(message));
-        }
+        plugin.getLogger().log(level, stripColor(message));
     }
     
     public WaitingRoom getWaitingRoom()

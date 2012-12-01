@@ -43,7 +43,6 @@ public final class LogItConfiguration
         
         plugin.getConfig().set("stop-if.online-mode-enabled",            plugin.getConfig().getBoolean("stop-if.online-mode-enabled", true));
         plugin.getConfig().set("locale",                                 plugin.getConfig().getString("locale", "en"));
-        plugin.getConfig().set("verbose",                                plugin.getConfig().getBoolean("verbose", false));
         plugin.getConfig().set("log-to-file.enabled",                    plugin.getConfig().getBoolean("log-to-file.enabled", false));
         plugin.getConfig().set("log-to-file.filename",                   plugin.getConfig().getString("log-to-file.filename", "debug.log"));
         plugin.getConfig().set("force-login.global",                     plugin.getConfig().getBoolean("force-login.global", true));
@@ -118,11 +117,6 @@ public final class LogItConfiguration
     public String getLocale()
     {
         return plugin.getConfig().getString("locale");
-    }
-    
-    public boolean getVerbose()
-    {
-        return plugin.getConfig().getBoolean("verbose");
     }
     
     public boolean isLogToFileEnabled()

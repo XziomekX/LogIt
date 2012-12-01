@@ -82,7 +82,7 @@ public class LogItCommand implements CommandExecutor
             }
             if (p == null || p.hasPermission("logit.backup.restore"))
             {
-                s.sendMessage(getLogItSubcommandHelp("backup restore", "<filename>"));
+                s.sendMessage(getLogItSubcommandHelp("backup restore", "[filename]"));
             }
             if (p == null || p.hasPermission("logit.backup.remove"))
             {
@@ -132,9 +132,7 @@ public class LogItCommand implements CommandExecutor
             core.restart();
             
             if (p != null && core.getPlugin().isEnabled())
-            {
                 s.sendMessage(getMessage("RELOADED"));
-            }
             
             return true;
         }
@@ -182,18 +180,14 @@ public class LogItCommand implements CommandExecutor
                     core.getBackupManager().createBackup(core.getDatabase());
                     
                     if (p != null)
-                    {
                         s.sendMessage(getMessage("CREATE_BACKUP_SUCCESS"));
-                    }
                     
                     core.log(INFO, getMessage("CREATE_BACKUP_SUCCESS"));
                 }
                 catch (IOException|SQLException ex)
                 {
                     if (p != null)
-                    {
                         s.sendMessage(getMessage("CREATE_BACKUP_FAIL"));
-                    }
                     
                     core.log(WARNING, getMessage("CREATE_BACKUP_FAIL"));
                 }
@@ -206,33 +200,46 @@ public class LogItCommand implements CommandExecutor
                     
                     return true;
                 }
-                if (args.length < 3)
-                {
-                    s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "filename"));
-                    
-                    return true;
-                }
                 
-                try
+                if (args.length == 2)
                 {
-                    core.getBackupManager().restoreBackup(core.getDatabase(), args[2]);
-                    core.getAccountManager().loadAccounts();
-                    
-                    if (p != null)
+                    try
                     {
-                        s.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS"));
+                        core.getBackupManager().restoreBackup(core.getDatabase());
+                        core.getAccountManager().loadAccounts();
+
+                        if (p != null)
+                            s.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS"));
+                        
+                        core.log(INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
                     }
-                    
-                    core.log(INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
+                    catch (FileNotFoundException|SQLException ex)
+                    {
+                        if (p != null)
+                            s.sendMessage(getMessage("RESTORE_BACKUP_FAIL"));
+                        
+                        core.log(WARNING, getMessage("RESTORE_BACKUP_FAIL"));
+                    }
                 }
-                catch (FileNotFoundException|SQLException ex)
+                else if (args.length == 3)
                 {
-                    if (p != null)
+                    try
                     {
-                        s.sendMessage(getMessage("RESTORE_BACKUP_FAIL"));
+                        core.getBackupManager().restoreBackup(core.getDatabase(), args[2]);
+                        core.getAccountManager().loadAccounts();
+                        
+                        if (p != null)
+                            s.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS"));
+                        
+                        core.log(INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
                     }
-                    
-                    core.log(WARNING, getMessage("RESTORE_BACKUP_FAIL"));
+                    catch (FileNotFoundException|SQLException ex)
+                    {
+                        if (p != null)
+                            s.sendMessage(getMessage("RESTORE_BACKUP_FAIL"));
+
+                        core.log(WARNING, getMessage("RESTORE_BACKUP_FAIL"));
+                    }
                 }
             }
             else if (args[1].equalsIgnoreCase("remove"))
@@ -255,18 +262,14 @@ public class LogItCommand implements CommandExecutor
                     core.getBackupManager().removeBackups(Integer.parseInt(args[2]));
                     
                     if (p != null)
-                    {
                         s.sendMessage(getMessage("REMOVE_BACKUPS_SUCCESS"));
-                    }
 
                     core.log(INFO, getMessage("REMOVE_BACKUPS_SUCCESS"));
                 }
                 catch (NumberFormatException|IOException ex)
                 {
                     if (p != null)
-                    {
                         s.sendMessage(getMessage("REMOVE_BACKUPS_FAIL"));
-                    }
 
                     core.log(WARNING, getMessage("REMOVE_BACKUPS_FAIL"));
                 }
@@ -350,9 +353,7 @@ public class LogItCommand implements CommandExecutor
                 core.changeGlobalPassword(args[2]);
                 
                 if (p != null)
-                {
                     s.sendMessage(getMessage("GLOBALPASS_SET_SUCCESS"));
-                }
                 
                 return true;
             }
@@ -368,22 +369,16 @@ public class LogItCommand implements CommandExecutor
                 core.removeGlobalPassword();
                 
                 if (p != null)
-                {
                     s.sendMessage(getMessage("GLOBALPASS_REMOVE_SUCCESS"));
-                }
                 
                 return true;
             }
         }
         
         if (p != null && !p.hasPermission("logit"))
-        {
             s.sendMessage(getMessage("NO_PERMS"));
-        }
         else
-        {
             s.sendMessage(getMessage("TYPE_FOR_HELP"));
-        }
         
         return true;
     }
@@ -393,13 +388,9 @@ public class LogItCommand implements CommandExecutor
         String line = getMessage("CMD_HELP");
         
         if (params != null)
-        {
             line = line.replace("%cmd%", "logit " + subcommand + " " + params);
-        }
         else
-        {
             line = line.replace("%cmd%", "logit " + subcommand);
-        }
         
         return line.replace("%desc%", getMessage("DESC_" + subcommand.replace(" ", "_").toUpperCase()));
     }

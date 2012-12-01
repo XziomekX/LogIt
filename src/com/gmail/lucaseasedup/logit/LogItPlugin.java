@@ -110,14 +110,10 @@ public final class LogItPlugin extends JavaPlugin
         JarEntry jarEntry = jarFile.getJarEntry("messages" + suffix + ".properties");
         
         if (jarEntry == null)
-        {
             jarEntry = jarFile.getJarEntry("messages.properties");
-        }
         
         if (jarEntry == null)
-        {
             throw new FileNotFoundException();
-        }
         
         prb = new PropertyResourceBundle(new InputStreamReader(jarFile.getInputStream(jarEntry), "UTF-8"));
     }

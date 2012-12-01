@@ -18,8 +18,6 @@
  */
 package com.gmail.lucaseasedup.logit.session;
 
-import com.gmail.lucaseasedup.logit.session.Session;
-
 /**
  * @author LucasEasedUp
  */

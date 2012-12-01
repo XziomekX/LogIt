@@ -134,9 +134,7 @@ public class HashGenerator
         byte bytes[] = messageDigest.digest();
         
         for (byte b : bytes)
-        {
             stringBuilder.append(Integer.toString((b & 0xFF) + 0x100, 16).substring(1));
-        }
         
         return stringBuilder.toString();
     }

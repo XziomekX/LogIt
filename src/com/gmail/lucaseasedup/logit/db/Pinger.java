@@ -18,7 +18,6 @@
  */
 package com.gmail.lucaseasedup.logit.db;
 
-import com.gmail.lucaseasedup.logit.db.Database;
 import java.sql.SQLException;
 
 /**

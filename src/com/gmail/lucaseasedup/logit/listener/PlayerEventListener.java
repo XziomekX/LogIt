@@ -87,9 +87,7 @@ public class PlayerEventListener implements Listener
         event.setJoinMessage(null);
         
         if (core.getSessionManager().getSession(username) == null)
-        {
             core.getSessionManager().createSession(username);
-        }
         
         Bukkit.getScheduler().scheduleSyncDelayedTask(core.getPlugin(), new Runnable()
         {
@@ -122,9 +120,7 @@ public class PlayerEventListener implements Listener
         event.setQuitMessage(null);
         
         if (core.getSessionManager().isSessionAlive(player))
-        {
             broadcastQuitMessage(player);
-        }
         
         core.getWaitingRoom().remove(player);
     }
@@ -194,9 +190,7 @@ public class PlayerEventListener implements Listener
         
         // Check if the sent command starts with "/login" or "/register".
         if (message.startsWith("/login ") || message.startsWith("/register "))
-        {
             return;
-        }
         
         // Check if the sent command starts with any of "/login" aliases.
         for (String alias : loginAliases)

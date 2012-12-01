@@ -18,9 +18,8 @@
  */
 package com.gmail.lucaseasedup.logit.util;
 
-import com.gmail.lucaseasedup.logit.account.AccountManager;
-import com.gmail.lucaseasedup.logit.LogItConfiguration;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
+import com.gmail.lucaseasedup.logit.account.AccountManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

@@ -166,9 +166,7 @@ public class SessionManager implements Runnable
     public void startSession(String username)
     {
         if (getSession(username) == null)
-        {
             throw new RuntimeException("Session does not exist.");
-        }
         
         // Start session.
         Session session = getSession(username);
@@ -190,9 +188,7 @@ public class SessionManager implements Runnable
     public void endSession(String username)
     {
         if (getSession(username) == null)
-        {
             throw new RuntimeException("Session does not exist.");
-        }
         
         // End session.
         Session session = getSession(username);

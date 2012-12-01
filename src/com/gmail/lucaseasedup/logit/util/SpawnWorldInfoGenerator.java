@@ -41,9 +41,7 @@ public class SpawnWorldInfoGenerator
     public static String getWorldAlias(World world)
     {
         if (!Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core"))
-        {
             return world.getName();
-        }
         
         return ((MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core")).getMVWorldManager().getMVWorld(world).getAlias();
     }

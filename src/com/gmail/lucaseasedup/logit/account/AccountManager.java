@@ -37,9 +37,9 @@ public class AccountManager
 {
     public AccountManager(LogItCore core, Database database)
     {
-        this.core           = core;
-        this.database       = database;
-        this.table          = core.getConfig().getStorageTable();
+        this.core     = core;
+        this.database = database;
+        this.table    = core.getConfig().getStorageTable();
     }
     
     /**
@@ -64,19 +64,20 @@ public class AccountManager
     public void createAccount(String username, String password)
     {
         if (isAccountCreated(username))
-        {
             throw new RuntimeException("Account already exists.");
-        }
         
         // Hash the given password.
-        String hash = core.hash(password);
+        String salt = core.generateSalt();
+        String hash = core.hash(password, salt);
         
         try
         {
             // Create account.
-            database.insert(table, "\"" + username.toLowerCase() + "\", \"" + hash + "\", \"\"");
+            database.insert(table, "\"" + username.toLowerCase() + "\", \"" + salt + "\", \"" + hash + "\", \"\"");
+            
+            salts.put(username.toLowerCase(), salt);
             passwords.put(username.toLowerCase(), hash);
-            ips.put(username.toLowerCase(), "");
+            ips.put(username.toLowerCase(), null);
             
             // Notify about the account creation.
             sendMessage(username, getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
@@ -104,14 +105,14 @@ public class AccountManager
     public void removeAccount(String username)
     {
         if (!isAccountCreated(username))
-        {
             throw new RuntimeException("Account does not exist.");
-        }
         
         try
         {
             // Remove account.
             database.delete(table, "username = \"" + username.toLowerCase() + "\"");
+            
+            salts.remove(username.toLowerCase());
             passwords.remove(username.toLowerCase());
             ips.remove(username.toLowerCase());
             
@@ -145,11 +146,9 @@ public class AccountManager
     public boolean checkAccountPassword(String username, String password)
     {
         if (!isAccountCreated(username))
-        {
             throw new RuntimeException("Account does not exist.");
-        }
         
-        return passwords.get(username.toLowerCase()).equals(core.hash(password));
+        return passwords.get(username.toLowerCase()).equals(core.hash(password, salts.get(username.toLowerCase())));
     }
     
     /**
@@ -163,12 +162,11 @@ public class AccountManager
     public void changeAccountPassword(String username, String newPassword)
     {
         if (!isAccountCreated(username))
-        {
             throw new RuntimeException("Account does not exist.");
-        }
         
         // Hash the given password.
-        newPassword = core.hash(newPassword);
+        String newSalt = core.generateSalt();
+        String newHash = core.hash(newPassword, newSalt);
         
         // Back up old password.
         String oldPassword = passwords.get(username.toLowerCase());
@@ -176,15 +174,17 @@ public class AccountManager
         try
         {
             // Change password.
-            database.update(table, "password = \"" + newPassword + "\"", "username = \"" + username.toLowerCase() + "\"");
-            passwords.put(username.toLowerCase(), newPassword);
+            database.update(table, "salt = \"" + newSalt + "\", password = \"" + newHash + "\"", "username = \"" + username.toLowerCase() + "\"");
+            
+            salts.put(username.toLowerCase(), newSalt);
+            passwords.put(username.toLowerCase(), newHash);
             
             // Notify about the password change.
             sendMessage(username, getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
             core.log(FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
             
             // Call the appropriate event.
-            callEvent(new AccountChangePasswordEvent(username, oldPassword, newPassword, SUCCESS));
+            callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, SUCCESS));
         }
         catch (SQLException ex)
         {
@@ -193,7 +193,7 @@ public class AccountManager
             core.log(FINE, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username));
             
             // Call the appropriate event.
-            callEvent(new AccountChangePasswordEvent(username, oldPassword, newPassword, FAILURE));
+            callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, FAILURE));
         }
     }
     
@@ -206,9 +206,7 @@ public class AccountManager
     public void attachIp(String username, String ip)
     {
         if (!isAccountCreated(username))
-        {
             throw new RuntimeException("Account does not exist.");
-        }
         
         try
         {
@@ -241,9 +239,7 @@ public class AccountManager
     public int countAccountsPerIp(String ip)
     {
         if (ip.isEmpty())
-        {
             return 0;
-        }
         
         int counter = 0;
         
@@ -293,6 +289,7 @@ public class AccountManager
     public void loadAccounts()
     {
         // Clear the local hash maps.
+        salts.clear();
         passwords.clear();
         ips.clear();
         
@@ -302,6 +299,7 @@ public class AccountManager
             
             while (rs.next())
             {
+                salts.put(rs.getString("username"), rs.getString("salt"));
                 passwords.put(rs.getString("username"), rs.getString("password"));
                 ips.put(rs.getString("username"), rs.getString("ip"));
             }
@@ -320,6 +318,7 @@ public class AccountManager
     private final Database database;
     private final String table;
     
+    private final HashMap<String, String> salts = new HashMap<>();
     private final HashMap<String, String> passwords = new HashMap<>();
     private final HashMap<String, String> ips = new HashMap<>();
 }
