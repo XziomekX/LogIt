@@ -20,9 +20,13 @@ package com.gmail.lucaseasedup.logit.account;
 
 import static com.gmail.lucaseasedup.logit.GeneralResult.*;
 import com.gmail.lucaseasedup.logit.LogItCore;
+import static com.gmail.lucaseasedup.logit.LogItConfiguration.IntegrationType.*;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
 import com.gmail.lucaseasedup.logit.db.Database;
 import static com.gmail.lucaseasedup.logit.util.MessageSender.sendMessage;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -50,7 +54,18 @@ public class AccountManager
      */
     public boolean isAccountCreated(String username)
     {
-        return passwords.containsKey(username.toLowerCase());
+        if (core.getConfig().getIntegration() == NONE)
+        {
+            return passwords.containsKey(username.toLowerCase());
+        }
+        else if (core.getConfig().getIntegration() == PHPBB)
+        {
+            return true;
+        }
+        else
+        {
+            throw new UnsupportedOperationException();
+        }
     }
     
     /**
@@ -72,8 +87,14 @@ public class AccountManager
         
         try
         {
-            // Create account.
-            database.insert(table, "\"" + username.toLowerCase() + "\", \"" + salt + "\", \"" + hash + "\", \"\"");
+            if (core.getConfig().getIntegration() == NONE)
+            {
+                database.insert(table, "\"" + username.toLowerCase() + "\", \"" + salt + "\", \"" + hash + "\", \"\"");
+            }
+            else
+            {
+                throw new UnsupportedOperationException();
+            }
             
             salts.put(username.toLowerCase(), salt);
             passwords.put(username.toLowerCase(), hash);
@@ -86,7 +107,7 @@ public class AccountManager
             // Call the appropriate event.
             callEvent(new AccountCreateEvent(username, hash, SUCCESS));
         }
-        catch (SQLException ex)
+        catch (SQLException|UnsupportedOperationException ex)
         {
             // Notify about the failure.
             sendMessage(username, getMessage("CREATE_ACCOUNT_FAIL_SELF"));
@@ -109,8 +130,14 @@ public class AccountManager
         
         try
         {
-            // Remove account.
-            database.delete(table, "username = \"" + username.toLowerCase() + "\"");
+            if (core.getConfig().getIntegration() == NONE)
+            {
+                database.delete(table, "username = \"" + username.toLowerCase() + "\"");
+            }
+            else
+            {
+                throw new UnsupportedOperationException();
+            }
             
             salts.remove(username.toLowerCase());
             passwords.remove(username.toLowerCase());
@@ -123,7 +150,7 @@ public class AccountManager
             // Call the appropriate event.
             callEvent(new AccountRemoveEvent(username, SUCCESS));
         }
-        catch (SQLException ex)
+        catch (SQLException|UnsupportedOperationException ex)
         {
             // Notify about the failure.
             sendMessage(username, getMessage("REMOVE_ACCOUNT_FAIL_SELF"));
@@ -148,7 +175,48 @@ public class AccountManager
         if (!isAccountCreated(username))
             throw new AccountNotFoundException();
         
-        return passwords.get(username.toLowerCase()).equals(core.hash(password, salts.get(username.toLowerCase())));
+        if (core.getConfig().getIntegration() == NONE)
+        {
+            return passwords.get(username.toLowerCase()).equals(core.hash(password, salts.get(username.toLowerCase())));
+        }
+        else if (core.getConfig().getIntegration() == PHPBB)
+        {
+            String result;
+            
+            try
+            {
+                URL url = new URL(core.getConfig().getIntegrationPhpbbLogItScript() + "?action=check-password");
+                HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+                uc.setRequestMethod("POST");
+                uc.setDoInput(true);
+                uc.setDoOutput(true);
+                uc.setUseCaches(false);
+                uc.setAllowUserInteraction(false);
+                uc.setInstanceFollowRedirects(false);
+                
+                try (DataOutputStream out = new DataOutputStream(uc.getOutputStream()))
+                {
+                    out.writeBytes("username=" + username);
+                    out.writeBytes("&password=" + password);
+                    out.flush();
+                }
+                
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream())))
+                {
+                    result = in.readLine();
+                }
+            }
+            catch (IOException e)
+            {
+                return false;
+            }
+            
+            return result.equals("ok");
+        }
+        else
+        {
+            throw new UnsupportedOperationException();
+        }
     }
     
     /**
@@ -173,8 +241,14 @@ public class AccountManager
         
         try
         {
-            // Change password.
-            database.update(table, "salt = \"" + newSalt + "\", password = \"" + newHash + "\"", "username = \"" + username.toLowerCase() + "\"");
+            if (core.getConfig().getIntegration() == NONE)
+            {
+                database.update(table, "salt = \"" + newSalt + "\", password = \"" + newHash + "\"", "username = \"" + username.toLowerCase() + "\"");
+            }
+            else
+            {
+                throw new UnsupportedOperationException();
+            }
             
             salts.put(username.toLowerCase(), newSalt);
             passwords.put(username.toLowerCase(), newHash);
@@ -186,7 +260,7 @@ public class AccountManager
             // Call the appropriate event.
             callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, SUCCESS));
         }
-        catch (SQLException ex)
+        catch (SQLException|UnsupportedOperationException ex)
         {
             // Notify about the failure.
             sendMessage(username, getMessage("CHANGE_PASSWORD_FAIL_SELF"));
@@ -210,8 +284,15 @@ public class AccountManager
         
         try
         {
-            // Attach the given ip.
-            database.update(table, "ip = \"" + ip + "\"", "username = \"" + username.toLowerCase() + "\"");
+            if (core.getConfig().getIntegration() == NONE)
+            {
+                database.update(table, "ip = \"" + ip + "\"", "username = \"" + username.toLowerCase() + "\"");
+            }
+            else
+            {
+                throw new UnsupportedOperationException();
+            }
+            
             ips.put(username.toLowerCase(), ip);
             
             // Notify about the attachment.
@@ -220,7 +301,7 @@ public class AccountManager
             // Call the appropriate event.
             callEvent(new AccountAttachIpEvent(username, ip, SUCCESS));
         }
-        catch (SQLException ex)
+        catch (SQLException|UnsupportedOperationException ex)
         {
             // Log failure.
             core.log(FINE, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username).replace("%ip%", ip));
@@ -263,8 +344,14 @@ public class AccountManager
     {
         try
         {
-            // Clear the database.
-            database.truncate(table);
+            if (core.getConfig().getIntegration() == NONE)
+            {
+                database.truncate(table);
+            }
+            else
+            {
+                throw new UnsupportedOperationException();
+            }
             
             // Clear the local hash maps.
             passwords.clear();
@@ -273,7 +360,7 @@ public class AccountManager
             // Notify about purging.
             core.log(INFO, getMessage("PURGE_SUCCESS"));
         }
-        catch (SQLException ex)
+        catch (SQLException|UnsupportedOperationException ex)
         {
             // Log failure.
             core.log(WARNING, getMessage("PURGE_FAIL"));
@@ -293,24 +380,27 @@ public class AccountManager
         passwords.clear();
         ips.clear();
         
-        try (ResultSet rs = database.select(table, "*"))
+        if (core.getConfig().getIntegration() == NONE)
         {
-            assert rs.getMetaData().getColumnCount() == 1;
-            
-            while (rs.next())
+            try (ResultSet rs = database.select(table, "*"))
             {
-                salts.put(rs.getString("username"), rs.getString("salt"));
-                passwords.put(rs.getString("username"), rs.getString("password"));
-                ips.put(rs.getString("username"), rs.getString("ip"));
+                assert rs.getMetaData().getColumnCount() == 1;
+
+                while (rs.next())
+                {
+                    salts.put(rs.getString("username"), rs.getString("salt"));
+                    passwords.put(rs.getString("username"), rs.getString("password"));
+                    ips.put(rs.getString("username"), rs.getString("ip"));
+                }
+
+                // Notify about the number of loaded accounts.
+                core.log(FINE, getMessage("LOAD_ACCOUNTS_SUCCESS").replace("%num%", String.valueOf(passwords.size())));
             }
-            
-            // Notify about the number of loaded accounts.
-            core.log(FINE, getMessage("LOAD_ACCOUNTS_SUCCESS").replace("%num%", String.valueOf(passwords.size())));
-        }
-        catch (SQLException ex)
-        {
-            // Log failure.
-            core.log(WARNING, getMessage("LOAD_ACCOUNTS_FAIL"));
+            catch (SQLException ex)
+            {
+                // Log failure.
+                core.log(WARNING, getMessage("LOAD_ACCOUNTS_FAIL"));
+            }
         }
     }
     

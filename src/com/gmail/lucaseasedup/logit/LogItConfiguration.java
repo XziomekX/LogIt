@@ -87,6 +87,8 @@ public final class LogItConfiguration
         plugin.getConfig().set("waiting-room.location.z",                plugin.getConfig().getDouble("waiting-room.location.z", 0.0));
         plugin.getConfig().set("waiting-room.location.yaw",              plugin.getConfig().getDouble("waiting-room.location.yaw", 0.0));
         plugin.getConfig().set("waiting-room.location.pitch",            plugin.getConfig().getDouble("waiting-room.location.pitch", 0.0));
+        plugin.getConfig().set("integration",                            plugin.getConfig().getString("integration", "none"));
+        plugin.getConfig().set("integration-phpbb.logit-script",         plugin.getConfig().getString("integration-phpbb.logit-script", ""));
         plugin.getConfig().set("storage.type",                           plugin.getConfig().getString("storage.type", "sqlite"));
         plugin.getConfig().set("storage.sqlite.filename",                plugin.getConfig().getString("storage.sqlite.filename", "LogIt.db"));
         plugin.getConfig().set("storage.mysql.host",                     plugin.getConfig().getString("storage.mysql.host", "jdbc:mysql://localhost:3306/")); 
@@ -402,6 +404,25 @@ public final class LogItConfiguration
         return (float) plugin.getConfig().getDouble("waiting-room.location.pitch");
     }
     
+    public IntegrationType getIntegration()
+    {
+        String s = plugin.getConfig().getString("integration");
+        
+        if (s.equalsIgnoreCase("phpbb"))
+        {
+            return IntegrationType.PHPBB;
+        }
+        else
+        {
+            return IntegrationType.NONE;
+        }
+    }
+    
+    public String getIntegrationPhpbbLogItScript()
+    {
+        return plugin.getConfig().getString("integration-phpbb.logit-script");
+    }
+    
     public StorageType getStorageType()
     {
         String s = plugin.getConfig().getString("storage.type");
@@ -493,6 +514,12 @@ public final class LogItConfiguration
     public static enum HashingAlgorithm
     {
         UNKNOWN, PLAIN, MD2, MD5, SHA1, SHA256, SHA384, SHA512, WHIRLPOOL
+    }
+    
+    
+    public static enum IntegrationType
+    {
+        NONE, PHPBB
     }
     
     public static enum StorageType
