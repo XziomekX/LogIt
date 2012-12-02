@@ -90,8 +90,11 @@ public class BackupManager implements Runnable
         
         try (SqliteDatabase backupDatabase = new SqliteDatabase())
         {
-            backupDatabase.connect("jdbc:sqlite:" + backupFile, null, null, null);
-            backupDatabase.create(core.getConfig().getStorageTable(), "username varchar(16) NOT NULL, password varchar(256) NOT NULL, ip varchar(64) NOT NULL");
+            backupDatabase.connect("jdbc:sqlite:" + backupFile);
+            backupDatabase.create(core.getConfig().getStorageTable(), "username varchar(16) NOT NULL,"
+                                                                    + "salt varchar(20) NOT NULL,"
+                                                                    + "password varchar(256) NOT NULL,"
+                                                                    + "ip varchar(64)");
             
             try (ResultSet rs = database.select(core.getConfig().getStorageTable(), "*"))
             {
@@ -99,30 +102,8 @@ public class BackupManager implements Runnable
                 
                 while (rs.next())
                 {
-                    backupDatabase.insert(core.getConfig().getStorageTable(), "\"" + rs.getString("username") + "\", \"" + rs.getString("password") + "\", \"" + rs.getString("ip") + "\"");
+                    backupDatabase.insert(core.getConfig().getStorageTable(), "\"" + rs.getString("username") + "\", \"" + rs.getString("salt") + "\", \"" + rs.getString("password") + "\", \"" + rs.getString("ip") + "\"");
                 }
-            }
-        }
-    }
-    
-    /**
-     * Removes a certain amount of backups starting from the oldest.
-     * 
-     * @param amount Amount of backups to delete.
-     * @throws IOException
-     */
-    public void removeBackups(int amount) throws IOException
-    {
-        File[] backups = core.getConfig().getBackupPath().listFiles();
-        
-        // Sort backups alphabetically.
-        Arrays.sort(backups);
-        
-        for (int i = 0; i < amount; i++)
-        {
-            if (i < backups.length)
-            {
-                backups[i].delete();
             }
         }
     }
@@ -137,10 +118,7 @@ public class BackupManager implements Runnable
      */
     public void restoreBackup(Database database, String filename) throws FileNotFoundException, SQLException
     {
-        File backupFile = new File(core.getConfig().getBackupPath(), filename);
-        
-        if (!backupFile.exists())
-            throw new FileNotFoundException();
+        File backupFile = getBackup(filename);
         
         try (SqliteDatabase backupDatabase = new SqliteDatabase())
         {
@@ -155,7 +133,7 @@ public class BackupManager implements Runnable
                 
                 while (rs.next())
                 {
-                    database.insert(core.getConfig().getStorageTable(), "\"" + rs.getString("username") + "\", \"" + rs.getString("password") + "\", \"" + rs.getString("ip") + "\"");
+                    database.insert(core.getConfig().getStorageTable(), "\"" + rs.getString("username") + "\", \"" + rs.getString("salt") + "\", \"" + rs.getString("password") + "\", \"" + rs.getString("ip") + "\"");
                 }
             }
         }
@@ -170,12 +148,54 @@ public class BackupManager implements Runnable
      */
     public void restoreBackup(Database database) throws FileNotFoundException, SQLException
     {
+        File[] backups = getBackups();
+        
+        if (backups.length == 0)
+            throw new FileNotFoundException();
+        
+        restoreBackup(database, backups[0].getName());
+    }
+    
+    /**
+     * Removes a certain amount of backups starting from the oldest.
+     * 
+     * @param amount Amount of backups to delete.
+     * @throws IOException
+     */
+    public void removeBackups(int amount) throws IOException
+    {
+        File[] backups = getBackups();
+        
+        for (int i = 0; i < amount; i++)
+        {
+            if (i < backups.length)
+            {
+                backups[i].delete();
+            }
+        }
+    }
+    
+    public File[] getBackups()
+    {
         File[] backups = core.getConfig().getBackupPath().listFiles();
+        
+        if (backups == null)
+            return new File[0];
         
         // Sort backups alphabetically.
         Arrays.sort(backups);
         
-        this.restoreBackup(database, backups[0].getName());
+        return backups;
+    }
+    
+    public File getBackup(String filename) throws FileNotFoundException
+    {
+        File backup = new File(core.getConfig().getBackupPath(), filename);
+        
+        if (!backup.exists())
+            throw new FileNotFoundException();
+        
+        return backup;
     }
     
     private final LogItCore core;
