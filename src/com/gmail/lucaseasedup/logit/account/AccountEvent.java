@@ -48,21 +48,7 @@ public abstract class AccountEvent extends Event
     
     public boolean isSuccessful()
     {
-        switch (result)
-        {
-            case SUCCESS:
-            {
-                return true;
-            }
-            case FAILURE:
-            {
-                return false;
-            }
-            default:
-            {
-                throw new RuntimeException("Unknown result.");
-            }
-        }
+        return GeneralResult.toBoolean(result);
     }
     
     public static HandlerList getHandlerList()

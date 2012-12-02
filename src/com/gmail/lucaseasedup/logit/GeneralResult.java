@@ -23,5 +23,26 @@ package com.gmail.lucaseasedup.logit;
  */
 public enum GeneralResult
 {
-    SUCCESS, FAILURE
+    SUCCESS, FAILURE;
+    
+    public static boolean toBoolean(GeneralResult result)
+    {
+        switch (result)
+        {
+            case SUCCESS:
+            {
+                return true;
+            }
+            case FAILURE:
+            {
+                return false;
+            }
+            default:
+            {
+                assert false;
+            }
+        }
+        
+        return false;
+    }
 }
