@@ -22,10 +22,7 @@ import static com.gmail.lucaseasedup.logit.LogItConfiguration.HashingAlgorithm.*
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import com.gmail.lucaseasedup.logit.account.AccountManager;
 import com.gmail.lucaseasedup.logit.command.*;
-import com.gmail.lucaseasedup.logit.db.Database;
-import com.gmail.lucaseasedup.logit.db.MySqlDatabase;
-import com.gmail.lucaseasedup.logit.db.Pinger;
-import com.gmail.lucaseasedup.logit.db.SqliteDatabase;
+import com.gmail.lucaseasedup.logit.db.*;
 import static com.gmail.lucaseasedup.logit.hash.HashGenerator.*;
 import com.gmail.lucaseasedup.logit.listener.*;
 import com.gmail.lucaseasedup.logit.session.SessionManager;
@@ -127,7 +124,7 @@ public class LogItCore
         
         try
         {
-            // Create a table for LogIt, if it does not exist.
+            // Create a table for LogIt if it does not exist.
             database.create(config.getStorageTable(), "username varchar(16) NOT NULL,"
                                                     + "salt varchar(20) NOT NULL,"
                                                     + "password varchar(256) NOT NULL,"
@@ -305,7 +302,14 @@ public class LogItCore
     
     public String hash(String string, String salt)
     {
-        return this.hash(string + salt);
+        String hash;
+        
+        if (config.getHashingAlgorithm() != PLAIN)
+            hash = hash(string + salt);
+        else
+            hash = hash(string);
+        
+        return hash;
     }
     
     public String generateSalt()
