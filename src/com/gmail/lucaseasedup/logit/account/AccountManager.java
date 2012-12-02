@@ -105,7 +105,7 @@ public class AccountManager
     public void removeAccount(String username)
     {
         if (!isAccountCreated(username))
-            throw new RuntimeException("Account does not exist.");
+            throw new AccountNotFoundException();
         
         try
         {
@@ -146,7 +146,7 @@ public class AccountManager
     public boolean checkAccountPassword(String username, String password)
     {
         if (!isAccountCreated(username))
-            throw new RuntimeException("Account does not exist.");
+            throw new AccountNotFoundException();
         
         return passwords.get(username.toLowerCase()).equals(core.hash(password, salts.get(username.toLowerCase())));
     }
@@ -162,7 +162,7 @@ public class AccountManager
     public void changeAccountPassword(String username, String newPassword)
     {
         if (!isAccountCreated(username))
-            throw new RuntimeException("Account does not exist.");
+            throw new AccountNotFoundException();
         
         // Hash the given password.
         String newSalt = core.generateSalt();
@@ -206,7 +206,7 @@ public class AccountManager
     public void attachIp(String username, String ip)
     {
         if (!isAccountCreated(username))
-            throw new RuntimeException("Account does not exist.");
+            throw new AccountNotFoundException();
         
         try
         {

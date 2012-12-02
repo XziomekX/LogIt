@@ -44,8 +44,8 @@ public class SessionManager implements Runnable
         for (Iterator<String> it = sessions.keySet().iterator(); it.hasNext();)
         {
             String  username = it.next();
-            Player  player = getPlayer(username);
-            Session session = sessions.get(username);
+            Player  player   = getPlayer(username);
+            Session session  = sessions.get(username);
             
             if (session.getStatus() >= 0L)
             {
@@ -166,7 +166,7 @@ public class SessionManager implements Runnable
     public void startSession(String username)
     {
         if (getSession(username) == null)
-            throw new RuntimeException("Session does not exist.");
+            throw new SessionNotFoundException();
         
         // Start session.
         Session session = getSession(username);
@@ -188,7 +188,7 @@ public class SessionManager implements Runnable
     public void endSession(String username)
     {
         if (getSession(username) == null)
-            throw new RuntimeException("Session does not exist.");
+            throw new SessionNotFoundException();
         
         // End session.
         Session session = getSession(username);
