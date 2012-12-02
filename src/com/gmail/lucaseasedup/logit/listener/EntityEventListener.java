@@ -25,6 +25,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 
 /**
@@ -86,6 +87,20 @@ public class EntityEventListener implements Listener
             return;
         
         Player player = (Player) event.getEntity();
+        
+        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        {
+            event.setCancelled(true);
+        }
+    }
+    
+    @EventHandler
+    private void onEntityTarget(EntityTargetEvent event)
+    {
+        if (!core.getConfig().getForceLoginPreventEntityTarget() || !(event.getTarget() instanceof Player))
+            return;
+        
+        Player player = (Player) event.getTarget();
         
         if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
         {

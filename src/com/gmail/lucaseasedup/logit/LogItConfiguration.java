@@ -57,6 +57,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("force-login.prevent.damage-out",         plugin.getConfig().getBoolean("force-login.prevent.damage-out", true));
         plugin.getConfig().set("force-login.prevent.regain-health",      plugin.getConfig().getBoolean("force-login.prevent.regain-health", true)); 
         plugin.getConfig().set("force-login.prevent.food-level-change",  plugin.getConfig().getBoolean("force-login.prevent.food-level-change", true)); 
+        plugin.getConfig().set("force-login.prevent.entity-target",      plugin.getConfig().getBoolean("force-login.prevent.entity-target", true)); 
         plugin.getConfig().set("force-login.prevent.chat",               plugin.getConfig().getBoolean("force-login.prevent.chat", true));
         plugin.getConfig().set("force-login.prevent.command-preprocess", plugin.getConfig().getBoolean("force-login.prevent.command-preprocess", true)); 
         plugin.getConfig().set("force-login.prevent.pickup-item",        plugin.getConfig().getBoolean("force-login.prevent.pickup-item", true));
@@ -193,37 +194,42 @@ public final class LogItConfiguration
     {
         return plugin.getConfig().getBoolean("force-login.prevent.food-level-change");
     }
-        
+    
+    public boolean getForceLoginPreventEntityTarget()
+    {
+        return plugin.getConfig().getBoolean("force-login.prevent.entity-target");
+    }
+    
     public boolean getForceLoginPreventChat()
     {
         return plugin.getConfig().getBoolean("force-login.prevent.chat");
     }
-        
+    
     public boolean getForceLoginPreventCommandPreprocess()
     {
         return plugin.getConfig().getBoolean("force-login.prevent.command-preprocess");
     }
-        
+    
     public boolean getForceLoginPreventPickupItem()
     {
         return plugin.getConfig().getBoolean("force-login.prevent.pickup-item");
     }
-        
+    
     public boolean getForceLoginPreventDropItem()
     {
         return plugin.getConfig().getBoolean("force-login.prevent.drop-item");
     }
-        
+    
     public boolean getForceLoginPreventInteract()
     {
         return plugin.getConfig().getBoolean("force-login.prevent.interact");
     }
-        
+    
     public boolean getForceLoginPreventInteractEntity()
     {
         return plugin.getConfig().getBoolean("force-login.prevent.interact-entity");
     }
-        
+    
     public boolean getForceLoginPreventInventoryClick()
     {
         return plugin.getConfig().getBoolean("force-login.prevent.inventory-click");
@@ -243,7 +249,7 @@ public final class LogItConfiguration
     {
         return plugin.getConfig().getString("username.regex");
     }
-
+    
     public int getUsernameMinLength()
     {
         return plugin.getConfig().getInt("username.min-length");
