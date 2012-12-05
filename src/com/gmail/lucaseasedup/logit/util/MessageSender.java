@@ -20,6 +20,7 @@ package com.gmail.lucaseasedup.logit.util;
 
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import com.gmail.lucaseasedup.logit.account.AccountManager;
+import static com.gmail.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -82,6 +83,7 @@ public class MessageSender
      * Broadcasts a join message.
      * 
      * @param player Player who joined.
+     * @param showSpawnWorldInfo Whether the spawn-world should be shown along with the join message.
      */
     public static void broadcastJoinMessage(Player player, boolean showSpawnWorldInfo)
     {
@@ -111,6 +113,7 @@ public class MessageSender
      * Sends a message to the specified player telling them to either login or register.
      * 
      * @param player Player.
+     * @param accountManager AccountManager.
      */
     public static void sendForceLoginMessage(Player player, AccountManager accountManager)
     {
@@ -122,45 +125,5 @@ public class MessageSender
         {
             player.sendMessage(getMessage("PLEASE_REGISTER"));
         }
-    }
-    
-    /**
-     * Returns a case-correct username.
-     * 
-     * @param username Username.
-     * @return Case-correct username.
-     */
-    public static String getPlayerName(String username)
-    {
-        if (isPlayerOnline(username))
-        {
-            return getPlayer(username).getName();
-        }
-        else
-        {
-            return username;
-        }
-    }
-    
-    /**
-     * Checks if a player with the given username is online.
-     * 
-     * @param username Username.
-     * @return True, if they are online.
-     */
-    public static boolean isPlayerOnline(String username)
-    {
-        return (getPlayer(username) != null) ? true : false;
-    }
-    
-    /**
-     * Returns a Player instance with the given username.
-     * 
-     * @param username Username.
-     * @return Player.
-     */
-    public static Player getPlayer(String username)
-    {
-        return Bukkit.getPlayerExact(username);
     }
 }

@@ -19,8 +19,10 @@
 package com.gmail.lucaseasedup.logit.session;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
-import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
-import static com.gmail.lucaseasedup.logit.util.MessageSender.*;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.callEvent;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
+import static com.gmail.lucaseasedup.logit.util.MessageSender.sendMessage;
+import static com.gmail.lucaseasedup.logit.util.PlayerUtils.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import static java.util.logging.Level.FINE;
