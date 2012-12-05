@@ -103,7 +103,7 @@ public class LoginCommand implements CommandExecutor
             }
             if (!core.getAccountManager().isAccountCreated(p.getName()))
             {
-                p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS"));
+                p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
                 
                 return true;
             }
