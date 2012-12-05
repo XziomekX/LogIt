@@ -48,6 +48,11 @@ public class SessionEventListener implements Listener
             
             core.getWaitingRoom().remove(player);
             
+            if (core.isLinkedToVault())
+            {
+                core.updatePlayerGroup(player);
+            }
+            
             if (core.getConfig().getForceLoginGlobal() && !player.hasPermission("logit.login.exempt"))
             {
                 broadcastJoinMessage(player, core.getConfig().isShowSpawnWorldInfoEnabled());
@@ -64,14 +69,22 @@ public class SessionEventListener implements Listener
         {
             Player player = getPlayer(username);
             
-            if (core.getConfig().getForceLoginGlobal() && core.getConfig().isWaitingRoomEnabled())
+            if (core.getConfig().getForceLoginGlobal())
             {
-                core.getWaitingRoom().put(player);
+                if (core.getConfig().isWaitingRoomEnabled())
+                {
+                    core.getWaitingRoom().put(player);
+                }
+                
+                if (!player.hasPermission("logit.login.exempt"))
+                {
+                    broadcastQuitMessage(player);
+                }
             }
             
-            if (core.getConfig().getForceLoginGlobal() && !player.hasPermission("logit.login.exempt"))
+            if (core.isLinkedToVault())
             {
-                broadcastQuitMessage(player);
+                core.updatePlayerGroup(player);
             }
         }
     }

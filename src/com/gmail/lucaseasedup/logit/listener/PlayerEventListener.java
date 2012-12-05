@@ -89,6 +89,9 @@ public class PlayerEventListener implements Listener
         if (core.getSessionManager().getSession(username) == null)
             core.getSessionManager().createSession(username, player.getAddress().getAddress().getHostAddress());
         
+        if (core.isLinkedToVault())
+            core.updatePlayerGroup(player);
+        
         Bukkit.getScheduler().scheduleSyncDelayedTask(core.getPlugin(), new Runnable()
         {
             @Override

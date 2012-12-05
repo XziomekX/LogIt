@@ -35,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import static java.util.logging.Level.*;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import static org.bukkit.ChatColor.stripColor;
 import org.bukkit.entity.Player;
@@ -251,6 +252,25 @@ public class LogItCore
         return (config.getForceLoginGlobal() || config.getForceLoginInWorld(player.getWorld())) && !player.hasPermission("logit.login.exempt");
     }
     
+    public void updatePlayerGroup(Player player)
+    {
+        if (sessionManager.isSessionAlive(player))
+        {
+            permissions.playerRemoveGroup(player, config.getGroupsLoggedOut());
+            permissions.playerAddGroup(player, config.getGroupsLoggedIn());
+        }
+        else
+        {
+            permissions.playerRemoveGroup(player, config.getGroupsLoggedIn());
+            permissions.playerAddGroup(player, config.getGroupsLoggedOut());
+        }
+    }
+    
+    public boolean isLinkedToVault()
+    {
+        return permissions != null;
+    }
+    
     /**
      * Creates a hash from the given string using algorithm specified in the config file.
      * 
@@ -347,6 +367,11 @@ public class LogItCore
         plugin.getLogger().log(level, stripColor(message));
     }
     
+    public Permission getPermissions()
+    {
+        return permissions;
+    }
+    
     public WaitingRoom getWaitingRoom()
     {
         return waitingRoom;
@@ -408,6 +433,11 @@ public class LogItCore
         tickEventCaller = new TickEventCaller();
         waitingRoom = new WaitingRoom(this);
         
+        if (plugin.getServer().getPluginManager().isPluginEnabled("Vault"))
+        {
+            permissions = plugin.getServer().getServicesManager().getRegistration(Permission.class).getProvider();
+        }
+        
         loaded = true;
     }
     
@@ -445,4 +475,6 @@ public class LogItCore
     
     private AccountManager accountManager;
     private WaitingRoom waitingRoom;
+    
+    private Permission permissions;
 }

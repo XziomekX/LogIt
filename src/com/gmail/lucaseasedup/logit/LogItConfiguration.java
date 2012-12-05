@@ -87,6 +87,8 @@ public final class LogItConfiguration
         plugin.getConfig().set("waiting-room.location.z",                plugin.getConfig().getDouble("waiting-room.location.z", 0.0));
         plugin.getConfig().set("waiting-room.location.yaw",              plugin.getConfig().getDouble("waiting-room.location.yaw", 0.0));
         plugin.getConfig().set("waiting-room.location.pitch",            plugin.getConfig().getDouble("waiting-room.location.pitch", 0.0));
+        plugin.getConfig().set("groups.logged-in",                       plugin.getConfig().getString("groups.logged-in", "LoggedIn"));
+        plugin.getConfig().set("groups.logged-out",                      plugin.getConfig().getString("groups.logged-out", "LoggedOut"));
         plugin.getConfig().set("integration",                            plugin.getConfig().getString("integration", "none"));
         plugin.getConfig().set("integration-phpbb.logit-script",         plugin.getConfig().getString("integration-phpbb.logit-script", ""));
         plugin.getConfig().set("storage.type",                           plugin.getConfig().getString("storage.type", "sqlite"));
@@ -402,6 +404,16 @@ public final class LogItConfiguration
     public float getWaitingRoomLocationPitch()
     {
         return (float) plugin.getConfig().getDouble("waiting-room.location.pitch");
+    }
+    
+    public String getGroupsLoggedIn()
+    {
+        return plugin.getConfig().getString("groups.logged-in");
+    }
+    
+    public String getGroupsLoggedOut()
+    {
+        return plugin.getConfig().getString("groups.logged-out");
     }
     
     public IntegrationType getIntegration()
