@@ -68,12 +68,6 @@ public class LoginCommand implements CommandExecutor
                 
                 return true;
             }
-            if (!core.getAccountManager().isAccountCreated(args[1]))
-            {
-                s.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS").replace("%player%", args[1]));
-                
-                return true;
-            }
             if (core.getSessionManager().isSessionAlive(args[1]))
             {
                 s.sendMessage(getMessage("START_SESSION_ALREADY_OTHERS").replace("%player%", args[1]));
