@@ -211,7 +211,7 @@ public class AccountManager
                 return false;
             }
             
-            return result.equals("ok");
+            return (result != null) ? result.equals("ok") : false;
         }
         else
         {
