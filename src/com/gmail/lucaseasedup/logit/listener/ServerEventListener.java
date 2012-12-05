@@ -48,7 +48,7 @@ public class ServerEventListener implements Listener
         
         for (Player player : players)
         {
-            core.getSessionManager().createSession(player.getName());
+            core.getSessionManager().createSession(player.getName(), player.getAddress().getAddress().getHostAddress());
             
             if (core.isPlayerForcedToLogin(player))
             {

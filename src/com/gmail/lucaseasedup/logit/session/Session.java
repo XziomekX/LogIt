@@ -23,6 +23,16 @@ package com.gmail.lucaseasedup.logit.session;
  */
 public class Session
 {
+    public Session(String ip)
+    {
+        this.ip = ip;
+    }
+    
+    public String getIp()
+    {
+        return ip;
+    }
+    
     public long getStatus()
     {
         return status;
@@ -43,5 +53,6 @@ public class Session
         return status >= 0L;
     }
     
+    private String ip;
     private long status = -1L;
 }

@@ -123,10 +123,10 @@ public class SessionManager implements Runnable
      * 
      * @param username Username.
      */
-    public void createSession(String username)
+    public void createSession(String username, String ip)
     {
         // Create session.
-        Session session = new Session();
+        Session session = new Session(ip);
         sessions.put(username.toLowerCase(), session);
         
         // Notify about the session creation.

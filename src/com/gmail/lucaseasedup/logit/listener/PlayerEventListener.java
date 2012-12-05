@@ -87,15 +87,17 @@ public class PlayerEventListener implements Listener
         event.setJoinMessage(null);
         
         if (core.getSessionManager().getSession(username) == null)
-            core.getSessionManager().createSession(username);
+            core.getSessionManager().createSession(username, player.getAddress().getAddress().getHostAddress());
         
         Bukkit.getScheduler().scheduleSyncDelayedTask(core.getPlugin(), new Runnable()
         {
             @Override
             public void run()
             {
-                if (core.getSessionManager().isSessionAlive(username) || !core.getConfig().getForceLoginGlobal()
-                        || player.hasPermission("logit.login.exempt"))
+                String ip = player.getAddress().getAddress().getHostAddress();
+                
+                if ((core.getSessionManager().isSessionAlive(player) && core.getSessionManager().getSession(username).getIp().equals(ip))
+                        || !core.getConfig().getForceLoginGlobal() || player.hasPermission("logit.login.exempt"))
                 {
                     broadcastJoinMessage(player, core.getConfig().isShowSpawnWorldInfoEnabled());
                 }
