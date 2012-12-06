@@ -113,6 +113,11 @@ public class PlayerEventListener implements Listener
                 
                 if (core.isPlayerForcedToLogin(player) && !core.getSessionManager().isSessionAlive(username))
                 {
+                    if (core.getConfig().getForceLoginHideInventory())
+                    {
+                        core.getInventoryDepository().deposit(player);
+                    }
+                    
                     sendForceLoginMessage(player, core.getAccountManager());
                 }
             }
@@ -130,6 +135,7 @@ public class PlayerEventListener implements Listener
             broadcastQuitMessage(player);
         
         core.getWaitingRoom().remove(player);
+        core.getInventoryDepository().withdraw(player);
     }
     
     @EventHandler
@@ -140,6 +146,7 @@ public class PlayerEventListener implements Listener
         event.setLeaveMessage(null);
         
         core.getWaitingRoom().remove(player);
+        core.getInventoryDepository().withdraw(player);
     }
     
     @EventHandler

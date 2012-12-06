@@ -364,7 +364,12 @@ public class LogItCore
     {
         return database;
     }
-
+    
+    public InventoryDepository getInventoryDepository()
+    {
+        return inventoryDepository;
+    }
+    
     public BackupManager getBackupManager()
     {
         return backupManager;
@@ -413,6 +418,7 @@ public class LogItCore
         sessionManager = new SessionManager(this);
         tickEventCaller = new TickEventCaller();
         waitingRoom = new WaitingRoom(this);
+        inventoryDepository = new InventoryDepository();
         
         if (plugin.getServer().getPluginManager().isPluginEnabled("Vault"))
         {
@@ -436,6 +442,7 @@ public class LogItCore
     
     private LogItConfiguration config;
     private Database database;
+    private Permission permissions;
     
     private Pinger pinger;
     private int pingerTaskId;
@@ -451,6 +458,5 @@ public class LogItCore
     
     private AccountManager accountManager;
     private WaitingRoom waitingRoom;
-    
-    private Permission permissions;
+    private InventoryDepository inventoryDepository;
 }

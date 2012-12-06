@@ -50,6 +50,7 @@ public class SessionEventListener implements Listener
             Player player = getPlayer(username);
             
             core.getWaitingRoom().remove(player);
+            core.getInventoryDepository().withdraw(player);
             
             if (core.isLinkedToVault())
             {
@@ -83,6 +84,11 @@ public class SessionEventListener implements Listener
                 {
                     broadcastQuitMessage(player);
                 }
+            }
+            
+            if (core.getConfig().getForceLoginHideInventory())
+            {
+                core.getInventoryDepository().deposit(player);
             }
             
             if (core.isLinkedToVault())

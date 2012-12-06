@@ -66,6 +66,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("force-login.prevent.interact-entity",    plugin.getConfig().getBoolean("force-login.prevent.interact-entity", true)); 
         plugin.getConfig().set("force-login.prevent.inventory-click",    plugin.getConfig().getBoolean("force-login.prevent.inventory-click", true)); 
         plugin.getConfig().set("force-login.prevent.air-depletion",      plugin.getConfig().getBoolean("force-login.prevent.air-depletion", true)); 
+        plugin.getConfig().set("force-login.hide-inventory",             plugin.getConfig().getBoolean("force-login.hide-inventory", false)); 
         plugin.getConfig().set("session-lifetime",                       plugin.getConfig().getInt("session-lifetime", 0));
         plugin.getConfig().set("username.regex",                         plugin.getConfig().getString("username.regex", "[A-Za-z0-9_]+"));
         plugin.getConfig().set("username.min-length",                    plugin.getConfig().getInt("username.min-length", 2));
@@ -239,6 +240,11 @@ public final class LogItConfiguration
     public boolean getForceLoginPreventAirDepletion()
     {
         return plugin.getConfig().getBoolean("force-login.prevent.air-depletion");
+    }
+    
+    public boolean getForceLoginHideInventory()
+    {
+        return plugin.getConfig().getBoolean("force-login.hide-inventory");
     }
     
     public long getSessionLifetime()

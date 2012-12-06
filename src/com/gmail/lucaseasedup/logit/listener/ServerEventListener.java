@@ -68,6 +68,7 @@ public class ServerEventListener implements Listener
         for (Player player : players)
         {
             core.getWaitingRoom().remove(player);
+            core.getInventoryDepository().withdraw(player);
             core.getSessionManager().destroySession(player.getName());
         }
     }
