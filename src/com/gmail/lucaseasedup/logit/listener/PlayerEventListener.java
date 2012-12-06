@@ -102,7 +102,7 @@ public class PlayerEventListener implements Listener
                 String ip = player.getAddress().getAddress().getHostAddress();
                 
                 if ((core.getSessionManager().isSessionAlive(player) && core.getSessionManager().getSession(username).getIp().equals(ip))
-                        || !core.getConfig().getForceLoginGlobal() || player.hasPermission("logit.login.exempt"))
+                        || !core.getConfig().getForceLoginGlobal() || player.hasPermission("logit.force-login.exempt"))
                 {
                     broadcastJoinMessage(player, core.getConfig().isShowSpawnWorldInfoEnabled());
                 }

@@ -57,7 +57,7 @@ public class SessionEventListener implements Listener
                 core.updatePlayerGroup(player);
             }
             
-            if (core.getConfig().getForceLoginGlobal() && !player.hasPermission("logit.login.exempt"))
+            if (core.getConfig().getForceLoginGlobal() && !player.hasPermission("logit.force-login.exempt"))
             {
                 broadcastJoinMessage(player, core.getConfig().isShowSpawnWorldInfoEnabled());
             }
@@ -80,7 +80,7 @@ public class SessionEventListener implements Listener
                     core.getWaitingRoom().put(player);
                 }
                 
-                if (!player.hasPermission("logit.login.exempt"))
+                if (!player.hasPermission("logit.force-login.exempt"))
                 {
                     broadcastQuitMessage(player);
                 }

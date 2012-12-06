@@ -230,7 +230,7 @@ public class LogItCore
     
     /**
      * Checks if the player is forced to login (by either "force-login" being set to true, or
-     * the player being in a world with forced login). If the player has the "logit.login.exempt"
+     * the player being in a world with forced login). If the player has the "logit.force-login.exempt"
      * permission, it always returns false.
      * 
      * @param player Player.
@@ -238,7 +238,8 @@ public class LogItCore
      */
     public boolean isPlayerForcedToLogin(Player player)
     {
-        return (config.getForceLoginGlobal() || config.getForceLoginInWorld(player.getWorld())) && !player.hasPermission("logit.login.exempt");
+        return (config.getForceLoginGlobal() || config.getForceLoginInWorld(player.getWorld()))
+                && !player.hasPermission("logit.force-login.exempt");
     }
     
     public void updatePlayerGroup(Player player)

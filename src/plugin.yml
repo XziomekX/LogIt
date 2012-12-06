@@ -110,8 +110,6 @@ permissions:
     default: false
   logit.login.others:
     default: false
-  logit.login.exempt:
-    default: false
   logit.logout:
     default: false
     children:
@@ -143,6 +141,8 @@ permissions:
   logit.changepass.self:
     default: false
   logit.changepass.others:
+    default: false
+  logit.force-login.exempt:
     default: false
   logit.force-login.timeout.exempt:
     default: false
