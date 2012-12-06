@@ -98,7 +98,7 @@ public class SessionManager implements Runnable
      * Checks if the session of a player with the specified player is alive.
      * 
      * @param username Username.
-     * @return True, if alive.
+     * @return True if alive.
      */
     public boolean isSessionAlive(String username)
     {
@@ -111,7 +111,7 @@ public class SessionManager implements Runnable
      * Checks if the session of the specified player is alive.
      * 
      * @param player Player.
-     * @return True, if alive.
+     * @return True if alive.
      */
     public boolean isSessionAlive(Player player)
     {
@@ -131,10 +131,8 @@ public class SessionManager implements Runnable
         Session session = new Session(ip);
         sessions.put(username.toLowerCase(), session);
         
-        // Notify about the session creation.
         core.log(FINE, getMessage("CREATE_SESSION_SUCCESS_LOG").replace("%player%", username));
         
-        // Call the appropriate event.
         callEvent(new SessionCreateEvent(username, session));
     }
     
@@ -153,10 +151,8 @@ public class SessionManager implements Runnable
         // Destroy session.
         Session session = sessions.remove(username.toLowerCase());
         
-        // Notify about the session destruction.
         core.log(FINE, getMessage("DESTROY_SESSION_SUCCESS_LOG").replace("%player%", getPlayerName(username)));
         
-        // Call the appropriate event.
         callEvent(new SessionDestroyEvent(username, session));
     }
     
@@ -164,6 +160,7 @@ public class SessionManager implements Runnable
      * Starts the session of a player with the specified username.
      * 
      * @param username Username.
+     * @throws SessionNotFoundException Thrown if the session does not exist.
      */
     public void startSession(String username)
     {
@@ -174,11 +171,9 @@ public class SessionManager implements Runnable
         Session session = getSession(username);
         session.setStatus(0L);
         
-        // Notify about the session start.
         sendMessage(username, getMessage("START_SESSION_SUCCESS_SELF"));
         core.log(FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
         
-        // Call the appropriate event.
         callEvent(new SessionStartEvent(username, session));
     }
     
@@ -186,6 +181,7 @@ public class SessionManager implements Runnable
      * Ends the session of a player with the specified username.
      * 
      * @param username Username.
+     * @throws SessionNotFoundException Thrown if the session does not exist.
      */
     public void endSession(String username)
     {
@@ -196,11 +192,9 @@ public class SessionManager implements Runnable
         Session session = getSession(username);
         session.setStatus(-1L);
         
-        // Notify about the session end.
         sendMessage(username, getMessage("END_SESSION_SUCCESS_SELF"));
         core.log(FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
         
-        // Call the appropriate event.
         callEvent(new SessionEndEvent(username, session));
     }
     

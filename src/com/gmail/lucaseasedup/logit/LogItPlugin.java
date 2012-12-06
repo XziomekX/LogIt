@@ -66,17 +66,11 @@ public final class LogItPlugin extends JavaPlugin
         }
     }
     
-    /**
-     * Enables LogIt.
-     */
     public void enable()
     {
         getServer().getPluginManager().enablePlugin(this);
     }
     
-    /**
-     * Disables LogIt.
-     */
     public void disable()
     {
         getServer().getPluginManager().disablePlugin(this);
@@ -98,10 +92,10 @@ public final class LogItPlugin extends JavaPlugin
     /**
      * Loads messages from the file.
      * 
-     * First, it tries to load a messages_{locale}.properties file (where {locale} is a value from the config file).
+     * First, it tries to load a messages_{locale}.properties file (where {locale} is the corresponding value from the config file).
      * If it does not exist, it tries to load a messages.properties file. If this fails too, it throws a FileNotFoundException.
      * 
-     * @throws IOException Thrown, if no file has been found, or there was an error while reading.
+     * @throws IOException Thrown if no message file has been found, or there was an error while reading it.
      */
     private void loadMessages() throws IOException
     {
@@ -122,7 +116,7 @@ public final class LogItPlugin extends JavaPlugin
      * Returns a message with the secified label.
      * 
      * @param label Message label.
-     * @return Message.
+     * @return Message with that label.
      */
     public static String getMessage(String label)
     {
@@ -176,7 +170,7 @@ public final class LogItPlugin extends JavaPlugin
     }
     
     /**
-     * Provides shortcut to the Bukkit.getServer().getPluginManager().callEvent() method.
+     * Provides a shortcut to Bukkit.getServer().getPluginManager().callEvent().
      * 
      * @param event Event to be called.
      */
@@ -187,8 +181,5 @@ public final class LogItPlugin extends JavaPlugin
     
     private static PropertyResourceBundle prb;
     
-    /**
-     * The LogIt core instance.
-     */
     private LogItCore core;
 }

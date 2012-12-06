@@ -29,7 +29,8 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import static java.util.logging.Level.*;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.WARNING;
 
 /**
  * @author LucasEasedUp
@@ -59,12 +60,10 @@ public class BackupManager implements Runnable
             {
                 createBackup(database);
                 
-                // Notify about the backup.
                 core.log(INFO, getMessage("CREATE_BACKUP_SUCCESS"));
             }
             catch (IOException|SQLException ex)
             {
-                // Log failure.
                 core.log(WARNING, getMessage("CREATE_BACKUP_FAIL"));
             }
             

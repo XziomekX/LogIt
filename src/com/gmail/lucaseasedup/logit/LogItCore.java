@@ -65,7 +65,6 @@ public class LogItCore
         if (!loaded)
             load();
         
-        // Load config.
         config.load();
         
         if (plugin.getServer().getOnlineMode() && config.isStopOnOnlineModeEnabled())
@@ -120,7 +119,6 @@ public class LogItCore
             return;
         }
         
-        // Set up database pinger.
         pinger = new Pinger(database);
         
         try
@@ -143,14 +141,11 @@ public class LogItCore
         log(FINE, getMessage("PLUGIN_START_SUCCESS").replace("%st%", config.getStorageType().name())
                 .replace("%ha%", config.getHashingAlgorithm().name()));
         
-        // Set up account manager and load accounts.
         accountManager = new AccountManager(this, database);
         accountManager.loadAccounts();
         
-        // Set up backup manager.
         backupManager = new BackupManager(this, database);
         
-        // Schedule tasks.
         pingerTaskId          = Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, pinger, 0L, 2400L);
         sessionManagerTaskId  = Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, sessionManager, 0L, 20L);
         tickEventCallerTaskId = Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, tickEventCaller, 0L, 1L);
@@ -171,7 +166,6 @@ public class LogItCore
         
         try
         {
-            // Disconnect from the database.
             database.close();
         }
         catch (SQLException ex)
@@ -179,13 +173,11 @@ public class LogItCore
             log(WARNING, getMessage("DB_CLOSE_FAIL"));
         }
         
-        // Cancel tasks.
         Bukkit.getScheduler().cancelTask(pingerTaskId);
         Bukkit.getScheduler().cancelTask(sessionManagerTaskId);
         Bukkit.getScheduler().cancelTask(tickEventCallerTaskId);
         Bukkit.getScheduler().cancelTask(backupManagerTaskId);
         
-        // Log.
         log(FINE, getMessage("PLUGIN_STOP_SUCCESS"));
         
         // Set started to false to allow starting again.
@@ -221,16 +213,13 @@ public class LogItCore
      * Checks if the given password matches the global password.
      * 
      * @param password Password to check.
-     * @return True, if they match.
+     * @return True if they match.
      */
     public boolean checkGlobalPassword(String password)
     {
         return config.getGlobalPassword().equals(hash(password));
     }
     
-    /**
-     * Removes the global password.
-     */
     public void removeGlobalPassword()
     {
         config.setGlobalPassword("");
@@ -245,7 +234,7 @@ public class LogItCore
      * permission, it always returns false.
      * 
      * @param player Player.
-     * @return True, if the specified player has to log in.
+     * @return True if the specified player is forced to log in.
      */
     public boolean isPlayerForcedToLogin(Player player)
     {
@@ -342,12 +331,6 @@ public class LogItCore
         return new String(salt);
     }
     
-    /**
-     * Logs a message.
-     * 
-     * @param level Message level.
-     * @param message Message to be logged.
-     */
     public void log(Level level, String message)
     {
         if (config.isLogToFileEnabled())
@@ -411,7 +394,6 @@ public class LogItCore
     {
         config = new LogItConfiguration(plugin);
         
-        // Register event listeners.
         plugin.getServer().getPluginManager().registerEvents(new TickEventListener(this), plugin);
         plugin.getServer().getPluginManager().registerEvents(new ServerEventListener(this), plugin);
         plugin.getServer().getPluginManager().registerEvents(new BlockEventListener(this), plugin);
@@ -421,7 +403,6 @@ public class LogItCore
         plugin.getServer().getPluginManager().registerEvents(new AccountEventListener(this), plugin);
         plugin.getServer().getPluginManager().registerEvents(new SessionEventListener(this), plugin);
         
-        // Set command executors.
         plugin.getCommand("logit").setExecutor(new LogItCommand(this));
         plugin.getCommand("login").setExecutor(new LoginCommand(this));
         plugin.getCommand("logout").setExecutor(new LogoutCommand(this));
@@ -441,11 +422,6 @@ public class LogItCore
         loaded = true;
     }
     
-    /**
-     * Returns the instance of the LogIt core.
-     * 
-     * @return The LogIt core.
-     */
     public static LogItCore getInstance()
     {
         return INSTANCE;

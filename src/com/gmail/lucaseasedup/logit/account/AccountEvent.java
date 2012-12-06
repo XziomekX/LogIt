@@ -19,7 +19,6 @@
 package com.gmail.lucaseasedup.logit.account;
 
 import com.gmail.lucaseasedup.logit.GeneralResult;
-import static com.gmail.lucaseasedup.logit.GeneralResult.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 

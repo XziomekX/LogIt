@@ -20,8 +20,10 @@ package com.gmail.lucaseasedup.logit.command;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
+import static com.gmail.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static com.gmail.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import java.util.HashMap;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

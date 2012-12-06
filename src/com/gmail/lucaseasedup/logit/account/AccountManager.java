@@ -18,10 +18,13 @@
  */
 package com.gmail.lucaseasedup.logit.account;
 
-import static com.gmail.lucaseasedup.logit.GeneralResult.*;
+import static com.gmail.lucaseasedup.logit.GeneralResult.FAILURE;
+import static com.gmail.lucaseasedup.logit.GeneralResult.SUCCESS;
+import static com.gmail.lucaseasedup.logit.LogItConfiguration.IntegrationType.NONE;
+import static com.gmail.lucaseasedup.logit.LogItConfiguration.IntegrationType.PHPBB;
 import com.gmail.lucaseasedup.logit.LogItCore;
-import static com.gmail.lucaseasedup.logit.LogItConfiguration.IntegrationType.*;
-import static com.gmail.lucaseasedup.logit.LogItPlugin.*;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.callEvent;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import com.gmail.lucaseasedup.logit.db.Database;
 import static com.gmail.lucaseasedup.logit.util.MessageSender.sendMessage;
 import java.io.*;
@@ -29,6 +32,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import static java.util.logging.Level.*;
 
@@ -50,7 +54,7 @@ public class AccountManager
      * Checks if an account with the specified username is created.
      * 
      * @param username Username.
-     * @return True, if an account exists.
+     * @return True if the account exists.
      */
     public boolean isAccountCreated(String username)
     {
@@ -81,7 +85,6 @@ public class AccountManager
         if (isAccountCreated(username))
             throw new RuntimeException("Account already exists.");
         
-        // Hash the given password.
         String salt = core.generateSalt();
         String hash = core.hash(password, salt);
         
@@ -100,20 +103,16 @@ public class AccountManager
             passwords.put(username.toLowerCase(), hash);
             ips.put(username.toLowerCase(), null);
             
-            // Notify about the account creation.
             sendMessage(username, getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
             core.log(FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
             
-            // Call the appropriate event.
             callEvent(new AccountCreateEvent(username, hash, SUCCESS));
         }
         catch (SQLException|UnsupportedOperationException ex)
         {
-            // Notify about the failure.
             sendMessage(username, getMessage("CREATE_ACCOUNT_FAIL_SELF"));
             core.log(WARNING, getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username));
             
-            // Call the appropriate event.
             callEvent(new AccountCreateEvent(username, hash, FAILURE));
         }
     }
@@ -122,6 +121,7 @@ public class AccountManager
      * Removes an account with the specified username.
      * 
      * @param username Username.
+     * @throws AccountNotFoundException Thrown if the account does not exist.
      */
     public void removeAccount(String username)
     {
@@ -143,20 +143,16 @@ public class AccountManager
             passwords.remove(username.toLowerCase());
             ips.remove(username.toLowerCase());
             
-            // Notify about the account removal.
             sendMessage(username, getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
             core.log(FINE, getMessage("REMOVE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
             
-            // Call the appropriate event.
             callEvent(new AccountRemoveEvent(username, SUCCESS));
         }
         catch (SQLException|UnsupportedOperationException ex)
         {
-            // Notify about the failure.
             sendMessage(username, getMessage("REMOVE_ACCOUNT_FAIL_SELF"));
             core.log(WARNING, getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username));
             
-            // Call the appropriate event.
             callEvent(new AccountRemoveEvent(username, FAILURE));
         }
     }
@@ -168,7 +164,7 @@ public class AccountManager
      * 
      * @param username Username.
      * @param password Password to check
-     * @return True, if they match.
+     * @return True if they match.
      */
     public boolean checkAccountPassword(String username, String password)
     {
@@ -232,7 +228,6 @@ public class AccountManager
         if (!isAccountCreated(username))
             throw new AccountNotFoundException();
         
-        // Hash the given password.
         String newSalt = core.generateSalt();
         String newHash = core.hash(newPassword, newSalt);
         
@@ -253,20 +248,16 @@ public class AccountManager
             salts.put(username.toLowerCase(), newSalt);
             passwords.put(username.toLowerCase(), newHash);
             
-            // Notify about the password change.
             sendMessage(username, getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
             core.log(FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
             
-            // Call the appropriate event.
             callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, SUCCESS));
         }
         catch (SQLException|UnsupportedOperationException ex)
         {
-            // Notify about the failure.
             sendMessage(username, getMessage("CHANGE_PASSWORD_FAIL_SELF"));
             core.log(FINE, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username));
             
-            // Call the appropriate event.
             callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, FAILURE));
         }
     }
@@ -276,6 +267,7 @@ public class AccountManager
      * 
      * @param username Username.
      * @param ip IP address.
+     * @throws AccountNotFoundException Thrown if the account does not exist.
      */
     public void attachIp(String username, String ip)
     {
@@ -295,18 +287,14 @@ public class AccountManager
             
             ips.put(username.toLowerCase(), ip);
             
-            // Notify about the attachment.
             core.log(FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username).replace("%ip%", ip));
             
-            // Call the appropriate event.
             callEvent(new AccountAttachIpEvent(username, ip, SUCCESS));
         }
         catch (SQLException|UnsupportedOperationException ex)
         {
-            // Log failure.
             core.log(FINE, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username).replace("%ip%", ip));
             
-            // Call the appropriate event.
             callEvent(new AccountAttachIpEvent(username, ip, FAILURE));
         }
     }
@@ -322,23 +310,13 @@ public class AccountManager
         if (ip.isEmpty())
             return 0;
         
-        int counter = 0;
-        
-        for (String s : ips.values())
-        {
-            if (s.equals(ip))
-            {
-                counter++;
-            }
-        }
-        
-        return counter;
+        return Collections.frequency(ips.values(), ip);
     }
     
     /**
      * Purges the database from accounts.
      * 
-     * @throws SQLException Thrown, if database truncation failed.
+     * @throws SQLException Thrown if database truncation failed.
      */
     public void purge() throws SQLException
     {
@@ -353,19 +331,15 @@ public class AccountManager
                 throw new UnsupportedOperationException();
             }
             
-            // Clear the local hash maps.
             passwords.clear();
             ips.clear();
             
-            // Notify about purging.
             core.log(INFO, getMessage("PURGE_SUCCESS"));
         }
         catch (SQLException|UnsupportedOperationException ex)
         {
-            // Log failure.
             core.log(WARNING, getMessage("PURGE_FAIL"));
             
-            // Pass the exception off this scope.
             throw ex;
         }
     }
@@ -375,7 +349,6 @@ public class AccountManager
      */
     public void loadAccounts()
     {
-        // Clear the local hash maps.
         salts.clear();
         passwords.clear();
         ips.clear();
@@ -392,13 +365,11 @@ public class AccountManager
                     passwords.put(rs.getString("username"), rs.getString("password"));
                     ips.put(rs.getString("username"), rs.getString("ip"));
                 }
-
-                // Notify about the number of loaded accounts.
+                
                 core.log(FINE, getMessage("LOAD_ACCOUNTS_SUCCESS").replace("%num%", String.valueOf(passwords.size())));
             }
             catch (SQLException ex)
             {
-                // Log failure.
                 core.log(WARNING, getMessage("LOAD_ACCOUNTS_FAIL"));
             }
         }

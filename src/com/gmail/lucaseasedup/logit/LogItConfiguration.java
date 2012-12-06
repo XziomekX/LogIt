@@ -106,9 +106,6 @@ public final class LogItConfiguration
         plugin.saveConfig();
     }
     
-    /**
-     * Saves configuration.
-     */
     public void save()
     {
         plugin.saveConfig();
@@ -282,7 +279,7 @@ public final class LogItConfiguration
     /**
      * Returns the global password.
      * 
-     * Please, note that this may not be a plain form of a password.
+     * Please, note that this is not a plain-text password.
      * It is hashed using a hashing algorithm specified in the config.
      * 
      * @return Global password.
@@ -503,6 +500,14 @@ public final class LogItConfiguration
         return plugin.getConfig().getInt("backup.schedule.interval") * 20L;
     }
     
+    /**
+     * Changes the global password.
+     * 
+     * Note that this method doesn't hash the password.
+     * Use LogItCore.changeGlobalPassword(), instead.
+     * 
+     * @param password Hashed global password.
+     */
     public void setGlobalPassword(String password)
     {
         plugin.getConfig().set("password.global-password", password);
