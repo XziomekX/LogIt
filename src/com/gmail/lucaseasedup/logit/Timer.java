@@ -28,6 +28,11 @@ public class Timer implements Runnable
         this.interval = interval;
     }
     
+    public Timer()
+    {
+        this(1);
+    }
+    
     @Override
     public void run()
     {
