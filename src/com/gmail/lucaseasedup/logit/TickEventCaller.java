@@ -18,7 +18,7 @@
  */
 package com.gmail.lucaseasedup.logit;
 
-import org.bukkit.Bukkit;
+import static com.gmail.lucaseasedup.logit.LogItPlugin.callEvent;
 
 /**
  * @author LucasEasedUp
@@ -32,6 +32,6 @@ public class TickEventCaller implements Runnable
     @Override
     public void run()
     {
-        Bukkit.getPluginManager().callEvent(new TickEvent());
+        callEvent(new TickEvent());
     }
 }
