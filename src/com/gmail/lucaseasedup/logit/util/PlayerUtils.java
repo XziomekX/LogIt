@@ -69,4 +69,9 @@ public class PlayerUtils
     {
         return Bukkit.getPlayerExact(username);
     }
+    
+    public static String getPlayerIp(Player player)
+    {
+        return player.getAddress().getAddress().getHostAddress();
+    }
 }
