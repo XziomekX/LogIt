@@ -126,7 +126,7 @@ public class LoginCommand implements CommandExecutor
                 
                 if (failedLoginsToBan.get(username) >= core.getConfig().getLoginFailsToBan())
                 {
-                    p.setBanned(true);
+                    Bukkit.banIP(getPlayerIp(p));
                     p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS_BAN"));
                     
                     failedLoginsToKick.remove(username);
