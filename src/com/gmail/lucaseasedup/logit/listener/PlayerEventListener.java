@@ -94,6 +94,12 @@ public class PlayerEventListener implements Listener
         if (core.isLinkedToVault())
             core.updatePlayerGroup(player);
         
+        if (core.isPlayerForcedToLogin(player) && !core.getSessionManager().isSessionAlive(username)
+                && core.getConfig().getForceLoginHideInventory())
+        {
+            core.getInventoryDepository().deposit(player);
+        }
+        
         Bukkit.getScheduler().scheduleSyncDelayedTask(core.getPlugin(), new Runnable()
         {
             @Override
@@ -113,11 +119,6 @@ public class PlayerEventListener implements Listener
                 
                 if (core.isPlayerForcedToLogin(player) && !core.getSessionManager().isSessionAlive(username))
                 {
-                    if (core.getConfig().getForceLoginHideInventory())
-                    {
-                        core.getInventoryDepository().deposit(player);
-                    }
-                    
                     sendForceLoginMessage(player, core.getAccountManager());
                 }
             }
