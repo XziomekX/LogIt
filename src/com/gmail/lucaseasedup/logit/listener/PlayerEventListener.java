@@ -30,18 +30,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import static org.bukkit.event.EventPriority.HIGHEST;
 import static org.bukkit.event.EventPriority.LOWEST;
-import org.bukkit.event.Listener;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
 import org.bukkit.event.player.*;
 
 /**
  * @author LucasEasedUp
  */
-public class PlayerEventListener implements Listener
+public class PlayerEventListener extends EventListener
 {
     public PlayerEventListener(LogItCore core)
     {
-        this.core = core;
+        super(core);
     }
     
     @EventHandler(priority = LOWEST)
@@ -308,6 +307,4 @@ public class PlayerEventListener implements Listener
             sendForceLoginMessage(player, core.getAccountManager());
         }
     }
-    
-    private final LogItCore core;
 }

@@ -21,17 +21,16 @@ package com.gmail.lucaseasedup.logit.listener;
 import com.gmail.lucaseasedup.logit.LogItCore;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 /**
  * @author LucasEasedUp
  */
-public class InventoryEventListener implements Listener
+public class InventoryEventListener extends EventListener
 {
     public InventoryEventListener(LogItCore core)
     {
-        this.core = core;
+        super(core);
     }
     
     @EventHandler
@@ -47,6 +46,4 @@ public class InventoryEventListener implements Listener
             event.setCancelled(true);
         }
     }
-    
-    private final LogItCore core;
 }

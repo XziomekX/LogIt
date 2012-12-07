@@ -19,17 +19,14 @@
 package com.gmail.lucaseasedup.logit.listener;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
-import org.bukkit.event.Listener;
 
 /**
  * @author LucasEasedUp
  */
-public class AccountEventListener implements Listener
+public class AccountEventListener extends EventListener
 {
     public AccountEventListener(LogItCore core)
     {
-        this.core = core;
+        super(core);
     }
-    
-    private final LogItCore core;
 }

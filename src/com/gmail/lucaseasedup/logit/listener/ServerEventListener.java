@@ -25,18 +25,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import static org.bukkit.event.EventPriority.HIGHEST;
-import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 
 /**
  * @author LucasEasedUp
  */
-public class ServerEventListener implements Listener
+public class ServerEventListener extends EventListener
 {
     public ServerEventListener(LogItCore core)
     {
-        this.core = core;
+        super(core);
     }
     
     @EventHandler
@@ -73,6 +72,4 @@ public class ServerEventListener implements Listener
             core.getSessionManager().destroySession(player.getName());
         }
     }
-    
-    private final LogItCore core;
 }

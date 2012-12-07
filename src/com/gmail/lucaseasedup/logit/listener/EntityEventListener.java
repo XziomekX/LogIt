@@ -21,21 +21,16 @@ package com.gmail.lucaseasedup.logit.listener;
 import com.gmail.lucaseasedup.logit.LogItCore;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.*;
 
 /**
  * @author LucasEasedUp
  */
-public class EntityEventListener implements Listener
+public class EntityEventListener extends EventListener
 {
     public EntityEventListener(LogItCore core)
     {
-        this.core = core;
+        super(core);
     }
     
     @EventHandler
@@ -107,6 +102,4 @@ public class EntityEventListener implements Listener
             event.setCancelled(true);
         }
     }
-    
-    private final LogItCore core;
 }

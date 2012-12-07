@@ -28,16 +28,15 @@ import static com.gmail.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import static org.bukkit.event.EventPriority.LOWEST;
-import org.bukkit.event.Listener;
 
 /**
  * @author LucasEasedUp
  */
-public class SessionEventListener implements Listener
+public class SessionEventListener extends EventListener
 {
     public SessionEventListener(LogItCore core)
     {
-        this.core = core;
+        super(core);
     }
     
     @EventHandler(priority = LOWEST)
@@ -97,6 +96,4 @@ public class SessionEventListener implements Listener
             }
         }
     }
-    
-    private final LogItCore core;
 }

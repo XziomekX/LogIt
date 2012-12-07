@@ -23,16 +23,15 @@ import com.gmail.lucaseasedup.logit.TickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
 /**
  * @author LucasEasedUp
  */
-public class TickEventListener implements Listener
+public class TickEventListener extends EventListener
 {
     public TickEventListener(LogItCore core)
     {
-        this.core = core;
+        super(core);
     }
     
     @EventHandler
@@ -49,6 +48,4 @@ public class TickEventListener implements Listener
             }
         }
     }
-    
-    private final LogItCore core;
 }

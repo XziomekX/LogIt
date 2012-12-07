@@ -22,18 +22,17 @@ import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.util.MessageSender.sendForceLoginMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 /**
  * @author LucasEasedUp
  */
-public class BlockEventListener implements Listener
+public class BlockEventListener extends EventListener
 {
     public BlockEventListener(LogItCore core)
     {
-        this.core = core;
+        super(core);
     }
     
     @EventHandler
@@ -65,6 +64,4 @@ public class BlockEventListener implements Listener
             sendForceLoginMessage(player, core.getAccountManager());
         }
     }
-    
-    private final LogItCore core;
 }
