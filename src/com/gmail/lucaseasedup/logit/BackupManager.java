@@ -112,7 +112,7 @@ public class BackupManager implements Runnable
      * 
      * @param database Database to be affected by the backup.
      * @param filename Backup filename.
-     * @throws FileNotFoundException When the backup does not exist.
+     * @throws FileNotFoundException Thrown if the backup does not exist.
      * @throws SQLException
      */
     public void restoreBackup(Database database, String filename) throws FileNotFoundException, SQLException
@@ -142,7 +142,7 @@ public class BackupManager implements Runnable
      * Restores the newest backup in the directory specified in the config.
      * 
      * @param database Database to be affected by the backup.
-     * @throws FileNotFoundException When there are not backups.
+     * @throws FileNotFoundException Thrown if there are not backups.
      * @throws SQLException
      */
     public void restoreBackup(Database database) throws FileNotFoundException, SQLException

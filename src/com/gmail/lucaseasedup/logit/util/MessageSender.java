@@ -87,10 +87,9 @@ public class MessageSender
      */
     public static void broadcastJoinMessage(Player player, boolean showSpawnWorldInfo)
     {
-        String message = getMessage("JOIN");
-        
-        message = message.replace("%player%", player.getName());
-        message = message.replace("%in_world%", (showSpawnWorldInfo) ? SpawnWorldInfoGenerator.generate(player) : "");
+        String message = getMessage("JOIN")
+                .replace("%player%", player.getName())
+                .replace("%in_world%", (showSpawnWorldInfo) ? SpawnWorldInfoGenerator.generate(player) : "");
         
         broadcastMessage(message, player);
     }
@@ -102,9 +101,8 @@ public class MessageSender
      */
     public static void broadcastQuitMessage(Player player)
     {
-        String message = getMessage("QUIT");
-        
-        message = message.replace("%player%", player.getName());
+        String message = getMessage("QUIT")
+                .replace("%player%", player.getName());
         
         broadcastMessage(message, player);
     }

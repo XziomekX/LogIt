@@ -202,7 +202,7 @@ public class AccountManager
                     result = in.readLine();
                 }
             }
-            catch (IOException e)
+            catch (IOException ex)
             {
                 return false;
             }

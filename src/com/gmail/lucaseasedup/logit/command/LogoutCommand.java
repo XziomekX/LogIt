@@ -51,61 +51,49 @@ public class LogoutCommand implements CommandExecutor
             if (p != null && !p.hasPermission("logit.logout.others"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
-                
-                return true;
             }
-            if (args.length < 2)
+            else if (args.length < 2)
             {
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
-                
-                return true;
             }
-            if (!isPlayerOnline(args[1]))
+            else if (!isPlayerOnline(args[1]))
             {
                 s.sendMessage(getMessage("NOT_ONLINE").replace("%player%", args[1]));
-                
-                return true;
             }
-            if (!core.getSessionManager().isSessionAlive(args[1]))
+            else if (!core.getSessionManager().isSessionAlive(args[1]))
             {
                 s.sendMessage(getMessage("START_SESSION_NOT_OTHERS").replace("%player%", args[1]));
-                
-                return true;
             }
-            
-            core.getSessionManager().endSession(args[1]);
-            
-            s.sendMessage(getMessage("END_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
-            
-            return true;
+            else
+            {
+                core.getSessionManager().endSession(args[1]);
+
+                s.sendMessage(getMessage("END_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
+            }
         }
         else if (args.length == 0)
         {
             if (p == null)
             {
                 s.sendMessage(getMessage("ONLY_PLAYERS"));
-                
-                return true;
             }
-            if (!p.hasPermission("logit.logout.self"))
+            else if (!p.hasPermission("logit.logout.self"))
             {
                 p.sendMessage(getMessage("NO_PERMS"));
-                
-                return true;
             }
-            if (!core.getSessionManager().isSessionAlive(p.getName()))
+            else if (!core.getSessionManager().isSessionAlive(p.getName()))
             {
                 p.sendMessage(getMessage("START_SESSION_NOT_SELF"));
-                
-                return true;
             }
-            
-            core.getSessionManager().endSession(p.getName());
-            
-            return true;
+            else
+            {
+                core.getSessionManager().endSession(p.getName());
+            }
         }
-        
-        s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
+        else
+        {
+            s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
+        }
         
         return true;
     }

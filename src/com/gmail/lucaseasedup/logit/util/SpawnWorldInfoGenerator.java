@@ -43,6 +43,8 @@ public class SpawnWorldInfoGenerator
         if (!Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core"))
             return world.getName();
         
-        return ((MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core")).getMVWorldManager().getMVWorld(world).getAlias();
+        MultiverseCore multiverseCore = (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");
+        
+        return multiverseCore.getMVWorldManager().getMVWorld(world).getAlias();
     }
 }

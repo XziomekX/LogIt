@@ -20,6 +20,7 @@ package com.gmail.lucaseasedup.logit.listener;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.util.MessageSender.sendForceLoginMessage;
+import static com.gmail.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,7 +49,7 @@ public class ServerEventListener implements Listener
         
         for (Player player : players)
         {
-            core.getSessionManager().createSession(player.getName(), player.getAddress().getAddress().getHostAddress());
+            core.getSessionManager().createSession(player.getName(), getPlayerIp(player));
             
             if (core.isPlayerForcedToLogin(player))
             {

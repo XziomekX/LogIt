@@ -35,7 +35,7 @@ public class AccountNotFoundException extends RuntimeException
      * Constructs an instance of
      * <code>AccountNotFoundException</code> with the specified detail message.
      *
-     * @param msg the detail message.
+     * @param msg The detail message.
      */
     public AccountNotFoundException(String msg)
     {

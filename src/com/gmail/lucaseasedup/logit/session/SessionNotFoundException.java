@@ -35,7 +35,7 @@ public class SessionNotFoundException extends RuntimeException
      * Constructs an instance of
      * <code>SessionNotFoundException</code> with the specified detail message.
      *
-     * @param msg the detail message.
+     * @param msg The detail message.
      */
     public SessionNotFoundException(String msg)
     {

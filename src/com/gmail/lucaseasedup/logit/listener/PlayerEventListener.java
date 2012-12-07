@@ -21,6 +21,7 @@ package com.gmail.lucaseasedup.logit.listener;
 import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import static com.gmail.lucaseasedup.logit.util.MessageSender.*;
+import static com.gmail.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static com.gmail.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import java.util.List;
 import org.bukkit.Bukkit;
@@ -85,11 +86,12 @@ public class PlayerEventListener implements Listener
     {
         final Player player   = event.getPlayer();
         final String username = player.getName();
+        final String ip       = getPlayerIp(player);
         
         event.setJoinMessage(null);
         
         if (core.getSessionManager().getSession(username) == null)
-            core.getSessionManager().createSession(username, player.getAddress().getAddress().getHostAddress());
+            core.getSessionManager().createSession(username, ip);
         
         if (core.isLinkedToVault())
             core.updatePlayerGroup(player);
@@ -105,8 +107,6 @@ public class PlayerEventListener implements Listener
             @Override
             public void run()
             {
-                String ip = player.getAddress().getAddress().getHostAddress();
-                
                 if ((core.getSessionManager().isSessionAlive(player) && core.getSessionManager().getSession(username).getIp().equals(ip))
                         || !core.getConfig().getForceLoginGlobal() || player.hasPermission("logit.force-login.exempt"))
                 {

@@ -57,113 +57,107 @@ public class LogItCommand implements CommandExecutor
             if (p != null && !p.hasPermission("logit.help"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
-                
-                return true;
             }
-            
-            if (p == null || p.hasPermission("logit.help"))
+            else
             {
-                s.sendMessage(getLogItSubcommandHelp("help", null));
+                if (p == null || p.hasPermission("logit.help"))
+                {
+                    s.sendMessage(getLogItSubcommandHelp("help", null));
+                }
+                if (p == null || p.hasPermission("logit.version"))
+                {
+                    s.sendMessage(getLogItSubcommandHelp("version", null));
+                }
+                if (p == null || p.hasPermission("logit.reload"))
+                {
+                    s.sendMessage(getLogItSubcommandHelp("reload", null));
+                }
+                if (p == null || p.hasPermission("logit.purge"))
+                {
+                    s.sendMessage(getLogItSubcommandHelp("purge", null));
+                }
+                if (p == null || p.hasPermission("logit.backup.force"))
+                {
+                    s.sendMessage(getLogItSubcommandHelp("backup force", null));
+                }
+                if (p == null || p.hasPermission("logit.backup.restore"))
+                {
+                    s.sendMessage(getLogItSubcommandHelp("backup restore", "[filename]"));
+                }
+                if (p == null || p.hasPermission("logit.backup.remove"))
+                {
+                    s.sendMessage(getLogItSubcommandHelp("backup remove", "<amount>"));
+                }
+                if (p != null && p.hasPermission("logit.setwr"))
+                {
+                    s.sendMessage(getLogItSubcommandHelp("setwr", null));
+                }
+                if (p != null && p.hasPermission("logit.gotowr"))
+                {
+                    s.sendMessage(getLogItSubcommandHelp("gotowr", null));
+                }
+                if (p == null || p.hasPermission("logit.globalpass.set"))
+                {
+                    s.sendMessage(getLogItSubcommandHelp("globalpass set", "<password>"));
+                }
+                if (p == null || p.hasPermission("logit.globalpass.remove"))
+                {
+                    s.sendMessage(getLogItSubcommandHelp("globalpass remove", null));
+                }
             }
-            if (p == null || p.hasPermission("logit.version"))
-            {
-                s.sendMessage(getLogItSubcommandHelp("version", null));
-            }
-            if (p == null || p.hasPermission("logit.reload"))
-            {
-                s.sendMessage(getLogItSubcommandHelp("reload", null));
-            }
-            if (p == null || p.hasPermission("logit.purge"))
-            {
-                s.sendMessage(getLogItSubcommandHelp("purge", null));
-            }
-            if (p == null || p.hasPermission("logit.backup.force"))
-            {
-                s.sendMessage(getLogItSubcommandHelp("backup force", null));
-            }
-            if (p == null || p.hasPermission("logit.backup.restore"))
-            {
-                s.sendMessage(getLogItSubcommandHelp("backup restore", "[filename]"));
-            }
-            if (p == null || p.hasPermission("logit.backup.remove"))
-            {
-                s.sendMessage(getLogItSubcommandHelp("backup remove", "<amount>"));
-            }
-            if (p != null && p.hasPermission("logit.setwr"))
-            {
-                s.sendMessage(getLogItSubcommandHelp("setwr", null));
-            }
-            if (p != null && p.hasPermission("logit.gotowr"))
-            {
-                s.sendMessage(getLogItSubcommandHelp("gotowr", null));
-            }
-            if (p == null || p.hasPermission("logit.globalpass.set"))
-            {
-                s.sendMessage(getLogItSubcommandHelp("globalpass set", "<password>"));
-            }
-            if (p == null || p.hasPermission("logit.globalpass.remove"))
-            {
-                s.sendMessage(getLogItSubcommandHelp("globalpass remove", null));
-            }
-            
-            return true;
         }
         else if (subcommand.equalsIgnoreCase("version") && args.length == 1)
         {
             if (p != null && !p.hasPermission("logit.version"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
-                
-                return true;
             }
-            
-            s.sendMessage(getMessage("PLUGIN_VERSION").replace("%version%", core.getPlugin().getDescription().getVersion()));
-            
-            return true;
+            else
+            {
+                s.sendMessage(getMessage("PLUGIN_VERSION").replace("%version%", core.getPlugin().getDescription().getVersion()));
+            }
         }
         else if (subcommand.equalsIgnoreCase("reload") && args.length == 1)
         {
             if (p != null && !p.hasPermission("logit.reload"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
-                
-                return true;
             }
-            
-            core.restart();
-            
-            if (p != null && core.getPlugin().isEnabled())
-                s.sendMessage(getMessage("RELOADED"));
-            
-            return true;
+            else
+            {
+                core.restart();
+                
+                if (p != null && core.getPlugin().isEnabled())
+                {
+                    s.sendMessage(getMessage("RELOADED"));
+                }
+            }
         }
         else if (subcommand.equalsIgnoreCase("purge") && args.length == 1)
         {
             if (p != null && !p.hasPermission("logit.purge"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
-                
-                return true;
             }
-            
-            try
+            else
             {
-                core.getAccountManager().purge();
-                
-                if (p != null)
+                try
                 {
-                    s.sendMessage(getMessage("PURGE_SUCCESS"));
+                    core.getAccountManager().purge();
+
+                    if (p != null)
+                    {
+                        s.sendMessage(getMessage("PURGE_SUCCESS"));
+                    }
+                }
+                catch (SQLException ex)
+                {
+                    if (p != null)
+                    {
+                        s.sendMessage(getMessage("PURGE_FAIL"));
+                    }
                 }
             }
-            catch (SQLException ex)
-            {
-                if (p != null)
-                {
-                    s.sendMessage(getMessage("PURGE_FAIL"));
-                }
-            }
-            
-            return true;
         }
         else if (subcommand.equalsIgnoreCase("backup") && args.length > 1 && args.length <= 3)
         {
@@ -172,25 +166,25 @@ public class LogItCommand implements CommandExecutor
                 if (p != null && !p.hasPermission("logit.backup.force"))
                 {
                     s.sendMessage(getMessage("NO_PERMS"));
-                    
-                    return true;
                 }
-                
-                try
+                else
                 {
-                    core.getBackupManager().createBackup(core.getDatabase());
-                    
-                    if (p != null)
-                        s.sendMessage(getMessage("CREATE_BACKUP_SUCCESS"));
-                    
-                    core.log(INFO, getMessage("CREATE_BACKUP_SUCCESS"));
-                }
-                catch (IOException|SQLException ex)
-                {
-                    if (p != null)
-                        s.sendMessage(getMessage("CREATE_BACKUP_FAIL"));
-                    
-                    core.log(WARNING, getMessage("CREATE_BACKUP_FAIL"));
+                    try
+                    {
+                        core.getBackupManager().createBackup(core.getDatabase());
+
+                        if (p != null)
+                            s.sendMessage(getMessage("CREATE_BACKUP_SUCCESS"));
+
+                        core.log(INFO, getMessage("CREATE_BACKUP_SUCCESS"));
+                    }
+                    catch (IOException|SQLException ex)
+                    {
+                        if (p != null)
+                            s.sendMessage(getMessage("CREATE_BACKUP_FAIL"));
+
+                        core.log(WARNING, getMessage("CREATE_BACKUP_FAIL"));
+                    }
                 }
             }
             else if (args[1].equalsIgnoreCase("restore"))
@@ -198,35 +192,18 @@ public class LogItCommand implements CommandExecutor
                 if (p != null && !p.hasPermission("logit.backup.restore"))
                 {
                     s.sendMessage(getMessage("NO_PERMS"));
+                }
+                else
+                {
+                    String filename = (args.length >= 3) ? args[2] : null;
                     
-                    return true;
-                }
-                
-                if (args.length == 2)
-                {
                     try
                     {
-                        core.getBackupManager().restoreBackup(core.getDatabase());
-                        core.getAccountManager().loadAccounts();
-
-                        if (p != null)
-                            s.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS"));
+                        if (filename != null)
+                            core.getBackupManager().restoreBackup(core.getDatabase(), filename);
+                        else
+                            core.getBackupManager().restoreBackup(core.getDatabase());
                         
-                        core.log(INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
-                    }
-                    catch (FileNotFoundException|SQLException ex)
-                    {
-                        if (p != null)
-                            s.sendMessage(getMessage("RESTORE_BACKUP_FAIL"));
-                        
-                        core.log(WARNING, getMessage("RESTORE_BACKUP_FAIL"));
-                    }
-                }
-                else if (args.length == 3)
-                {
-                    try
-                    {
-                        core.getBackupManager().restoreBackup(core.getDatabase(), args[2]);
                         core.getAccountManager().loadAccounts();
                         
                         if (p != null)
@@ -238,7 +215,7 @@ public class LogItCommand implements CommandExecutor
                     {
                         if (p != null)
                             s.sendMessage(getMessage("RESTORE_BACKUP_FAIL"));
-
+                        
                         core.log(WARNING, getMessage("RESTORE_BACKUP_FAIL"));
                     }
                 }
@@ -248,77 +225,65 @@ public class LogItCommand implements CommandExecutor
                 if (p != null && !p.hasPermission("logit.backup.remove"))
                 {
                     s.sendMessage(getMessage("NO_PERMS"));
-                    
-                    return true;
                 }
-                if (args.length < 3)
+                else if (args.length < 3)
                 {
                     s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "amount"));
-                    
-                    return true;
                 }
-                
-                try
+                else
                 {
-                    core.getBackupManager().removeBackups(Integer.parseInt(args[2]));
-                    
-                    if (p != null)
-                        s.sendMessage(getMessage("REMOVE_BACKUPS_SUCCESS"));
+                    try
+                    {
+                        core.getBackupManager().removeBackups(Integer.parseInt(args[2]));
 
-                    core.log(INFO, getMessage("REMOVE_BACKUPS_SUCCESS"));
-                }
-                catch (NumberFormatException|IOException ex)
-                {
-                    if (p != null)
-                        s.sendMessage(getMessage("REMOVE_BACKUPS_FAIL"));
+                        if (p != null)
+                            s.sendMessage(getMessage("REMOVE_BACKUPS_SUCCESS"));
 
-                    core.log(WARNING, getMessage("REMOVE_BACKUPS_FAIL"));
+                        core.log(INFO, getMessage("REMOVE_BACKUPS_SUCCESS"));
+                    }
+                    catch (NumberFormatException|IOException ex)
+                    {
+                        if (p != null)
+                            s.sendMessage(getMessage("REMOVE_BACKUPS_FAIL"));
+
+                        core.log(WARNING, getMessage("REMOVE_BACKUPS_FAIL"));
+                    }
                 }
             }
-            
-            return true;
         }
         else if (subcommand.equalsIgnoreCase("setwr") && args.length == 1)
         {
             if (p == null)
             {
                 s.sendMessage(getMessage("ONLY_PLAYERS"));
-                
-                return true;
             }
-            if (p != null && !p.hasPermission("logit.setwr"))
+            else if (p != null && !p.hasPermission("logit.setwr"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
-                
-                return true;
             }
-            
-            core.getConfig().setWaitingRoomLocation(p.getLocation());
-            core.getConfig().save();
-            
-            p.sendMessage(getMessage("WAITING_ROOM_SET"));
-            core.log(INFO, getMessage("WAITING_ROOM_SET"));
-            
-            return true;
+            else
+            {
+                core.getConfig().setWaitingRoomLocation(p.getLocation());
+                core.getConfig().save();
+                
+                p.sendMessage(getMessage("WAITING_ROOM_SET"));
+                core.log(INFO, getMessage("WAITING_ROOM_SET"));
+            }
         }
         else if (subcommand.equalsIgnoreCase("gotowr") && args.length == 1)
         {
             if (p == null)
             {
                 s.sendMessage(getMessage("ONLY_PLAYERS"));
-                
-                return true;
             }
-            if (p != null && !p.hasPermission("logit.gotowr"))
+            else if (p != null && !p.hasPermission("logit.gotowr"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
-                
-                return true;
             }
-            
-            p.teleport(core.getConfig().getWaitingRoomLocation());
-            
-            return true;
+            else
+            {
+                p.teleport(core.getConfig().getWaitingRoomLocation());
+            }
         }
         else if (subcommand.equalsIgnoreCase("globalpass") && args.length > 1 && args.length <= 3)
         {
@@ -327,59 +292,55 @@ public class LogItCommand implements CommandExecutor
                 if (p != null && !p.hasPermission("logit.globalpass.set"))
                 {
                     s.sendMessage(getMessage("NO_PERMS"));
-                    
-                    return true;
                 }
-                if (args.length < 3)
+                else if (args.length < 3)
                 {
                     s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
-                    
-                    return true;
                 }
-                if (args[2].length() < core.getConfig().getPasswordMinLength())
+                else if (args[2].length() < core.getConfig().getPasswordMinLength())
                 {
                     s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
                             String.valueOf(core.getConfig().getPasswordMinLength())));
-                    
-                    return true;
                 }
-                if (args[2].length() > core.getConfig().getPasswordMaxLength())
+                else if (args[2].length() > core.getConfig().getPasswordMaxLength())
                 {
                     s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
                             String.valueOf(core.getConfig().getPasswordMaxLength())));
-                    
-                    return true;
                 }
-                
-                core.changeGlobalPassword(args[2]);
-                
-                if (p != null)
-                    s.sendMessage(getMessage("GLOBALPASS_SET_SUCCESS"));
-                
-                return true;
+                else
+                {
+                    core.changeGlobalPassword(args[2]);
+                    
+                    if (p != null)
+                    {
+                        s.sendMessage(getMessage("GLOBALPASS_SET_SUCCESS"));
+                    }
+                }
             }
             else if (args[1].equalsIgnoreCase("remove") && args.length == 2)
             {
                 if (p != null && !p.hasPermission("logit.globalpass.remove"))
                 {
                     s.sendMessage(getMessage("NO_PERMS"));
-                    
-                    return true;
                 }
-                
-                core.removeGlobalPassword();
-                
-                if (p != null)
-                    s.sendMessage(getMessage("GLOBALPASS_REMOVE_SUCCESS"));
-                
-                return true;
+                else
+                {
+                    core.removeGlobalPassword();
+                    
+                    if (p != null)
+                    {
+                        s.sendMessage(getMessage("GLOBALPASS_REMOVE_SUCCESS"));
+                    }
+                }
             }
         }
-        
-        if (p != null && !p.hasPermission("logit"))
-            s.sendMessage(getMessage("NO_PERMS"));
         else
-            s.sendMessage(getMessage("TYPE_FOR_HELP"));
+        {
+            if (p != null && !p.hasPermission("logit"))
+                s.sendMessage(getMessage("NO_PERMS"));
+            else
+                s.sendMessage(getMessage("TYPE_FOR_HELP"));
+        }
         
         return true;
     }

@@ -167,8 +167,9 @@ public class SessionManager implements Runnable
         if (getSession(username) == null)
             throw new SessionNotFoundException();
         
-        // Start session.
         Session session = getSession(username);
+        
+        // Start session.
         session.setStatus(0L);
         
         sendMessage(username, getMessage("START_SESSION_SUCCESS_SELF"));
@@ -188,8 +189,9 @@ public class SessionManager implements Runnable
         if (getSession(username) == null)
             throw new SessionNotFoundException();
         
-        // End session.
         Session session = getSession(username);
+        
+        // End session.
         session.setStatus(-1L);
         
         sendMessage(username, getMessage("END_SESSION_SUCCESS_SELF"));

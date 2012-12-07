@@ -20,6 +20,7 @@ package com.gmail.lucaseasedup.logit.command;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
+import static com.gmail.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -51,104 +52,75 @@ public class RegisterCommand implements CommandExecutor
                     || !p.hasPermission("logit.register.others")))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
-                
-                return true;
             }
-            if (args.length < 2)
+            else if (args.length < 2)
             {
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
-                
-                return true;
             }
-            if (args.length < 3)
+            else if (args.length < 3)
             {
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
-                
-                return true;
             }
-            if (core.getAccountManager().isAccountCreated(args[1]))
+            else if (core.getAccountManager().isAccountCreated(args[1]))
             {
                 s.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_OTHERS").replace("%player%", args[1]));
-                
-                return true;
             }
-            if (args[2].length() < core.getConfig().getPasswordMinLength())
+            else if (args[2].length() < core.getConfig().getPasswordMinLength())
             {
                 s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
                         String.valueOf(core.getConfig().getPasswordMinLength())));
-                
-                return true;
             }
-            if (args[2].length() > core.getConfig().getPasswordMaxLength())
+            else if (args[2].length() > core.getConfig().getPasswordMaxLength())
             {
                 s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
                         String.valueOf(core.getConfig().getPasswordMaxLength())));
-                
-                return true;
             }
-            
-            core.getAccountManager().createAccount(args[1], args[2]);
-            
-            s.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_OTHERS").replace("%player%", args[1]));
-            
-            return true;
+            else
+            {
+                core.getAccountManager().createAccount(args[1], args[2]);
+
+                s.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_OTHERS").replace("%player%", args[1]));
+            }
         }
         else if (args.length <= 2)
         {
+            String ip = getPlayerIp(p);
+            
             if (p == null)
             {
                 s.sendMessage(getMessage("ONLY_PLAYERS"));
-                
-                return true;
             }
-            if (!p.hasPermission("logit.register.self"))
+            else if (!p.hasPermission("logit.register.self"))
             {
                 p.sendMessage(getMessage("NO_PERMS"));
-                
-                return true;
             }
-            if (args.length < 1)
+            else if (args.length < 1)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
-                
-                return true;
             }
-            if (args.length < 2)
+            else if (args.length < 2)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
-                
-                return true;
             }
-            if (core.getAccountManager().isAccountCreated(p.getName()))
+            else if (core.getAccountManager().isAccountCreated(p.getName()))
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_SELF"));
-                
-                return true;
             }
-            if (args[0].length() < core.getConfig().getPasswordMinLength())
+            else if (args[0].length() < core.getConfig().getPasswordMinLength())
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
                         String.valueOf(core.getConfig().getPasswordMinLength())));
-                
-                return true;
             }
-            if (args[0].length() > core.getConfig().getPasswordMaxLength())
+            else if (args[0].length() > core.getConfig().getPasswordMaxLength())
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
                         String.valueOf(core.getConfig().getPasswordMaxLength())));
-                
-                return true;
             }
-            if (!args[0].equals(args[1]))
+            else if (!args[0].equals(args[1]))
             {
                 p.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
-                
-                return true;
             }
-            
-            String ip = p.getAddress().getAddress().getHostAddress();
-            
-            if (core.getAccountManager().countAccountsPerIp(ip) >= core.getConfig().getAccountsPerIp())
+            else if (core.getAccountManager().countAccountsPerIp(ip) >= core.getConfig().getAccountsPerIp())
             {
                 p.sendMessage(getMessage("ACCOUNTS_PER_IP_LIMIT"));
             }
@@ -158,11 +130,11 @@ public class RegisterCommand implements CommandExecutor
                 core.getAccountManager().attachIp(p.getName(), ip);
                 core.getSessionManager().startSession(p.getName());
             }
-            
-            return true;
         }
-        
-        s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
+        else
+        {
+            s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
+        }
         
         return true;
     }

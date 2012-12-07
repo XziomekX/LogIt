@@ -55,74 +55,58 @@ public class LoginCommand implements CommandExecutor
                     || !p.hasPermission("logit.login.others")))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
-                
-                return true;
             }
-            if (args.length < 2)
+            else if (args.length < 2)
             {
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
-                
-                return true;
             }
-            if (!isPlayerOnline(args[1]))
+            else if (!isPlayerOnline(args[1]))
             {
                 s.sendMessage(getMessage("NOT_ONLINE").replace("%player%", args[1]));
-                
-                return true;
             }
-            if (core.getSessionManager().isSessionAlive(args[1]))
+            else if (core.getSessionManager().isSessionAlive(args[1]))
             {
                 s.sendMessage(getMessage("START_SESSION_ALREADY_OTHERS").replace("%player%", args[1]));
-                
-                return true;
             }
-            
-            core.getSessionManager().startSession(args[1]);
-            
-            s.sendMessage(getMessage("START_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
-            
-            return true;
+            else
+            {
+                core.getSessionManager().startSession(args[1]);
+
+                s.sendMessage(getMessage("START_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
+            }
         }
         else if (args.length <= 1)
         {
             if (p == null)
             {
                 s.sendMessage(getMessage("ONLY_PLAYERS"));
-                
-                return true;
             }
-            if (!p.hasPermission("logit.login.self"))
+            else if (!p.hasPermission("logit.login.self"))
             {
                 p.sendMessage(getMessage("NO_PERMS"));
-                
-                return true;
             }
-            if (args.length < 1)
+            else if (args.length < 1)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
-                
-                return true;
             }
-            if (!core.getAccountManager().isAccountCreated(p.getName()))
+            else if (!core.getAccountManager().isAccountCreated(p.getName()))
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
-                
-                return true;
             }
-            if (core.getSessionManager().isSessionAlive(p.getName()))
+            else if (core.getSessionManager().isSessionAlive(p.getName()))
             {
                 p.sendMessage(getMessage("START_SESSION_ALREADY_SELF"));
-                
-                return true;
             }
-            if (!core.getAccountManager().checkAccountPassword(p.getName(), args[0]) && !core.checkGlobalPassword(args[0]))
+            else if (!core.getAccountManager().checkAccountPassword(p.getName(), args[0]) && !core.checkGlobalPassword(args[0]))
             {
                 String username = p.getName().toLowerCase();
                 
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
                 
-                failedLoginsToKick.put(username, (failedLoginsToKick.get(username) != null) ? failedLoginsToKick.get(username) + 1 : 1);
-                failedLoginsToBan.put(username, (failedLoginsToBan.get(username) != null) ? failedLoginsToBan.get(username) + 1 : 1);
+                failedLoginsToKick.put(username,
+                                       (failedLoginsToKick.get(username) != null) ? failedLoginsToKick.get(username) + 1 : 1);
+                failedLoginsToBan.put(username,
+                                      (failedLoginsToBan.get(username) != null) ? failedLoginsToBan.get(username) + 1 : 1);
                 
                 if (failedLoginsToBan.get(username) >= core.getConfig().getLoginFailsToBan())
                 {
@@ -138,19 +122,19 @@ public class LoginCommand implements CommandExecutor
                     
                     failedLoginsToKick.remove(username);
                 }
-                
-                return true;
             }
-            
-            core.getSessionManager().startSession(p.getName());
-            
-            failedLoginsToKick.remove(p.getName().toLowerCase());
-            failedLoginsToBan.remove(p.getName().toLowerCase());
-            
-            return true;
+            else
+            {
+                core.getSessionManager().startSession(p.getName());
+
+                failedLoginsToKick.remove(p.getName().toLowerCase());
+                failedLoginsToBan.remove(p.getName().toLowerCase());
+            }
         }
-        
-        s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
+        else
+        {
+            s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
+        }
         
         return true;
     }

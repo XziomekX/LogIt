@@ -41,8 +41,6 @@ import static org.bukkit.ChatColor.stripColor;
 import org.bukkit.entity.Player;
 
 /**
- * The LogIt core.
- * 
  * @author LucasEasedUp
  */
 public class LogItCore
@@ -52,9 +50,6 @@ public class LogItCore
         this.plugin = plugin;
     }
     
-    /**
-     * Starts the LogIt core.
-     */
     public void start()
     {
         // If LogIt has already been started, return at this point.
@@ -138,7 +133,8 @@ public class LogItCore
         }
         
         // At this point, we can surely say that LogIt has successfully started.
-        log(FINE, getMessage("PLUGIN_START_SUCCESS").replace("%st%", config.getStorageType().name())
+        log(FINE, getMessage("PLUGIN_START_SUCCESS")
+                .replace("%st%", config.getStorageType().name())
                 .replace("%ha%", config.getHashingAlgorithm().name()));
         
         accountManager = new AccountManager(this, database);
@@ -155,12 +151,8 @@ public class LogItCore
         started = true;
     }
     
-    /**
-     * Stops the LogIt core.
-     */
     public void stop()
     {
-        // If LogIt is not started, return at this point.
         if (!started)
             return;
         
@@ -184,12 +176,8 @@ public class LogItCore
         started = false;
     }
     
-    /**
-     * Restarts the LogIt core.
-     */
     public void restart()
     {
-        // Stop and start the LogIt core.
         stop();
         start();
         
@@ -398,7 +386,11 @@ public class LogItCore
     
     private void load()
     {
-        config = new LogItConfiguration(plugin);
+        config              = new LogItConfiguration(plugin);
+        sessionManager      = new SessionManager(this);
+        waitingRoom         = new WaitingRoom(this);
+        inventoryDepository = new InventoryDepository();
+        tickEventCaller     = new TickEventCaller();
         
         plugin.getServer().getPluginManager().registerEvents(new TickEventListener(this), plugin);
         plugin.getServer().getPluginManager().registerEvents(new ServerEventListener(this), plugin);
@@ -415,11 +407,6 @@ public class LogItCore
         plugin.getCommand("register").setExecutor(new RegisterCommand(this));
         plugin.getCommand("unregister").setExecutor(new UnregisterCommand(this));
         plugin.getCommand("changepass").setExecutor(new ChangePassCommand(this));
-        
-        sessionManager = new SessionManager(this);
-        tickEventCaller = new TickEventCaller();
-        waitingRoom = new WaitingRoom(this);
-        inventoryDepository = new InventoryDepository();
         
         if (plugin.getServer().getPluginManager().isPluginEnabled("Vault"))
         {
@@ -441,23 +428,19 @@ public class LogItCore
     private boolean loaded = false;
     private boolean started = false;
     
-    private LogItConfiguration config;
-    private Database database;
-    private Permission permissions;
-    
-    private Pinger pinger;
-    private int pingerTaskId;
-    
-    private SessionManager sessionManager;
-    private int sessionManagerTaskId;
-    
-    private TickEventCaller tickEventCaller;
-    private int tickEventCallerTaskId;
-    
-    private BackupManager backupManager;
-    private int backupManagerTaskId;
-    
-    private AccountManager accountManager;
-    private WaitingRoom waitingRoom;
+    private LogItConfiguration  config;
+    private Database            database;
+    private Pinger              pinger;
+    private Permission          permissions;
+    private SessionManager      sessionManager;
+    private AccountManager      accountManager;
+    private BackupManager       backupManager;
+    private WaitingRoom         waitingRoom;
     private InventoryDepository inventoryDepository;
+    private TickEventCaller     tickEventCaller;
+    
+    private int pingerTaskId;
+    private int sessionManagerTaskId;
+    private int tickEventCallerTaskId;
+    private int backupManagerTaskId;
 }

@@ -31,8 +31,6 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * The LogIt plugin.
- * 
  * @author LucasEasedUp
  */
 public final class LogItPlugin extends JavaPlugin
@@ -52,7 +50,6 @@ public final class LogItPlugin extends JavaPlugin
             getLogger().log(WARNING, "Could not load messages.");
         }
         
-        // Start the core!
         core = LogItCore.getInstance();
         core.start();
     }

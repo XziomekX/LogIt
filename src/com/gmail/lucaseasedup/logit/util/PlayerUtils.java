@@ -39,13 +39,9 @@ public class PlayerUtils
     public static String getPlayerName(String username)
     {
         if (isPlayerOnline(username))
-        {
             return getPlayer(username).getName();
-        }
         else
-        {
             return username;
-        }
     }
     
     /**
