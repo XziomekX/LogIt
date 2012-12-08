@@ -102,7 +102,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("backup.path",                            plugin.getConfig().getString("backup.path", "backup"));
         plugin.getConfig().set("backup.filename-format",                 plugin.getConfig().getString("backup.filename-format", "yyyy-MM-dd_HH-mm-ss'.db'"));
         plugin.getConfig().set("backup.schedule.enabled",                plugin.getConfig().getBoolean("backup.schedule.enabled", false));
-        plugin.getConfig().set("backup.schedule.interval",               plugin.getConfig().getInt("backup.schedule.interval", 7200));
+        plugin.getConfig().set("backup.schedule.interval",               plugin.getConfig().getInt("backup.schedule.interval", 120));
         
         plugin.saveConfig();
     }
@@ -503,7 +503,7 @@ public final class LogItConfiguration
     
     public long getScheduledBackupInterval()
     {
-        return plugin.getConfig().getInt("backup.schedule.interval") * 20L;
+        return (plugin.getConfig().getInt("backup.schedule.interval") * 60) * 20L;
     }
     
     /**
