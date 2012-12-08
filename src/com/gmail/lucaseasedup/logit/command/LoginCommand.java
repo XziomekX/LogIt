@@ -25,15 +25,14 @@ import static com.gmail.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class LoginCommand implements CommandExecutor
+public class LoginCommand extends CommandExecutor
 {
     public LoginCommand(LogItCore core)
     {
-        this.core = core;
+        super(core);
     }
     
     @Override
@@ -138,8 +137,6 @@ public class LoginCommand implements CommandExecutor
         
         return true;
     }
-    
-    private final LogItCore core;
     
     private final HashMap<String, Integer> failedLoginsToKick = new HashMap<>();
     private final HashMap<String, Integer> failedLoginsToBan = new HashMap<>();

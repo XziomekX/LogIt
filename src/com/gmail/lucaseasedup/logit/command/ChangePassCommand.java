@@ -21,15 +21,14 @@ package com.gmail.lucaseasedup.logit.command;
 import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ChangePassCommand implements CommandExecutor
+public class ChangePassCommand extends CommandExecutor
 {
     public ChangePassCommand(LogItCore core)
     {
-        this.core = core;
+        super(core);
     }
     
     @Override
@@ -136,6 +135,4 @@ public class ChangePassCommand implements CommandExecutor
         
         return true;
     }
-    
-    private final LogItCore core;
 }

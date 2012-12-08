@@ -22,15 +22,14 @@ import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import static com.gmail.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class LogoutCommand implements CommandExecutor
+public class LogoutCommand extends CommandExecutor
 {
     public LogoutCommand(LogItCore core)
     {
-        this.core = core;
+        super(core);
     }
 
     @Override
@@ -97,6 +96,4 @@ public class LogoutCommand implements CommandExecutor
         
         return true;
     }
-    
-    private final LogItCore core;
 }

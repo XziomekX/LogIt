@@ -22,15 +22,14 @@ import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import static com.gmail.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class RegisterCommand implements CommandExecutor
+public class RegisterCommand extends CommandExecutor
 {
     public RegisterCommand(LogItCore core)
     {
-        this.core = core;
+        super(core);
     }
     
     @Override
@@ -138,6 +137,4 @@ public class RegisterCommand implements CommandExecutor
         
         return true;
     }
-    
-    private final LogItCore core;
 }

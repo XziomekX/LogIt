@@ -26,15 +26,14 @@ import java.sql.SQLException;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.WARNING;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class LogItCommand implements CommandExecutor
+public class LogItCommand extends CommandExecutor
 {
     public LogItCommand(LogItCore core)
     {
-        this.core = core;
+        super(core);
     }
     
     @Override
@@ -356,6 +355,4 @@ public class LogItCommand implements CommandExecutor
         
         return line.replace("%desc%", getMessage("DESC_" + subcommand.replace(" ", "_").toUpperCase()));
     }
-    
-    private final LogItCore core;
 }
