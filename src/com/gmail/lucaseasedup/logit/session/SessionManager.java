@@ -41,7 +41,8 @@ public class SessionManager implements Runnable
     @Override
     public void run()
     {
-        long forceLoginTimeout = (core.getConfig().getForceLoginTimeout() > 0L) ? (-core.getConfig().getForceLoginTimeout()) : Long.MIN_VALUE;
+        long forceLoginTimeout = (core.getConfig().getForceLoginTimeout() > 0L)
+                ? (-core.getConfig().getForceLoginTimeout()) : Long.MIN_VALUE;
         
         for (Iterator<String> it = sessions.keySet().iterator(); it.hasNext();)
         {
@@ -69,14 +70,17 @@ public class SessionManager implements Runnable
             }
             else if (isPlayerOnline(username))
             {
-                if (session.getStatus() <= forceLoginTimeout && core.isPlayerForcedToLogin(player)
-                        && !player.hasPermission("logit.force-login.timeout.exempt"))
+                if (core.getAccountManager().isAccountCreated(username) && !player.hasPermission("logit.force-login.timeout.exempt")
+                        && core.isPlayerForcedToLogin(player))
                 {
-                    player.kickPlayer(getMessage("FORCE_LOGIN_TIMEOUT"));
-                }
-                else
-                {
-                    session.updateStatus(-20L);
+                    if (session.getStatus() <= forceLoginTimeout)
+                    {
+                        player.kickPlayer(getMessage("FORCE_LOGIN_TIMEOUT"));
+                    }
+                    else
+                    {
+                        session.updateStatus(-20L);
+                    }
                 }
             }
             else
