@@ -100,7 +100,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("storage.mysql.database",                 plugin.getConfig().getString("storage.mysql.database", ""));
         plugin.getConfig().set("storage.table",                          plugin.getConfig().getString("storage.table", "logit"));
         plugin.getConfig().set("backup.path",                            plugin.getConfig().getString("backup.path", "backup"));
-        plugin.getConfig().set("backup.file-format",                     plugin.getConfig().getString("backup.file-format", "yyyy-MM-dd_HH-mm-ss'.db'"));
+        plugin.getConfig().set("backup.filename-format",                 plugin.getConfig().getString("backup.filename-format", "yyyy-MM-dd_HH-mm-ss'.db'"));
         plugin.getConfig().set("backup.schedule.enabled",                plugin.getConfig().getBoolean("backup.schedule.enabled", false));
         plugin.getConfig().set("backup.schedule.interval",               plugin.getConfig().getInt("backup.schedule.interval", 7200));
         
@@ -491,7 +491,7 @@ public final class LogItConfiguration
         return new File(plugin.getDataFolder(), plugin.getConfig().getString("backup.path"));
     }
     
-    public String getBackupFileFormat()
+    public String getBackupFilenameFormat()
     {
         return plugin.getConfig().getString("backup.file-format");
     }
