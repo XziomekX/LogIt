@@ -88,6 +88,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("waiting-room.location.z",                plugin.getConfig().getDouble("waiting-room.location.z", 0.0));
         plugin.getConfig().set("waiting-room.location.yaw",              plugin.getConfig().getDouble("waiting-room.location.yaw", 0.0));
         plugin.getConfig().set("waiting-room.location.pitch",            plugin.getConfig().getDouble("waiting-room.location.pitch", 0.0));
+        plugin.getConfig().set("groups.enabled",                         plugin.getConfig().getBoolean("groups.enabled", false));
         plugin.getConfig().set("groups.logged-in",                       plugin.getConfig().getString("groups.logged-in", "LoggedIn"));
         plugin.getConfig().set("groups.logged-out",                      plugin.getConfig().getString("groups.logged-out", "LoggedOut"));
         plugin.getConfig().set("integration",                            plugin.getConfig().getString("integration", "none"));
@@ -407,6 +408,11 @@ public final class LogItConfiguration
     public float getWaitingRoomLocationPitch()
     {
         return (float) plugin.getConfig().getDouble("waiting-room.location.pitch");
+    }
+    
+    public boolean getGroupsEnabled()
+    {
+        return plugin.getConfig().getBoolean("groups.enabled");
     }
     
     public String getGroupsLoggedIn()
