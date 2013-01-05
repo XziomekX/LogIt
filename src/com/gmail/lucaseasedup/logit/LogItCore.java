@@ -142,10 +142,10 @@ public class LogItCore
         
         backupManager = new BackupManager(this, database);
         
-        pingerTaskId          = Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, pinger, 0L, 2400L);
-        sessionManagerTaskId  = Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, sessionManager, 0L, 20L);
-        tickEventCallerTaskId = Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, tickEventCaller, 0L, 1L);
-        backupManagerTaskId   = Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, backupManager, 0L, 40L);
+        pingerTaskId          = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, pinger, 0L, 2400L);
+        sessionManagerTaskId  = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, sessionManager, 0L, 20L);
+        tickEventCallerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, tickEventCaller, 0L, 1L);
+        backupManagerTaskId   = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, backupManager, 0L, 40L);
         
         // Set started to true to prevent starting multiple times.
         started = true;
