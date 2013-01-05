@@ -27,6 +27,12 @@ import org.bukkit.inventory.ItemStack;
  */
 public class InventoryDepository
 {
+    /**
+     * Deposits player's items and armor. If the player's inventory has already
+     * been deposited, no action will be taken.
+     * 
+     * @param player Player.
+     */
     public void deposit(Player player)
     {
         if (contents.containsKey(player))
@@ -42,6 +48,12 @@ public class InventoryDepository
         player.getInventory().setBoots(null);
     }
     
+    /**
+     * Withdraws players's items and armor. If the player's inventory has not been
+     * deposited, no action will be taken.
+     * 
+     * @param player Player.
+     */
     public void withdraw(Player player)
     {
         if (!contents.containsKey(player))
