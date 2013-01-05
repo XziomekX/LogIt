@@ -118,10 +118,10 @@ public class LogItCore
         try
         {
             // Create a table for LogIt if it does not exist.
-            database.create(config.getStorageTable(), "username varchar(16) NOT NULL,"
-                                                    + "salt varchar(20) NOT NULL,"
-                                                    + "password varchar(256) NOT NULL,"
-                                                    + "ip varchar(64)");
+            database.create(config.getStorageTable(), "username varchar(16) NOT NULL",
+                                                      "salt varchar(20) NOT NULL",
+                                                      "password varchar(256) NOT NULL",
+                                                      "ip varchar(64)");
         }
         catch (SQLException ex)
         {

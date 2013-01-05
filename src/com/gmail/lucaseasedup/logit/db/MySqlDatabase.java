@@ -18,6 +18,7 @@
  */
 package com.gmail.lucaseasedup.logit.db;
 
+import com.gmail.lucaseasedup.logit.util.ArrayUtils;
 import java.sql.*;
 
 /**
@@ -46,33 +47,33 @@ public class MySqlDatabase implements Database, AutoCloseable
     }
     
     @Override
-    public boolean create(String table, String columns) throws SQLException
+    public boolean create(String table, String... columns) throws SQLException
     {
-        return statement.execute("CREATE TABLE IF NOT EXISTS " + table + " (" + columns + ");");
+        return statement.execute("CREATE TABLE IF NOT EXISTS " + table + " (" + ArrayUtils.implodeArray(columns, ",") + ");");
     }
     
     @Override
-    public ResultSet select(String table, String columns) throws SQLException
+    public ResultSet select(String table, String... columns) throws SQLException
     {
-        return statement.executeQuery("SELECT " + columns + " FROM " + table + ";");
+        return statement.executeQuery("SELECT " + ArrayUtils.implodeArray(columns, ",") + " FROM " + table + ";");
     }
     
     @Override
-    public boolean insert(String table, String values) throws SQLException
+    public boolean insert(String table, String... values) throws SQLException
     {
-        return statement.execute("INSERT INTO " + table + " VALUES (" + values + ");");
+        return statement.execute("INSERT INTO " + table + " VALUES (" + ArrayUtils.implodeArray(values, ",", "\"", "\"") + ");");
     }
     
     @Override
-    public boolean update(String table, String set, String where) throws SQLException
+    public boolean update(String table, String[] where, String... set) throws SQLException
     {
-        return statement.execute("UPDATE " + table + " SET " + set + " WHERE " + where + ";");
+        return statement.execute("UPDATE " + table + " SET " + ArrayUtils.implodeKeyValueArray(set, ",", "=", "\"", "\"") + " WHERE " + ArrayUtils.implodeKeyValueArray(where, " AND ", "=", "\"", "\"") + ";");
     }
     
     @Override
-    public boolean delete(String table, String where) throws SQLException
+    public boolean delete(String table, String[] where) throws SQLException
     {
-        return statement.execute("DELETE FROM " + table + " WHERE " + where + ";");
+        return statement.execute("DELETE FROM " + table + " WHERE " + ArrayUtils.implodeKeyValueArray(where, " AND ", "=", "\"", "\"") + ";");
     }
     
     @Override

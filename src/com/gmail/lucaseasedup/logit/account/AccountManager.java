@@ -93,7 +93,7 @@ public class AccountManager
         {
             if (core.getConfig().getIntegration() == NONE)
             {
-                database.insert(table, "\"" + username.toLowerCase() + "\", \"" + salt + "\", \"" + hash + "\", \"\"");
+                database.insert(table, username.toLowerCase(), salt, hash, "");
             }
             else
             {
@@ -133,7 +133,7 @@ public class AccountManager
         {
             if (core.getConfig().getIntegration() == NONE)
             {
-                database.delete(table, "username = \"" + username.toLowerCase() + "\"");
+                database.delete(table, new String[]{"username", username.toLowerCase()});
             }
             else
             {
@@ -239,7 +239,7 @@ public class AccountManager
         {
             if (core.getConfig().getIntegration() == NONE)
             {
-                database.update(table, "salt = \"" + newSalt + "\", password = \"" + newHash + "\"", "username = \"" + username.toLowerCase() + "\"");
+                database.update(table, new String[]{"username", username.toLowerCase()}, "salt", newSalt, "password", newHash);
             }
             else
             {
@@ -279,7 +279,7 @@ public class AccountManager
         {
             if (core.getConfig().getIntegration() == NONE)
             {
-                database.update(table, "ip = \"" + ip + "\"", "username = \"" + username.toLowerCase() + "\"");
+                database.update(table, new String[]{"username", username.toLowerCase()}, "ip", ip);
             }
             else
             {

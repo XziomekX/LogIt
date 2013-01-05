@@ -29,11 +29,11 @@ public interface Database
     public void connect(String host, String user, String password, String database) throws SQLException;
     public boolean executeStatement(String sql) throws SQLException;
     public ResultSet executeQuery(String sql) throws SQLException;
-    public boolean create(String table, String columns) throws SQLException;
-    public ResultSet select(String table, String columns) throws SQLException;
-    public boolean insert(String table, String values) throws SQLException;
-    public boolean update(String table, String set, String where) throws SQLException;
-    public boolean delete(String table, String where) throws SQLException;
+    public boolean create(String table, String... columns) throws SQLException;
+    public ResultSet select(String table, String... columns) throws SQLException;
+    public boolean insert(String table, String... values) throws SQLException;
+    public boolean update(String table, String[] where, String... set) throws SQLException;
+    public boolean delete(String table, String[] where) throws SQLException;
     public boolean truncate(String table) throws SQLException;
     public boolean isConnected();
     public void close() throws SQLException;
