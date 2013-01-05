@@ -1,5 +1,5 @@
 /*
- * CommandExecutor.java
+ * AbstractCommandExecutor.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -19,13 +19,14 @@
 package com.gmail.lucaseasedup.logit.command;
 
 import com.gmail.lucaseasedup.logit.LogItCore;
+import org.bukkit.command.CommandExecutor;
 
 /**
  * @author LucasEasedUp
  */
-public abstract class CommandExecutor implements org.bukkit.command.CommandExecutor
+public abstract class AbstractCommandExecutor implements CommandExecutor
 {
-    public CommandExecutor(LogItCore core)
+    public AbstractCommandExecutor(LogItCore core)
     {
         this.core = core;
     }
