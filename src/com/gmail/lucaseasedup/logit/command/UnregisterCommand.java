@@ -24,7 +24,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class UnregisterCommand extends CommandExecutor
+public class UnregisterCommand extends AbstractCommandExecutor
 {
     public UnregisterCommand(LogItCore core)
     {

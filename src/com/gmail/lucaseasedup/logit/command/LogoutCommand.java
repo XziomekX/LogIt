@@ -25,7 +25,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class LogoutCommand extends CommandExecutor
+public class LogoutCommand extends AbstractCommandExecutor
 {
     public LogoutCommand(LogItCore core)
     {

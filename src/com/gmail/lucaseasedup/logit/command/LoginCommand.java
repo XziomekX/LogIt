@@ -28,7 +28,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class LoginCommand extends CommandExecutor
+public class LoginCommand extends AbstractCommandExecutor
 {
     public LoginCommand(LogItCore core)
     {

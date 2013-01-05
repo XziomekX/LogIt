@@ -29,7 +29,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class LogItCommand extends CommandExecutor
+public class LogItCommand extends AbstractCommandExecutor
 {
     public LogItCommand(LogItCore core)
     {
