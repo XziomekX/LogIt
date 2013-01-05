@@ -29,7 +29,6 @@ import com.gmail.lucaseasedup.logit.session.SessionManager;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -308,16 +307,6 @@ public class LogItCore
             hash = hash(string);
         
         return hash;
-    }
-    
-    public String generateSalt()
-    {
-        SecureRandom sr   = new SecureRandom();
-        byte[]       salt = new byte[20];
-        
-        sr.nextBytes(salt);
-        
-        return new String(salt);
     }
     
     public void log(Level level, String message)

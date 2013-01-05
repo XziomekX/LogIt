@@ -26,6 +26,7 @@ import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.callEvent;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import com.gmail.lucaseasedup.logit.db.Database;
+import com.gmail.lucaseasedup.logit.hash.HashGenerator;
 import static com.gmail.lucaseasedup.logit.util.MessageSender.sendMessage;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -85,7 +86,7 @@ public class AccountManager
         if (isAccountCreated(username))
             throw new RuntimeException("Account already exists.");
         
-        String salt = core.generateSalt();
+        String salt = HashGenerator.generateSalt();
         String hash = core.hash(password, salt);
         
         try
@@ -228,7 +229,7 @@ public class AccountManager
         if (!isAccountCreated(username))
             throw new AccountNotFoundException();
         
-        String newSalt = core.generateSalt();
+        String newSalt = HashGenerator.generateSalt();
         String newHash = core.hash(newPassword, newSalt);
         
         // Back up old password.

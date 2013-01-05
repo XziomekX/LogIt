@@ -20,6 +20,7 @@ package com.gmail.lucaseasedup.logit.hash;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 /**
  * Provides a hashing tool for different algorithms.
@@ -137,5 +138,15 @@ public class HashGenerator
             stringBuilder.append(Integer.toString((b & 0xFF) + 0x100, 16).substring(1));
         
         return stringBuilder.toString();
+    }
+    
+    public static String generateSalt()
+    {
+        SecureRandom sr   = new SecureRandom();
+        byte[]       salt = new byte[20];
+        
+        sr.nextBytes(salt);
+        
+        return new String(salt);
     }
 }
