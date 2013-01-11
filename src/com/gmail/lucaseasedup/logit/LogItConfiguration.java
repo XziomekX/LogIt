@@ -48,7 +48,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("force-login.global",                     plugin.getConfig().getBoolean("force-login.global", true));
         plugin.getConfig().set("force-login.in-worlds",                  plugin.getConfig().getStringList("force-login.in-worlds"));
         plugin.getConfig().set("force-login.allowed-commands",           plugin.getConfig().getStringList("force-login.allowed-commands"));
-        plugin.getConfig().set("force-login.timeout",                    plugin.getConfig().getInt("force-login.timeout", 30));
+        plugin.getConfig().set("force-login.timeout",                    plugin.getConfig().getInt("force-login.timeout", -1));
         plugin.getConfig().set("force-login.prevent.move",               plugin.getConfig().getBoolean("force-login.prevent.move", true));
         plugin.getConfig().set("force-login.prevent.toggle-sneak",       plugin.getConfig().getBoolean("force-login.prevent.toggle-sneak", true)); 
         plugin.getConfig().set("force-login.prevent.block-place",        plugin.getConfig().getBoolean("force-login.prevent.block-place", true));
@@ -75,8 +75,8 @@ public final class LogItConfiguration
         plugin.getConfig().set("password.min-length",                    plugin.getConfig().getInt("password.min-length", 3));
         plugin.getConfig().set("password.max-length",                    plugin.getConfig().getInt("password.max-length", 25));
         plugin.getConfig().set("password.global-password",               plugin.getConfig().getString("password.global-password", ""));
-        plugin.getConfig().set("login-fails-to-kick",                    plugin.getConfig().getInt("login-fails-to-kick", 3));
-        plugin.getConfig().set("login-fails-to-ban",                     plugin.getConfig().getInt("login-fails-to-ban", 9));
+        plugin.getConfig().set("login-fails-to-kick",                    plugin.getConfig().getInt("login-fails-to-kick", -1));
+        plugin.getConfig().set("login-fails-to-ban",                     plugin.getConfig().getInt("login-fails-to-ban", -1));
         plugin.getConfig().set("kick-unregistered",                      plugin.getConfig().getBoolean("kick-unregistered", false));
         plugin.getConfig().set("accounts-per-ip",                        plugin.getConfig().getInt("accounts-per-ip", 3));
         plugin.getConfig().set("hashing-algorithm",                      plugin.getConfig().getString("hashing-algorithm", "md5"));
