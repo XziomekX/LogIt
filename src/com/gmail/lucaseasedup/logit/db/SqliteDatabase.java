@@ -69,6 +69,12 @@ public class SqliteDatabase implements Database, AutoCloseable
     }
     
     @Override
+    public boolean insert(String table, String[] columns, String... values) throws SQLException
+    {
+        return statement.execute("INSERT INTO " + table + " (" + ArrayUtils.implodeArray(columns, ",") + ") VALUES (" + ArrayUtils.implodeArray(values, ",", "\"", "\"") + ");");
+    }
+    
+    @Override
     public boolean update(String table, String[] where, String... set) throws SQLException
     {
         return statement.execute("UPDATE " + table + " SET " + ArrayUtils.implodeKeyValueArray(set, ",", "=", "\"", "\"") + " WHERE " + ArrayUtils.implodeKeyValueArray(where, " AND ", "=", "\"", "\"") + ";");

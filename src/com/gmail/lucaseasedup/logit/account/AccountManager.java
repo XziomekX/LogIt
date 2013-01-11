@@ -93,7 +93,13 @@ public class AccountManager
         {
             if (core.getConfig().getIntegration() == NONE)
             {
-                database.insert(table, username.toLowerCase(), salt, hash, "");
+                database.insert(table, new String[]{
+                        core.getConfig().getStorageColumnsUsername(),
+                        core.getConfig().getStorageColumnsSalt(),
+                        core.getConfig().getStorageColumnsPassword(),
+                        core.getConfig().getStorageColumnsIp()
+                    },
+                    username.toLowerCase(), salt, hash, "");
             }
             else
             {
@@ -133,7 +139,7 @@ public class AccountManager
         {
             if (core.getConfig().getIntegration() == NONE)
             {
-                database.delete(table, new String[]{"username", username.toLowerCase()});
+                database.delete(table, new String[]{core.getConfig().getStorageColumnsUsername(), username.toLowerCase()});
             }
             else
             {
@@ -239,7 +245,9 @@ public class AccountManager
         {
             if (core.getConfig().getIntegration() == NONE)
             {
-                database.update(table, new String[]{"username", username.toLowerCase()}, "salt", newSalt, "password", newHash);
+                database.update(table, new String[]{core.getConfig().getStorageColumnsUsername(), username.toLowerCase()},
+                    core.getConfig().getStorageColumnsSalt(), newSalt,
+                    core.getConfig().getStorageColumnsPassword(), newHash);
             }
             else
             {
@@ -279,7 +287,8 @@ public class AccountManager
         {
             if (core.getConfig().getIntegration() == NONE)
             {
-                database.update(table, new String[]{"username", username.toLowerCase()}, "ip", ip);
+                database.update(table, new String[]{core.getConfig().getStorageColumnsUsername(), username.toLowerCase()},
+                    core.getConfig().getStorageColumnsIp(), ip);
             }
             else
             {
@@ -362,9 +371,12 @@ public class AccountManager
 
                 while (rs.next())
                 {
-                    salts.put(rs.getString("username"), rs.getString("salt"));
-                    passwords.put(rs.getString("username"), rs.getString("password"));
-                    ips.put(rs.getString("username"), rs.getString("ip"));
+                    salts.put(rs.getString(core.getConfig().getStorageColumnsUsername()),
+                        rs.getString(core.getConfig().getStorageColumnsSalt()));
+                    passwords.put(rs.getString(core.getConfig().getStorageColumnsUsername()),
+                        rs.getString(core.getConfig().getStorageColumnsPassword()));
+                    ips.put(rs.getString(core.getConfig().getStorageColumnsUsername()),
+                        rs.getString(core.getConfig().getStorageColumnsIp()));
                 }
                 
                 core.log(FINE, getMessage("LOAD_ACCOUNTS_SUCCESS").replace("%num%", String.valueOf(passwords.size())));

@@ -101,7 +101,11 @@ public class BackupManager implements Runnable
                 
                 while (rs.next())
                 {
-                    backupDatabase.insert(core.getConfig().getStorageTable(), "\"" + rs.getString("username") + "\", \"" + rs.getString("salt") + "\", \"" + rs.getString("password") + "\", \"" + rs.getString("ip") + "\"");
+                    backupDatabase.insert(core.getConfig().getStorageTable(),
+                        rs.getString(core.getConfig().getStorageColumnsUsername()),
+                        rs.getString(core.getConfig().getStorageColumnsSalt()),
+                        rs.getString(core.getConfig().getStorageColumnsPassword()),
+                        rs.getString(core.getConfig().getStorageColumnsIp()));
                 }
             }
         }
@@ -132,7 +136,13 @@ public class BackupManager implements Runnable
                 
                 while (rs.next())
                 {
-                    database.insert(core.getConfig().getStorageTable(), "\"" + rs.getString("username") + "\", \"" + rs.getString("salt") + "\", \"" + rs.getString("password") + "\", \"" + rs.getString("ip") + "\"");
+                    database.insert(core.getConfig().getStorageTable(), new String[]{
+                        core.getConfig().getStorageColumnsUsername(),
+                        core.getConfig().getStorageColumnsSalt(),
+                        core.getConfig().getStorageColumnsPassword(),
+                        core.getConfig().getStorageColumnsIp()
+                    },
+                    rs.getString("username"), rs.getString("salt"), rs.getString("password"), rs.getString("ip"));
                 }
             }
         }

@@ -32,6 +32,7 @@ public interface Database
     public boolean create(String table, String... columns) throws SQLException;
     public ResultSet select(String table, String... columns) throws SQLException;
     public boolean insert(String table, String... values) throws SQLException;
+    public boolean insert(String table, String[] columns, String... values) throws SQLException;
     public boolean update(String table, String[] where, String... set) throws SQLException;
     public boolean delete(String table, String[] where) throws SQLException;
     public boolean truncate(String table) throws SQLException;
