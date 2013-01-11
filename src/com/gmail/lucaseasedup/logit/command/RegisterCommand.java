@@ -83,8 +83,6 @@ public class RegisterCommand extends AbstractCommandExecutor
         }
         else if (args.length <= 2)
         {
-            String ip = getPlayerIp(p);
-            
             if (p == null)
             {
                 s.sendMessage(getMessage("ONLY_PLAYERS"));
@@ -119,14 +117,14 @@ public class RegisterCommand extends AbstractCommandExecutor
             {
                 p.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
             }
-            else if (core.getAccountManager().countAccountsPerIp(ip) >= core.getConfig().getAccountsPerIp())
+            else if (core.getAccountManager().countAccountsPerIp(getPlayerIp(p)) >= core.getConfig().getAccountsPerIp())
             {
                 p.sendMessage(getMessage("ACCOUNTS_PER_IP_LIMIT"));
             }
             else
             {
                 core.getAccountManager().createAccount(p.getName(), args[0]);
-                core.getAccountManager().attachIp(p.getName(), ip);
+                core.getAccountManager().attachIp(p.getName(), getPlayerIp(p));
                 core.getSessionManager().startSession(p.getName());
             }
         }
