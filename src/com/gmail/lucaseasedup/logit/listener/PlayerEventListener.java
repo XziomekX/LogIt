@@ -30,7 +30,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import static org.bukkit.event.EventPriority.HIGHEST;
 import static org.bukkit.event.EventPriority.LOWEST;
-import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
+import static org.bukkit.event.player.PlayerLoginEvent.Result.*;
 import org.bukkit.event.player.*;
 
 /**
@@ -77,6 +77,37 @@ public class PlayerEventListener extends EventListener
         else if (!core.getAccountManager().isAccountCreated(player.getName()) && core.getConfig().getKickUnregistered())
         {
             event.disallow(KICK_OTHER, getMessage("KICK_UNREGISTERED"));
+        }
+        else
+        {
+            int freeSlots = Bukkit.getMaxPlayers() - Bukkit.getOnlinePlayers().length;
+            List<String> preserveSlotsPlayers = core.getConfig().getPreserveSlotsPlayers();
+            
+            int preservedSlots = 0;
+            boolean preservedForThisPlayer = false;
+            
+            // Calculate how many players for which slots should be preserved are online.
+            for (Player p : Bukkit.getOnlinePlayers())
+            {
+                if (preserveSlotsPlayers.contains(p.getName()))
+                {
+                    preservedSlots++;
+                }
+            }
+            
+            // Determine if the player currently trying to log in can occupy preserved slots.
+            for (String name : preserveSlotsPlayers)
+            {
+                if (name.equalsIgnoreCase(player.getName()))
+                {
+                    preservedForThisPlayer = true;
+                }
+            }
+            
+            if (freeSlots - (core.getConfig().getPreserveSlotsAmount() - preservedSlots) <= 0 && !preservedForThisPlayer)
+            {
+                event.disallow(KICK_FULL, getMessage("NO_SLOTS_FREE"));
+            }
         }
     }
     

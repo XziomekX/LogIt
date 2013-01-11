@@ -78,6 +78,8 @@ public final class LogItConfiguration
         plugin.getConfig().set("login-fails-to-kick",                    plugin.getConfig().getInt("login-fails-to-kick", -1));
         plugin.getConfig().set("login-fails-to-ban",                     plugin.getConfig().getInt("login-fails-to-ban", -1));
         plugin.getConfig().set("kick-unregistered",                      plugin.getConfig().getBoolean("kick-unregistered", false));
+        plugin.getConfig().set("preserve-slots.amount",                  plugin.getConfig().getInt("preserve-slots.amount", 0));
+        plugin.getConfig().set("preserve-slots.players",                 plugin.getConfig().getStringList("preserve-slots.players"));
         plugin.getConfig().set("accounts-per-ip",                        plugin.getConfig().getInt("accounts-per-ip", 3));
         plugin.getConfig().set("hashing-algorithm",                      plugin.getConfig().getString("hashing-algorithm", "md5"));
         plugin.getConfig().set("show-spawn-world-info",                  plugin.getConfig().getBoolean("show-spawn-world-info", true));
@@ -313,6 +315,16 @@ public final class LogItConfiguration
     public boolean getKickUnregistered()
     {
         return plugin.getConfig().getBoolean("kick-unregistered");
+    }
+    
+    public int getPreserveSlotsAmount()
+    {
+        return plugin.getConfig().getInt("preserve-slots.amount");
+    }
+    
+    public List<String> getPreserveSlotsPlayers()
+    {
+        return plugin.getConfig().getStringList("preserve-slots.players");
     }
     
     public int getAccountsPerIp()
