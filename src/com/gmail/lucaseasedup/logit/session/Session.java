@@ -28,26 +28,55 @@ public class Session
         this.ip = ip;
     }
     
+    /**
+     * Returns an IP address associated with the session.
+     * 
+     * @return IP address.
+     */
     public String getIp()
     {
         return ip;
     }
     
+    /**
+     * Returns session status.
+     * <p/>
+     * Values above or equal to 0 mean "session alive" (logged in). Values below 0 mean "session ended" (logged out).
+     * 
+     * @return Session status.
+     */
     public long getStatus()
     {
         return status;
     }
     
+    /**
+     * Sets session status to value of {@code status}.
+     * 
+     * @param status Session status.
+     */
     public void setStatus(long status)
     {
         this.status = status;
     }
     
+    /**
+     * Updates session status by adding {@code update} to current status.
+     * 
+     * @param update Update value.
+     */
     public void updateStatus(long update)
     {
         status += update;
     }
-
+    
+    /**
+     * Check if the session is alive.
+     * <p/>
+     * A session is alive when its status is below or equal to 0.
+     * 
+     * @return True if the session is alive.
+     */
     public boolean isAlive()
     {
         return status >= 0L;

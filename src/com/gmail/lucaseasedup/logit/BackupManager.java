@@ -168,7 +168,7 @@ public class BackupManager implements Runnable
     /**
      * Removes a certain amount of backups starting from the oldest.
      * 
-     * @param amount Amount of backups to delete.
+     * @param amount Amount of backups to remove.
      * @throws IOException
      */
     public void removeBackups(int amount) throws IOException
@@ -197,6 +197,13 @@ public class BackupManager implements Runnable
         return backups;
     }
     
+    /**
+     * Searches for a backup with the given filename.
+     * 
+     * @param filename Backup filename.
+     * @return Backup file.
+     * @throws FileNotFoundException If no backup with the given filename exists.
+     */
     public File getBackup(String filename) throws FileNotFoundException
     {
         File backup = new File(core.getConfig().getBackupPath(), filename);

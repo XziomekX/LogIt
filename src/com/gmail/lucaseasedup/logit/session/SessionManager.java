@@ -112,7 +112,7 @@ public class SessionManager implements Runnable
     }
     
     /**
-     * Checks if the session of the specified player is alive.
+     * Checks if session of the specified player is alive.
      * 
      * @param player Player.
      * @return True if alive.
@@ -124,10 +124,13 @@ public class SessionManager implements Runnable
     
     /**
      * Creates a session for a player with the specified username.
-     * 
+     * <p/>
+     * Providing a valid IP address is important as it prevents session hijacking.
+     * <p/>
      * If session already exists, it will be ignored and overridden.
      * 
      * @param username Username.
+     * @param ip IP address.
      */
     public void createSession(String username, String ip)
     {
@@ -142,7 +145,7 @@ public class SessionManager implements Runnable
     
     /**
      * Destroys session belonging to a player with the specified username.
-     * 
+     * <p/>
      * If session does not exist, no action will be taken.
      * 
      * @param username Username.

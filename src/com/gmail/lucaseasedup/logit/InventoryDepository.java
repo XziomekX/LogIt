@@ -28,8 +28,9 @@ import org.bukkit.inventory.ItemStack;
 public class InventoryDepository
 {
     /**
-     * Deposits player's items and armor. If the player's inventory has already
-     * been deposited, no action will be taken.
+     * Deposits player's items and armor.
+     * <p/>
+     * If the player's inventory has already been deposited, no action will be taken.
      * 
      * @param player Player.
      */
@@ -49,8 +50,9 @@ public class InventoryDepository
     }
     
     /**
-     * Withdraws players's items and armor. If the player's inventory has not been
-     * deposited, no action will be taken.
+     * Withdraws players's items and armor.
+     * <p/>
+     * If the player's inventory has not been deposited, no action will be taken.
      * 
      * @param player Player.
      */

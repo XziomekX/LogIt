@@ -75,7 +75,7 @@ public class AccountManager
     
     /**
      * Creates a new account with the given username and password.
-     * 
+     * <p/>
      * The given password will be hashed using an algorithm specified in the config.
      * 
      * @param username Username.
@@ -126,6 +126,8 @@ public class AccountManager
     
     /**
      * Removes an account with the specified username.
+     * <p/>
+     * Removing a player's account does not entail logging them out.
      * 
      * @param username Username.
      * @throws AccountNotFoundException Thrown if the account does not exist.

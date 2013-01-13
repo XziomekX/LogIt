@@ -40,6 +40,10 @@ import static org.bukkit.ChatColor.stripColor;
 import org.bukkit.entity.Player;
 
 /**
+ * LogItCore is the central part of LogIt.
+ * </p>
+ * It's also the most important part of API.
+ * 
  * @author LucasEasedUp
  */
 public class LogItCore
@@ -216,9 +220,10 @@ public class LogItCore
     }
     
     /**
-     * Checks if the player is forced to login (by either "force-login" being set to true, or
-     * the player being in a world with forced login). If the player has the "logit.force-login.exempt"
-     * permission, it always returns false.
+     * Checks if the player is forced to login (by either "force-login.global" set to true, or
+     * the player being in a world with forced login).
+     * <p/>
+     * If the player has the "logit.force-login.exempt" permission, it returns false.
      * 
      * @param player Player.
      * @return True if the specified player is forced to log in.
@@ -229,6 +234,11 @@ public class LogItCore
                 && !player.hasPermission("logit.force-login.exempt");
     }
     
+    /**
+     * Updates player group depending on whether they're logged in or logged out.
+     * 
+     * @param player Player whose group is to be updated.
+     */
     public void updatePlayerGroup(Player player)
     {
         if (sessionManager.isSessionAlive(player))
@@ -243,16 +253,21 @@ public class LogItCore
         }
     }
     
+    /**
+     * Checks if LogIt is linked to Vault (e.i.&nbsp;LogItCore has been loaded and Vault is enabled).
+     * 
+     * @return True if LogIt is linked to Vault.
+     */
     public boolean isLinkedToVault()
     {
         return permissions != null;
     }
     
     /**
-     * Creates a hash from the given string using algorithm specified in the config file.
+     * Hashes the given string through algorithm specified in the config.
      * 
-     * @param string String.
-     * @return Hash.
+     * @param string String to be hashed.
+     * @return Resulting hash.
      */
     public String hash(String string)
     {
@@ -297,6 +312,15 @@ public class LogItCore
         }
     }
     
+    /**
+     * Hashes the given string and salt through algorithm specified in the config.
+     * <p/>
+     * If algorithm is PLAIN, salt won't be appended to the string.
+     * 
+     * @param string String to be hashed.
+     * @param salt Salt.
+     * @return Resulting hash.
+     */
     public String hash(String string, String salt)
     {
         String hash;
@@ -309,6 +333,12 @@ public class LogItCore
         return hash;
     }
     
+    /**
+     * Logs a message in the name of LogIt.
+     * 
+     * @param level Message level.
+     * @param message Message.
+     */
     public void log(Level level, String message)
     {
         if (config.isLogToFileEnabled())
@@ -405,6 +435,11 @@ public class LogItCore
         loaded = true;
     }
     
+    /**
+     * The preferred way to obtain the instance of LogIt core.
+     * 
+     * @return Instance of LogIt core.
+     */
     public static LogItCore getInstance()
     {
         return INSTANCE;

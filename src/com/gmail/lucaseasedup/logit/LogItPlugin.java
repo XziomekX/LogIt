@@ -87,12 +87,13 @@ public final class LogItPlugin extends JavaPlugin
     }
     
     /**
-     * Loads messages from the file.
+     * Loads messages from file.
+     * <p/>
+     * First, it tries to load messages_{locale}.properties (where {locale} is the corresponding value from the config file).
+     * If it does not exist, it tries to load messages.properties. If this fails too, it throws a FileNotFoundException.
      * 
-     * First, it tries to load a messages_{locale}.properties file (where {locale} is the corresponding value from the config file).
-     * If it does not exist, it tries to load a messages.properties file. If this fails too, it throws a FileNotFoundException.
-     * 
-     * @throws IOException Thrown if no message file has been found, or there was an error while reading it.
+     * @throws FileNotFoundException Thrown if no message file has been found.
+     * @throws IOException Thrown if there was an error while reading.
      */
     private void loadMessages() throws IOException
     {
@@ -167,7 +168,7 @@ public final class LogItPlugin extends JavaPlugin
     }
     
     /**
-     * Provides a shortcut to Bukkit.getServer().getPluginManager().callEvent().
+     * Provides a shortcut to Bukkit.getPluginManager().callEvent().
      * 
      * @param event Event to be called.
      */
