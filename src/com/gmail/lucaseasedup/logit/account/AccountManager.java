@@ -230,7 +230,7 @@ public class AccountManager
      * The given password will be hashed using an algorithm specified in the config.
      * 
      * @param username Username.
-     * @param password New password.
+     * @param newPassword New password.
      */
     public void changeAccountPassword(String username, String newPassword)
     {

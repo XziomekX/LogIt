@@ -1,6 +1,6 @@
-# Netbeans stuff
 build/
 dist/
+javadoc/
 lib/
 nbproject/
 build.xml
