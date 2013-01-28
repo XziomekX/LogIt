@@ -65,14 +65,6 @@ public class LogItCore
         
         config.load();
         
-        if (plugin.getServer().getOnlineMode() && config.isStopOnOnlineModeEnabled())
-        {
-            log(FINE, getMessage("ONLINEMODE_ENABLED"));
-            plugin.disable();
-            
-            return;
-        }
-        
         // If LogIt does not know the hashing algorithm specified in the config, stop.
         if (config.getHashingAlgorithm().equals(UNKNOWN))
         {

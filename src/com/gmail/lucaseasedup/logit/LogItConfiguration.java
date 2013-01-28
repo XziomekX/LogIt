@@ -41,7 +41,6 @@ public final class LogItConfiguration
     {
         plugin.reloadConfig();
         
-        plugin.getConfig().set("stop-if.online-mode-enabled",            plugin.getConfig().getBoolean("stop-if.online-mode-enabled", true));
         plugin.getConfig().set("locale",                                 plugin.getConfig().getString("locale", "en"));
         plugin.getConfig().set("log-to-file.enabled",                    plugin.getConfig().getBoolean("log-to-file.enabled", false));
         plugin.getConfig().set("log-to-file.filename",                   plugin.getConfig().getString("log-to-file.filename", "debug.log"));
@@ -117,11 +116,6 @@ public final class LogItConfiguration
     public void save()
     {
         plugin.saveConfig();
-    }
-    
-    public boolean isStopOnOnlineModeEnabled()
-    {
-        return plugin.getConfig().getBoolean("stop-if.online-mode-enabled");
     }
     
     public String getLocale()
