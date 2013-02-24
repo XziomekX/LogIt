@@ -233,6 +233,9 @@ public class LogItCore
      */
     public void updatePlayerGroup(Player player)
     {
+        if (!isLinkedToVault())
+            return;
+        
         if (sessionManager.isSessionAlive(player))
         {
             permissions.playerRemoveGroup(player, config.getGroupsLoggedOut());

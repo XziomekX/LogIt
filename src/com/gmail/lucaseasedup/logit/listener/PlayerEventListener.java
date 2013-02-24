@@ -123,7 +123,7 @@ public class PlayerEventListener extends EventListener
         if (core.getSessionManager().getSession(username) == null)
             core.getSessionManager().createSession(username, ip);
         
-        if (core.isLinkedToVault() && core.getConfig().getGroupsEnabled())
+        if (core.getConfig().getGroupsEnabled())
             core.updatePlayerGroup(player);
         
         if (core.isPlayerForcedToLogin(player) && !core.getSessionManager().isSessionAlive(username)

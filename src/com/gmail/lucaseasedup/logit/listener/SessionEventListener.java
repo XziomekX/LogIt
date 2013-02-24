@@ -51,7 +51,7 @@ public class SessionEventListener extends EventListener
             core.getWaitingRoom().remove(player);
             core.getInventoryDepository().withdraw(player);
             
-            if (core.isLinkedToVault() && core.getConfig().getGroupsEnabled())
+            if (core.getConfig().getGroupsEnabled())
                 core.updatePlayerGroup(player);
             
             if (core.getConfig().getForceLoginGlobal() && !player.hasPermission("logit.force-login.exempt"))
@@ -88,7 +88,7 @@ public class SessionEventListener extends EventListener
                 core.getInventoryDepository().deposit(player);
             }
             
-            if (core.isLinkedToVault() && core.getConfig().getGroupsEnabled())
+            if (core.getConfig().getGroupsEnabled())
             {
                 core.updatePlayerGroup(player);
             }
