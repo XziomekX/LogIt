@@ -23,8 +23,7 @@ import static com.gmail.lucaseasedup.logit.LogItPlugin.callEvent;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import static com.gmail.lucaseasedup.logit.util.MessageSender.sendMessage;
 import static com.gmail.lucaseasedup.logit.util.PlayerUtils.*;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import static java.util.logging.Level.FINE;
 import org.bukkit.entity.Player;
 
@@ -36,6 +35,7 @@ public class SessionManager implements Runnable
     public SessionManager(LogItCore core)
     {
         this.core = core;
+        this.sessions = Collections.synchronizedMap(new HashMap<String, Session>());
     }
     
     @Override
@@ -44,6 +44,8 @@ public class SessionManager implements Runnable
         long forceLoginTimeout = (core.getConfig().getForceLoginTimeout() > 0L)
                 ? (-core.getConfig().getForceLoginTimeout()) : Long.MIN_VALUE;
         
+        synchronized(sessions)
+        {
         for (Iterator<String> it = sessions.keySet().iterator(); it.hasNext();)
         {
             String  username = it.next();
@@ -87,6 +89,7 @@ public class SessionManager implements Runnable
             {
                 destroySession(username);
             }
+        }
         }
     }
     
@@ -209,5 +212,5 @@ public class SessionManager implements Runnable
     
     private final LogItCore core;
     
-    private final HashMap<String, Session> sessions = new HashMap<>();
+    private final Map<String, Session> sessions;
 }
