@@ -21,6 +21,7 @@ package com.gmail.lucaseasedup.logit;
 import static com.gmail.lucaseasedup.logit.LogItConfiguration.HashingAlgorithm.*;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import com.gmail.lucaseasedup.logit.account.AccountManager;
+import com.gmail.lucaseasedup.logit.account.AccountWatcher;
 import com.gmail.lucaseasedup.logit.command.*;
 import com.gmail.lucaseasedup.logit.db.*;
 import static com.gmail.lucaseasedup.logit.hash.HashGenerator.*;
@@ -113,15 +114,29 @@ public class LogItCore
         
         try
         {
-            // Create a table for LogIt if it does not exist.
-            database.create(config.getStorageTable(), "username varchar(16) NOT NULL",
-                                                      "salt varchar(20) NOT NULL",
-                                                      "password varchar(256) NOT NULL",
-                                                      "ip varchar(64)");
+            database.createTableIfNotExists(config.getStorageTable(), "username VARCHAR(16) NOT NULL",
+                                                      "salt VARCHAR(20) NOT NULL",
+                                                      "password VARCHAR(256) NOT NULL",
+                                                      "ip VARCHAR(64)",
+                                                      "last_active INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))");
+            try
+            {
+                database.select(config.getStorageTable(), "last_active");
+            }
+            catch (SQLException ex)
+            {
+                database.toggleBuffering(true);
+                database.renameTable(config.getStorageTable(), "logit_tmp_export");
+                database.createTable(config.getStorageTable(), "username VARCHAR(16) NOT NULL, salt VARCHAR(20) NOT NULL, password VARCHAR(256) NOT NULL, ip VARCHAR(64), last_active INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))");
+                database.executeStatement("INSERT INTO " + config.getStorageTable() + " (username, salt, password, ip) SELECT username, salt, password, ip FROM logit_tmp_export;");
+                database.dropTable("logit_tmp_export");
+                database.flush();
+                database.toggleBuffering(false);
+            }
         }
         catch (SQLException ex)
         {
-            log(SEVERE, getMessage("DB_CREATE_TABLE_FAIL"));
+            log(SEVERE, getMessage("DB_ERROR").replace("%error%", ex.getMessage()));
             plugin.disable();
             
             return;
@@ -135,11 +150,14 @@ public class LogItCore
         accountManager = new AccountManager(this, database);
         accountManager.loadAccounts();
         
+        accountWatcher = new AccountWatcher(this, accountManager);
         backupManager = new BackupManager(this, database);
+        sessionManager = new SessionManager(this, accountManager);
         
         pingerTaskId          = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, pinger, 0L, 2400L);
         sessionManagerTaskId  = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, sessionManager, 0L, 20L);
         tickEventCallerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, tickEventCaller, 0L, 1L);
+        accountWatcherTaskId  = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, accountWatcher, 0L, 12000L);
         backupManagerTaskId   = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, backupManager, 0L, 40L);
         
         // Set started to true to prevent starting multiple times.
@@ -163,6 +181,7 @@ public class LogItCore
         Bukkit.getScheduler().cancelTask(pingerTaskId);
         Bukkit.getScheduler().cancelTask(sessionManagerTaskId);
         Bukkit.getScheduler().cancelTask(tickEventCallerTaskId);
+        Bukkit.getScheduler().cancelTask(accountWatcherTaskId);
         Bukkit.getScheduler().cancelTask(backupManagerTaskId);
         
         log(FINE, getMessage("PLUGIN_STOP_SUCCESS"));
@@ -401,7 +420,6 @@ public class LogItCore
     private void load()
     {
         config              = new LogItConfiguration(plugin);
-        sessionManager      = new SessionManager(this);
         waitingRoom         = new WaitingRoom(this);
         inventoryDepository = new InventoryDepository();
         tickEventCaller     = new TickEventCaller();
@@ -453,6 +471,7 @@ public class LogItCore
     private Permission          permissions;
     private SessionManager      sessionManager;
     private AccountManager      accountManager;
+    private AccountWatcher      accountWatcher;
     private BackupManager       backupManager;
     private WaitingRoom         waitingRoom;
     private InventoryDepository inventoryDepository;
@@ -461,5 +480,6 @@ public class LogItCore
     private int pingerTaskId;
     private int sessionManagerTaskId;
     private int tickEventCallerTaskId;
+    private int accountWatcherTaskId;
     private int backupManagerTaskId;
 }

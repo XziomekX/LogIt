@@ -35,6 +35,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 import static java.util.logging.Level.*;
 
 /**
@@ -51,6 +52,11 @@ public class AccountManager
         this.table    = core.getConfig().getStorageTable();
     }
     
+    public Set<String> getRegisteredUsernames()
+    {
+        return cPassword.keySet();
+    }
+    
     /**
      * Checks if an account with the specified username is created.
      * 
@@ -61,7 +67,7 @@ public class AccountManager
     {
         if (core.getConfig().getIntegration() == NONE)
         {
-            return passwords.containsKey(username.toLowerCase());
+            return cPassword.containsKey(username.toLowerCase());
         }
         else if (core.getConfig().getIntegration() == PHPBB)
         {
@@ -96,19 +102,19 @@ public class AccountManager
                 database.insert(table, new String[]{
                         core.getConfig().getStorageColumnsUsername(),
                         core.getConfig().getStorageColumnsSalt(),
-                        core.getConfig().getStorageColumnsPassword(),
-                        core.getConfig().getStorageColumnsIp()
+                        core.getConfig().getStorageColumnsPassword()
                     },
-                    username.toLowerCase(), salt, hash, "");
+                    username.toLowerCase(), salt, hash);
             }
             else
             {
                 throw new UnsupportedOperationException();
             }
             
-            salts.put(username.toLowerCase(), salt);
-            passwords.put(username.toLowerCase(), hash);
-            ips.put(username.toLowerCase(), null);
+            cSalt.put(username.toLowerCase(), salt);
+            cPassword.put(username.toLowerCase(), hash);
+            cIp.put(username.toLowerCase(), null);
+            cLastActive.put(username.toLowerCase(), (int) (System.currentTimeMillis() / 1000L));
             
             sendMessage(username, getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
             core.log(FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
@@ -148,9 +154,10 @@ public class AccountManager
                 throw new UnsupportedOperationException();
             }
             
-            salts.remove(username.toLowerCase());
-            passwords.remove(username.toLowerCase());
-            ips.remove(username.toLowerCase());
+            cSalt.remove(username.toLowerCase());
+            cPassword.remove(username.toLowerCase());
+            cIp.remove(username.toLowerCase());
+            cLastActive.remove(username.toLowerCase());
             
             sendMessage(username, getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
             core.log(FINE, getMessage("REMOVE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
@@ -182,7 +189,7 @@ public class AccountManager
         
         if (core.getConfig().getIntegration() == NONE)
         {
-            return passwords.get(username.toLowerCase()).equals(core.hash(password, salts.get(username.toLowerCase())));
+            return cPassword.get(username.toLowerCase()).equals(core.hash(password, cSalt.get(username.toLowerCase())));
         }
         else if (core.getConfig().getIntegration() == PHPBB)
         {
@@ -241,7 +248,7 @@ public class AccountManager
         String newHash = core.hash(newPassword, newSalt);
         
         // Back up old password.
-        String oldPassword = passwords.get(username.toLowerCase());
+        String oldPassword = cPassword.get(username.toLowerCase());
         
         try
         {
@@ -256,8 +263,8 @@ public class AccountManager
                 throw new UnsupportedOperationException();
             }
             
-            salts.put(username.toLowerCase(), newSalt);
-            passwords.put(username.toLowerCase(), newHash);
+            cSalt.put(username.toLowerCase(), newSalt);
+            cPassword.put(username.toLowerCase(), newHash);
             
             sendMessage(username, getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
             core.log(FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
@@ -297,7 +304,7 @@ public class AccountManager
                 throw new UnsupportedOperationException();
             }
             
-            ips.put(username.toLowerCase(), ip);
+            cIp.put(username.toLowerCase(), ip);
             
             core.log(FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username).replace("%ip%", ip));
             
@@ -322,7 +329,29 @@ public class AccountManager
         if (ip.isEmpty())
             return 0;
         
-        return Collections.frequency(ips.values(), ip);
+        return Collections.frequency(cIp.values(), ip);
+    }
+    
+    public void updateLastActiveDate(String username)
+    {
+        int now = (int) (System.currentTimeMillis() / 1000L);
+        
+        try
+        {
+            database.update(table, new String[]{core.getConfig().getStorageColumnsUsername(), username.toLowerCase()},
+                core.getConfig().getStorageColumnsLastActive(), String.valueOf(now));
+        }
+        catch (SQLException ex)
+        {
+            return;
+        }
+        
+        cLastActive.put(username.toLowerCase(), now);
+    }
+    
+    public int getLastActiveDate(String username)
+    {
+        return cLastActive.get(username.toLowerCase());
     }
     
     /**
@@ -336,15 +365,17 @@ public class AccountManager
         {
             if (core.getConfig().getIntegration() == NONE)
             {
-                database.truncate(table);
+                database.truncateTable(table);
             }
             else
             {
                 throw new UnsupportedOperationException();
             }
             
-            passwords.clear();
-            ips.clear();
+            cSalt.clear();
+            cPassword.clear();
+            cIp.clear();
+            cLastActive.clear();
             
             core.log(INFO, getMessage("PURGE_SUCCESS"));
         }
@@ -361,9 +392,10 @@ public class AccountManager
      */
     public void loadAccounts()
     {
-        salts.clear();
-        passwords.clear();
-        ips.clear();
+        cSalt.clear();
+        cPassword.clear();
+        cIp.clear();
+        cLastActive.clear();
         
         if (core.getConfig().getIntegration() == NONE)
         {
@@ -373,15 +405,17 @@ public class AccountManager
 
                 while (rs.next())
                 {
-                    salts.put(rs.getString(core.getConfig().getStorageColumnsUsername()),
+                    cSalt.put(rs.getString(core.getConfig().getStorageColumnsUsername()),
                         rs.getString(core.getConfig().getStorageColumnsSalt()));
-                    passwords.put(rs.getString(core.getConfig().getStorageColumnsUsername()),
+                    cPassword.put(rs.getString(core.getConfig().getStorageColumnsUsername()),
                         rs.getString(core.getConfig().getStorageColumnsPassword()));
-                    ips.put(rs.getString(core.getConfig().getStorageColumnsUsername()),
+                    cIp.put(rs.getString(core.getConfig().getStorageColumnsUsername()),
                         rs.getString(core.getConfig().getStorageColumnsIp()));
+                    cLastActive.put(rs.getString(core.getConfig().getStorageColumnsUsername()),
+                        rs.getInt(core.getConfig().getStorageColumnsLastActive()));
                 }
                 
-                core.log(FINE, getMessage("LOAD_ACCOUNTS_SUCCESS").replace("%num%", String.valueOf(passwords.size())));
+                core.log(FINE, getMessage("LOAD_ACCOUNTS_SUCCESS").replace("%num%", String.valueOf(cPassword.size())));
             }
             catch (SQLException ex)
             {
@@ -394,7 +428,8 @@ public class AccountManager
     private final Database database;
     private final String table;
     
-    private final HashMap<String, String> salts = new HashMap<>();
-    private final HashMap<String, String> passwords = new HashMap<>();
-    private final HashMap<String, String> ips = new HashMap<>();
+    private final HashMap<String, String> cSalt = new HashMap<>();
+    private final HashMap<String, String> cPassword = new HashMap<>();
+    private final HashMap<String, String> cIp = new HashMap<>();
+    private final HashMap<String, Integer> cLastActive = new HashMap<>();
 }

@@ -21,6 +21,7 @@ package com.gmail.lucaseasedup.logit.session;
 import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.callEvent;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
+import com.gmail.lucaseasedup.logit.account.AccountManager;
 import static com.gmail.lucaseasedup.logit.util.MessageSender.sendMessage;
 import static com.gmail.lucaseasedup.logit.util.PlayerUtils.*;
 import java.util.*;
@@ -32,9 +33,10 @@ import org.bukkit.entity.Player;
  */
 public class SessionManager implements Runnable
 {
-    public SessionManager(LogItCore core)
+    public SessionManager(LogItCore core, AccountManager accountManager)
     {
         this.core = core;
+        this.accountManager = accountManager;
         this.sessions = Collections.synchronizedMap(new HashMap<String, Session>());
     }
     
@@ -182,6 +184,8 @@ public class SessionManager implements Runnable
         // Start session.
         session.setStatus(0L);
         
+        accountManager.updateLastActiveDate(username);
+        
         sendMessage(username, getMessage("START_SESSION_SUCCESS_SELF"));
         core.log(FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
         
@@ -204,6 +208,8 @@ public class SessionManager implements Runnable
         // End session.
         session.setStatus(-1L);
         
+        accountManager.updateLastActiveDate(username);
+        
         sendMessage(username, getMessage("END_SESSION_SUCCESS_SELF"));
         core.log(FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
         
@@ -211,6 +217,7 @@ public class SessionManager implements Runnable
     }
     
     private final LogItCore core;
+    private final AccountManager accountManager;
     
     private final Map<String, Session> sessions;
 }

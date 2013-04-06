@@ -77,6 +77,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("login-fails-to-kick",                    plugin.getConfig().getInt("login-fails-to-kick", -1));
         plugin.getConfig().set("login-fails-to-ban",                     plugin.getConfig().getInt("login-fails-to-ban", -1));
         plugin.getConfig().set("kick-unregistered",                      plugin.getConfig().getBoolean("kick-unregistered", false));
+        plugin.getConfig().set("absence-period-to-unregister",           plugin.getConfig().getInt("absence-period-to-unregister", -1));
         plugin.getConfig().set("preserve-slots.amount",                  plugin.getConfig().getInt("preserve-slots.amount", 0));
         plugin.getConfig().set("preserve-slots.players",                 plugin.getConfig().getStringList("preserve-slots.players"));
         plugin.getConfig().set("accounts-per-ip",                        plugin.getConfig().getInt("accounts-per-ip", 3));
@@ -105,6 +106,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("storage.columns.salt",                   plugin.getConfig().getString("storage.columns.salt", "salt"));
         plugin.getConfig().set("storage.columns.password",               plugin.getConfig().getString("storage.columns.password", "password"));
         plugin.getConfig().set("storage.columns.ip",                     plugin.getConfig().getString("storage.columns.ip", "ip"));
+        plugin.getConfig().set("storage.columns.last_active",            plugin.getConfig().getString("storage.columns.last_active", "last_active"));
         plugin.getConfig().set("backup.path",                            plugin.getConfig().getString("backup.path", "backup"));
         plugin.getConfig().set("backup.filename-format",                 plugin.getConfig().getString("backup.filename-format", "yyyy-MM-dd_HH-mm-ss'.db'"));
         plugin.getConfig().set("backup.schedule.enabled",                plugin.getConfig().getBoolean("backup.schedule.enabled", false));
@@ -309,6 +311,11 @@ public final class LogItConfiguration
     public boolean getKickUnregistered()
     {
         return plugin.getConfig().getBoolean("kick-unregistered");
+    }
+    
+    public int getAbsencePeriodToUnregister()
+    {
+        return plugin.getConfig().getInt("absence-period-to-unregister");
     }
     
     public int getPreserveSlotsAmount()
@@ -520,6 +527,11 @@ public final class LogItConfiguration
     public String getStorageColumnsIp()
     {
         return plugin.getConfig().getString("storage.columns.ip");
+    }
+    
+    public String getStorageColumnsLastActive()
+    {
+        return plugin.getConfig().getString("storage.columns.last_active");
     }
     
     public File getBackupPath()

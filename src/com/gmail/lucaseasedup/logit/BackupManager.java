@@ -90,7 +90,7 @@ public class BackupManager implements Runnable
         try (SqliteDatabase backupDatabase = new SqliteDatabase())
         {
             backupDatabase.connect("jdbc:sqlite:" + backupFile);
-            backupDatabase.create(core.getConfig().getStorageTable(), "username varchar(16) NOT NULL,"
+            backupDatabase.createTable(core.getConfig().getStorageTable(), "username varchar(16) NOT NULL,"
                                                                     + "salt varchar(20) NOT NULL,"
                                                                     + "password varchar(256) NOT NULL,"
                                                                     + "ip varchar(64)");
@@ -128,7 +128,7 @@ public class BackupManager implements Runnable
             backupDatabase.connect("jdbc:sqlite:" + backupFile);
             
             // Clear the table before restoring.
-            database.truncate(core.getConfig().getStorageTable());
+            database.truncateTable(core.getConfig().getStorageTable());
             
             try (ResultSet rs = backupDatabase.select(core.getConfig().getStorageTable(), "*"))
             {

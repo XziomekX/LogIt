@@ -24,7 +24,7 @@ import java.sql.*;
 /**
  * @author LucasEasedUp
  */
-public class SqliteDatabase implements Database, AutoCloseable
+public class SqliteDatabase extends Database
 {
     @Override
     public void connect(String host, String user, String password, String database) throws SQLException
@@ -39,21 +39,39 @@ public class SqliteDatabase implements Database, AutoCloseable
     }
     
     @Override
-    public boolean executeStatement(String sql) throws SQLException
-    {
-        return statement.execute(sql);
-    }
-    
-    @Override
     public ResultSet executeQuery(String sql) throws SQLException
     {
         return statement.executeQuery(sql);
     }
     
     @Override
-    public boolean create(String table, String... columns) throws SQLException
+    public boolean createTable(String table, String... columns) throws SQLException
     {
-        return statement.execute("CREATE TABLE IF NOT EXISTS " + table + " (" + ArrayUtils.implodeArray(columns, ",") + ");");
+        return executeStatement("CREATE TABLE " + table + " (" + ArrayUtils.implodeArray(columns, ",") + ");");
+    }
+    
+    @Override
+    public boolean createTableIfNotExists(String table, String... columns) throws SQLException
+    {
+        return executeStatement("CREATE TABLE IF NOT EXISTS " + table + " (" + ArrayUtils.implodeArray(columns, ",") + ");");
+    }
+    
+    @Override
+    public boolean renameTable(String table, String newTable) throws SQLException
+    {
+        return executeStatement("ALTER TABLE " + table + " RENAME TO " + newTable + ";");
+    }
+    
+    @Override
+    public boolean truncateTable(String table) throws SQLException
+    {
+        return executeStatement("DELETE FROM " + table + ";");
+    }
+    
+    @Override
+    public boolean dropTable(String table) throws SQLException
+    {
+        return executeStatement("DROP TABLE " + table + ";");
     }
     
     @Override
@@ -65,31 +83,25 @@ public class SqliteDatabase implements Database, AutoCloseable
     @Override
     public boolean insert(String table, String... values) throws SQLException
     {
-        return statement.execute("INSERT INTO " + table + " VALUES (" + ArrayUtils.implodeArray(values, ",", "\"", "\"") + ");");
+        return executeStatement("INSERT INTO " + table + " VALUES (" + ArrayUtils.implodeArray(values, ",", "\"", "\"") + ");");
     }
     
     @Override
     public boolean insert(String table, String[] columns, String... values) throws SQLException
     {
-        return statement.execute("INSERT INTO " + table + " (" + ArrayUtils.implodeArray(columns, ",") + ") VALUES (" + ArrayUtils.implodeArray(values, ",", "\"", "\"") + ");");
+        return executeStatement("INSERT INTO " + table + " (" + ArrayUtils.implodeArray(columns, ",") + ") VALUES (" + ArrayUtils.implodeArray(values, ",", "\"", "\"") + ");");
     }
     
     @Override
     public boolean update(String table, String[] where, String... set) throws SQLException
     {
-        return statement.execute("UPDATE " + table + " SET " + ArrayUtils.implodeKeyValueArray(set, ",", "=", "\"", "\"") + " WHERE " + ArrayUtils.implodeKeyValueArray(where, " AND ", "=", "\"", "\"") + ";");
+        return executeStatement("UPDATE " + table + " SET " + ArrayUtils.implodeKeyValueArray(set, ",", "=", "\"", "\"") + " WHERE " + ArrayUtils.implodeKeyValueArray(where, " AND ", "=", "\"", "\"") + ";");
     }
     
     @Override
     public boolean delete(String table, String[] where) throws SQLException
     {
-        return statement.execute("DELETE FROM " + table + " WHERE " + ArrayUtils.implodeKeyValueArray(where, " AND ", "=", "\"", "\"") + ";");
-    }
-    
-    @Override
-    public boolean truncate(String table) throws SQLException
-    {
-        return statement.execute("DELETE FROM " + table + ";");
+        return executeStatement("DELETE FROM " + table + " WHERE " + ArrayUtils.implodeKeyValueArray(where, " AND ", "=", "\"", "\"") + ";");
     }
     
     @Override
@@ -113,6 +125,12 @@ public class SqliteDatabase implements Database, AutoCloseable
             connection.close();
             connection = null;
         }
+    }
+    
+    @Override
+    protected boolean executeStatementNow(String sql) throws SQLException
+    {
+        return statement.execute(sql);
     }
     
     private Connection connection;
