@@ -32,7 +32,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 import java.util.logging.Level;
 import static java.util.logging.Level.*;
 import net.milkbowl.vault.permission.Permission;
@@ -65,6 +65,7 @@ public class LogItCore
             load();
         
         config.load();
+        buildStorageColumnMeta();
         
         // If LogIt does not know the hashing algorithm specified in the config, stop.
         if (config.getHashingAlgorithm().equals(UNKNOWN))
@@ -114,24 +115,16 @@ public class LogItCore
         
         try
         {
-            database.createTableIfNotExists(config.getStorageTable(), "username VARCHAR(16) NOT NULL",
-                                                      "salt VARCHAR(20) NOT NULL",
-                                                      "password VARCHAR(256) NOT NULL",
-                                                      "ip VARCHAR(64)",
-                                                      "last_active INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))");
-            try
+            database.createTableIfNotExists(config.getStorageTable(), storageColumnDefinition);
+            
+            List<String> existingColumns = database.getColumnNames(config.getStorageTable());
+            
+            for (Map.Entry<String, String> entry : storageColumns.entrySet())
             {
-                database.select(config.getStorageTable(), "last_active");
-            }
-            catch (SQLException ex)
-            {
-                database.toggleBuffering(true);
-                database.renameTable(config.getStorageTable(), "logit_tmp_export");
-                database.createTable(config.getStorageTable(), "username VARCHAR(16) NOT NULL, salt VARCHAR(20) NOT NULL, password VARCHAR(256) NOT NULL, ip VARCHAR(64), last_active INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))");
-                database.executeStatement("INSERT INTO " + config.getStorageTable() + " (username, salt, password, ip) SELECT username, salt, password, ip FROM logit_tmp_export;");
-                database.dropTable("logit_tmp_export");
-                database.flush();
-                database.toggleBuffering(false);
+                if (!existingColumns.contains(entry.getKey()))
+                {
+                    database.executeStatement("ALTER TABLE " + config.getStorageTable() + " ADD COLUMN " + entry.getKey() + " " + entry.getValue() + ";");
+                }
             }
         }
         catch (SQLException ex)
@@ -151,7 +144,7 @@ public class LogItCore
         accountManager.loadAccounts();
         
         accountWatcher = new AccountWatcher(this, accountManager);
-        backupManager = new BackupManager(this, database);
+        backupManager  = new BackupManager(this, database);
         sessionManager = new SessionManager(this, accountManager);
         
         pingerTaskId          = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, pinger, 0L, 2400L);
@@ -448,6 +441,26 @@ public class LogItCore
         loaded = true;
     }
     
+    private void buildStorageColumnMeta()
+    {
+        if (config == null)
+            return;
+        
+        storageColumns.put(config.getStorageColumnsUsername(),   "VARCHAR(16)");
+        storageColumns.put(config.getStorageColumnsSalt(),       "VARCHAR(20)");
+        storageColumns.put(config.getStorageColumnsPassword(),   "VARCHAR(256)");
+        storageColumns.put(config.getStorageColumnsIp(),         "VARCHAR(64)");
+        storageColumns.put(config.getStorageColumnsLastActive(), "INTEGER");
+        
+        for (Map.Entry<String, String> entry : storageColumns.entrySet())
+        {
+            if (storageColumnDefinition.length() > 0)
+                storageColumnDefinition += ", ";
+            
+            storageColumnDefinition += entry.getKey() + " " + entry.getValue();
+        }
+    }
+    
     /**
      * The preferred way to obtain the instance of LogIt core.
      * 
@@ -482,4 +495,7 @@ public class LogItCore
     private int tickEventCallerTaskId;
     private int accountWatcherTaskId;
     private int backupManagerTaskId;
+    
+    private HashMap<String, String> storageColumns = new HashMap<>();
+    private String storageColumnDefinition = "";
 }
