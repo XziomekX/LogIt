@@ -27,46 +27,46 @@ public class ArrayUtils
     {
     }
     
-    public static String implodeKeyValueArray(String[] pieces, String glue, String assignmentSign, String beforeValue, String afterValue)
+    public static String implodeKeyValueArray(Object[] pieces, String glue, String assignmentSign, String beforeValue, String afterValue)
     {
         String output = "";
         
         if (pieces.length > 1)
         {
-            output += pieces[0] + assignmentSign + beforeValue + pieces[1] + afterValue;
+            output += pieces[0].toString() + assignmentSign + beforeValue + pieces[1].toString() + afterValue;
             
             for (int i = 2; i < pieces.length; i += 2)
             {
-                output += glue + pieces[i] + assignmentSign + beforeValue + pieces[i + 1] + afterValue;
+                output += glue + pieces[i].toString() + assignmentSign + beforeValue + pieces[i + 1].toString() + afterValue;
             }
         }
         
         return output;
     }
     
-    public static String implodeArray(String[] pieces, String glue, String before, String after)
+    public static String implodeArray(Object[] pieces, String glue, String before, String after)
     {
         String output = "";
         
         if (pieces.length > 0)
         {
-            output += before + pieces[0] + after;
+            output += before + pieces[0].toString() + after;
             
             for (int i = 1; i < pieces.length; i++)
             {
-                output += glue + before + pieces[i] + after;
+                output += glue + before + pieces[i].toString() + after;
             }
         }
         
         return output;
     }
     
-    public static String implodeArray(String[] pieces, String glue)
+    public static String implodeArray(Object[] pieces, String glue)
     {
         return implodeArray(pieces, glue, "", "");
     }
     
-    public static String implodeArray(String[] pieces)
+    public static String implodeArray(Object[] pieces)
     {
         return implodeArray(pieces, "");
     }
