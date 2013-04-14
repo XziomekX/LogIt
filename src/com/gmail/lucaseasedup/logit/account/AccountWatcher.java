@@ -44,7 +44,12 @@ public class AccountWatcher implements Runnable
 
         for (String username : usernames)
         {
-            if ((now - accountManager.getLastActiveDate(username)) / 86400 >= core.getConfig().getDaysOfAbsenceToUnregister())
+            int lastActiveDate = accountManager.getLastActiveDate(username);
+            
+            if (lastActiveDate == 0)
+                continue;
+            
+            if ((now - lastActiveDate) / 86400 >= core.getConfig().getDaysOfAbsenceToUnregister())
             {
                 accountManager.removeAccount(username);
             }
