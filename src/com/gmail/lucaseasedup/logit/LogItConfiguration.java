@@ -81,7 +81,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("preserve-slots.amount",                  plugin.getConfig().getInt("preserve-slots.amount", 0));
         plugin.getConfig().set("preserve-slots.players",                 plugin.getConfig().getStringList("preserve-slots.players"));
         plugin.getConfig().set("accounts-per-ip",                        plugin.getConfig().getInt("accounts-per-ip", 3));
-        plugin.getConfig().set("hashing-algorithm",                      plugin.getConfig().getString("hashing-algorithm", "md5"));
+        plugin.getConfig().set("hashing-algorithm",                      plugin.getConfig().getString("hashing-algorithm", "sha-256"));
         plugin.getConfig().set("show-spawn-world-info",                  plugin.getConfig().getBoolean("show-spawn-world-info", true));
         plugin.getConfig().set("waiting-room.enabled",                   plugin.getConfig().getBoolean("waiting-room.enabled", false));
         plugin.getConfig().set("waiting-room.location.world",            plugin.getConfig().getString("waiting-room.location.world", "world"));
