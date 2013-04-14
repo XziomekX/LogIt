@@ -105,7 +105,7 @@ public class LogItCore
         }
         catch (SQLException ex)
         {
-            log(SEVERE, getMessage("DB_CONNECT_FAIL"));
+            log(SEVERE, getMessage("DB_ERROR").replace("%error%", ex.getMessage()));
             plugin.disable();
             
             return;
@@ -168,7 +168,7 @@ public class LogItCore
         }
         catch (SQLException ex)
         {
-            log(WARNING, getMessage("DB_CLOSE_FAIL"));
+            log(WARNING, getMessage("DB_ERROR").replace("%error%", ex.getMessage()));
         }
         
         Bukkit.getScheduler().cancelTask(pingerTaskId);
