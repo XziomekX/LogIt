@@ -123,9 +123,11 @@ public class LogItCore
             {
                 if (!existingColumns.contains(entry.getKey()))
                 {
-                    database.executeStatement("ALTER TABLE " + config.getStorageTable() + " ADD COLUMN " + entry.getKey() + " " + entry.getValue() + ";");
+                    database.addBatch("ALTER TABLE " + config.getStorageTable() + " ADD COLUMN " + entry.getKey() + " " + entry.getValue() + ";");
                 }
             }
+            
+            database.executeBatch();
         }
         catch (SQLException ex)
         {

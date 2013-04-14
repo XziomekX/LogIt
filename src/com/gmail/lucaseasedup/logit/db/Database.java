@@ -27,11 +27,6 @@ import java.util.*;
  */
 public abstract class Database implements AutoCloseable
 {
-    public Database()
-    {
-        buffer = Collections.synchronizedList(new LinkedList<String>());
-    }
-    
     public abstract void connect(String host, String user, String password, String database) throws SQLException;
     public abstract boolean isConnected();
     public abstract void close() throws SQLException;
@@ -40,18 +35,7 @@ public abstract class Database implements AutoCloseable
     public abstract List<String> getColumnNames(String table) throws SQLException;
     public abstract ResultSet select(String table, String... columns) throws SQLException;
     
-    public boolean executeStatement(String sql) throws SQLException
-    {
-        if (isBufferingEnabled())
-        {
-            return pushStatement(sql);
-        }
-        else
-        {
-            return executeStatementNow(sql);
-        }
-    }
-    
+    public abstract boolean executeStatement(String sql) throws SQLException;
     public abstract boolean createTable(String table, String... columns) throws SQLException;
     public abstract boolean createTableIfNotExists(String table, String... columns) throws SQLException;
     public abstract boolean renameTable(String table, String newTable) throws SQLException;
@@ -62,39 +46,7 @@ public abstract class Database implements AutoCloseable
     public abstract boolean update(String table, String[] where, String... set) throws SQLException;
     public abstract boolean delete(String table, String[] where) throws SQLException;
     
-    public void toggleBuffering(boolean status)
-    {
-        bufferingEnabled = status;
-    }
-    
-    public boolean isBufferingEnabled()
-    {
-        return bufferingEnabled;
-    }
-    
-    public void clearBuffer()
-    {
-        buffer.clear();
-    }
-    
-    public void flush() throws SQLException
-    {
-        if (!isBufferingEnabled())
-            return;
-        
-        while (!buffer.isEmpty())
-        {
-            executeStatementNow(buffer.remove(0));
-        }
-    }
-    
-    protected abstract boolean executeStatementNow(String sql) throws SQLException;
-    
-    protected boolean pushStatement(String sql)
-    {
-        return buffer.add(sql);
-    }
-    
-    private boolean bufferingEnabled = false;
-    private List<String> buffer;
+    public abstract void addBatch(String sql) throws SQLException;
+    public abstract void executeBatch() throws SQLException;
+    public abstract void clearBatch() throws SQLException;
 }

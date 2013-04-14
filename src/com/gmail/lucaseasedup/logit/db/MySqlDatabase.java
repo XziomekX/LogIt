@@ -86,6 +86,12 @@ public class MySqlDatabase extends Database
     }
     
     @Override
+    public boolean executeStatement(String sql) throws SQLException
+    {
+        return statement.execute(sql);
+    }
+    
+    @Override
     public boolean createTable(String table, String... columns) throws SQLException
     {
         return executeStatement("CREATE TABLE " + table + " (" + ArrayUtils.implodeArray(columns, ",") + ");");
@@ -140,9 +146,22 @@ public class MySqlDatabase extends Database
     }
     
     @Override
-    protected boolean executeStatementNow(String sql) throws SQLException
+    public void addBatch(String sql) throws SQLException
     {
-        return statement.execute(sql);
+        statement.addBatch(sql);
+    }
+    
+    @Override
+    public void executeBatch() throws SQLException
+    {
+        statement.executeBatch();
+        statement.clearBatch();
+    }
+    
+    @Override
+    public void clearBatch() throws SQLException
+    {
+        statement.clearBatch();
     }
     
     private Connection connection;
