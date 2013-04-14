@@ -77,7 +77,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("login-fails-to-kick",                    plugin.getConfig().getInt("login-fails-to-kick", -1));
         plugin.getConfig().set("login-fails-to-ban",                     plugin.getConfig().getInt("login-fails-to-ban", -1));
         plugin.getConfig().set("kick-unregistered",                      plugin.getConfig().getBoolean("kick-unregistered", false));
-        plugin.getConfig().set("absence-period-to-unregister",           plugin.getConfig().getInt("absence-period-to-unregister", -1));
+        plugin.getConfig().set("days-of-absence-to-unregister",          plugin.getConfig().getInt("days-of-absence-to-unregister", -1));
         plugin.getConfig().set("preserve-slots.amount",                  plugin.getConfig().getInt("preserve-slots.amount", 0));
         plugin.getConfig().set("preserve-slots.players",                 plugin.getConfig().getStringList("preserve-slots.players"));
         plugin.getConfig().set("accounts-per-ip",                        plugin.getConfig().getInt("accounts-per-ip", 3));
@@ -313,9 +313,9 @@ public final class LogItConfiguration
         return plugin.getConfig().getBoolean("kick-unregistered");
     }
     
-    public int getAbsencePeriodToUnregister()
+    public int getDaysOfAbsenceToUnregister()
     {
-        return plugin.getConfig().getInt("absence-period-to-unregister");
+        return plugin.getConfig().getInt("days-of-absence-to-unregister");
     }
     
     public int getPreserveSlotsAmount()
