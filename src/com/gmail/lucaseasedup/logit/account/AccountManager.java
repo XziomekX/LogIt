@@ -102,9 +102,10 @@ public class AccountManager
                 database.insert(table, new String[]{
                         core.getConfig().getStorageColumnsUsername(),
                         core.getConfig().getStorageColumnsSalt(),
-                        core.getConfig().getStorageColumnsPassword()
+                        core.getConfig().getStorageColumnsPassword(),
+                        core.getConfig().getStorageColumnsLastActive()
                     },
-                    username.toLowerCase(), salt, hash);
+                    username.toLowerCase(), salt, hash, String.valueOf(System.currentTimeMillis() / 1000L));
             }
             else
             {
