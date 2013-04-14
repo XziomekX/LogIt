@@ -103,6 +103,10 @@ public class LogItCommand extends AbstractCommandExecutor
                 {
                     s.sendMessage(getLogItSubcommandHelp("globalpass remove", null));
                 }
+                if (p == null || p.hasPermission("logit.accountcount"))
+                {
+                    s.sendMessage(getLogItSubcommandHelp("accountcount", null));
+                }
             }
         }
         else if (subcommand.equalsIgnoreCase("version") && args.length == 1)
@@ -331,6 +335,17 @@ public class LogItCommand extends AbstractCommandExecutor
                         s.sendMessage(getMessage("GLOBALPASS_REMOVE_SUCCESS"));
                     }
                 }
+            }
+        }
+        else if (subcommand.equalsIgnoreCase("accountcount") && args.length == 1)
+        {
+            if (p != null && !p.hasPermission("logit.accountcount"))
+            {
+                s.sendMessage(getMessage("NO_PERMS"));
+            }
+            else
+            {
+                s.sendMessage(getMessage("ACCOUNT_COUNT").replace("%num%", String.valueOf(core.getAccountManager().getAccountCount())));
             }
         }
         else

@@ -355,6 +355,11 @@ public class AccountManager
         return cLastActive.get(username.toLowerCase());
     }
     
+    public int getAccountCount()
+    {
+        return cPassword.size();
+    }
+    
     /**
      * Purges the database from accounts.
      * 
