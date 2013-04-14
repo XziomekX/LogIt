@@ -411,14 +411,15 @@ public class AccountManager
 
                 while (rs.next())
                 {
-                    cSalt.put(rs.getString(core.getConfig().getStorageColumnsUsername()),
-                        rs.getString(core.getConfig().getStorageColumnsSalt()));
-                    cPassword.put(rs.getString(core.getConfig().getStorageColumnsUsername()),
-                        rs.getString(core.getConfig().getStorageColumnsPassword()));
-                    cIp.put(rs.getString(core.getConfig().getStorageColumnsUsername()),
-                        rs.getString(core.getConfig().getStorageColumnsIp()));
-                    cLastActive.put(rs.getString(core.getConfig().getStorageColumnsUsername()),
-                        rs.getInt(core.getConfig().getStorageColumnsLastActive()));
+                    String username = rs.getString(core.getConfig().getStorageColumnsUsername());
+                    
+                    if (username == null)
+                        continue;
+                    
+                    cSalt.put(username, rs.getString(core.getConfig().getStorageColumnsSalt()));
+                    cPassword.put(username, rs.getString(core.getConfig().getStorageColumnsPassword()));
+                    cIp.put(username, rs.getString(core.getConfig().getStorageColumnsIp()));
+                    cLastActive.put(username, rs.getInt(core.getConfig().getStorageColumnsLastActive()));
                 }
                 
                 core.log(FINE, getMessage("LOAD_ACCOUNTS_SUCCESS").replace("%num%", String.valueOf(cPassword.size())));
