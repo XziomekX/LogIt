@@ -20,6 +20,8 @@ package com.gmail.lucaseasedup.logit.db;
 
 import com.gmail.lucaseasedup.logit.util.ArrayUtils;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author LucasEasedUp
@@ -35,9 +37,52 @@ public class MySqlDatabase extends Database
     }
     
     @Override
+    public boolean isConnected()
+    {
+        try
+        {
+            return !connection.isClosed();
+        }
+        catch (SQLException ex)
+        {
+            return false;
+        }
+    }
+    
+    @Override
+    public void close() throws SQLException
+    {
+        if (connection != null)
+        {
+            connection.close();
+            connection = null;
+        }
+    }
+    
+    @Override
     public ResultSet executeQuery(String sql) throws SQLException
     {
         return statement.executeQuery(sql);
+    }
+    
+    @Override
+    public List<String> getColumnNames(String table) throws SQLException
+    {
+        ResultSet tableInfo = executeQuery("PRAGMA table_info('" + table + "');");
+        ArrayList<String> columnNames = new ArrayList<>();
+        
+        while (tableInfo.next())
+        {
+            columnNames.add(tableInfo.getString("name"));
+        }
+        
+        return columnNames;
+    }
+    
+    @Override
+    public ResultSet select(String table, String... columns) throws SQLException
+    {
+        return statement.executeQuery("SELECT " + ArrayUtils.implodeArray(columns, ",") + " FROM " + table + ";");
     }
     
     @Override
@@ -71,12 +116,6 @@ public class MySqlDatabase extends Database
     }
     
     @Override
-    public ResultSet select(String table, String... columns) throws SQLException
-    {
-        return statement.executeQuery("SELECT " + ArrayUtils.implodeArray(columns, ",") + " FROM " + table + ";");
-    }
-    
-    @Override
     public boolean insert(String table, String... values) throws SQLException
     {
         return executeStatement("INSERT INTO " + table + " VALUES (" + ArrayUtils.implodeArray(values, ",", "\"", "\"") + ");");
@@ -98,29 +137,6 @@ public class MySqlDatabase extends Database
     public boolean delete(String table, String[] where) throws SQLException
     {
         return executeStatement("DELETE FROM " + table + " WHERE " + ArrayUtils.implodeKeyValueArray(where, " AND ", "=", "\"", "\"") + ";");
-    }
-    
-    @Override
-    public boolean isConnected()
-    {
-        try
-        {
-            return !connection.isClosed();
-        }
-        catch (SQLException ex)
-        {
-            return false;
-        }
-    }
-    
-    @Override
-    public void close() throws SQLException
-    {
-        if (connection != null)
-        {
-            connection.close();
-            connection = null;
-        }
     }
     
     @Override

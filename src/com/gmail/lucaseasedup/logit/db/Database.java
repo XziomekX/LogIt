@@ -20,9 +20,7 @@ package com.gmail.lucaseasedup.logit.db;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author LucasEasedUp
@@ -35,6 +33,12 @@ public abstract class Database implements AutoCloseable
     }
     
     public abstract void connect(String host, String user, String password, String database) throws SQLException;
+    public abstract boolean isConnected();
+    public abstract void close() throws SQLException;
+    
+    public abstract ResultSet executeQuery(String sql) throws SQLException;
+    public abstract List<String> getColumnNames(String table) throws SQLException;
+    public abstract ResultSet select(String table, String... columns) throws SQLException;
     
     public boolean executeStatement(String sql) throws SQLException
     {
@@ -48,19 +52,15 @@ public abstract class Database implements AutoCloseable
         }
     }
     
-    public abstract ResultSet executeQuery(String sql) throws SQLException;
     public abstract boolean createTable(String table, String... columns) throws SQLException;
     public abstract boolean createTableIfNotExists(String table, String... columns) throws SQLException;
     public abstract boolean renameTable(String table, String newTable) throws SQLException;
     public abstract boolean truncateTable(String table) throws SQLException;
     public abstract boolean dropTable(String table) throws SQLException;
-    public abstract ResultSet select(String table, String... columns) throws SQLException;
     public abstract boolean insert(String table, String... values) throws SQLException;
     public abstract boolean insert(String table, String[] columns, String... values) throws SQLException;
     public abstract boolean update(String table, String[] where, String... set) throws SQLException;
     public abstract boolean delete(String table, String[] where) throws SQLException;
-    public abstract boolean isConnected();
-    public abstract void close() throws SQLException;
     
     public void toggleBuffering(boolean status)
     {
