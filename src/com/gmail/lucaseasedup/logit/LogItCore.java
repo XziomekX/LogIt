@@ -70,7 +70,7 @@ public class LogItCore
         // If LogIt does not know the hashing algorithm specified in the config, stop.
         if (config.getHashingAlgorithm().equals(UNKNOWN))
         {
-            log(SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM"));
+            log(SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM").replace("%ha%", config.getHashingAlgorithm().name()));
             plugin.disable();
             
             return;
@@ -96,7 +96,7 @@ public class LogItCore
                 }
                 default:
                 {
-                    log(SEVERE, getMessage("UNKNOWN_STORAGE_TYPE"));
+                    log(SEVERE, getMessage("UNKNOWN_STORAGE_TYPE").replace("%st%", config.getStorageType().name()));
                     plugin.disable();
                     
                     return;
