@@ -180,11 +180,12 @@ public class AccountManager
     
     /**
      * Checks if the given password matches that of account with the specified username.
-     * 
+     * <p/>
      * The given password will be hashed using an algorithm specified in the config.
      * 
      * @param username Username.
-     * @param password Password to check
+     * @param password Password to check.
+     * @throws AccountNotFoundException Thrown if no such account exists.
      * @return True if they match.
      */
     public boolean checkAccountPassword(String username, String password)
@@ -238,7 +239,7 @@ public class AccountManager
     
     /**
      * Changes password of an account with the specified username.
-     * 
+     * <p/>
      * The given password will be hashed using an algorithm specified in the config.
      * 
      * @param username Username.
