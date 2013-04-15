@@ -325,7 +325,7 @@ public class AccountManager
      * @param ip IP address.
      * @return Number of accounts with the given IP.
      */
-    public int countAccountsPerIp(String ip)
+    public int countAccountsWithIp(String ip)
     {
         if (ip.isEmpty())
             return 0;
