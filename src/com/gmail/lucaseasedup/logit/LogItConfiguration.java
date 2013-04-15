@@ -82,7 +82,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("preserve-slots.players",                 plugin.getConfig().getStringList("preserve-slots.players"));
         plugin.getConfig().set("accounts-per-ip",                        plugin.getConfig().getInt("accounts-per-ip", 3));
         plugin.getConfig().set("hashing-algorithm",                      plugin.getConfig().getString("hashing-algorithm", "sha-256"));
-        plugin.getConfig().set("show-spawn-world-info",                  plugin.getConfig().getBoolean("show-spawn-world-info", true));
+        plugin.getConfig().set("reveal-spawn-world",                     plugin.getConfig().getBoolean("reveal-spawn-world", true));
         plugin.getConfig().set("waiting-room.enabled",                   plugin.getConfig().getBoolean("waiting-room.enabled", false));
         plugin.getConfig().set("waiting-room.location.world",            plugin.getConfig().getString("waiting-room.location.world", "world"));
         plugin.getConfig().set("waiting-room.location.x",                plugin.getConfig().getDouble("waiting-room.location.x", 0.0));
@@ -390,9 +390,9 @@ public final class LogItConfiguration
         }
     }
     
-    public boolean isShowSpawnWorldInfoEnabled()
+    public boolean getRevealSpawnWorld()
     {
-        return plugin.getConfig().getBoolean("show-spawn-world-info");
+        return plugin.getConfig().getBoolean("reveal-spawn-world");
     }
     
     public boolean isWaitingRoomEnabled()

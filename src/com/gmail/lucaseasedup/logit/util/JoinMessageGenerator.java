@@ -1,5 +1,5 @@
 /*
- * SpawnWorldInfoGenerator.java
+ * JoinMessageGenerator.java
  *
  * Copyright (C) 2012 LucasEasedUp
  *
@@ -27,15 +27,22 @@ import org.bukkit.entity.Player;
 /**
  * @author LucasEasedUp
  */
-public class SpawnWorldInfoGenerator
+public class JoinMessageGenerator
 {
-    private SpawnWorldInfoGenerator()
+    private JoinMessageGenerator()
     {
     }
     
-    public static String generate(Player player)
+    public static String generate(Player player, boolean revealSpawnWorld)
     {
-        return getMessage("IN_WORLD").replace("%world%", getWorldAlias(player.getWorld()));
+        String message = getMessage("JOIN").replace("%player%", player.getName());
+        
+        if (revealSpawnWorld)
+            message = message.replace("%in_world%", getMessage("IN_WORLD").replace("%world%", getWorldAlias(player.getWorld())));
+        else
+            message = message.replace("%in_world%", "");
+        
+        return message;
     }
     
     public static String getWorldAlias(World world)

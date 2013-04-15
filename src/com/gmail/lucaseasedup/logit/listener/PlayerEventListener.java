@@ -140,7 +140,7 @@ public class PlayerEventListener extends EventListener
                 if ((core.getSessionManager().isSessionAlive(player) && core.getSessionManager().getSession(username).getIp().equals(ip))
                         || !core.getConfig().getForceLoginGlobal() || player.hasPermission("logit.force-login.exempt"))
                 {
-                    broadcastJoinMessage(player, core.getConfig().isShowSpawnWorldInfoEnabled());
+                    broadcastJoinMessage(player, core.getConfig().getRevealSpawnWorld());
                 }
                 else if (core.getConfig().getForceLoginGlobal() && core.getConfig().isWaitingRoomEnabled())
                 {

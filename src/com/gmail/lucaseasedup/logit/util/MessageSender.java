@@ -83,15 +83,13 @@ public class MessageSender
      * Broadcasts a join message.
      * 
      * @param player Player who joined.
-     * @param showSpawnWorldInfo Whether the spawn-world should be shown along with the join message.
+     * @param revealSpawnWorld Whether the spawn-world should be shown along with the join message.
      */
-    public static void broadcastJoinMessage(Player player, boolean showSpawnWorldInfo)
+    public static void broadcastJoinMessage(Player player, boolean revealSpawnWorld)
     {
-        String message = getMessage("JOIN")
-                .replace("%player%", player.getName())
-                .replace("%in_world%", (showSpawnWorldInfo) ? SpawnWorldInfoGenerator.generate(player) : "");
+        String joinMessage = JoinMessageGenerator.generate(player, revealSpawnWorld);
         
-        broadcastMessage(message, player);
+        broadcastMessage(joinMessage, player);
     }
     
     /**
@@ -101,10 +99,10 @@ public class MessageSender
      */
     public static void broadcastQuitMessage(Player player)
     {
-        String message = getMessage("QUIT")
+        String quitMessage = getMessage("QUIT")
                 .replace("%player%", player.getName());
         
-        broadcastMessage(message, player);
+        broadcastMessage(quitMessage, player);
     }
     
     /**
