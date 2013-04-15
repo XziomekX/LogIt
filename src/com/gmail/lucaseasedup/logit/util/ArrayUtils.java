@@ -33,11 +33,13 @@ public class ArrayUtils
         
         if (pieces.length > 1)
         {
-            output += pieces[0].toString() + assignmentSign + beforeValue + pieces[1].toString() + afterValue;
+            output += ((pieces[0] != null) ? pieces[0].toString() : "") + assignmentSign;
+            output += beforeValue + ((pieces[1] != null) ? pieces[1].toString() : "") + afterValue;
             
             for (int i = 2; i < pieces.length; i += 2)
             {
-                output += glue + pieces[i].toString() + assignmentSign + beforeValue + pieces[i + 1].toString() + afterValue;
+                output += glue + ((pieces[i] != null) ? pieces[i].toString() : "") + assignmentSign;
+                output += beforeValue + ((pieces[i + 1] != null) ? pieces[i + 1].toString() : "") + afterValue;
             }
         }
         
@@ -50,11 +52,11 @@ public class ArrayUtils
         
         if (pieces.length > 0)
         {
-            output += before + pieces[0].toString() + after;
+            output += before + ((pieces[0] != null) ? pieces[0].toString() : "") + after;
             
             for (int i = 1; i < pieces.length; i++)
             {
-                output += glue + before + pieces[i].toString() + after;
+                output += glue + before + ((pieces[i] != null) ? pieces[i].toString() : "") + after;
             }
         }
         
