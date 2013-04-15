@@ -90,10 +90,7 @@ public class BackupManager implements Runnable
         try (SqliteDatabase backupDatabase = new SqliteDatabase())
         {
             backupDatabase.connect("jdbc:sqlite:" + backupFile);
-            backupDatabase.createTable(core.getConfig().getStorageTable(), "username varchar(16) NOT NULL,"
-                                                                    + "salt varchar(20) NOT NULL,"
-                                                                    + "password varchar(256) NOT NULL,"
-                                                                    + "ip varchar(64)");
+            backupDatabase.createTable(core.getConfig().getStorageTable(), core.getStorageColumnDefinition());
             
             try (ResultSet rs = database.select(core.getConfig().getStorageTable(), "*"))
             {
@@ -105,7 +102,8 @@ public class BackupManager implements Runnable
                         rs.getString(core.getConfig().getStorageColumnsUsername()),
                         rs.getString(core.getConfig().getStorageColumnsSalt()),
                         rs.getString(core.getConfig().getStorageColumnsPassword()),
-                        rs.getString(core.getConfig().getStorageColumnsIp()));
+                        rs.getString(core.getConfig().getStorageColumnsIp()),
+                        rs.getString(core.getConfig().getStorageColumnsLastActive()));
                 }
             }
         }
@@ -137,12 +135,17 @@ public class BackupManager implements Runnable
                 while (rs.next())
                 {
                     database.insert(core.getConfig().getStorageTable(), new String[]{
-                        core.getConfig().getStorageColumnsUsername(),
-                        core.getConfig().getStorageColumnsSalt(),
-                        core.getConfig().getStorageColumnsPassword(),
-                        core.getConfig().getStorageColumnsIp()
-                    },
-                    rs.getString("username"), rs.getString("salt"), rs.getString("password"), rs.getString("ip"));
+                            core.getConfig().getStorageColumnsUsername(),
+                            core.getConfig().getStorageColumnsSalt(),
+                            core.getConfig().getStorageColumnsPassword(),
+                            core.getConfig().getStorageColumnsIp(),
+                            core.getConfig().getStorageColumnsLastActive()
+                        },
+                        rs.getString(core.getConfig().getStorageColumnsUsername()),
+                        rs.getString(core.getConfig().getStorageColumnsSalt()),
+                        rs.getString(core.getConfig().getStorageColumnsPassword()),
+                        rs.getString(core.getConfig().getStorageColumnsIp()),
+                        rs.getString(core.getConfig().getStorageColumnsLastActive()));
                 }
             }
         }
@@ -152,7 +155,7 @@ public class BackupManager implements Runnable
      * Restores the newest backup in the directory specified in the config.
      * 
      * @param database Database to be affected by the backup.
-     * @throws FileNotFoundException Thrown if there are not backups.
+     * @throws FileNotFoundException Thrown if there are no backups.
      * @throws SQLException
      */
     public void restoreBackup(Database database) throws FileNotFoundException, SQLException
