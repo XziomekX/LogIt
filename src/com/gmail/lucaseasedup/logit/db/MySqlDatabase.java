@@ -68,12 +68,12 @@ public class MySqlDatabase extends Database
     @Override
     public List<String> getColumnNames(String table) throws SQLException
     {
-        ResultSet tableInfo = executeQuery("PRAGMA table_info('" + table + "');");
+        ResultSet tableInfo = executeQuery("DESCRIBE " + table + ";");
         ArrayList<String> columnNames = new ArrayList<>();
         
         while (tableInfo.next())
         {
-            columnNames.add(tableInfo.getString("name"));
+            columnNames.add(tableInfo.getString("Field"));
         }
         
         return columnNames;
