@@ -59,12 +59,15 @@ public class AccountManager
     }
     
     /**
-     * Checks if an account with the specified username is created.
+     * Checks if the given username is registered.
+     * <p/>
+     * If integration mode is set to phpBB, it always returns true.
      * 
      * @param username Username.
-     * @return True if the account exists.
+     * @throws UnsupportedOperationException Thrown if current integration mode disallows this operation.
+     * @return True if the username is registered.
      */
-    public boolean isAccountCreated(String username)
+    public boolean isRegistered(String username)
     {
         if (core.getConfig().getIntegration() == NONE)
         {
@@ -90,7 +93,7 @@ public class AccountManager
      */
     public void createAccount(String username, String password)
     {
-        if (isAccountCreated(username))
+        if (isRegistered(username))
             throw new RuntimeException("Account already exists.");
         
         String salt = HashGenerator.generateSalt();
@@ -142,7 +145,7 @@ public class AccountManager
      */
     public void removeAccount(String username)
     {
-        if (!isAccountCreated(username))
+        if (!isRegistered(username))
             throw new AccountNotFoundException();
         
         try
@@ -186,7 +189,7 @@ public class AccountManager
      */
     public boolean checkAccountPassword(String username, String password)
     {
-        if (!isAccountCreated(username))
+        if (!isRegistered(username))
             throw new AccountNotFoundException();
         
         if (core.getConfig().getIntegration() == NONE)
@@ -243,7 +246,7 @@ public class AccountManager
      */
     public void changeAccountPassword(String username, String newPassword)
     {
-        if (!isAccountCreated(username))
+        if (!isRegistered(username))
             throw new AccountNotFoundException();
         
         String newSalt = HashGenerator.generateSalt();
@@ -291,7 +294,7 @@ public class AccountManager
      */
     public void attachIp(String username, String ip)
     {
-        if (!isAccountCreated(username))
+        if (!isRegistered(username))
             throw new AccountNotFoundException();
         
         try

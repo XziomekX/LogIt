@@ -115,7 +115,7 @@ public class MessageSender
      */
     public static void sendForceLoginMessage(Player player, AccountManager accountManager)
     {
-        if (accountManager.isAccountCreated(player.getName()))
+        if (accountManager.isRegistered(player.getName()))
         {
             player.sendMessage(getMessage("PLEASE_LOGIN"));
         }

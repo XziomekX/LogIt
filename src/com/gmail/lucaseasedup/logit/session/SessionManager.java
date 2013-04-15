@@ -72,7 +72,7 @@ public class SessionManager implements Runnable
             }
             else if (isPlayerOnline(username))
             {
-                if (core.getAccountManager().isAccountCreated(username) && !player.hasPermission("logit.force-login.timeout.exempt")
+                if (core.getAccountManager().isRegistered(username) && !player.hasPermission("logit.force-login.timeout.exempt")
                         && core.isPlayerForcedToLogin(player))
                 {
                     if (session.getStatus() <= forceLoginTimeout)

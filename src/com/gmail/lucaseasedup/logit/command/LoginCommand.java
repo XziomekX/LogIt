@@ -88,7 +88,7 @@ public class LoginCommand extends AbstractCommandExecutor
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
-            else if (!core.getAccountManager().isAccountCreated(p.getName()))
+            else if (!core.getAccountManager().isRegistered(p.getName()))
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
             }

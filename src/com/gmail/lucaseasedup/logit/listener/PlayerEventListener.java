@@ -74,7 +74,7 @@ public class PlayerEventListener extends EventListener
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_ALREADY_USED"));
         }
-        else if (!core.getAccountManager().isAccountCreated(player.getName()) && core.getConfig().getKickUnregistered())
+        else if (!core.getAccountManager().isRegistered(player.getName()) && core.getConfig().getKickUnregistered())
         {
             event.disallow(KICK_OTHER, getMessage("KICK_UNREGISTERED"));
         }

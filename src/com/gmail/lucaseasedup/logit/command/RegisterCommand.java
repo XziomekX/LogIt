@@ -60,7 +60,7 @@ public class RegisterCommand extends AbstractCommandExecutor
             {
                 s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
-            else if (core.getAccountManager().isAccountCreated(args[1]))
+            else if (core.getAccountManager().isRegistered(args[1]))
             {
                 s.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_OTHERS").replace("%player%", args[1]));
             }
@@ -99,7 +99,7 @@ public class RegisterCommand extends AbstractCommandExecutor
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
             }
-            else if (core.getAccountManager().isAccountCreated(p.getName()))
+            else if (core.getAccountManager().isRegistered(p.getName()))
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_SELF"));
             }
