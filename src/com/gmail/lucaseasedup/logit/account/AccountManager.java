@@ -35,6 +35,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import static java.util.logging.Level.*;
 
@@ -331,6 +332,16 @@ public class AccountManager
             return 0;
         
         return Collections.frequency(cIp.values(), ip);
+    }
+    
+    /**
+     * Counts unique IP addresses.
+     * 
+     * @return Number of unique IP addresses.
+     */
+    public int countUniqueIps()
+    {
+        return new HashSet(cIp.values()).size();
     }
     
     public void updateLastActiveDate(String username)

@@ -107,6 +107,10 @@ public class LogItCommand extends AbstractCommandExecutor
                 {
                     s.sendMessage(getLogItSubcommandHelp("accountcount", null));
                 }
+                if (p == null || p.hasPermission("logit.ipcount"))
+                {
+                    s.sendMessage(getLogItSubcommandHelp("ipcount", "[ip]"));
+                }
             }
         }
         else if (subcommand.equalsIgnoreCase("version") && args.length == 1)
@@ -346,6 +350,27 @@ public class LogItCommand extends AbstractCommandExecutor
             else
             {
                 s.sendMessage(getMessage("ACCOUNT_COUNT").replace("%num%", String.valueOf(core.getAccountManager().getAccountCount())));
+            }
+        }
+        else if (subcommand.equalsIgnoreCase("ipcount") && args.length <= 2)
+        {
+            if (p != null && !p.hasPermission("logit.ipcount"))
+            {
+                s.sendMessage(getMessage("NO_PERMS"));
+            }
+            else
+            {
+                if (args.length == 1)
+                {
+                    s.sendMessage(getMessage("IP_COUNT_UNIQUE")
+                        .replace("%num%", String.valueOf(core.getAccountManager().countUniqueIps())));
+                }
+                else if (args.length == 2)
+                {
+                    s.sendMessage(getMessage("IP_COUNT_ACCOUNTS")
+                        .replace("%ip%", args[1])
+                        .replace("%num%", String.valueOf(core.getAccountManager().countAccountsWithIp(args[1]))));
+                }
             }
         }
         else
