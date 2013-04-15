@@ -367,6 +367,16 @@ public class LogItCore
         plugin.getLogger().log(level, stripColor(message));
     }
     
+    public HashMap<String, String> getStorageColumns()
+    {
+        return storageColumns;
+    }
+    
+    public String getStorageColumnDefinition()
+    {
+        return storageColumnDefinition;
+    }
+    
     public Permission getPermissions()
     {
         return permissions;
