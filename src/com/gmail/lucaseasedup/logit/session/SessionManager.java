@@ -44,7 +44,7 @@ public class SessionManager implements Runnable
     public void run()
     {
         long forceLoginTimeout = (core.getConfig().getForceLoginTimeout() > 0L)
-                ? (-core.getConfig().getForceLoginTimeout()) : Long.MIN_VALUE;
+                ? (-core.getConfig().getForceLoginTimeoutTicks()) : Long.MIN_VALUE;
         
         for (Map.Entry<String, Session> entry : sessions.entrySet())
         {
@@ -54,7 +54,7 @@ public class SessionManager implements Runnable
             
             if (session.getStatus() >= 0L)
             {
-                if (session.getStatus() > core.getConfig().getSessionLifetime())
+                if (session.getStatus() > core.getConfig().getSessionLifetimeTicks())
                 {
                     if (isPlayerOnline(username))
                     {

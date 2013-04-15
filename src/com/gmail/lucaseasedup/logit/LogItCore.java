@@ -236,7 +236,7 @@ public class LogItCore
      */
     public boolean isPlayerForcedToLogin(Player player)
     {
-        return (config.getForceLoginGlobal() || config.getForceLoginInWorld(player.getWorld()))
+        return (config.getForceLoginGlobal() || config.isLoginForcedInWorld(player.getWorld()))
                 && !player.hasPermission("logit.force-login.exempt");
     }
     

@@ -54,7 +54,7 @@ public class BackupManager implements Runnable
         
         timer.run();
         
-        if (timer.getElapsed() >= core.getConfig().getScheduledBackupInterval())
+        if (timer.getElapsed() >= core.getConfig().getScheduledBackupIntervalTicks())
         {
             try
             {

@@ -41,7 +41,7 @@ public class AccountWatcher implements Runnable
         
         Set<String> usernames = Collections.synchronizedSet(accountManager.getRegisteredUsernames());
         int now = (int) (System.currentTimeMillis() / 1000L);
-
+        
         for (String username : usernames)
         {
             int lastActiveDate = accountManager.getLastActiveDate(username);
@@ -49,7 +49,7 @@ public class AccountWatcher implements Runnable
             if (lastActiveDate == 0)
                 continue;
             
-            if ((now - lastActiveDate) / 86400 >= core.getConfig().getDaysOfAbsenceToUnregister())
+            if ((now - lastActiveDate) >= core.getConfig().getSecondsOfAbsenceToUnregister())
             {
                 accountManager.removeAccount(username);
             }

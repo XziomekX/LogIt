@@ -140,14 +140,14 @@ public final class LogItConfiguration
         return plugin.getConfig().getBoolean("force-login.global");
     }
     
-    public List<String> getForceLoginInWorlds()
+    public List<String> getWorldsWithForceLogin()
     {
         return plugin.getConfig().getStringList("force-login.in-worlds");
     }
     
-    public boolean getForceLoginInWorld(World world)
+    public boolean isLoginForcedInWorld(World world)
     {
-        return getForceLoginInWorlds().contains(world.getName());
+        return getWorldsWithForceLogin().contains(world.getName());
     }
     
     public List<String> getForceLoginAllowedCommands()
@@ -157,7 +157,12 @@ public final class LogItConfiguration
     
     public long getForceLoginTimeout()
     {
-        return plugin.getConfig().getInt("force-login.timeout") * 20L;
+        return plugin.getConfig().getInt("force-login.timeout");
+    }
+    
+    public long getForceLoginTimeoutTicks()
+    {
+        return getForceLoginTimeout() * 20L;
     }
     
     public boolean getForceLoginPreventMove()
@@ -252,7 +257,12 @@ public final class LogItConfiguration
     
     public long getSessionLifetime()
     {
-        return plugin.getConfig().getInt("session-lifetime") * 20L;
+        return plugin.getConfig().getInt("session-lifetime");
+    }
+    
+    public long getSessionLifetimeTicks()
+    {
+        return getSessionLifetime() * 20L;
     }
     
     public String getUsernameRegex()
@@ -316,6 +326,11 @@ public final class LogItConfiguration
     public int getDaysOfAbsenceToUnregister()
     {
         return plugin.getConfig().getInt("days-of-absence-to-unregister");
+    }
+    
+    public int getSecondsOfAbsenceToUnregister()
+    {
+        return getDaysOfAbsenceToUnregister() * 86400;
     }
     
     public int getPreserveSlotsAmount()
@@ -551,7 +566,12 @@ public final class LogItConfiguration
     
     public long getScheduledBackupInterval()
     {
-        return (plugin.getConfig().getInt("backup.schedule.interval") * 60) * 20L;
+        return plugin.getConfig().getInt("backup.schedule.interval");
+    }
+    
+    public long getScheduledBackupIntervalTicks()
+    {
+        return getScheduledBackupInterval() * 60 * 20L;
     }
     
     /**
@@ -586,7 +606,6 @@ public final class LogItConfiguration
     {
         UNKNOWN, PLAIN, MD2, MD5, SHA1, SHA256, SHA384, SHA512, WHIRLPOOL
     }
-    
     
     public static enum IntegrationType
     {
