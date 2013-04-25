@@ -130,6 +130,7 @@ public class AccountManager
         {
             sendMessage(username, getMessage("CREATE_ACCOUNT_FAIL_SELF"));
             core.log(WARNING, getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username));
+            core.log(WARNING, getMessage("CAUGHT_ERROR").replace("%error%", ex.getMessage()));
             
             callEvent(new AccountCreateEvent(username, hash, FAILURE));
         }
@@ -173,6 +174,7 @@ public class AccountManager
         {
             sendMessage(username, getMessage("REMOVE_ACCOUNT_FAIL_SELF"));
             core.log(WARNING, getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username));
+            core.log(WARNING, getMessage("CAUGHT_ERROR").replace("%error%", ex.getMessage()));
             
             callEvent(new AccountRemoveEvent(username, FAILURE));
         }
@@ -280,7 +282,8 @@ public class AccountManager
         catch (SQLException|UnsupportedOperationException ex)
         {
             sendMessage(username, getMessage("CHANGE_PASSWORD_FAIL_SELF"));
-            core.log(FINE, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username));
+            core.log(WARNING, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username));
+            core.log(WARNING, getMessage("CAUGHT_ERROR").replace("%error%", ex.getMessage()));
             
             callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, FAILURE));
         }
@@ -318,7 +321,8 @@ public class AccountManager
         }
         catch (SQLException|UnsupportedOperationException ex)
         {
-            core.log(FINE, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username).replace("%ip%", ip));
+            core.log(WARNING, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username).replace("%ip%", ip));
+            core.log(WARNING, getMessage("CAUGHT_ERROR").replace("%error%", ex.getMessage()));
             
             callEvent(new AccountAttachIpEvent(username, ip, FAILURE));
         }
@@ -403,6 +407,7 @@ public class AccountManager
         catch (SQLException|UnsupportedOperationException ex)
         {
             core.log(WARNING, getMessage("PURGE_FAIL"));
+            core.log(WARNING, getMessage("CAUGHT_ERROR").replace("%error%", ex.getMessage()));
             
             throw ex;
         }
@@ -442,6 +447,7 @@ public class AccountManager
             catch (SQLException ex)
             {
                 core.log(WARNING, getMessage("LOAD_ACCOUNTS_FAIL"));
+                core.log(WARNING, getMessage("CAUGHT_ERROR").replace("%error%", ex.getMessage()));
             }
         }
     }
