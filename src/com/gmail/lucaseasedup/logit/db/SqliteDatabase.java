@@ -128,25 +128,27 @@ public class SqliteDatabase extends Database
     @Override
     public boolean insert(String table, String... values) throws SQLException
     {
-        return executeStatement("INSERT INTO " + table + " VALUES (" + ArrayUtils.implodeArray(values, ",", "\"", "\"") + ");");
+        return executeStatement("INSERT INTO " + table + " VALUES (" + ArrayUtils.implodeSqlArray(values, ",") + ");");
     }
     
     @Override
     public boolean insert(String table, String[] columns, String... values) throws SQLException
     {
-        return executeStatement("INSERT INTO " + table + " (" + ArrayUtils.implodeArray(columns, ",") + ") VALUES (" + ArrayUtils.implodeArray(values, ",", "\"", "\"") + ");");
+        return executeStatement("INSERT INTO " + table
+            + " (" + ArrayUtils.implodeSqlArray(columns, ",") + ") VALUES (" + ArrayUtils.implodeSqlArray(values, ",") + ");");
     }
     
     @Override
     public boolean update(String table, String[] where, String... set) throws SQLException
     {
-        return executeStatement("UPDATE " + table + " SET " + ArrayUtils.implodeKeyValueArray(set, ",", "=", "\"", "\"") + " WHERE " + ArrayUtils.implodeKeyValueArray(where, " AND ", "=", "\"", "\"") + ";");
+        return executeStatement("UPDATE " + table
+            + " SET " + ArrayUtils.implodeSqlKeyValueArray(set, ", ") + " WHERE " + ArrayUtils.implodeSqlKeyValueArray(where, " AND ") + ";");
     }
     
     @Override
     public boolean delete(String table, String[] where) throws SQLException
     {
-        return executeStatement("DELETE FROM " + table + " WHERE " + ArrayUtils.implodeKeyValueArray(where, " AND ", "=", "\"", "\"") + ";");
+        return executeStatement("DELETE FROM " + table + " WHERE " + ArrayUtils.implodeSqlKeyValueArray(where, " AND ") + ";");
     }
     
     @Override

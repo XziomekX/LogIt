@@ -18,6 +18,8 @@
  */
 package com.gmail.lucaseasedup.logit.util;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 /**
  * @author LucasEasedUp
  */
@@ -46,6 +48,16 @@ public class ArrayUtils
         return output;
     }
     
+    public static String implodeSqlKeyValueArray(String[] pieces, String glue)
+    {
+        for (int i = 0; i < pieces.length; i += 2)
+        {
+            pieces[i] = StringEscapeUtils.escapeSql(pieces[i]);
+        }
+        
+        return implodeKeyValueArray(pieces, glue, " = ", "'", "'");
+    }
+    
     public static String implodeArray(Object[] pieces, String glue, String before, String after)
     {
         String output = "";
@@ -72,4 +84,15 @@ public class ArrayUtils
     {
         return implodeArray(pieces, "");
     }
+    
+    public static String implodeSqlArray(String[] pieces, String glue)
+    {
+        for (int i = 0; i < pieces.length; i++)
+        {
+            pieces[i] = StringEscapeUtils.escapeSql(pieces[i]);
+        }
+        
+        return implodeArray(pieces, glue, "'", "'");
+    }
+    
 }
