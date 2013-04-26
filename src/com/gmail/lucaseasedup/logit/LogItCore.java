@@ -27,6 +27,7 @@ import com.gmail.lucaseasedup.logit.db.*;
 import static com.gmail.lucaseasedup.logit.hash.HashGenerator.*;
 import com.gmail.lucaseasedup.logit.listener.*;
 import com.gmail.lucaseasedup.logit.session.SessionManager;
+import com.gmail.lucaseasedup.logit.util.SqlUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -115,15 +116,16 @@ public class LogItCore
         
         try
         {
-            database.createTableIfNotExists(config.getStorageTable(), storageColumnDefinition);
+            database.createTableIfNotExists(config.getStorageTable(), arrStorageColumns);
             
             List<String> existingColumns = database.getColumnNames(config.getStorageTable());
             
-            for (Map.Entry<String, String> entry : storageColumns.entrySet())
+            for (Map.Entry<String, String> entry : hmStorageColumns.entrySet())
             {
                 if (!existingColumns.contains(entry.getKey()))
                 {
-                    database.addBatch("ALTER TABLE " + config.getStorageTable() + " ADD COLUMN " + entry.getKey() + " " + entry.getValue() + ";");
+                    database.addBatch("ALTER TABLE `" + SqlUtils.escapeQuotes(config.getStorageTable(), "`") + "`"
+                        + " ADD COLUMN `" + entry.getKey() + "` " + entry.getValue() + ";");
                 }
             }
             
@@ -367,14 +369,14 @@ public class LogItCore
         plugin.getLogger().log(level, stripColor(message));
     }
     
-    public HashMap<String, String> getStorageColumns()
+    public HashMap<String, String> getStorageColumnsHashMap()
     {
-        return storageColumns;
+        return hmStorageColumns;
     }
     
-    public String getStorageColumnDefinition()
+    public String[] getStorageColumnsStrings()
     {
-        return storageColumnDefinition;
+        return arrStorageColumns;
     }
     
     public Permission getPermissions()
@@ -458,19 +460,22 @@ public class LogItCore
         if (config == null)
             return;
         
-        storageColumns.put(config.getStorageColumnsUsername(),   "VARCHAR(16)");
-        storageColumns.put(config.getStorageColumnsSalt(),       "VARCHAR(20)");
-        storageColumns.put(config.getStorageColumnsPassword(),   "VARCHAR(256)");
-        storageColumns.put(config.getStorageColumnsIp(),         "VARCHAR(64)");
-        storageColumns.put(config.getStorageColumnsLastActive(), "INTEGER");
+        hmStorageColumns.put(config.getStorageColumnsUsername(),   "VARCHAR(16)");
+        hmStorageColumns.put(config.getStorageColumnsSalt(),       "VARCHAR(20)");
+        hmStorageColumns.put(config.getStorageColumnsPassword(),   "VARCHAR(256)");
+        hmStorageColumns.put(config.getStorageColumnsIp(),         "VARCHAR(64)");
+        hmStorageColumns.put(config.getStorageColumnsLastActive(), "INTEGER");
         
-        for (Map.Entry<String, String> entry : storageColumns.entrySet())
-        {
-            if (storageColumnDefinition.length() > 0)
-                storageColumnDefinition += ", ";
-            
-            storageColumnDefinition += entry.getKey() + " " + entry.getValue();
-        }
+        arrStorageColumns[0] = config.getStorageColumnsUsername();
+        arrStorageColumns[1] = "VARCHAR(16)";
+        arrStorageColumns[2] = config.getStorageColumnsSalt();
+        arrStorageColumns[3] = "VARCHAR(20)";
+        arrStorageColumns[4] = config.getStorageColumnsPassword();
+        arrStorageColumns[5] = "VARCHAR(256)";
+        arrStorageColumns[6] = config.getStorageColumnsIp();
+        arrStorageColumns[7] = "VARCHAR(64)";
+        arrStorageColumns[8] = config.getStorageColumnsLastActive();
+        arrStorageColumns[9] = "INTEGER";
     }
     
     /**
@@ -508,6 +513,6 @@ public class LogItCore
     private int accountWatcherTaskId;
     private int backupManagerTaskId;
     
-    private HashMap<String, String> storageColumns = new HashMap<>();
-    private String storageColumnDefinition = "";
+    private HashMap<String, String> hmStorageColumns = new HashMap<>();
+    private String[] arrStorageColumns = new String[10];
 }
