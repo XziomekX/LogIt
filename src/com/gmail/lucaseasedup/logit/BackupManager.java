@@ -98,7 +98,13 @@ public class BackupManager implements Runnable
                 
                 while (rs.next())
                 {
-                    backupDatabase.insert(core.getConfig().getStorageTable(),
+                    backupDatabase.insert(core.getConfig().getStorageTable(), new String[]{
+                            core.getConfig().getStorageColumnsUsername(),
+                            core.getConfig().getStorageColumnsSalt(),
+                            core.getConfig().getStorageColumnsPassword(),
+                            core.getConfig().getStorageColumnsIp(),
+                            core.getConfig().getStorageColumnsLastActive()
+                        },
                         rs.getString(core.getConfig().getStorageColumnsUsername()),
                         rs.getString(core.getConfig().getStorageColumnsSalt()),
                         rs.getString(core.getConfig().getStorageColumnsPassword()),
