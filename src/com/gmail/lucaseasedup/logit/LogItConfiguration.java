@@ -81,6 +81,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("preserve-slots.amount",                  plugin.getConfig().getInt("preserve-slots.amount", 0));
         plugin.getConfig().set("preserve-slots.players",                 plugin.getConfig().getStringList("preserve-slots.players"));
         plugin.getConfig().set("accounts-per-ip",                        plugin.getConfig().getInt("accounts-per-ip", 3));
+        plugin.getConfig().set("unrestricted-ips",                       plugin.getConfig().getStringList("unrestricted-ips"));
         plugin.getConfig().set("hashing-algorithm",                      plugin.getConfig().getString("hashing-algorithm", "sha-256"));
         plugin.getConfig().set("reveal-spawn-world",                     plugin.getConfig().getBoolean("reveal-spawn-world", true));
         plugin.getConfig().set("waiting-room.enabled",                   plugin.getConfig().getBoolean("waiting-room.enabled", false));
@@ -346,6 +347,11 @@ public final class LogItConfiguration
     public int getAccountsPerIp()
     {
         return plugin.getConfig().getInt("accounts-per-ip");
+    }
+    
+    public List<String> getUnrestrictedIps()
+    {
+        return plugin.getConfig().getStringList("unrestricted-ips");
     }
     
     public HashingAlgorithm getHashingAlgorithm()
