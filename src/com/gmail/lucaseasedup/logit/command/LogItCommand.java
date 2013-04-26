@@ -191,6 +191,7 @@ public class LogItCommand extends AbstractCommandExecutor
                             s.sendMessage(getMessage("CREATE_BACKUP_FAIL"));
 
                         core.log(WARNING, getMessage("CREATE_BACKUP_FAIL"));
+                        core.log(WARNING, getMessage("CAUGHT_ERROR").replace("%error%", ex.getMessage()));
                     }
                 }
             }
