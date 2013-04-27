@@ -29,7 +29,7 @@ public class SqlUtils
     
     public static String escapeQuotes(String string, String quote)
     {
-        return string.replace(quote, quote + quote);
+        return string.replace(quote, quote + quote).replace("\\", "\\\\");
     }
     
     public static String implodeColumnArray(String[] columns)
