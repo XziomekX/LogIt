@@ -349,7 +349,7 @@ public class AccountManager
      */
     public int countUniqueIps()
     {
-        return new HashSet(cIp.values()).size();
+        return new HashSet<String>(cIp.values()).size();
     }
     
     public void updateLastActiveDate(String username)
