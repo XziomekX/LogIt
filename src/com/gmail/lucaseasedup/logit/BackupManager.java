@@ -90,7 +90,7 @@ public class BackupManager implements Runnable
         try (SqliteDatabase backupDatabase = new SqliteDatabase())
         {
             backupDatabase.connect("jdbc:sqlite:" + backupFile);
-            backupDatabase.createTable(core.getConfig().getStorageTable(), core.getStorageColumnsStrings());
+            backupDatabase.createTable(core.getConfig().getStorageTable(), core.getStorageColumns());
             
             try (ResultSet rs = database.select(core.getConfig().getStorageTable(), "*"))
             {

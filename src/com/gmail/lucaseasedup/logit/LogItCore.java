@@ -116,16 +116,16 @@ public class LogItCore
         
         try
         {
-            database.createTableIfNotExists(config.getStorageTable(), arrStorageColumns);
+            database.createTableIfNotExists(config.getStorageTable(), storageColumns);
             
             List<String> existingColumns = database.getColumnNames(config.getStorageTable());
             
-            for (Map.Entry<String, String> entry : hmStorageColumns.entrySet())
+            for (int i = 0; i < storageColumns.length; i += 2)
             {
-                if (!existingColumns.contains(entry.getKey()))
+                if (!existingColumns.contains(storageColumns[i]))
                 {
                     database.addBatch("ALTER TABLE `" + SqlUtils.escapeQuotes(config.getStorageTable(), "`") + "`"
-                        + " ADD COLUMN `" + entry.getKey() + "` " + entry.getValue() + ";");
+                        + " ADD COLUMN `" + storageColumns[i] + "` " + storageColumns[i + 1] + ";");
                 }
             }
             
@@ -369,14 +369,16 @@ public class LogItCore
         plugin.getLogger().log(level, stripColor(message));
     }
     
-    public HashMap<String, String> getStorageColumnsHashMap()
+    /**
+     * Returns an array containing storage columns,
+     * where getStorageColumns()[i] is the column name,
+     * and getStorageColumns()[i + 1] is the column type.
+     * 
+     * @return Storage columns.
+     */
+    public String[] getStorageColumns()
     {
-        return hmStorageColumns;
-    }
-    
-    public String[] getStorageColumnsStrings()
-    {
-        return arrStorageColumns;
+        return storageColumns;
     }
     
     public Permission getPermissions()
@@ -460,22 +462,11 @@ public class LogItCore
         if (config == null)
             return;
         
-        hmStorageColumns.put(config.getStorageColumnsUsername(),   "VARCHAR(16)");
-        hmStorageColumns.put(config.getStorageColumnsSalt(),       "VARCHAR(20)");
-        hmStorageColumns.put(config.getStorageColumnsPassword(),   "VARCHAR(256)");
-        hmStorageColumns.put(config.getStorageColumnsIp(),         "VARCHAR(64)");
-        hmStorageColumns.put(config.getStorageColumnsLastActive(), "INTEGER");
-        
-        arrStorageColumns[0] = config.getStorageColumnsUsername();
-        arrStorageColumns[1] = "VARCHAR(16)";
-        arrStorageColumns[2] = config.getStorageColumnsSalt();
-        arrStorageColumns[3] = "VARCHAR(20)";
-        arrStorageColumns[4] = config.getStorageColumnsPassword();
-        arrStorageColumns[5] = "VARCHAR(256)";
-        arrStorageColumns[6] = config.getStorageColumnsIp();
-        arrStorageColumns[7] = "VARCHAR(64)";
-        arrStorageColumns[8] = config.getStorageColumnsLastActive();
-        arrStorageColumns[9] = "INTEGER";
+        storageColumns[0] = config.getStorageColumnsUsername();   storageColumns[1] = "VARCHAR(16)";
+        storageColumns[2] = config.getStorageColumnsSalt();       storageColumns[3] = "VARCHAR(20)";
+        storageColumns[4] = config.getStorageColumnsPassword();   storageColumns[5] = "VARCHAR(256)";
+        storageColumns[6] = config.getStorageColumnsIp();         storageColumns[7] = "VARCHAR(64)";
+        storageColumns[8] = config.getStorageColumnsLastActive(); storageColumns[9] = "INTEGER";
     }
     
     /**
@@ -513,6 +504,5 @@ public class LogItCore
     private int accountWatcherTaskId;
     private int backupManagerTaskId;
     
-    private HashMap<String, String> hmStorageColumns = new HashMap<>();
-    private String[] arrStorageColumns = new String[10];
+    private String[] storageColumns = new String[10];
 }
