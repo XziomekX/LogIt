@@ -18,7 +18,6 @@
 package org.apache.commons.codec.binary;
 
 import java.math.BigInteger;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Provides Base64 encoding and decoding as defined by <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>.
