@@ -265,13 +265,13 @@ public class LogItCommand extends AbstractCommandExecutor
             {
                 s.sendMessage(getMessage("ONLY_PLAYERS"));
             }
-            else if (p != null && !p.hasPermission("logit.setwr"))
+            else if (!p.hasPermission("logit.setwr"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
             }
             else
             {
-                core.getConfig().setWaitingRoomLocation(p.getLocation());
+                core.getWaitingRoom().setLocation(p.getLocation());
                 core.getConfig().save();
                 
                 p.sendMessage(getMessage("WAITING_ROOM_SET"));
@@ -284,13 +284,13 @@ public class LogItCommand extends AbstractCommandExecutor
             {
                 s.sendMessage(getMessage("ONLY_PLAYERS"));
             }
-            else if (p != null && !p.hasPermission("logit.gotowr"))
+            else if (!p.hasPermission("logit.gotowr"))
             {
                 s.sendMessage(getMessage("NO_PERMS"));
             }
             else
             {
-                p.teleport(core.getConfig().getWaitingRoomLocation());
+                p.teleport(core.getWaitingRoom().getLocation());
             }
         }
         else if (subcommand.equalsIgnoreCase("globalpass") && args.length > 1 && args.length <= 3)
@@ -305,15 +305,15 @@ public class LogItCommand extends AbstractCommandExecutor
                 {
                     s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
                 }
-                else if (args[2].length() < core.getConfig().getPasswordMinLength())
+                else if (args[2].length() < core.getConfig().getInt("password.min-length"))
                 {
                     s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
-                            String.valueOf(core.getConfig().getPasswordMinLength())));
+                            String.valueOf(core.getConfig().getInt("password.min-length"))));
                 }
-                else if (args[2].length() > core.getConfig().getPasswordMaxLength())
+                else if (args[2].length() > core.getConfig().getInt("password.max-length"))
                 {
                     s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
-                            String.valueOf(core.getConfig().getPasswordMaxLength())));
+                            String.valueOf(core.getConfig().getInt("password.max-length"))));
                 }
                 else
                 {

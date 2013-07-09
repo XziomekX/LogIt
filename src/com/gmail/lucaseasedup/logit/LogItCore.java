@@ -18,7 +18,6 @@
  */
 package com.gmail.lucaseasedup.logit;
 
-import static com.gmail.lucaseasedup.logit.LogItConfiguration.HashingAlgorithm.*;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
 import com.gmail.lucaseasedup.logit.account.AccountManager;
 import com.gmail.lucaseasedup.logit.account.AccountWatcher;
@@ -27,10 +26,9 @@ import com.gmail.lucaseasedup.logit.db.*;
 import static com.gmail.lucaseasedup.logit.hash.HashGenerator.*;
 import com.gmail.lucaseasedup.logit.listener.*;
 import com.gmail.lucaseasedup.logit.session.SessionManager;
-import com.gmail.lucaseasedup.logit.util.SqlUtils;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import com.google.common.collect.ImmutableList;
+import java.io.*;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -39,7 +37,10 @@ import static java.util.logging.Level.*;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import static org.bukkit.ChatColor.stripColor;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.jnbt.*;
 
 /**
  * LogItCore is the central part of LogIt.
@@ -61,17 +62,16 @@ public class LogItCore
         if (started)
             return;
         
-        // If LogIt hasn't been loaded yet, do it now.
+        config = new LogItConfiguration(plugin);
+        config.load();
+        
         if (!loaded)
             load();
         
-        config.load();
-        buildStorageColumnMeta();
-        
         // If LogIt does not know the hashing algorithm specified in the config, stop.
-        if (config.getHashingAlgorithm().equals(UNKNOWN))
+        if (getHashingAlgorithm().equals(HashingAlgorithm.UNKNOWN))
         {
-            log(SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM").replace("%ha%", config.getHashingAlgorithm().name()));
+            log(SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM").replace("%ha%", getHashingAlgorithm().name()));
             plugin.disable();
             
             return;
@@ -79,25 +79,27 @@ public class LogItCore
         
         try
         {
-            switch (config.getStorageType())
+            switch (getStorageAccountsDbType())
             {
                 case SQLITE:
                 {
-                    database = new SqliteDatabase();
-                    database.connect("jdbc:sqlite:" + plugin.getDataFolder() + "/" + config.getSqliteFilename(), null, null, null);
+                    database = new SqliteDatabase("jdbc:sqlite:" +
+                        plugin.getDataFolder() + "/" + config.getString("storage.accounts.sqlite.filename"));
+                    database.connect(null, null, null);
                     
                     break;
                 }
                 case MYSQL:
                 {
-                    database = new MySqlDatabase();
-                    database.connect(config.getMysqlHost(), config.getMysqlUser(), config.getMysqlPassword(), config.getMysqlDatabase());
+                    database = new MySqlDatabase(config.getString("storage.accounts.mysql.host"));
+                    database.connect(config.getString("storage.accounts.mysql.user"), config.getString("storage.accounts.mysql.password"),
+                        config.getString("storage.accounts.mysql.database"));
                     
                     break;
                 }
                 default:
                 {
-                    log(SEVERE, getMessage("UNKNOWN_STORAGE_TYPE").replace("%st%", config.getStorageType().name()));
+                    log(SEVERE, getMessage("UNKNOWN_STORAGE_TYPE").replace("%st%", getStorageAccountsDbType().name()));
                     plugin.disable();
                     
                     return;
@@ -116,20 +118,22 @@ public class LogItCore
         
         try
         {
-            database.createTableIfNotExists(config.getStorageTable(), storageColumns);
+            String[] storageColumnsArray = getStorageColumns();
+            List<String> existingColumns = database.getColumnNames(config.getString("storage.accounts.table"));
             
-            List<String> existingColumns = database.getColumnNames(config.getStorageTable());
+            database.createTableIfNotExists(config.getString("storage.accounts.table"), storageColumnsArray);
+            database.setAutobatchEnabled(true);
             
-            for (int i = 0; i < storageColumns.length; i += 2)
+            for (int i = 0; i < storageColumnsArray.length; i += 2)
             {
-                if (!existingColumns.contains(storageColumns[i]))
+                if (!existingColumns.contains(storageColumnsArray[i]))
                 {
-                    database.addBatch("ALTER TABLE `" + SqlUtils.escapeQuotes(config.getStorageTable(), "`") + "`"
-                        + " ADD COLUMN `" + storageColumns[i] + "` " + storageColumns[i + 1] + ";");
+                    database.addColumn(config.getString("storage.accounts.table"), storageColumnsArray[i], storageColumnsArray[i + 1]);
                 }
             }
             
             database.executeBatch();
+            database.setAutobatchEnabled(false);
         }
         catch (SQLException ex)
         {
@@ -141,8 +145,8 @@ public class LogItCore
         
         // At this point, we can surely say that LogIt has successfully started.
         log(FINE, getMessage("PLUGIN_START_SUCCESS")
-                .replace("%st%", config.getStorageType().name())
-                .replace("%ha%", config.getHashingAlgorithm().name()));
+                .replace("%st%", getStorageAccountsDbType().name())
+                .replace("%ha%", getHashingAlgorithm().name()));
         
         accountManager = new AccountManager(this, database);
         accountManager.loadAccounts();
@@ -150,6 +154,98 @@ public class LogItCore
         accountWatcher = new AccountWatcher(this, accountManager);
         backupManager  = new BackupManager(this, database);
         sessionManager = new SessionManager(this, accountManager);
+        
+        SqliteDatabase inventoryDatabase = new SqliteDatabase("jdbc:sqlite:" +
+            plugin.getDataFolder() + "/" + config.getString("storage.inventories.filename"));
+        
+        try
+        {
+            inventoryDatabase.connect();
+            inventoryDatabase.createTableIfNotExists("inventories", new String[]{
+                "username",     "VARCHAR(16)",
+                "inv-contents", "TEXT",
+                "inv-armor",    "TEXT"
+            });
+            
+            ResultSet rs = inventoryDatabase.select("inventories", new String[]{"username", "inv-contents", "inv-armor"});
+            
+            while (rs.next())
+            {
+                File playerFile = new File(System.getProperty("user.dir") + "/" +
+                    ((World) plugin.getServer().getWorlds().get(0)).getName() + "/players/" + rs.getString("username") + ".dat");
+                
+                if (playerFile.exists())
+                {
+                    ItemStack[] contents = InventoryDepository.fromBase64(rs.getString("inv-contents")).getContents();
+                    ItemStack[] armor = InventoryDepository.fromBase64(rs.getString("inv-armor")).getContents();
+                    CompoundTag rootCompoundTag;
+                    
+                    try (NBTInputStream is = new NBTInputStream(new FileInputStream(playerFile)))
+                    {
+                        rootCompoundTag = (CompoundTag) is.readTag();
+                    }
+                    
+                    HashMap<String, Tag> newRootTagMap = new HashMap<>();
+                    
+                    for (String tagName : rootCompoundTag.getValue().keySet())
+                    {
+                        newRootTagMap.put(tagName, (Tag) rootCompoundTag.getValue().get(tagName));
+                    }
+                    
+                    List<Tag> inventoryTagList = new ArrayList<>();
+                    
+                    for (int i = 0; i < 36; i++)
+                    {
+                        if (contents[i] != null)
+                        {
+                            HashMap<String, Tag> tagMap = new HashMap<>();
+                            tagMap.put("id", new ShortTag("id", (short) contents[i].getTypeId()));
+                            tagMap.put("Damage", new ShortTag("Damage", contents[i].getDurability()));
+                            tagMap.put("Count", new ByteTag("Count", (byte) contents[i].getAmount()));
+                            tagMap.put("Slot", new ByteTag("Slot", (byte) i));
+                            
+                            if (contents[i].getTypeId() > 0)
+                            {
+                                inventoryTagList.add(new CompoundTag("", tagMap));
+                            }
+                        }
+                    }
+                    
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (armor[i] != null)
+                        {
+                            HashMap<String, Tag> tagMap = new HashMap<>();
+                            tagMap.put("id", new ShortTag("id", (short) armor[i].getTypeId()));
+                            tagMap.put("Damage", new ShortTag("Damage", armor[i].getDurability()));
+                            tagMap.put("Count", new ByteTag("Count", (byte) 1));
+                            tagMap.put("Slot", new ByteTag("Slot", (byte) (i + 100)));
+                            
+                            if (armor[i].getTypeId() > 0)
+                            {
+                                inventoryTagList.add(new CompoundTag("", tagMap));
+                            }
+                        }
+                    }
+                    
+                    newRootTagMap.put("Inventory", new ListTag("Inventory", CompoundTag.class, inventoryTagList));
+                    
+                    try (NBTOutputStream os = new NBTOutputStream(new FileOutputStream(playerFile)))
+                    {
+                        os.writeTag(new CompoundTag("", newRootTagMap));
+                    }
+                }
+            }
+        }
+        catch (IOException | SQLException ex)
+        {
+            log(SEVERE, getMessage("DB_ERROR").replace("%error%", ex.getMessage()));
+            plugin.disable();
+            
+            return;
+        }
+        
+        inventoryDepository = new InventoryDepository(inventoryDatabase);
         
         pingerTaskId          = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, pinger, 0L, 2400L);
         sessionManagerTaskId  = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, sessionManager, 0L, 20L);
@@ -202,8 +298,7 @@ public class LogItCore
      */
     public void changeGlobalPassword(String password)
     {
-        config.setGlobalPassword(hash(password));
-        config.save();
+        config.set("password.global-password", hash(password));
         
         log(INFO, getMessage("GLOBALPASS_SET_SUCCESS"));
     }
@@ -216,13 +311,12 @@ public class LogItCore
      */
     public boolean checkGlobalPassword(String password)
     {
-        return config.getGlobalPassword().equals(hash(password));
+        return config.getString("password.global-password").equals(hash(password));
     }
     
     public void removeGlobalPassword()
     {
-        config.setGlobalPassword("");
-        config.save();
+        config.set("password.global-password", "");
         
         log(INFO, getMessage("GLOBALPASS_REMOVE_SUCCESS"));
     }
@@ -238,7 +332,7 @@ public class LogItCore
      */
     public boolean isPlayerForcedToLogin(Player player)
     {
-        return (config.getForceLoginGlobal() || config.isLoginForcedInWorld(player.getWorld()))
+        return (config.getBoolean("force-login.global") || config.getStringList("force-login.in-worlds").contains(player.getWorld().getName()))
                 && !player.hasPermission("logit.force-login.exempt");
     }
     
@@ -254,13 +348,13 @@ public class LogItCore
         
         if (sessionManager.isSessionAlive(player))
         {
-            permissions.playerRemoveGroup(player, config.getGroupsLoggedOut());
-            permissions.playerAddGroup(player, config.getGroupsLoggedIn());
+            permissions.playerRemoveGroup(player, config.getString("groups.logged-out"));
+            permissions.playerAddGroup(player, config.getString("groups.logged-in"));
         }
         else
         {
-            permissions.playerRemoveGroup(player, config.getGroupsLoggedIn());
-            permissions.playerAddGroup(player, config.getGroupsLoggedOut());
+            permissions.playerRemoveGroup(player, config.getString("groups.logged-in"));
+            permissions.playerAddGroup(player, config.getString("groups.logged-out"));
         }
     }
     
@@ -282,7 +376,7 @@ public class LogItCore
      */
     public String hash(String string)
     {
-        switch (config.getHashingAlgorithm())
+        switch (getHashingAlgorithm())
         {
             case PLAIN:
             {
@@ -336,12 +430,90 @@ public class LogItCore
     {
         String hash;
         
-        if (config.getHashingAlgorithm() != PLAIN)
+        if (getHashingAlgorithm() != HashingAlgorithm.PLAIN)
             hash = hash(string + salt);
         else
             hash = hash(string);
         
         return hash;
+    }
+    
+    public StorageType getStorageAccountsDbType()
+    {
+        String s = plugin.getConfig().getString("storage.accounts.db-type");
+        
+        if (s.equalsIgnoreCase("sqlite"))
+        {
+            return StorageType.SQLITE;
+        }
+        else if (s.equalsIgnoreCase("mysql"))
+        {
+            return StorageType.MYSQL;
+        }
+        else
+        {
+            return StorageType.UNKNOWN;
+        }
+    }
+    
+    public HashingAlgorithm getHashingAlgorithm()
+    {
+        String s = plugin.getConfig().getString("hashing-algorithm");
+        
+        if (s.equalsIgnoreCase("plain"))
+        {
+            return HashingAlgorithm.PLAIN;
+        }
+        else if (s.equalsIgnoreCase("md2"))
+        {
+            return HashingAlgorithm.MD2;
+        }
+        else if (s.equalsIgnoreCase("md5"))
+        {
+            return HashingAlgorithm.MD5;
+        }
+        else if (s.equalsIgnoreCase("sha-1"))
+        {
+            return HashingAlgorithm.SHA1;
+        }
+        else if (s.equalsIgnoreCase("sha-256"))
+        {
+            return HashingAlgorithm.SHA256;
+        }
+        else if (s.equalsIgnoreCase("sha-384"))
+        {
+            return HashingAlgorithm.SHA384;
+        }
+        else if (s.equalsIgnoreCase("sha-512"))
+        {
+            return HashingAlgorithm.SHA512;
+        }
+        else if (s.equalsIgnoreCase("whirlpool"))
+        {
+            return HashingAlgorithm.WHIRLPOOL;
+        }
+        else
+        {
+            return HashingAlgorithm.UNKNOWN;
+        }
+    }
+    
+    public IntegrationType getIntegration()
+    {
+        String s = plugin.getConfig().getString("integration");
+        
+        if (s.equalsIgnoreCase("none"))
+        {
+            return IntegrationType.NONE;
+        }
+        else if (s.equalsIgnoreCase("phpbb"))
+        {
+            return IntegrationType.PHPBB;
+        }
+        else
+        {
+            return IntegrationType.UNKNOWN;
+        }
     }
     
     /**
@@ -352,12 +524,12 @@ public class LogItCore
      */
     public void log(Level level, String message)
     {
-        if (config.isLogToFileEnabled())
+        if (config.getBoolean("log-to-file.enabled"))
         {
             Date             date = new Date();
             SimpleDateFormat sdf  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             
-            try (FileWriter fileWriter = new FileWriter(new File(plugin.getDataFolder(), config.getLogFilename()), true))
+            try (FileWriter fileWriter = new FileWriter(new File(plugin.getDataFolder(), config.getString("log-to-file.filename")), true))
             {
                 fileWriter.write(sdf.format(date) + " [" + level.getName() + "] " + stripColor(message) + "\n");
             }
@@ -378,7 +550,7 @@ public class LogItCore
      */
     public String[] getStorageColumns()
     {
-        return storageColumns;
+        return storageColumns.toArray(new String[storageColumns.size()]);
     }
     
     public Permission getPermissions()
@@ -428,10 +600,16 @@ public class LogItCore
     
     private void load()
     {
-        config              = new LogItConfiguration(plugin);
-        waitingRoom         = new WaitingRoom(this);
-        inventoryDepository = new InventoryDepository();
-        tickEventCaller     = new TickEventCaller();
+        storageColumns = ImmutableList.of(
+            config.getString("storage.accounts.columns.username"),    "VARCHAR(16)",
+            config.getString("storage.accounts.columns.salt"),        "VARCHAR(20)",
+            config.getString("storage.accounts.columns.password"),    "VARCHAR(256)",
+            config.getString("storage.accounts.columns.ip"),          "VARCHAR(64)",
+            config.getString("storage.accounts.columns.last_active"), "INTEGER"
+        );
+        
+        waitingRoom     = new WaitingRoom(this);
+        tickEventCaller = new TickEventCaller();
         
         plugin.getServer().getPluginManager().registerEvents(new TickEventListener(this), plugin);
         plugin.getServer().getPluginManager().registerEvents(new ServerEventListener(this), plugin);
@@ -457,18 +635,6 @@ public class LogItCore
         loaded = true;
     }
     
-    private void buildStorageColumnMeta()
-    {
-        if (config == null)
-            return;
-        
-        storageColumns[0] = config.getStorageColumnsUsername();   storageColumns[1] = "VARCHAR(16)";
-        storageColumns[2] = config.getStorageColumnsSalt();       storageColumns[3] = "VARCHAR(20)";
-        storageColumns[4] = config.getStorageColumnsPassword();   storageColumns[5] = "VARCHAR(256)";
-        storageColumns[6] = config.getStorageColumnsIp();         storageColumns[7] = "VARCHAR(64)";
-        storageColumns[8] = config.getStorageColumnsLastActive(); storageColumns[9] = "INTEGER";
-    }
-    
     /**
      * The preferred way to obtain the instance of LogIt core.
      * 
@@ -477,6 +643,21 @@ public class LogItCore
     public static LogItCore getInstance()
     {
         return INSTANCE;
+    }
+    
+    public static enum StorageType
+    {
+        UNKNOWN, SQLITE, MYSQL
+    }
+    
+    public static enum HashingAlgorithm
+    {
+        UNKNOWN, PLAIN, MD2, MD5, SHA1, SHA256, SHA384, SHA512, WHIRLPOOL
+    }
+    
+    public static enum IntegrationType
+    {
+        UNKNOWN, NONE, PHPBB
     }
     
     private static final LogItCore INSTANCE = new LogItCore((LogItPlugin) Bukkit.getPluginManager().getPlugin("LogIt"));
@@ -504,5 +685,5 @@ public class LogItCore
     private int accountWatcherTaskId;
     private int backupManagerTaskId;
     
-    private String[] storageColumns = new String[10];
+    private List<String> storageColumns;
 }

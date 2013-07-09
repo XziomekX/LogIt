@@ -36,7 +36,7 @@ public class InventoryEventListener extends EventListener
     @EventHandler
     private void onClick(InventoryClickEvent event)
     {
-        if (!core.getConfig().getForceLoginPreventInventoryClick() || !(event.getWhoClicked() instanceof Player))
+        if (!core.getConfig().getBoolean("force-login.prevent.inventory-click") || !(event.getWhoClicked() instanceof Player))
             return;
         
         Player player = (Player) event.getWhoClicked();

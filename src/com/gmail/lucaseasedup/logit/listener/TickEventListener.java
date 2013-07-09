@@ -37,7 +37,7 @@ public class TickEventListener extends EventListener
     @EventHandler
     private void onTick(TickEvent event)
     {
-        if (!core.getConfig().getForceLoginPreventAirDepletion())
+        if (!core.getConfig().getBoolean("force-login.prevent.air-depletion"))
             return;
         
         for (Player player : Bukkit.getOnlinePlayers())

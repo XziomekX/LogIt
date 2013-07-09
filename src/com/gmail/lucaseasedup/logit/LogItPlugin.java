@@ -21,6 +21,7 @@ package com.gmail.lucaseasedup.logit;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -97,17 +98,20 @@ public final class LogItPlugin extends JavaPlugin
      */
     private void loadMessages() throws IOException
     {
-        String   suffix = "_" + getConfig().getString("locale", "en");
-        JarFile  jarFile = new JarFile(getFile());
-        JarEntry jarEntry = jarFile.getJarEntry("messages" + suffix + ".properties");
+        String suffix = "_" + getConfig().getString("locale", "en");
         
-        if (jarEntry == null)
-            jarEntry = jarFile.getJarEntry("messages.properties");
-        
-        if (jarEntry == null)
-            throw new FileNotFoundException();
-        
-        prb = new PropertyResourceBundle(new InputStreamReader(jarFile.getInputStream(jarEntry), "UTF-8"));
+        try (JarFile jarFile = new JarFile(getFile()))
+        {
+            JarEntry jarEntry = jarFile.getJarEntry("messages" + suffix + ".properties");
+            
+            if (jarEntry == null)
+                jarEntry = jarFile.getJarEntry("messages.properties");
+            
+            if (jarEntry == null)
+                throw new FileNotFoundException("No message files found.");
+            
+            prb = new PropertyResourceBundle(new InputStreamReader(jarFile.getInputStream(jarEntry), "UTF-8"));
+        }
     }
     
     /**
@@ -124,7 +128,7 @@ public final class LogItPlugin extends JavaPlugin
         {
             message = formatColorCodes(prb.getString(label));
         }
-        catch (Exception ex)
+        catch (NullPointerException | MissingResourceException | ClassCastException ex)
         {
             return label;
         }

@@ -28,8 +28,13 @@ import java.util.List;
  */
 public class MySqlDatabase extends Database
 {
+    public MySqlDatabase(String host)
+    {
+        super(host);
+    }
+    
     @Override
-    public void connect(String host, String user, String password, String database) throws SQLException
+    public void connect(String user, String password, String database) throws SQLException
     {
         connection = DriverManager.getConnection(host, user, password);
         statement = connection.createStatement();
@@ -60,12 +65,6 @@ public class MySqlDatabase extends Database
     }
     
     @Override
-    public ResultSet executeQuery(String sql) throws SQLException
-    {
-        return statement.executeQuery(sql);
-    }
-    
-    @Override
     public List<String> getColumnNames(String table) throws SQLException
     {
         ResultSet tableInfo = executeQuery("DESCRIBE `" + SqlUtils.escapeQuotes(table, "`") + "`;");
@@ -80,27 +79,46 @@ public class MySqlDatabase extends Database
     }
     
     @Override
-    public ResultSet select(String table, String... columns) throws SQLException
+    public ResultSet executeQuery(String sql) throws SQLException
+    {
+        return statement.executeQuery(sql);
+    }
+    
+    @Override
+    public boolean executeStatement(String sql) throws SQLException
+    {
+        if (!isAutobatchEnabled())
+            return statement.execute(sql);
+        
+        addBatch(sql);
+        
+        return false;
+    }
+    
+    @Override
+    public ResultSet select(String table, String[] columns) throws SQLException
     {
         return statement.executeQuery("SELECT " + SqlUtils.implodeColumnArray(columns)
             + " FROM `" + SqlUtils.escapeQuotes(table, "`") + "`;");
     }
     
     @Override
-    public boolean executeStatement(String sql) throws SQLException
+    public ResultSet select(String table, String[] columns, String[] where) throws SQLException
     {
-        return statement.execute(sql);
+        return statement.executeQuery("SELECT " + SqlUtils.implodeColumnArray(columns)
+            + " FROM `" + SqlUtils.escapeQuotes(table, "`") + "`"
+            + " WHERE " + SqlUtils.implodeWhereArray(where) + ";");
     }
     
     @Override
-    public boolean createTable(String table, String... columns) throws SQLException
+    public boolean createTable(String table, String[] columns) throws SQLException
     {
         return executeStatement("CREATE TABLE `" + SqlUtils.escapeQuotes(table, "`") + "`"
             + " (" + SqlUtils.implodeColumnDefinition(columns) + ");");
     }
     
     @Override
-    public boolean createTableIfNotExists(String table, String... columns) throws SQLException
+    public boolean createTableIfNotExists(String table, String[] columns) throws SQLException
     {
         return executeStatement("CREATE TABLE IF NOT EXISTS `" + SqlUtils.escapeQuotes(table, "`") + "`"
             + " (" + SqlUtils.implodeColumnDefinition(columns) + ");");
@@ -126,21 +144,28 @@ public class MySqlDatabase extends Database
     }
     
     @Override
-    public boolean insert(String table, String... values) throws SQLException
+    public boolean addColumn(String table, String name, String type) throws SQLException
+    {
+        return executeStatement("ALTER TABLE `" + SqlUtils.escapeQuotes(table, "`") + "`"
+            + " ADD COLUMN `" + SqlUtils.escapeQuotes(name, "`") + "` " + type + ";");
+    }
+    
+    @Override
+    public boolean insert(String table, String[] values) throws SQLException
     {
         return executeStatement("INSERT INTO `" + SqlUtils.escapeQuotes(table, "`") + "`"
             + " VALUES (" + SqlUtils.implodeValueArray(values) + ");");
     }
     
     @Override
-    public boolean insert(String table, String[] columns, String... values) throws SQLException
+    public boolean insert(String table, String[] columns, String[] values) throws SQLException
     {
         return executeStatement("INSERT INTO `" + SqlUtils.escapeQuotes(table, "`") + "`"
             + " (" + SqlUtils.implodeColumnArray(columns) + ") VALUES (" + SqlUtils.implodeValueArray(values) + ");");
     }
     
     @Override
-    public boolean update(String table, String[] where, String... set) throws SQLException
+    public boolean update(String table, String[] where, String[] set) throws SQLException
     {
         return executeStatement("UPDATE `" + SqlUtils.escapeQuotes(table, "`") + "`"
             + " SET " + SqlUtils.implodeSetArray(set) + " WHERE " + SqlUtils.implodeWhereArray(where) + ";");

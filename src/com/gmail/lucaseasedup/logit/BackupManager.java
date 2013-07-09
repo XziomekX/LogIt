@@ -49,12 +49,12 @@ public class BackupManager implements Runnable
     @Override
     public void run()
     {
-        if (!core.getConfig().isScheduledBackupEnabled())
+        if (!core.getConfig().getBoolean("backup.schedule.enabled"))
             return;
         
         timer.run();
         
-        if (timer.getElapsed() >= core.getConfig().getScheduledBackupIntervalTicks())
+        if (timer.getElapsed() >= (core.getConfig().getInt("backup.schedule.interval") * 60L * 20L))
         {
             try
             {
@@ -81,35 +81,40 @@ public class BackupManager implements Runnable
     public void createBackup(Database database) throws IOException, SQLException
     {
         Date             date = new Date();
-        SimpleDateFormat sdf  = new SimpleDateFormat(core.getConfig().getBackupFilenameFormat());
-        File             backupFile = new File(core.getConfig().getBackupPath(), sdf.format(date));
+        SimpleDateFormat sdf  = new SimpleDateFormat(core.getConfig().getString("backup.filename-format"));
+        File             backupPath = new File(core.getPlugin().getDataFolder(), core.getConfig().getString("backup.path"));
+        File             backupFile = new File(backupPath, sdf.format(date));
         
-        core.getConfig().getBackupPath().mkdir();
-        backupFile.createNewFile();
+        if (!backupPath.mkdir())
+            throw new IOException("Could not create backup directory.");
         
-        try (SqliteDatabase backupDatabase = new SqliteDatabase())
+        if (!backupFile.createNewFile())
+            throw new IOException("Backup already exists.");
+        
+        try (SqliteDatabase backupDatabase = new SqliteDatabase("jdbc:sqlite:" + backupFile))
         {
-            backupDatabase.connect("jdbc:sqlite:" + backupFile);
-            backupDatabase.createTable(core.getConfig().getStorageTable(), core.getStorageColumns());
+            backupDatabase.connect();
+            backupDatabase.createTable(core.getConfig().getString("storage.accounts.table"), core.getStorageColumns());
             
-            try (ResultSet rs = database.select(core.getConfig().getStorageTable(), "*"))
+            try (ResultSet rs = database.select(core.getConfig().getString("storage.accounts.table"), new String[]{"*"}))
             {
                 assert rs.getMetaData().getColumnCount() == 1;
                 
                 while (rs.next())
                 {
-                    backupDatabase.insert(core.getConfig().getStorageTable(), new String[]{
-                            core.getConfig().getStorageColumnsUsername(),
-                            core.getConfig().getStorageColumnsSalt(),
-                            core.getConfig().getStorageColumnsPassword(),
-                            core.getConfig().getStorageColumnsIp(),
-                            core.getConfig().getStorageColumnsLastActive()
-                        },
-                        rs.getString(core.getConfig().getStorageColumnsUsername()),
-                        rs.getString(core.getConfig().getStorageColumnsSalt()),
-                        rs.getString(core.getConfig().getStorageColumnsPassword()),
-                        rs.getString(core.getConfig().getStorageColumnsIp()),
-                        rs.getString(core.getConfig().getStorageColumnsLastActive()));
+                    backupDatabase.insert(core.getConfig().getString("storage.accounts.table"), new String[]{
+                        core.getConfig().getString("storage.accounts.columns.username"),
+                        core.getConfig().getString("storage.accounts.columns.salt"),
+                        core.getConfig().getString("storage.accounts.columns.password"),
+                        core.getConfig().getString("storage.accounts.columns.ip"),
+                        core.getConfig().getString("storage.accounts.columns.last_active")
+                    }, new String[]{
+                        rs.getString(core.getConfig().getString("storage.accounts.columns.username")),
+                        rs.getString(core.getConfig().getString("storage.accounts.columns.salt")),
+                        rs.getString(core.getConfig().getString("storage.accounts.columns.password")),
+                        rs.getString(core.getConfig().getString("storage.accounts.columns.ip")),
+                        rs.getString(core.getConfig().getString("storage.accounts.columns.last_active"))
+                    });
                 }
             }
         }
@@ -127,31 +132,32 @@ public class BackupManager implements Runnable
     {
         File backupFile = getBackup(filename);
         
-        try (SqliteDatabase backupDatabase = new SqliteDatabase())
+        try (SqliteDatabase backupDatabase = new SqliteDatabase("jdbc:sqlite:" + backupFile))
         {
-            backupDatabase.connect("jdbc:sqlite:" + backupFile);
+            backupDatabase.connect();
             
             // Clear the table before restoring.
-            database.truncateTable(core.getConfig().getStorageTable());
+            database.truncateTable(core.getConfig().getString("storage.accounts.table"));
             
-            try (ResultSet rs = backupDatabase.select(core.getConfig().getStorageTable(), "*"))
+            try (ResultSet rs = backupDatabase.select(core.getConfig().getString("storage.accounts.table"), new String[]{"*"}))
             {
                 assert rs.getMetaData().getColumnCount() == 1;
                 
                 while (rs.next())
                 {
-                    database.insert(core.getConfig().getStorageTable(), new String[]{
-                            core.getConfig().getStorageColumnsUsername(),
-                            core.getConfig().getStorageColumnsSalt(),
-                            core.getConfig().getStorageColumnsPassword(),
-                            core.getConfig().getStorageColumnsIp(),
-                            core.getConfig().getStorageColumnsLastActive()
-                        },
-                        rs.getString(core.getConfig().getStorageColumnsUsername()),
-                        rs.getString(core.getConfig().getStorageColumnsSalt()),
-                        rs.getString(core.getConfig().getStorageColumnsPassword()),
-                        rs.getString(core.getConfig().getStorageColumnsIp()),
-                        rs.getString(core.getConfig().getStorageColumnsLastActive()));
+                    database.insert(core.getConfig().getString("storage.accounts.table"), new String[]{
+                        core.getConfig().getString("storage.accounts.columns.username"),
+                        core.getConfig().getString("storage.accounts.columns.salt"),
+                        core.getConfig().getString("storage.accounts.columns.password"),
+                        core.getConfig().getString("storage.accounts.columns.ip"),
+                        core.getConfig().getString("storage.accounts.columns.last_active")
+                    }, new String[]{
+                        rs.getString(core.getConfig().getString("storage.accounts.columns.username")),
+                        rs.getString(core.getConfig().getString("storage.accounts.columns.salt")),
+                        rs.getString(core.getConfig().getString("storage.accounts.columns.password")),
+                        rs.getString(core.getConfig().getString("storage.accounts.columns.ip")),
+                        rs.getString(core.getConfig().getString("storage.accounts.columns.last_active"))
+                    });
                 }
             }
         }
@@ -195,7 +201,8 @@ public class BackupManager implements Runnable
     
     public File[] getBackups()
     {
-        File[] backups = core.getConfig().getBackupPath().listFiles();
+        File   backupPath = new File(core.getPlugin().getDataFolder(), core.getConfig().getString("backup.path"));
+        File[] backups = backupPath.listFiles();
         
         if (backups == null)
             return new File[0];
@@ -215,7 +222,8 @@ public class BackupManager implements Runnable
      */
     public File getBackup(String filename) throws FileNotFoundException
     {
-        File backup = new File(core.getConfig().getBackupPath(), filename);
+        File backupPath = new File(core.getPlugin().getDataFolder(), core.getConfig().getString("backup.path"));
+        File backup = new File(backupPath, filename);
         
         if (!backup.exists())
             throw new FileNotFoundException();

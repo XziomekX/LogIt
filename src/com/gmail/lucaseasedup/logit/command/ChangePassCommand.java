@@ -62,15 +62,15 @@ public class ChangePassCommand extends AbstractCommandExecutor
             {
                 s.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS").replace("%player%", args[1]));
             }
-            else if (args[2].length() < core.getConfig().getPasswordMinLength())
+            else if (args[2].length() < core.getConfig().getInt("password.min-length"))
             {
                 s.sendMessage(getMessage("PASSWORD_TOO_SHORT")
-                        .replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
+                        .replace("%min-length%", String.valueOf(core.getConfig().getInt("password.min-length"))));
             }
-            else if (args[2].length() > core.getConfig().getPasswordMaxLength())
+            else if (args[2].length() > core.getConfig().getInt("password.max-length"))
             {
                 s.sendMessage(getMessage("PASSWORD_TOO_LONG")
-                        .replace("%max-length%", String.valueOf(core.getConfig().getPasswordMaxLength())));
+                        .replace("%max-length%", String.valueOf(core.getConfig().getInt("password.max-length"))));
             }
             else
             {
@@ -109,15 +109,15 @@ public class ChangePassCommand extends AbstractCommandExecutor
             {
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
             }
-            else if (args[1].length() < core.getConfig().getPasswordMinLength())
+            else if (args[1].length() < core.getConfig().getInt("password.min-length"))
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_SHORT")
-                        .replace("%min-length%", String.valueOf(core.getConfig().getPasswordMinLength())));
+                        .replace("%min-length%", String.valueOf(core.getConfig().getInt("password.min-length"))));
             }
-            else if (args[1].length() > core.getConfig().getPasswordMaxLength())
+            else if (args[1].length() > core.getConfig().getInt("password.max-length"))
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_LONG")
-                        .replace("%max-length%", String.valueOf(core.getConfig().getPasswordMaxLength())));
+                        .replace("%max-length%", String.valueOf(core.getConfig().getInt("password.max-length"))));
             }
             else if (!args[1].equals(args[2]))
             {

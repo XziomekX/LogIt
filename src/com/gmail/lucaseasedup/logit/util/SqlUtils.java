@@ -34,92 +34,94 @@ public class SqlUtils
     
     public static String implodeColumnArray(String[] columns)
     {
-        String output = "";
+        StringBuilder output = new StringBuilder();
         
         if (columns.length >= 1)
         {
             if (columns[0].equals("*"))
-                output += "*";
+                output.append("*");
             else
-                output += "`" + escapeQuotes(columns[0], "`") + "`";
+                output.append("`").append(escapeQuotes(columns[0], "`")).append("`");
         }
         
         for (int i = 1; i < columns.length; i++)
         {
-            output += ", `" + escapeQuotes(columns[i], "`") + "`";
+            output.append(", `").append(escapeQuotes(columns[i], "`")).append("`");
         }
         
-        return output;
+        return output.toString();
     }
     
     public static String implodeColumnDefinition(String[] columns)
     {
-        String output = "";
+        StringBuilder output = new StringBuilder();
         
         if (columns.length >= 2)
         {
-            output += "`" + escapeQuotes(columns[0], "`") + "` " + columns[1];
+            output.append("`").append(escapeQuotes(columns[0], "`")).append("` ").append(columns[1]);
         }
         
         for (int i = 2; i < columns.length; i += 2)
         {
-            output += ", `" + escapeQuotes(columns[i], "`") + "` " + columns[i + 1];
+            output.append(", `").append(escapeQuotes(columns[i], "`")).append("` ").append(columns[i + 1]);
         }
         
-        return output;
+        return output.toString();
     }
     
     public static String implodeValueArray(String[] values)
     {
-        String output = "";
+        StringBuilder output = new StringBuilder();
         
         if (values.length >= 1)
         {
-            output += "'" + escapeQuotes(values[0], "'") + "'";
+            output.append("'").append(escapeQuotes(values[0], "'")).append("'");
         }
         
         for (int i = 1; i < values.length; i++)
         {
             if (values[i] != null)
-                output += ", '" + escapeQuotes(values[i], "'") + "'";
+                output.append(", '").append(escapeQuotes(values[i], "'")).append("'");
             else
-                output += ", NULL";
+                output.append(", NULL");
         }
         
-        return output;
+        return output.toString();
     }
     
     public static String implodeSetArray(String[] set)
     {
-        String output = "";
+        StringBuilder output = new StringBuilder();
         
         if (set.length >= 2)
         {
-            output += "`" + escapeQuotes(set[0], "`") + "` = '" + escapeQuotes(set[1], "'") + "'";
+            output.append("`").append(escapeQuotes(set[0], "`")).append("` = '").append(escapeQuotes(set[1], "'")).append("'");
         }
         
         for (int i = 2; i < set.length; i += 2)
         {
-            output += ", `" + escapeQuotes(set[i], "`") + "` = '" + escapeQuotes(set[i + 1], "'") + "'";
+            output.append(", `").append(escapeQuotes(set[i], "`")).append("` = '").append(escapeQuotes(set[i + 1], "'")).append("'");
         }
         
-        return output;
+        return output.toString();
     }
     
     public static String implodeWhereArray(String[] conditions)
     {
-        String output = "";
+        StringBuilder output = new StringBuilder();
         
-        if (conditions.length >= 2)
+        if (conditions.length >= 3)
         {
-            output += "`" + escapeQuotes(conditions[0], "`") + "` = '" + escapeQuotes(conditions[1], "'") + "'";
+            output.append("`").append(escapeQuotes(conditions[0], "`")).append("` ").append(conditions[1]).append(" '")
+                .append(escapeQuotes(conditions[2], "'")).append("'");
         }
         
-        for (int i = 2; i < conditions.length; i += 2)
+        for (int i = 3; i < conditions.length; i += 3)
         {
-            output += " AND `" + escapeQuotes(conditions[i], "`") + "` = '" + escapeQuotes(conditions[i + 1], "'") + "'";
+            output.append(" AND `").append(escapeQuotes(conditions[i], "`")).append("` ").append(conditions[i + 1]).append(" '")
+                .append(escapeQuotes(conditions[i + 2], "'")).append("'");
         }
         
-        return output;
+        return output.toString();
     }
 }

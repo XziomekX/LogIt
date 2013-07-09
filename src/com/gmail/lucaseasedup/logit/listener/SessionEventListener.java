@@ -51,12 +51,12 @@ public class SessionEventListener extends EventListener
             core.getWaitingRoom().remove(player);
             core.getInventoryDepository().withdraw(player);
             
-            if (core.getConfig().getGroupsEnabled())
+            if (core.getConfig().getBoolean("groups.enabled"))
                 core.updatePlayerGroup(player);
             
-            if (core.getConfig().getForceLoginGlobal() && !player.hasPermission("logit.force-login.exempt"))
+            if (core.getConfig().getBoolean("force-login.global") && !player.hasPermission("logit.force-login.exempt"))
             {
-                broadcastJoinMessage(player, core.getConfig().getRevealSpawnWorld());
+                broadcastJoinMessage(player, core.getConfig().getBoolean("reveal-spawn-world"));
             }
         }
     }
@@ -70,9 +70,9 @@ public class SessionEventListener extends EventListener
         {
             Player player = getPlayer(username);
             
-            if (core.getConfig().getForceLoginGlobal())
+            if (core.getConfig().getBoolean("force-login.global"))
             {
-                if (core.getConfig().isWaitingRoomEnabled())
+                if (core.getConfig().getBoolean("waiting-room.enabled"))
                 {
                     core.getWaitingRoom().put(player);
                 }
@@ -83,12 +83,12 @@ public class SessionEventListener extends EventListener
                 }
             }
             
-            if (core.getConfig().getForceLoginHideInventory())
+            if (core.getConfig().getBoolean("force-login.hide-inventory"))
             {
                 core.getInventoryDepository().deposit(player);
             }
             
-            if (core.getConfig().getGroupsEnabled())
+            if (core.getConfig().getBoolean("groups.enabled"))
             {
                 core.updatePlayerGroup(player);
             }

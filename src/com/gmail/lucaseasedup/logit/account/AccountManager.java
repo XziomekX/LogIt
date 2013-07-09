@@ -20,8 +20,7 @@ package com.gmail.lucaseasedup.logit.account;
 
 import static com.gmail.lucaseasedup.logit.GeneralResult.FAILURE;
 import static com.gmail.lucaseasedup.logit.GeneralResult.SUCCESS;
-import static com.gmail.lucaseasedup.logit.LogItConfiguration.IntegrationType.NONE;
-import static com.gmail.lucaseasedup.logit.LogItConfiguration.IntegrationType.PHPBB;
+import static com.gmail.lucaseasedup.logit.LogItCore.IntegrationType.*;
 import com.gmail.lucaseasedup.logit.LogItCore;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.callEvent;
 import static com.gmail.lucaseasedup.logit.LogItPlugin.getMessage;
@@ -50,7 +49,7 @@ public class AccountManager
     {
         this.core     = core;
         this.database = database;
-        this.table    = core.getConfig().getStorageTable();
+        this.table    = core.getConfig().getString("storage.accounts.table");
     }
     
     public Set<String> getRegisteredUsernames()
@@ -69,11 +68,11 @@ public class AccountManager
      */
     public boolean isRegistered(String username)
     {
-        if (core.getConfig().getIntegration() == NONE)
+        if (core.getIntegration() == NONE)
         {
             return cPassword.containsKey(username.toLowerCase());
         }
-        else if (core.getConfig().getIntegration() == PHPBB)
+        else if (core.getIntegration() == PHPBB)
         {
             return true;
         }
@@ -101,15 +100,19 @@ public class AccountManager
         
         try
         {
-            if (core.getConfig().getIntegration() == NONE)
+            if (core.getIntegration() == NONE)
             {
                 database.insert(table, new String[]{
-                        core.getConfig().getStorageColumnsUsername(),
-                        core.getConfig().getStorageColumnsSalt(),
-                        core.getConfig().getStorageColumnsPassword(),
-                        core.getConfig().getStorageColumnsLastActive()
-                    },
-                    username.toLowerCase(), salt, hash, String.valueOf(System.currentTimeMillis() / 1000L));
+                    core.getConfig().getString("storage.accounts.columns.username"),
+                    core.getConfig().getString("storage.accounts.columns.salt"),
+                    core.getConfig().getString("storage.accounts.columns.password"),
+                    core.getConfig().getString("storage.accounts.columns.last_active")
+                }, new String[]{
+                    username.toLowerCase(),
+                    salt,
+                    hash,
+                    String.valueOf(System.currentTimeMillis() / 1000L)
+                });
             }
             else
             {
@@ -151,9 +154,10 @@ public class AccountManager
         
         try
         {
-            if (core.getConfig().getIntegration() == NONE)
+            if (core.getIntegration() == NONE)
             {
-                database.delete(table, new String[]{core.getConfig().getStorageColumnsUsername(), username.toLowerCase()});
+                database.delete(table,
+                    new String[]{core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()});
             }
             else
             {
@@ -195,17 +199,17 @@ public class AccountManager
         if (!isRegistered(username))
             throw new AccountNotFoundException();
         
-        if (core.getConfig().getIntegration() == NONE)
+        if (core.getIntegration() == NONE)
         {
             return cPassword.get(username.toLowerCase()).equals(core.hash(password, cSalt.get(username.toLowerCase())));
         }
-        else if (core.getConfig().getIntegration() == PHPBB)
+        else if (core.getIntegration() == PHPBB)
         {
             String result;
             
             try
             {
-                URL url = new URL(core.getConfig().getIntegrationPhpbbLogItScript() + "?action=check-password");
+                URL url = new URL(core.getConfig().getString("integration-phpbb.logit-script") + "?action=check-password");
                 HttpURLConnection uc = (HttpURLConnection) url.openConnection();
                 uc.setRequestMethod("POST");
                 uc.setDoInput(true);
@@ -260,11 +264,14 @@ public class AccountManager
         
         try
         {
-            if (core.getConfig().getIntegration() == NONE)
+            if (core.getIntegration() == NONE)
             {
-                database.update(table, new String[]{core.getConfig().getStorageColumnsUsername(), username.toLowerCase()},
-                    core.getConfig().getStorageColumnsSalt(), newSalt,
-                    core.getConfig().getStorageColumnsPassword(), newHash);
+                database.update(table,
+                    new String[]{core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()},
+                    new String[]{
+                        core.getConfig().getString("storage.accounts.columns.salt"), newSalt,
+                        core.getConfig().getString("storage.accounts.columns.password"), newHash
+                    });
             }
             else
             {
@@ -303,10 +310,13 @@ public class AccountManager
         
         try
         {
-            if (core.getConfig().getIntegration() == NONE)
+            if (core.getIntegration() == NONE)
             {
-                database.update(table, new String[]{core.getConfig().getStorageColumnsUsername(), username.toLowerCase()},
-                    core.getConfig().getStorageColumnsIp(), ip);
+                database.update(table,
+                    new String[]{core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()},
+                    new String[]{
+                        core.getConfig().getString("storage.accounts.columns.ip"), ip
+                    });
             }
             else
             {
@@ -358,8 +368,11 @@ public class AccountManager
         
         try
         {
-            database.update(table, new String[]{core.getConfig().getStorageColumnsUsername(), username.toLowerCase()},
-                core.getConfig().getStorageColumnsLastActive(), String.valueOf(now));
+            database.update(table,
+                new String[]{core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()},
+                new String[]{
+                    core.getConfig().getString("storage.accounts.columns.last_active"), String.valueOf(now)
+                });
         }
         catch (SQLException ex)
         {
@@ -388,7 +401,7 @@ public class AccountManager
     {
         try
         {
-            if (core.getConfig().getIntegration() == NONE)
+            if (core.getIntegration() == NONE)
             {
                 database.truncateTable(table);
             }
@@ -423,23 +436,23 @@ public class AccountManager
         cIp.clear();
         cLastActive.clear();
         
-        if (core.getConfig().getIntegration() == NONE)
+        if (core.getIntegration() == NONE)
         {
-            try (ResultSet rs = database.select(table, "*"))
+            try (ResultSet rs = database.select(table, new String[]{"*"}))
             {
                 assert rs.getMetaData().getColumnCount() == 1;
 
                 while (rs.next())
                 {
-                    String username = rs.getString(core.getConfig().getStorageColumnsUsername());
+                    String username = rs.getString(core.getConfig().getString("storage.accounts.columns.username"));
                     
                     if (username == null)
                         continue;
                     
-                    cSalt.put(username, rs.getString(core.getConfig().getStorageColumnsSalt()));
-                    cPassword.put(username, rs.getString(core.getConfig().getStorageColumnsPassword()));
-                    cIp.put(username, rs.getString(core.getConfig().getStorageColumnsIp()));
-                    cLastActive.put(username, rs.getInt(core.getConfig().getStorageColumnsLastActive()));
+                    cSalt.put(username,       rs.getString(core.getConfig().getString("storage.accounts.columns.salt")));
+                    cPassword.put(username,   rs.getString(core.getConfig().getString("storage.accounts.columns.password")));
+                    cIp.put(username,         rs.getString(core.getConfig().getString("storage.accounts.columns.ip")));
+                    cLastActive.put(username,    rs.getInt(core.getConfig().getString("storage.accounts.columns.last_active")));
                 }
                 
                 core.log(FINE, getMessage("LOAD_ACCOUNTS_SUCCESS").replace("%num%", String.valueOf(cPassword.size())));

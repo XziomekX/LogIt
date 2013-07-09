@@ -36,7 +36,7 @@ public class AccountWatcher implements Runnable
     @Override
     public void run()
     {
-        if (core.getConfig().getDaysOfAbsenceToUnregister() < 0)
+        if (core.getConfig().getInt("days-of-absence-to-unregister") < 0)
             return;
         
         Set<String> usernames = Collections.synchronizedSet(accountManager.getRegisteredUsernames());
@@ -49,7 +49,8 @@ public class AccountWatcher implements Runnable
             if (lastActiveDate == 0)
                 continue;
             
-            if ((now - lastActiveDate) >= core.getConfig().getSecondsOfAbsenceToUnregister())
+            //                                                                                   days to seconds
+            if ((now - lastActiveDate) >= (core.getConfig().getInt("days-of-absence-to-unregister") * 86400))
             {
                 accountManager.removeAccount(username);
             }

@@ -18,11 +18,7 @@
  */
 package com.gmail.lucaseasedup.logit;
 
-import java.io.File;
 import java.util.List;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
 
 /**
  * @author LucasEasedUp
@@ -96,18 +92,19 @@ public final class LogItConfiguration
         plugin.getConfig().set("groups.logged-out",                      plugin.getConfig().getString("groups.logged-out", "LoggedOut"));
         plugin.getConfig().set("integration",                            plugin.getConfig().getString("integration", "none"));
         plugin.getConfig().set("integration-phpbb.logit-script",         plugin.getConfig().getString("integration-phpbb.logit-script", ""));
-        plugin.getConfig().set("storage.type",                           plugin.getConfig().getString("storage.type", "sqlite"));
-        plugin.getConfig().set("storage.sqlite.filename",                plugin.getConfig().getString("storage.sqlite.filename", "LogIt.db"));
-        plugin.getConfig().set("storage.mysql.host",                     plugin.getConfig().getString("storage.mysql.host", "jdbc:mysql://localhost:3306/")); 
-        plugin.getConfig().set("storage.mysql.user",                     plugin.getConfig().getString("storage.mysql.user", "root"));
-        plugin.getConfig().set("storage.mysql.password",                 plugin.getConfig().getString("storage.mysql.password", ""));
-        plugin.getConfig().set("storage.mysql.database",                 plugin.getConfig().getString("storage.mysql.database", ""));
-        plugin.getConfig().set("storage.table",                          plugin.getConfig().getString("storage.table", "logit"));
-        plugin.getConfig().set("storage.columns.username",               plugin.getConfig().getString("storage.columns.username", "username"));
-        plugin.getConfig().set("storage.columns.salt",                   plugin.getConfig().getString("storage.columns.salt", "salt"));
-        plugin.getConfig().set("storage.columns.password",               plugin.getConfig().getString("storage.columns.password", "password"));
-        plugin.getConfig().set("storage.columns.ip",                     plugin.getConfig().getString("storage.columns.ip", "ip"));
-        plugin.getConfig().set("storage.columns.last_active",            plugin.getConfig().getString("storage.columns.last_active", "last_active"));
+        plugin.getConfig().set("storage.accounts.db-type",               plugin.getConfig().getString("storage.accounts.db-type", "sqlite"));
+        plugin.getConfig().set("storage.accounts.sqlite.filename",       plugin.getConfig().getString("storage.accounts.sqlite.filename", "accounts.db"));
+        plugin.getConfig().set("storage.accounts.mysql.host",            plugin.getConfig().getString("storage.accounts.mysql.host", "jdbc:mysql://localhost:3306/")); 
+        plugin.getConfig().set("storage.accounts.mysql.user",            plugin.getConfig().getString("storage.accounts.mysql.user", "root"));
+        plugin.getConfig().set("storage.accounts.mysql.password",        plugin.getConfig().getString("storage.accounts.mysql.password", ""));
+        plugin.getConfig().set("storage.accounts.mysql.database",        plugin.getConfig().getString("storage.accounts.mysql.database", ""));
+        plugin.getConfig().set("storage.accounts.table",                 plugin.getConfig().getString("storage.accounts.table", "logit"));
+        plugin.getConfig().set("storage.accounts.columns.username",      plugin.getConfig().getString("storage.accounts.columns.username", "username"));
+        plugin.getConfig().set("storage.accounts.columns.salt",          plugin.getConfig().getString("storage.accounts.columns.salt", "salt"));
+        plugin.getConfig().set("storage.accounts.columns.password",      plugin.getConfig().getString("storage.accounts.columns.password", "password"));
+        plugin.getConfig().set("storage.accounts.columns.ip",            plugin.getConfig().getString("storage.accounts.columns.ip", "ip"));
+        plugin.getConfig().set("storage.accounts.columns.last_active",   plugin.getConfig().getString("storage.accounts.columns.last_active", "last_active"));
+        plugin.getConfig().set("storage.inventories.filename",           plugin.getConfig().getString("storage.inventories.filename", "inventories.db"));
         plugin.getConfig().set("backup.path",                            plugin.getConfig().getString("backup.path", "backup"));
         plugin.getConfig().set("backup.filename-format",                 plugin.getConfig().getString("backup.filename-format", "yyyy-MM-dd_HH-mm-ss'.db'"));
         plugin.getConfig().set("backup.schedule.enabled",                plugin.getConfig().getBoolean("backup.schedule.enabled", false));
@@ -121,506 +118,40 @@ public final class LogItConfiguration
         plugin.saveConfig();
     }
     
-    public String getLocale()
+    public Object get(String path)
     {
-        return plugin.getConfig().getString("locale");
+        return plugin.getConfig().get(path);
     }
     
-    public boolean isLogToFileEnabled()
+    public String getString(String path)
     {
-        return plugin.getConfig().getBoolean("log-to-file.enabled");
+        return plugin.getConfig().getString(path);
     }
     
-    public String getLogFilename()
+    public boolean getBoolean(String path)
     {
-        return plugin.getConfig().getString("log-to-file.filename");
+        return plugin.getConfig().getBoolean(path);
     }
     
-    public boolean getForceLoginGlobal()
+    public int getInt(String path)
     {
-        return plugin.getConfig().getBoolean("force-login.global");
+        return plugin.getConfig().getInt(path);
     }
     
-    public List<String> getWorldsWithForceLogin()
+    public double getDouble(String path)
     {
-        return plugin.getConfig().getStringList("force-login.in-worlds");
+        return plugin.getConfig().getDouble(path);
     }
     
-    public boolean isLoginForcedInWorld(World world)
+    public List<String> getStringList(String path)
     {
-        return getWorldsWithForceLogin().contains(world.getName());
+        return plugin.getConfig().getStringList(path);
     }
     
-    public List<String> getForceLoginAllowedCommands()
+    public void set(String path, Object value)
     {
-        return plugin.getConfig().getStringList("force-login.allowed-commands");
-    }
-    
-    public long getForceLoginTimeout()
-    {
-        return plugin.getConfig().getInt("force-login.timeout");
-    }
-    
-    public long getForceLoginTimeoutTicks()
-    {
-        return getForceLoginTimeout() * 20L;
-    }
-    
-    public boolean getForceLoginPreventMove()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.move");
-    }
-    
-    public boolean getForceLoginPreventToggleSneak()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.toggle-sneak");
-    }
-    
-    public boolean getForceLoginPreventBlockPlace()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.block-place");
-    }
-    
-    public boolean getForceLoginPreventBlockBreak()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.block-break");
-    }
-    
-    public boolean getForceLoginPreventDamageIn()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.damage-in");
-    }
-    
-    public boolean getForceLoginPreventDamageOut()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.damage-out");
-    }
-    
-    public boolean getForceLoginPreventRegainHealth()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.regain-health");
-    }
-    
-    public boolean getForceLoginPreventFoodLevelChange()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.food-level-change");
-    }
-    
-    public boolean getForceLoginPreventEntityTarget()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.entity-target");
-    }
-    
-    public boolean getForceLoginPreventChat()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.chat");
-    }
-    
-    public boolean getForceLoginPreventCommandPreprocess()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.command-preprocess");
-    }
-    
-    public boolean getForceLoginPreventPickupItem()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.pickup-item");
-    }
-    
-    public boolean getForceLoginPreventDropItem()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.drop-item");
-    }
-    
-    public boolean getForceLoginPreventInteract()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.interact");
-    }
-    
-    public boolean getForceLoginPreventInteractEntity()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.interact-entity");
-    }
-    
-    public boolean getForceLoginPreventInventoryClick()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.inventory-click");
-    }
-    
-    public boolean getForceLoginPreventAirDepletion()
-    {
-        return plugin.getConfig().getBoolean("force-login.prevent.air-depletion");
-    }
-    
-    public boolean getForceLoginHideInventory()
-    {
-        return plugin.getConfig().getBoolean("force-login.hide-inventory");
-    }
-    
-    public long getSessionLifetime()
-    {
-        return plugin.getConfig().getInt("session-lifetime");
-    }
-    
-    public long getSessionLifetimeTicks()
-    {
-        return getSessionLifetime() * 20L;
-    }
-    
-    public String getUsernameRegex()
-    {
-        return plugin.getConfig().getString("username.regex");
-    }
-    
-    public int getUsernameMinLength()
-    {
-        return plugin.getConfig().getInt("username.min-length");
-    }
-    
-    public int getUsernameMaxLength()
-    {
-        return plugin.getConfig().getInt("username.max-length");
-    }
-    
-    public List<String> getProhibitedUsernames()
-    {
-        return plugin.getConfig().getStringList("username.prohibited-usernames");
-    }
-    
-    public int getPasswordMinLength()
-    {
-        return plugin.getConfig().getInt("password.min-length");
-    }
-    
-    public int getPasswordMaxLength()
-    {
-        return plugin.getConfig().getInt("password.max-length");
-    }
-    
-    /**
-     * Returns the global password.
-     * 
-     * Please, note that this is not a plain-text password.
-     * It is hashed using a hashing algorithm specified in the config.
-     * 
-     * @return Global password.
-     */
-    public String getGlobalPassword()
-    {
-        return plugin.getConfig().getString("password.global-password");
-    }
-    
-    public int getLoginFailsToKick()
-    {
-        return plugin.getConfig().getInt("login-fails-to-kick");
-    }
-    
-    public int getLoginFailsToBan()
-    {
-        return plugin.getConfig().getInt("login-fails-to-ban");
-    }
-    
-    public boolean getKickUnregistered()
-    {
-        return plugin.getConfig().getBoolean("kick-unregistered");
-    }
-    
-    public int getDaysOfAbsenceToUnregister()
-    {
-        return plugin.getConfig().getInt("days-of-absence-to-unregister");
-    }
-    
-    public int getSecondsOfAbsenceToUnregister()
-    {
-        return getDaysOfAbsenceToUnregister() * 86400;
-    }
-    
-    public int getPreserveSlotsAmount()
-    {
-        return plugin.getConfig().getInt("preserve-slots.amount");
-    }
-    
-    public List<String> getPreserveSlotsPlayers()
-    {
-        return plugin.getConfig().getStringList("preserve-slots.players");
-    }
-    
-    public int getAccountsPerIp()
-    {
-        return plugin.getConfig().getInt("accounts-per-ip");
-    }
-    
-    public List<String> getUnrestrictedIps()
-    {
-        return plugin.getConfig().getStringList("unrestricted-ips");
-    }
-    
-    public HashingAlgorithm getHashingAlgorithm()
-    {
-        String s = plugin.getConfig().getString("hashing-algorithm");
-        
-        if (s.equalsIgnoreCase("plain"))
-        {
-            return HashingAlgorithm.PLAIN;
-        }
-        else if (s.equalsIgnoreCase("md2"))
-        {
-            return HashingAlgorithm.MD2;
-        }
-        else if (s.equalsIgnoreCase("md5"))
-        {
-            return HashingAlgorithm.MD5;
-        }
-        else if (s.equalsIgnoreCase("sha-1"))
-        {
-            return HashingAlgorithm.SHA1;
-        }
-        else if (s.equalsIgnoreCase("sha-256"))
-        {
-            return HashingAlgorithm.SHA256;
-        }
-        else if (s.equalsIgnoreCase("sha-384"))
-        {
-            return HashingAlgorithm.SHA384;
-        }
-        else if (s.equalsIgnoreCase("sha-512"))
-        {
-            return HashingAlgorithm.SHA512;
-        }
-        else if (s.equalsIgnoreCase("whirlpool"))
-        {
-            return HashingAlgorithm.WHIRLPOOL;
-        }
-        else
-        {
-            return HashingAlgorithm.UNKNOWN;
-        }
-    }
-    
-    public boolean getRevealSpawnWorld()
-    {
-        return plugin.getConfig().getBoolean("reveal-spawn-world");
-    }
-    
-    public boolean isWaitingRoomEnabled()
-    {
-        return plugin.getConfig().getBoolean("waiting-room.enabled");
-    }
-    
-    public Location getWaitingRoomLocation()
-    {
-        World  world = Bukkit.getServer().getWorld(plugin.getConfig().getString("waiting-room.location.world"));
-        double x = plugin.getConfig().getDouble("waiting-room.location.x");
-        double y = plugin.getConfig().getDouble("waiting-room.location.y");
-        double z = plugin.getConfig().getDouble("waiting-room.location.z");
-        float  yaw = (float) plugin.getConfig().getDouble("waiting-room.location.yaw");
-        float  pitch = (float) plugin.getConfig().getDouble("waiting-room.location.pitch");
-        
-        return new Location(world, x, y, z, yaw, pitch);
-    }
-    
-    public String getWaitingRoomLocationWorld()
-    {
-        return plugin.getConfig().getString("waiting-room.location.world");
-    }
-
-    public double getWaitingRoomLocationX()
-    {
-        return plugin.getConfig().getDouble("waiting-room.location.x");
-    }
-
-    public double getWaitingRoomLocationY()
-    {
-        return plugin.getConfig().getDouble("waiting-room.location.y");
-    }
-
-    public double getWaitingRoomLocationZ()
-    {
-        return plugin.getConfig().getDouble("waiting-room.location.z");
-    }
-
-    public float getWaitingRoomLocationYaw()
-    {
-        return (float) plugin.getConfig().getDouble("waiting-room.location.yaw");
-    }
-
-    public float getWaitingRoomLocationPitch()
-    {
-        return (float) plugin.getConfig().getDouble("waiting-room.location.pitch");
-    }
-    
-    public boolean getGroupsEnabled()
-    {
-        return plugin.getConfig().getBoolean("groups.enabled");
-    }
-    
-    public String getGroupsLoggedIn()
-    {
-        return plugin.getConfig().getString("groups.logged-in");
-    }
-    
-    public String getGroupsLoggedOut()
-    {
-        return plugin.getConfig().getString("groups.logged-out");
-    }
-    
-    public IntegrationType getIntegration()
-    {
-        String s = plugin.getConfig().getString("integration");
-        
-        if (s.equalsIgnoreCase("phpbb"))
-        {
-            return IntegrationType.PHPBB;
-        }
-        else
-        {
-            return IntegrationType.NONE;
-        }
-    }
-    
-    public String getIntegrationPhpbbLogItScript()
-    {
-        return plugin.getConfig().getString("integration-phpbb.logit-script");
-    }
-    
-    public StorageType getStorageType()
-    {
-        String s = plugin.getConfig().getString("storage.type");
-        
-        if (s.equalsIgnoreCase("sqlite"))
-        {
-            return StorageType.SQLITE;
-        }
-        else if (s.equalsIgnoreCase("mysql"))
-        {
-            return StorageType.MYSQL;
-        }
-        else
-        {
-            return StorageType.UNKNOWN;
-        }
-    }
-    
-    public String getSqliteFilename()
-    {
-        return plugin.getConfig().getString("storage.sqlite.filename");
-    }
-    
-    public String getMysqlHost()
-    {
-        return plugin.getConfig().getString("storage.mysql.host");
-    }
-
-    public String getMysqlUser()
-    {
-        return plugin.getConfig().getString("storage.mysql.user");
-    }
-
-    public String getMysqlPassword()
-    {
-        return plugin.getConfig().getString("storage.mysql.password");
-    }
-    
-    public String getMysqlDatabase()
-    {
-        return plugin.getConfig().getString("storage.mysql.database");
-    }
-    
-    public String getStorageTable()
-    {
-        return plugin.getConfig().getString("storage.table");
-    }
-    
-    public String getStorageColumnsUsername()
-    {
-        return plugin.getConfig().getString("storage.columns.username");
-    }
-    
-    public String getStorageColumnsSalt()
-    {
-        return plugin.getConfig().getString("storage.columns.salt");
-    }
-    
-    public String getStorageColumnsPassword()
-    {
-        return plugin.getConfig().getString("storage.columns.password");
-    }
-    
-    public String getStorageColumnsIp()
-    {
-        return plugin.getConfig().getString("storage.columns.ip");
-    }
-    
-    public String getStorageColumnsLastActive()
-    {
-        return plugin.getConfig().getString("storage.columns.last_active");
-    }
-    
-    public File getBackupPath()
-    {
-        return new File(plugin.getDataFolder(), plugin.getConfig().getString("backup.path"));
-    }
-    
-    public String getBackupFilenameFormat()
-    {
-        return plugin.getConfig().getString("backup.filename-format");
-    }
-    
-    public boolean isScheduledBackupEnabled()
-    {
-        return plugin.getConfig().getBoolean("backup.schedule.enabled");
-    }
-    
-    public long getScheduledBackupInterval()
-    {
-        return plugin.getConfig().getInt("backup.schedule.interval");
-    }
-    
-    public long getScheduledBackupIntervalTicks()
-    {
-        return getScheduledBackupInterval() * 60 * 20L;
-    }
-    
-    /**
-     * Changes the global password.
-     * 
-     * Note that this method doesn't hash the password.
-     * Use LogItCore.changeGlobalPassword(), instead.
-     * 
-     * @param password Hashed global password.
-     */
-    public void setGlobalPassword(String password)
-    {
-        plugin.getConfig().set("password.global-password", password);
-    }
-    
-    public void setWaitingRoomEnabled(boolean status)
-    {
-        plugin.getConfig().set("waiting-room.enabled", status);
-    }
-    
-    public void setWaitingRoomLocation(Location location)
-    {
-        plugin.getConfig().set("waiting-room.location.world", location.getWorld().getName());
-        plugin.getConfig().set("waiting-room.location.x", location.getX());
-        plugin.getConfig().set("waiting-room.location.y", location.getY());
-        plugin.getConfig().set("waiting-room.location.z", location.getZ());
-        plugin.getConfig().set("waiting-room.location.yaw", location.getYaw());
-        plugin.getConfig().set("waiting-room.location.pitch", location.getPitch());
-    }
-    
-    public static enum HashingAlgorithm
-    {
-        UNKNOWN, PLAIN, MD2, MD5, SHA1, SHA256, SHA384, SHA512, WHIRLPOOL
-    }
-    
-    public static enum IntegrationType
-    {
-        NONE, PHPBB
-    }
-    
-    public static enum StorageType
-    {
-        UNKNOWN, SQLITE, MYSQL
+        plugin.getConfig().set(path, value);
+        plugin.saveConfig();
     }
     
     private final LogItPlugin plugin;

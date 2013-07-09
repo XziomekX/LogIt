@@ -38,7 +38,7 @@ public class BlockEventListener extends EventListener
     @EventHandler
     private void onPlace(BlockPlaceEvent event)
     {
-        if (!core.getConfig().getForceLoginPreventBlockPlace())
+        if (!core.getConfig().getBoolean("force-login.prevent.block-place"))
             return;
         
         Player player = event.getPlayer();
@@ -53,7 +53,7 @@ public class BlockEventListener extends EventListener
     @EventHandler
     private void onBreak(BlockBreakEvent event)
     {
-        if (!core.getConfig().getForceLoginPreventBlockBreak())
+        if (!core.getConfig().getBoolean("force-login.prevent.block-break"))
             return;
         
         Player player = event.getPlayer();

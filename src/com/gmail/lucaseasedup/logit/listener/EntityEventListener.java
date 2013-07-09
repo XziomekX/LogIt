@@ -36,7 +36,7 @@ public class EntityEventListener extends EventListener
     @EventHandler
     private void onDamageIn(EntityDamageEvent event)
     {
-        if (!core.getConfig().getForceLoginPreventDamageIn() || !(event.getEntity() instanceof Player))
+        if (!core.getConfig().getBoolean("force-login.prevent.damage-in") || !(event.getEntity() instanceof Player))
             return;
         
         Player player = (Player) event.getEntity();
@@ -50,7 +50,7 @@ public class EntityEventListener extends EventListener
     @EventHandler
     private void onDamageOut(EntityDamageByEntityEvent event)
     {
-        if (!core.getConfig().getForceLoginPreventDamageOut() || !(event.getDamager() instanceof Player))
+        if (!core.getConfig().getBoolean("force-login.prevent.damage-out") || !(event.getDamager() instanceof Player))
             return;
         
         Player player = (Player) event.getDamager();
@@ -64,7 +64,7 @@ public class EntityEventListener extends EventListener
     @EventHandler
     private void onRegainHealth(EntityRegainHealthEvent event)
     {
-        if (!core.getConfig().getForceLoginPreventRegainHealth() || !(event.getEntity() instanceof Player))
+        if (!core.getConfig().getBoolean("force-login.prevent.regain-health") || !(event.getEntity() instanceof Player))
             return;
         
         Player player = (Player) event.getEntity();
@@ -78,7 +78,7 @@ public class EntityEventListener extends EventListener
     @EventHandler
     private void onFoodLevelChange(FoodLevelChangeEvent event)
     {
-        if (!core.getConfig().getForceLoginPreventFoodLevelChange() || !(event.getEntity() instanceof Player))
+        if (!core.getConfig().getBoolean("force-login.prevent.food-level-change") || !(event.getEntity() instanceof Player))
             return;
         
         Player player = (Player) event.getEntity();
@@ -92,7 +92,7 @@ public class EntityEventListener extends EventListener
     @EventHandler
     private void onEntityTarget(EntityTargetEvent event)
     {
-        if (!core.getConfig().getForceLoginPreventEntityTarget() || !(event.getTarget() instanceof Player))
+        if (!core.getConfig().getBoolean("force-login.prevent.entity-target") || !(event.getTarget() instanceof Player))
             return;
         
         Player player = (Player) event.getTarget();

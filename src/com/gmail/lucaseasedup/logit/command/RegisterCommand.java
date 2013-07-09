@@ -64,15 +64,15 @@ public class RegisterCommand extends AbstractCommandExecutor
             {
                 s.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_OTHERS").replace("%player%", args[1]));
             }
-            else if (args[2].length() < core.getConfig().getPasswordMinLength())
+            else if (args[2].length() < core.getConfig().getInt("password.min-length"))
             {
                 s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
-                        String.valueOf(core.getConfig().getPasswordMinLength())));
+                        String.valueOf(core.getConfig().getInt("password.min-length"))));
             }
-            else if (args[2].length() > core.getConfig().getPasswordMaxLength())
+            else if (args[2].length() > core.getConfig().getInt("password.max-length"))
             {
                 s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
-                        String.valueOf(core.getConfig().getPasswordMaxLength())));
+                        String.valueOf(core.getConfig().getInt("password.max-length"))));
             }
             else
             {
@@ -103,22 +103,22 @@ public class RegisterCommand extends AbstractCommandExecutor
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_SELF"));
             }
-            else if (args[0].length() < core.getConfig().getPasswordMinLength())
+            else if (args[0].length() < core.getConfig().getInt("password.min-length"))
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
-                        String.valueOf(core.getConfig().getPasswordMinLength())));
+                        String.valueOf(core.getConfig().getInt("password.min-length"))));
             }
-            else if (args[0].length() > core.getConfig().getPasswordMaxLength())
+            else if (args[0].length() > core.getConfig().getInt("password.max-length"))
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
-                        String.valueOf(core.getConfig().getPasswordMaxLength())));
+                        String.valueOf(core.getConfig().getInt("password.max-length"))));
             }
             else if (!args[0].equals(args[1]))
             {
                 p.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
             }
-            else if (core.getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= core.getConfig().getAccountsPerIp()
-                && !core.getConfig().getUnrestrictedIps().contains(getPlayerIp(p)))
+            else if (core.getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= core.getConfig().getInt("accounts-per-ip")
+                && !core.getConfig().getStringList("unrestricted-ips").contains(getPlayerIp(p)))
             {
                 p.sendMessage(getMessage("ACCOUNTS_PER_IP_LIMIT"));
             }
