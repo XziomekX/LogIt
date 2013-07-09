@@ -49,6 +49,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import static java.util.logging.Level.*;
+import java.util.logging.Logger;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import static org.bukkit.ChatColor.stripColor;
@@ -123,7 +124,7 @@ public class LogItCore
         }
         catch (SQLException ex)
         {
-            log(SEVERE, getMessage("DB_ERROR").replace("%error%", ex.getMessage()));
+            Logger.getLogger(LogItCore.class.getName()).log(Level.SEVERE, null, ex);
             plugin.disable();
             
             return;
@@ -152,7 +153,7 @@ public class LogItCore
         }
         catch (SQLException ex)
         {
-            log(SEVERE, getMessage("DB_ERROR").replace("%error%", ex.getMessage()));
+            Logger.getLogger(LogItCore.class.getName()).log(Level.SEVERE, null, ex);
             plugin.disable();
             
             return;
@@ -254,7 +255,7 @@ public class LogItCore
         }
         catch (IOException | SQLException ex)
         {
-            log(SEVERE, getMessage("DB_ERROR").replace("%error%", ex.getMessage()));
+            Logger.getLogger(LogItCore.class.getName()).log(Level.SEVERE, null, ex);
             plugin.disable();
             
             return;
@@ -283,7 +284,7 @@ public class LogItCore
         }
         catch (SQLException ex)
         {
-            log(WARNING, getMessage("DB_ERROR").replace("%error%", ex.getMessage()));
+            Logger.getLogger(LogItCore.class.getName()).log(Level.WARNING, null, ex);
         }
         
         Bukkit.getScheduler().cancelTask(pingerTaskId);
