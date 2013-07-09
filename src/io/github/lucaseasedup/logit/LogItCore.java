@@ -135,9 +135,11 @@ public class LogItCore
         try
         {
             String[] storageColumnsArray = getStorageColumns();
-            List<String> existingColumns = database.getColumnNames(config.getString("storage.accounts.table"));
             
             database.createTableIfNotExists(config.getString("storage.accounts.table"), storageColumnsArray);
+            
+            List<String> existingColumns = database.getColumnNames(config.getString("storage.accounts.table"));
+            
             database.setAutobatchEnabled(true);
             
             for (int i = 0; i < storageColumnsArray.length; i += 2)
