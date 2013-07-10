@@ -232,7 +232,6 @@ public class LogItCore
                 .replace("%st%", getStorageAccountsDbType().name())
                 .replace("%ha%", getHashingAlgorithm().name()));
         
-        // Set started to true to prevent starting multiple times.
         started = true;
     }
     
@@ -258,7 +257,6 @@ public class LogItCore
         
         log(FINE, getMessage("PLUGIN_STOP_SUCCESS"));
         
-        // Set started to false to allow starting again.
         started = false;
     }
     
