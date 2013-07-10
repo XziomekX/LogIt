@@ -85,8 +85,7 @@ public class BackupManager implements Runnable
         File             backupPath = new File(core.getPlugin().getDataFolder(), core.getConfig().getString("backup.path"));
         File             backupFile = new File(backupPath, sdf.format(date));
         
-        if (!backupPath.mkdir())
-            throw new IOException("Could not create backup directory.");
+        backupPath.mkdir();
         
         if (!backupFile.createNewFile())
             throw new IOException("Backup already exists.");
