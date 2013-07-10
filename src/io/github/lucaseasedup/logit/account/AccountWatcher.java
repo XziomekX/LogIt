@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.account;
 
 import io.github.lucaseasedup.logit.LogItCore;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Set;
 
@@ -52,7 +53,13 @@ public class AccountWatcher implements Runnable
             //                                                                                   days to seconds
             if ((now - lastActiveDate) >= (core.getConfig().getInt("days-of-absence-to-unregister") * 86400))
             {
-                accountManager.removeAccount(username);
+                try
+                {
+                    accountManager.removeAccount(username);
+                }
+                catch (SQLException | UnsupportedOperationException ex)
+                {
+                }
             }
         }
     }

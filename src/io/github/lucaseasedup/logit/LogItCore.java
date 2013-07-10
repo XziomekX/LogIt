@@ -54,10 +54,7 @@ import java.util.logging.Logger;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import static org.bukkit.ChatColor.stripColor;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.jnbt.*;
 
 /**
  * LogItCore is the central part of LogIt.
@@ -75,9 +72,10 @@ public class LogItCore
     
     public void start()
     {
-        // If LogIt has already been started, return at this point.
         if (started)
             return;
+        
+        new File(plugin.getDataFolder(), "lib").mkdir();
         
         config = new LogItConfiguration(plugin);
         config.load();
@@ -85,7 +83,6 @@ public class LogItCore
         if (!loaded)
             load();
         
-        // If LogIt does not know the hashing algorithm specified in the config, stop.
         if (getHashingAlgorithm().equals(HashingAlgorithm.UNKNOWN))
         {
             log(SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM").replace("%ha%", getHashingAlgorithm().name()));
@@ -170,13 +167,16 @@ public class LogItCore
             return;
         }
         
-        // At this point, we can surely say that LogIt has successfully started.
-        log(FINE, getMessage("PLUGIN_START_SUCCESS")
-                .replace("%st%", getStorageAccountsDbType().name())
-                .replace("%ha%", getHashingAlgorithm().name()));
-        
         accountManager = new AccountManager(this, database);
-        accountManager.loadAccounts();
+        
+        try
+        {
+            accountManager.loadAccounts();
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(LogItCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         accountWatcher = new AccountWatcher(this, accountManager);
         backupManager  = new BackupManager(this, database);
@@ -190,79 +190,27 @@ public class LogItCore
             inventoryDatabase.connect();
             inventoryDatabase.createTableIfNotExists("inventories", new String[]{
                 "username",     "VARCHAR(16)",
+                "world",        "VARCHAR(512)",
                 "inv-contents", "TEXT",
                 "inv-armor",    "TEXT"
             });
             
-            ResultSet rs = inventoryDatabase.select("inventories", new String[]{"username", "inv-contents", "inv-armor"});
+            ResultSet rs = inventoryDatabase.select("inventories", new String[]{"username", "world", "inv-contents", "inv-armor"});
             
             while (rs.next())
             {
-                File playerFile = new File(System.getProperty("user.dir") + "/" +
-                    ((World) plugin.getServer().getWorlds().get(0)).getName() + "/players/" + rs.getString("username") + ".dat");
-                
-                if (playerFile.exists())
+                try
                 {
-                    ItemStack[] contents = InventoryDepository.fromBase64(rs.getString("inv-contents")).getContents();
-                    ItemStack[] armor = InventoryDepository.fromBase64(rs.getString("inv-armor")).getContents();
-                    CompoundTag rootCompoundTag;
-                    
-                    try (NBTInputStream is = new NBTInputStream(new FileInputStream(playerFile)))
-                    {
-                        rootCompoundTag = (CompoundTag) is.readTag();
-                    }
-                    
-                    HashMap<String, Tag> newRootTagMap = new HashMap<>();
-                    
-                    for (String tagName : rootCompoundTag.getValue().keySet())
-                    {
-                        newRootTagMap.put(tagName, (Tag) rootCompoundTag.getValue().get(tagName));
-                    }
-                    
-                    List<Tag> inventoryTagList = new ArrayList<>();
-                    
-                    for (int i = 0; i < 36; i++)
-                    {
-                        if (contents[i] != null)
-                        {
-                            HashMap<String, Tag> tagMap = new HashMap<>();
-                            tagMap.put("id", new ShortTag("id", (short) contents[i].getTypeId()));
-                            tagMap.put("Damage", new ShortTag("Damage", contents[i].getDurability()));
-                            tagMap.put("Count", new ByteTag("Count", (byte) contents[i].getAmount()));
-                            tagMap.put("Slot", new ByteTag("Slot", (byte) i));
-                            
-                            if (contents[i].getTypeId() > 0)
-                            {
-                                inventoryTagList.add(new CompoundTag("", tagMap));
-                            }
-                        }
-                    }
-                    
-                    for (int i = 0; i < 4; i++)
-                    {
-                        if (armor[i] != null)
-                        {
-                            HashMap<String, Tag> tagMap = new HashMap<>();
-                            tagMap.put("id", new ShortTag("id", (short) armor[i].getTypeId()));
-                            tagMap.put("Damage", new ShortTag("Damage", armor[i].getDurability()));
-                            tagMap.put("Count", new ByteTag("Count", (byte) 1));
-                            tagMap.put("Slot", new ByteTag("Slot", (byte) (i + 100)));
-                            
-                            if (armor[i].getTypeId() > 0)
-                            {
-                                inventoryTagList.add(new CompoundTag("", tagMap));
-                            }
-                        }
-                    }
-                    
-                    newRootTagMap.put("Inventory", new ListTag("Inventory", CompoundTag.class, inventoryTagList));
-                    
-                    try (NBTOutputStream os = new NBTOutputStream(new FileOutputStream(playerFile)))
-                    {
-                        os.writeTag(new CompoundTag("", newRootTagMap));
-                    }
+                    InventoryDepository.saveInventory(rs.getString("world"), rs.getString("username"),
+                        InventoryDepository.unserialize(rs.getString("inv-contents")),
+                        InventoryDepository.unserialize(rs.getString("inv-armor")));
+                }
+                catch (FileNotFoundException ex)
+                {
                 }
             }
+            
+            inventoryDatabase.truncateTable("inventories");
         }
         catch (IOException | SQLException ex)
         {
@@ -279,6 +227,10 @@ public class LogItCore
         tickEventCallerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, tickEventCaller, 0L, 1L);
         accountWatcherTaskId  = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, accountWatcher, 0L, 12000L);
         backupManagerTaskId   = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, backupManager, 0L, 40L);
+        
+        log(FINE, getMessage("PLUGIN_START_SUCCESS")
+                .replace("%st%", getStorageAccountsDbType().name())
+                .replace("%ha%", getHashingAlgorithm().name()));
         
         // Set started to true to prevent starting multiple times.
         started = true;

@@ -26,7 +26,6 @@ import static io.github.lucaseasedup.logit.LogItPlugin.callEvent;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.db.AbstractSqlDatabase;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
-import static io.github.lucaseasedup.logit.util.MessageSender.sendMessage;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -90,7 +89,7 @@ public class AccountManager
      * @param username Username.
      * @param password Password.
      */
-    public void createAccount(String username, String password)
+    public void createAccount(String username, String password) throws SQLException, UnsupportedOperationException
     {
         if (isRegistered(username))
             throw new RuntimeException("Account already exists.");
@@ -124,18 +123,15 @@ public class AccountManager
             cIp.put(username.toLowerCase(), null);
             cLastActive.put(username.toLowerCase(), (int) (System.currentTimeMillis() / 1000L));
             
-            sendMessage(username, getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
             core.log(FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
-            
             callEvent(new AccountCreateEvent(username, hash, SUCCESS));
         }
-        catch (SQLException|UnsupportedOperationException ex)
+        catch (SQLException | UnsupportedOperationException ex)
         {
-            sendMessage(username, getMessage("CREATE_ACCOUNT_FAIL_SELF"));
             core.log(WARNING, getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username));
-            core.log(WARNING, getMessage("CAUGHT_ERROR").replace("%error%", ex.getMessage()));
-            
             callEvent(new AccountCreateEvent(username, hash, FAILURE));
+            
+            throw ex;
         }
     }
     
@@ -145,9 +141,9 @@ public class AccountManager
      * Removing a player's account does not entail logging them out.
      * 
      * @param username Username.
-     * @throws AccountNotFoundException Thrown if the account does not exist.
+     * @throws AccountNotFoundException Thrown if account does not exist.
      */
-    public void removeAccount(String username)
+    public void removeAccount(String username) throws SQLException, UnsupportedOperationException
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
@@ -169,18 +165,15 @@ public class AccountManager
             cIp.remove(username.toLowerCase());
             cLastActive.remove(username.toLowerCase());
             
-            sendMessage(username, getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
             core.log(FINE, getMessage("REMOVE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
-            
             callEvent(new AccountRemoveEvent(username, SUCCESS));
         }
-        catch (SQLException|UnsupportedOperationException ex)
+        catch (SQLException | UnsupportedOperationException ex)
         {
-            sendMessage(username, getMessage("REMOVE_ACCOUNT_FAIL_SELF"));
             core.log(WARNING, getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username));
-            core.log(WARNING, getMessage("CAUGHT_ERROR").replace("%error%", ex.getMessage()));
-            
             callEvent(new AccountRemoveEvent(username, FAILURE));
+            
+            throw ex;
         }
     }
     
@@ -251,7 +244,7 @@ public class AccountManager
      * @param username Username.
      * @param newPassword New password.
      */
-    public void changeAccountPassword(String username, String newPassword)
+    public void changeAccountPassword(String username, String newPassword) throws SQLException, UnsupportedOperationException
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
@@ -281,18 +274,15 @@ public class AccountManager
             cSalt.put(username.toLowerCase(), newSalt);
             cPassword.put(username.toLowerCase(), newHash);
             
-            sendMessage(username, getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
             core.log(FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
-            
             callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, SUCCESS));
         }
-        catch (SQLException|UnsupportedOperationException ex)
+        catch (SQLException | UnsupportedOperationException ex)
         {
-            sendMessage(username, getMessage("CHANGE_PASSWORD_FAIL_SELF"));
             core.log(WARNING, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username));
-            core.log(WARNING, getMessage("CAUGHT_ERROR").replace("%error%", ex.getMessage()));
-            
             callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, FAILURE));
+            
+            throw ex;
         }
     }
     
@@ -303,7 +293,7 @@ public class AccountManager
      * @param ip IP address.
      * @throws AccountNotFoundException Thrown if the account does not exist.
      */
-    public void attachIp(String username, String ip)
+    public void attachIp(String username, String ip) throws SQLException, UnsupportedOperationException
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
@@ -326,15 +316,14 @@ public class AccountManager
             cIp.put(username.toLowerCase(), ip);
             
             core.log(FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username).replace("%ip%", ip));
-            
             callEvent(new AccountAttachIpEvent(username, ip, SUCCESS));
         }
-        catch (SQLException|UnsupportedOperationException ex)
+        catch (SQLException | UnsupportedOperationException ex)
         {
             core.log(WARNING, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username).replace("%ip%", ip));
-            core.log(WARNING, getMessage("CAUGHT_ERROR").replace("%error%", ex.getMessage()));
-            
             callEvent(new AccountAttachIpEvent(username, ip, FAILURE));
+            
+            throw ex;
         }
     }
     
@@ -368,11 +357,11 @@ public class AccountManager
         
         try
         {
-            database.update(table,
-                new String[]{core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()},
-                new String[]{
-                    core.getConfig().getString("storage.accounts.columns.last_active"), String.valueOf(now)
-                });
+            database.update(table, new String[]{
+                core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
+            }, new String[]{
+                core.getConfig().getString("storage.accounts.columns.last_active"), String.valueOf(now)
+            });
         }
         catch (SQLException ex)
         {
@@ -417,10 +406,9 @@ public class AccountManager
             
             core.log(INFO, getMessage("PURGE_SUCCESS"));
         }
-        catch (SQLException|UnsupportedOperationException ex)
+        catch (SQLException | UnsupportedOperationException ex)
         {
             core.log(WARNING, getMessage("PURGE_FAIL"));
-            core.log(WARNING, getMessage("CAUGHT_ERROR").replace("%error%", ex.getMessage()));
             
             throw ex;
         }
@@ -429,7 +417,7 @@ public class AccountManager
     /**
      * Loads accounts from the database.
      */
-    public void loadAccounts()
+    public void loadAccounts() throws SQLException
     {
         cSalt.clear();
         cPassword.clear();
@@ -460,7 +448,8 @@ public class AccountManager
             catch (SQLException ex)
             {
                 core.log(WARNING, getMessage("LOAD_ACCOUNTS_FAIL"));
-                core.log(WARNING, getMessage("CAUGHT_ERROR").replace("%error%", ex.getMessage()));
+                
+                throw ex;
             }
         }
     }

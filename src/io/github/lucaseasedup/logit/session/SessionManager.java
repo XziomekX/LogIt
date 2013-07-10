@@ -22,7 +22,6 @@ import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.callEvent;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.account.AccountManager;
-import static io.github.lucaseasedup.logit.util.MessageSender.sendMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -144,7 +143,6 @@ public class SessionManager implements Runnable
         sessions.put(username.toLowerCase(), session);
         
         core.log(FINE, getMessage("CREATE_SESSION_SUCCESS_LOG").replace("%player%", username));
-        
         callEvent(new SessionCreateEvent(username, session));
     }
     
@@ -164,7 +162,6 @@ public class SessionManager implements Runnable
         Session session = sessions.remove(username.toLowerCase());
         
         core.log(FINE, getMessage("DESTROY_SESSION_SUCCESS_LOG").replace("%player%", getPlayerName(username)));
-        
         callEvent(new SessionDestroyEvent(username, session));
     }
     
@@ -186,9 +183,7 @@ public class SessionManager implements Runnable
         
         accountManager.updateLastActiveDate(username);
         
-        sendMessage(username, getMessage("START_SESSION_SUCCESS_SELF"));
         core.log(FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
-        
         callEvent(new SessionStartEvent(username, session));
     }
     
@@ -210,9 +205,7 @@ public class SessionManager implements Runnable
         
         accountManager.updateLastActiveDate(username);
         
-        sendMessage(username, getMessage("END_SESSION_SUCCESS_SELF"));
         core.log(FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
-        
         callEvent(new SessionEndEvent(username, session));
     }
     

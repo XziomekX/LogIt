@@ -23,8 +23,10 @@ import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.logging.Level;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.WARNING;
+import java.util.logging.Logger;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -37,13 +39,13 @@ public class LogItCommand extends AbstractCommandExecutor
     }
     
     @Override
-    public boolean onCommand(CommandSender s, Command cmd, String label, String[] args)
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
         Player p = null;
         
         try
         {
-            p = (Player) s;
+            p = (Player) sender;
         }
         catch (ClassCastException ex)
         {
@@ -55,61 +57,61 @@ public class LogItCommand extends AbstractCommandExecutor
         {
             if (p != null && !p.hasPermission("logit.help"))
             {
-                s.sendMessage(getMessage("NO_PERMS"));
+                sender.sendMessage(getMessage("NO_PERMS"));
             }
             else
             {
                 if (p == null || p.hasPermission("logit.help"))
                 {
-                    s.sendMessage(getLogItSubcommandHelp("help", null));
+                    sender.sendMessage(getLogItSubcommandHelp("help", null));
                 }
                 if (p == null || p.hasPermission("logit.version"))
                 {
-                    s.sendMessage(getLogItSubcommandHelp("version", null));
+                    sender.sendMessage(getLogItSubcommandHelp("version", null));
                 }
                 if (p == null || p.hasPermission("logit.reload"))
                 {
-                    s.sendMessage(getLogItSubcommandHelp("reload", null));
+                    sender.sendMessage(getLogItSubcommandHelp("reload", null));
                 }
                 if (p == null || p.hasPermission("logit.purge"))
                 {
-                    s.sendMessage(getLogItSubcommandHelp("purge", null));
+                    sender.sendMessage(getLogItSubcommandHelp("purge", null));
                 }
                 if (p == null || p.hasPermission("logit.backup.force"))
                 {
-                    s.sendMessage(getLogItSubcommandHelp("backup force", null));
+                    sender.sendMessage(getLogItSubcommandHelp("backup force", null));
                 }
                 if (p == null || p.hasPermission("logit.backup.restore"))
                 {
-                    s.sendMessage(getLogItSubcommandHelp("backup restore", "[filename]"));
+                    sender.sendMessage(getLogItSubcommandHelp("backup restore", "[filename]"));
                 }
                 if (p == null || p.hasPermission("logit.backup.remove"))
                 {
-                    s.sendMessage(getLogItSubcommandHelp("backup remove", "<amount>"));
+                    sender.sendMessage(getLogItSubcommandHelp("backup remove", "<amount>"));
                 }
                 if (p != null && p.hasPermission("logit.setwr"))
                 {
-                    s.sendMessage(getLogItSubcommandHelp("setwr", null));
+                    sender.sendMessage(getLogItSubcommandHelp("setwr", null));
                 }
                 if (p != null && p.hasPermission("logit.gotowr"))
                 {
-                    s.sendMessage(getLogItSubcommandHelp("gotowr", null));
+                    sender.sendMessage(getLogItSubcommandHelp("gotowr", null));
                 }
                 if (p == null || p.hasPermission("logit.globalpass.set"))
                 {
-                    s.sendMessage(getLogItSubcommandHelp("globalpass set", "<password>"));
+                    sender.sendMessage(getLogItSubcommandHelp("globalpass set", "<password>"));
                 }
                 if (p == null || p.hasPermission("logit.globalpass.remove"))
                 {
-                    s.sendMessage(getLogItSubcommandHelp("globalpass remove", null));
+                    sender.sendMessage(getLogItSubcommandHelp("globalpass remove", null));
                 }
                 if (p == null || p.hasPermission("logit.accountcount"))
                 {
-                    s.sendMessage(getLogItSubcommandHelp("accountcount", null));
+                    sender.sendMessage(getLogItSubcommandHelp("accountcount", null));
                 }
                 if (p == null || p.hasPermission("logit.ipcount"))
                 {
-                    s.sendMessage(getLogItSubcommandHelp("ipcount", "[ip]"));
+                    sender.sendMessage(getLogItSubcommandHelp("ipcount", "[ip]"));
                 }
             }
         }
@@ -117,18 +119,18 @@ public class LogItCommand extends AbstractCommandExecutor
         {
             if (p != null && !p.hasPermission("logit.version"))
             {
-                s.sendMessage(getMessage("NO_PERMS"));
+                sender.sendMessage(getMessage("NO_PERMS"));
             }
             else
             {
-                s.sendMessage(getMessage("PLUGIN_VERSION").replace("%version%", core.getPlugin().getDescription().getVersion()));
+                sender.sendMessage(getMessage("PLUGIN_VERSION").replace("%version%", core.getPlugin().getDescription().getVersion()));
             }
         }
         else if (subcommand.equalsIgnoreCase("reload") && args.length == 1)
         {
             if (p != null && !p.hasPermission("logit.reload"))
             {
-                s.sendMessage(getMessage("NO_PERMS"));
+                sender.sendMessage(getMessage("NO_PERMS"));
             }
             else
             {
@@ -136,7 +138,7 @@ public class LogItCommand extends AbstractCommandExecutor
                 
                 if (p != null && core.getPlugin().isEnabled())
                 {
-                    s.sendMessage(getMessage("RELOADED"));
+                    sender.sendMessage(getMessage("RELOADED"));
                 }
             }
         }
@@ -144,24 +146,24 @@ public class LogItCommand extends AbstractCommandExecutor
         {
             if (p != null && !p.hasPermission("logit.purge"))
             {
-                s.sendMessage(getMessage("NO_PERMS"));
+                sender.sendMessage(getMessage("NO_PERMS"));
             }
             else
             {
                 try
                 {
                     core.getAccountManager().purge();
-
+                    
                     if (p != null)
                     {
-                        s.sendMessage(getMessage("PURGE_SUCCESS"));
+                        sender.sendMessage(getMessage("PURGE_SUCCESS"));
                     }
                 }
                 catch (SQLException ex)
                 {
                     if (p != null)
                     {
-                        s.sendMessage(getMessage("PURGE_FAIL"));
+                        sender.sendMessage(getMessage("PURGE_FAIL"));
                     }
                 }
             }
@@ -172,7 +174,7 @@ public class LogItCommand extends AbstractCommandExecutor
             {
                 if (p != null && !p.hasPermission("logit.backup.force"))
                 {
-                    s.sendMessage(getMessage("NO_PERMS"));
+                    sender.sendMessage(getMessage("NO_PERMS"));
                 }
                 else
                 {
@@ -181,15 +183,15 @@ public class LogItCommand extends AbstractCommandExecutor
                         core.getBackupManager().createBackup(core.getDatabase());
 
                         if (p != null)
-                            s.sendMessage(getMessage("CREATE_BACKUP_SUCCESS"));
-
+                            sender.sendMessage(getMessage("CREATE_BACKUP_SUCCESS"));
+                        
                         core.log(INFO, getMessage("CREATE_BACKUP_SUCCESS"));
                     }
                     catch (IOException|SQLException ex)
                     {
                         if (p != null)
-                            s.sendMessage(getMessage("CREATE_BACKUP_FAIL"));
-
+                            sender.sendMessage(getMessage("CREATE_BACKUP_FAIL"));
+                        
                         core.log(WARNING, getMessage("CREATE_BACKUP_FAIL"));
                         core.log(WARNING, getMessage("CAUGHT_ERROR").replace("%error%", ex.getMessage()));
                     }
@@ -199,7 +201,7 @@ public class LogItCommand extends AbstractCommandExecutor
             {
                 if (p != null && !p.hasPermission("logit.backup.restore"))
                 {
-                    s.sendMessage(getMessage("NO_PERMS"));
+                    sender.sendMessage(getMessage("NO_PERMS"));
                 }
                 else
                 {
@@ -215,15 +217,16 @@ public class LogItCommand extends AbstractCommandExecutor
                         core.getAccountManager().loadAccounts();
                         
                         if (p != null)
-                            s.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS"));
+                            sender.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS"));
                         
                         core.log(INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
                     }
                     catch (FileNotFoundException|SQLException ex)
                     {
                         if (p != null)
-                            s.sendMessage(getMessage("RESTORE_BACKUP_FAIL"));
+                            sender.sendMessage(getMessage("RESTORE_BACKUP_FAIL"));
                         
+                        Logger.getLogger(LogItCommand.class.getName()).log(Level.WARNING, null, ex);
                         core.log(WARNING, getMessage("RESTORE_BACKUP_FAIL"));
                     }
                 }
@@ -232,11 +235,11 @@ public class LogItCommand extends AbstractCommandExecutor
             {
                 if (p != null && !p.hasPermission("logit.backup.remove"))
                 {
-                    s.sendMessage(getMessage("NO_PERMS"));
+                    sender.sendMessage(getMessage("NO_PERMS"));
                 }
                 else if (args.length < 3)
                 {
-                    s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "amount"));
+                    sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "amount"));
                 }
                 else
                 {
@@ -245,14 +248,14 @@ public class LogItCommand extends AbstractCommandExecutor
                         core.getBackupManager().removeBackups(Integer.parseInt(args[2]));
 
                         if (p != null)
-                            s.sendMessage(getMessage("REMOVE_BACKUPS_SUCCESS"));
+                            sender.sendMessage(getMessage("REMOVE_BACKUPS_SUCCESS"));
 
                         core.log(INFO, getMessage("REMOVE_BACKUPS_SUCCESS"));
                     }
                     catch (NumberFormatException|IOException ex)
                     {
                         if (p != null)
-                            s.sendMessage(getMessage("REMOVE_BACKUPS_FAIL"));
+                            sender.sendMessage(getMessage("REMOVE_BACKUPS_FAIL"));
 
                         core.log(WARNING, getMessage("REMOVE_BACKUPS_FAIL"));
                     }
@@ -263,11 +266,11 @@ public class LogItCommand extends AbstractCommandExecutor
         {
             if (p == null)
             {
-                s.sendMessage(getMessage("ONLY_PLAYERS"));
+                sender.sendMessage(getMessage("ONLY_PLAYERS"));
             }
             else if (!p.hasPermission("logit.setwr"))
             {
-                s.sendMessage(getMessage("NO_PERMS"));
+                sender.sendMessage(getMessage("NO_PERMS"));
             }
             else
             {
@@ -282,11 +285,11 @@ public class LogItCommand extends AbstractCommandExecutor
         {
             if (p == null)
             {
-                s.sendMessage(getMessage("ONLY_PLAYERS"));
+                sender.sendMessage(getMessage("ONLY_PLAYERS"));
             }
             else if (!p.hasPermission("logit.gotowr"))
             {
-                s.sendMessage(getMessage("NO_PERMS"));
+                sender.sendMessage(getMessage("NO_PERMS"));
             }
             else
             {
@@ -299,20 +302,20 @@ public class LogItCommand extends AbstractCommandExecutor
             {
                 if (p != null && !p.hasPermission("logit.globalpass.set"))
                 {
-                    s.sendMessage(getMessage("NO_PERMS"));
+                    sender.sendMessage(getMessage("NO_PERMS"));
                 }
                 else if (args.length < 3)
                 {
-                    s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+                    sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
                 }
                 else if (args[2].length() < core.getConfig().getInt("password.min-length"))
                 {
-                    s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
+                    sender.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
                             String.valueOf(core.getConfig().getInt("password.min-length"))));
                 }
                 else if (args[2].length() > core.getConfig().getInt("password.max-length"))
                 {
-                    s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
+                    sender.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
                             String.valueOf(core.getConfig().getInt("password.max-length"))));
                 }
                 else
@@ -321,7 +324,7 @@ public class LogItCommand extends AbstractCommandExecutor
                     
                     if (p != null)
                     {
-                        s.sendMessage(getMessage("GLOBALPASS_SET_SUCCESS"));
+                        sender.sendMessage(getMessage("GLOBALPASS_SET_SUCCESS"));
                     }
                 }
             }
@@ -329,7 +332,7 @@ public class LogItCommand extends AbstractCommandExecutor
             {
                 if (p != null && !p.hasPermission("logit.globalpass.remove"))
                 {
-                    s.sendMessage(getMessage("NO_PERMS"));
+                    sender.sendMessage(getMessage("NO_PERMS"));
                 }
                 else
                 {
@@ -337,7 +340,7 @@ public class LogItCommand extends AbstractCommandExecutor
                     
                     if (p != null)
                     {
-                        s.sendMessage(getMessage("GLOBALPASS_REMOVE_SUCCESS"));
+                        sender.sendMessage(getMessage("GLOBALPASS_REMOVE_SUCCESS"));
                     }
                 }
             }
@@ -346,29 +349,29 @@ public class LogItCommand extends AbstractCommandExecutor
         {
             if (p != null && !p.hasPermission("logit.accountcount"))
             {
-                s.sendMessage(getMessage("NO_PERMS"));
+                sender.sendMessage(getMessage("NO_PERMS"));
             }
             else
             {
-                s.sendMessage(getMessage("ACCOUNT_COUNT").replace("%num%", String.valueOf(core.getAccountManager().getAccountCount())));
+                sender.sendMessage(getMessage("ACCOUNT_COUNT").replace("%num%", String.valueOf(core.getAccountManager().getAccountCount())));
             }
         }
         else if (subcommand.equalsIgnoreCase("ipcount") && args.length <= 2)
         {
             if (p != null && !p.hasPermission("logit.ipcount"))
             {
-                s.sendMessage(getMessage("NO_PERMS"));
+                sender.sendMessage(getMessage("NO_PERMS"));
             }
             else
             {
                 if (args.length == 1)
                 {
-                    s.sendMessage(getMessage("IP_COUNT_UNIQUE")
+                    sender.sendMessage(getMessage("IP_COUNT_UNIQUE")
                         .replace("%num%", String.valueOf(core.getAccountManager().countUniqueIps())));
                 }
                 else if (args.length == 2)
                 {
-                    s.sendMessage(getMessage("IP_COUNT_ACCOUNTS")
+                    sender.sendMessage(getMessage("IP_COUNT_ACCOUNTS")
                         .replace("%ip%", args[1])
                         .replace("%num%", String.valueOf(core.getAccountManager().countAccountsWithIp(args[1]))));
                 }
@@ -377,9 +380,9 @@ public class LogItCommand extends AbstractCommandExecutor
         else
         {
             if (p != null && !p.hasPermission("logit"))
-                s.sendMessage(getMessage("NO_PERMS"));
+                sender.sendMessage(getMessage("NO_PERMS"));
             else
-                s.sendMessage(getMessage("TYPE_FOR_HELP"));
+                sender.sendMessage(getMessage("TYPE_FOR_HELP"));
         }
         
         return true;

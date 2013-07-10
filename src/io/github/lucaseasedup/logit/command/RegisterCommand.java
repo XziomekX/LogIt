@@ -20,10 +20,14 @@ package io.github.lucaseasedup.logit.command;
 
 import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.MessageSender.sendMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
+import java.sql.SQLException;
+import java.util.logging.Level;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import java.util.logging.Logger;
 
 public class RegisterCommand extends AbstractCommandExecutor
 {
@@ -33,13 +37,13 @@ public class RegisterCommand extends AbstractCommandExecutor
     }
     
     @Override
-    public boolean onCommand(CommandSender s, Command cmd, String label, String[] args)
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
         Player p = null;
         
         try
         {
-            p = (Player) s;
+            p = (Player) sender;
         }
         catch (ClassCastException ex)
         {
@@ -50,42 +54,51 @@ public class RegisterCommand extends AbstractCommandExecutor
             if (p != null && ((core.isPlayerForcedToLogin(p) && !core.getSessionManager().isSessionAlive(p))
                     || !p.hasPermission("logit.register.others")))
             {
-                s.sendMessage(getMessage("NO_PERMS"));
+                sender.sendMessage(getMessage("NO_PERMS"));
             }
             else if (args.length < 2)
             {
-                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
+                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
             }
             else if (args.length < 3)
             {
-                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
             else if (core.getAccountManager().isRegistered(args[1]))
             {
-                s.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_OTHERS").replace("%player%", args[1]));
+                sender.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_OTHERS").replace("%player%", args[1]));
             }
             else if (args[2].length() < core.getConfig().getInt("password.min-length"))
             {
-                s.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
+                sender.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
                         String.valueOf(core.getConfig().getInt("password.min-length"))));
             }
             else if (args[2].length() > core.getConfig().getInt("password.max-length"))
             {
-                s.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
+                sender.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
                         String.valueOf(core.getConfig().getInt("password.max-length"))));
             }
             else
             {
-                core.getAccountManager().createAccount(args[1], args[2]);
-
-                s.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_OTHERS").replace("%player%", args[1]));
+                try
+                {
+                    core.getAccountManager().createAccount(args[1], args[2]);
+                    sendMessage(args[1], getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
+                    sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_OTHERS").replace("%player%", args[1]));
+                    
+                }
+                catch (SQLException | UnsupportedOperationException ex)
+                {
+                    Logger.getLogger(RegisterCommand.class.getName()).log(Level.WARNING, null, ex);
+                    sender.sendMessage(getMessage("CREATE_ACCOUNT_FAIL_OTHERS").replace("%player%", args[1]));
+                }
             }
         }
         else if (args.length <= 2)
         {
             if (p == null)
             {
-                s.sendMessage(getMessage("ONLY_PLAYERS"));
+                sender.sendMessage(getMessage("ONLY_PLAYERS"));
             }
             else if (!p.hasPermission("logit.register.self"))
             {
@@ -124,14 +137,26 @@ public class RegisterCommand extends AbstractCommandExecutor
             }
             else
             {
-                core.getAccountManager().createAccount(p.getName(), args[0]);
-                core.getAccountManager().attachIp(p.getName(), getPlayerIp(p));
-                core.getSessionManager().startSession(p.getName());
+                try
+                {
+                    core.getAccountManager().createAccount(p.getName(), args[0]);
+                    sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
+                    
+                    core.getAccountManager().attachIp(p.getName(), getPlayerIp(p));
+                    
+                    core.getSessionManager().startSession(p.getName());
+                    sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
+                }
+                catch (SQLException | UnsupportedOperationException ex)
+                {
+                    Logger.getLogger(RegisterCommand.class.getName()).log(Level.WARNING, null, ex);
+                    sender.sendMessage(getMessage("CREATE_ACCOUNT_FAIL_SELF"));
+                }
             }
         }
         else
         {
-            s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
+            sender.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
         }
         
         return true;

@@ -22,7 +22,9 @@ import io.github.lucaseasedup.logit.db.AbstractSqlDatabase;
 import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.server.v1_5_R3.NBTBase;
@@ -35,6 +37,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.jnbt.*;
 
 /**
  * @author LucasEasedUp
@@ -67,12 +70,14 @@ public class InventoryDepository
             {
                 inventoryDatabase.insert("inventories", new String[]{
                     "username",
+                    "world",
                     "inv-contents",
                     "inv-armor"
                 }, new String[]{
                     player.getName().toLowerCase(),
-                    toBase64(getContentInventory(player.getInventory())),
-                    toBase64(getArmorInventory(player.getInventory()))
+                    player.getWorld().getName(),
+                    serialize(getContentInventory(player.getInventory())),
+                    serialize(getArmorInventory(player.getInventory()))
                 });
             }
             else
@@ -80,8 +85,9 @@ public class InventoryDepository
                 inventoryDatabase.update("inventories", new String[]{
                     "username", "=", player.getName().toLowerCase()
                 }, new String[]{
-                    "inv-contents", toBase64(getContentInventory(player.getInventory())),
-                    "inv-armor", toBase64(getArmorInventory(player.getInventory()))
+                    "world", player.getWorld().getName(),
+                    "inv-contents", serialize(getContentInventory(player.getInventory())),
+                    "inv-armor", serialize(getArmorInventory(player.getInventory()))
                 });
             }
         }
@@ -115,17 +121,20 @@ public class InventoryDepository
         try
         {        
             ResultSet rs = inventoryDatabase.select("inventories", new String[]{
-                "username", "inv-contents", "inv-armor"
+                "username", "world", "inv-contents", "inv-armor"
             }, new String[]{
                 "username", "=", player.getName().toLowerCase()
             });
             
-            player.getInventory().setContents(fromBase64(rs.getString("inv-contents")).getContents());
-            player.getInventory().setArmorContents(fromBase64(rs.getString("inv-armor")).getContents());
-            
-            inventoryDatabase.delete("inventories", new String[]{
-                "username", "=", player.getName().toLowerCase()
-            });
+            if (rs.getString("world").equalsIgnoreCase(player.getWorld().getName()))
+            {
+                player.getInventory().setContents(unserialize(rs.getString("inv-contents")).getContents());
+                player.getInventory().setArmorContents(unserialize(rs.getString("inv-armor")).getContents());
+                
+                inventoryDatabase.delete("inventories", new String[]{
+                    "username", "=", player.getName().toLowerCase()
+                });
+            }
         }
         catch (SQLException ex)
         {
@@ -139,6 +148,73 @@ public class InventoryDepository
     public AbstractSqlDatabase getInventoryDatabase()
     {
         return inventoryDatabase;
+    }
+    
+    public static void saveInventory(String world, String username, Inventory contentsInventory, Inventory armorInventory) throws IOException
+    {
+        File playerFile = new File(System.getProperty("user.dir") + "/" + world + "/players/" + username + ".dat");
+
+        if (!playerFile.exists())
+            throw new FileNotFoundException();
+        
+        ItemStack[] contents = contentsInventory.getContents();
+        ItemStack[] armor = armorInventory.getContents();
+        CompoundTag rootCompoundTag;
+
+        try (NBTInputStream is = new NBTInputStream(new FileInputStream(playerFile)))
+        {
+            rootCompoundTag = (CompoundTag) is.readTag();
+        }
+
+        HashMap<String, Tag> newRootTagMap = new HashMap<>();
+
+        for (String tagName : rootCompoundTag.getValue().keySet())
+        {
+            newRootTagMap.put(tagName, (Tag) rootCompoundTag.getValue().get(tagName));
+        }
+
+        List<Tag> inventoryTagList = new ArrayList<>();
+
+        for (int i = 0; i < 36; i++)
+        {
+            if (contents[i] != null)
+            {
+                HashMap<String, Tag> tagMap = new HashMap<>();
+                tagMap.put("id", new ShortTag("id", (short) contents[i].getTypeId()));
+                tagMap.put("Damage", new ShortTag("Damage", contents[i].getDurability()));
+                tagMap.put("Count", new ByteTag("Count", (byte) contents[i].getAmount()));
+                tagMap.put("Slot", new ByteTag("Slot", (byte) i));
+
+                if (contents[i].getTypeId() > 0)
+                {
+                    inventoryTagList.add(new CompoundTag("", tagMap));
+                }
+            }
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (armor[i] != null)
+            {
+                HashMap<String, Tag> tagMap = new HashMap<>();
+                tagMap.put("id", new ShortTag("id", (short) armor[i].getTypeId()));
+                tagMap.put("Damage", new ShortTag("Damage", armor[i].getDurability()));
+                tagMap.put("Count", new ByteTag("Count", (byte) 1));
+                tagMap.put("Slot", new ByteTag("Slot", (byte) (i + 100)));
+
+                if (armor[i].getTypeId() > 0)
+                {
+                    inventoryTagList.add(new CompoundTag("", tagMap));
+                }
+            }
+        }
+
+        newRootTagMap.put("Inventory", new ListTag("Inventory", CompoundTag.class, inventoryTagList));
+
+        try (NBTOutputStream os = new NBTOutputStream(new FileOutputStream(playerFile)))
+        {
+            os.writeTag(new CompoundTag("", newRootTagMap));
+        }
     }
     
     public static Inventory getArmorInventory(PlayerInventory inventory)

@@ -20,10 +20,12 @@ package io.github.lucaseasedup.logit.command;
 
 import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.MessageSender.sendMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import static java.util.logging.Level.*;
 
 public class LogoutCommand extends AbstractCommandExecutor
 {
@@ -33,13 +35,13 @@ public class LogoutCommand extends AbstractCommandExecutor
     }
 
     @Override
-    public boolean onCommand(CommandSender s, Command cmd, String label, String[] args)
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
         Player p = null;
         
         try
         {
-            p = (Player) s;
+            p = (Player) sender;
         }
         catch (ClassCastException ex)
         {
@@ -49,32 +51,34 @@ public class LogoutCommand extends AbstractCommandExecutor
         {
             if (p != null && !p.hasPermission("logit.logout.others"))
             {
-                s.sendMessage(getMessage("NO_PERMS"));
+                sender.sendMessage(getMessage("NO_PERMS"));
             }
             else if (args.length < 2)
             {
-                s.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
+                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
             }
             else if (!isPlayerOnline(args[1]))
             {
-                s.sendMessage(getMessage("NOT_ONLINE").replace("%player%", args[1]));
+                sender.sendMessage(getMessage("NOT_ONLINE").replace("%player%", args[1]));
             }
             else if (!core.getSessionManager().isSessionAlive(args[1]))
             {
-                s.sendMessage(getMessage("START_SESSION_NOT_OTHERS").replace("%player%", args[1]));
+                sender.sendMessage(getMessage("START_SESSION_NOT_OTHERS").replace("%player%", args[1]));
             }
             else
             {
                 core.getSessionManager().endSession(args[1]);
-
-                s.sendMessage(getMessage("END_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
+                
+                sendMessage(args[1], getMessage("END_SESSION_SUCCESS_SELF"));
+                sender.sendMessage(getMessage("END_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
+                core.log(FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", args[1]));
             }
         }
         else if (args.length == 0)
         {
             if (p == null)
             {
-                s.sendMessage(getMessage("ONLY_PLAYERS"));
+                sender.sendMessage(getMessage("ONLY_PLAYERS"));
             }
             else if (!p.hasPermission("logit.logout.self"))
             {
@@ -87,11 +91,14 @@ public class LogoutCommand extends AbstractCommandExecutor
             else
             {
                 core.getSessionManager().endSession(p.getName());
+                
+                sender.sendMessage(getMessage("END_SESSION_SUCCESS_SELF"));
+                core.log(FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", p.getName()));
             }
         }
         else
         {
-            s.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
+            sender.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
         }
         
         return true;
