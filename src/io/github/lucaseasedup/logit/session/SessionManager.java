@@ -23,6 +23,7 @@ import static io.github.lucaseasedup.logit.LogItPlugin.callEvent;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.account.AccountManager;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.*;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import static java.util.logging.Level.FINE;
@@ -181,7 +182,13 @@ public class SessionManager implements Runnable
         // Start session.
         session.setStatus(0L);
         
-        accountManager.updateLastActiveDate(username);
+        try
+        {
+            accountManager.updateLastActiveDate(username);
+        }
+        catch (SQLException ex)
+        {
+        }
         
         core.log(FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
         callEvent(new SessionStartEvent(username, session));
@@ -203,7 +210,13 @@ public class SessionManager implements Runnable
         // End session.
         session.setStatus(-1L);
         
-        accountManager.updateLastActiveDate(username);
+        try
+        {
+            accountManager.updateLastActiveDate(username);
+        }
+        catch (SQLException ex)
+        {
+        }
         
         core.log(FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
         callEvent(new SessionEndEvent(username, session));

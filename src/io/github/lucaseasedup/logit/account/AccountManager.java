@@ -152,8 +152,9 @@ public class AccountManager
         {
             if (core.getIntegration() == NONE)
             {
-                database.delete(table,
-                    new String[]{core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()});
+                database.delete(table, new String[]{
+                    core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
+                });
             }
             else
             {
@@ -259,12 +260,12 @@ public class AccountManager
         {
             if (core.getIntegration() == NONE)
             {
-                database.update(table,
-                    new String[]{core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()},
-                    new String[]{
-                        core.getConfig().getString("storage.accounts.columns.salt"), newSalt,
-                        core.getConfig().getString("storage.accounts.columns.password"), newHash
-                    });
+                database.update(table, new String[]{
+                    core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
+                }, new String[]{
+                    core.getConfig().getString("storage.accounts.columns.salt"), newSalt,
+                    core.getConfig().getString("storage.accounts.columns.password"), newHash
+                });
             }
             else
             {
@@ -302,11 +303,11 @@ public class AccountManager
         {
             if (core.getIntegration() == NONE)
             {
-                database.update(table,
-                    new String[]{core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()},
-                    new String[]{
-                        core.getConfig().getString("storage.accounts.columns.ip"), ip
-                    });
+                database.update(table, new String[]{
+                    core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
+                }, new String[]{
+                    core.getConfig().getString("storage.accounts.columns.ip"), ip
+                });
             }
             else
             {
@@ -351,22 +352,15 @@ public class AccountManager
         return new HashSet<String>(cIp.values()).size();
     }
     
-    public void updateLastActiveDate(String username)
+    public void updateLastActiveDate(String username) throws SQLException
     {
         int now = (int) (System.currentTimeMillis() / 1000L);
         
-        try
-        {
-            database.update(table, new String[]{
-                core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
-            }, new String[]{
-                core.getConfig().getString("storage.accounts.columns.last_active"), String.valueOf(now)
-            });
-        }
-        catch (SQLException ex)
-        {
-            return;
-        }
+        database.update(table, new String[]{
+            core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
+        }, new String[]{
+            core.getConfig().getString("storage.accounts.columns.last_active"), String.valueOf(now)
+        });
         
         cLastActive.put(username.toLowerCase(), now);
     }
