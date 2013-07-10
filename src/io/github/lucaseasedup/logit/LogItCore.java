@@ -191,19 +191,19 @@ public class LogItCore
             inventoryDatabase.createTableIfNotExists("inventories", new String[]{
                 "username",     "VARCHAR(16)",
                 "world",        "VARCHAR(512)",
-                "inv-contents", "TEXT",
-                "inv-armor",    "TEXT"
+                "inv_contents", "TEXT",
+                "inv_armor",    "TEXT"
             });
             
-            ResultSet rs = inventoryDatabase.select("inventories", new String[]{"username", "world", "inv-contents", "inv-armor"});
+            ResultSet rs = inventoryDatabase.select("inventories", new String[]{"username", "world", "inv_contents", "inv_armor"});
             
             while (rs.next())
             {
                 try
                 {
                     InventoryDepository.saveInventory(rs.getString("world"), rs.getString("username"),
-                        InventoryDepository.unserialize(rs.getString("inv-contents")),
-                        InventoryDepository.unserialize(rs.getString("inv-armor")));
+                        InventoryDepository.unserialize(rs.getString("inv_contents")),
+                        InventoryDepository.unserialize(rs.getString("inv_armor")));
                 }
                 catch (FileNotFoundException ex)
                 {

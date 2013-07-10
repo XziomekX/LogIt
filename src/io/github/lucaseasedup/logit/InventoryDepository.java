@@ -71,8 +71,8 @@ public class InventoryDepository
                 inventoryDatabase.insert("inventories", new String[]{
                     "username",
                     "world",
-                    "inv-contents",
-                    "inv-armor"
+                    "inv_contents",
+                    "inv_armor"
                 }, new String[]{
                     player.getName().toLowerCase(),
                     player.getWorld().getName(),
@@ -86,8 +86,8 @@ public class InventoryDepository
                     "username", "=", player.getName().toLowerCase()
                 }, new String[]{
                     "world", player.getWorld().getName(),
-                    "inv-contents", serialize(getContentInventory(player.getInventory())),
-                    "inv-armor", serialize(getArmorInventory(player.getInventory()))
+                    "inv_contents", serialize(getContentInventory(player.getInventory())),
+                    "inv_armor", serialize(getArmorInventory(player.getInventory()))
                 });
             }
         }
@@ -121,15 +121,15 @@ public class InventoryDepository
         try
         {        
             ResultSet rs = inventoryDatabase.select("inventories", new String[]{
-                "username", "world", "inv-contents", "inv-armor"
+                "username", "world", "inv_contents", "inv_armor"
             }, new String[]{
                 "username", "=", player.getName().toLowerCase()
             });
             
             if (rs.getString("world").equalsIgnoreCase(player.getWorld().getName()))
             {
-                player.getInventory().setContents(unserialize(rs.getString("inv-contents")).getContents());
-                player.getInventory().setArmorContents(unserialize(rs.getString("inv-armor")).getContents());
+                player.getInventory().setContents(unserialize(rs.getString("inv_contents")).getContents());
+                player.getInventory().setArmorContents(unserialize(rs.getString("inv_armor")).getContents());
                 
                 inventoryDatabase.delete("inventories", new String[]{
                     "username", "=", player.getName().toLowerCase()
