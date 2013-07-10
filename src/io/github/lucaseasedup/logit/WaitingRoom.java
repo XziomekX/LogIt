@@ -56,7 +56,7 @@ public class WaitingRoom
         try
         {
             core.getAccountManager().saveLocation(player.getName(), player.getLocation());
-            player.teleport(getLocation());
+            player.teleport(getWaitingRoomLocation());
             
             database.update(table, new String[]{
                 core.getConfig().getString("storage.accounts.columns.username"), "=", player.getName().toLowerCase()
@@ -127,7 +127,7 @@ public class WaitingRoom
         }
     }
     
-    public Location getLocation()
+    public Location getWaitingRoomLocation()
     {
         World  world = Bukkit.getServer().getWorld(core.getConfig().getString("waiting-room.location.world"));
         double x = core.getConfig().getVector("waiting-room.location.position").getX();
@@ -139,12 +139,24 @@ public class WaitingRoom
         return new Location(world, x, y, z, yaw, pitch);
     }
     
-    public void setLocation(Location location)
+    public void setWaitingRoomLocation(Location location)
     {
         core.getConfig().set("waiting-room.location.world", location.getWorld().getName());
         core.getConfig().set("waiting-room.location.position", new Vector(location.getX(), location.getY(), location.getZ()));
         core.getConfig().set("waiting-room.location.yaw", location.getYaw());
         core.getConfig().set("waiting-room.location.pitch", location.getPitch());
+    }
+    
+    public Location getNewbieTeleportLocation()
+    {
+        World  world = Bukkit.getServer().getWorld(core.getConfig().getString("waiting-room.newbie-teleport.location.world"));
+        double x = core.getConfig().getVector("waiting-room.newbie-teleport.location.position").getX();
+        double y = core.getConfig().getVector("waiting-room.newbie-teleport.location.position").getY();
+        double z = core.getConfig().getVector("waiting-room.newbie-teleport.location.position").getZ();
+        float  yaw = (float) core.getConfig().getDouble("waiting-room.newbie-teleport.location.yaw");
+        float  pitch = (float) core.getConfig().getDouble("waiting-room.newbie-teleport.location.pitch");
+        
+        return new Location(world, x, y, z, yaw, pitch);
     }
     
     private final LogItCore core;

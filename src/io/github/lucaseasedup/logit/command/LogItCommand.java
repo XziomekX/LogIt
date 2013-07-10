@@ -284,7 +284,7 @@ public class LogItCommand extends AbstractCommandExecutor
             }
             else
             {
-                core.getWaitingRoom().setLocation(p.getLocation());
+                core.getWaitingRoom().setWaitingRoomLocation(p.getLocation());
                 core.getConfig().save();
                 
                 p.sendMessage(getMessage("WAITING_ROOM_SET"));
@@ -303,7 +303,7 @@ public class LogItCommand extends AbstractCommandExecutor
             }
             else
             {
-                p.teleport(core.getWaitingRoom().getLocation());
+                p.teleport(core.getWaitingRoom().getWaitingRoomLocation());
             }
         }
         else if (subcommand.equalsIgnoreCase("togglewr") && args.length == 1)
