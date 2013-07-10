@@ -157,6 +157,11 @@ public final class LogItConfiguration
         return plugin.getConfig().getStringList(path);
     }
     
+    public Vector getVector(String path)
+    {
+        return plugin.getConfig().getVector(path);
+    }
+    
     public void set(String path, Object value)
     {
         plugin.getConfig().set(path, value);
