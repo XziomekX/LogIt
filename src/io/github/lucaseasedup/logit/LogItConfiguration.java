@@ -113,6 +113,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("storage.accounts.columns.location_pitch", plugin.getConfig().getString("storage.accounts.columns.location_pitch", "location_pitch"));
         plugin.getConfig().set("storage.accounts.columns.in_wr",          plugin.getConfig().getString("storage.accounts.columns.in_wr", "in_wr"));
         plugin.getConfig().set("storage.inventories.filename",            plugin.getConfig().getString("storage.inventories.filename", "inventories.db"));
+        plugin.getConfig().set("storage.sessions.filename",               plugin.getConfig().getString("storage.sessions.filename", "sessions.db"));
         plugin.getConfig().set("backup.path",                             plugin.getConfig().getString("backup.path", "backup"));
         plugin.getConfig().set("backup.filename-format",                  plugin.getConfig().getString("backup.filename-format", "yyyy-MM-dd_HH-mm-ss'.db'"));
         plugin.getConfig().set("backup.schedule.enabled",                 plugin.getConfig().getBoolean("backup.schedule.enabled", false));

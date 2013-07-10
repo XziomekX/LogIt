@@ -50,7 +50,8 @@ public class ServerEventListener extends EventListener
         if (!event.getPlugin().equals(core.getPlugin()))
             return;
         
-        File sessionsDatabaseFile = new File(core.getPlugin().getDataFolder() + "/sessions.db");
+        File sessionsDatabaseFile = new File(core.getPlugin().getDataFolder() + "/" +
+            core.getConfig().getString("storage.sessions.filename"));
         SqliteDatabase sessionsDatabase = new SqliteDatabase("jdbc:sqlite:" + sessionsDatabaseFile);
         
         try
@@ -108,7 +109,8 @@ public class ServerEventListener extends EventListener
         if (!event.getPlugin().equals(core.getPlugin()))
             return;
         
-        File sessionsDatabaseFile = new File(core.getPlugin().getDataFolder() + "/sessions.db");
+        File sessionsDatabaseFile = new File(core.getPlugin().getDataFolder() + "/" +
+            core.getConfig().getString("storage.sessions.filename"));
         
         sessionsDatabaseFile.delete();
         
