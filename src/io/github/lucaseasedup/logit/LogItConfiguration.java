@@ -94,6 +94,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("integration-phpbb.logit-script",          plugin.getConfig().getString("integration-phpbb.logit-script", ""));
         plugin.getConfig().set("storage.accounts.db-type",                plugin.getConfig().getString("storage.accounts.db-type", "sqlite"));
         plugin.getConfig().set("storage.accounts.sqlite.filename",        plugin.getConfig().getString("storage.accounts.sqlite.filename", "accounts.db"));
+        plugin.getConfig().set("storage.accounts.h2.filename",            plugin.getConfig().getString("storage.accounts.h2.filename", "accounts"));
         plugin.getConfig().set("storage.accounts.mysql.host",             plugin.getConfig().getString("storage.accounts.mysql.host", "jdbc:mysql://localhost:3306/")); 
         plugin.getConfig().set("storage.accounts.mysql.user",             plugin.getConfig().getString("storage.accounts.mysql.user", "root"));
         plugin.getConfig().set("storage.accounts.mysql.password",         plugin.getConfig().getString("storage.accounts.mysql.password", ""));
