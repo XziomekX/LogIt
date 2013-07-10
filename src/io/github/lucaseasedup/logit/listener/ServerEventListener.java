@@ -19,8 +19,14 @@
 package io.github.lucaseasedup.logit.listener;
 
 import io.github.lucaseasedup.logit.LogItCore;
-import static io.github.lucaseasedup.logit.util.MessageSender.sendForceLoginMessage;
+import io.github.lucaseasedup.logit.db.SqliteDatabase;
+import io.github.lucaseasedup.logit.session.Session;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
+import java.io.File;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -44,17 +50,56 @@ public class ServerEventListener extends EventListener
         if (!event.getPlugin().equals(core.getPlugin()))
             return;
         
+        File sessionsDatabaseFile = new File(core.getPlugin().getDataFolder() + "/sessions.db");
+        SqliteDatabase sessionsDatabase = new SqliteDatabase("jdbc:sqlite:" + sessionsDatabaseFile);
+        
+        try
+        {
+            sessionsDatabase.connect();
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(ServerEventListener.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         Player[] players = Bukkit.getOnlinePlayers();
         
         for (Player player : players)
         {
-            core.getSessionManager().createSession(player.getName(), getPlayerIp(player));
+            core.getSessionManager().createSession(player.getName(), "");
             
-            if (core.isPlayerForcedToLogin(player))
+            try
             {
-                sendForceLoginMessage(player, core.getAccountManager());
+                ResultSet rs = sessionsDatabase.select("sessions", new String[]{
+                    "status",
+                    "ip"
+                }, new String[]{
+                    "username", "=", player.getName().toLowerCase()
+                });
+                
+                if (rs.isBeforeFirst())
+                {
+                    Session session = core.getSessionManager().getSession(player.getName());
+                    
+                    session.setStatus(rs.getInt("status"));
+                    session.setIp(rs.getString("ip"));
+                }
+            }
+            catch (SQLException ex)
+            {
             }
         }
+        
+        try
+        {
+            sessionsDatabase.close();
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(ServerEventListener.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        sessionsDatabaseFile.delete();
     }
     
     @EventHandler(priority = HIGHEST)
@@ -62,6 +107,26 @@ public class ServerEventListener extends EventListener
     {
         if (!event.getPlugin().equals(core.getPlugin()))
             return;
+        
+        File sessionsDatabaseFile = new File(core.getPlugin().getDataFolder() + "/sessions.db");
+        
+        sessionsDatabaseFile.delete();
+        
+        SqliteDatabase sessionsDatabase = new SqliteDatabase("jdbc:sqlite:" + sessionsDatabaseFile);
+        
+        try
+        {
+            sessionsDatabase.connect();
+            sessionsDatabase.createTableIfNotExists("sessions", new String[]{
+                "username", "VARCHAR(16)",
+                "status",   "INTEGER",
+                "ip",       "VARCHAR(64)"
+            });
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(ServerEventListener.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         Player[] players = Bukkit.getOnlinePlayers();
         
@@ -71,7 +136,34 @@ public class ServerEventListener extends EventListener
                 core.getWaitingRoom().remove(player);
             
             core.getInventoryDepository().withdraw(player);
+            
+            try
+            {
+                sessionsDatabase.insert("sessions", new String[]{
+                    "username",
+                    "status",
+                    "ip"
+                }, new String[]{
+                    player.getName().toLowerCase(),
+                    String.valueOf(core.getSessionManager().getSession(player.getName()).getStatus()),
+                    getPlayerIp(player)
+                });
+            }
+            catch (SQLException ex)
+            {
+                Logger.getLogger(ServerEventListener.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
             core.getSessionManager().destroySession(player.getName());
+        }
+        
+        try
+        {
+            sessionsDatabase.close();
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(ServerEventListener.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

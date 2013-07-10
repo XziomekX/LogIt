@@ -38,6 +38,11 @@ public class Session
         return ip;
     }
     
+    public void setIp(String ip)
+    {
+        this.ip = ip;
+    }
+    
     /**
      * Returns session status.
      * <p/>
