@@ -163,7 +163,7 @@ public class InventoryDepository
         return storage;
     }
     
-    public static String toBase64(Inventory inventory)
+    public static String serialize(Inventory inventory)
     {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         DataOutputStream dataOutput = new DataOutputStream(outputStream);
@@ -186,10 +186,9 @@ public class InventoryDepository
         return Base64.encodeBase64String(outputStream.toByteArray());
     }
     
-    public static Inventory fromBase64(String data)
+    public static Inventory unserialize(String data)
     {
-        ByteArrayInputStream inputStream = new
-        ByteArrayInputStream(Base64.decodeBase64(data));
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.decodeBase64(data));
         NBTTagList itemList = (NBTTagList) NBTBase.b(new DataInputStream(inputStream));
         Inventory inventory = new CraftInventoryCustom(null, itemList.size());
         
