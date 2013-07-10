@@ -97,6 +97,10 @@ public class LogItCommand extends AbstractCommandExecutor
                 {
                     sender.sendMessage(getLogItSubcommandHelp("gotowr", null));
                 }
+                if (p != null && p.hasPermission("logit.togglewr"))
+                {
+                    sender.sendMessage(getLogItSubcommandHelp("togglewr", null));
+                }
                 if (p == null || p.hasPermission("logit.globalpass.set"))
                 {
                     sender.sendMessage(getLogItSubcommandHelp("globalpass set", "<password>"));
@@ -294,6 +298,38 @@ public class LogItCommand extends AbstractCommandExecutor
             else
             {
                 p.teleport(core.getWaitingRoom().getLocation());
+            }
+        }
+        else if (subcommand.equalsIgnoreCase("togglewr") && args.length == 1)
+        {
+            if (p != null && !p.hasPermission("logit.gotowr"))
+            {
+                sender.sendMessage(getMessage("NO_PERMS"));
+            }
+            else
+            {
+                if (core.getConfig().getBoolean("waiting-room.enabled"))
+                {
+                    core.getConfig().set("waiting-room.enabled", false);
+                    
+                    if (p != null)
+                    {
+                        sender.sendMessage(getMessage("WAITING_ROOM_DISABLED"));
+                    }
+                    
+                    core.log(INFO, getMessage("WAITING_ROOM_DISABLED"));
+                }
+                else
+                {
+                    core.getConfig().set("waiting-room.enabled", true);
+                    
+                    if (p != null)
+                    {
+                        sender.sendMessage(getMessage("WAITING_ROOM_ENABLED"));
+                    }
+                    
+                    core.log(INFO, getMessage("WAITING_ROOM_ENABLED"));
+                }
             }
         }
         else if (subcommand.equalsIgnoreCase("globalpass") && args.length > 1 && args.length <= 3)
