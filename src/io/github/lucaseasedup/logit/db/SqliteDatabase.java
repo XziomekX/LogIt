@@ -27,7 +27,7 @@ import java.util.Properties;
 /**
  * @author LucasEasedUp
  */
-public class SqliteDatabase extends Database
+public class SqliteDatabase extends AbstractSqlDatabase
 {
     public SqliteDatabase(String host)
     {

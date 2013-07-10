@@ -19,7 +19,7 @@
 package io.github.lucaseasedup.logit;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import io.github.lucaseasedup.logit.db.Database;
+import io.github.lucaseasedup.logit.db.AbstractSqlDatabase;
 import io.github.lucaseasedup.logit.db.SqliteDatabase;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,7 +37,7 @@ import static java.util.logging.Level.WARNING;
  */
 public class BackupManager implements Runnable
 {
-    public BackupManager(LogItCore core, Database database)
+    public BackupManager(LogItCore core, AbstractSqlDatabase database)
     {
         timer = new Timer(40L);
         timer.start();
@@ -78,7 +78,7 @@ public class BackupManager implements Runnable
      * @throws IOException
      * @throws SQLException
      */
-    public void createBackup(Database database) throws IOException, SQLException
+    public void createBackup(AbstractSqlDatabase database) throws IOException, SQLException
     {
         Date             date = new Date();
         SimpleDateFormat sdf  = new SimpleDateFormat(core.getConfig().getString("backup.filename-format"));
@@ -128,7 +128,7 @@ public class BackupManager implements Runnable
      * @throws FileNotFoundException Thrown if the backup does not exist.
      * @throws SQLException
      */
-    public void restoreBackup(Database database, String filename) throws FileNotFoundException, SQLException
+    public void restoreBackup(AbstractSqlDatabase database, String filename) throws FileNotFoundException, SQLException
     {
         File backupFile = getBackup(filename);
         
@@ -170,7 +170,7 @@ public class BackupManager implements Runnable
      * @throws FileNotFoundException Thrown if there are no backups.
      * @throws SQLException
      */
-    public void restoreBackup(Database database) throws FileNotFoundException, SQLException
+    public void restoreBackup(AbstractSqlDatabase database) throws FileNotFoundException, SQLException
     {
         File[] backups = getBackups();
         
@@ -232,6 +232,6 @@ public class BackupManager implements Runnable
     }
     
     private final LogItCore core;
-    private final Database database;
+    private final AbstractSqlDatabase database;
     private final Timer timer;
 }

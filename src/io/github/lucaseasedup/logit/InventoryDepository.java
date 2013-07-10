@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit;
 
-import io.github.lucaseasedup.logit.db.Database;
+import io.github.lucaseasedup.logit.db.AbstractSqlDatabase;
 import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,7 +41,7 @@ import org.bukkit.inventory.PlayerInventory;
  */
 public class InventoryDepository
 {
-    public InventoryDepository(Database inventoryDatabase)
+    public InventoryDepository(AbstractSqlDatabase inventoryDatabase)
     {
         this.inventoryDatabase = inventoryDatabase;
     }
@@ -136,7 +136,7 @@ public class InventoryDepository
         player.getInventory().setArmorContents(armorContents.remove(player));
     }
     
-    public Database getInventoryDatabase()
+    public AbstractSqlDatabase getInventoryDatabase()
     {
         return inventoryDatabase;
     }
@@ -214,7 +214,7 @@ public class InventoryDepository
         return null;
     }
     
-    private final Database inventoryDatabase;
+    private final AbstractSqlDatabase inventoryDatabase;
     
     private final HashMap<Player, ItemStack[]> contents = new HashMap<>();
     private final HashMap<Player, ItemStack[]> armorContents = new HashMap<>();

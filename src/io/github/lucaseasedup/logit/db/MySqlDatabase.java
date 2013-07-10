@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * @author LucasEasedUp
  */
-public class MySqlDatabase extends Database
+public class MySqlDatabase extends AbstractSqlDatabase
 {
     public MySqlDatabase(String host)
     {

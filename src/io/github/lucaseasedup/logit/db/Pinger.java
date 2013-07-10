@@ -25,7 +25,7 @@ import java.sql.SQLException;
  */
 public class Pinger implements Runnable
 {
-    public Pinger(Database database)
+    public Pinger(AbstractSqlDatabase database)
     {
         this.database = database;
     }
@@ -42,5 +42,5 @@ public class Pinger implements Runnable
         }
     }
     
-    private final Database database;
+    private final AbstractSqlDatabase database;
 }

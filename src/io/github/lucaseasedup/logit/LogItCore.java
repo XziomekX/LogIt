@@ -29,7 +29,7 @@ import io.github.lucaseasedup.logit.listener.InventoryEventListener;
 import io.github.lucaseasedup.logit.db.SqliteDatabase;
 import io.github.lucaseasedup.logit.db.Pinger;
 import io.github.lucaseasedup.logit.db.MySqlDatabase;
-import io.github.lucaseasedup.logit.db.Database;
+import io.github.lucaseasedup.logit.db.AbstractSqlDatabase;
 import io.github.lucaseasedup.logit.command.LogItCommand;
 import io.github.lucaseasedup.logit.command.LoginCommand;
 import io.github.lucaseasedup.logit.command.UnregisterCommand;
@@ -581,7 +581,7 @@ public class LogItCore
         return waitingRoom;
     }
     
-    public Database getDatabase()
+    public AbstractSqlDatabase getDatabase()
     {
         return database;
     }
@@ -686,7 +686,7 @@ public class LogItCore
     private boolean started = false;
     
     private LogItConfiguration  config;
-    private Database            database;
+    private AbstractSqlDatabase database;
     private Pinger              pinger;
     private Permission          permissions;
     private SessionManager      sessionManager;
