@@ -65,6 +65,7 @@ permissions:
       logit.purge: true
       logit.backup.*: true
       logit.setwr: true
+      logit.togglewr: true
       logit.globalpass.*: true
       logit.accountcount: true
       logit.ipcount: true
