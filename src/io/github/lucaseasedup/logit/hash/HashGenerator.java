@@ -147,6 +147,15 @@ public class HashGenerator
         
         sr.nextBytes(salt);
         
+        // Replace backslashes with forwardslashes to avoid escaping problems with different DBMSs.
+        for (int i = 0; i < salt.length; i++)
+        {
+            if (salt[i] == '\\')
+            {
+                salt[i] = '/';
+            }
+        }
+        
         return new String(salt);
     }
 }

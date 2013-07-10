@@ -42,6 +42,7 @@ import io.github.lucaseasedup.logit.account.AccountWatcher;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.*;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import com.google.common.collect.ImmutableList;
+import io.github.lucaseasedup.logit.db.*;
 import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -113,6 +114,14 @@ public class LogItCore
                     
                     break;
                 }
+                case H2:
+                {
+                    database = new H2Database("jdbc:h2:" +
+                        plugin.getDataFolder() + "/" + config.getString("storage.accounts.h2.filename"));
+                    database.connect(null, null, null);
+                    
+                    break;
+                }
                 default:
                 {
                     log(SEVERE, getMessage("UNKNOWN_STORAGE_TYPE").replace("%st%", getStorageAccountsDbType().name()));
@@ -122,7 +131,7 @@ public class LogItCore
                 }
             }
         }
-        catch (SQLException ex)
+        catch (SQLException | ReflectiveOperationException ex)
         {
             Logger.getLogger(LogItCore.class.getName()).log(Level.SEVERE, null, ex);
             plugin.disable();
@@ -138,7 +147,7 @@ public class LogItCore
             
             database.createTableIfNotExists(config.getString("storage.accounts.table"), storageColumnsArray);
             
-            List<String> existingColumns = database.getColumnNames(config.getString("storage.accounts.table"));
+            Set<String> existingColumns = database.getColumnNames(config.getString("storage.accounts.table"));
             
             database.setAutobatchEnabled(true);
             
@@ -468,6 +477,10 @@ public class LogItCore
         {
             return StorageType.MYSQL;
         }
+        else if (s.equalsIgnoreCase("h2"))
+        {
+            return StorageType.H2;
+        }
         else
         {
             return StorageType.UNKNOWN;
@@ -665,7 +678,7 @@ public class LogItCore
     
     public static enum StorageType
     {
-        UNKNOWN, SQLITE, MYSQL
+        UNKNOWN, SQLITE, MYSQL, H2
     }
     
     public static enum HashingAlgorithm
