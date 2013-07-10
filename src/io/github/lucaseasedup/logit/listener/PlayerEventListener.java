@@ -132,19 +132,24 @@ public class PlayerEventListener extends EventListener
             core.getInventoryDepository().deposit(player);
         }
         
+        if ((core.getSessionManager().isSessionAlive(player) && core.getSessionManager().getSession(username).getIp().equals(ip))
+                        || !core.getConfig().getBoolean("force-login.global") || player.hasPermission("logit.force-login.exempt"))
+        {
+            broadcastJoinMessage(player, core.getConfig().getBoolean("reveal-spawn-world"));
+        }
+        
         Bukkit.getScheduler().scheduleSyncDelayedTask(core.getPlugin(), new Runnable()
         {
             @Override
             public void run()
             {
-                if ((core.getSessionManager().isSessionAlive(player) && core.getSessionManager().getSession(username).getIp().equals(ip))
-                        || !core.getConfig().getBoolean("force-login.global") || player.hasPermission("logit.force-login.exempt"))
-                {
-                    broadcastJoinMessage(player, core.getConfig().getBoolean("reveal-spawn-world"));
-                }
-                else if (core.getConfig().getBoolean("force-login.global") && core.getConfig().getBoolean("waiting-room.enabled"))
+                if (core.getConfig().getBoolean("waiting-room.enabled"))
                 {
                     core.getWaitingRoom().put(player);
+                }
+                else if (core.getWaitingRoom().contains(player))
+                {
+                    core.getWaitingRoom().remove(player);
                 }
                 
                 if (core.isPlayerForcedToLogin(player) && !core.getSessionManager().isSessionAlive(username))
@@ -165,8 +170,12 @@ public class PlayerEventListener extends EventListener
         if (core.getSessionManager().isSessionAlive(player))
             broadcastQuitMessage(player);
         
-        core.getWaitingRoom().remove(player);
         core.getInventoryDepository().withdraw(player);
+        
+        if (core.getConfig().getBoolean("waiting-room.enabled"))
+        {
+            core.getWaitingRoom().put(player);
+        }
     }
     
     @EventHandler
@@ -176,8 +185,12 @@ public class PlayerEventListener extends EventListener
         
         event.setLeaveMessage(null);
         
-        core.getWaitingRoom().remove(player);
         core.getInventoryDepository().withdraw(player);
+        
+        if (core.getConfig().getBoolean("waiting-room.enabled"))
+        {
+            core.getWaitingRoom().put(player);
+        }
     }
     
     @EventHandler

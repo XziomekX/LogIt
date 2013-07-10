@@ -221,6 +221,7 @@ public class LogItCore
         }
         
         inventoryDepository = new InventoryDepository(inventoryDatabase);
+        waitingRoom = new WaitingRoom(this, database);
         
         pingerTaskId          = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, pinger, 0L, 2400L);
         sessionManagerTaskId  = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, sessionManager, 0L, 20L);
@@ -592,14 +593,20 @@ public class LogItCore
     private void load()
     {
         storageColumns = ImmutableList.of(
-            config.getString("storage.accounts.columns.username"),    "VARCHAR(16)",
-            config.getString("storage.accounts.columns.salt"),        "VARCHAR(20)",
-            config.getString("storage.accounts.columns.password"),    "VARCHAR(256)",
-            config.getString("storage.accounts.columns.ip"),          "VARCHAR(64)",
-            config.getString("storage.accounts.columns.last_active"), "INTEGER"
+            config.getString("storage.accounts.columns.username"),        "VARCHAR(16)",
+            config.getString("storage.accounts.columns.salt"),            "VARCHAR(20)",
+            config.getString("storage.accounts.columns.password"),        "VARCHAR(256)",
+            config.getString("storage.accounts.columns.ip"),              "VARCHAR(64)",
+            config.getString("storage.accounts.columns.last_active"),     "INTEGER",
+            config.getString("storage.accounts.columns.location_world"),  "VARCHAR(512)",
+            config.getString("storage.accounts.columns.location_x"),      "REAL",
+            config.getString("storage.accounts.columns.location_y"),      "REAL",
+            config.getString("storage.accounts.columns.location_z"),      "REAL",
+            config.getString("storage.accounts.columns.location_yaw"),    "REAL",
+            config.getString("storage.accounts.columns.location_pitch"),  "REAL",
+            config.getString("storage.accounts.columns.in_wr"),           "INTEGER"
         );
         
-        waitingRoom     = new WaitingRoom(this);
         tickEventCaller = new TickEventCaller();
         
         plugin.getServer().getPluginManager().registerEvents(new TickEventListener(this), plugin);

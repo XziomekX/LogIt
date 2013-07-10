@@ -36,6 +36,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import static java.util.logging.Level.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 
 /**
  * Account manager.
@@ -368,6 +370,43 @@ public class AccountManager
     public int getLastActiveDate(String username)
     {
         return cLastActive.get(username.toLowerCase());
+    }
+    
+    public void saveLocation(String username, Location location) throws SQLException
+    {
+        database.update(table, new String[]{
+            core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
+        }, new String[]{
+            core.getConfig().getString("storage.accounts.columns.location_world"), location.getWorld().getName(),
+            core.getConfig().getString("storage.accounts.columns.location_x"), String.valueOf(location.getX()),
+            core.getConfig().getString("storage.accounts.columns.location_y"), String.valueOf(location.getY()),
+            core.getConfig().getString("storage.accounts.columns.location_z"), String.valueOf(location.getZ()),
+            core.getConfig().getString("storage.accounts.columns.location_yaw"), String.valueOf(location.getYaw()),
+            core.getConfig().getString("storage.accounts.columns.location_pitch"), String.valueOf(location.getPitch()),
+        });
+    }
+    
+    public Location getLocation(String username) throws SQLException
+    {
+        ResultSet rs = database.select(table, new String[]{
+            core.getConfig().getString("storage.accounts.columns.location_world"),
+            core.getConfig().getString("storage.accounts.columns.location_x"),
+            core.getConfig().getString("storage.accounts.columns.location_y"),
+            core.getConfig().getString("storage.accounts.columns.location_z"),
+            core.getConfig().getString("storage.accounts.columns.location_yaw"),
+            core.getConfig().getString("storage.accounts.columns.location_pitch"),
+        }, new String[]{
+            core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
+        });
+        
+        return new Location(
+            Bukkit.getWorld(rs.getString(core.getConfig().getString("storage.accounts.columns.location_world"))),
+            Double.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_x"))),
+            Double.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_y"))),
+            Double.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_z"))),
+            Float.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_yaw"))),
+            Float.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_pitch")))
+        );
     }
     
     public int getAccountCount()

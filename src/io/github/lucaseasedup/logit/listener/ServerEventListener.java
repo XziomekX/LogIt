@@ -67,7 +67,9 @@ public class ServerEventListener extends EventListener
         
         for (Player player : players)
         {
-            core.getWaitingRoom().remove(player);
+            if (core.getConfig().getBoolean("waiting-room.enabled"))
+                core.getWaitingRoom().remove(player);
+            
             core.getInventoryDepository().withdraw(player);
             core.getSessionManager().destroySession(player.getName());
         }

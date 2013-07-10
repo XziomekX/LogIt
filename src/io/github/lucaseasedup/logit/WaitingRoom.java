@@ -18,7 +18,9 @@
  */
 package io.github.lucaseasedup.logit;
 
-import java.util.HashMap;
+import io.github.lucaseasedup.logit.db.AbstractSqlDatabase;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -29,9 +31,11 @@ import org.bukkit.entity.Player;
  */
 public class WaitingRoom
 {
-    public WaitingRoom(LogItCore core)
+    public WaitingRoom(LogItCore core, AbstractSqlDatabase database)
     {
-        this.core = core;
+        this.core     = core;
+        this.database = database;
+        this.table    = core.getConfig().getString("storage.accounts.table");
     }
     
     /**
@@ -46,11 +50,20 @@ public class WaitingRoom
         if (contains(player))
             return;
         
-        // Back up player's location.
-        locations.put(player, player.getLocation().clone());
-        
-        // Put the player into the waiting room.
-        player.teleport(getLocation());
+        try
+        {
+            core.getAccountManager().saveLocation(player.getName(), player.getLocation());
+            player.teleport(getLocation());
+            
+            database.update(table, new String[]{
+                core.getConfig().getString("storage.accounts.columns.username"), "=", player.getName().toLowerCase()
+            }, new String[]{
+                core.getConfig().getString("storage.accounts.columns.in_wr"), "1"
+            });
+        }
+        catch (SQLException ex)
+        {
+        }
     }
     
     /**
@@ -65,8 +78,19 @@ public class WaitingRoom
         if (!contains(player))
             return;
         
-        // Take the player out of waiting room.
-        player.teleport(locations.remove(player));
+        try
+        {
+            player.teleport(core.getAccountManager().getLocation(player.getName()));
+            
+            database.update(table, new String[]{
+                core.getConfig().getString("storage.accounts.columns.username"), "=", player.getName().toLowerCase()
+            }, new String[]{
+                core.getConfig().getString("storage.accounts.columns.in_wr"), "0"
+            });
+        }
+        catch (SQLException ex)
+        {
+        }
     }
     
     /**
@@ -77,7 +101,20 @@ public class WaitingRoom
      */
     public boolean contains(Player player)
     {
-        return locations.containsKey(player);
+        try
+        {
+            ResultSet rs = database.select(table, new String[]{
+                core.getConfig().getString("storage.accounts.columns.in_wr")
+            }, new String[]{
+                core.getConfig().getString("storage.accounts.columns.username"), "=", player.getName().toLowerCase()
+            });
+            
+            return rs.getInt("in_wr") != 0;
+        }
+        catch (SQLException ex)
+        {
+            return false;
+        }
     }
     
     public Location getLocation()
@@ -103,6 +140,6 @@ public class WaitingRoom
     }
     
     private final LogItCore core;
-    
-    private final HashMap<Player, Location> locations = new HashMap<>();
+    private final AbstractSqlDatabase database;
+    private final String table;
 }
