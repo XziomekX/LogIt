@@ -59,7 +59,7 @@ public class ServerEventListener extends EventListener
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(ServerEventListener.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ServerEventListener.class.getName()).log(Level.WARNING, null, ex);
         }
         
         Player[] players = Bukkit.getOnlinePlayers();

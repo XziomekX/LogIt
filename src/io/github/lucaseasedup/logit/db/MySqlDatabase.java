@@ -21,6 +21,8 @@ package io.github.lucaseasedup.logit.db;
 import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.sql.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author LucasEasedUp
@@ -49,6 +51,8 @@ public class MySqlDatabase extends AbstractSqlDatabase
         }
         catch (SQLException ex)
         {
+            Logger.getLogger(MySqlDatabase.class.getName()).log(Level.WARNING, null, ex);
+            
             return false;
         }
     }

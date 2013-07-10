@@ -19,6 +19,8 @@
 package io.github.lucaseasedup.logit.db;
 
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author LucasEasedUp
@@ -39,6 +41,7 @@ public class Pinger implements Runnable
         }
         catch (SQLException ex)
         {
+            Logger.getLogger(Pinger.class.getName()).log(Level.WARNING, null, ex);
         }
     }
     

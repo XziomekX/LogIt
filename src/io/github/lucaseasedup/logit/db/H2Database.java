@@ -103,6 +103,8 @@ public class H2Database extends AbstractSqlDatabase
         }
         catch (SQLException ex)
         {
+            Logger.getLogger(H2Database.class.getName()).log(Level.WARNING, null, ex);
+            
             return false;
         }
     }

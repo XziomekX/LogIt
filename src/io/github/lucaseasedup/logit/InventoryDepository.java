@@ -93,7 +93,7 @@ public class InventoryDepository
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(InventoryDepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(InventoryDepository.class.getName()).log(Level.WARNING, null, ex);
         }
         
         contents.put(player, player.getInventory().getContents().clone());
@@ -138,7 +138,7 @@ public class InventoryDepository
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(InventoryDepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(InventoryDepository.class.getName()).log(Level.WARNING, null, ex);
         }
         
         player.getInventory().setContents(contents.remove(player));

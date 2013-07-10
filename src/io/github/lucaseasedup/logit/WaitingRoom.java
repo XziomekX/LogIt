@@ -21,6 +21,8 @@ package io.github.lucaseasedup.logit;
 import io.github.lucaseasedup.logit.db.AbstractSqlDatabase;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -63,6 +65,7 @@ public class WaitingRoom
         }
         catch (SQLException ex)
         {
+            Logger.getLogger(WaitingRoom.class.getName()).log(Level.WARNING, null, ex);
         }
     }
     
@@ -90,6 +93,7 @@ public class WaitingRoom
         }
         catch (SQLException ex)
         {
+            Logger.getLogger(WaitingRoom.class.getName()).log(Level.WARNING, null, ex);
         }
     }
     
@@ -109,10 +113,15 @@ public class WaitingRoom
                 core.getConfig().getString("storage.accounts.columns.username"), "=", player.getName().toLowerCase()
             });
             
+            if (!rs.isBeforeFirst())
+                return false;
+            
             return rs.getInt("in_wr") != 0;
         }
         catch (SQLException ex)
         {
+            Logger.getLogger(WaitingRoom.class.getName()).log(Level.WARNING, null, ex);
+            
             return false;
         }
     }

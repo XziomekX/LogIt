@@ -26,7 +26,9 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.*;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import static java.util.logging.Level.FINE;
+import java.util.logging.Logger;
 import org.bukkit.entity.Player;
 
 /**
@@ -188,6 +190,7 @@ public class SessionManager implements Runnable
         }
         catch (SQLException ex)
         {
+            Logger.getLogger(SessionManager.class.getName()).log(Level.WARNING, null, ex);
         }
         
         core.log(FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
@@ -216,6 +219,7 @@ public class SessionManager implements Runnable
         }
         catch (SQLException ex)
         {
+            Logger.getLogger(SessionManager.class.getName()).log(Level.WARNING, null, ex);
         }
         
         core.log(FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));

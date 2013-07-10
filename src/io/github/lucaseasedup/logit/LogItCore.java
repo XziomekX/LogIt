@@ -527,6 +527,7 @@ public class LogItCore
             }
             catch (IOException ex)
             {
+                Logger.getLogger(LogItCommand.class.getName()).log(Level.WARNING, null, ex);
             }
         }
         

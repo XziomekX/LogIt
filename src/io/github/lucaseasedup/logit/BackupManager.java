@@ -29,8 +29,10 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.logging.Level;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.WARNING;
+import java.util.logging.Logger;
 
 /**
  * @author LucasEasedUp
@@ -62,8 +64,9 @@ public class BackupManager implements Runnable
                 
                 core.log(INFO, getMessage("CREATE_BACKUP_SUCCESS"));
             }
-            catch (IOException|SQLException ex)
+            catch (IOException | SQLException ex)
             {
+                Logger.getLogger(BackupManager.class.getName()).log(Level.WARNING, null, ex);
                 core.log(WARNING, getMessage("CREATE_BACKUP_FAIL"));
             }
             

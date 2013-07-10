@@ -165,6 +165,8 @@ public class LogItCommand extends AbstractCommandExecutor
                 }
                 catch (SQLException ex)
                 {
+                    Logger.getLogger(LogItCommand.class.getName()).log(Level.WARNING, null, ex);
+                    
                     if (p != null)
                     {
                         sender.sendMessage(getMessage("PURGE_FAIL"));
@@ -191,13 +193,14 @@ public class LogItCommand extends AbstractCommandExecutor
                         
                         core.log(INFO, getMessage("CREATE_BACKUP_SUCCESS"));
                     }
-                    catch (IOException|SQLException ex)
+                    catch (IOException | SQLException ex)
                     {
+                        Logger.getLogger(LogItCommand.class.getName()).log(Level.WARNING, null, ex);
+                        
                         if (p != null)
                             sender.sendMessage(getMessage("CREATE_BACKUP_FAIL"));
                         
                         core.log(WARNING, getMessage("CREATE_BACKUP_FAIL"));
-                        core.log(WARNING, getMessage("CAUGHT_ERROR").replace("%error%", ex.getMessage()));
                     }
                 }
             }
@@ -225,12 +228,13 @@ public class LogItCommand extends AbstractCommandExecutor
                         
                         core.log(INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
                     }
-                    catch (FileNotFoundException|SQLException ex)
+                    catch (FileNotFoundException | SQLException ex)
                     {
+                        Logger.getLogger(LogItCommand.class.getName()).log(Level.WARNING, null, ex);
+                        
                         if (p != null)
                             sender.sendMessage(getMessage("RESTORE_BACKUP_FAIL"));
                         
-                        Logger.getLogger(LogItCommand.class.getName()).log(Level.WARNING, null, ex);
                         core.log(WARNING, getMessage("RESTORE_BACKUP_FAIL"));
                     }
                 }
@@ -256,8 +260,10 @@ public class LogItCommand extends AbstractCommandExecutor
 
                         core.log(INFO, getMessage("REMOVE_BACKUPS_SUCCESS"));
                     }
-                    catch (NumberFormatException|IOException ex)
+                    catch (NumberFormatException | IOException ex)
                     {
+                        Logger.getLogger(LogItCommand.class.getName()).log(Level.WARNING, null, ex);
+                        
                         if (p != null)
                             sender.sendMessage(getMessage("REMOVE_BACKUPS_FAIL"));
 
