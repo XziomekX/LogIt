@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.hash;
 
+import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -117,6 +118,11 @@ public class HashGenerator
         return Whirlpool.display(digest);
     }
     
+    public static String getBCrypt(String string, String salt)
+    {
+        return BCrypt.hashpw(string, salt);
+    }
+    
     private static String getHash(String string, String algorithm)
     {
         StringBuilder stringBuilder = new StringBuilder();
@@ -140,22 +146,29 @@ public class HashGenerator
         return stringBuilder.toString();
     }
     
-    public static String generateSalt()
+    public static String generateSalt(HashingAlgorithm hashingAlgorithm)
     {
-        SecureRandom sr   = new SecureRandom();
-        byte[]       salt = new byte[20];
-        
-        sr.nextBytes(salt);
-        
-        // Replace backslashes with forwardslashes to avoid escaping problems with different DBMSs.
-        for (int i = 0; i < salt.length; i++)
+        if (hashingAlgorithm == HashingAlgorithm.BCRYPT)
         {
-            if (salt[i] == '\\')
-            {
-                salt[i] = '/';
-            }
+            return BCrypt.gensalt();
         }
-        
-        return new String(salt);
+        else
+        {
+            SecureRandom sr   = new SecureRandom();
+            byte[]       salt = new byte[20];
+            
+            sr.nextBytes(salt);
+            
+            // Replace backslashes with forwardslashes to avoid escaping problems with different DBMSs.
+            for (int i = 0; i < salt.length; i++)
+            {
+                if (salt[i] == '\\')
+                {
+                    salt[i] = '/';
+                }
+            }
+            
+            return new String(salt);
+        }
     }
 }

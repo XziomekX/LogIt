@@ -389,6 +389,10 @@ public class LogItCore
             {
                 return getWhirlpool(string);
             }
+            case BCRYPT:
+            {
+                return getBCrypt(string, "");
+            }
             default:
             {
                 return null;
@@ -409,10 +413,12 @@ public class LogItCore
     {
         String hash;
         
-        if (getHashingAlgorithm() != HashingAlgorithm.PLAIN)
-            hash = hash(string + salt);
-        else
+        if (getHashingAlgorithm() == HashingAlgorithm.BCRYPT)
+            hash = getBCrypt(string, salt);
+        else if (getHashingAlgorithm() == HashingAlgorithm.PLAIN)
             hash = hash(string);
+        else
+            hash = hash(string + salt);
         
         return hash;
     }
@@ -474,6 +480,10 @@ public class LogItCore
         else if (s.equalsIgnoreCase("whirlpool"))
         {
             return HashingAlgorithm.WHIRLPOOL;
+        }
+        else if (s.equalsIgnoreCase("bcrypt"))
+        {
+            return HashingAlgorithm.BCRYPT;
         }
         else
         {
@@ -635,7 +645,7 @@ public class LogItCore
     
     public static enum HashingAlgorithm
     {
-        UNKNOWN, PLAIN, MD2, MD5, SHA1, SHA256, SHA384, SHA512, WHIRLPOOL
+        UNKNOWN, PLAIN, MD2, MD5, SHA1, SHA256, SHA384, SHA512, WHIRLPOOL, BCRYPT
     }
     
     public static enum IntegrationType

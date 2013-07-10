@@ -94,7 +94,7 @@ public class AccountManager
         if (isRegistered(username))
             throw new RuntimeException("Account already exists.");
         
-        String salt = HashGenerator.generateSalt();
+        String salt = HashGenerator.generateSalt(core.getHashingAlgorithm());
         String hash = core.hash(password, salt);
         
         try
@@ -249,7 +249,7 @@ public class AccountManager
         if (!isRegistered(username))
             throw new AccountNotFoundException();
         
-        String newSalt = HashGenerator.generateSalt();
+        String newSalt = HashGenerator.generateSalt(core.getHashingAlgorithm());
         String newHash = core.hash(newPassword, newSalt);
         
         // Back up old password.
