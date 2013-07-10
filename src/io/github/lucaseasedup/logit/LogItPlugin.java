@@ -18,9 +18,7 @@
  */
 package io.github.lucaseasedup.logit;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.jar.JarEntry;
@@ -99,6 +97,21 @@ public final class LogItPlugin extends JavaPlugin
     private void loadMessages() throws IOException
     {
         String suffix = "_" + getConfig().getString("locale", "en");
+        File file;
+        
+        if ((file = new File(getDataFolder(), "messages" + suffix + ".properties")).exists())
+        {
+            prb = new PropertyResourceBundle(new FileInputStream(file));
+            
+            return;
+        }
+        
+        if ((file = new File(getDataFolder(), "messages.properties")).exists())
+        {
+            prb = new PropertyResourceBundle(new FileInputStream(file));
+            
+            return;
+        }
         
         try (JarFile jarFile = new JarFile(getFile()))
         {
