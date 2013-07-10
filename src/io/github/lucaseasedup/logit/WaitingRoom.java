@@ -27,6 +27,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 /**
  * @author LucasEasedUp
@@ -129,9 +130,9 @@ public class WaitingRoom
     public Location getLocation()
     {
         World  world = Bukkit.getServer().getWorld(core.getConfig().getString("waiting-room.location.world"));
-        double x = core.getConfig().getDouble("waiting-room.location.x");
-        double y = core.getConfig().getDouble("waiting-room.location.y");
-        double z = core.getConfig().getDouble("waiting-room.location.z");
+        double x = core.getConfig().getVector("waiting-room.location.position").getX();
+        double y = core.getConfig().getVector("waiting-room.location.position").getY();
+        double z = core.getConfig().getVector("waiting-room.location.position").getZ();
         float  yaw = (float) core.getConfig().getDouble("waiting-room.location.yaw");
         float  pitch = (float) core.getConfig().getDouble("waiting-room.location.pitch");
         
@@ -141,9 +142,7 @@ public class WaitingRoom
     public void setLocation(Location location)
     {
         core.getConfig().set("waiting-room.location.world", location.getWorld().getName());
-        core.getConfig().set("waiting-room.location.x", location.getX());
-        core.getConfig().set("waiting-room.location.y", location.getY());
-        core.getConfig().set("waiting-room.location.z", location.getZ());
+        core.getConfig().set("waiting-room.location.position", new Vector(location.getX(), location.getY(), location.getZ()));
         core.getConfig().set("waiting-room.location.yaw", location.getYaw());
         core.getConfig().set("waiting-room.location.pitch", location.getPitch());
     }

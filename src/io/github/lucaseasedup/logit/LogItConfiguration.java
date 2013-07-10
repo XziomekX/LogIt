@@ -82,9 +82,6 @@ public final class LogItConfiguration
         plugin.getConfig().set("reveal-spawn-world",                      plugin.getConfig().getBoolean("reveal-spawn-world", true));
         plugin.getConfig().set("waiting-room.enabled",                    plugin.getConfig().getBoolean("waiting-room.enabled", false));
         plugin.getConfig().set("waiting-room.location.world",             plugin.getConfig().getString("waiting-room.location.world", "world"));
-        plugin.getConfig().set("waiting-room.location.x",                 plugin.getConfig().getDouble("waiting-room.location.x", 0.0));
-        plugin.getConfig().set("waiting-room.location.y",                 plugin.getConfig().getDouble("waiting-room.location.y", 0.0));
-        plugin.getConfig().set("waiting-room.location.z",                 plugin.getConfig().getDouble("waiting-room.location.z", 0.0));
         plugin.getConfig().set("waiting-room.location.yaw",               plugin.getConfig().getDouble("waiting-room.location.yaw", 0.0));
         plugin.getConfig().set("waiting-room.location.pitch",             plugin.getConfig().getDouble("waiting-room.location.pitch", 0.0));
         plugin.getConfig().set("groups.enabled",                          plugin.getConfig().getBoolean("groups.enabled", false));
@@ -118,6 +115,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("backup.filename-format",                  plugin.getConfig().getString("backup.filename-format", "yyyy-MM-dd_HH-mm-ss'.db'"));
         plugin.getConfig().set("backup.schedule.enabled",                 plugin.getConfig().getBoolean("backup.schedule.enabled", false));
         plugin.getConfig().set("backup.schedule.interval",                plugin.getConfig().getInt("backup.schedule.interval", 120));
+        plugin.getConfig().set("waiting-room.location.position",                 plugin.getConfig().getVector("waiting-room.location.position", new Vector(0, 0, 0)));
         
         plugin.saveConfig();
     }
