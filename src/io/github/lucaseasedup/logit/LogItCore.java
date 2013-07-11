@@ -78,6 +78,7 @@ public class LogItCore
             return;
         
         new File(plugin.getDataFolder(), "lib").mkdir();
+        new File(plugin.getDataFolder(), "backup").mkdir();
         
         config = new LogItConfiguration(plugin);
         config.load();
