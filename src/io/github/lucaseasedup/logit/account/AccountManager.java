@@ -403,6 +403,8 @@ public class AccountManager
             core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
         });
         
+        rs.next();
+        
         return new Location(
             Bukkit.getWorld(rs.getString(core.getConfig().getString("storage.accounts.columns.location_world"))),
             Double.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_x"))),

@@ -78,6 +78,8 @@ public class ServerEventListener extends EventListener
                     "username", "=", player.getName().toLowerCase()
                 });
                 
+                rs.next();
+                
                 if (rs.isBeforeFirst())
                 {
                     Session session = core.getSessionManager().getSession(player.getName());

@@ -126,6 +126,8 @@ public class InventoryDepository
                 "username", "=", player.getName().toLowerCase()
             });
             
+            rs.next();
+            
             if (rs.getString("world").equalsIgnoreCase(player.getWorld().getName()))
             {
                 player.getInventory().setContents(unserialize(rs.getString("inv_contents")).getContents());

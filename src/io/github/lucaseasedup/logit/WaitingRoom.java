@@ -117,6 +117,8 @@ public class WaitingRoom
             if (!rs.isBeforeFirst())
                 return false;
             
+            rs.next();
+            
             return rs.getInt(core.getConfig().getString("storage.accounts.columns.in_wr")) != 0;
         }
         catch (SQLException ex)
