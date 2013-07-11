@@ -43,6 +43,7 @@ import static io.github.lucaseasedup.logit.hash.HashGenerator.*;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import com.google.common.collect.ImmutableList;
 import io.github.lucaseasedup.logit.db.*;
+import io.github.lucaseasedup.logit.hash.BCrypt;
 import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -292,14 +293,57 @@ public class LogItCore
     }
     
     /**
+     * Checks if the given password matches its hashed equivalent.
+     * 
+     * @param password Plain-text password.
+     * @param hashedPassword Hashed password.
+     * @return True if passwords match.
+     */
+    public boolean checkPassword(String password, String hashedPassword)
+    {
+        if (getHashingAlgorithm() == HashingAlgorithm.BCRYPT)
+        {
+            return BCrypt.checkpw(password, hashedPassword);
+        }
+        else
+        {
+            return hashedPassword.equals(hash(password));
+        }
+    }
+    
+    /**
+     * Checks if the given password matches its hashed equivalent.
+     * Salt is used only if it is enabled in the config file.
+     * 
+     * @param password Plain-text password.
+     * @param hashedPassword Hashed password.
+     * @param salt Salt.
+     * @return True if passwords match.
+     */
+    public boolean checkPassword(String password, String hashedPassword, String salt)
+    {
+        if (getHashingAlgorithm() == HashingAlgorithm.BCRYPT)
+        {
+            return BCrypt.checkpw(password, hashedPassword);
+        }
+        else
+        {
+            if (config.getBoolean("password.use-salt"))
+                return hashedPassword.equals(hash(password, salt));
+            else
+                return hashedPassword.equals(hash(password));
+        }
+    }
+    
+    /**
      * Checks if the given password matches the global password.
      * 
-     * @param password Password to check.
-     * @return True if they match.
+     * @param password Plain-text password.
+     * @return True if passwords match.
      */
     public boolean checkGlobalPassword(String password)
     {
-        return config.getString("password.global-password").equals(hash(password));
+        return checkPassword(password, config.getString("password.global-password"));
     }
     
     public void removeGlobalPassword()
@@ -460,7 +504,7 @@ public class LogItCore
     
     public HashingAlgorithm getHashingAlgorithm()
     {
-        String s = plugin.getConfig().getString("hashing-algorithm");
+        String s = plugin.getConfig().getString("password.hashing-algorithm");
         
         if (s.equalsIgnoreCase("plain"))
         {

@@ -70,6 +70,8 @@ public final class LogItConfiguration
         plugin.getConfig().set("username.prohibited-usernames",                  plugin.getConfig().getStringList("username.prohibited-usernames"));
         plugin.getConfig().set("password.min-length",                            plugin.getConfig().getInt("password.min-length", 3));
         plugin.getConfig().set("password.max-length",                            plugin.getConfig().getInt("password.max-length", 25));
+        plugin.getConfig().set("password.hashing-algorithm",                     plugin.getConfig().getString("password.hashing-algorithm", "sha-256"));
+        plugin.getConfig().set("password.use-salt",                              plugin.getConfig().getBoolean("password.use-salt", true));
         plugin.getConfig().set("password.global-password",                       plugin.getConfig().getString("password.global-password", ""));
         plugin.getConfig().set("login-fails-to-kick",                            plugin.getConfig().getInt("login-fails-to-kick", -1));
         plugin.getConfig().set("login-fails-to-ban",                             plugin.getConfig().getInt("login-fails-to-ban", -1));
@@ -79,7 +81,6 @@ public final class LogItConfiguration
         plugin.getConfig().set("preserve-slots.players",                         plugin.getConfig().getStringList("preserve-slots.players"));
         plugin.getConfig().set("accounts-per-ip",                                plugin.getConfig().getInt("accounts-per-ip", 3));
         plugin.getConfig().set("unrestricted-ips",                               plugin.getConfig().getStringList("unrestricted-ips"));
-        plugin.getConfig().set("hashing-algorithm",                              plugin.getConfig().getString("hashing-algorithm", "sha-256"));
         plugin.getConfig().set("reveal-spawn-world",                             plugin.getConfig().getBoolean("reveal-spawn-world", true));
         plugin.getConfig().set("waiting-room.enabled",                           plugin.getConfig().getBoolean("waiting-room.enabled", false));
         plugin.getConfig().set("waiting-room.location.world",                    plugin.getConfig().getString("waiting-room.location.world", "world"));

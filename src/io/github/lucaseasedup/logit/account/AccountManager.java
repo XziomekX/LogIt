@@ -199,7 +199,7 @@ public class AccountManager
         
         if (core.getIntegration() == NONE)
         {
-            return cPassword.get(username.toLowerCase()).equals(core.hash(password, cSalt.get(username.toLowerCase())));
+            return core.checkPassword(password, cPassword.get(username.toLowerCase()), cSalt.get(username.toLowerCase()));
         }
         else if (core.getIntegration() == PHPBB)
         {
