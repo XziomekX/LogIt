@@ -69,6 +69,7 @@ public class LogItCore
     private LogItCore(LogItPlugin plugin)
     {
         this.plugin = plugin;
+        this.firstRun = !new File(plugin.getDataFolder(), "config.yml").exists();
     }
     
     public void start()
@@ -243,6 +244,9 @@ public class LogItCore
         log(FINE, getMessage("PLUGIN_START_SUCCESS")
                 .replace("%st%", getStorageAccountsDbType().name())
                 .replace("%ha%", getHashingAlgorithm().name()));
+        
+        if (firstRun)
+            log(INFO, getMessage("PLUGIN_FIRST_RUN"));
         
         started = true;
     }
@@ -639,6 +643,11 @@ public class LogItCore
         return sessionManager;
     }
     
+    public boolean isFirstRun()
+    {
+        return firstRun;
+    }
+    
     public LogItPlugin getPlugin()
     {
         return plugin;
@@ -721,6 +730,7 @@ public class LogItCore
     
     private final LogItPlugin plugin;
     
+    private final boolean firstRun;
     private boolean loaded = false;
     private boolean started = false;
     
