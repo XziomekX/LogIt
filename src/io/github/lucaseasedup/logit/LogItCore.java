@@ -29,7 +29,7 @@ import io.github.lucaseasedup.logit.listener.InventoryEventListener;
 import io.github.lucaseasedup.logit.db.SqliteDatabase;
 import io.github.lucaseasedup.logit.db.Pinger;
 import io.github.lucaseasedup.logit.db.MySqlDatabase;
-import io.github.lucaseasedup.logit.db.AbstractSqlDatabase;
+import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
 import io.github.lucaseasedup.logit.command.LogItCommand;
 import io.github.lucaseasedup.logit.command.LoginCommand;
 import io.github.lucaseasedup.logit.command.UnregisterCommand;
@@ -99,15 +99,18 @@ public class LogItCore
                 {
                     database = new SqliteDatabase("jdbc:sqlite:" +
                         plugin.getDataFolder() + "/" + config.getString("storage.accounts.sqlite.filename"));
-                    database.connect(null, null, null);
+                    database.connect();
                     
                     break;
                 }
                 case MYSQL:
                 {
                     database = new MySqlDatabase(config.getString("storage.accounts.mysql.host"));
-                    database.connect(config.getString("storage.accounts.mysql.user"), config.getString("storage.accounts.mysql.password"),
-                        config.getString("storage.accounts.mysql.database"));
+                    ((MySqlDatabase) database).connect(
+                        config.getString("storage.accounts.mysql.user"),
+                        config.getString("storage.accounts.mysql.password"),
+                        config.getString("storage.accounts.mysql.database")
+                    );
                     
                     break;
                 }
@@ -115,7 +118,14 @@ public class LogItCore
                 {
                     database = new H2Database("jdbc:h2:" +
                         plugin.getDataFolder() + "/" + config.getString("storage.accounts.h2.filename"));
-                    database.connect(null, null, null);
+                    database.connect();
+                    
+                    break;
+                }
+                case CSV:
+                {
+                    database = new CsvDatabase(plugin.getDataFolder());
+                    database.connect();
                     
                     break;
                 }
@@ -144,7 +154,7 @@ public class LogItCore
             
             database.createTableIfNotExists(config.getString("storage.accounts.table"), storageColumnsArray);
             
-            Set<String> existingColumns = database.getColumnNames(config.getString("storage.accounts.table"));
+            ArrayList<String> existingColumns = database.getColumnNames(config.getString("storage.accounts.table"));
             
             database.setAutobatchEnabled(true);
             
@@ -438,6 +448,10 @@ public class LogItCore
         {
             return StorageType.H2;
         }
+        else if (s.equalsIgnoreCase("csv"))
+        {
+            return StorageType.CSV;
+        }
         else
         {
             return StorageType.UNKNOWN;
@@ -556,7 +570,7 @@ public class LogItCore
         return waitingRoom;
     }
     
-    public AbstractSqlDatabase getDatabase()
+    public AbstractRelationalDatabase getDatabase()
     {
         return database;
     }
@@ -646,7 +660,7 @@ public class LogItCore
     
     public static enum StorageType
     {
-        UNKNOWN, SQLITE, MYSQL, H2
+        UNKNOWN, SQLITE, MYSQL, H2, CSV
     }
     
     public static enum HashingAlgorithm
@@ -667,7 +681,7 @@ public class LogItCore
     private boolean started = false;
     
     private LogItConfiguration  config;
-    private AbstractSqlDatabase database;
+    private AbstractRelationalDatabase database;
     private Pinger              pinger;
     private Permission          permissions;
     private SessionManager      sessionManager;

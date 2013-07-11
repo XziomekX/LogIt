@@ -27,7 +27,7 @@ import java.util.logging.Logger;
  */
 public class Pinger implements Runnable
 {
-    public Pinger(AbstractSqlDatabase database)
+    public Pinger(AbstractRelationalDatabase database)
     {
         this.database = database;
     }
@@ -37,7 +37,7 @@ public class Pinger implements Runnable
     {
         try
         {
-            database.executeStatement("SELECT 1");
+            database.ping();
         }
         catch (SQLException ex)
         {
@@ -45,5 +45,5 @@ public class Pinger implements Runnable
         }
     }
     
-    private final AbstractSqlDatabase database;
+    private final AbstractRelationalDatabase database;
 }

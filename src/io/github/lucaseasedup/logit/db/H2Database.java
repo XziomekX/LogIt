@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.db;
 
+import io.github.lucaseasedup.logit.CaseInsensitiveArrayList;
 import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,7 +38,7 @@ import org.bukkit.Bukkit;
 /**
  * @author LucasEasedUp
  */
-public class H2Database extends AbstractSqlDatabase
+public class H2Database extends AbstractRelationalDatabase
 {
     public H2Database(String host)
     {
@@ -45,7 +46,7 @@ public class H2Database extends AbstractSqlDatabase
     }
      
     @Override
-    public void connect(String user, String password, String database) throws SQLException, ReflectiveOperationException
+    public void connect() throws SQLException, ReflectiveOperationException
     {
         File libDir = new File(Bukkit.getPluginManager().getPlugin("LogIt").getDataFolder(), "lib");
         File h2Jar = new File(libDir, "h2.jar");
@@ -89,11 +90,6 @@ public class H2Database extends AbstractSqlDatabase
         statement = connection.createStatement();
     }
     
-    public void connect() throws SQLException, ReflectiveOperationException
-    {
-        connect(null, null, null);
-    }
-    
     @Override
     public boolean isConnected()
     {
@@ -110,6 +106,12 @@ public class H2Database extends AbstractSqlDatabase
     }
     
     @Override
+    public void ping() throws SQLException
+    {
+        statement.execute("SELECT 1");
+    }
+    
+    @Override
     public void close() throws SQLException
     {
         if (connection != null)
@@ -120,11 +122,11 @@ public class H2Database extends AbstractSqlDatabase
     }
     
     @Override
-    public Set<String> getColumnNames(String table) throws SQLException
+    public ArrayList<String> getColumnNames(String table) throws SQLException
     {
         ResultSet tableInfo = executeQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS"
             + " WHERE TABLE_NAME = '" + SqlUtils.escapeQuotes(table, "'", false) + "';");
-        Set<String> columnNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        ArrayList<String> columnNames = new CaseInsensitiveArrayList<>();
         
         while (tableInfo.next())
         {

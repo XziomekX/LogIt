@@ -24,7 +24,7 @@ import static io.github.lucaseasedup.logit.LogItCore.IntegrationType.*;
 import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.callEvent;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import io.github.lucaseasedup.logit.db.AbstractSqlDatabase;
+import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -48,7 +48,7 @@ import org.bukkit.Location;
  */
 public class AccountManager
 {
-    public AccountManager(LogItCore core, AbstractSqlDatabase database)
+    public AccountManager(LogItCore core, AbstractRelationalDatabase database)
     {
         this.core     = core;
         this.database = database;
@@ -492,7 +492,7 @@ public class AccountManager
     }
     
     private final LogItCore core;
-    private final AbstractSqlDatabase database;
+    private final AbstractRelationalDatabase database;
     private final String table;
     
     private final HashMap<String, String> cSalt = new HashMap<>();

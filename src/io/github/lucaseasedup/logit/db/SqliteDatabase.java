@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.db;
 
+import io.github.lucaseasedup.logit.CaseInsensitiveArrayList;
 import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.sql.*;
 import java.util.*;
@@ -27,7 +28,7 @@ import java.util.logging.Logger;
 /**
  * @author LucasEasedUp
  */
-public class SqliteDatabase extends AbstractSqlDatabase
+public class SqliteDatabase extends AbstractRelationalDatabase
 {
     public SqliteDatabase(String host)
     {
@@ -35,15 +36,10 @@ public class SqliteDatabase extends AbstractSqlDatabase
     }
     
     @Override
-    public void connect(String user, String password, String database) throws SQLException
+    public void connect() throws SQLException
     {
         connection = org.sqlite.JDBC.createConnection(host, new Properties());
         statement = connection.createStatement();
-    }
-    
-    public void connect() throws SQLException
-    {
-        connect(null, null, null);
     }
     
     @Override
@@ -62,6 +58,12 @@ public class SqliteDatabase extends AbstractSqlDatabase
     }
     
     @Override
+    public void ping() throws SQLException
+    {
+        statement.execute("SELECT 1");
+    }
+    
+    @Override
     public void close() throws SQLException
     {
         if (connection != null)
@@ -72,10 +74,10 @@ public class SqliteDatabase extends AbstractSqlDatabase
     }
     
     @Override
-    public Set<String> getColumnNames(String table) throws SQLException
+    public ArrayList<String> getColumnNames(String table) throws SQLException
     {
         ResultSet tableInfo = executeQuery("PRAGMA table_info('" + SqlUtils.escapeQuotes(table, "'", true) + "');");
-        Set<String> columnNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        ArrayList<String> columnNames = new CaseInsensitiveArrayList<>();
         
         while (tableInfo.next())
         {

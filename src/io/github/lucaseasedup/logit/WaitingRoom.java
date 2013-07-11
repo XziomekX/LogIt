@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit;
 
-import io.github.lucaseasedup.logit.db.AbstractSqlDatabase;
+import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -34,7 +34,7 @@ import org.bukkit.util.Vector;
  */
 public class WaitingRoom
 {
-    public WaitingRoom(LogItCore core, AbstractSqlDatabase database)
+    public WaitingRoom(LogItCore core, AbstractRelationalDatabase database)
     {
         this.core     = core;
         this.database = database;
@@ -160,6 +160,6 @@ public class WaitingRoom
     }
     
     private final LogItCore core;
-    private final AbstractSqlDatabase database;
+    private final AbstractRelationalDatabase database;
     private final String table;
 }

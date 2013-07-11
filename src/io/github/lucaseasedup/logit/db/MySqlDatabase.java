@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.db;
 
+import io.github.lucaseasedup.logit.CaseInsensitiveArrayList;
 import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.sql.*;
 import java.util.*;
@@ -27,7 +28,7 @@ import java.util.logging.Logger;
 /**
  * @author LucasEasedUp
  */
-public class MySqlDatabase extends AbstractSqlDatabase
+public class MySqlDatabase extends AbstractRelationalDatabase
 {
     public MySqlDatabase(String host)
     {
@@ -35,6 +36,11 @@ public class MySqlDatabase extends AbstractSqlDatabase
     }
     
     @Override
+    public void connect() throws SQLException
+    {
+        throw new UnsupportedOperationException("Cannot connect to a MySQL without specifying database name.");
+    }
+    
     public void connect(String user, String password, String database) throws SQLException
     {
         connection = DriverManager.getConnection(host, user, password);
@@ -58,6 +64,12 @@ public class MySqlDatabase extends AbstractSqlDatabase
     }
     
     @Override
+    public void ping() throws SQLException
+    {
+        statement.execute("SELECT 1");
+    }
+    
+    @Override
     public void close() throws SQLException
     {
         if (connection != null)
@@ -68,10 +80,10 @@ public class MySqlDatabase extends AbstractSqlDatabase
     }
     
     @Override
-    public Set<String> getColumnNames(String table) throws SQLException
+    public ArrayList<String> getColumnNames(String table) throws SQLException
     {
         ResultSet tableInfo = executeQuery("DESCRIBE `" + SqlUtils.escapeQuotes(table, "`", true) + "`;");
-        Set<String> columnNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        ArrayList<String> columnNames = new CaseInsensitiveArrayList<>();
         
         while (tableInfo.next())
         {

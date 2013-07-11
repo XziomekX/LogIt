@@ -1,5 +1,5 @@
 /*
- * AbstractSqlDatabase.java
+ * AbstractRelationalDatabase.java
  *
  * Copyright (C) 2012-2013 LucasEasedUp
  *
@@ -25,20 +25,21 @@ import java.util.*;
 /**
  * @author LucasEasedUp
  */
-public abstract class AbstractSqlDatabase implements AutoCloseable
+public abstract class AbstractRelationalDatabase implements AutoCloseable
 {
-    public AbstractSqlDatabase(String host)
+    public AbstractRelationalDatabase(String host)
     {
         this.host = host;
     }
     
-    public abstract void connect(String user, String password, String database) throws SQLException, ReflectiveOperationException;
+    public abstract void connect() throws SQLException, ReflectiveOperationException;
     public abstract boolean isConnected();
+    public abstract void ping() throws SQLException;
     
     @Override
     public abstract void close() throws SQLException;
     
-    public abstract Set<String> getColumnNames(String table) throws SQLException;
+    public abstract ArrayList<String> getColumnNames(String table) throws SQLException;
     public abstract ResultSet executeQuery(String sql) throws SQLException;
     public abstract boolean executeStatement(String sql) throws SQLException;
     
