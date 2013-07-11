@@ -465,8 +465,6 @@ public class AccountManager
         {
             try (ResultSet rs = database.select(table, new String[]{"*"}))
             {
-                assert rs.getMetaData().getColumnCount() == 1;
-
                 while (rs.next())
                 {
                     String username = rs.getString(core.getConfig().getString("storage.accounts.columns.username"));

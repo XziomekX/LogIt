@@ -100,8 +100,6 @@ public class BackupManager implements Runnable
             
             try (ResultSet rs = database.select(core.getConfig().getString("storage.accounts.table"), new String[]{"*"}))
             {
-                assert rs.getMetaData().getColumnCount() == 1;
-                
                 while (rs.next())
                 {
                     backupDatabase.insert(core.getConfig().getString("storage.accounts.table"), new String[]{
