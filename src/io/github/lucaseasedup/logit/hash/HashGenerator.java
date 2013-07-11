@@ -150,7 +150,7 @@ public class HashGenerator
     {
         if (hashingAlgorithm == HashingAlgorithm.BCRYPT)
         {
-            return BCrypt.gensalt();
+            return BCrypt.gensalt(12);
         }
         else
         {
