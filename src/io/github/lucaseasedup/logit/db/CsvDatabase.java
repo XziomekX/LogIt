@@ -117,7 +117,7 @@ public class CsvDatabase extends AbstractRelationalDatabase
                     line += "\r\n" + nextLine;
                 }
                 
-                String[] lineValues = line.split("\",\"");
+                String[] lineValues = line.split("(?<=\"),(?=\")");
                 ArrayList<String> row = new ArrayList<>();
                 
                 for (int i = 0; i < lineValues.length; i++)
