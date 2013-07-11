@@ -21,7 +21,7 @@ package io.github.lucaseasedup.logit.hash;
 import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.util.Random;
 
 /**
  * Provides a hashing tool for different algorithms.
@@ -154,21 +154,21 @@ public class HashGenerator
         }
         else
         {
-            SecureRandom sr   = new SecureRandom();
-            byte[]       salt = new byte[20];
+            char[] charTable = new char[]{
+                '1','2','3','4','5','6','7','8','9','0','_',
+                'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+                'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+            };
             
-            sr.nextBytes(salt);
+            StringBuilder sb = new StringBuilder(20);
+            Random random = new Random();
             
-            // Replace backslashes with forwardslashes to avoid escaping problems with different DBMSs.
-            for (int i = 0; i < salt.length; i++)
+            for (int i = 0, n = charTable.length; i < 20; i++)
             {
-                if (salt[i] == '\\')
-                {
-                    salt[i] = '/';
-                }
+                sb.append(charTable[random.nextInt(n)]);
             }
             
-            return new String(salt);
+            return sb.toString();
         }
     }
 }
