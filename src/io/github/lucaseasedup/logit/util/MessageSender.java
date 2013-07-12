@@ -21,6 +21,8 @@ package io.github.lucaseasedup.logit.util;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.account.AccountManager;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
+import java.util.Arrays;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -66,13 +68,13 @@ public class MessageSender
      * Sends the given message to all online players, except for a player specified as a first parameter.
      * 
      * @param message Message.
-     * @param player Player to be omitted in broadcasting.
+     * @param exceptPlayers Players to be omitted in broadcasting.
      */
-    public static void broadcastMessage(String message, Player player)
+    public static void broadcastMessageExcept(String message, List<Player> exceptPlayers)
     {
         for (Player p : Bukkit.getOnlinePlayers())
         {
-            if (!p.equals(player))
+            if (!exceptPlayers.contains(p))
             {
                 p.sendMessage(message);
             }
@@ -89,7 +91,7 @@ public class MessageSender
     {
         String joinMessage = JoinMessageGenerator.generate(player, revealSpawnWorld);
         
-        broadcastMessage(joinMessage, player);
+        broadcastMessageExcept(joinMessage, Arrays.asList(player));
     }
     
     /**
@@ -102,7 +104,7 @@ public class MessageSender
         String quitMessage = getMessage("QUIT")
                 .replace("%player%", player.getName());
         
-        broadcastMessage(quitMessage, player);
+        broadcastMessageExcept(quitMessage, Arrays.asList(player));
     }
     
     /**
