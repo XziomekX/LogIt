@@ -275,6 +275,11 @@ public class LogItCore
         accountWatcherTaskId  = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, accountWatcher, 0L, 12000L);
         backupManagerTaskId   = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, backupManager, 0L, 40L);
         
+        if (plugin.getServer().getPluginManager().isPluginEnabled("Vault"))
+        {
+            permissions = plugin.getServer().getServicesManager().getRegistration(Permission.class).getProvider();
+        }
+        
         log(FINE, getMessage("PLUGIN_START_SUCCESS")
                 .replace("%st%", getStorageAccountsDbType().name())
                 .replace("%ha%", getHashingAlgorithm().name()));
@@ -799,11 +804,6 @@ public class LogItCore
         plugin.getCommand("unregister").setExecutor(new UnregisterCommand(this));
         plugin.getCommand("changepass").setExecutor(new ChangePassCommand(this));
         plugin.getCommand("changeemail").setExecutor(new ChangeEmailCommand(this));
-        
-        if (plugin.getServer().getPluginManager().isPluginEnabled("Vault"))
-        {
-            permissions = plugin.getServer().getServicesManager().getRegistration(Permission.class).getProvider();
-        }
         
         loaded = true;
     }
