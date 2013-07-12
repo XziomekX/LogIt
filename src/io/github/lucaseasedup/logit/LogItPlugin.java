@@ -98,28 +98,17 @@ public final class LogItPlugin extends JavaPlugin
     }
     
     /**
-     * Returns the LogIt core.
-     * 
-     * It is not the preferred way to get the core. You should use LogItCore.getInstance() instead,
-     * although getCore() works exactly the same.
-     * 
-     * @return The LogIt core.
-     */
-    public LogItCore getCore()
-    {
-        return core;
-    }
-    
-    /**
      * Loads messages from file.
      * <p/>
-     * First, it tries to load messages_{locale}.properties (where {locale} is the corresponding value from the config file).
-     * If it does not exist, it tries to load messages.properties. If this fails too, it throws a FileNotFoundException.
+     * First, it tries to load messages_{locale}.properties from the data folder
+     * (where {locale} is the "locale" config property). If it does not exist, it tries to load messages.properties.
+     * If this fails too, it does it all again but within JAR file. If the JAR file does not contain any of
+     * the aforementioned files, it throws FileNotFoundException.
      * 
      * @throws FileNotFoundException Thrown if no message file has been found.
      * @throws IOException Thrown if there was an error while reading.
      */
-    private void loadMessages() throws IOException
+    public void loadMessages() throws IOException
     {
         String suffix = "_" + getConfig().getString("locale", "en");
         File file;
@@ -150,6 +139,19 @@ public final class LogItPlugin extends JavaPlugin
             
             prb = new PropertyResourceBundle(new InputStreamReader(jarFile.getInputStream(jarEntry), "UTF-8"));
         }
+    }
+    
+    /**
+     * Returns the LogIt core.
+     * 
+     * It is not the preferred way to get the core. You should use LogItCore.getInstance() instead,
+     * although getCore() works exactly the same.
+     * 
+     * @return The LogIt core.
+     */
+    public LogItCore getCore()
+    {
+        return core;
     }
     
     public static String getMessage(String label, String[] variables)

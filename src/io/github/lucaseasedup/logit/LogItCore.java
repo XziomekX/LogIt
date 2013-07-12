@@ -355,6 +355,16 @@ public class LogItCore
     public void restart()
     {
         stop();
+        
+        try
+        {
+            plugin.loadMessages();
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(LogItCore.class.getName()).log(Level.WARNING, null, ex);
+        }
+        
         start();
         
         log(INFO, getMessage("RELOADED"));
