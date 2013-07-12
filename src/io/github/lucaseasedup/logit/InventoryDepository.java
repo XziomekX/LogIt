@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit;
 
 import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
+import it.sauronsoftware.base64.Base64;
 import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,7 +31,6 @@ import java.util.logging.Logger;
 import net.minecraft.server.v1_5_R3.NBTBase;
 import net.minecraft.server.v1_5_R3.NBTTagCompound;
 import net.minecraft.server.v1_5_R3.NBTTagList;
-import org.apache.commons.codec.binary.Base64;
 import org.bukkit.craftbukkit.v1_5_R3.inventory.CraftInventoryCustom;
 import org.bukkit.craftbukkit.v1_5_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -261,12 +261,12 @@ public class InventoryDepository
         // Save the list
         NBTBase.a(itemList, dataOutput);
         
-        return Base64.encodeBase64String(outputStream.toByteArray());
+        return Base64.encode(outputStream.toString());
     }
     
     public static Inventory unserialize(String data)
     {
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.decodeBase64(data));
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.decode(data).getBytes());
         NBTTagList itemList = (NBTTagList) NBTBase.b(new DataInputStream(inputStream));
         Inventory inventory = new CraftInventoryCustom(null, itemList.size());
         
