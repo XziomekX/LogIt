@@ -18,32 +18,17 @@
  */
 package io.github.lucaseasedup.logit;
 
-import io.github.lucaseasedup.logit.listener.ServerEventListener;
-import io.github.lucaseasedup.logit.listener.EntityEventListener;
-import io.github.lucaseasedup.logit.listener.SessionEventListener;
-import io.github.lucaseasedup.logit.listener.PlayerEventListener;
-import io.github.lucaseasedup.logit.listener.TickEventListener;
-import io.github.lucaseasedup.logit.listener.BlockEventListener;
-import io.github.lucaseasedup.logit.listener.AccountEventListener;
-import io.github.lucaseasedup.logit.listener.InventoryEventListener;
-import io.github.lucaseasedup.logit.db.SqliteDatabase;
-import io.github.lucaseasedup.logit.db.Pinger;
-import io.github.lucaseasedup.logit.db.MySqlDatabase;
-import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
-import io.github.lucaseasedup.logit.command.LogItCommand;
-import io.github.lucaseasedup.logit.command.LoginCommand;
-import io.github.lucaseasedup.logit.command.UnregisterCommand;
-import io.github.lucaseasedup.logit.command.ChangePassCommand;
-import io.github.lucaseasedup.logit.command.LogoutCommand;
-import io.github.lucaseasedup.logit.command.RegisterCommand;
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import io.github.lucaseasedup.logit.listener.*;
+import static io.github.lucaseasedup.logit.LogItPlugin.*;
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.account.AccountWatcher;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.*;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import com.google.common.collect.ImmutableList;
+import io.github.lucaseasedup.logit.command.*;
 import io.github.lucaseasedup.logit.db.*;
 import io.github.lucaseasedup.logit.hash.BCrypt;
+import io.github.lucaseasedup.logit.util.FileUtils;
 import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -78,10 +63,48 @@ public class LogItCore
             return;
         
         new File(plugin.getDataFolder(), "lib").mkdir();
-        new File(plugin.getDataFolder(), "backup").mkdir();
         
         config = new LogItConfiguration(plugin);
         config.load();
+        
+        if (firstRun)
+        {
+            new File(plugin.getDataFolder(), "backup").mkdir();
+            new File(plugin.getDataFolder(), "mail").mkdir();
+            
+            if (config.getBoolean("password-recovery.enabled"))
+            {
+                try
+                {
+                    FileUtils.extractResource("/password-recovery.html", new File(plugin.getDataFolder(), "mail/password-recovery.html"));
+                }
+                catch (IOException ex)
+                {
+                    Logger.getLogger(LogItCore.class.getName()).log(Level.WARNING, null, ex);
+                }
+            }
+        }
+        
+        if (config.getBoolean("password-recovery.enabled"))
+        {
+            try
+            {
+                if (!FileUtils.libraryDownloaded(LIB_MAIL))
+                {
+                    Logger.getLogger(LogItCore.class.getName()).log(Level.INFO, "Downloading " + LIB_MAIL + " (~0.5 MB)...");
+                    FileUtils.downloadLibrary("http://repo1.maven.org/maven2/javax/mail/mail/1.4.5/mail-1.4.5.jar", LIB_MAIL);
+                }
+                
+                FileUtils.loadLibrary(LIB_MAIL);
+            }
+            catch (IOException | ReflectiveOperationException ex)
+            {
+                Logger.getLogger(LogItCore.class.getName()).log(Level.SEVERE, null, ex);
+                plugin.disable();
+                
+                return;
+            }
+        }
         
         if (!loaded)
             load();
@@ -141,7 +164,7 @@ public class LogItCore
                 }
             }
         }
-        catch (SQLException | ReflectiveOperationException ex)
+        catch (IOException | SQLException | ReflectiveOperationException ex)
         {
             Logger.getLogger(LogItCore.class.getName()).log(Level.SEVERE, null, ex);
             plugin.disable();
@@ -194,6 +217,16 @@ public class LogItCore
         accountWatcher = new AccountWatcher(this, accountManager);
         backupManager  = new BackupManager(this, database);
         sessionManager = new SessionManager(this, accountManager);
+        
+        if (FileUtils.libraryLoaded(LIB_MAIL))
+        {
+            mailSender = new MailSender();
+            mailSender.configure(config.getString("mail.smtp-host"), config.getInt("mail.smtp-port"),
+                config.getString("mail.smtp-user"), config.getString("mail.smtp-password"));
+        }
+        
+        if (FileUtils.libraryLoaded(LIB_MAIL))
+            plugin.getCommand("recoverpass").setExecutor(new RecoverPassCommand(this));
         
         SqliteDatabase inventoryDatabase = new SqliteDatabase("jdbc:sqlite:" +
             plugin.getDataFolder() + "/" + config.getString("storage.inventories.filename"));
@@ -356,6 +389,72 @@ public class LogItCore
         config.set("password.global-password", "");
         
         log(INFO, getMessage("GLOBALPASS_REMOVE_SUCCESS"));
+    }
+    
+    public void sendPasswordRecoveryMail(String username) throws IOException, SQLException
+    {
+        try
+        {
+            if (!FileUtils.libraryLoaded(LIB_MAIL))
+                throw new IOException("Library " + LIB_MAIL + " not loaded.");
+            
+            String to = accountManager.getEmail(username);
+            String from = config.getString("mail.email-address");
+            String subject = parseMessage(config.getString("password-recovery.subject"), new String[]{
+                "%player%", username,
+            });
+            
+            String playerPassword = generatePassword(config.getInt("password-recovery.password-length"),
+                config.getString("password-recovery.password-combination"));
+            accountManager.changeAccountPassword(username, playerPassword);
+            
+            StringBuilder bodyBuilder = new StringBuilder();
+            
+            try (FileReader fr = new FileReader(new File(plugin.getDataFolder(), config.getString("password-recovery.body-template"))))
+            {
+                int b;
+
+                while ((b = fr.read()) != -1)
+                {
+                    bodyBuilder.append((char) b);
+                }
+            }
+            
+            String body = parseMessage(bodyBuilder.toString(), new String[]{
+                "%player%", username,
+                "%password%", playerPassword
+            });
+            
+            mailSender.sendMail(new String[]{to}, from, subject, body, config.getBoolean("password-recovery.html-enabled"));
+            
+            log(FINE, getMessage("RECOVER_PASSWORD_SUCCESS_LOG", new String[]{
+                "%player%", username,
+                "%email%", to,
+            }));
+        }
+        catch (IOException | SQLException ex)
+        {
+            log(WARNING, getMessage("RECOVER_PASSWORD_FAIL_LOG", new String[]{
+                "%player%", username,
+            }));
+            
+            throw ex;
+        }
+    }
+    
+    public String generatePassword(int length, String combination)
+    {
+        char[] charTable = combination.toCharArray();
+        
+        StringBuilder sb = new StringBuilder(length);
+        Random random = new Random();
+        
+        for (int i = 0, n = charTable.length; i < length; i++)
+        {
+            sb.append(charTable[random.nextInt(n)]);
+        }
+        
+        return sb.toString();
     }
     
     /**
@@ -629,6 +728,11 @@ public class LogItCore
         return inventoryDepository;
     }
     
+    public MailSender getMailSender()
+    {
+        return mailSender;
+    }
+    
     public BackupManager getBackupManager()
     {
         return backupManager;
@@ -666,6 +770,7 @@ public class LogItCore
             config.getString("storage.accounts.columns.salt"),            "VARCHAR(20)",
             config.getString("storage.accounts.columns.password"),        "VARCHAR(256)",
             config.getString("storage.accounts.columns.ip"),              "VARCHAR(64)",
+            config.getString("storage.accounts.columns.email"),           "VARCHAR(255)",
             config.getString("storage.accounts.columns.last_active"),     "INTEGER",
             config.getString("storage.accounts.columns.location_world"),  "VARCHAR(512)",
             config.getString("storage.accounts.columns.location_x"),      "REAL",
@@ -693,6 +798,7 @@ public class LogItCore
         plugin.getCommand("register").setExecutor(new RegisterCommand(this));
         plugin.getCommand("unregister").setExecutor(new UnregisterCommand(this));
         plugin.getCommand("changepass").setExecutor(new ChangePassCommand(this));
+        plugin.getCommand("changeemail").setExecutor(new ChangeEmailCommand(this));
         
         if (plugin.getServer().getPluginManager().isPluginEnabled("Vault"))
         {
@@ -727,6 +833,9 @@ public class LogItCore
         UNKNOWN, NONE, PHPBB
     }
     
+    public static final String LIB_H2 = "h2-1.3.172.jar";
+    public static final String LIB_MAIL = "mail-1.4.5.jar";
+    
     private static final LogItCore INSTANCE = new LogItCore((LogItPlugin) Bukkit.getPluginManager().getPlugin("LogIt"));
     
     private final LogItPlugin plugin;
@@ -745,6 +854,7 @@ public class LogItCore
     private BackupManager       backupManager;
     private WaitingRoom         waitingRoom;
     private InventoryDepository inventoryDepository;
+    private MailSender          mailSender;
     private TickEventCaller     tickEventCaller;
     
     private int pingerTaskId;

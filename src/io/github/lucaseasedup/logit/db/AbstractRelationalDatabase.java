@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.db;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -32,7 +33,7 @@ public abstract class AbstractRelationalDatabase implements AutoCloseable
         this.host = host;
     }
     
-    public abstract void connect() throws SQLException, ReflectiveOperationException;
+    public abstract void connect() throws IOException, SQLException, ReflectiveOperationException;
     public abstract boolean isConnected();
     public abstract void ping() throws SQLException;
     

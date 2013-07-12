@@ -39,8 +39,10 @@ public final class LogItConfiguration
         plugin.reloadConfig();
         
         plugin.getConfig().set("locale",                                         plugin.getConfig().getString("locale", "en"));
+        
         plugin.getConfig().set("log-to-file.enabled",                            plugin.getConfig().getBoolean("log-to-file.enabled", false));
         plugin.getConfig().set("log-to-file.filename",                           plugin.getConfig().getString("log-to-file.filename", "debug.log"));
+        
         plugin.getConfig().set("force-login.global",                             plugin.getConfig().getBoolean("force-login.global", true));
         plugin.getConfig().set("force-login.in-worlds",                          plugin.getConfig().getStringList("force-login.in-worlds"));
         plugin.getConfig().set("force-login.allowed-commands",                   plugin.getConfig().getStringList("force-login.allowed-commands"));
@@ -63,25 +65,45 @@ public final class LogItConfiguration
         plugin.getConfig().set("force-login.prevent.inventory-click",            plugin.getConfig().getBoolean("force-login.prevent.inventory-click", true)); 
         plugin.getConfig().set("force-login.prevent.air-depletion",              plugin.getConfig().getBoolean("force-login.prevent.air-depletion", true)); 
         plugin.getConfig().set("force-login.hide-inventory",                     plugin.getConfig().getBoolean("force-login.hide-inventory", false)); 
+        
         plugin.getConfig().set("session-lifetime",                               plugin.getConfig().getInt("session-lifetime", 0));
+        plugin.getConfig().set("reveal-spawn-world",                             plugin.getConfig().getBoolean("reveal-spawn-world", true));
+        
         plugin.getConfig().set("username.regex",                                 plugin.getConfig().getString("username.regex", "[A-Za-z0-9_]+"));
         plugin.getConfig().set("username.min-length",                            plugin.getConfig().getInt("username.min-length", 2));
         plugin.getConfig().set("username.max-length",                            plugin.getConfig().getInt("username.max-length", 16));
         plugin.getConfig().set("username.prohibited-usernames",                  plugin.getConfig().getStringList("username.prohibited-usernames"));
+        
         plugin.getConfig().set("password.min-length",                            plugin.getConfig().getInt("password.min-length", 3));
         plugin.getConfig().set("password.max-length",                            plugin.getConfig().getInt("password.max-length", 25));
         plugin.getConfig().set("password.hashing-algorithm",                     plugin.getConfig().getString("password.hashing-algorithm", "sha-256"));
         plugin.getConfig().set("password.use-salt",                              plugin.getConfig().getBoolean("password.use-salt", true));
         plugin.getConfig().set("password.global-password",                       plugin.getConfig().getString("password.global-password", ""));
+        
         plugin.getConfig().set("login-fails-to-kick",                            plugin.getConfig().getInt("login-fails-to-kick", -1));
         plugin.getConfig().set("login-fails-to-ban",                             plugin.getConfig().getInt("login-fails-to-ban", -1));
         plugin.getConfig().set("kick-unregistered",                              plugin.getConfig().getBoolean("kick-unregistered", false));
         plugin.getConfig().set("days-of-absence-to-unregister",                  plugin.getConfig().getInt("days-of-absence-to-unregister", -1));
+        
         plugin.getConfig().set("preserve-slots.amount",                          plugin.getConfig().getInt("preserve-slots.amount", 0));
         plugin.getConfig().set("preserve-slots.players",                         plugin.getConfig().getStringList("preserve-slots.players"));
-        plugin.getConfig().set("accounts-per-ip",                                plugin.getConfig().getInt("accounts-per-ip", 3));
-        plugin.getConfig().set("unrestricted-ips",                               plugin.getConfig().getStringList("unrestricted-ips"));
-        plugin.getConfig().set("reveal-spawn-world",                             plugin.getConfig().getBoolean("reveal-spawn-world", true));
+        
+        plugin.getConfig().set("accounts-per-ip.amount",                         plugin.getConfig().getInt("accounts-per-ip.amount", 3));
+        plugin.getConfig().set("accounts-per-ip.unrestricted-ips",               plugin.getConfig().getStringList("accounts-per-ip.unrestricted-ips"));
+        
+        plugin.getConfig().set("password-recovery.enabled",                      plugin.getConfig().getBoolean("password-recovery.enabled", false));
+        plugin.getConfig().set("password-recovery.subject",                      plugin.getConfig().getString("password-recovery.subject", "Password recovery for %player%"));
+        plugin.getConfig().set("password-recovery.body-template",                plugin.getConfig().getString("password-recovery.body-template", "mail/password-recovery.html"));
+        plugin.getConfig().set("password-recovery.html-enabled",                 plugin.getConfig().getBoolean("password-recovery.html-enabled", true));
+        plugin.getConfig().set("password-recovery.password-length",              plugin.getConfig().getInt("password-recovery.password-length", 6));
+        plugin.getConfig().set("password-recovery.password-combination",         plugin.getConfig().getString("password-recovery.password-combination", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+        
+        plugin.getConfig().set("mail.email-address",                             plugin.getConfig().getString("mail.email-address", ""));
+        plugin.getConfig().set("mail.smtp-host",                                 plugin.getConfig().getString("mail.smtp-host", ""));
+        plugin.getConfig().set("mail.smtp-port",                                 plugin.getConfig().getInt("mail.smtp-port", 465));
+        plugin.getConfig().set("mail.smtp-user",                                 plugin.getConfig().getString("mail.smtp-user", ""));
+        plugin.getConfig().set("mail.smtp-password",                             plugin.getConfig().getString("mail.smtp-password", ""));
+        
         plugin.getConfig().set("waiting-room.enabled",                           plugin.getConfig().getBoolean("waiting-room.enabled", false));
         plugin.getConfig().set("waiting-room.location.world",                    plugin.getConfig().getString("waiting-room.location.world", "world"));
         plugin.getConfig().set("waiting-room.location.position",                 plugin.getConfig().getVector("waiting-room.location.position", new Vector(0, 0, 0)));
@@ -92,11 +114,14 @@ public final class LogItConfiguration
         plugin.getConfig().set("waiting-room.newbie-teleport.location.position", plugin.getConfig().getVector("waiting-room.newbie-teleport.location.position", new Vector(0, 0, 0)));
         plugin.getConfig().set("waiting-room.newbie-teleport.location.yaw",      plugin.getConfig().getDouble("waiting-room.newbie-teleport.yaw", 0));
         plugin.getConfig().set("waiting-room.newbie-teleport.location.pitch",    plugin.getConfig().getDouble("waiting-room.newbie-teleport.pitch", 0));
+        
         plugin.getConfig().set("groups.enabled",                                 plugin.getConfig().getBoolean("groups.enabled", false));
         plugin.getConfig().set("groups.logged-in",                               plugin.getConfig().getString("groups.logged-in", "LoggedIn"));
         plugin.getConfig().set("groups.logged-out",                              plugin.getConfig().getString("groups.logged-out", "LoggedOut"));
+        
         plugin.getConfig().set("integration",                                    plugin.getConfig().getString("integration", "none"));
         plugin.getConfig().set("integration-phpbb.logit-script",                 plugin.getConfig().getString("integration-phpbb.logit-script", ""));
+        
         plugin.getConfig().set("storage.accounts.db-type",                       plugin.getConfig().getString("storage.accounts.db-type", "sqlite"));
         plugin.getConfig().set("storage.accounts.sqlite.filename",               plugin.getConfig().getString("storage.accounts.sqlite.filename", "accounts.db"));
         plugin.getConfig().set("storage.accounts.h2.filename",                   plugin.getConfig().getString("storage.accounts.h2.filename", "accounts"));
@@ -109,6 +134,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("storage.accounts.columns.salt",                  plugin.getConfig().getString("storage.accounts.columns.salt", "salt"));
         plugin.getConfig().set("storage.accounts.columns.password",              plugin.getConfig().getString("storage.accounts.columns.password", "password"));
         plugin.getConfig().set("storage.accounts.columns.ip",                    plugin.getConfig().getString("storage.accounts.columns.ip", "ip"));
+        plugin.getConfig().set("storage.accounts.columns.email",                 plugin.getConfig().getString("storage.accounts.columns.email", "email"));
         plugin.getConfig().set("storage.accounts.columns.last_active",           plugin.getConfig().getString("storage.accounts.columns.last_active", "last_active"));
         plugin.getConfig().set("storage.accounts.columns.location_world",        plugin.getConfig().getString("storage.accounts.columns.location_world", "location_world"));
         plugin.getConfig().set("storage.accounts.columns.location_x",            plugin.getConfig().getString("storage.accounts.columns.location_x", "location_x"));
@@ -119,6 +145,7 @@ public final class LogItConfiguration
         plugin.getConfig().set("storage.accounts.columns.in_wr",                 plugin.getConfig().getString("storage.accounts.columns.in_wr", "in_wr"));
         plugin.getConfig().set("storage.inventories.filename",                   plugin.getConfig().getString("storage.inventories.filename", "inventories.db"));
         plugin.getConfig().set("storage.sessions.filename",                      plugin.getConfig().getString("storage.sessions.filename", "sessions.db"));
+        
         plugin.getConfig().set("backup.path",                                    plugin.getConfig().getString("backup.path", "backup"));
         plugin.getConfig().set("backup.filename-format",                         plugin.getConfig().getString("backup.filename-format", "yyyy-MM-dd_HH-mm-ss'.db'"));
         plugin.getConfig().set("backup.schedule.enabled",                        plugin.getConfig().getBoolean("backup.schedule.enabled", false));

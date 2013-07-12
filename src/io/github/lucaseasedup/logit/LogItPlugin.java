@@ -127,13 +127,7 @@ public final class LogItPlugin extends JavaPlugin
         }
     }
     
-    /**
-     * Returns a message with the secified label.
-     * 
-     * @param label Message label.
-     * @return Message with that label.
-     */
-    public static String getMessage(String label)
+    public static String getMessage(String label, String[] variables)
     {
         String message;
         
@@ -146,7 +140,40 @@ public final class LogItPlugin extends JavaPlugin
             return label;
         }
         
+        return parseMessage(message, variables);
+    }
+    
+    /**
+     * Returns a message with the secified label.
+     * 
+     * @param label Message label.
+     * @return Message with that label.
+     */
+    public static String getMessage(String label)
+    {
+        return getMessage(label, new String[0]);
+    }
+    
+    public static String parseMessage(String message, String[] variables)
+    {
+        for (int i = 0; i < variables.length; i += 2)
+        {
+            message = message.replace(variables[i], variables[i + 1]);
+        }
+        
+        message = message.replace("%bukkit_version%", Bukkit.getBukkitVersion());
+        message = message.replace("%logit_version%", Bukkit.getPluginManager().getPlugin("LogIt").getDescription().getVersion());
+        message = message.replace("%server_id%", Bukkit.getServerId());
+        message = message.replace("%server_ip%", Bukkit.getIp());
+        message = message.replace("%server_motd%", Bukkit.getMotd());
+        message = message.replace("%server_name%", Bukkit.getServerName());
+        
         return message;
+    }
+    
+    public static String parseMessage(String message)
+    {
+        return parseMessage(message, new String[0]);
     }
     
     /**

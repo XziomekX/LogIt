@@ -31,6 +31,14 @@ commands:
     description: Changes your password.
     usage: /<command> <oldpassword> <newpassword> <confirmpassword>
 
+  changeemail:
+    description: Changes your e-mail address.
+    usage: /<command> <newemail>
+
+  recoverpass:
+    description: Recovers your password through e-mail.
+    usage: /<command> <email>
+
 permissions:
   logit.*:
     default: false
@@ -47,6 +55,8 @@ permissions:
       logit.register.self: true
       logit.unregister.self: true
       logit.changepass.self: true
+      logit.changeemail.self: true
+      logit.recoverpass: true
   logit.mod:
     default: op
     children:
@@ -57,6 +67,7 @@ permissions:
       logit.register.others: true
       logit.unregister.others: true
       logit.changepass.others: true
+      logit.changeemail.others: true
   logit.admin:
     default: false
     children:
@@ -149,6 +160,12 @@ permissions:
   logit.changepass.self:
     default: false
   logit.changepass.others:
+    default: false
+  logit.changeemail.self:
+    default: false
+  logit.changeemail.others:
+    default: false
+  logit.recoverpass:
     default: false
   logit.force-login.exempt:
     default: false

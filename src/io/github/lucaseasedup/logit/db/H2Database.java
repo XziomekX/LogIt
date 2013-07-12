@@ -19,21 +19,14 @@
 package io.github.lucaseasedup.logit.db;
 
 import io.github.lucaseasedup.logit.CaseInsensitiveArrayList;
+import static io.github.lucaseasedup.logit.LogItCore.LIB_H2;
+import io.github.lucaseasedup.logit.util.FileUtils;
 import io.github.lucaseasedup.logit.util.SqlUtils;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bukkit.Bukkit;
 
 /**
  * @author LucasEasedUp
@@ -46,45 +39,15 @@ public class H2Database extends AbstractRelationalDatabase
     }
      
     @Override
-    public void connect() throws SQLException, ReflectiveOperationException
+    public void connect() throws IOException, SQLException, ReflectiveOperationException
     {
-        File libDir = new File(Bukkit.getPluginManager().getPlugin("LogIt").getDataFolder(), "lib");
-        File h2Jar = new File(libDir, "h2.jar");
-        
-        if (!h2Jar.exists())
+        if (!FileUtils.libraryDownloaded(LIB_H2))
         {
-            Logger.getLogger(H2Database.class.getName()).log(Level.INFO, "Downloading h2.jar (~1.5 MB)...");
-            
-            try
-            {
-                URL h2JarDownloadUrl = new URL("http://repo2.maven.org/maven2/com/h2database/h2/1.3.172/h2-1.3.172.jar");
-                ReadableByteChannel rbc = Channels.newChannel(h2JarDownloadUrl.openStream());
-                
-                try (FileOutputStream fos = new FileOutputStream(h2Jar))
-                {
-                    fos.getChannel().transferFrom(rbc, 0, Integer.MAX_VALUE);
-                }
-                
-                Logger.getLogger(H2Database.class.getName()).log(Level.INFO, "Done.");
-            }
-            catch (IOException ex)
-            {
-                Logger.getLogger(H2Database.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            Logger.getLogger(H2Database.class.getName()).log(Level.INFO, "Downloading " + LIB_H2 + " (~1.5 MB)...");
+            FileUtils.downloadLibrary("http://repo2.maven.org/maven2/com/h2database/h2/1.3.172/h2-1.3.172.jar", LIB_H2);
         }
         
-        try
-        {
-            URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-            Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
-            addUrlMethod.setAccessible(true);
-            addUrlMethod.invoke(classLoader, new Object[]{h2Jar.toURI().toURL()});
-            Class.forName("org.h2.Driver", true, classLoader);
-        }
-        catch (MalformedURLException ex)
-        {
-            Logger.getLogger(H2Database.class.getName()).log(Level.WARNING, null, ex);
-        }
+        FileUtils.loadLibrary(LIB_H2);
         
         connection = DriverManager.getConnection(host);
         statement = connection.createStatement();

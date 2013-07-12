@@ -258,8 +258,6 @@ public class AccountManager
         
         String newSalt = HashGenerator.generateSalt(core.getHashingAlgorithm());
         String newHash = core.hash(newPassword, newSalt);
-        
-        // Back up old password.
         String oldPassword = cPassword.get(username.toLowerCase());
         
         try
@@ -291,6 +289,47 @@ public class AccountManager
             
             throw ex;
         }
+    }
+    
+    public void changeEmail(String username, String newEmail) throws SQLException, UnsupportedOperationException
+    {
+        if (!isRegistered(username))
+            throw new AccountNotFoundException();
+        
+        String oldEmail = cEmail.get(username.toLowerCase());
+        
+        try
+        {
+            if (core.getIntegration() == NONE)
+            {
+                database.update(table, new String[]{
+                    core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
+                }, new String[]{
+                    core.getConfig().getString("storage.accounts.columns.email"), newEmail
+                });
+            }
+            else
+            {
+                throw new UnsupportedOperationException();
+            }
+            
+            cEmail.put(username.toLowerCase(), newEmail);
+            
+            core.log(FINE, getMessage("CHANGE_EMAIL_SUCCESS_LOG").replace("%player%", username));
+            callEvent(new AccountChangeEmailEvent(username, oldEmail, newEmail, SUCCESS));
+        }
+        catch (SQLException | UnsupportedOperationException ex)
+        {
+            core.log(WARNING, getMessage("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username));
+            callEvent(new AccountChangeEmailEvent(username, oldEmail, newEmail, FAILURE));
+            
+            throw ex;
+        }
+    }
+    
+    public String getEmail(String username)
+    {
+        return cEmail.get(username.toLowerCase());
     }
     
     /**
@@ -441,6 +480,7 @@ public class AccountManager
             cSalt.clear();
             cPassword.clear();
             cIp.clear();
+            cEmail.clear();
             cLastActive.clear();
             
             core.log(INFO, getMessage("PURGE_SUCCESS"));
@@ -461,6 +501,7 @@ public class AccountManager
         cSalt.clear();
         cPassword.clear();
         cIp.clear();
+        cEmail.clear();
         cLastActive.clear();
         
         if (core.getIntegration() == NONE)
@@ -477,6 +518,7 @@ public class AccountManager
                     cSalt.put(username,       rs.getString(core.getConfig().getString("storage.accounts.columns.salt")));
                     cPassword.put(username,   rs.getString(core.getConfig().getString("storage.accounts.columns.password")));
                     cIp.put(username,         rs.getString(core.getConfig().getString("storage.accounts.columns.ip")));
+                    cEmail.put(username,      rs.getString(core.getConfig().getString("storage.accounts.columns.email")));
                     cLastActive.put(username,    rs.getInt(core.getConfig().getString("storage.accounts.columns.last_active")));
                 }
                 
@@ -498,5 +540,6 @@ public class AccountManager
     private final HashMap<String, String> cSalt = new HashMap<>();
     private final HashMap<String, String> cPassword = new HashMap<>();
     private final HashMap<String, String> cIp = new HashMap<>();
+    private final HashMap<String, String> cEmail = new HashMap<>();
     private final HashMap<String, Integer> cLastActive = new HashMap<>();
 }
