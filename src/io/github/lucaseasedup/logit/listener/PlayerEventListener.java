@@ -20,7 +20,7 @@ package io.github.lucaseasedup.logit.listener;
 
 import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import static io.github.lucaseasedup.logit.util.MessageSender.*;
+import static io.github.lucaseasedup.logit.util.MessageUtils.*;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import java.util.List;

@@ -19,7 +19,7 @@
 package io.github.lucaseasedup.logit.command;
 
 import io.github.lucaseasedup.logit.LogItCore;
-import static io.github.lucaseasedup.logit.util.MessageSender.sendMessage;
+import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.util.EmailUtils;
 import java.sql.SQLException;

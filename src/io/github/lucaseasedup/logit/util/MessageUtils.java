@@ -29,9 +29,9 @@ import org.bukkit.entity.Player;
 /**
  * @author LucasEasedUp
  */
-public class MessageSender
+public class MessageUtils
 {
-    private MessageSender()
+    private MessageUtils()
     {
     }
     
