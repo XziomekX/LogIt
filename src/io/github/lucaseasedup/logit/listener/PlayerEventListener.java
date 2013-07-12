@@ -20,7 +20,9 @@ package io.github.lucaseasedup.logit.listener;
 
 import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import static io.github.lucaseasedup.logit.util.MessageUtils.*;
+import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastJoinMessage;
+import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastQuitMessage;
+import static io.github.lucaseasedup.logit.util.MessageUtils.sendForceLoginMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import java.util.List;
@@ -30,8 +32,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import static org.bukkit.event.EventPriority.HIGHEST;
 import static org.bukkit.event.EventPriority.LOWEST;
-import static org.bukkit.event.player.PlayerLoginEvent.Result.*;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_FULL;
+import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 /**
  * @author LucasEasedUp

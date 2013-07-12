@@ -21,7 +21,7 @@ package io.github.lucaseasedup.logit.db;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * @author LucasEasedUp

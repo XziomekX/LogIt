@@ -23,8 +23,12 @@ import static io.github.lucaseasedup.logit.LogItCore.LIB_H2;
 import io.github.lucaseasedup.logit.util.FileUtils;
 import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.io.IOException;
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

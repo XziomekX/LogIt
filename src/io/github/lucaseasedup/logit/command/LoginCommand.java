@@ -24,11 +24,11 @@ import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import java.util.HashMap;
+import static java.util.logging.Level.FINE;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import static java.util.logging.Level.*;
 
 public class LoginCommand extends AbstractCommandExecutor
 {

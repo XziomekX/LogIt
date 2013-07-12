@@ -21,13 +21,15 @@ package io.github.lucaseasedup.logit.command;
 import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.*;
+import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
+import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
+import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import java.sql.SQLException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import java.util.logging.Logger;
 
 public class RegisterCommand extends AbstractCommandExecutor
 {
