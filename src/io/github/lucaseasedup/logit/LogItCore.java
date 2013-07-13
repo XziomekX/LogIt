@@ -31,6 +31,7 @@ import io.github.lucaseasedup.logit.command.LogoutCommand;
 import io.github.lucaseasedup.logit.command.RecoverPassCommand;
 import io.github.lucaseasedup.logit.command.RegisterCommand;
 import io.github.lucaseasedup.logit.command.UnregisterCommand;
+import io.github.lucaseasedup.logit.config.LogItConfiguration;
 import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
 import io.github.lucaseasedup.logit.db.CsvDatabase;
 import io.github.lucaseasedup.logit.db.H2Database;
@@ -560,6 +561,17 @@ public class LogItCore
     {
         if (!isLinkedToVault())
             return;
+        
+        if (accountManager.isRegistered(player.getName()))
+        {
+            permissions.playerRemoveGroup(player, config.getString("groups.unregistered"));
+            permissions.playerAddGroup(player, config.getString("groups.registered"));
+        }
+        else
+        {
+            permissions.playerRemoveGroup(player, config.getString("groups.registered"));
+            permissions.playerAddGroup(player, config.getString("groups.unregistered"));
+        }
         
         if (sessionManager.isSessionAlive(player))
         {

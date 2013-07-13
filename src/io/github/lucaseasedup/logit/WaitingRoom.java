@@ -170,8 +170,8 @@ public class WaitingRoom
     {
         core.getConfig().set("waiting-room.location.world", location.getWorld().getName());
         core.getConfig().set("waiting-room.location.position", new Vector(location.getX(), location.getY(), location.getZ()));
-        core.getConfig().set("waiting-room.location.yaw", location.getYaw());
-        core.getConfig().set("waiting-room.location.pitch", location.getPitch());
+        core.getConfig().set("waiting-room.location.yaw", (double) location.getYaw());
+        core.getConfig().set("waiting-room.location.pitch", (double) location.getPitch());
     }
     
     public Location getNewbieTeleportLocation()

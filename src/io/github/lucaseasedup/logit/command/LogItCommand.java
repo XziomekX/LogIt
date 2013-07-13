@@ -20,9 +20,12 @@ package io.github.lucaseasedup.logit.command;
 
 import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import io.github.lucaseasedup.logit.config.Property;
+import io.github.lucaseasedup.logit.config.PropertyType;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.logging.Level;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.WARNING;
@@ -30,6 +33,7 @@ import java.util.logging.Logger;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class LogItCommand extends AbstractCommandExecutor
 {
@@ -116,6 +120,14 @@ public class LogItCommand extends AbstractCommandExecutor
                 if (p == null || p.hasPermission("logit.ipcount"))
                 {
                     sender.sendMessage(getLogItSubcommandHelp("ipcount", "[ip]"));
+                }
+                if (p == null || p.hasPermission("logit.config.get"))
+                {
+                    sender.sendMessage(getLogItSubcommandHelp("config get", "<path>"));
+                }
+                if (p == null || p.hasPermission("logit.config.set"))
+                {
+                    sender.sendMessage(getLogItSubcommandHelp("config set", "<path> <value>"));
                 }
             }
         }
@@ -338,9 +350,9 @@ public class LogItCommand extends AbstractCommandExecutor
                 }
             }
         }
-        else if (subcommand.equalsIgnoreCase("globalpass") && args.length > 1 && args.length <= 3)
+        else if (subcommand.equalsIgnoreCase("globalpass") && args.length <= 3)
         {
-            if (args[1].equalsIgnoreCase("set"))
+            if (args.length >= 2 && args[1].equalsIgnoreCase("set"))
             {
                 if (p != null && !p.hasPermission("logit.globalpass.set"))
                 {
@@ -370,7 +382,7 @@ public class LogItCommand extends AbstractCommandExecutor
                     }
                 }
             }
-            else if (args[1].equalsIgnoreCase("remove") && args.length == 2)
+            else if (args.length >= 2 && args[1].equalsIgnoreCase("remove") && args.length == 2)
             {
                 if (p != null && !p.hasPermission("logit.globalpass.remove"))
                 {
@@ -385,6 +397,10 @@ public class LogItCommand extends AbstractCommandExecutor
                         sender.sendMessage(getMessage("GLOBALPASS_REMOVE_SUCCESS"));
                     }
                 }
+            }
+            else
+            {
+                sender.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
             }
         }
         else if (subcommand.equalsIgnoreCase("accountcount") && args.length == 1)
@@ -417,6 +433,188 @@ public class LogItCommand extends AbstractCommandExecutor
                         .replace("%ip%", args[1])
                         .replace("%num%", String.valueOf(core.getAccountManager().countAccountsWithIp(args[1]))));
                 }
+            }
+        }
+        else if (subcommand.equalsIgnoreCase("config"))
+        {
+            if (args.length >= 2 && args[1].equalsIgnoreCase("set"))
+            {
+                if (p != null && !p.hasPermission("logit.config.set"))
+                {
+                    sender.sendMessage(getMessage("NO_PERMS"));
+                }
+                else if (args.length < 3)
+                {
+                    sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "path"));
+                }
+                else if (args.length < 4)
+                {
+                    sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "value"));
+                }
+                else if (!core.getConfig().contains(args[2]))
+                {
+                    sender.sendMessage(getMessage("CONFIG_PROPERTY_NOT_FOUND").replace("%param%", "path"));
+                }
+                else
+                {
+                    PropertyType type = core.getConfig().getType(args[2]);
+                    String inputValue = "";
+                    Object outputValue = null;
+                    
+                    for (int i = 3; i < args.length; i++)
+                    {
+                        if (!inputValue.isEmpty())
+                            inputValue += " ";
+                        
+                        inputValue += args[i];
+                    }
+                    
+                    try
+                    {
+                        switch (type)
+                        {
+                        case OBJECT:
+                            outputValue = inputValue;
+                            break;
+                        case BOOLEAN:
+                            outputValue = Boolean.valueOf(inputValue);
+                            break;
+                        case COLOR:
+                            throw new Exception("Unsupported property type conversion.");
+                        case DOUBLE:
+                            outputValue = Double.valueOf(inputValue);
+                            break;
+                        case INT:
+                            outputValue = Integer.valueOf(inputValue);
+                            break;
+                        case ITEM_STACK:
+                            throw new Exception("Unsupported property type conversion.");
+                        case LONG:
+                            outputValue = Long.valueOf(inputValue);
+                            break;
+                        case STRING:
+                            outputValue = inputValue;
+                            break;
+                        case VECTOR:
+                            String[] axes = inputValue.split(" ");
+                            
+                            if (axes.length != 3)
+                                throw new Exception("Malformed vector representation.");
+                            
+                            outputValue = new Vector(Double.valueOf(axes[0]), Double.valueOf(axes[1]), Double.valueOf(axes[2]));
+                            break;
+                        case LIST:
+                        case BOOLEAN_LIST:
+                        case BYTE_LIST:
+                        case CHARACTER_LIST:
+                        case DOUBLE_LIST:
+                        case FLOAT_LIST:
+                        case INTEGER_LIST:
+                        case LONG_LIST:
+                        case MAP_LIST:
+                        case SHORT_LIST:
+                        case STRING_LIST:
+                            throw new Exception("Unsupported property type conversion.");
+                        default:
+                            throw new Exception("Unknown property type.");
+                        }
+                        
+                        core.getConfig().set(args[2], outputValue);
+                        
+                        if (p != null)
+                        {
+                            sender.sendMessage(getMessage("CONFIG_PROPERTY_SET_SUCCESS", new String[]{
+                                "%path%", args[2],
+                                "%value%", core.getConfig().toString(args[2]),
+                            }));
+                        }
+                        
+                        if (core.getConfig().getProperty(args[2]).changeRequiresRestart())
+                        {
+                            sender.sendMessage(getMessage("CONFIG_RELOAD_PLUGIN"));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        sender.sendMessage(getMessage("CONFIG_PROPERTY_SET_FAIL", new String[]{
+                            "%cause%", ex.getMessage()
+                        }));
+                    }
+                }
+            }
+            else if (args.length >= 2 && args[1].equalsIgnoreCase("get") && args.length <= 3)
+            {
+                if (p != null && !p.hasPermission("logit.config.get"))
+                {
+                    sender.sendMessage(getMessage("NO_PERMS"));
+                }
+                else if (args.length < 3)
+                {
+                    sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "path"));
+                }
+                else if (!core.getConfig().contains(args[2]))
+                {
+                    sender.sendMessage(getMessage("CONFIG_PROPERTY_NOT_FOUND").replace("%param%", "path"));
+                }
+                else
+                {
+                    if (p != null)
+                    {
+                        sender.sendMessage(getMessage("CONFIG_PROPERTY_GET", new String[]{
+                            "%path%", args[2],
+                            "%value%", core.getConfig().toString(args[2]),
+                        }));
+                    }
+                }
+            }
+            else if (args.length >= 2 && args[1].equalsIgnoreCase("list") && args.length <= 3)
+            {
+                if (p != null && !p.hasPermission("logit.config.list"))
+                {
+                    sender.sendMessage(getMessage("NO_PERMS"));
+                }
+                else
+                {
+                    final int PROPERTIES_PER_PAGE = 16;
+                    int page = 1;
+                    int pages = (int) Math.floor(core.getConfig().getProperties().size() / PROPERTIES_PER_PAGE) + 1;
+                    int i = 0, j = 0;
+                    
+                    if (args.length >= 3)
+                        page = Integer.valueOf(args[2]);
+                    
+                    if (page <= 0)
+                        page = 1;
+                    
+                    sender.sendMessage(getMessage("CONFIG_PROPERTY_LIST_HEADER", new String[]{
+                        "%page%", String.valueOf(page),
+                        "%pages%", String.valueOf(pages),
+                    }));
+                    
+                    for (Map.Entry<String, Property> e : core.getConfig().getProperties().entrySet())
+                    {
+                        if ((i > ((PROPERTIES_PER_PAGE * (page - 1)) - 1)) && (j < PROPERTIES_PER_PAGE))
+                        {
+                            sender.sendMessage(getMessage("CONFIG_PROPERTY_GET", new String[]{
+                                "%path%", e.getValue().getPath(),
+                                "%value%", e.getValue().toString(),
+                            }));
+                            
+                            j++;
+                        }
+                        
+                        i++;
+                    }
+                    
+                    if (page > pages)
+                    {
+                        sender.sendMessage(getMessage("CONFIG_PROPERTY_LIST_NO_PROPERTIES"));
+                    }
+                }
+            }
+            else
+            {
+                sender.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
             }
         }
         else
