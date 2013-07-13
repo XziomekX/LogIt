@@ -113,10 +113,7 @@ public class LogItCore
             
             try
             {
-                if (config.getBoolean("password-recovery.enabled"))
-                {
-                    FileUtils.extractResource("/password-recovery.html", new File(plugin.getDataFolder(), "mail/password-recovery.html"));
-                }
+                FileUtils.extractResource("/password-recovery.html", new File(plugin.getDataFolder(), "mail/password-recovery.html"));
             }
             catch (IOException ex)
             {
