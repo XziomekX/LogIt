@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit;
 
 import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
+import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -91,6 +92,30 @@ public class WaitingRoom
             }, new String[]{
                 core.getConfig().getString("storage.accounts.columns.in_wr"), "0"
             });
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(WaitingRoom.class.getName()).log(Level.WARNING, null, ex);
+        }
+    }
+    
+    public void removeAll()
+    {
+        try
+        {
+            ResultSet rs = database.select(table, new String[]{
+                core.getConfig().getString("storage.accounts.columns.username")
+            }, new String[]{
+                core.getConfig().getString("storage.accounts.columns.in_wr"), "=", "1"
+            });
+            
+            if (!rs.isBeforeFirst())
+                return;
+            
+            while (rs.next())
+            {
+                remove(getPlayer(rs.getString(core.getConfig().getString("storage.accounts.columns.username"))));
+            }
         }
         catch (SQLException ex)
         {
