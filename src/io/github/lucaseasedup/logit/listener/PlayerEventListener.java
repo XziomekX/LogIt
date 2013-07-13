@@ -88,14 +88,15 @@ public class PlayerEventListener extends EventListener
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_ALREADY_USED"));
         }
-        else if (!core.getAccountManager().isRegistered(player.getName()) && core.getConfig().getBoolean("kick-unregistered"))
+        else if (!core.getAccountManager().isRegistered(player.getName())
+            && core.getConfig().getBoolean("crowd-control.kick-unregistered"))
         {
             event.disallow(KICK_OTHER, getMessage("KICK_UNREGISTERED"));
         }
         else
         {
             int freeSlots = Bukkit.getMaxPlayers() - Bukkit.getOnlinePlayers().length;
-            List<String> preserveSlotsPlayers = core.getConfig().getStringList("preserve-slots.players");
+            List<String> preserveSlotsPlayers = core.getConfig().getStringList("crowd-control.preserve-slots.players");
             
             int preservedSlots = 0;
             boolean preservedForThisPlayer = false;
@@ -118,7 +119,8 @@ public class PlayerEventListener extends EventListener
                 }
             }
             
-            if (freeSlots - (core.getConfig().getInt("preserve-slots.amount") - preservedSlots) <= 0 && !preservedForThisPlayer)
+            if (freeSlots - (core.getConfig().getInt("crowd-control.preserve-slots.amount") - preservedSlots) <= 0
+                && !preservedForThisPlayer)
             {
                 event.disallow(KICK_FULL, getMessage("NO_SLOTS_FREE"));
             }

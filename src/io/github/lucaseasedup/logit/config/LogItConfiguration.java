@@ -111,16 +111,14 @@ public final class LogItConfiguration extends PropertyObserver
         addProperty("password.use-salt", BOOLEAN, true, true);
         addProperty("password.global-password", STRING, false, "");
         
-        addProperty("login-fails-to-kick", INT, false, -1);
-        addProperty("login-fails-to-ban", INT, false, -1);
-        addProperty("kick-unregistered", BOOLEAN, false, false);
-        addProperty("days-of-absence-to-unregister", INT, false, -1);
-        
-        addProperty("preserve-slots.amount", INT, false, 0);
-        addProperty("preserve-slots.players", STRING_LIST, false, new ArrayList<>(0));
-        
-        addProperty("accounts-per-ip.amount", INT, false, 3);
-        addProperty("accounts-per-ip.unrestricted-ips", STRING_LIST, false, new ArrayList<>(0));
+        addProperty("crowd-control.login-fails-to-kick", INT, false, -1);
+        addProperty("crowd-control.login-fails-to-ban", INT, false, -1);
+        addProperty("crowd-control.kick-unregistered", BOOLEAN, false, false);
+        addProperty("crowd-control.days-of-absence-to-unregister", INT, false, -1);
+        addProperty("crowd-control.accounts-per-ip.amount", INT, false, 3);
+        addProperty("crowd-control.accounts-per-ip.unrestricted-ips", STRING_LIST, false, new ArrayList<>(0));
+        addProperty("crowd-control.preserve-slots.amount", INT, false, 0);
+        addProperty("crowd-control.preserve-slots.players", STRING_LIST, false, new ArrayList<>(0));
         
         addProperty("password-recovery.enabled", BOOLEAN, true, false);
         addProperty("password-recovery.subject", STRING, false, "Password recovery for %player%");

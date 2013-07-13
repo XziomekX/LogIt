@@ -111,8 +111,8 @@ public class LoginCommand extends AbstractCommandExecutor
                 failedLoginsToBan.put(username,
                                       (failedLoginsToBan.get(username) != null) ? failedLoginsToBan.get(username) + 1 : 1);
                 
-                if (failedLoginsToBan.get(username) >= core.getConfig().getInt("login-fails-to-ban")
-                    && core.getConfig().getInt("login-fails-to-ban") > 0)
+                if (failedLoginsToBan.get(username) >= core.getConfig().getInt("crowd-control.login-fails-to-ban")
+                    && core.getConfig().getInt("crowd-control.login-fails-to-ban") > 0)
                 {
                     Bukkit.banIP(getPlayerIp(p));
                     p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS_BAN"));
@@ -120,8 +120,8 @@ public class LoginCommand extends AbstractCommandExecutor
                     failedLoginsToKick.remove(username);
                     failedLoginsToBan.remove(username);
                 }
-                else if (failedLoginsToKick.get(username) >= core.getConfig().getInt("login-fails-to-kick")
-                    && core.getConfig().getInt("login-fails-to-kick") > 0)
+                else if (failedLoginsToKick.get(username) >= core.getConfig().getInt("crowd-control.login-fails-to-kick")
+                    && core.getConfig().getInt("crowd-control.login-fails-to-kick") > 0)
                 {
                     p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS_KICK"));
                     

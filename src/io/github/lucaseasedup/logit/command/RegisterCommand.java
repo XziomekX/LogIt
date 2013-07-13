@@ -146,8 +146,8 @@ public class RegisterCommand extends AbstractCommandExecutor
             {
                 p.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
             }
-            else if (core.getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= core.getConfig().getInt("accounts-per-ip.amount")
-                && !core.getConfig().getStringList("accounts-per-ip.unrestricted-ips").contains(getPlayerIp(p)))
+            else if (core.getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= core.getConfig().getInt("crowd-control.accounts-per-ip.amount")
+                && !core.getConfig().getStringList("crowd-control.accounts-per-ip.unrestricted-ips").contains(getPlayerIp(p)))
             {
                 p.sendMessage(getMessage("ACCOUNTS_PER_IP_LIMIT"));
             }
