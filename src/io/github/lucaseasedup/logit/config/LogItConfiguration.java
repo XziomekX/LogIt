@@ -152,7 +152,10 @@ public final class LogItConfiguration extends PropertyObserver
             @Override
             public void update(Property p)
             {
-                plugin.getCore().getWaitingRoom().removeAll();
+                if (!p.getBoolean())
+                {
+                    plugin.getCore().getWaitingRoom().removeAll();
+                }
             }
         });
         addProperty("waiting-room.location.world", STRING, false, "world");
