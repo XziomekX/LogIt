@@ -108,17 +108,22 @@ public class LogItCore
         {
             new File(plugin.getDataFolder(), "backup").mkdir();
             new File(plugin.getDataFolder(), "mail").mkdir();
+            new File(plugin.getDataFolder(), "lang").mkdir();
             
-            if (config.getBoolean("password-recovery.enabled"))
+            try
             {
-                try
+                if (config.getBoolean("password-recovery.enabled"))
                 {
                     FileUtils.extractResource("/password-recovery.html", new File(plugin.getDataFolder(), "mail/password-recovery.html"));
                 }
-                catch (IOException ex)
-                {
-                    Logger.getLogger(LogItCore.class.getName()).log(Level.WARNING, null, ex);
-                }
+                
+                FileUtils.extractResource("/messages_de.properties", new File(plugin.getDataFolder(), "lang/messages_de.properties"));
+                FileUtils.extractResource("/messages_en.properties", new File(plugin.getDataFolder(), "lang/messages_en.properties"));
+                FileUtils.extractResource("/messages_pl.properties", new File(plugin.getDataFolder(), "lang/messages_pl.properties"));
+            }
+            catch (IOException ex)
+            {
+                Logger.getLogger(LogItCore.class.getName()).log(Level.WARNING, null, ex);
             }
         }
         

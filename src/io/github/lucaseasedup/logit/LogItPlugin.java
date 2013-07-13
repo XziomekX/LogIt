@@ -113,14 +113,14 @@ public final class LogItPlugin extends JavaPlugin
         String suffix = "_" + getConfig().getString("locale", "en");
         File file;
         
-        if ((file = new File(getDataFolder(), "messages" + suffix + ".properties")).exists())
+        if ((file = new File(getDataFolder(), "lang/messages" + suffix + ".properties")).exists())
         {
             prb = new PropertyResourceBundle(new FileInputStream(file));
             
             return;
         }
         
-        if ((file = new File(getDataFolder(), "messages.properties")).exists())
+        if ((file = new File(getDataFolder(), "lang/messages.properties")).exists())
         {
             prb = new PropertyResourceBundle(new FileInputStream(file));
             
