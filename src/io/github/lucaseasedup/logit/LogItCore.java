@@ -117,10 +117,6 @@ public class LogItCore
                 {
                     FileUtils.extractResource("/password-recovery.html", new File(plugin.getDataFolder(), "mail/password-recovery.html"));
                 }
-                
-                FileUtils.extractResource("/messages_de.properties", new File(plugin.getDataFolder(), "lang/messages_de.properties"));
-                FileUtils.extractResource("/messages_en.properties", new File(plugin.getDataFolder(), "lang/messages_en.properties"));
-                FileUtils.extractResource("/messages_pl.properties", new File(plugin.getDataFolder(), "lang/messages_pl.properties"));
             }
             catch (IOException ex)
             {
