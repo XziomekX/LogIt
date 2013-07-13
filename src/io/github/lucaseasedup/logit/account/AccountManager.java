@@ -448,16 +448,23 @@ public class AccountManager
             core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
         });
         
-        rs.next();
-        
-        return new Location(
-            Bukkit.getWorld(rs.getString(core.getConfig().getString("storage.accounts.columns.location_world"))),
-            Double.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_x"))),
-            Double.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_y"))),
-            Double.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_z"))),
-            Float.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_yaw"))),
-            Float.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_pitch")))
-        );
+        if (rs.isBeforeFirst())
+        {
+            rs.next();
+            
+            return new Location(
+                Bukkit.getWorld(rs.getString(core.getConfig().getString("storage.accounts.columns.location_world"))),
+                Double.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_x"))),
+                Double.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_y"))),
+                Double.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_z"))),
+                Float.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_yaw"))),
+                Float.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_pitch")))
+            );
+        }
+        else
+        {
+            return null;
+        }
     }
     
     public int getAccountCount()

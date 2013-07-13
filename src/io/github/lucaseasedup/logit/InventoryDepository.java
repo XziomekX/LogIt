@@ -140,16 +140,19 @@ public class InventoryDepository
                 "username", "=", player.getName().toLowerCase()
             });
             
-            rs.next();
-            
-            if (rs.getString("world").equalsIgnoreCase(player.getWorld().getName()))
+            if (rs.isBeforeFirst())
             {
-                player.getInventory().setContents(unserialize(rs.getString("inv_contents")).getContents());
-                player.getInventory().setArmorContents(unserialize(rs.getString("inv_armor")).getContents());
+                rs.next();
                 
-                inventoryDatabase.delete("inventories", new String[]{
-                    "username", "=", player.getName().toLowerCase()
-                });
+                if (rs.getString("world").equalsIgnoreCase(player.getWorld().getName()))
+                {
+                    player.getInventory().setContents(unserialize(rs.getString("inv_contents")).getContents());
+                    player.getInventory().setArmorContents(unserialize(rs.getString("inv_armor")).getContents());
+
+                    inventoryDatabase.delete("inventories", new String[]{
+                        "username", "=", player.getName().toLowerCase()
+                    });
+                }
             }
         }
         catch (SQLException ex)
