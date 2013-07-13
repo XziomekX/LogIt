@@ -39,6 +39,7 @@ import io.github.lucaseasedup.logit.db.MySqlDatabase;
 import io.github.lucaseasedup.logit.db.Pinger;
 import io.github.lucaseasedup.logit.db.SqliteDatabase;
 import io.github.lucaseasedup.logit.hash.BCrypt;
+import io.github.lucaseasedup.logit.hash.HashGenerator;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getBCrypt;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getMd2;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getMd5;
@@ -398,7 +399,10 @@ public class LogItCore
      */
     public void changeGlobalPassword(String password)
     {
-        config.set("password.global-password", hash(password));
+        String salt = HashGenerator.generateSalt(getHashingAlgorithm());
+        
+        config.set("password.global-password.salt", salt);
+        config.set("password.global-password.hash", hash(password, salt));
         
         log(INFO, getMessage("GLOBALPASS_SET_SUCCESS"));
     }
@@ -454,12 +458,14 @@ public class LogItCore
      */
     public boolean checkGlobalPassword(String password)
     {
-        return checkPassword(password, config.getString("password.global-password"));
+        return checkPassword(password, config.getString("password.global-password.hash"),
+            config.getString("password.global-password.salt"));
     }
     
     public void removeGlobalPassword()
     {
-        config.set("password.global-password", "");
+        config.set("password.global-password.hash", "");
+        config.set("password.global-password.salt", "");
         
         log(INFO, getMessage("GLOBALPASS_REMOVE_SUCCESS"));
     }
