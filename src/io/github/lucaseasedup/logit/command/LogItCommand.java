@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
+import org.bukkit.Color;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -448,7 +449,50 @@ public class LogItCommand extends AbstractCommandExecutor
                             outputValue = Boolean.valueOf(inputValue);
                             break;
                         case COLOR:
-                            throw new Exception("Unsupported property type conversion.");
+                            if (inputValue.equalsIgnoreCase("aqua"))
+                                outputValue = Color.AQUA;
+                            else if (inputValue.equalsIgnoreCase("black"))
+                                outputValue = Color.BLACK;
+                            else if (inputValue.equalsIgnoreCase("blue"))
+                                outputValue = Color.BLUE;
+                            else if (inputValue.equalsIgnoreCase("fuchsia"))
+                                outputValue = Color.FUCHSIA;
+                            else if (inputValue.equalsIgnoreCase("gray"))
+                                outputValue = Color.GRAY;
+                            else if (inputValue.equalsIgnoreCase("green"))
+                                outputValue = Color.GREEN;
+                            else if (inputValue.equalsIgnoreCase("lime"))
+                                outputValue = Color.LIME;
+                            else if (inputValue.equalsIgnoreCase("maroon"))
+                                outputValue = Color.MAROON;
+                            else if (inputValue.equalsIgnoreCase("navy"))
+                                outputValue = Color.NAVY;
+                            else if (inputValue.equalsIgnoreCase("olive"))
+                                outputValue = Color.OLIVE;
+                            else if (inputValue.equalsIgnoreCase("orange"))
+                                outputValue = Color.ORANGE;
+                            else if (inputValue.equalsIgnoreCase("purple"))
+                                outputValue = Color.PURPLE;
+                            else if (inputValue.equalsIgnoreCase("red"))
+                                outputValue = Color.RED;
+                            else if (inputValue.equalsIgnoreCase("silver"))
+                                outputValue = Color.SILVER;
+                            else if (inputValue.equalsIgnoreCase("teal"))
+                                outputValue = Color.TEAL;
+                            else if (inputValue.equalsIgnoreCase("white"))
+                                outputValue = Color.WHITE;
+                            else if (inputValue.equalsIgnoreCase("yellow"))
+                                outputValue = Color.YELLOW;
+                            else
+                            {
+                                String[] rgb = inputValue.split(" ");
+                                
+                                if (rgb.length != 3)
+                                    throw new Exception("Malformed color representation.");
+                                
+                                outputValue = Color.fromRGB(Integer.valueOf(rgb[0]), Integer.valueOf(rgb[1]), Integer.valueOf(rgb[2]));
+                            }
+                            break;
                         case DOUBLE:
                             outputValue = Double.valueOf(inputValue);
                             break;
