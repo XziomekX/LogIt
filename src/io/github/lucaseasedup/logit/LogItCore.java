@@ -354,6 +354,17 @@ public class LogItCore
     
     public void restart()
     {
+        File sessions = new File(plugin.getDataFolder() + "/" + config.getString("storage.sessions.filename"));
+        
+        try
+        {
+            sessionManager.exportSessions(sessions);
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(LogItCore.class.getName()).log(Level.WARNING, null, ex);
+        }
+        
         stop();
         
         try
@@ -366,6 +377,17 @@ public class LogItCore
         }
         
         start();
+        
+        try
+        {
+            sessionManager.importSessions(sessions);
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(LogItCore.class.getName()).log(Level.WARNING, null, ex);
+        }
+        
+        sessions.delete();
         
         log(INFO, getMessage("RELOADED"));
     }

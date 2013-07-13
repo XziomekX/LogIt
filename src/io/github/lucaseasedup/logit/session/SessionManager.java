@@ -22,15 +22,20 @@ import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.callEvent;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.account.AccountManager;
+import io.github.lucaseasedup.logit.db.SqliteDatabase;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
+import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerName;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
+import java.io.File;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import static java.util.logging.Level.FINE;
 import java.util.logging.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**
@@ -226,6 +231,69 @@ public class SessionManager implements Runnable
         
         core.log(FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
         callEvent(new SessionEndEvent(username, session));
+    }
+    
+    public void exportSessions(File sessionsDatabaseFile) throws SQLException
+    {
+        sessionsDatabaseFile.delete();
+        
+        try (SqliteDatabase sessionsDatabase = new SqliteDatabase("jdbc:sqlite:" + sessionsDatabaseFile))
+        {
+            sessionsDatabase.connect();
+            sessionsDatabase.createTableIfNotExists("sessions", new String[]{
+                "username", "VARCHAR(16)",
+                "status",   "INTEGER",
+                "ip",       "VARCHAR(64)"
+            });
+            
+            Player[] players = Bukkit.getOnlinePlayers();
+            
+            for (Player player : players)
+            {
+                sessionsDatabase.insert("sessions", new String[]{
+                    "username",
+                    "status",
+                    "ip"
+                }, new String[]{
+                    player.getName().toLowerCase(),
+                    String.valueOf(getSession(player.getName()).getStatus()),
+                    getPlayerIp(player)
+                });
+            }
+        }
+    }
+    
+    public void importSessions(File file) throws SQLException
+    {
+        try (SqliteDatabase sessionsDatabase = new SqliteDatabase("jdbc:sqlite:" + file))
+        {
+            sessionsDatabase.connect();
+            
+            Player[] players = Bukkit.getOnlinePlayers();
+            
+            for (Player player : players)
+            {
+                if (getSession(player.getName()) == null)
+                    createSession(player.getName(), "");
+                
+                ResultSet rs = sessionsDatabase.select("sessions", new String[]{
+                    "status",
+                    "ip"
+                }, new String[]{
+                    "username", "=", player.getName().toLowerCase()
+                });
+                
+                if (rs.isBeforeFirst())
+                {
+                    rs.next();
+                    
+                    Session session = getSession(player.getName());
+                    
+                    session.setStatus(rs.getInt("status"));
+                    session.setIp(rs.getString("ip"));
+                }
+            }
+        }
     }
     
     private final LogItCore core;
