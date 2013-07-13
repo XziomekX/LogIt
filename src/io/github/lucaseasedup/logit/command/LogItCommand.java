@@ -464,12 +464,19 @@ public class LogItCommand extends AbstractCommandExecutor
                             outputValue = inputValue;
                             break;
                         case VECTOR:
-                            String[] axes = inputValue.split(" ");
-                            
-                            if (axes.length != 3)
-                                throw new Exception("Malformed vector representation.");
-                            
-                            outputValue = new Vector(Double.valueOf(axes[0]), Double.valueOf(axes[1]), Double.valueOf(axes[2]));
+                            if (inputValue.equals("$") && p != null)
+                            {
+                                outputValue = new Vector(p.getLocation().getX(), p.getLocation().getY(), p.getLocation().getZ());
+                            }
+                            else
+                            {
+                                String[] axes = inputValue.split(" ");
+                                
+                                if (axes.length != 3)
+                                    throw new Exception("Malformed vector representation.");
+                                
+                                outputValue = new Vector(Double.valueOf(axes[0]), Double.valueOf(axes[1]), Double.valueOf(axes[2]));
+                            }
                             break;
                         case LIST:
                         case BOOLEAN_LIST:
