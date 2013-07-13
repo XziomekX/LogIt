@@ -318,38 +318,6 @@ public class LogItCommand extends AbstractCommandExecutor
                 p.teleport(core.getWaitingRoom().getWaitingRoomLocation());
             }
         }
-        else if (subcommand.equalsIgnoreCase("togglewr") && args.length == 1)
-        {
-            if (p != null && !p.hasPermission("logit.gotowr"))
-            {
-                sender.sendMessage(getMessage("NO_PERMS"));
-            }
-            else
-            {
-                if (core.getConfig().getBoolean("waiting-room.enabled"))
-                {
-                    core.getConfig().set("waiting-room.enabled", false);
-                    
-                    if (p != null)
-                    {
-                        sender.sendMessage(getMessage("WAITING_ROOM_DISABLED"));
-                    }
-                    
-                    core.log(INFO, getMessage("WAITING_ROOM_DISABLED"));
-                }
-                else
-                {
-                    core.getConfig().set("waiting-room.enabled", true);
-                    
-                    if (p != null)
-                    {
-                        sender.sendMessage(getMessage("WAITING_ROOM_ENABLED"));
-                    }
-                    
-                    core.log(INFO, getMessage("WAITING_ROOM_ENABLED"));
-                }
-            }
-        }
         else if (subcommand.equalsIgnoreCase("globalpass") && args.length <= 3)
         {
             if (args.length >= 2 && args[1].equalsIgnoreCase("set"))
