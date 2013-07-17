@@ -241,6 +241,7 @@ public class LogItCore
                 config.getString("mail.smtp-user"), config.getString("mail.smtp-password"));
             
             plugin.getCommand("recoverpass").setExecutor(new RecoverPassCommand(this));
+        }
         
         SqliteDatabase inventoryDatabase = new SqliteDatabase("jdbc:sqlite:" +
             plugin.getDataFolder() + "/" + config.getString("storage.inventories.filename"));
@@ -451,6 +452,8 @@ public class LogItCore
     {
         try
         {
+            if (mailSender == null)
+                throw new RuntimeException("MailSender not initialized.");
             
             String to = accountManager.getEmail(username);
             String from = config.getString("mail.email-address");
