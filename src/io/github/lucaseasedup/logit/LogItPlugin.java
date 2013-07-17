@@ -192,7 +192,7 @@ public final class LogItPlugin extends JavaPlugin
         }
         
         message = message.replace("%bukkit_version%", Bukkit.getBukkitVersion());
-        message = message.replace("%logit_version%", Bukkit.getPluginManager().getPlugin("LogIt").getDescription().getVersion());
+        message = message.replace("%logit_version%", LogItPlugin.getInstance().getDescription().getVersion());
         message = message.replace("%server_id%", Bukkit.getServerId());
         message = message.replace("%server_ip%", Bukkit.getIp());
         message = message.replace("%server_motd%", Bukkit.getMotd());

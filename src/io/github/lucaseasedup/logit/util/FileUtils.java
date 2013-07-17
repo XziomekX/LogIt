@@ -18,7 +18,9 @@
  */
 package io.github.lucaseasedup.logit.util;
 
+import io.github.lucaseasedup.logit.LogItPlugin;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +32,6 @@ import java.net.URLClassLoader;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Arrays;
-import org.bukkit.Bukkit;
 
 /**
  * @author LucasEasedUp
@@ -70,27 +71,33 @@ public class FileUtils
     
     public static void downloadLibrary(String url, String filename) throws IOException
     {
-        downloadFile(url, new File(Bukkit.getPluginManager().getPlugin("LogIt").getDataFolder(), "lib/" + filename));
+        downloadFile(url, new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename));
     }
     
     public static boolean libraryDownloaded(String filename)
     {
-        return new File(Bukkit.getPluginManager().getPlugin("LogIt").getDataFolder(), "lib/" + filename).exists();
+        return new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename).exists();
     }
     
-    public static void loadLibrary(String filename) throws ReflectiveOperationException, MalformedURLException
+    public static void loadLibrary(String filename) throws ReflectiveOperationException, IOException
     {
-        File file = new File(Bukkit.getPluginManager().getPlugin("LogIt").getDataFolder(), "lib/" + filename);
+        File file = new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename);
         URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
         
-        Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
-        addUrlMethod.setAccessible(true);
-        addUrlMethod.invoke(classLoader, new Object[]{file.toURI().toURL()});
+        if (!file.exists())
+            throw new FileNotFoundException("Library " + filename + " was not found.");
+        
+        if (!Arrays.asList(classLoader.getURLs()).contains(file.toURI().toURL()))
+        {
+            Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
+            addUrlMethod.setAccessible(true);
+            addUrlMethod.invoke(classLoader, new Object[]{file.toURI().toURL()});
+        }
     }
     
     public static boolean libraryLoaded(String filename)
     {
-        File file = new File(Bukkit.getPluginManager().getPlugin("LogIt").getDataFolder(), "lib/" + filename);
+        File file = new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename);
         URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
         
         try
