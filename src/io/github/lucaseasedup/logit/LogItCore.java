@@ -122,27 +122,6 @@ public class LogItCore
             }
         }
         
-        if (config.getBoolean("password-recovery.enabled"))
-        {
-            try
-            {
-                if (!FileUtils.libraryDownloaded(LIB_MAIL))
-                {
-                    Logger.getLogger(LogItCore.class.getName()).log(Level.INFO, "Downloading " + LIB_MAIL + " (~0.5 MB)...");
-                    FileUtils.downloadLibrary("http://repo1.maven.org/maven2/javax/mail/mail/1.4.5/mail-1.4.5.jar", LIB_MAIL);
-                }
-                
-                FileUtils.loadLibrary(LIB_MAIL);
-            }
-            catch (IOException | ReflectiveOperationException ex)
-            {
-                Logger.getLogger(LogItCore.class.getName()).log(Level.SEVERE, null, ex);
-                plugin.disable();
-                
-                return;
-            }
-        }
-        
         if (!loaded)
             load();
         
@@ -255,14 +234,12 @@ public class LogItCore
         backupManager  = new BackupManager(this, database);
         sessionManager = new SessionManager(this, accountManager);
         
-        if (FileUtils.libraryLoaded(LIB_MAIL))
+        if (config.getBoolean("password-recovery.enabled"))
         {
             mailSender = new MailSender();
             mailSender.configure(config.getString("mail.smtp-host"), config.getInt("mail.smtp-port"),
                 config.getString("mail.smtp-user"), config.getString("mail.smtp-password"));
-        }
-        
-        if (FileUtils.libraryLoaded(LIB_MAIL))
+            
             plugin.getCommand("recoverpass").setExecutor(new RecoverPassCommand(this));
         
         SqliteDatabase inventoryDatabase = new SqliteDatabase("jdbc:sqlite:" +
@@ -474,8 +451,6 @@ public class LogItCore
     {
         try
         {
-            if (!FileUtils.libraryLoaded(LIB_MAIL))
-                throw new IOException("Library " + LIB_MAIL + " not loaded.");
             
             String to = accountManager.getEmail(username);
             String from = config.getString("mail.email-address");
