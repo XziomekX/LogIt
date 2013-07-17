@@ -28,7 +28,9 @@ import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import static java.util.logging.Level.WARNING;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import static org.bukkit.ChatColor.AQUA;
 import static org.bukkit.ChatColor.BLACK;
@@ -237,6 +239,21 @@ public final class LogItPlugin extends JavaPlugin
         s = s.replace("&r", RESET.toString());
         
         return s;
+    }
+    
+    public static void loadLibrary(String filename) throws IOException, ReflectiveOperationException
+    {
+        try
+        {
+            FileUtils.loadLibrary(filename);
+        }
+        catch (IOException | ReflectiveOperationException ex)
+        {
+            Logger.getLogger(LogItPlugin.class.getName()).log(Level.SEVERE, null, ex);
+            getInstance().disable();
+            
+            throw ex;
+        }
     }
     
     /**
