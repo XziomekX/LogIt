@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit;
 
+import io.github.lucaseasedup.logit.util.FileUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -246,6 +247,11 @@ public final class LogItPlugin extends JavaPlugin
     public static void callEvent(Event event)
     {
         Bukkit.getPluginManager().callEvent(event);
+    }
+    
+    public static LogItPlugin getInstance()
+    {
+        return (LogItPlugin) Bukkit.getPluginManager().getPlugin("LogIt");
     }
     
     private static PropertyResourceBundle prb;
