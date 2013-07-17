@@ -20,7 +20,7 @@ package io.github.lucaseasedup.logit.db;
 
 import io.github.lucaseasedup.logit.CaseInsensitiveArrayList;
 import static io.github.lucaseasedup.logit.LogItCore.LIB_H2;
-import io.github.lucaseasedup.logit.util.FileUtils;
+import io.github.lucaseasedup.logit.LogItPlugin;
 import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.io.IOException;
 import java.sql.Connection;
@@ -45,13 +45,7 @@ public class H2Database extends AbstractRelationalDatabase
     @Override
     public void connect() throws IOException, SQLException, ReflectiveOperationException
     {
-        if (!FileUtils.libraryDownloaded(LIB_H2))
-        {
-            Logger.getLogger(H2Database.class.getName()).log(Level.INFO, "Downloading " + LIB_H2 + " (~1.5 MB)...");
-            FileUtils.downloadLibrary("http://repo2.maven.org/maven2/com/h2database/h2/1.3.172/h2-1.3.172.jar", LIB_H2);
-        }
-        
-        FileUtils.loadLibrary(LIB_H2);
+        org.h2.Driver.load();
         
         connection = DriverManager.getConnection(host);
         statement = connection.createStatement();
@@ -222,6 +216,17 @@ public class H2Database extends AbstractRelationalDatabase
     public void clearBatch() throws SQLException
     {
         statement.clearBatch();
+    }
+    
+    static
+    {
+        try
+        {
+            LogItPlugin.loadLibrary(LIB_H2);
+        }
+        catch (IOException | ReflectiveOperationException ex)
+        {
+        }
     }
     
     private Connection connection;
