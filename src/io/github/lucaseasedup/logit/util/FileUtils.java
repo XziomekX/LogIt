@@ -59,26 +59,6 @@ public class FileUtils
         }
     }
     
-    public static void downloadFile(String url, File dest) throws IOException
-    {
-        ReadableByteChannel rbc = Channels.newChannel(new URL(url).openStream());
-
-        try (FileOutputStream fos = new FileOutputStream(dest))
-        {
-            fos.getChannel().transferFrom(rbc, 0, Integer.MAX_VALUE);
-        }
-    }
-    
-    public static void downloadLibrary(String url, String filename) throws IOException
-    {
-        downloadFile(url, new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename));
-    }
-    
-    public static boolean libraryDownloaded(String filename)
-    {
-        return new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename).exists();
-    }
-    
     public static void loadLibrary(String filename) throws ReflectiveOperationException, IOException
     {
         File file = new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename);
@@ -87,11 +67,13 @@ public class FileUtils
         if (!file.exists())
             throw new FileNotFoundException("Library " + filename + " was not found.");
         
-        if (!Arrays.asList(classLoader.getURLs()).contains(file.toURI().toURL()))
+        URL url = file.toURI().toURL();
+        
+        if (!Arrays.asList(classLoader.getURLs()).contains(url))
         {
             Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
             addUrlMethod.setAccessible(true);
-            addUrlMethod.invoke(classLoader, new Object[]{file.toURI().toURL()});
+            addUrlMethod.invoke(classLoader, new Object[]{url});
         }
     }
     
@@ -99,14 +81,17 @@ public class FileUtils
     {
         File file = new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename);
         URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        URL url;
         
         try
         {
-            return Arrays.asList(classLoader.getURLs()).contains(file.toURI().toURL());
+            url = file.toURI().toURL();
         }
         catch (MalformedURLException ex)
         {
             return false;
         }
+        
+        return Arrays.asList(classLoader.getURLs()).contains(url);
     }
 }
