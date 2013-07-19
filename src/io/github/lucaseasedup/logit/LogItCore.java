@@ -831,6 +831,16 @@ public class LogItCore
         return config;
     }
     
+    public boolean isLoaded()
+    {
+        return loaded;
+    }
+    
+    public boolean isStarted()
+    {
+        return started;
+    }
+    
     private void load()
     {
         storageColumns = ImmutableList.of(
