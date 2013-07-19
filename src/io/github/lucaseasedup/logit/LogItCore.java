@@ -125,15 +125,6 @@ public class LogItCore
         if (!loaded)
             load();
         
-        try
-        {
-            LogItPlugin.loadLibrary(LIB_H2);
-            LogItPlugin.loadLibrary(LIB_MAIL);
-        }
-        catch (IOException | ReflectiveOperationException ex)
-        {
-        }
-        
         if (getHashingAlgorithm().equals(HashingAlgorithm.UNKNOWN))
         {
             log(SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM").replace("%ha%", getHashingAlgorithm().name()));
