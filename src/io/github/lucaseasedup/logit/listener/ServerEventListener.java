@@ -63,7 +63,7 @@ public class ServerEventListener extends EventListener
     @EventHandler(priority = HIGHEST)
     private void onPluginDisable(PluginDisableEvent event)
     {
-        if (!event.getPlugin().equals(core.getPlugin()))
+        if (!event.getPlugin().equals(core.getPlugin()) || !core.isStarted())
             return;
         
         File sessions = new File(core.getPlugin().getDataFolder() + "/" + core.getConfig().getString("storage.sessions.filename"));
