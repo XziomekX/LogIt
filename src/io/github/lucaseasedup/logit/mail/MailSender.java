@@ -16,9 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit;
+package io.github.lucaseasedup.logit.mail;
 
-import static io.github.lucaseasedup.logit.LogItCore.LIB_MAIL;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
@@ -89,17 +88,6 @@ public class MailSender
         catch (MessagingException ex)
         {
             throw new IOException(ex);
-        }
-    }
-    
-    static
-    {
-        try
-        {
-            LogItPlugin.loadLibrary(LIB_MAIL);
-        }
-        catch (IOException | ReflectiveOperationException ex)
-        {
         }
     }
     

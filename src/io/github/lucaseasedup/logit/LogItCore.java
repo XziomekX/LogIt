@@ -56,6 +56,7 @@ import io.github.lucaseasedup.logit.listener.PlayerEventListener;
 import io.github.lucaseasedup.logit.listener.ServerEventListener;
 import io.github.lucaseasedup.logit.listener.SessionEventListener;
 import io.github.lucaseasedup.logit.listener.TickEventListener;
+import io.github.lucaseasedup.logit.mail.MailSender;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.util.FileUtils;
 import java.io.File;
@@ -130,6 +131,23 @@ public class LogItCore
             log(SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM").replace("%ha%", getHashingAlgorithm().name()));
             plugin.disable();
             
+            return;
+        }
+        
+        try
+        {
+            if (getStorageAccountsDbType().equals(StorageType.H2))
+            {
+                LogItPlugin.loadLibrary(LIB_H2);
+            }
+            
+            if (config.getBoolean("password-recovery.enabled"))
+            {
+                LogItPlugin.loadLibrary(LIB_MAIL);
+            }
+        }
+        catch (IOException | ReflectiveOperationException ex)
+        {
             return;
         }
         

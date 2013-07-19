@@ -19,8 +19,6 @@
 package io.github.lucaseasedup.logit.db;
 
 import io.github.lucaseasedup.logit.CaseInsensitiveArrayList;
-import static io.github.lucaseasedup.logit.LogItCore.LIB_H2;
-import io.github.lucaseasedup.logit.LogItPlugin;
 import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.io.IOException;
 import java.sql.Connection;
@@ -216,17 +214,6 @@ public class H2Database extends AbstractRelationalDatabase
     public void clearBatch() throws SQLException
     {
         statement.clearBatch();
-    }
-    
-    static
-    {
-        try
-        {
-            LogItPlugin.loadLibrary(LIB_H2);
-        }
-        catch (IOException | ReflectiveOperationException ex)
-        {
-        }
     }
     
     private Connection connection;
