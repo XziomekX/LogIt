@@ -1,9 +1,14 @@
 LogIt
 =====
 
+Optional libraries for enhanced functionality:
+* mail-<version>.jar - for sending e-mails (e.g. password recovery)
+* h2-<version>.jar - for H2 database support
+
+Note: If a directory mentioned in the guide below does not exist, create it yourself.
+
 Installation steps:
-* Download the latest version of LogIt.
-* Put the downloaded JAR into your server's "plugins" folder.
-* (Optional) Open up the config.yml file from the LogIt data folder (plugins/LogIt/config.yml).
-* (Optional) Change whatever you like.
+* Put LogIt.jar into "/plugins".
+* (Optional) Put the libraries you want into "/plugins/LogIt/lib"
+* (Optional) Put "config.yml" into "/plugins/Logit", open it up, change whatever you like.
 * Restart/reload your server and you're done!
