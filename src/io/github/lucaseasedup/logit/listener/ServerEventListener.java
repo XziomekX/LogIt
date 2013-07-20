@@ -86,5 +86,7 @@ public class ServerEventListener extends EventListener
             
             core.getInventoryDepository().withdraw(player);
         }
+        
+        new File(core.getPlugin().getDataFolder(), core.getConfig().getString("storage.inventories.filename")).delete();
     }
 }
