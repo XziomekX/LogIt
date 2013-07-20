@@ -72,7 +72,7 @@ public class InventoryDepository
      */
     public void deposit(Player player)
     {
-        if (contents.containsKey(player))
+        if (players.contains(player))
             return;
         
         try
@@ -110,8 +110,7 @@ public class InventoryDepository
             Logger.getLogger(InventoryDepository.class.getName()).log(Level.WARNING, null, ex);
         }
         
-        contents.put(player, player.getInventory().getContents().clone());
-        armorContents.put(player, player.getInventory().getArmorContents().clone());
+        players.add(player);
         
         player.getInventory().clear();
         player.getInventory().setHelmet(null);
@@ -129,7 +128,7 @@ public class InventoryDepository
      */
     public void withdraw(Player player)
     {
-        if (!contents.containsKey(player))
+        if (!players.contains(player))
             return;
         
         try
@@ -160,8 +159,7 @@ public class InventoryDepository
             Logger.getLogger(InventoryDepository.class.getName()).log(Level.WARNING, null, ex);
         }
         
-        player.getInventory().setContents(contents.remove(player));
-        player.getInventory().setArmorContents(armorContents.remove(player));
+        players.remove(player);
     }
     
     public AbstractRelationalDatabase getInventoryDatabase()
@@ -179,7 +177,7 @@ public class InventoryDepository
         ItemStack[] contents = contentsInventory.getContents();
         ItemStack[] armor = armorInventory.getContents();
         CompoundTag rootCompoundTag;
-
+        
         try (NBTInputStream is = new NBTInputStream(new FileInputStream(playerFile)))
         {
             rootCompoundTag = (CompoundTag) is.readTag();
@@ -310,6 +308,5 @@ public class InventoryDepository
     
     private final AbstractRelationalDatabase inventoryDatabase;
     
-    private final HashMap<Player, ItemStack[]> contents = new HashMap<>();
-    private final HashMap<Player, ItemStack[]> armorContents = new HashMap<>();
+    private final List<Player> players = new ArrayList<>();
 }
