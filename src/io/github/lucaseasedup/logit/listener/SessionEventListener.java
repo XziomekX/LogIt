@@ -19,12 +19,14 @@
 package io.github.lucaseasedup.logit.listener;
 
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.inventory.InventorySerializationException;
 import io.github.lucaseasedup.logit.session.SessionEndEvent;
 import io.github.lucaseasedup.logit.session.SessionStartEvent;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastJoinMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastQuitMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
+import java.util.logging.Level;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import static org.bukkit.event.EventPriority.LOWEST;
@@ -49,7 +51,16 @@ public class SessionEventListener extends EventListener
             Player player = getPlayer(username);
             
             core.getWaitingRoom().remove(player);
-            core.getInventoryDepository().withdraw(player);
+            
+            try
+            {
+                core.getInventoryDepository().withdraw(player);
+            }
+            catch (InventorySerializationException ex)
+            {
+                core.log(Level.WARNING, "Could not withdraw player's inventory. Stack trace:");
+                ex.printStackTrace();
+            }
             
             if (core.getConfig().getBoolean("groups.enabled"))
                 core.updatePlayerGroup(player);
@@ -85,7 +96,15 @@ public class SessionEventListener extends EventListener
             
             if (core.getConfig().getBoolean("force-login.hide-inventory"))
             {
-                core.getInventoryDepository().deposit(player);
+                try
+                {
+                    core.getInventoryDepository().deposit(player);
+                }
+                catch (InventorySerializationException ex)
+                {
+                    core.log(Level.WARNING, "Could not deposit player's inventory. Stack trace:");
+                    ex.printStackTrace();
+                }
             }
             
             if (core.getConfig().getBoolean("groups.enabled"))
