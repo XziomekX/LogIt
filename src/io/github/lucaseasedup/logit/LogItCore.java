@@ -422,7 +422,6 @@ public class LogItCore
     
     /**
      * Checks if the given password matches its hashed equivalent.
-     * Salt is used only if it is enabled in the config file.
      * 
      * @param password Plain-text password.
      * @param hashedPassword Hashed password.
@@ -437,10 +436,7 @@ public class LogItCore
         }
         else
         {
-            if (config.getBoolean("password.use-salt"))
-                return hashedPassword.equals(hash(password, salt));
-            else
-                return hashedPassword.equals(hash(password));
+            return hashedPassword.equals(hash(password, salt));
         }
     }
     
@@ -656,7 +652,7 @@ public class LogItCore
         
         if (getHashingAlgorithm() == HashingAlgorithm.BCRYPT)
             hash = getBCrypt(string, salt);
-        else if (getHashingAlgorithm() == HashingAlgorithm.PLAIN)
+        else if (getHashingAlgorithm() == HashingAlgorithm.PLAIN || !config.getBoolean("password.use-salt"))
             hash = hash(string);
         else
             hash = hash(string + salt);
