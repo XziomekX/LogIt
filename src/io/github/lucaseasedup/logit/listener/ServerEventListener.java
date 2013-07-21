@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.listener;
 
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.inventory.InventorySerializationException;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -84,7 +85,15 @@ public class ServerEventListener extends EventListener
             if (core.getConfig().getBoolean("waiting-room.enabled"))
                 core.getWaitingRoom().remove(player);
             
-            core.getInventoryDepository().withdraw(player);
+            try
+            {
+                core.getInventoryDepository().withdraw(player);
+            }
+            catch (InventorySerializationException ex)
+            {
+                core.log(Level.WARNING, "Could not withdraw player's inventory. Stack trace:");
+                ex.printStackTrace();
+            }
         }
         
         new File(core.getPlugin().getDataFolder(), core.getConfig().getString("storage.inventories.filename")).delete();
