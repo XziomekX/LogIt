@@ -116,7 +116,8 @@ public class LogItCore
             }
             catch (IOException ex)
             {
-                Logger.getLogger(LogItCore.class.getName()).log(Level.WARNING, null, ex);
+                log(Level.WARNING, "Could not copy resource password-recovery.html. Stack trace:");
+                ex.printStackTrace();
             }
         }
         
