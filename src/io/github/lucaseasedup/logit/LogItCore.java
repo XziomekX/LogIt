@@ -294,7 +294,8 @@ public class LogItCore
         }
         catch (IOException | SQLException | ReflectiveOperationException ex)
         {
-            Logger.getLogger(LogItCore.class.getName()).log(Level.SEVERE, null, ex);
+            log(Level.SEVERE, "Inventories could not be restored. Stack trace:");
+            ex.printStackTrace();
             plugin.disable();
             
             return;
