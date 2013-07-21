@@ -21,17 +21,12 @@ package io.github.lucaseasedup.logit.account;
 import static io.github.lucaseasedup.logit.GeneralResult.FAILURE;
 import static io.github.lucaseasedup.logit.GeneralResult.SUCCESS;
 import io.github.lucaseasedup.logit.LogItCore;
-import static io.github.lucaseasedup.logit.LogItCore.IntegrationType.NONE;
-import static io.github.lucaseasedup.logit.LogItCore.IntegrationType.PHPBB;
+import io.github.lucaseasedup.logit.LogItCore.IntegrationType;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -39,7 +34,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.xml.bind.DatatypeConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -73,13 +68,9 @@ public class AccountManager
      */
     public boolean isRegistered(String username)
     {
-        if (core.getIntegration() == NONE)
+        if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
         {
             return cPassword.containsKey(username.toLowerCase());
-        }
-        else if (core.getIntegration() == PHPBB)
-        {
-            return true;
         }
         else
         {
@@ -105,17 +96,33 @@ public class AccountManager
         
         try
         {
-            if (core.getIntegration() == NONE)
+            if (core.getIntegration() == IntegrationType.NONE)
             {
                 database.insert(table, new String[]{
                     core.getConfig().getString("storage.accounts.columns.username"),
                     core.getConfig().getString("storage.accounts.columns.salt"),
                     core.getConfig().getString("storage.accounts.columns.password"),
-                    core.getConfig().getString("storage.accounts.columns.last_active")
+                    core.getConfig().getString("storage.accounts.columns.last_active"),
                 }, new String[]{
                     username.toLowerCase(),
                     salt,
                     hash,
+                    String.valueOf(System.currentTimeMillis() / 1000L)
+                });
+            }
+            else if (core.getIntegration() == IntegrationType.PHPBB2)
+            {
+                database.insert(table, new String[]{
+                    core.getConfig().getString("storage.accounts.columns.username"),
+                    core.getConfig().getString("storage.accounts.columns.salt"),
+                    core.getConfig().getString("storage.accounts.columns.password"),
+                    core.getConfig().getString("storage.accounts.columns.last_active"),
+                    "user_regdate"
+                }, new String[]{
+                    username.toLowerCase(),
+                    salt,
+                    hash,
+                    String.valueOf(System.currentTimeMillis() / 1000L),
                     String.valueOf(System.currentTimeMillis() / 1000L)
                 });
             }
@@ -156,7 +163,7 @@ public class AccountManager
         
         try
         {
-            if (core.getIntegration() == NONE)
+            if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
             {
                 database.delete(table, new String[]{
                     core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
@@ -199,45 +206,9 @@ public class AccountManager
         if (!isRegistered(username))
             throw new AccountNotFoundException();
         
-        if (core.getIntegration() == NONE)
+        if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
         {
             return core.checkPassword(password, cPassword.get(username.toLowerCase()), cSalt.get(username.toLowerCase()));
-        }
-        else if (core.getIntegration() == PHPBB)
-        {
-            String result;
-            
-            try
-            {
-                URL url = new URL(core.getConfig().getString("integration-phpbb.logit-script") + "?action=check-password");
-                HttpURLConnection uc = (HttpURLConnection) url.openConnection();
-                uc.setRequestMethod("POST");
-                uc.setDoInput(true);
-                uc.setDoOutput(true);
-                uc.setUseCaches(false);
-                uc.setAllowUserInteraction(false);
-                uc.setInstanceFollowRedirects(false);
-                
-                try (DataOutputStream out = new DataOutputStream(uc.getOutputStream()))
-                {
-                    out.writeBytes("username=" + username);
-                    out.writeBytes("&password=" + password);
-                    out.flush();
-                }
-                
-                try (BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream())))
-                {
-                    result = in.readLine();
-                }
-            }
-            catch (IOException ex)
-            {
-                Logger.getLogger(AccountManager.class.getName()).log(Level.WARNING, null, ex);
-                
-                return false;
-            }
-            
-            return (result != null) ? result.equals("ok") : false;
         }
         else
         {
@@ -264,7 +235,7 @@ public class AccountManager
         
         try
         {
-            if (core.getIntegration() == NONE)
+            if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
             {
                 database.update(table, new String[]{
                     core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
@@ -302,7 +273,7 @@ public class AccountManager
         
         try
         {
-            if (core.getIntegration() == NONE)
+            if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
             {
                 database.update(table, new String[]{
                     core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
@@ -348,12 +319,31 @@ public class AccountManager
         
         try
         {
-            if (core.getIntegration() == NONE)
+            if (core.getIntegration() == IntegrationType.NONE)
             {
                 database.update(table, new String[]{
                     core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
                 }, new String[]{
                     core.getConfig().getString("storage.accounts.columns.ip"), ip
+                });
+            }
+            else if (core.getIntegration() == IntegrationType.PHPBB2)
+            {
+                String hexIp = "";
+                
+                try
+                {
+                    hexIp = DatatypeConverter.printHexBinary(InetAddress.getByName(ip).getAddress()).toLowerCase();
+                }
+                catch (UnknownHostException ex)
+                {
+                }
+                
+                database.update(table, new String[]{
+                    core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
+                }, new String[]{
+                    core.getConfig().getString("storage.accounts.columns.ip"), hexIp
+                    
                 });
             }
             else
@@ -479,7 +469,7 @@ public class AccountManager
         cEmail.clear();
         cLastActive.clear();
         
-        if (core.getIntegration() == NONE)
+        if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
         {
             try (ResultSet rs = database.select(table, new String[]{"*"}))
             {
@@ -488,6 +478,9 @@ public class AccountManager
                     String username = rs.getString(core.getConfig().getString("storage.accounts.columns.username"));
                     
                     if (username == null)
+                        continue;
+                    
+                    if (username.equals("Anonymous") && core.getIntegration() == IntegrationType.PHPBB2)
                         continue;
                     
                     cSalt.put(username,       rs.getString(core.getConfig().getString("storage.accounts.columns.salt")));

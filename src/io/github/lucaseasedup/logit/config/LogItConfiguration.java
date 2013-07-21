@@ -173,8 +173,7 @@ public final class LogItConfiguration extends PropertyObserver
         addProperty("groups.logged-in", STRING, true, "LoggedIn");
         addProperty("groups.logged-out", STRING, true, "LoggedOut");
         
-        addProperty("integration", STRING, true, "none", new String[]{"none", "phpbb"});
-        addProperty("integration-phpbb.logit-script", STRING, false, "");
+        addProperty("integration", STRING, true, "none", new String[]{"none", "phpbb2"});
         
         addProperty("storage.accounts.db-type", STRING, true, "sqlite", new String[]{
             "sqlite", "mysql", "h2", "csv"

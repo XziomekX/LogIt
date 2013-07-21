@@ -740,9 +740,9 @@ public class LogItCore
         {
             return IntegrationType.NONE;
         }
-        else if (s.equalsIgnoreCase("phpbb"))
+        else if (s.equalsIgnoreCase("phpbb2"))
         {
-            return IntegrationType.PHPBB;
+            return IntegrationType.PHPBB2;
         }
         else
         {
@@ -915,7 +915,7 @@ public class LogItCore
     
     public static enum IntegrationType
     {
-        UNKNOWN, NONE, PHPBB
+        UNKNOWN, NONE, PHPBB2
     }
     
     public static final String LIB_H2 = "h2-1.3.171.jar";
