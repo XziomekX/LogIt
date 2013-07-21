@@ -146,7 +146,7 @@ public class LogItCore
                 LogItPlugin.loadLibrary(LIB_MAIL);
             }
         }
-        catch (IOException | ReflectiveOperationException ex)
+        catch (FatalReportedException ex)
         {
             return;
         }
