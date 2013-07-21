@@ -31,7 +31,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -64,7 +63,8 @@ public final class LogItConfiguration extends PropertyObserver
                 }
                 catch (IOException ex)
                 {
-                    Logger.getLogger(LogItConfiguration.class.getName()).log(Level.WARNING, null, ex);
+                    plugin.getCore().log(Level.WARNING, "Could not load messages. Stack trace:");
+                    ex.printStackTrace();
                 }
             }
         });
