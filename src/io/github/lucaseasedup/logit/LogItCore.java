@@ -110,14 +110,19 @@ public class LogItCore
             new File(plugin.getDataFolder(), "mail").mkdir();
             new File(plugin.getDataFolder(), "lang").mkdir();
             
-            try
+            File mailPasswordRecovery = new File(plugin.getDataFolder(), "mail/password-recovery.html");
+            
+            if (!mailPasswordRecovery.exists())
             {
-                FileUtils.extractResource("/password-recovery.html", new File(plugin.getDataFolder(), "mail/password-recovery.html"));
-            }
-            catch (IOException ex)
-            {
-                log(Level.WARNING, "Could not copy resource password-recovery.html. Stack trace:");
-                ex.printStackTrace();
+                try
+                {
+                    FileUtils.extractResource("/password-recovery.html", mailPasswordRecovery);
+                }
+                catch (IOException ex)
+                {
+                    log(Level.WARNING, "Could not copy resource password-recovery.html. Stack trace:");
+                    ex.printStackTrace();
+                }
             }
         }
         
