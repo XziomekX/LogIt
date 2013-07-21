@@ -24,7 +24,7 @@ import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import java.util.HashMap;
-import static java.util.logging.Level.FINE;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -75,7 +75,7 @@ public class LoginCommand extends AbstractCommandExecutor
                 
                 sendMessage(args[1], getMessage("START_SESSION_SUCCESS_SELF"));
                 sender.sendMessage(getMessage("START_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
-                core.log(FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", args[1]));
+                core.log(Level.FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", args[1]));
             }
         }
         else if (args.length <= 1)
@@ -135,7 +135,7 @@ public class LoginCommand extends AbstractCommandExecutor
                 failedLoginsToBan.remove(p.getName().toLowerCase());
                 
                 sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
-                core.log(FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", p.getName()));
+                core.log(Level.FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", p.getName()));
             }
         }
         else

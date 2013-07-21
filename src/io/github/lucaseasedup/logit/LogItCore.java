@@ -73,10 +73,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
-import static java.util.logging.Level.FINE;
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.SEVERE;
-import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
@@ -129,7 +125,7 @@ public class LogItCore
         
         if (getHashingAlgorithm().equals(HashingAlgorithm.UNKNOWN))
         {
-            log(SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM").replace("%ha%", getHashingAlgorithm().name()));
+            log(Level.SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM").replace("%ha%", getHashingAlgorithm().name()));
             plugin.disable();
             
             return;
@@ -192,7 +188,7 @@ public class LogItCore
                 }
                 default:
                 {
-                    log(SEVERE, getMessage("UNKNOWN_STORAGE_TYPE").replace("%st%", getStorageAccountsDbType().name()));
+                    log(Level.SEVERE, getMessage("UNKNOWN_STORAGE_TYPE").replace("%st%", getStorageAccountsDbType().name()));
                     plugin.disable();
                     
                     return;
@@ -315,12 +311,12 @@ public class LogItCore
             permissions = plugin.getServer().getServicesManager().getRegistration(Permission.class).getProvider();
         }
         
-        log(FINE, getMessage("PLUGIN_START_SUCCESS")
+        log(Level.FINE, getMessage("PLUGIN_START_SUCCESS")
                 .replace("%st%", getStorageAccountsDbType().name())
                 .replace("%ha%", getHashingAlgorithm().name()));
         
         if (firstRun)
-            log(INFO, getMessage("PLUGIN_FIRST_RUN"));
+            log(Level.INFO, getMessage("PLUGIN_FIRST_RUN"));
         
         started = true;
     }
@@ -345,7 +341,7 @@ public class LogItCore
         Bukkit.getScheduler().cancelTask(accountWatcherTaskId);
         Bukkit.getScheduler().cancelTask(backupManagerTaskId);
         
-        log(FINE, getMessage("PLUGIN_STOP_SUCCESS"));
+        log(Level.FINE, getMessage("PLUGIN_STOP_SUCCESS"));
         
         started = false;
     }
@@ -387,7 +383,7 @@ public class LogItCore
         
         sessions.delete();
         
-        log(INFO, getMessage("RELOADED"));
+        log(Level.INFO, getMessage("RELOADED"));
     }
     
     /**
@@ -402,7 +398,7 @@ public class LogItCore
         config.set("password.global-password.salt", salt);
         config.set("password.global-password.hash", hash(password, salt));
         
-        log(INFO, getMessage("GLOBALPASS_SET_SUCCESS"));
+        log(Level.INFO, getMessage("GLOBALPASS_SET_SUCCESS"));
     }
     
     /**
@@ -465,7 +461,7 @@ public class LogItCore
         config.set("password.global-password.hash", "");
         config.set("password.global-password.salt", "");
         
-        log(INFO, getMessage("GLOBALPASS_REMOVE_SUCCESS"));
+        log(Level.INFO, getMessage("GLOBALPASS_REMOVE_SUCCESS"));
     }
     
     public void sendPasswordRecoveryMail(String username) throws IOException, SQLException
@@ -504,14 +500,14 @@ public class LogItCore
             
             mailSender.sendMail(new String[]{to}, from, subject, body, config.getBoolean("password-recovery.html-enabled"));
             
-            log(FINE, getMessage("RECOVER_PASSWORD_SUCCESS_LOG", new String[]{
+            log(Level.FINE, getMessage("RECOVER_PASSWORD_SUCCESS_LOG", new String[]{
                 "%player%", username,
                 "%email%", to,
             }));
         }
         catch (IOException | SQLException ex)
         {
-            log(WARNING, getMessage("RECOVER_PASSWORD_FAIL_LOG", new String[]{
+            log(Level.WARNING, getMessage("RECOVER_PASSWORD_FAIL_LOG", new String[]{
                 "%player%", username,
             }));
             

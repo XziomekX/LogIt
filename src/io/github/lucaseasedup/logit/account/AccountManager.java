@@ -39,9 +39,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
-import static java.util.logging.Level.FINE;
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -132,12 +129,12 @@ public class AccountManager
             cIp.put(username.toLowerCase(), null);
             cLastActive.put(username.toLowerCase(), (int) (System.currentTimeMillis() / 1000L));
             
-            core.log(FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
+            core.log(Level.FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
             Bukkit.getPluginManager().callEvent(new AccountCreateEvent(username, hash, SUCCESS));
         }
         catch (SQLException | UnsupportedOperationException ex)
         {
-            core.log(WARNING, getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username));
+            core.log(Level.WARNING, getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username));
             Bukkit.getPluginManager().callEvent(new AccountCreateEvent(username, hash, FAILURE));
             
             throw ex;
@@ -175,12 +172,12 @@ public class AccountManager
             cIp.remove(username.toLowerCase());
             cLastActive.remove(username.toLowerCase());
             
-            core.log(FINE, getMessage("REMOVE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
+            core.log(Level.FINE, getMessage("REMOVE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
             Bukkit.getPluginManager().callEvent(new AccountRemoveEvent(username, SUCCESS));
         }
         catch (SQLException | UnsupportedOperationException ex)
         {
-            core.log(WARNING, getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username));
+            core.log(Level.WARNING, getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username));
             Bukkit.getPluginManager().callEvent(new AccountRemoveEvent(username, FAILURE));
             
             throw ex;
@@ -284,12 +281,12 @@ public class AccountManager
             cSalt.put(username.toLowerCase(), newSalt);
             cPassword.put(username.toLowerCase(), newHash);
             
-            core.log(FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
+            core.log(Level.FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
             Bukkit.getPluginManager().callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, SUCCESS));
         }
         catch (SQLException | UnsupportedOperationException ex)
         {
-            core.log(WARNING, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username));
+            core.log(Level.WARNING, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username));
             Bukkit.getPluginManager().callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, FAILURE));
             
             throw ex;
@@ -320,12 +317,12 @@ public class AccountManager
             
             cEmail.put(username.toLowerCase(), newEmail);
             
-            core.log(FINE, getMessage("CHANGE_EMAIL_SUCCESS_LOG").replace("%player%", username));
+            core.log(Level.FINE, getMessage("CHANGE_EMAIL_SUCCESS_LOG").replace("%player%", username));
             Bukkit.getPluginManager().callEvent(new AccountChangeEmailEvent(username, oldEmail, newEmail, SUCCESS));
         }
         catch (SQLException | UnsupportedOperationException ex)
         {
-            core.log(WARNING, getMessage("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username));
+            core.log(Level.WARNING, getMessage("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username));
             Bukkit.getPluginManager().callEvent(new AccountChangeEmailEvent(username, oldEmail, newEmail, FAILURE));
             
             throw ex;
@@ -366,12 +363,12 @@ public class AccountManager
             
             cIp.put(username.toLowerCase(), ip);
             
-            core.log(FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username).replace("%ip%", ip));
+            core.log(Level.FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username).replace("%ip%", ip));
             Bukkit.getPluginManager().callEvent(new AccountAttachIpEvent(username, ip, SUCCESS));
         }
         catch (SQLException | UnsupportedOperationException ex)
         {
-            core.log(WARNING, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username).replace("%ip%", ip));
+            core.log(Level.WARNING, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username).replace("%ip%", ip));
             Bukkit.getPluginManager().callEvent(new AccountAttachIpEvent(username, ip, FAILURE));
             
             throw ex;
@@ -495,11 +492,11 @@ public class AccountManager
             cEmail.clear();
             cLastActive.clear();
             
-            core.log(INFO, getMessage("PURGE_SUCCESS"));
+            core.log(Level.INFO, getMessage("PURGE_SUCCESS"));
         }
         catch (SQLException | UnsupportedOperationException ex)
         {
-            core.log(WARNING, getMessage("PURGE_FAIL"));
+            core.log(Level.WARNING, getMessage("PURGE_FAIL"));
             
             throw ex;
         }
@@ -534,11 +531,11 @@ public class AccountManager
                     cLastActive.put(username,    rs.getInt(core.getConfig().getString("storage.accounts.columns.last_active")));
                 }
                 
-                core.log(FINE, getMessage("LOAD_ACCOUNTS_SUCCESS").replace("%num%", String.valueOf(cPassword.size())));
+                core.log(Level.FINE, getMessage("LOAD_ACCOUNTS_SUCCESS").replace("%num%", String.valueOf(cPassword.size())));
             }
             catch (SQLException ex)
             {
-                core.log(WARNING, getMessage("LOAD_ACCOUNTS_FAIL"));
+                core.log(Level.WARNING, getMessage("LOAD_ACCOUNTS_FAIL"));
                 
                 throw ex;
             }

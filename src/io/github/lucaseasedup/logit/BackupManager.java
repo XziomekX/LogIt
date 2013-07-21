@@ -30,8 +30,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Level;
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
 
 /**
@@ -62,12 +60,12 @@ public class BackupManager implements Runnable
             {
                 createBackup(database);
                 
-                core.log(INFO, getMessage("CREATE_BACKUP_SUCCESS"));
+                core.log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS"));
             }
             catch (IOException | SQLException ex)
             {
                 Logger.getLogger(BackupManager.class.getName()).log(Level.WARNING, null, ex);
-                core.log(WARNING, getMessage("CREATE_BACKUP_FAIL"));
+                core.log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"));
             }
             
             timer.reset();

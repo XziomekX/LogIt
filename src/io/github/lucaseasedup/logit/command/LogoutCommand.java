@@ -22,7 +22,7 @@ import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
-import static java.util.logging.Level.FINE;
+import java.util.logging.Level;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -71,7 +71,7 @@ public class LogoutCommand extends AbstractCommandExecutor
                 
                 sendMessage(args[1], getMessage("END_SESSION_SUCCESS_SELF"));
                 sender.sendMessage(getMessage("END_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
-                core.log(FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", args[1]));
+                core.log(Level.FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", args[1]));
             }
         }
         else if (args.length == 0)
@@ -93,7 +93,7 @@ public class LogoutCommand extends AbstractCommandExecutor
                 core.getSessionManager().endSession(p.getName());
                 
                 sender.sendMessage(getMessage("END_SESSION_SUCCESS_SELF"));
-                core.log(FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", p.getName()));
+                core.log(Level.FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", p.getName()));
             }
         }
         else

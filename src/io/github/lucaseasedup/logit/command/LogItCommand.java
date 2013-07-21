@@ -27,8 +27,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.logging.Level;
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
 import org.bukkit.Color;
 import org.bukkit.command.Command;
@@ -204,7 +202,7 @@ public class LogItCommand extends AbstractCommandExecutor
                         if (p != null)
                             sender.sendMessage(getMessage("CREATE_BACKUP_SUCCESS"));
                         
-                        core.log(INFO, getMessage("CREATE_BACKUP_SUCCESS"));
+                        core.log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS"));
                     }
                     catch (IOException | SQLException ex)
                     {
@@ -213,7 +211,7 @@ public class LogItCommand extends AbstractCommandExecutor
                         if (p != null)
                             sender.sendMessage(getMessage("CREATE_BACKUP_FAIL"));
                         
-                        core.log(WARNING, getMessage("CREATE_BACKUP_FAIL"));
+                        core.log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"));
                     }
                 }
             }
@@ -239,7 +237,7 @@ public class LogItCommand extends AbstractCommandExecutor
                         if (p != null)
                             sender.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS"));
                         
-                        core.log(INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
+                        core.log(Level.INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
                     }
                     catch (FileNotFoundException | SQLException ex)
                     {
@@ -248,7 +246,7 @@ public class LogItCommand extends AbstractCommandExecutor
                         if (p != null)
                             sender.sendMessage(getMessage("RESTORE_BACKUP_FAIL"));
                         
-                        core.log(WARNING, getMessage("RESTORE_BACKUP_FAIL"));
+                        core.log(Level.WARNING, getMessage("RESTORE_BACKUP_FAIL"));
                     }
                 }
             }
@@ -271,7 +269,7 @@ public class LogItCommand extends AbstractCommandExecutor
                         if (p != null)
                             sender.sendMessage(getMessage("REMOVE_BACKUPS_SUCCESS"));
 
-                        core.log(INFO, getMessage("REMOVE_BACKUPS_SUCCESS"));
+                        core.log(Level.INFO, getMessage("REMOVE_BACKUPS_SUCCESS"));
                     }
                     catch (NumberFormatException | IOException ex)
                     {
@@ -280,7 +278,7 @@ public class LogItCommand extends AbstractCommandExecutor
                         if (p != null)
                             sender.sendMessage(getMessage("REMOVE_BACKUPS_FAIL"));
 
-                        core.log(WARNING, getMessage("REMOVE_BACKUPS_FAIL"));
+                        core.log(Level.WARNING, getMessage("REMOVE_BACKUPS_FAIL"));
                     }
                 }
             }
@@ -301,7 +299,7 @@ public class LogItCommand extends AbstractCommandExecutor
                 core.getConfig().save();
                 
                 p.sendMessage(getMessage("WAITING_ROOM_SET"));
-                core.log(INFO, getMessage("WAITING_ROOM_SET"));
+                core.log(Level.INFO, getMessage("WAITING_ROOM_SET"));
             }
         }
         else if (subcommand.equalsIgnoreCase("gotowr") && args.length == 1)

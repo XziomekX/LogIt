@@ -31,7 +31,6 @@ import java.util.PropertyResourceBundle;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
-import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import static org.bukkit.ChatColor.AQUA;
@@ -100,7 +99,7 @@ public final class LogItPlugin extends JavaPlugin
         {
             // If messages could not be loaded, just log the failure.
             // They're not nessesary for LogIt to work.
-            getLogger().log(WARNING, "Could not load messages.");
+            getLogger().log(Level.WARNING, "Could not load messages.");
         }
         
         core = LogItCore.getInstance();

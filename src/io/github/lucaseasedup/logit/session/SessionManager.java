@@ -32,7 +32,6 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
-import static java.util.logging.Level.FINE;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -151,7 +150,7 @@ public class SessionManager implements Runnable
         Session session = new Session(ip);
         sessions.put(username.toLowerCase(), session);
         
-        core.log(FINE, getMessage("CREATE_SESSION_SUCCESS_LOG").replace("%player%", username));
+        core.log(Level.FINE, getMessage("CREATE_SESSION_SUCCESS_LOG").replace("%player%", username));
         Bukkit.getPluginManager().callEvent(new SessionCreateEvent(username, session));
     }
     
@@ -170,7 +169,7 @@ public class SessionManager implements Runnable
         // Destroy session.
         Session session = sessions.remove(username.toLowerCase());
         
-        core.log(FINE, getMessage("DESTROY_SESSION_SUCCESS_LOG").replace("%player%", getPlayerName(username)));
+        core.log(Level.FINE, getMessage("DESTROY_SESSION_SUCCESS_LOG").replace("%player%", getPlayerName(username)));
         Bukkit.getPluginManager().callEvent(new SessionDestroyEvent(username, session));
     }
     
@@ -199,7 +198,7 @@ public class SessionManager implements Runnable
             Logger.getLogger(SessionManager.class.getName()).log(Level.WARNING, null, ex);
         }
         
-        core.log(FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
+        core.log(Level.FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
         Bukkit.getPluginManager().callEvent(new SessionStartEvent(username, session));
     }
     
@@ -228,7 +227,7 @@ public class SessionManager implements Runnable
             Logger.getLogger(SessionManager.class.getName()).log(Level.WARNING, null, ex);
         }
         
-        core.log(FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
+        core.log(Level.FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
         Bukkit.getPluginManager().callEvent(new SessionEndEvent(username, session));
     }
     
