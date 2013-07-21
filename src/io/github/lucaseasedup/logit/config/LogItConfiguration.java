@@ -104,7 +104,7 @@ public final class LogItConfiguration extends PropertyObserver
         addProperty("username.prohibited-usernames", STRING_LIST, false, new ArrayList<>(0));
         
         addProperty("password.min-length", INT, false, 3);
-        addProperty("password.max-length", INT, false, 25);
+        addProperty("password.max-length", INT, false, 40);
         addProperty("password.hashing-algorithm", STRING, true, "sha-256", new String[]{
             "plan", "md2", "md5", "sha-1", "sha-256", "sha-384", "sha-512", "whirlpool", "bcrypt"
         });
