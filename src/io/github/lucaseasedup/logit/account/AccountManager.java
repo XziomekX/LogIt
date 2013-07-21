@@ -23,7 +23,6 @@ import static io.github.lucaseasedup.logit.GeneralResult.SUCCESS;
 import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItCore.IntegrationType.NONE;
 import static io.github.lucaseasedup.logit.LogItCore.IntegrationType.PHPBB;
-import static io.github.lucaseasedup.logit.LogItPlugin.callEvent;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
@@ -134,12 +133,12 @@ public class AccountManager
             cLastActive.put(username.toLowerCase(), (int) (System.currentTimeMillis() / 1000L));
             
             core.log(FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
-            callEvent(new AccountCreateEvent(username, hash, SUCCESS));
+            Bukkit.getPluginManager().callEvent(new AccountCreateEvent(username, hash, SUCCESS));
         }
         catch (SQLException | UnsupportedOperationException ex)
         {
             core.log(WARNING, getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username));
-            callEvent(new AccountCreateEvent(username, hash, FAILURE));
+            Bukkit.getPluginManager().callEvent(new AccountCreateEvent(username, hash, FAILURE));
             
             throw ex;
         }
@@ -177,12 +176,12 @@ public class AccountManager
             cLastActive.remove(username.toLowerCase());
             
             core.log(FINE, getMessage("REMOVE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
-            callEvent(new AccountRemoveEvent(username, SUCCESS));
+            Bukkit.getPluginManager().callEvent(new AccountRemoveEvent(username, SUCCESS));
         }
         catch (SQLException | UnsupportedOperationException ex)
         {
             core.log(WARNING, getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username));
-            callEvent(new AccountRemoveEvent(username, FAILURE));
+            Bukkit.getPluginManager().callEvent(new AccountRemoveEvent(username, FAILURE));
             
             throw ex;
         }
@@ -286,12 +285,12 @@ public class AccountManager
             cPassword.put(username.toLowerCase(), newHash);
             
             core.log(FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
-            callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, SUCCESS));
+            Bukkit.getPluginManager().callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, SUCCESS));
         }
         catch (SQLException | UnsupportedOperationException ex)
         {
             core.log(WARNING, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username));
-            callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, FAILURE));
+            Bukkit.getPluginManager().callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, FAILURE));
             
             throw ex;
         }
@@ -322,12 +321,12 @@ public class AccountManager
             cEmail.put(username.toLowerCase(), newEmail);
             
             core.log(FINE, getMessage("CHANGE_EMAIL_SUCCESS_LOG").replace("%player%", username));
-            callEvent(new AccountChangeEmailEvent(username, oldEmail, newEmail, SUCCESS));
+            Bukkit.getPluginManager().callEvent(new AccountChangeEmailEvent(username, oldEmail, newEmail, SUCCESS));
         }
         catch (SQLException | UnsupportedOperationException ex)
         {
             core.log(WARNING, getMessage("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username));
-            callEvent(new AccountChangeEmailEvent(username, oldEmail, newEmail, FAILURE));
+            Bukkit.getPluginManager().callEvent(new AccountChangeEmailEvent(username, oldEmail, newEmail, FAILURE));
             
             throw ex;
         }
@@ -368,12 +367,12 @@ public class AccountManager
             cIp.put(username.toLowerCase(), ip);
             
             core.log(FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username).replace("%ip%", ip));
-            callEvent(new AccountAttachIpEvent(username, ip, SUCCESS));
+            Bukkit.getPluginManager().callEvent(new AccountAttachIpEvent(username, ip, SUCCESS));
         }
         catch (SQLException | UnsupportedOperationException ex)
         {
             core.log(WARNING, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username).replace("%ip%", ip));
-            callEvent(new AccountAttachIpEvent(username, ip, FAILURE));
+            Bukkit.getPluginManager().callEvent(new AccountAttachIpEvent(username, ip, FAILURE));
             
             throw ex;
         }

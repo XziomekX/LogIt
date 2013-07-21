@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.callEvent;
+import org.bukkit.Bukkit;
 
 /**
  * @author LucasEasedUp
@@ -32,6 +32,6 @@ public class TickEventCaller implements Runnable
     @Override
     public void run()
     {
-        callEvent(new TickEvent());
+        Bukkit.getPluginManager().callEvent(new TickEvent());
     }
 }

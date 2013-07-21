@@ -54,7 +54,6 @@ import static org.bukkit.ChatColor.STRIKETHROUGH;
 import static org.bukkit.ChatColor.UNDERLINE;
 import static org.bukkit.ChatColor.WHITE;
 import static org.bukkit.ChatColor.YELLOW;
-import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -65,6 +64,8 @@ public final class LogItPlugin extends JavaPlugin
     @Override
     public void onEnable()
     {
+        logger = getLogger();
+        
         try
         {
             // Load messages from the file.
@@ -256,21 +257,17 @@ public final class LogItPlugin extends JavaPlugin
         }
     }
     
-    /**
-     * Provides a shortcut to Bukkit.getPluginManager().callEvent().
-     * 
-     * @param event Event to be called.
-     */
-    public static void callEvent(Event event)
-    {
-        Bukkit.getPluginManager().callEvent(event);
-    }
-    
     public static LogItPlugin getInstance()
     {
         return (LogItPlugin) Bukkit.getPluginManager().getPlugin("LogIt");
     }
     
+    public static Logger getInstanceLogger()
+    {
+        return logger;
+    }
+    
+    private static Logger logger;
     private static PropertyResourceBundle prb;
     
     private LogItCore core;

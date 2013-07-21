@@ -766,16 +766,16 @@ public class LogItCore
     {
         if (config.getBoolean("log-to-file.enabled"))
         {
-            Date             date = new Date();
-            SimpleDateFormat sdf  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             
             try (FileWriter fileWriter = new FileWriter(new File(plugin.getDataFolder(), config.getString("log-to-file.filename")), true))
             {
-                fileWriter.write(sdf.format(date) + " [" + level.getName() + "] " + stripColor(message) + "\n");
+                fileWriter.write(sdf.format(new Date()) + " [" + level.getName() + "] " + stripColor(message) + "\n");
             }
             catch (IOException ex)
             {
-                Logger.getLogger(LogItCommand.class.getName()).log(Level.WARNING, null, ex);
+                plugin.getLogger().log(Level.WARNING, "Could not log to file. Stack trace:");
+                ex.printStackTrace();
             }
         }
         
