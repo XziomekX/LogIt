@@ -7,7 +7,7 @@ softdepend: [Multiverse-Core, Vault]
 commands:
   logit:
     description: LogIt generic command.
-    usage: /<command> [help|version|reload|purge|backup <force|restore [filename]|remove <amount>>|setwr|gotowr|globalpass <set <password>|remove>|accountcount|ipcount [ip]|config <get <path>|set <path> <value>|list>]
+    usage: /<command> [help|version|reload|backup <force|restore [filename]|remove <amount>>|setwr|gotowr|globalpass <set <password>|remove>|accountcount|ipcount [ip]|config <get <path>|set <path> <value>|list>]
 
   login:
     description: Logs you in.
@@ -73,7 +73,6 @@ permissions:
     children:
       logit.mod: true
       logit.reload: true
-      logit.purge: true
       logit.backup.*: true
       logit.setwr: true
       logit.globalpass.*: true
@@ -87,8 +86,6 @@ permissions:
   logit.version:
     default: true
   logit.reload:
-    default: false
-  logit.purge:
     default: false
   logit.backup.*:
     default: false

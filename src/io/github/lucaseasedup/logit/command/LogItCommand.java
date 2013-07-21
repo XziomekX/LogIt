@@ -157,34 +157,6 @@ public class LogItCommand extends AbstractCommandExecutor
                 }
             }
         }
-        else if (subcommand.equalsIgnoreCase("purge") && args.length == 1)
-        {
-            if (p != null && !p.hasPermission("logit.purge"))
-            {
-                sender.sendMessage(getMessage("NO_PERMS"));
-            }
-            else
-            {
-                try
-                {
-                    core.getAccountManager().purge();
-                    
-                    if (p != null)
-                    {
-                        sender.sendMessage(getMessage("PURGE_SUCCESS"));
-                    }
-                }
-                catch (SQLException ex)
-                {
-                    Logger.getLogger(LogItCommand.class.getName()).log(Level.WARNING, null, ex);
-                    
-                    if (p != null)
-                    {
-                        sender.sendMessage(getMessage("PURGE_FAIL"));
-                    }
-                }
-            }
-        }
         else if (subcommand.equalsIgnoreCase("backup") && args.length > 1 && args.length <= 3)
         {
             if (args[1].equalsIgnoreCase("force") && args.length == 2)

@@ -469,40 +469,6 @@ public class AccountManager
     }
     
     /**
-     * Purges the database from accounts.
-     * 
-     * @throws SQLException Thrown if database truncation failed.
-     */
-    public void purge() throws SQLException
-    {
-        try
-        {
-            if (core.getIntegration() == NONE)
-            {
-                database.truncateTable(table);
-            }
-            else
-            {
-                throw new UnsupportedOperationException();
-            }
-            
-            cSalt.clear();
-            cPassword.clear();
-            cIp.clear();
-            cEmail.clear();
-            cLastActive.clear();
-            
-            core.log(Level.INFO, getMessage("PURGE_SUCCESS"));
-        }
-        catch (SQLException | UnsupportedOperationException ex)
-        {
-            core.log(Level.WARNING, getMessage("PURGE_FAIL"));
-            
-            throw ex;
-        }
-    }
-    
-    /**
      * Loads accounts from the database.
      */
     public void loadAccounts() throws SQLException
