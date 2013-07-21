@@ -53,7 +53,7 @@ public final class LogItConfiguration extends PropertyObserver
     {
         plugin.reloadConfig();
         
-        addProperty("locale", STRING, false, "en", new String[]{"de", "en", "pl"}, new PropertyObserver()
+        addProperty("locale", STRING, false, "en", new PropertyObserver()
         {
             @Override
             public void update(Property p)
