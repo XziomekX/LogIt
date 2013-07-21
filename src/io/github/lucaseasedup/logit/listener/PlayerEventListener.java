@@ -20,12 +20,14 @@ package io.github.lucaseasedup.logit.listener;
 
 import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import io.github.lucaseasedup.logit.inventory.InventorySerializationException;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastJoinMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastQuitMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendForceLoginMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import java.util.List;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -145,7 +147,15 @@ public class PlayerEventListener extends EventListener
         if (core.isPlayerForcedToLogin(player) && !core.getSessionManager().isSessionAlive(username)
                 && core.getConfig().getBoolean("force-login.hide-inventory"))
         {
-            core.getInventoryDepository().deposit(player);
+            try
+            {
+                core.getInventoryDepository().deposit(player);
+            }
+            catch (InventorySerializationException ex)
+            {
+                core.log(Level.WARNING, "Could not deposit player's inventory. Stack trace:");
+                ex.printStackTrace();
+            }
         }
         
         if ((core.getSessionManager().isSessionAlive(player) && core.getSessionManager().getSession(username).getIp().equals(ip))
@@ -186,7 +196,15 @@ public class PlayerEventListener extends EventListener
         if (core.getSessionManager().isSessionAlive(player))
             broadcastQuitMessage(player);
         
-        core.getInventoryDepository().withdraw(player);
+        try
+        {
+            core.getInventoryDepository().withdraw(player);
+        }
+        catch (InventorySerializationException ex)
+        {
+            core.log(Level.WARNING, "Could not withdraw player's inventory. Stack trace: ");
+            ex.printStackTrace();
+        }
         
         if (core.getConfig().getBoolean("waiting-room.enabled"))
         {
@@ -201,7 +219,15 @@ public class PlayerEventListener extends EventListener
         
         event.setLeaveMessage(null);
         
-        core.getInventoryDepository().withdraw(player);
+        try
+        {
+            core.getInventoryDepository().withdraw(player);
+        }
+        catch (InventorySerializationException ex)
+        {
+            core.log(Level.WARNING, "Could not withdraw player's inventory. Stack trace:");
+            ex.printStackTrace();
+        }
         
         if (core.getConfig().getBoolean("waiting-room.enabled"))
         {
