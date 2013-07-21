@@ -16,13 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit;
+package io.github.lucaseasedup.logit.inventory;
 
+import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItPlugin;
+import io.github.lucaseasedup.logit.craftreflect.CraftInventoryCustom;
+import io.github.lucaseasedup.logit.craftreflect.CraftReflect;
+import io.github.lucaseasedup.logit.craftreflect.NBTTagCompound;
+import io.github.lucaseasedup.logit.craftreflect.NBTTagList;
 import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
 import it.sauronsoftware.base64.Base64;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,13 +39,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.minecraft.server.v1_5_R3.NBTBase;
-import net.minecraft.server.v1_5_R3.NBTTagCompound;
-import net.minecraft.server.v1_5_R3.NBTTagList;
-import org.bukkit.craftbukkit.v1_5_R3.inventory.CraftInventoryCustom;
-import org.bukkit.craftbukkit.v1_5_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -58,8 +56,9 @@ import org.jnbt.Tag;
  */
 public class InventoryDepository
 {
-    public InventoryDepository(AbstractRelationalDatabase inventoryDatabase)
+    public InventoryDepository(LogItCore core, AbstractRelationalDatabase inventoryDatabase)
     {
+        this.core = core;
         this.inventoryDatabase = inventoryDatabase;
     }
     
@@ -70,7 +69,7 @@ public class InventoryDepository
      * 
      * @param player Player.
      */
-    public void deposit(Player player)
+    public void deposit(Player player) throws InventorySerializationException
     {
         if (players.contains(player))
             return;
@@ -105,9 +104,9 @@ public class InventoryDepository
                 });
             }
         }
-        catch (SQLException ex)
+        catch (SQLException | ReflectiveOperationException ex)
         {
-            Logger.getLogger(InventoryDepository.class.getName()).log(Level.WARNING, null, ex);
+            throw new InventorySerializationException(ex);
         }
         
         players.add(player);
@@ -126,7 +125,7 @@ public class InventoryDepository
      * 
      * @param player Player.
      */
-    public void withdraw(Player player)
+    public void withdraw(Player player) throws InventorySerializationException
     {
         if (!players.contains(player))
             return;
@@ -154,20 +153,16 @@ public class InventoryDepository
                 }
             }
         }
-        catch (SQLException ex)
+        catch (SQLException | ReflectiveOperationException ex)
         {
-            Logger.getLogger(InventoryDepository.class.getName()).log(Level.WARNING, null, ex);
+            throw new InventorySerializationException(ex);
         }
         
         players.remove(player);
     }
     
-    public AbstractRelationalDatabase getInventoryDatabase()
-    {
-        return inventoryDatabase;
-    }
-    
-    public static void saveInventory(String world, String username, Inventory contentsInventory, Inventory armorInventory) throws IOException
+    public void saveInventory(String world, String username, Inventory contentsInventory, Inventory armorInventory)
+        throws IOException
     {
         File playerFile = new File(System.getProperty("user.dir") + "/" + world + "/players/" + username + ".dat");
 
@@ -234,79 +229,75 @@ public class InventoryDepository
         }
     }
     
-    public static Inventory getArmorInventory(PlayerInventory inventory)
+    public String serialize(Inventory inventory) throws ReflectiveOperationException
     {
-        ItemStack[] armor = inventory.getArmorContents();
-        CraftInventoryCustom storage = new CraftInventoryCustom(null, armor.length);
-        
-        for (int i = 0; i < armor.length; i++)
-            storage.setItem(i, armor[i]);
-        
-        return storage;
-    }
-    
-    public static Inventory getContentInventory(PlayerInventory inventory)
-    {
-        ItemStack[] content = inventory.getContents();
-        CraftInventoryCustom storage = new CraftInventoryCustom(null, content.length);
-        
-        for (int i = 0; i < content.length; i++)
-            storage.setItem(i, content[i]);
-        
-        return storage;
-    }
-    
-    public static String serialize(Inventory inventory)
-    {
+        CraftReflect reflect = LogItPlugin.getInstance().getCraftReflect();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         DataOutputStream dataOutput = new DataOutputStream(outputStream);
-        NBTTagList itemList = new NBTTagList();
+        NBTTagList itemList = reflect.newNBTTagList();
         
         for (int i = 0; i < inventory.getSize(); i++)
         {
-            NBTTagCompound outputObject = new NBTTagCompound();
-            net.minecraft.server.v1_5_R3.ItemStack craft = getCraftVersion(inventory.getItem(i));
-            
-            if (craft != null)
-                craft.save(outputObject);
-            
+            NBTTagCompound outputObject = reflect.newNBTTagCompound();
+            reflect.saveItemStack(inventory.getItem(i), outputObject);
             itemList.add(outputObject);
         }
         
-        // Save the list
-        NBTBase.a(itemList, dataOutput);
+        itemList.write(dataOutput);
         
         return Base64.encode(outputStream.toString());
     }
     
-    public static Inventory unserialize(String data)
+    public Inventory unserialize(String data) throws ReflectiveOperationException
     {
+        CraftReflect reflect = LogItPlugin.getInstance().getCraftReflect();
         ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.decode(data).getBytes());
-        NBTTagList itemList = (NBTTagList) NBTBase.b(new DataInputStream(inputStream));
-        Inventory inventory = new CraftInventoryCustom(null, itemList.size());
+        NBTTagList itemList = reflect.readNBTTag(inputStream).cast(NBTTagList.class);
+        CraftInventoryCustom inventory = reflect.newCraftInventoryCustom(itemList.size());
         
         for (int i = 0; i < itemList.size(); i++)
         {
-            NBTTagCompound inputObject = (NBTTagCompound) itemList.get(i);
+            NBTTagCompound inputObject = itemList.get(i).cast(NBTTagCompound.class);
             
             if (!inputObject.isEmpty())
             {
-                inventory.setItem(i, CraftItemStack.asBukkitCopy(net.minecraft.server.v1_5_R3.ItemStack.createStack(inputObject)));
+                inventory.setItem(i, reflect.createStack(inputObject));
             }
         }
         
-        return inventory;
+        return (Inventory) inventory.o;
     }
     
-    private static net.minecraft.server.v1_5_R3.ItemStack getCraftVersion(ItemStack stack)
+    public AbstractRelationalDatabase getInventoryDatabase()
     {
-        if (stack != null)
-            return CraftItemStack.asNMSCopy(stack);
-        
-        return null;
+        return inventoryDatabase;
     }
     
-    private final AbstractRelationalDatabase inventoryDatabase;
+    protected Inventory getArmorInventory(PlayerInventory inventory)
+    {
+        CraftReflect reflect = LogItPlugin.getInstance().getCraftReflect();
+        ItemStack[] armor = inventory.getArmorContents();
+        CraftInventoryCustom storage = reflect.newCraftInventoryCustom(armor.length);
+        
+        for (int i = 0; i < armor.length; i++)
+            storage.setItem(i, armor[i]);
+        
+        return (Inventory) storage.o;
+    }
     
+    protected Inventory getContentInventory(PlayerInventory inventory)
+    {
+        CraftReflect reflect = LogItPlugin.getInstance().getCraftReflect();
+        ItemStack[] content = inventory.getContents();
+        CraftInventoryCustom storage = reflect.newCraftInventoryCustom(content.length);
+        
+        for (int i = 0; i < content.length; i++)
+            storage.setItem(i, content[i]);
+        
+        return (Inventory) storage.o;
+    }
+    
+    private final LogItCore core;
+    private final AbstractRelationalDatabase inventoryDatabase;
     private final List<Player> players = new ArrayList<>();
 }

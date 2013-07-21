@@ -18,12 +18,14 @@
  */
 package io.github.lucaseasedup.logit;
 
+import io.github.lucaseasedup.logit.craftreflect.CraftReflect;
 import io.github.lucaseasedup.logit.util.FileUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.jar.JarEntry;
@@ -65,6 +67,29 @@ public final class LogItPlugin extends JavaPlugin
     public void onEnable()
     {
         logger = getLogger();
+        
+        try
+        {
+            String version = getCraftBukkitVersion();
+            Class<?> craftClass = Class.forName("io.github.lucaseasedup.logit.craftreflect." + version + ".CraftReflect");
+            
+            craftReflect = (CraftReflect) craftClass.getConstructor().newInstance();
+        }
+        catch (ClassNotFoundException ex)
+        {
+            logger.log(Level.SEVERE, "LogIt does not support this version of Bukkit.");
+            disable();
+            
+            return;
+        }
+        catch (Exception ex)
+        {
+            logger.log(Level.SEVERE, "Could not set up CraftBukkit reflection. Stack trace:");
+            ex.printStackTrace();
+            disable();
+            
+            return;
+        }
         
         try
         {
@@ -143,6 +168,11 @@ public final class LogItPlugin extends JavaPlugin
             
             prb = new PropertyResourceBundle(new InputStreamReader(jarFile.getInputStream(jarEntry), "UTF-8"));
         }
+    }
+    
+    public CraftReflect getCraftReflect()
+    {
+        return craftReflect;
     }
     
     /**
@@ -242,18 +272,34 @@ public final class LogItPlugin extends JavaPlugin
         return s;
     }
     
-    public static void loadLibrary(String filename) throws IOException, ReflectiveOperationException
+    public static String getCraftBukkitVersion()
+    {
+        String packageName = Bukkit.getServer().getClass().getPackage().getName();
+        String[] packageParts = packageName.split("\\.");
+        
+        return packageParts[packageParts.length - 1];
+    }
+    
+    public static void loadLibrary(String filename) throws FatalReportedException
     {
         try
         {
             FileUtils.loadLibrary(filename);
         }
-        catch (IOException | ReflectiveOperationException ex)
+        catch (FileNotFoundException | MalformedURLException ex)
         {
-            Logger.getLogger(LogItPlugin.class.getName()).log(Level.SEVERE, null, ex);
+            getInstanceLogger().log(Level.SEVERE, "Library {0} was not found.", filename);
             getInstance().disable();
             
-            throw ex;
+            throw new FatalReportedException(ex);
+        }
+        catch (ReflectiveOperationException ex)
+        {
+            getInstanceLogger().log(Level.SEVERE, "Could not load library {0}. Stack trace:", filename);
+            ex.printStackTrace();
+            getInstance().disable();
+            
+            throw new FatalReportedException(ex);
         }
     }
     
@@ -271,4 +317,5 @@ public final class LogItPlugin extends JavaPlugin
     private static PropertyResourceBundle prb;
     
     private LogItCore core;
+    private CraftReflect craftReflect;
 }

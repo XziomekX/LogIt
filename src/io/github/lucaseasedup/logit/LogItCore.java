@@ -48,6 +48,7 @@ import static io.github.lucaseasedup.logit.hash.HashGenerator.getSha256;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getSha384;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getSha512;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getWhirlpool;
+import io.github.lucaseasedup.logit.inventory.InventoryDepository;
 import io.github.lucaseasedup.logit.listener.AccountEventListener;
 import io.github.lucaseasedup.logit.listener.BlockEventListener;
 import io.github.lucaseasedup.logit.listener.EntityEventListener;
@@ -280,9 +281,9 @@ public class LogItCore
             {
                 try
                 {
-                    InventoryDepository.saveInventory(rs.getString("world"), rs.getString("username"),
-                        InventoryDepository.unserialize(rs.getString("inv_contents")),
-                        InventoryDepository.unserialize(rs.getString("inv_armor")));
+                    inventoryDepository.saveInventory(rs.getString("world"), rs.getString("username"),
+                        inventoryDepository.unserialize(rs.getString("inv_contents")),
+                        inventoryDepository.unserialize(rs.getString("inv_armor")));
                 }
                 catch (FileNotFoundException ex)
                 {
@@ -291,7 +292,7 @@ public class LogItCore
             
             inventoryDatabase.truncateTable("inventories");
         }
-        catch (IOException | SQLException ex)
+        catch (IOException | SQLException | ReflectiveOperationException ex)
         {
             Logger.getLogger(LogItCore.class.getName()).log(Level.SEVERE, null, ex);
             plugin.disable();
@@ -299,7 +300,7 @@ public class LogItCore
             return;
         }
         
-        inventoryDepository = new InventoryDepository(inventoryDatabase);
+        inventoryDepository = new InventoryDepository(this, inventoryDatabase);
         waitingRoom = new WaitingRoom(this, database);
         
         pingerTaskId          = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, pinger, 0L, 2400L);
