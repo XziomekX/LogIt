@@ -51,6 +51,7 @@ public final class LogItConfiguration extends PropertyObserver
     public void load()
     {
         plugin.reloadConfig();
+        plugin.getConfig().options().header(null);
         
         addProperty("locale", STRING, false, "en", new PropertyObserver()
         {
