@@ -57,14 +57,10 @@ public class FileUtils
         }
     }
     
-    public static void loadLibrary(String filename) throws ReflectiveOperationException, IOException
+    public static void loadLibrary(String filename) throws ReflectiveOperationException, FileNotFoundException, MalformedURLException
     {
         File file = new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename);
         URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        
-        if (!file.exists())
-            throw new FileNotFoundException("Library " + filename + " was not found.");
-        
         URL url = file.toURI().toURL();
         
         if (!Arrays.asList(classLoader.getURLs()).contains(url))
