@@ -25,10 +25,6 @@ import org.bukkit.Bukkit;
  */
 public class TickEventCaller implements Runnable
 {
-    public TickEventCaller()
-    {
-    }
-    
     @Override
     public void run()
     {
