@@ -1,7 +1,12 @@
+.externalToolBuilders
+.settings/
+bin/
 build/
 class/
 dist/
 javadoc/
 lib/
 nbproject/
+.classpath
+.project
 build.xml
