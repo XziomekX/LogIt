@@ -86,7 +86,7 @@ import org.bukkit.entity.Player;
  * 
  * @author LucasEasedUp
  */
-public class LogItCore
+public final class LogItCore
 {
     private LogItCore(LogItPlugin plugin)
     {
