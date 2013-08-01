@@ -31,6 +31,8 @@ public abstract class ObjectWrapper
         
         Class<?> wrapperCraftClass =
             Class.forName("io.github.lucaseasedup.logit.craftreflect." + version + "." + castTo.getSimpleName());
+        
+        @SuppressWarnings("unchecked")
         T2 newWrapper = (T2) wrapperCraftClass.getConstructor().newInstance();
         
         Class<?> objectCraftClass =

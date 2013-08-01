@@ -25,12 +25,14 @@ import static io.github.lucaseasedup.logit.config.PropertyType.INT;
 import static io.github.lucaseasedup.logit.config.PropertyType.STRING;
 import static io.github.lucaseasedup.logit.config.PropertyType.STRING_LIST;
 import static io.github.lucaseasedup.logit.config.PropertyType.VECTOR;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -285,11 +287,13 @@ public final class LogItConfiguration extends PropertyObserver
         return (Vector) properties.get(path).getValue();
     }
     
+    @SuppressWarnings("rawtypes")
     public List getList(String path)
     {
         return (List) properties.get(path).getValue();
     }
     
+    @SuppressWarnings("unchecked")
     public List<String> getStringList(String path)
     {
         return (List<String>) properties.get(path).getValue();

@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
@@ -61,6 +62,7 @@ public class Property extends Observable
         return changeRequiresRestart;
     }
     
+    @SuppressWarnings("rawtypes")
     @Override
     public String toString()
     {
@@ -101,6 +103,7 @@ public class Property extends Observable
         return sb.toString();
     }
     
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public Object getValue()
     {
         switch (type)
@@ -190,11 +193,13 @@ public class Property extends Observable
         return (Vector) value;
     }
     
+    @SuppressWarnings("rawtypes")
     public List getList()
     {
         return (List) value;
     }
     
+    @SuppressWarnings("unchecked")
     public List<String> getStringList()
     {
         return (List<String>) value;
