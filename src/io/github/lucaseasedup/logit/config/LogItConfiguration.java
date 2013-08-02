@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.Color;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -240,6 +241,11 @@ public final class LogItConfiguration extends PropertyObserver
     public String toString(String path)
     {
         return properties.get(path).toString();
+    }
+    
+    public ConfigurationSection getConfigurationSection(String path)
+    {
+        return plugin.getConfig().getConfigurationSection(path);
     }
     
     public Object get(String path)
