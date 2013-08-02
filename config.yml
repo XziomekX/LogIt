@@ -196,7 +196,7 @@ storage:
       password: ''
       database: ''
     
-    # In case of CSV database it is the database filename
+    # In case of CSV database it is the database path
     table: logit
     
     columns:
