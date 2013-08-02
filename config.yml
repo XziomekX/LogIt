@@ -214,7 +214,7 @@ storage:
       location_pitch: location_pitch
       in_wr: in_wr
   
-  # This database stores player inventories
+  # This SQLite database stores player inventories
   # In case your server crashes, it will restore inventories
   # belonging to players who were logged out at that time
   # It is ignored if "force-login.hide-inventories" is set to false
