@@ -249,6 +249,9 @@ public final class LogItCore
         catch (SQLException ex)
         {
             Logger.getLogger(LogItCore.class.getName()).log(Level.SEVERE, null, ex);
+            plugin.disable();
+            
+            return;
         }
         
         accountWatcher = new AccountWatcher(this, accountManager);
