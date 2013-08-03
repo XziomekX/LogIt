@@ -110,7 +110,6 @@ public final class LogItConfiguration extends PropertyObserver
         addProperty("password.hashing-algorithm", STRING, true, "sha-256", new String[]{
             "plan", "md2", "md5", "sha-1", "sha-256", "sha-384", "sha-512", "whirlpool", "bcrypt"
         });
-        addProperty("password.use-salt", BOOLEAN, true, true);
         addProperty("password.global-password.hash", STRING, false, "");
         addProperty("password.global-password.salt", STRING, false, "");
         
