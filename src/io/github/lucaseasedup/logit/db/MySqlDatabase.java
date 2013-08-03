@@ -97,13 +97,11 @@ public class MySqlDatabase extends Database
         return columnNames;
     }
     
-    @Override
     public ResultSet executeQuery(String sql) throws SQLException
     {
         return statement.executeQuery(sql);
     }
     
-    @Override
     public boolean executeStatement(String sql) throws SQLException
     {
         if (!isAutobatchEnabled())
@@ -197,7 +195,6 @@ public class MySqlDatabase extends Database
             + " WHERE " + SqlUtils.implodeWhereArray(where, "`", "'", true) + ";");
     }
     
-    @Override
     public void addBatch(String sql) throws SQLException
     {
         statement.addBatch(sql);

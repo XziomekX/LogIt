@@ -41,9 +41,6 @@ public abstract class Database implements AutoCloseable
     public abstract void close() throws SQLException;
     
     public abstract ArrayList<String> getColumnNames(String table) throws SQLException;
-    public abstract ResultSet executeQuery(String sql) throws SQLException;
-    public abstract boolean executeStatement(String sql) throws SQLException;
-    
     public abstract ResultSet select(String table, String[] columns) throws SQLException;
     public abstract ResultSet select(String table, String[] columns, String[] where) throws SQLException;
     
@@ -58,7 +55,6 @@ public abstract class Database implements AutoCloseable
     public abstract boolean update(String table, String[] where, String[] set) throws SQLException;
     public abstract boolean delete(String table, String[] where) throws SQLException;
     
-    public abstract void addBatch(String sql) throws SQLException;
     public abstract void executeBatch() throws SQLException;
     public abstract void clearBatch() throws SQLException;
     

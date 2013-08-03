@@ -81,18 +81,6 @@ public class CsvDatabase extends Database
     }
     
     @Override
-    public ResultSet executeQuery(String sql) throws SQLException
-    {
-        throw new UnsupportedOperationException("CSV does not support queries");
-    }
-
-    @Override
-    public boolean executeStatement(String sql) throws SQLException
-    {
-        throw new UnsupportedOperationException("CSV does not support statements.");
-    }
-
-    @Override
     public ResultSet select(String table, String[] columns) throws SQLException
     {
         if (!connected)
@@ -396,12 +384,6 @@ public class CsvDatabase extends Database
         }
         
         return true;
-    }
-    
-    @Override
-    public void addBatch(String sql) throws SQLException
-    {
-        throw new UnsupportedOperationException("CSV does not support statements.");
     }
     
     @Override
