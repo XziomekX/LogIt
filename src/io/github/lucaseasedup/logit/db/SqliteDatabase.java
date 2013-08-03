@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 /**
  * @author LucasEasedUp
  */
-public class SqliteDatabase extends AbstractRelationalDatabase
+public class SqliteDatabase extends Database
 {
     public SqliteDatabase(String host)
     {

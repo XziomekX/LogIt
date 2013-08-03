@@ -1,5 +1,5 @@
 /*
- * AbstractRelationalDatabase.java
+ * AbstractDatabase.java
  *
  * Copyright (C) 2012-2013 LucasEasedUp
  *
@@ -26,9 +26,9 @@ import java.util.ArrayList;
 /**
  * @author LucasEasedUp
  */
-public abstract class AbstractRelationalDatabase implements AutoCloseable
+public abstract class Database implements AutoCloseable
 {
-    public AbstractRelationalDatabase(String host)
+    public Database(String host)
     {
         this.host = host;
     }

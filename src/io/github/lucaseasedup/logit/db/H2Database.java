@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 /**
  * @author LucasEasedUp
  */
-public class H2Database extends AbstractRelationalDatabase
+public class H2Database extends Database
 {
     public H2Database(String host)
     {

@@ -31,7 +31,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 public final class Table
 {
-    public Table(AbstractRelationalDatabase database, String name, ConfigurationSection columnsSection)
+    public Table(Database database, String name, ConfigurationSection columnsSection)
     {
         this.database = database;
         this.table = name;
@@ -263,7 +263,7 @@ public final class Table
         return result;
     }
     
-    private final AbstractRelationalDatabase database;
+    private final Database database;
     private final String table;
     private final Map<String, Column> tableColumns = new HashMap<>();
 }

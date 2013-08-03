@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * @author LucasEasedUp
  */
-public class CsvDatabase extends AbstractRelationalDatabase
+public class CsvDatabase extends Database
 {
     public CsvDatabase(File dir)
     {

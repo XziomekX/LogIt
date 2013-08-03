@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 /**
  * @author LucasEasedUp
  */
-public class MySqlDatabase extends AbstractRelationalDatabase
+public class MySqlDatabase extends Database
 {
     public MySqlDatabase(String host)
     {

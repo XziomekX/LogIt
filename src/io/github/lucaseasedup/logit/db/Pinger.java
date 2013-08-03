@@ -27,7 +27,7 @@ import java.util.logging.Logger;
  */
 public class Pinger implements Runnable
 {
-    public Pinger(AbstractRelationalDatabase database)
+    public Pinger(Database database)
     {
         this.database = database;
     }
@@ -45,5 +45,5 @@ public class Pinger implements Runnable
         }
     }
     
-    private final AbstractRelationalDatabase database;
+    private final Database database;
 }

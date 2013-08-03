@@ -24,7 +24,7 @@ import io.github.lucaseasedup.logit.craftreflect.CraftInventoryCustom;
 import io.github.lucaseasedup.logit.craftreflect.CraftReflect;
 import io.github.lucaseasedup.logit.craftreflect.NBTTagCompound;
 import io.github.lucaseasedup.logit.craftreflect.NBTTagList;
-import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
+import io.github.lucaseasedup.logit.db.Database;
 import it.sauronsoftware.base64.Base64;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -56,7 +56,7 @@ import org.jnbt.Tag;
  */
 public class InventoryDepository
 {
-    public InventoryDepository(LogItCore core, AbstractRelationalDatabase inventoryDatabase)
+    public InventoryDepository(LogItCore core, Database inventoryDatabase)
     {
         this.core = core;
         this.inventoryDatabase = inventoryDatabase;
@@ -268,7 +268,7 @@ public class InventoryDepository
         return (Inventory) inventory.o;
     }
     
-    public AbstractRelationalDatabase getInventoryDatabase()
+    public Database getInventoryDatabase()
     {
         return inventoryDatabase;
     }
@@ -298,6 +298,6 @@ public class InventoryDepository
     }
     
     private final LogItCore core;
-    private final AbstractRelationalDatabase inventoryDatabase;
+    private final Database inventoryDatabase;
     private final List<Player> players = new ArrayList<>();
 }
