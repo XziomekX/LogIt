@@ -162,23 +162,6 @@ public class BackupManager implements Runnable
     }
     
     /**
-     * Restores the newest backup in the directory specified in the config.
-     * 
-     * @param database Database to be affected by the backup.
-     * @throws FileNotFoundException Thrown if there are no backups.
-     * @throws SQLException
-     */
-    public void restoreBackup(AbstractRelationalDatabase database) throws FileNotFoundException, SQLException
-    {
-        File[] backups = getBackups();
-        
-        if (backups.length == 0)
-            throw new FileNotFoundException();
-        
-        restoreBackup(database, backups[0].getName());
-    }
-    
-    /**
      * Removes a certain amount of backups starting from the oldest.
      * 
      * @param amount Amount of backups to remove.
