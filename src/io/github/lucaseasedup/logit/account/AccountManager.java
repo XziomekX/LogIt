@@ -22,16 +22,20 @@ import static io.github.lucaseasedup.logit.GeneralResult.FAILURE;
 import static io.github.lucaseasedup.logit.GeneralResult.SUCCESS;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
 import io.github.lucaseasedup.logit.LogItCore.IntegrationType;
-import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
+import io.github.lucaseasedup.logit.db.LogItTable;
+import io.github.lucaseasedup.logit.db.SetClause;
+import io.github.lucaseasedup.logit.db.WhereClause;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import javax.xml.bind.DatatypeConverter;
@@ -45,11 +49,10 @@ import org.bukkit.Location;
  */
 public class AccountManager
 {
-    public AccountManager(LogItCore core, AbstractRelationalDatabase database)
+    public AccountManager(LogItCore core, LogItTable accounts)
     {
         this.core     = core;
-        this.database = database;
-        this.table    = core.getConfig().getString("storage.accounts.table");
+        this.accounts = accounts;
     }
     
     public Set<String> getRegisteredUsernames()
@@ -91,39 +94,28 @@ public class AccountManager
         if (isRegistered(username))
             throw new RuntimeException("Account already exists.");
         
-        String salt = HashGenerator.generateSalt(core.getHashingAlgorithm());
-        String hash = core.hash(password, salt);
+        HashingAlgorithm algorithm = core.getDefaultHashingAlgorithm();
+        String salt = HashGenerator.generateSalt(algorithm);
+        String hash = core.hash(password, salt, algorithm);
         
         try
         {
-            if (core.getIntegration() == IntegrationType.NONE)
+            if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
             {
-                database.insert(table, new String[]{
-                    core.getConfig().getString("storage.accounts.columns.username"),
-                    core.getConfig().getString("storage.accounts.columns.salt"),
-                    core.getConfig().getString("storage.accounts.columns.password"),
-                    core.getConfig().getString("storage.accounts.columns.last_active"),
+                accounts.insert(new String[]{
+                    "logit.accounts.username",
+                    "logit.accounts.salt",
+                    "logit.accounts.password",
+                    "logit.accounts.hashing_algorithm",
+                    "logit.accounts.last_active",
+                    "logit.accounts.reg_date",
                 }, new String[]{
                     username.toLowerCase(),
                     salt,
                     hash,
-                    String.valueOf(System.currentTimeMillis() / 1000L)
-                });
-            }
-            else if (core.getIntegration() == IntegrationType.PHPBB2)
-            {
-                database.insert(table, new String[]{
-                    core.getConfig().getString("storage.accounts.columns.username"),
-                    core.getConfig().getString("storage.accounts.columns.salt"),
-                    core.getConfig().getString("storage.accounts.columns.password"),
-                    core.getConfig().getString("storage.accounts.columns.last_active"),
-                    "user_regdate"
-                }, new String[]{
-                    username.toLowerCase(),
-                    salt,
-                    hash,
+                    algorithm.encode(),
                     String.valueOf(System.currentTimeMillis() / 1000L),
-                    String.valueOf(System.currentTimeMillis() / 1000L)
+                    String.valueOf(System.currentTimeMillis() / 1000L),
                 });
             }
             else
@@ -165,8 +157,8 @@ public class AccountManager
         {
             if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
             {
-                database.delete(table, new String[]{
-                    core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
+                accounts.delete(new WhereClause[]{
+                    new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase())
                 });
             }
             else
@@ -206,9 +198,36 @@ public class AccountManager
         if (!isRegistered(username))
             throw new AccountNotFoundException();
         
+        if (accounts.isColumnDisabled("logit.accounts.password"))
+            return true;
+        
         if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
         {
-            return core.checkPassword(password, cPassword.get(username.toLowerCase()), cSalt.get(username.toLowerCase()));
+            HashingAlgorithm algorithm = core.getDefaultHashingAlgorithm();
+            String userAlgorithm = null;
+            
+            try
+            {
+                userAlgorithm = getAccountValue(username, "logit.accounts.hashing_algorithm");
+            }
+            catch (SQLException ex)
+            {
+            }
+            
+            if (userAlgorithm != null)
+            {
+                algorithm = HashingAlgorithm.decode(userAlgorithm);
+            }
+            
+            if (!accounts.isColumnDisabled("logit.accounts.salt"))
+            {
+                return core.checkPassword(password, cPassword.get(username.toLowerCase()),
+                        cSalt.get(username.toLowerCase()), algorithm);
+            }
+            else
+            {
+                return core.checkPassword(password, cPassword.get(username.toLowerCase()), algorithm);
+            }
         }
         else
         {
@@ -229,19 +248,21 @@ public class AccountManager
         if (!isRegistered(username))
             throw new AccountNotFoundException();
         
-        String newSalt = HashGenerator.generateSalt(core.getHashingAlgorithm());
-        String newHash = core.hash(newPassword, newSalt);
+        HashingAlgorithm algorithm = core.getDefaultHashingAlgorithm();
+        String newSalt = HashGenerator.generateSalt(algorithm);
+        String newHash = core.hash(newPassword, newSalt, algorithm);
         String oldPassword = cPassword.get(username.toLowerCase());
         
         try
         {
             if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
             {
-                database.update(table, new String[]{
-                    core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
-                }, new String[]{
-                    core.getConfig().getString("storage.accounts.columns.salt"), newSalt,
-                    core.getConfig().getString("storage.accounts.columns.password"), newHash
+                accounts.update(new WhereClause[]{
+                    new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase())
+                }, new SetClause[]{
+                    new SetClause("logit.accounts.salt", newSalt),
+                    new SetClause("logit.accounts.password", newHash),
+                    new SetClause("logit.accounts.hashing_algorithm", algorithm.encode()),
                 });
             }
             else
@@ -275,10 +296,10 @@ public class AccountManager
         {
             if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
             {
-                database.update(table, new String[]{
-                    core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
-                }, new String[]{
-                    core.getConfig().getString("storage.accounts.columns.email"), newEmail
+                accounts.update(new WhereClause[]{
+                    new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase()),
+                }, new SetClause[]{
+                    new SetClause("logit.accounts.email", newEmail),
                 });
             }
             else
@@ -321,10 +342,10 @@ public class AccountManager
         {
             if (core.getIntegration() == IntegrationType.NONE)
             {
-                database.update(table, new String[]{
-                    core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
-                }, new String[]{
-                    core.getConfig().getString("storage.accounts.columns.ip"), ip
+                accounts.update(new WhereClause[]{
+                    new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase()),
+                }, new SetClause[]{
+                    new SetClause("logit.accounts.ip", ip),
                 });
             }
             else if (core.getIntegration() == IntegrationType.PHPBB2)
@@ -339,11 +360,10 @@ public class AccountManager
                 {
                 }
                 
-                database.update(table, new String[]{
-                    core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
-                }, new String[]{
-                    core.getConfig().getString("storage.accounts.columns.ip"), hexIp
-                    
+                accounts.update(new WhereClause[]{
+                    new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase()),
+                }, new SetClause[]{
+                    new SetClause("logit.accounts.ip", hexIp),
                 });
             }
             else
@@ -393,10 +413,10 @@ public class AccountManager
     {
         int now = (int) (System.currentTimeMillis() / 1000L);
         
-        database.update(table, new String[]{
-            core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
-        }, new String[]{
-            core.getConfig().getString("storage.accounts.columns.last_active"), String.valueOf(now)
+        accounts.update(new WhereClause[]{
+            new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase()),
+        }, new SetClause[]{
+            new SetClause("logit.accounts.last_active", String.valueOf(now)),
         });
         
         cLastActive.put(username.toLowerCase(), now);
@@ -409,43 +429,55 @@ public class AccountManager
     
     public void saveLocation(String username, Location location) throws SQLException
     {
-        database.update(table, new String[]{
-            core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
-        }, new String[]{
-            core.getConfig().getString("storage.accounts.columns.location_world"), location.getWorld().getName(),
-            core.getConfig().getString("storage.accounts.columns.location_x"), String.valueOf(location.getX()),
-            core.getConfig().getString("storage.accounts.columns.location_y"), String.valueOf(location.getY()),
-            core.getConfig().getString("storage.accounts.columns.location_z"), String.valueOf(location.getZ()),
-            core.getConfig().getString("storage.accounts.columns.location_yaw"), String.valueOf(location.getYaw()),
-            core.getConfig().getString("storage.accounts.columns.location_pitch"), String.valueOf(location.getPitch()),
+        accounts.update(new WhereClause[]{
+            new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase()),
+        }, new SetClause[]{
+            new SetClause("logit.accounts.world", location.getWorld().getName()),
+            new SetClause("logit.accounts.x", String.valueOf(location.getX())),
+            new SetClause("logit.accounts.y", String.valueOf(location.getY())),
+            new SetClause("logit.accounts.z", String.valueOf(location.getZ())),
+            new SetClause("logit.accounts.yaw", String.valueOf(location.getYaw())),
+            new SetClause("logit.accounts.pitch", String.valueOf(location.getPitch())),
         });
     }
     
     public Location getLocation(String username) throws SQLException
     {
-        ResultSet rs = database.select(table, new String[]{
-            core.getConfig().getString("storage.accounts.columns.location_world"),
-            core.getConfig().getString("storage.accounts.columns.location_x"),
-            core.getConfig().getString("storage.accounts.columns.location_y"),
-            core.getConfig().getString("storage.accounts.columns.location_z"),
-            core.getConfig().getString("storage.accounts.columns.location_yaw"),
-            core.getConfig().getString("storage.accounts.columns.location_pitch"),
-        }, new String[]{
-            core.getConfig().getString("storage.accounts.columns.username"), "=", username.toLowerCase()
+        List<Map<String, String>> rs = accounts.select(new String[]{
+            "logit.accounts.world",
+            "logit.accounts.x",
+            "logit.accounts.y",
+            "logit.accounts.z",
+            "logit.accounts.yaw",
+            "logit.accounts.pitch",
+        }, new WhereClause[]{
+            new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase()),
         });
         
-        if (rs.isBeforeFirst())
+        if (rs.isEmpty())
+            return null;
+        
+        return new Location(
+            Bukkit.getWorld(rs.get(0).get("logit.accounts.world")),
+            Double.valueOf(rs.get(0).get("logit.accounts.x")),
+            Double.valueOf(rs.get(0).get("logit.accounts.y")),
+            Double.valueOf(rs.get(0).get("logit.accounts.z")),
+            Float.valueOf(rs.get(0).get("logit.accounts.yaw")),
+            Float.valueOf(rs.get(0).get("logit.accounts.pitch"))
+        );
+    }
+    
+    public String getAccountValue(String username, String column) throws SQLException
+    {
+        List<Map<String, String>> rs = accounts.select(new String[]{
+            column,
+        }, new WhereClause[]{
+            new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase()),
+        });
+        
+        if (!rs.isEmpty())
         {
-            rs.next();
-            
-            return new Location(
-                Bukkit.getWorld(rs.getString(core.getConfig().getString("storage.accounts.columns.location_world"))),
-                Double.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_x"))),
-                Double.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_y"))),
-                Double.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_z"))),
-                Float.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_yaw"))),
-                Float.valueOf(rs.getString(core.getConfig().getString("storage.accounts.columns.location_pitch")))
-            );
+            return rs.get(0).get(column);
         }
         else
         {
@@ -471,11 +503,13 @@ public class AccountManager
         
         if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
         {
-            try (ResultSet rs = database.select(table, new String[]{"*"}))
+            try
             {
-                while (rs.next())
+                List<Map<String, String>> rs = accounts.select();
+                
+                for (Map<String, String> m : rs)
                 {
-                    String username = rs.getString(core.getConfig().getString("storage.accounts.columns.username"));
+                    String username = m.get("logit.accounts.username");
                     
                     if (username == null)
                         continue;
@@ -483,11 +517,11 @@ public class AccountManager
                     if (username.equals("Anonymous") && core.getIntegration() == IntegrationType.PHPBB2)
                         continue;
                     
-                    cSalt.put(username,       rs.getString(core.getConfig().getString("storage.accounts.columns.salt")));
-                    cPassword.put(username,   rs.getString(core.getConfig().getString("storage.accounts.columns.password")));
-                    cIp.put(username,         rs.getString(core.getConfig().getString("storage.accounts.columns.ip")));
-                    cEmail.put(username,      rs.getString(core.getConfig().getString("storage.accounts.columns.email")));
-                    cLastActive.put(username,    rs.getInt(core.getConfig().getString("storage.accounts.columns.last_active")));
+                    cSalt.put(username,       m.get("logit.accounts.salt"));
+                    cPassword.put(username,   m.get("logit.accounts.password"));
+                    cIp.put(username,         m.get("logit.accounts.ip"));
+                    cEmail.put(username,      m.get("logit.accounts.email"));
+                    cLastActive.put(username, Integer.valueOf(m.get("logit.accounts.last_active")));
                 }
                 
                 core.log(Level.FINE, getMessage("LOAD_ACCOUNTS_SUCCESS").replace("%num%", String.valueOf(cPassword.size())));
@@ -502,8 +536,7 @@ public class AccountManager
     }
     
     private final LogItCore core;
-    private final AbstractRelationalDatabase database;
-    private final String table;
+    private final LogItTable accounts;
     
     private final HashMap<String, String> cSalt = new HashMap<>();
     private final HashMap<String, String> cPassword = new HashMap<>();

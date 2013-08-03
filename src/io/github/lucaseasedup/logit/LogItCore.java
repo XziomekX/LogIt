@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit;
 
-import com.google.common.collect.ImmutableList;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.LogItPlugin.parseMessage;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getBCrypt;
@@ -44,6 +43,7 @@ import io.github.lucaseasedup.logit.config.LogItConfiguration;
 import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
 import io.github.lucaseasedup.logit.db.CsvDatabase;
 import io.github.lucaseasedup.logit.db.H2Database;
+import io.github.lucaseasedup.logit.db.LogItTable;
 import io.github.lucaseasedup.logit.db.MySqlDatabase;
 import io.github.lucaseasedup.logit.db.Pinger;
 import io.github.lucaseasedup.logit.db.SqliteDatabase;
@@ -69,15 +69,12 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import static org.bukkit.ChatColor.stripColor;
 import org.bukkit.entity.Player;
 
 /**
@@ -130,9 +127,9 @@ public final class LogItCore
         if (!loaded)
             load();
         
-        if (getHashingAlgorithm().equals(HashingAlgorithm.UNKNOWN))
+        if (getDefaultHashingAlgorithm().equals(HashingAlgorithm.UNKNOWN))
         {
-            log(Level.SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM").replace("%ha%", getHashingAlgorithm().name()));
+            log(Level.SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM").replace("%ha%", getDefaultHashingAlgorithm().name()));
             plugin.disable();
             
             return;
@@ -211,27 +208,12 @@ public final class LogItCore
         }
         
         pinger = new Pinger(database);
+        accountTable = new LogItTable(database, config.getString("storage.accounts.table"),
+                config.getConfigurationSection("storage.accounts.columns"));
         
         try
         {
-            String[] storageColumnsArray = getStorageColumns();
-            
-            database.createTableIfNotExists(config.getString("storage.accounts.table"), storageColumnsArray);
-            
-            ArrayList<String> existingColumns = database.getColumnNames(config.getString("storage.accounts.table"));
-            
-            database.setAutobatchEnabled(true);
-            
-            for (int i = 0; i < storageColumnsArray.length; i += 2)
-            {
-                if (!existingColumns.contains(storageColumnsArray[i]))
-                {
-                    database.addColumn(config.getString("storage.accounts.table"), storageColumnsArray[i], storageColumnsArray[i + 1]);
-                }
-            }
-            
-            database.executeBatch();
-            database.setAutobatchEnabled(false);
+            accountTable.open();
         }
         catch (SQLException ex)
         {
@@ -241,7 +223,7 @@ public final class LogItCore
             return;
         }
         
-        accountManager = new AccountManager(this, database);
+        accountManager = new AccountManager(this, accountTable);
         
         try
         {
@@ -256,7 +238,7 @@ public final class LogItCore
         }
         
         accountWatcher = new AccountWatcher(this, accountManager);
-        backupManager  = new BackupManager(this, database);
+        backupManager  = new BackupManager(this, accountTable);
         sessionManager = new SessionManager(this, accountManager);
         
         if (config.getBoolean("password-recovery.enabled"))
@@ -308,7 +290,7 @@ public final class LogItCore
         }
         
         inventoryDepository = new InventoryDepository(this, inventoryDatabase);
-        waitingRoom = new WaitingRoom(this, database);
+        waitingRoom = new WaitingRoom(this, accountTable);
         
         pingerTaskId          = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, pinger, 0L, 2400L);
         sessionManagerTaskId  = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, sessionManager, 0L, 20L);
@@ -323,7 +305,7 @@ public final class LogItCore
         
         log(Level.FINE, getMessage("PLUGIN_START_SUCCESS")
                 .replace("%st%", getStorageAccountsDbType().name())
-                .replace("%ha%", getHashingAlgorithm().name()));
+                .replace("%ha%", getDefaultHashingAlgorithm().name()));
         
         if (firstRun)
             log(Level.INFO, getMessage("PLUGIN_FIRST_RUN"));
@@ -397,36 +379,21 @@ public final class LogItCore
     }
     
     /**
-     * Changes the global password.
-     * 
-     * @param password New global password;
-     */
-    public void changeGlobalPassword(String password)
-    {
-        String salt = HashGenerator.generateSalt(getHashingAlgorithm());
-        
-        config.set("password.global-password.salt", salt);
-        config.set("password.global-password.hash", hash(password, salt));
-        
-        log(Level.INFO, getMessage("GLOBALPASS_SET_SUCCESS"));
-    }
-    
-    /**
      * Checks if the given password matches its hashed equivalent.
      * 
      * @param password Plain-text password.
      * @param hashedPassword Hashed password.
      * @return True if passwords match.
      */
-    public boolean checkPassword(String password, String hashedPassword)
+    public boolean checkPassword(String password, String hashedPassword, HashingAlgorithm ha)
     {
-        if (getHashingAlgorithm() == HashingAlgorithm.BCRYPT)
+        if (ha == HashingAlgorithm.BCRYPT)
         {
             return BCrypt.checkpw(password, hashedPassword);
         }
         else
         {
-            return hashedPassword.equals(hash(password));
+            return hashedPassword.equals(hash(password, ha));
         }
     }
     
@@ -438,15 +405,15 @@ public final class LogItCore
      * @param salt Salt.
      * @return True if passwords match.
      */
-    public boolean checkPassword(String password, String hashedPassword, String salt)
+    public boolean checkPassword(String password, String hashedPassword, String salt, HashingAlgorithm ha)
     {
-        if (getHashingAlgorithm() == HashingAlgorithm.BCRYPT)
+        if (ha == HashingAlgorithm.BCRYPT)
         {
             return BCrypt.checkpw(password, hashedPassword);
         }
         else
         {
-            return hashedPassword.equals(hash(password, salt));
+            return hashedPassword.equals(hash(password, salt, ha));
         }
     }
     
@@ -459,7 +426,22 @@ public final class LogItCore
     public boolean checkGlobalPassword(String password)
     {
         return checkPassword(password, config.getString("password.global-password.hash"),
-            config.getString("password.global-password.salt"));
+            config.getString("password.global-password.salt"), getDefaultHashingAlgorithm());
+    }
+
+    /**
+     * Changes the global password.
+     * 
+     * @param password New global password;
+     */
+    public void changeGlobalPassword(String password)
+    {
+        String salt = HashGenerator.generateSalt(getDefaultHashingAlgorithm());
+        
+        config.set("password.global-password.salt", salt);
+        config.set("password.global-password.hash", hash(password, salt, getDefaultHashingAlgorithm()));
+        
+        log(Level.INFO, getMessage("GLOBALPASS_SET_SUCCESS"));
     }
     
     public void removeGlobalPassword()
@@ -600,9 +582,9 @@ public final class LogItCore
      * @param string String to be hashed.
      * @return Resulting hash.
      */
-    public String hash(String string)
+    public String hash(String string, HashingAlgorithm ha)
     {
-        switch (getHashingAlgorithm())
+        switch (ha)
         {
             case PLAIN:
             {
@@ -649,23 +631,21 @@ public final class LogItCore
     
     /**
      * Hashes the given string and salt through algorithm specified in the config.
-     * <p/>
-     * If algorithm is PLAIN, salt won't be appended to the string.
      * 
      * @param string String to be hashed.
      * @param salt Salt.
      * @return Resulting hash.
      */
-    public String hash(String string, String salt)
+    public String hash(String string, String salt, HashingAlgorithm ha)
     {
         String hash;
         
-        if (getHashingAlgorithm() == HashingAlgorithm.BCRYPT)
+        if (ha == HashingAlgorithm.BCRYPT)
             hash = getBCrypt(string, salt);
-        else if (getHashingAlgorithm() == HashingAlgorithm.PLAIN || !config.getBoolean("password.use-salt"))
-            hash = hash(string);
+        else if (ha == HashingAlgorithm.PLAIN)
+            hash = hash(string, ha);
         else
-            hash = hash(string + salt);
+            hash = hash(string + salt, ha);
         
         return hash;
     }
@@ -696,7 +676,7 @@ public final class LogItCore
         }
     }
     
-    public HashingAlgorithm getHashingAlgorithm()
+    public HashingAlgorithm getDefaultHashingAlgorithm()
     {
         return HashingAlgorithm.decode(plugin.getConfig().getString("password.hashing-algorithm"));
     }
@@ -745,16 +725,9 @@ public final class LogItCore
         plugin.getLogger().log(level, stripColor(message));
     }
     
-    /**
-     * Returns an array containing storage columns,
-     * where getStorageColumns()[i] is the column name,
-     * and getStorageColumns()[i + 1] is the column type.
-     * 
-     * @return Storage columns.
-     */
-    public String[] getStorageColumns()
+    public LogItTable getAccountTable()
     {
-        return storageColumns.toArray(new String[storageColumns.size()]);
+        return accountTable;
     }
     
     public Permission getPermissions()
@@ -765,11 +738,6 @@ public final class LogItCore
     public WaitingRoom getWaitingRoom()
     {
         return waitingRoom;
-    }
-    
-    public AbstractRelationalDatabase getDatabase()
-    {
-        return database;
     }
     
     public InventoryDepository getInventoryDepository()
@@ -824,22 +792,6 @@ public final class LogItCore
     
     private void load()
     {
-        storageColumns = ImmutableList.of(
-            config.getString("storage.accounts.columns.username"),        "VARCHAR(16)",
-            config.getString("storage.accounts.columns.salt"),            "VARCHAR(20)",
-            config.getString("storage.accounts.columns.password"),        "VARCHAR(256)",
-            config.getString("storage.accounts.columns.ip"),              "VARCHAR(64)",
-            config.getString("storage.accounts.columns.email"),           "VARCHAR(255)",
-            config.getString("storage.accounts.columns.last_active"),     "INTEGER",
-            config.getString("storage.accounts.columns.location_world"),  "VARCHAR(512)",
-            config.getString("storage.accounts.columns.location_x"),      "REAL",
-            config.getString("storage.accounts.columns.location_y"),      "REAL",
-            config.getString("storage.accounts.columns.location_z"),      "REAL",
-            config.getString("storage.accounts.columns.location_yaw"),    "REAL",
-            config.getString("storage.accounts.columns.location_pitch"),  "REAL",
-            config.getString("storage.accounts.columns.in_wr"),           "INTEGER"
-        );
-        
         tickEventCaller = new TickEventCaller();
         
         plugin.getServer().getPluginManager().registerEvents(new TickEventListener(this), plugin);
@@ -970,24 +922,23 @@ public final class LogItCore
     private boolean loaded = false;
     private boolean started = false;
     
-    private LogItConfiguration  config;
+    private LogItConfiguration         config;
     private AbstractRelationalDatabase database;
-    private Pinger              pinger;
-    private Permission          permissions;
-    private SessionManager      sessionManager;
-    private AccountManager      accountManager;
-    private AccountWatcher      accountWatcher;
-    private BackupManager       backupManager;
-    private WaitingRoom         waitingRoom;
-    private InventoryDepository inventoryDepository;
-    private MailSender          mailSender;
-    private TickEventCaller     tickEventCaller;
+    private LogItTable                 accountTable;
+    private Pinger                     pinger;
+    private Permission                 permissions;
+    private SessionManager             sessionManager;
+    private AccountManager             accountManager;
+    private AccountWatcher             accountWatcher;
+    private BackupManager              backupManager;
+    private WaitingRoom                waitingRoom;
+    private InventoryDepository        inventoryDepository;
+    private MailSender                 mailSender;
+    private TickEventCaller            tickEventCaller;
     
     private int pingerTaskId;
     private int sessionManagerTaskId;
     private int tickEventCallerTaskId;
     private int accountWatcherTaskId;
     private int backupManagerTaskId;
-    
-    private List<String> storageColumns;
 }

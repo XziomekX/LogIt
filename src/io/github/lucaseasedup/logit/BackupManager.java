@@ -19,31 +19,41 @@
 package io.github.lucaseasedup.logit;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
+import io.github.lucaseasedup.logit.db.LogItTable;
 import io.github.lucaseasedup.logit.db.SqliteDatabase;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * This class runs a scheduled backup and provides
+ * methods for manual backup.
+ * 
  * @author LucasEasedUp
  */
 public class BackupManager implements Runnable
 {
-    public BackupManager(LogItCore core, AbstractRelationalDatabase database)
+    /**
+     * Sets up a new backup manager.
+     * 
+     * @param core The LogIt core.
+     * @param accounts Account table.
+     */
+    public BackupManager(LogItCore core, LogItTable accounts)
     {
         timer = new Timer(40L);
         timer.start();
         
         this.core = core;
-        this.database = database;
+        this.accounts = accounts;
     }
     
     @Override
@@ -58,7 +68,7 @@ public class BackupManager implements Runnable
         {
             try
             {
-                createBackup(database);
+                createBackup();
                 
                 core.log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS"));
             }
@@ -72,14 +82,7 @@ public class BackupManager implements Runnable
         }
     }
     
-    /**
-     * Creates a backup of the provided database.
-     * 
-     * @param database Database to be backed up.
-     * @throws IOException
-     * @throws SQLException
-     */
-    public void createBackup(AbstractRelationalDatabase database) throws IOException, SQLException
+    public void createBackup() throws IOException, SQLException
     {
         Date             date = new Date();
         SimpleDateFormat sdf  = new SimpleDateFormat(core.getConfig().getString("backup.filename-format"));
@@ -94,39 +97,33 @@ public class BackupManager implements Runnable
         try (SqliteDatabase backupDatabase = new SqliteDatabase("jdbc:sqlite:" + backupFile))
         {
             backupDatabase.connect();
-            backupDatabase.createTable(core.getConfig().getString("storage.accounts.table"), core.getStorageColumns());
             
-            try (ResultSet rs = database.select(core.getConfig().getString("storage.accounts.table"), new String[]{"*"}))
+            LogItTable backupTable = new LogItTable(backupDatabase, accounts.getTableName(),
+                    core.getConfig().getConfigurationSection("storage.accounts.columns"));
+            backupTable.open();
+            
+            List<Map<String, String>> rs = accounts.select();
+            
+            for (Map<String, String> m : rs)
             {
-                while (rs.next())
-                {
-                    backupDatabase.insert(core.getConfig().getString("storage.accounts.table"), new String[]{
-                        core.getConfig().getString("storage.accounts.columns.username"),
-                        core.getConfig().getString("storage.accounts.columns.salt"),
-                        core.getConfig().getString("storage.accounts.columns.password"),
-                        core.getConfig().getString("storage.accounts.columns.ip"),
-                        core.getConfig().getString("storage.accounts.columns.last_active")
-                    }, new String[]{
-                        rs.getString(core.getConfig().getString("storage.accounts.columns.username")),
-                        rs.getString(core.getConfig().getString("storage.accounts.columns.salt")),
-                        rs.getString(core.getConfig().getString("storage.accounts.columns.password")),
-                        rs.getString(core.getConfig().getString("storage.accounts.columns.ip")),
-                        rs.getString(core.getConfig().getString("storage.accounts.columns.last_active"))
-                    });
-                }
+                backupTable.insert(new String[]{
+                    "logit.accounts.username",
+                    "logit.accounts.salt",
+                    "logit.accounts.password",
+                    "logit.accounts.ip",
+                    "logit.accounts.last_active",
+                }, new String[]{
+                    m.get("logit.accounts.username"),
+                    m.get("logit.accounts.salt"),
+                    m.get("logit.accounts.password"),
+                    m.get("logit.accounts.ip"),
+                    m.get("logit.accounts.last_active"),
+                });
             }
         }
     }
     
-    /**
-     * Restores a backup with the specified filename in the directory specified in the config.
-     * 
-     * @param database Database to be affected by the backup.
-     * @param filename Backup filename.
-     * @throws FileNotFoundException Thrown if the backup does not exist.
-     * @throws SQLException
-     */
-    public void restoreBackup(AbstractRelationalDatabase database, String filename) throws FileNotFoundException, SQLException
+    public void restoreBackup(String filename) throws FileNotFoundException, SQLException
     {
         File backupFile = getBackup(filename);
         
@@ -134,29 +131,30 @@ public class BackupManager implements Runnable
         {
             backupDatabase.connect();
             
-            // Clear the table before restoring.
-            database.truncateTable(core.getConfig().getString("storage.accounts.table"));
+            LogItTable backupTable = new LogItTable(backupDatabase, accounts.getTableName(),
+                    core.getConfig().getConfigurationSection("storage.accounts.columns"));
+            backupTable.open();
             
-            try (ResultSet rs = backupDatabase.select(core.getConfig().getString("storage.accounts.table"), new String[]{"*"}))
+            // Clear the table before restoring.
+            accounts.truncate();
+            
+            List<Map<String, String>> rs = backupTable.select();
+            
+            for (Map<String, String> m : rs)
             {
-                assert rs.getMetaData().getColumnCount() == 1;
-                
-                while (rs.next())
-                {
-                    database.insert(core.getConfig().getString("storage.accounts.table"), new String[]{
-                        core.getConfig().getString("storage.accounts.columns.username"),
-                        core.getConfig().getString("storage.accounts.columns.salt"),
-                        core.getConfig().getString("storage.accounts.columns.password"),
-                        core.getConfig().getString("storage.accounts.columns.ip"),
-                        core.getConfig().getString("storage.accounts.columns.last_active")
-                    }, new String[]{
-                        rs.getString(core.getConfig().getString("storage.accounts.columns.username")),
-                        rs.getString(core.getConfig().getString("storage.accounts.columns.salt")),
-                        rs.getString(core.getConfig().getString("storage.accounts.columns.password")),
-                        rs.getString(core.getConfig().getString("storage.accounts.columns.ip")),
-                        rs.getString(core.getConfig().getString("storage.accounts.columns.last_active"))
-                    });
-                }
+                accounts.insert(new String[]{
+                    "logit.accounts.username",
+                    "logit.accounts.salt",
+                    "logit.accounts.password",
+                    "logit.accounts.ip",
+                    "logit.accounts.last_active",
+                }, new String[]{
+                    m.get("logit.accounts.username"),
+                    m.get("logit.accounts.salt"),
+                    m.get("logit.accounts.password"),
+                    m.get("logit.accounts.ip"),
+                    m.get("logit.accounts.last_active"),
+                });
             }
         }
     }
@@ -215,6 +213,6 @@ public class BackupManager implements Runnable
     }
     
     private final LogItCore core;
-    private final AbstractRelationalDatabase database;
+    private final LogItTable accounts;
     private final Timer timer;
 }

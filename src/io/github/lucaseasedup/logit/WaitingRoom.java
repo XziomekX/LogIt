@@ -18,10 +18,13 @@
  */
 package io.github.lucaseasedup.logit;
 
-import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
-import java.sql.ResultSet;
+import io.github.lucaseasedup.logit.db.LogItTable;
+import io.github.lucaseasedup.logit.db.SetClause;
+import io.github.lucaseasedup.logit.db.WhereClause;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
@@ -35,11 +38,10 @@ import org.bukkit.util.Vector;
  */
 public class WaitingRoom
 {
-    public WaitingRoom(LogItCore core, AbstractRelationalDatabase database)
+    public WaitingRoom(LogItCore core, LogItTable accounts)
     {
         this.core     = core;
-        this.database = database;
-        this.table    = core.getConfig().getString("storage.accounts.table");
+        this.accounts = accounts;
     }
     
     /**
@@ -59,10 +61,10 @@ public class WaitingRoom
             core.getAccountManager().saveLocation(player.getName(), player.getLocation());
             player.teleport(getWaitingRoomLocation());
             
-            database.update(table, new String[]{
-                core.getConfig().getString("storage.accounts.columns.username"), "=", player.getName().toLowerCase()
-            }, new String[]{
-                core.getConfig().getString("storage.accounts.columns.in_wr"), "1"
+            accounts.update(new WhereClause[]{
+                new WhereClause("logit.accounts.username", WhereClause.EQUAL, player.getName().toLowerCase()),
+            }, new SetClause[]{
+                new SetClause("logit.accounts.waiting_room", "1"),
             });
         }
         catch (SQLException ex)
@@ -87,10 +89,10 @@ public class WaitingRoom
         {
             player.teleport(core.getAccountManager().getLocation(player.getName()));
             
-            database.update(table, new String[]{
-                core.getConfig().getString("storage.accounts.columns.username"), "=", player.getName().toLowerCase()
-            }, new String[]{
-                core.getConfig().getString("storage.accounts.columns.in_wr"), "0"
+            accounts.update(new WhereClause[]{
+                new WhereClause("logit.accounts.username", WhereClause.EQUAL, player.getName().toLowerCase()),
+            }, new SetClause[]{
+                new SetClause("logit.accounts.waiting_room", "0"),
             });
         }
         catch (SQLException ex)
@@ -103,18 +105,15 @@ public class WaitingRoom
     {
         try
         {
-            ResultSet rs = database.select(table, new String[]{
-                core.getConfig().getString("storage.accounts.columns.username")
-            }, new String[]{
-                core.getConfig().getString("storage.accounts.columns.in_wr"), "=", "1"
+            List<Map<String, String>> rs = accounts.select(new String[]{
+                "logit.accounts.username",
+            }, new WhereClause[]{
+                new WhereClause("logit.accounts.waiting_room", WhereClause.EQUAL, "1"),
             });
             
-            if (!rs.isBeforeFirst())
-                return;
-            
-            while (rs.next())
+            for (Map<String, String> m : rs)
             {
-                remove(getPlayer(rs.getString(core.getConfig().getString("storage.accounts.columns.username"))));
+                remove(getPlayer(m.get("logit.accounts.username")));
             }
         }
         catch (SQLException ex)
@@ -133,18 +132,16 @@ public class WaitingRoom
     {
         try
         {
-            ResultSet rs = database.select(table, new String[]{
-                core.getConfig().getString("storage.accounts.columns.in_wr")
-            }, new String[]{
-                core.getConfig().getString("storage.accounts.columns.username"), "=", player.getName().toLowerCase()
+            List<Map<String, String>> rs = accounts.select(new String[]{
+                "logit.accounts.waiting_room",
+            }, new WhereClause[]{
+                new WhereClause("logit.accounts.username", WhereClause.EQUAL, player.getName().toLowerCase()),
             });
             
-            if (!rs.isBeforeFirst())
+            if (rs.isEmpty())
                 return false;
             
-            rs.next();
-            
-            return rs.getInt(core.getConfig().getString("storage.accounts.columns.in_wr")) != 0;
+            return "1".equals(rs.get(0).get("logit.accounts.waiting_room"));
         }
         catch (SQLException ex)
         {
@@ -187,6 +184,5 @@ public class WaitingRoom
     }
     
     private final LogItCore core;
-    private final AbstractRelationalDatabase database;
-    private final String table;
+    private final LogItTable accounts;
 }

@@ -186,19 +186,82 @@ public final class LogItConfiguration extends PropertyObserver
         addProperty("storage.accounts.mysql.password", STRING, true, "");
         addProperty("storage.accounts.mysql.database", STRING, true, "");
         addProperty("storage.accounts.table", STRING, true, "logit");
-        addProperty("storage.accounts.columns.username", STRING, true, "username");
-        addProperty("storage.accounts.columns.salt", STRING, true, "salt");
-        addProperty("storage.accounts.columns.password", STRING, true, "password");
-        addProperty("storage.accounts.columns.ip", STRING, true, "ip");
-        addProperty("storage.accounts.columns.email", STRING, true, "email");
-        addProperty("storage.accounts.columns.last_active", STRING, true, "last_active");
-        addProperty("storage.accounts.columns.location_world", STRING, true, "location_world");
-        addProperty("storage.accounts.columns.location_x", STRING, true, "location_x");
-        addProperty("storage.accounts.columns.location_y", STRING, true, "location_y");
-        addProperty("storage.accounts.columns.location_z", STRING, true, "location_z");
-        addProperty("storage.accounts.columns.location_yaw", STRING, true, "location_yaw");
-        addProperty("storage.accounts.columns.location_pitch", STRING, true, "location_pitch");
-        addProperty("storage.accounts.columns.in_wr", STRING, true, "in_wr");
+        
+        addProperty("storage.accounts.columns.username.id", STRING, true, "logit.accounts.username");
+        addProperty("storage.accounts.columns.username.name", STRING, true, "username");
+        addProperty("storage.accounts.columns.username.type", STRING, true, "VARCHAR(16)");
+        addProperty("storage.accounts.columns.username.disabled", BOOLEAN, true, false);
+        
+        addProperty("storage.accounts.columns.salt.id", STRING, true, "logit.accounts.salt");
+        addProperty("storage.accounts.columns.salt.name", STRING, true, "salt");
+        addProperty("storage.accounts.columns.salt.type", STRING, true, "VARCHAR(20)");
+        addProperty("storage.accounts.columns.salt.disabled", BOOLEAN, true, false);
+        
+        addProperty("storage.accounts.columns.password.id", STRING, true, "logit.accounts.password");
+        addProperty("storage.accounts.columns.password.name", STRING, true, "password");
+        addProperty("storage.accounts.columns.password.type", STRING, true, "VARCHAR(256)");
+        addProperty("storage.accounts.columns.password.disabled", BOOLEAN, true, false);
+
+        addProperty("storage.accounts.columns.hashing_algorithm.id", STRING, true, "logit.accounts.hashing_algorithm");
+        addProperty("storage.accounts.columns.hashing_algorithm.name", STRING, true, "hashing_algorithm");
+        addProperty("storage.accounts.columns.hashing_algorithm.type", STRING, true, "VARCHAR(16)");
+        addProperty("storage.accounts.columns.hashing_algorithm.disabled", BOOLEAN, true, false);
+        
+        addProperty("storage.accounts.columns.ip.id", STRING, true, "logit.accounts.ip");
+        addProperty("storage.accounts.columns.ip.name", STRING, true, "ip");
+        addProperty("storage.accounts.columns.ip.type", STRING, true, "VARCHAR(64)");
+        addProperty("storage.accounts.columns.ip.disabled", BOOLEAN, true, false);
+        
+        addProperty("storage.accounts.columns.email.id", STRING, true, "logit.accounts.email");
+        addProperty("storage.accounts.columns.email.name", STRING, true, "email");
+        addProperty("storage.accounts.columns.email.type", STRING, true, "VARCHAR(255)");
+        addProperty("storage.accounts.columns.email.disabled", BOOLEAN, true, true);
+        
+        addProperty("storage.accounts.columns.last_active.id", STRING, true, "logit.accounts.last_active");
+        addProperty("storage.accounts.columns.last_active.name", STRING, true, "last_active");
+        addProperty("storage.accounts.columns.last_active.type", STRING, true, "INTEGER");
+        addProperty("storage.accounts.columns.last_active.disabled", BOOLEAN, true, false);
+
+        addProperty("storage.accounts.columns.reg_date.id", STRING, true, "logit.accounts.reg_date");
+        addProperty("storage.accounts.columns.reg_date.name", STRING, true, "reg_date");
+        addProperty("storage.accounts.columns.reg_date.type", STRING, true, "INTEGER");
+        addProperty("storage.accounts.columns.reg_date.disabled", BOOLEAN, true, true);
+        
+        addProperty("storage.accounts.columns.world.id", STRING, true, "logit.accounts.world");
+        addProperty("storage.accounts.columns.world.name", STRING, true, "world");
+        addProperty("storage.accounts.columns.world.type", STRING, true, "VARCHAR(512)");
+        addProperty("storage.accounts.columns.world.disabled", BOOLEAN, true, false);
+
+        addProperty("storage.accounts.columns.x.id", STRING, true, "logit.accounts.x");
+        addProperty("storage.accounts.columns.x.name", STRING, true, "x");
+        addProperty("storage.accounts.columns.x.type", STRING, true, "REAL");
+        addProperty("storage.accounts.columns.x.disabled", BOOLEAN, true, false);
+
+        addProperty("storage.accounts.columns.y.id", STRING, true, "logit.accounts.y");
+        addProperty("storage.accounts.columns.y.name", STRING, true, "y");
+        addProperty("storage.accounts.columns.y.type", STRING, true, "REAL");
+        addProperty("storage.accounts.columns.y.disabled", BOOLEAN, true, false);
+
+        addProperty("storage.accounts.columns.z.id", STRING, true, "logit.accounts.z");
+        addProperty("storage.accounts.columns.z.name", STRING, true, "z");
+        addProperty("storage.accounts.columns.z.type", STRING, true, "REAL");
+        addProperty("storage.accounts.columns.z.disabled", BOOLEAN, true, false);
+
+        addProperty("storage.accounts.columns.yaw.id", STRING, true, "logit.accounts.yaw");
+        addProperty("storage.accounts.columns.yaw.name", STRING, true, "yaw");
+        addProperty("storage.accounts.columns.yaw.type", STRING, true, "REAL");
+        addProperty("storage.accounts.columns.yaw.disabled", BOOLEAN, true, false);
+
+        addProperty("storage.accounts.columns.pitch.id", STRING, true, "logit.accounts.pitch");
+        addProperty("storage.accounts.columns.pitch.name", STRING, true, "pitch");
+        addProperty("storage.accounts.columns.pitch.type", STRING, true, "REAL");
+        addProperty("storage.accounts.columns.pitch.disabled", BOOLEAN, true, false);
+
+        addProperty("storage.accounts.columns.waiting_room.id", STRING, true, "logit.accounts.waiting_room");
+        addProperty("storage.accounts.columns.waiting_room.name", STRING, true, "waiting_room");
+        addProperty("storage.accounts.columns.waiting_room.type", STRING, true, "INTEGER");
+        addProperty("storage.accounts.columns.waiting_room.disabled", BOOLEAN, true, false);
+        
         addProperty("storage.inventories.filename", STRING, true, "inventories.db");
         addProperty("storage.sessions.filename", STRING, false, "sessions.db");
         

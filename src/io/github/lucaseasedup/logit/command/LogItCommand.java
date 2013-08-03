@@ -22,6 +22,7 @@ import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyType;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -169,7 +170,7 @@ public class LogItCommand extends AbstractCommandExecutor
                 {
                     try
                     {
-                        core.getBackupManager().createBackup(core.getDatabase());
+                        core.getBackupManager().createBackup();
 
                         if (p != null)
                             sender.sendMessage(getMessage("CREATE_BACKUP_SUCCESS"));
@@ -200,9 +201,18 @@ public class LogItCommand extends AbstractCommandExecutor
                     try
                     {
                         if (filename != null)
-                            core.getBackupManager().restoreBackup(core.getDatabase(), filename);
+                        {
+                            core.getBackupManager().restoreBackup(filename);
+                        }
                         else
-                            core.getBackupManager().restoreBackup(core.getDatabase());
+                        {
+                            File[] backups = core.getBackupManager().getBackups(true);
+                            
+                            if (backups.length == 0)
+                                throw new FileNotFoundException();
+                            
+                            core.getBackupManager().restoreBackup(backups[backups.length - 1].getName());
+                        }
                         
                         core.getAccountManager().loadAccounts();
                         

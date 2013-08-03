@@ -199,20 +199,90 @@ storage:
     # In case of CSV database it is the database path
     table: logit
     
+    #
+    # Each column definition has four properties:
+    # - id: tells LogIt what will the column be used for
+    # - name: is what you see in the database
+    # - type: SQL type of the column
+    # - disabled: when set to true LogIt will not
+    #     create/read/write the column
+    #
     columns:
-      username: username
-      salt: salt
-      password: password
-      ip: ip
-      email: email
-      last_active: last_active
-      location_world: location_world
-      location_x: location_x
-      location_y: location_y
-      location_z: location_z
-      location_yaw: location_yaw
-      location_pitch: location_pitch
-      in_wr: in_wr
+      username:
+        id: logit.accounts.username
+        name: username
+        type: 'VARCHAR(16)'
+        disabled: false
+      salt:
+        id: logit.accounts.salt
+        name: salt
+        type: 'VARCHAR(20)'
+        disabled: false
+      password:
+        id: logit.accounts.password
+        name: password
+        type: 'VARCHAR(256)'
+        disabled: false
+      hashing_algorithm:
+        id: logit.accounts.hashing_algorithm
+        name: hashing_algorithm
+        type: 'VARCHAR(16)'
+        disabled: false
+      ip:
+        id: logit.accounts.ip
+        name: ip
+        type: 'VARCHAR(64)'
+        disabled: false
+      email:
+        id: logit.accounts.email
+        name: email
+        type: 'VARCHAR(255)'
+        disabled: false
+      last_active:
+        id: logit.accounts.last_active
+        name: last_active
+        type: 'INTEGER'
+        disabled: false
+      reg_date:
+        id: logit.accounts.reg_date
+        name: reg_date
+        type: 'INTEGER'
+        disabled: true
+      world:
+        id: logit.accounts.world
+        name: world
+        type: 'VARCHAR(512)'
+        disabled: false
+      x:
+        id: logit.accounts.x
+        name: x
+        type: 'REAL'
+        disabled: false
+      y:
+        id: logit.accounts.y
+        name: y
+        type: 'REAL'
+        disabled: false
+      z:
+        id: logit.accounts.z
+        name: z
+        type: 'REAL'
+        disabled: false
+      yaw:
+        id: logit.accounts.yaw
+        name: yaw
+        type: 'REAL'
+        disabled: false
+      pitch:
+        id: logit.accounts.pitch
+        name: pitch
+        type: 'REAL'
+        disabled: false
+      waiting_room:
+        id: logit.accounts.waiting_room
+        name: waiting_room
+        type: 'INTEGER'
+        disabled: false
   
   # This SQLite database stores player inventories
   # In case your server crashes, it will restore inventories
