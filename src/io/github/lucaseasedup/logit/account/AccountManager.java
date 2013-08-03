@@ -24,8 +24,8 @@ import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
 import io.github.lucaseasedup.logit.LogItCore.IntegrationType;
-import io.github.lucaseasedup.logit.db.LogItTable;
 import io.github.lucaseasedup.logit.db.SetClause;
+import io.github.lucaseasedup.logit.db.Table;
 import io.github.lucaseasedup.logit.db.WhereClause;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
 import java.net.InetAddress;
@@ -49,7 +49,7 @@ import org.bukkit.Location;
  */
 public class AccountManager
 {
-    public AccountManager(LogItCore core, LogItTable accounts)
+    public AccountManager(LogItCore core, Table accounts)
     {
         this.core     = core;
         this.accounts = accounts;
@@ -536,7 +536,7 @@ public class AccountManager
     }
     
     private final LogItCore core;
-    private final LogItTable accounts;
+    private final Table accounts;
     
     private final HashMap<String, String> cSalt = new HashMap<>();
     private final HashMap<String, String> cPassword = new HashMap<>();

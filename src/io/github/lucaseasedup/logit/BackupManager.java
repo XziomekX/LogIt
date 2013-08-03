@@ -19,8 +19,8 @@
 package io.github.lucaseasedup.logit;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import io.github.lucaseasedup.logit.db.LogItTable;
 import io.github.lucaseasedup.logit.db.SqliteDatabase;
+import io.github.lucaseasedup.logit.db.Table;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class BackupManager implements Runnable
      * @param core The LogIt core.
      * @param accounts Account table.
      */
-    public BackupManager(LogItCore core, LogItTable accounts)
+    public BackupManager(LogItCore core, Table accounts)
     {
         timer = new Timer(40L);
         timer.start();
@@ -98,7 +98,7 @@ public class BackupManager implements Runnable
         {
             backupDatabase.connect();
             
-            LogItTable backupTable = new LogItTable(backupDatabase, accounts.getTableName(),
+            Table backupTable = new Table(backupDatabase, accounts.getTableName(),
                     core.getConfig().getConfigurationSection("storage.accounts.columns"));
             backupTable.open();
             
@@ -131,7 +131,7 @@ public class BackupManager implements Runnable
         {
             backupDatabase.connect();
             
-            LogItTable backupTable = new LogItTable(backupDatabase, accounts.getTableName(),
+            Table backupTable = new Table(backupDatabase, accounts.getTableName(),
                     core.getConfig().getConfigurationSection("storage.accounts.columns"));
             backupTable.open();
             
@@ -213,6 +213,6 @@ public class BackupManager implements Runnable
     }
     
     private final LogItCore core;
-    private final LogItTable accounts;
+    private final Table accounts;
     private final Timer timer;
 }

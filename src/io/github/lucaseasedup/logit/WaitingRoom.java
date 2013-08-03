@@ -19,8 +19,8 @@
 package io.github.lucaseasedup.logit;
 
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
-import io.github.lucaseasedup.logit.db.LogItTable;
 import io.github.lucaseasedup.logit.db.SetClause;
+import io.github.lucaseasedup.logit.db.Table;
 import io.github.lucaseasedup.logit.db.WhereClause;
 import java.sql.SQLException;
 import java.util.List;
@@ -38,7 +38,7 @@ import org.bukkit.util.Vector;
  */
 public class WaitingRoom
 {
-    public WaitingRoom(LogItCore core, LogItTable accounts)
+    public WaitingRoom(LogItCore core, Table accounts)
     {
         this.core     = core;
         this.accounts = accounts;
@@ -184,5 +184,5 @@ public class WaitingRoom
     }
     
     private final LogItCore core;
-    private final LogItTable accounts;
+    private final Table accounts;
 }

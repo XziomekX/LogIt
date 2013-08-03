@@ -1,5 +1,5 @@
 /*
- * LogItTable.java
+ * Table.java
  *
  * Copyright (C) 2012-2013 LucasEasedUp
  *
@@ -29,9 +29,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.configuration.ConfigurationSection;
 
-public final class LogItTable
+public final class Table
 {
-    public LogItTable(AbstractRelationalDatabase database, String name, ConfigurationSection columnsSection)
+    public Table(AbstractRelationalDatabase database, String name, ConfigurationSection columnsSection)
     {
         this.database = database;
         this.table = name;

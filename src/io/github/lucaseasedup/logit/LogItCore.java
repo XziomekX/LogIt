@@ -43,10 +43,10 @@ import io.github.lucaseasedup.logit.config.LogItConfiguration;
 import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
 import io.github.lucaseasedup.logit.db.CsvDatabase;
 import io.github.lucaseasedup.logit.db.H2Database;
-import io.github.lucaseasedup.logit.db.LogItTable;
 import io.github.lucaseasedup.logit.db.MySqlDatabase;
 import io.github.lucaseasedup.logit.db.Pinger;
 import io.github.lucaseasedup.logit.db.SqliteDatabase;
+import io.github.lucaseasedup.logit.db.Table;
 import io.github.lucaseasedup.logit.hash.BCrypt;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
 import io.github.lucaseasedup.logit.inventory.InventoryDepository;
@@ -208,7 +208,7 @@ public final class LogItCore
         }
         
         pinger = new Pinger(database);
-        accountTable = new LogItTable(database, config.getString("storage.accounts.table"),
+        accountTable = new Table(database, config.getString("storage.accounts.table"),
                 config.getConfigurationSection("storage.accounts.columns"));
         
         try
@@ -725,7 +725,7 @@ public final class LogItCore
         plugin.getLogger().log(level, stripColor(message));
     }
     
-    public LogItTable getAccountTable()
+    public Table getAccountTable()
     {
         return accountTable;
     }
@@ -924,7 +924,7 @@ public final class LogItCore
     
     private LogItConfiguration         config;
     private AbstractRelationalDatabase database;
-    private LogItTable                 accountTable;
+    private Table                 accountTable;
     private Pinger                     pinger;
     private Permission                 permissions;
     private SessionManager             sessionManager;
