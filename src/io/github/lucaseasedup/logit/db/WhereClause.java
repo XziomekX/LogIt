@@ -27,10 +27,6 @@ public final class WhereClause
         this.value = value;
     }
     
-    public static final String EQUAL = "=";
-    public static final String LESS_THAN = "<";
-    public static final String GREATER_THAN = ">";
-    
     public String getColumnId()
     {
         return columnId;
@@ -45,6 +41,10 @@ public final class WhereClause
     {
         return value;
     }
+
+    public static final String EQUAL = "=";
+    public static final String LESS_THAN = "<";
+    public static final String GREATER_THAN = ">";
     
     private final String columnId;
     private final String operator;
