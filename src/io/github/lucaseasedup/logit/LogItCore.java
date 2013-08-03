@@ -698,48 +698,7 @@ public final class LogItCore
     
     public HashingAlgorithm getHashingAlgorithm()
     {
-        String s = plugin.getConfig().getString("password.hashing-algorithm");
-        
-        if (s.equalsIgnoreCase("plain"))
-        {
-            return HashingAlgorithm.PLAIN;
-        }
-        else if (s.equalsIgnoreCase("md2"))
-        {
-            return HashingAlgorithm.MD2;
-        }
-        else if (s.equalsIgnoreCase("md5"))
-        {
-            return HashingAlgorithm.MD5;
-        }
-        else if (s.equalsIgnoreCase("sha-1"))
-        {
-            return HashingAlgorithm.SHA1;
-        }
-        else if (s.equalsIgnoreCase("sha-256"))
-        {
-            return HashingAlgorithm.SHA256;
-        }
-        else if (s.equalsIgnoreCase("sha-384"))
-        {
-            return HashingAlgorithm.SHA384;
-        }
-        else if (s.equalsIgnoreCase("sha-512"))
-        {
-            return HashingAlgorithm.SHA512;
-        }
-        else if (s.equalsIgnoreCase("whirlpool"))
-        {
-            return HashingAlgorithm.WHIRLPOOL;
-        }
-        else if (s.equalsIgnoreCase("bcrypt"))
-        {
-            return HashingAlgorithm.BCRYPT;
-        }
-        else
-        {
-            return HashingAlgorithm.UNKNOWN;
-        }
+        return HashingAlgorithm.decode(plugin.getConfig().getString("password.hashing-algorithm"));
     }
     
     public IntegrationType getIntegration()
