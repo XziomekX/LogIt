@@ -72,6 +72,11 @@ public abstract class Database implements AutoCloseable
         autobatch = status;
     }
     
+    public String getHost()
+    {
+        return host;
+    }
+    
     protected boolean autobatch = false;
     protected final String host;
 }
