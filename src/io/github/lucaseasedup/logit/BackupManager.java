@@ -169,7 +169,7 @@ public class BackupManager implements Runnable
      */
     public void removeBackups(int amount) throws IOException
     {
-        File[] backups = getBackups();
+        File[] backups = getBackups(true);
         
         for (int i = 0; i < amount; i++)
         {
@@ -180,7 +180,7 @@ public class BackupManager implements Runnable
         }
     }
     
-    public File[] getBackups()
+    public File[] getBackups(boolean sortAlphabetically)
     {
         File   backupPath = new File(core.getPlugin().getDataFolder(), core.getConfig().getString("backup.path"));
         File[] backups = backupPath.listFiles();
@@ -188,8 +188,10 @@ public class BackupManager implements Runnable
         if (backups == null)
             return new File[0];
         
-        // Sort backups alphabetically.
-        Arrays.sort(backups);
+        if (sortAlphabetically)
+        {
+            Arrays.sort(backups);
+        }
         
         return backups;
     }
