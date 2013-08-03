@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.db;
 
+import com.google.common.collect.ImmutableList;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -241,7 +242,7 @@ public class Table
     
     private List<Map<String, String>> copyResultSet(ResultSet rs, Set<String> columns) throws SQLException
     {
-        List<Map<String, String>> result = new ArrayList<>();
+        ImmutableList.Builder<Map<String, String>> result = new ImmutableList.Builder<>();
         
         if (rs.isBeforeFirst())
         {
@@ -260,7 +261,7 @@ public class Table
             rs.close();
         }
         
-        return result;
+        return result.build();
     }
     
     private final Database database;
