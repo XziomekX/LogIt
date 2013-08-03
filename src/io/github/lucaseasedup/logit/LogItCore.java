@@ -838,11 +838,6 @@ public final class LogItCore
         return sessionManager;
     }
     
-    public boolean isFirstRun()
-    {
-        return firstRun;
-    }
-    
     public LogItPlugin getPlugin()
     {
         return plugin;
@@ -851,6 +846,11 @@ public final class LogItCore
     public LogItConfiguration getConfig()
     {
         return config;
+    }
+    
+    public boolean isFirstRun()
+    {
+        return firstRun;
     }
     
     public boolean isLoaded()
