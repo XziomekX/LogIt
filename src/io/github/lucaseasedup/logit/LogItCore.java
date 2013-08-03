@@ -920,7 +920,79 @@ public final class LogItCore
     
     public static enum HashingAlgorithm
     {
-        UNKNOWN, PLAIN, MD2, MD5, SHA1, SHA256, SHA384, SHA512, WHIRLPOOL, BCRYPT
+        UNKNOWN, PLAIN, MD2, MD5, SHA1, SHA256, SHA384, SHA512, WHIRLPOOL, BCRYPT;
+        
+        public static HashingAlgorithm decode(String s)
+        {
+            if (s.equalsIgnoreCase("plain"))
+            {
+                return HashingAlgorithm.PLAIN;
+            }
+            else if (s.equalsIgnoreCase("md2"))
+            {
+                return HashingAlgorithm.MD2;
+            }
+            else if (s.equalsIgnoreCase("md5"))
+            {
+                return HashingAlgorithm.MD5;
+            }
+            else if (s.equalsIgnoreCase("sha-1"))
+            {
+                return HashingAlgorithm.SHA1;
+            }
+            else if (s.equalsIgnoreCase("sha-256"))
+            {
+                return HashingAlgorithm.SHA256;
+            }
+            else if (s.equalsIgnoreCase("sha-384"))
+            {
+                return HashingAlgorithm.SHA384;
+            }
+            else if (s.equalsIgnoreCase("sha-512"))
+            {
+                return HashingAlgorithm.SHA512;
+            }
+            else if (s.equalsIgnoreCase("whirlpool"))
+            {
+                return HashingAlgorithm.WHIRLPOOL;
+            }
+            else if (s.equalsIgnoreCase("bcrypt"))
+            {
+                return HashingAlgorithm.BCRYPT;
+            }
+            else
+            {
+                return HashingAlgorithm.UNKNOWN;
+            }
+        }
+        
+        public String encode()
+        {
+            switch (this)
+            {
+            case PLAIN:
+                return "plain";
+            case MD2:
+                return "md2";
+            case MD5:
+                return "md5";
+            case SHA1:
+                return "sha-1";
+            case SHA256:
+                return "sha-256";
+            case SHA384:
+                return "sha-384";
+            case SHA512:
+                return "sha-512";
+            case WHIRLPOOL:
+                return "whirlpool";
+            case BCRYPT:
+                return "bcrypt";
+            case UNKNOWN:
+            default:
+                return null;
+            }
+        }
     }
     
     public static enum IntegrationType
