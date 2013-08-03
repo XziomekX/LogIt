@@ -31,10 +31,10 @@ import org.bukkit.configuration.ConfigurationSection;
 
 public class Table
 {
-    public Table(Database database, String name, ConfigurationSection columnsSection)
+    public Table(Database database, String tableName, ConfigurationSection columnsSection)
     {
         this.database = database;
-        this.table = name;
+        this.table = tableName;
         
         for (String s : columnsSection.getKeys(false))
         {
