@@ -18,14 +18,14 @@
  */
 package io.github.lucaseasedup.logit.session;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import io.github.lucaseasedup.logit.account.AccountManager;
-import io.github.lucaseasedup.logit.db.SqliteDatabase;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerName;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
+import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.account.AccountManager;
+import io.github.lucaseasedup.logit.db.SqliteDatabase;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;

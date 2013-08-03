@@ -18,11 +18,11 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
+import io.github.lucaseasedup.logit.LogItCore;
 import java.util.HashMap;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;

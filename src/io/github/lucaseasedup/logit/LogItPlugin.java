@@ -18,21 +18,6 @@
  */
 package io.github.lucaseasedup.logit;
 
-import io.github.lucaseasedup.logit.craftreflect.CraftReflect;
-import io.github.lucaseasedup.logit.util.FileUtils;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.util.MissingResourceException;
-import java.util.PropertyResourceBundle;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.bukkit.Bukkit;
 import static org.bukkit.ChatColor.AQUA;
 import static org.bukkit.ChatColor.BLACK;
 import static org.bukkit.ChatColor.BLUE;
@@ -55,6 +40,21 @@ import static org.bukkit.ChatColor.STRIKETHROUGH;
 import static org.bukkit.ChatColor.UNDERLINE;
 import static org.bukkit.ChatColor.WHITE;
 import static org.bukkit.ChatColor.YELLOW;
+import io.github.lucaseasedup.logit.craftreflect.CraftReflect;
+import io.github.lucaseasedup.logit.util.FileUtils;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.util.MissingResourceException;
+import java.util.PropertyResourceBundle;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**

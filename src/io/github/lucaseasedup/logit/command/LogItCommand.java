@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyType;
 import java.io.FileNotFoundException;

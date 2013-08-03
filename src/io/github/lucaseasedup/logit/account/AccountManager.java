@@ -20,9 +20,9 @@ package io.github.lucaseasedup.logit.account;
 
 import static io.github.lucaseasedup.logit.GeneralResult.FAILURE;
 import static io.github.lucaseasedup.logit.GeneralResult.SUCCESS;
+import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCore.IntegrationType;
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.db.AbstractRelationalDatabase;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
 import java.net.InetAddress;

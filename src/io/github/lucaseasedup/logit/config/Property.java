@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;

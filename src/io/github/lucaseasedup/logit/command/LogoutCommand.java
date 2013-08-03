@@ -18,10 +18,10 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
+import io.github.lucaseasedup.logit.LogItCore;
 import java.util.logging.Level;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

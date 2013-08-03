@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.util;
 
-import com.onarandombox.MultiverseCore.MultiverseCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import com.onarandombox.MultiverseCore.MultiverseCore;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;

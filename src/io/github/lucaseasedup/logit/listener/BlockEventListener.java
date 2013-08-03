@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.listener;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendForceLoginMessage;
+import io.github.lucaseasedup.logit.LogItCore;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;

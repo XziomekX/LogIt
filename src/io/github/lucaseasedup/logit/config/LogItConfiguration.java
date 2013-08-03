@@ -18,21 +18,19 @@
  */
 package io.github.lucaseasedup.logit.config;
 
-import io.github.lucaseasedup.logit.LogItPlugin;
 import static io.github.lucaseasedup.logit.config.PropertyType.BOOLEAN;
 import static io.github.lucaseasedup.logit.config.PropertyType.DOUBLE;
 import static io.github.lucaseasedup.logit.config.PropertyType.INT;
 import static io.github.lucaseasedup.logit.config.PropertyType.STRING;
 import static io.github.lucaseasedup.logit.config.PropertyType.STRING_LIST;
 import static io.github.lucaseasedup.logit.config.PropertyType.VECTOR;
-
+import io.github.lucaseasedup.logit.LogItPlugin;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-
 import org.bukkit.Color;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;

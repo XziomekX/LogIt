@@ -18,22 +18,24 @@
  */
 package io.github.lucaseasedup.logit.listener;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import io.github.lucaseasedup.logit.inventory.InventorySerializationException;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastJoinMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastQuitMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendForceLoginMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
+import static org.bukkit.event.EventPriority.HIGHEST;
+import static org.bukkit.event.EventPriority.LOWEST;
+import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_FULL;
+import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
+import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.inventory.InventorySerializationException;
 import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import static org.bukkit.event.EventPriority.HIGHEST;
-import static org.bukkit.event.EventPriority.LOWEST;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -42,8 +44,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
-import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_FULL;
-import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;

@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.listener;
 
+import static org.bukkit.event.EventPriority.HIGHEST;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.inventory.InventorySerializationException;
 import java.io.File;
@@ -27,7 +28,6 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import static org.bukkit.event.EventPriority.HIGHEST;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 

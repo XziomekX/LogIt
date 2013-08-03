@@ -18,18 +18,18 @@
  */
 package io.github.lucaseasedup.logit.listener;
 
-import io.github.lucaseasedup.logit.LogItCore;
-import io.github.lucaseasedup.logit.inventory.InventorySerializationException;
-import io.github.lucaseasedup.logit.session.SessionEndEvent;
-import io.github.lucaseasedup.logit.session.SessionStartEvent;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastJoinMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastQuitMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
+import static org.bukkit.event.EventPriority.LOWEST;
+import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.inventory.InventorySerializationException;
+import io.github.lucaseasedup.logit.session.SessionEndEvent;
+import io.github.lucaseasedup.logit.session.SessionStartEvent;
 import java.util.logging.Level;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import static org.bukkit.event.EventPriority.LOWEST;
 
 /**
  * @author LucasEasedUp

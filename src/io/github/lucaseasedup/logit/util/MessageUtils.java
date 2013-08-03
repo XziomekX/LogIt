@@ -19,8 +19,8 @@
 package io.github.lucaseasedup.logit.util;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import io.github.lucaseasedup.logit.account.AccountManager;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
+import io.github.lucaseasedup.logit.account.AccountManager;
 import java.util.Arrays;
 import java.util.List;
 import org.bukkit.Bukkit;

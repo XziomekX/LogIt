@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import io.github.lucaseasedup.logit.LogItCore;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
