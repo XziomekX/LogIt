@@ -29,7 +29,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.configuration.ConfigurationSection;
 
-public final class Table
+public class Table
 {
     public Table(Database database, String name, ConfigurationSection columnsSection)
     {
