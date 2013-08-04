@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.db;
 
+import java.util.List;
 import io.github.lucaseasedup.logit.CaseInsensitiveArrayList;
 import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.sql.Connection;
@@ -84,10 +85,10 @@ public class MySqlDatabase extends Database
     }
     
     @Override
-    public ArrayList<String> getColumnNames(String table) throws SQLException
+    public List<String> getColumnNames(String table) throws SQLException
     {
         ResultSet tableInfo = executeQuery("DESCRIBE `" + SqlUtils.escapeQuotes(table, "`", true) + "`;");
-        ArrayList<String> columnNames = new CaseInsensitiveArrayList<>();
+        List<String> columnNames = new CaseInsensitiveArrayList<>();
         
         while (tableInfo.next())
         {

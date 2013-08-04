@@ -55,12 +55,12 @@ public class CsvDatabase extends Database
     }
     
     @Override
-    public ArrayList<String> getColumnNames(String table) throws SQLException
+    public List<String> getColumnNames(String table) throws SQLException
     {
         if (!connected)
             throw new SQLException("Database closed.");
         
-        ArrayList<String> columnNames = new CaseInsensitiveArrayList<>();
+        List<String> columnNames = new CaseInsensitiveArrayList<>();
         
         try (BufferedReader br = new BufferedReader(new FileReader(new File(dir, table))))
         {
@@ -224,7 +224,7 @@ public class CsvDatabase extends Database
         if (!connected)
             throw new SQLException("Database closed.");
         
-        ArrayList<String> columnNames = getColumnNames(table);
+        List<String> columnNames = getColumnNames(table);
         
         if (columnNames.contains(name))
             throw new SQLException("Column with this name already exists: " + name);
@@ -323,7 +323,7 @@ public class CsvDatabase extends Database
         if (!connected)
             throw new SQLException("Database closed.");
         
-        ArrayList<String> columnNames = getColumnNames(table);
+        List<String> columnNames = getColumnNames(table);
         CsvResultSet rs = (CsvResultSet) select(table, columnListToArray(columnNames, false));
         
         createTable(table, columnListToArray(columnNames, true));
@@ -360,7 +360,7 @@ public class CsvDatabase extends Database
         if (!connected)
             throw new SQLException("Database closed.");
         
-        ArrayList<String> columnNames = getColumnNames(table);
+        List<String> columnNames = getColumnNames(table);
         CsvResultSet rs = (CsvResultSet) select(table, columnListToArray(columnNames, false));
         
         createTable(table, columnListToArray(columnNames, true));
@@ -408,7 +408,7 @@ public class CsvDatabase extends Database
         return connected;
     }
     
-    protected String[] columnListToArray(ArrayList<String> columnList, boolean precedeType)
+    protected String[] columnListToArray(List<String> columnList, boolean precedeType)
     {
         if (precedeType)
         {

@@ -40,7 +40,7 @@ public abstract class Database implements AutoCloseable
     @Override
     public abstract void close() throws SQLException;
     
-    public abstract ArrayList<String> getColumnNames(String table) throws SQLException;
+    public abstract List<String> getColumnNames(String table) throws SQLException;
     public abstract ResultSet select(String table, String[] columns) throws SQLException;
     public abstract ResultSet select(String table, String[] columns, String[] where) throws SQLException;
     
