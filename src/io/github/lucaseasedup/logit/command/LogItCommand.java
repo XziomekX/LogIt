@@ -430,8 +430,7 @@ public class LogItCommand extends AbstractCommandExecutor
                         switch (type)
                         {
                         case OBJECT:
-                            outputValue = inputValue;
-                            break;
+                            throw new Exception("Unsupported property type conversion.");
                         case BOOLEAN:
                             outputValue = Boolean.valueOf(inputValue);
                             break;
