@@ -129,6 +129,10 @@ public class LogItCommand extends AbstractCommandExecutor
                 {
                     sender.sendMessage(getLogItSubcommandHelp("config set", "<path> <value>"));
                 }
+                if (p == null || p.hasPermission("logit.config.list"))
+                {
+                    sender.sendMessage(getLogItSubcommandHelp("config list", "[page]"));
+                }
             }
         }
         else if (subcommand.equalsIgnoreCase("version") && args.length == 1)
