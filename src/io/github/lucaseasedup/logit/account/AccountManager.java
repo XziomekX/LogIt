@@ -385,14 +385,15 @@ public class AccountManager
     }
     
     /**
-     * Returns number of accounts with the given IP. If "ip" is an empty string, the returned value is 0.
+     * Returns number of accounts with the given IP.
+     * If "ip" is null or an empty string, the returned value is 0.
      * 
      * @param ip IP address.
      * @return Number of accounts with the given IP.
      */
     public int countAccountsWithIp(String ip)
     {
-        if (ip.isEmpty())
+        if (ip == null || ip.isEmpty())
             return 0;
         
         return Collections.frequency(cIp.values(), ip);
