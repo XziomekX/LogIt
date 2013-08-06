@@ -535,7 +535,7 @@ public class LogItCommand extends AbstractCommandExecutor
                             }));
                         }
                         
-                        if (core.getConfig().getProperty(args[2]).changeRequiresRestart())
+                        if (core.getConfig().getProperty(args[2]).requiresRestart())
                         {
                             sender.sendMessage(getMessage("CONFIG_RELOAD_PLUGIN"));
                         }

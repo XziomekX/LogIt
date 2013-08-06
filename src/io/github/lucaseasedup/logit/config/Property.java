@@ -32,11 +32,11 @@ import org.bukkit.util.Vector;
  */
 public class Property extends Observable
 {
-    public Property(String path, PropertyType type, boolean changeRequiresRestart, Object value, Object[] validValues)
+    public Property(String path, PropertyType type, boolean requiresRestart, Object value, Object[] validValues)
     {
         this.path = path;
         this.type = type;
-        this.changeRequiresRestart = changeRequiresRestart;
+        this.requiresRestart = requiresRestart;
         this.value = value;
         this.validValues = validValues;
     }
@@ -56,9 +56,9 @@ public class Property extends Observable
         return type;
     }
     
-    public boolean changeRequiresRestart()
+    public boolean requiresRestart()
     {
-        return changeRequiresRestart;
+        return requiresRestart;
     }
     
     @SuppressWarnings("rawtypes")
@@ -219,7 +219,7 @@ public class Property extends Observable
     
     private final String path;
     private final PropertyType type;
-    private final boolean changeRequiresRestart;
+    private final boolean requiresRestart;
     private Object value = null;
     private final Object[] validValues;
 }
