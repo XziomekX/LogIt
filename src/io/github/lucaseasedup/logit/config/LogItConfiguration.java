@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.config;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.IniFile;
+import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItPlugin;
 import it.sauronsoftware.base64.Base64;
 import java.io.File;
