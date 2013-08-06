@@ -59,6 +59,12 @@ public final class LogItConfiguration extends PropertyObserver
         plugin.getConfig().options().header(null);
         
         File userDefFile = new File(plugin.getDataFolder(), "config-def.b64");
+        
+        if (!userDefFile.exists())
+        {
+            FileUtils.extractResource("/config-def.b64", new File(plugin.getDataFolder(), "config-def.b64"));
+        }
+        
         String userDefString = Base64.decode(IOUtils.toString(new FileInputStream(userDefFile)));
         IniFile userDef = new IniFile(userDefString);
         
