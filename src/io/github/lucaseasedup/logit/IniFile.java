@@ -144,6 +144,8 @@ public class IniFile
                 if (m.matches())
                 {
                     section = m.group(1).trim();
+                    
+                    entries.put(section, new LinkedHashMap<String, String>());
                 }
                 else if (section != null)
                 {
@@ -153,9 +155,6 @@ public class IniFile
                     {
                         String key = m.group(1).trim();
                         String value = m.group(2).trim();
-                        
-                        if (!entries.containsKey(section))
-                            entries.put(section, new LinkedHashMap<String, String>());
                         
                         entries.get(section).put(key, value);
                     }
