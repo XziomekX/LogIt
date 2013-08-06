@@ -18,19 +18,19 @@
  */
 package io.github.lucaseasedup.logit.config;
 
-import static io.github.lucaseasedup.logit.config.PropertyType.BOOLEAN;
-import static io.github.lucaseasedup.logit.config.PropertyType.DOUBLE;
-import static io.github.lucaseasedup.logit.config.PropertyType.INT;
-import static io.github.lucaseasedup.logit.config.PropertyType.STRING;
-import static io.github.lucaseasedup.logit.config.PropertyType.STRING_LIST;
-import static io.github.lucaseasedup.logit.config.PropertyType.VECTOR;
+import io.github.lucaseasedup.logit.IniFile;
 import io.github.lucaseasedup.logit.LogItPlugin;
+import it.sauronsoftware.base64.Base64;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
+import org.apache.commons.io.IOUtils;
 import org.bukkit.Color;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -54,221 +54,164 @@ public final class LogItConfiguration extends PropertyObserver
         plugin.reloadConfig();
         plugin.getConfig().options().header(null);
         
-        addProperty("locale", STRING, false, "en", new PropertyObserver()
+        File configDefFile = new File(plugin.getDataFolder(), "config-def.b64");
+        String configDefString = Base64.decode(IOUtils.toString(new FileInputStream(configDefFile)));
+        IniFile configDef = new IniFile(configDefString);
+        Set<String> properties = configDef.getSections();
+        
+        for (String uuid : properties)
         {
-            @Override
-            public void update(Property p)
+            String path = configDef.getString(uuid, "path");
+            PropertyType type = null;
+            boolean requiresRestart = configDef.getBoolean(uuid, "requires_restart", true);
+            Object defaultValue = null;
+            PropertyValidator validator = null;
+            PropertyObserver observer = null;
+            
+            String typeString = configDef.getString(uuid, "type");
+            
+            try
             {
-                try
+                type = PropertyType.valueOf(typeString);
+            }
+            catch (IllegalArgumentException ex)
+            {
+                plugin.getCore().log(Level.WARNING, "Unknown property type: " + typeString);
+                
+                continue;
+            }
+            
+            String defaultValueString = configDef.getString(uuid, "default_value");
+            
+            switch (type)
+            {
+            case OBJECT:
+                defaultValue = null;
+                break;
+            case BOOLEAN:
+                defaultValue = Boolean.valueOf(defaultValueString);
+                break;
+            case COLOR:
+                if (defaultValueString.equalsIgnoreCase("aqua"))
+                    defaultValue = Color.AQUA;
+                else if (defaultValueString.equalsIgnoreCase("black"))
+                    defaultValue = Color.BLACK;
+                else if (defaultValueString.equalsIgnoreCase("blue"))
+                    defaultValue = Color.BLUE;
+                else if (defaultValueString.equalsIgnoreCase("fuchsia"))
+                    defaultValue = Color.FUCHSIA;
+                else if (defaultValueString.equalsIgnoreCase("gray"))
+                    defaultValue = Color.GRAY;
+                else if (defaultValueString.equalsIgnoreCase("green"))
+                    defaultValue = Color.GREEN;
+                else if (defaultValueString.equalsIgnoreCase("lime"))
+                    defaultValue = Color.LIME;
+                else if (defaultValueString.equalsIgnoreCase("maroon"))
+                    defaultValue = Color.MAROON;
+                else if (defaultValueString.equalsIgnoreCase("navy"))
+                    defaultValue = Color.NAVY;
+                else if (defaultValueString.equalsIgnoreCase("olive"))
+                    defaultValue = Color.OLIVE;
+                else if (defaultValueString.equalsIgnoreCase("orange"))
+                    defaultValue = Color.ORANGE;
+                else if (defaultValueString.equalsIgnoreCase("purple"))
+                    defaultValue = Color.PURPLE;
+                else if (defaultValueString.equalsIgnoreCase("red"))
+                    defaultValue = Color.RED;
+                else if (defaultValueString.equalsIgnoreCase("silver"))
+                    defaultValue = Color.SILVER;
+                else if (defaultValueString.equalsIgnoreCase("teal"))
+                    defaultValue = Color.TEAL;
+                else if (defaultValueString.equalsIgnoreCase("white"))
+                    defaultValue = Color.WHITE;
+                else if (defaultValueString.equalsIgnoreCase("yellow"))
+                    defaultValue = Color.YELLOW;
+                else
                 {
-                    plugin.loadMessages();
+                    String[] rgb = defaultValueString.split(" ");
+                    
+                    if (rgb.length == 3)
+                    {
+                        defaultValue = Color.fromRGB(Integer.valueOf(rgb[0]), Integer.valueOf(rgb[1]), Integer.valueOf(rgb[2]));
+                    }
+                    else
+                    {
+                        defaultValue = Color.BLACK;
+                    }
                 }
-                catch (IOException ex)
+                break;
+            case DOUBLE:
+                defaultValue = Double.valueOf(defaultValueString);
+                break;
+            case INT:
+                defaultValue = Integer.valueOf(defaultValueString);
+                break;
+            case ITEM_STACK:
+                defaultValue = null;
+            case LONG:
+                defaultValue = Long.valueOf(defaultValueString);
+                break;
+            case STRING:
+                defaultValue = defaultValueString;
+                break;
+            case VECTOR:
+                String[] axes = defaultValueString.split(" ");
+                
+                if (axes.length == 3)
                 {
-                    plugin.getCore().log(Level.WARNING, "Could not load messages. Stack trace:");
-                    ex.printStackTrace();
+                    defaultValue = new Vector(Double.valueOf(axes[0]), Double.valueOf(axes[1]), Double.valueOf(axes[2]));
+                }
+                else
+                {
+                    defaultValue = new Vector(0, 0, 0);
+                }
+                
+                break;
+            case LIST:
+            case BOOLEAN_LIST:
+            case BYTE_LIST:
+            case CHARACTER_LIST:
+            case DOUBLE_LIST:
+            case FLOAT_LIST:
+            case INTEGER_LIST:
+            case LONG_LIST:
+            case MAP_LIST:
+            case SHORT_LIST:
+            case STRING_LIST:
+                defaultValue = new ArrayList<>(0);
+                break;
+            default:
+                throw new RuntimeException("Unknown property type.");
+            }
+            
+            try
+            {
+                String validatorClassName = configDef.getString(uuid, "validator");
+                
+                if (validatorClassName != null)
+                {
+                    Class<PropertyValidator> validatorClass =
+                            (Class<PropertyValidator>) Class.forName(validatorClassName);
+                    
+                    validator = validatorClass.newInstance();
+                }
+                
+                String observerClassName = configDef.getString(uuid, "observer");
+                
+                if (observerClassName != null)
+                {
+                    Class<PropertyObserver> observerClass =
+                            (Class<PropertyObserver>) Class.forName(observerClassName);
+                    
+                    observer = observerClass.newInstance();
                 }
             }
-        });
-        
-        addProperty("log-to-file.enabled", BOOLEAN, false, false);
-        addProperty("log-to-file.filename", STRING, false, "debug.log");
-        
-        addProperty("force-login.global", BOOLEAN, false, true);
-        addProperty("force-login.in-worlds", STRING_LIST, false, new ArrayList<>(0));
-        addProperty("force-login.allowed-commands", STRING_LIST, false, new ArrayList<>(0));
-        addProperty("force-login.timeout", INT, false, -1);
-        addProperty("force-login.prevent.move", BOOLEAN, false, true);
-        addProperty("force-login.prevent.toggle-sneak", BOOLEAN, false, true);
-        addProperty("force-login.prevent.block-place", BOOLEAN, false, true);
-        addProperty("force-login.prevent.block-break", BOOLEAN, false, true);
-        addProperty("force-login.prevent.damage-in", BOOLEAN, false, true);
-        addProperty("force-login.prevent.damage-out", BOOLEAN, false, true);
-        addProperty("force-login.prevent.regain-health", BOOLEAN, false, true);
-        addProperty("force-login.prevent.food-level-change", BOOLEAN, false, true);
-        addProperty("force-login.prevent.entity-target", BOOLEAN, false, true);
-        addProperty("force-login.prevent.chat", BOOLEAN, false, true);
-        addProperty("force-login.prevent.command-preprocess", BOOLEAN, false, true); 
-        addProperty("force-login.prevent.pickup-item", BOOLEAN, false, true);
-        addProperty("force-login.prevent.drop-item", BOOLEAN, false, true);
-        addProperty("force-login.prevent.interact", BOOLEAN, false, true);
-        addProperty("force-login.prevent.interact-entity", BOOLEAN, false, true);
-        addProperty("force-login.prevent.inventory-click", BOOLEAN, false, true);
-        addProperty("force-login.prevent.air-depletion", BOOLEAN, false, true);
-        addProperty("force-login.hide-inventory", BOOLEAN, false, false);
-        
-        addProperty("session-lifetime", INT, false, 0);
-        addProperty("reveal-spawn-world", BOOLEAN, false, true);
-        
-        addProperty("username.regex", STRING, false, "[A-Za-z0-9_]+");
-        addProperty("username.min-length", INT, false, 2);
-        addProperty("username.max-length", INT, false, 16);
-        addProperty("username.prohibited-usernames", STRING_LIST, false, new ArrayList<>(0));
-        
-        addProperty("password.min-length", INT, false, 3);
-        addProperty("password.max-length", INT, false, 40);
-        addProperty("password.hashing-algorithm", STRING, true, "sha-256", new String[]{
-            "plan", "md2", "md5", "sha-1", "sha-256", "sha-384", "sha-512", "whirlpool", "bcrypt"
-        });
-        addProperty("password.global-password.hash", STRING, false, "");
-        addProperty("password.global-password.salt", STRING, false, "");
-        
-        addProperty("crowd-control.login-fails-to-kick", INT, false, -1);
-        addProperty("crowd-control.login-fails-to-ban", INT, false, -1);
-        addProperty("crowd-control.kick-unregistered", BOOLEAN, false, false);
-        addProperty("crowd-control.days-of-absence-to-unregister", INT, false, -1);
-        addProperty("crowd-control.accounts-per-ip.amount", INT, false, 3);
-        addProperty("crowd-control.accounts-per-ip.unrestricted-ips", STRING_LIST, false, new ArrayList<>(0));
-        addProperty("crowd-control.preserve-slots.amount", INT, false, 0);
-        addProperty("crowd-control.preserve-slots.players", STRING_LIST, false, new ArrayList<>(0));
-        
-        addProperty("password-recovery.enabled", BOOLEAN, true, false);
-        addProperty("password-recovery.subject", STRING, false, "Password recovery for %player%");
-        addProperty("password-recovery.body-template", STRING, false, "mail/password-recovery.html");
-        addProperty("password-recovery.html-enabled", BOOLEAN, false, true);
-        addProperty("password-recovery.password-length", INT, false, 6);
-        addProperty("password-recovery.password-combination", STRING, false, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-        
-        PropertyObserver smtpConfigurationObserver = new PropertyObserver()
-        {
-            @Override
-            public void update(Property p)
+            catch (ReflectiveOperationException e)
             {
-                plugin.getCore().getMailSender().configure(plugin.getCore().getConfig().getString("mail.smtp-host"),
-                    Integer.valueOf(plugin.getCore().getConfig().getString("mail.smtp-port")),
-                    plugin.getCore().getConfig().getString("mail.smtp-user"),
-                    plugin.getCore().getConfig().getString("mail.smtp-password"));
             }
-        };
-        
-        addProperty("mail.email-address", STRING, false, "");
-        addProperty("mail.smtp-host", STRING, false, "", smtpConfigurationObserver);
-        addProperty("mail.smtp-port", INT, false, 465, smtpConfigurationObserver);
-        addProperty("mail.smtp-user", STRING, false, "", smtpConfigurationObserver);
-        addProperty("mail.smtp-password", STRING, false, "", smtpConfigurationObserver);
-        
-        addProperty("waiting-room.enabled", BOOLEAN, false, false, new PropertyObserver()
-        {
-            @Override
-            public void update(Property p)
-            {
-                if (!p.getBoolean())
-                {
-                    plugin.getCore().getWaitingRoom().removeAll();
-                }
-            }
-        });
-        addProperty("waiting-room.location.world", STRING, false, "world");
-        addProperty("waiting-room.location.position", VECTOR, false, new Vector(0, 0, 0));
-        addProperty("waiting-room.location.yaw", DOUBLE, false, 0d);
-        addProperty("waiting-room.location.pitch", DOUBLE, false, 0d);
-        addProperty("waiting-room.newbie-teleport.enabled", BOOLEAN, false, false);
-        addProperty("waiting-room.newbie-teleport.location.world", STRING, false, "world");
-        addProperty("waiting-room.newbie-teleport.location.position", VECTOR, false, new Vector(0, 0, 0));
-        addProperty("waiting-room.newbie-teleport.location.yaw", DOUBLE, false, 0d);
-        addProperty("waiting-room.newbie-teleport.location.pitch", DOUBLE, false, 0d);
-        
-        addProperty("groups.enabled", BOOLEAN, true, false);
-        addProperty("groups.registered", STRING, true, "Registered");
-        addProperty("groups.unregistered", STRING, true, "Unregistered");
-        addProperty("groups.logged-in", STRING, true, "LoggedIn");
-        addProperty("groups.logged-out", STRING, true, "LoggedOut");
-        
-        addProperty("integration", STRING, true, "none", new String[]{"none", "phpbb2"});
-        
-        addProperty("storage.accounts.db-type", STRING, true, "sqlite", new String[]{
-            "sqlite", "mysql", "h2", "csv"
-        });
-        addProperty("storage.accounts.sqlite.filename", STRING, true, "accounts.db");
-        addProperty("storage.accounts.h2.filename", STRING, true, "accounts");
-        addProperty("storage.accounts.mysql.host", STRING, true, "jdbc:mysql://localhost:3306/"); 
-        addProperty("storage.accounts.mysql.user", STRING, true, "root");
-        addProperty("storage.accounts.mysql.password", STRING, true, "");
-        addProperty("storage.accounts.mysql.database", STRING, true, "");
-        addProperty("storage.accounts.table", STRING, true, "logit");
-        
-        addProperty("storage.accounts.columns.username.id", STRING, true, "logit.accounts.username");
-        addProperty("storage.accounts.columns.username.name", STRING, true, "username");
-        addProperty("storage.accounts.columns.username.type", STRING, true, "VARCHAR(16)");
-        addProperty("storage.accounts.columns.username.disabled", BOOLEAN, true, false);
-        
-        addProperty("storage.accounts.columns.salt.id", STRING, true, "logit.accounts.salt");
-        addProperty("storage.accounts.columns.salt.name", STRING, true, "salt");
-        addProperty("storage.accounts.columns.salt.type", STRING, true, "VARCHAR(20)");
-        addProperty("storage.accounts.columns.salt.disabled", BOOLEAN, true, false);
-        
-        addProperty("storage.accounts.columns.password.id", STRING, true, "logit.accounts.password");
-        addProperty("storage.accounts.columns.password.name", STRING, true, "password");
-        addProperty("storage.accounts.columns.password.type", STRING, true, "VARCHAR(256)");
-        addProperty("storage.accounts.columns.password.disabled", BOOLEAN, true, false);
-
-        addProperty("storage.accounts.columns.hashing_algorithm.id", STRING, true, "logit.accounts.hashing_algorithm");
-        addProperty("storage.accounts.columns.hashing_algorithm.name", STRING, true, "hashing_algorithm");
-        addProperty("storage.accounts.columns.hashing_algorithm.type", STRING, true, "VARCHAR(16)");
-        addProperty("storage.accounts.columns.hashing_algorithm.disabled", BOOLEAN, true, false);
-        
-        addProperty("storage.accounts.columns.ip.id", STRING, true, "logit.accounts.ip");
-        addProperty("storage.accounts.columns.ip.name", STRING, true, "ip");
-        addProperty("storage.accounts.columns.ip.type", STRING, true, "VARCHAR(64)");
-        addProperty("storage.accounts.columns.ip.disabled", BOOLEAN, true, false);
-        
-        addProperty("storage.accounts.columns.email.id", STRING, true, "logit.accounts.email");
-        addProperty("storage.accounts.columns.email.name", STRING, true, "email");
-        addProperty("storage.accounts.columns.email.type", STRING, true, "VARCHAR(255)");
-        addProperty("storage.accounts.columns.email.disabled", BOOLEAN, true, true);
-        
-        addProperty("storage.accounts.columns.last_active.id", STRING, true, "logit.accounts.last_active");
-        addProperty("storage.accounts.columns.last_active.name", STRING, true, "last_active");
-        addProperty("storage.accounts.columns.last_active.type", STRING, true, "INTEGER");
-        addProperty("storage.accounts.columns.last_active.disabled", BOOLEAN, true, false);
-
-        addProperty("storage.accounts.columns.reg_date.id", STRING, true, "logit.accounts.reg_date");
-        addProperty("storage.accounts.columns.reg_date.name", STRING, true, "reg_date");
-        addProperty("storage.accounts.columns.reg_date.type", STRING, true, "INTEGER");
-        addProperty("storage.accounts.columns.reg_date.disabled", BOOLEAN, true, true);
-        
-        addProperty("storage.accounts.columns.world.id", STRING, true, "logit.accounts.world");
-        addProperty("storage.accounts.columns.world.name", STRING, true, "world");
-        addProperty("storage.accounts.columns.world.type", STRING, true, "VARCHAR(512)");
-        addProperty("storage.accounts.columns.world.disabled", BOOLEAN, true, false);
-
-        addProperty("storage.accounts.columns.x.id", STRING, true, "logit.accounts.x");
-        addProperty("storage.accounts.columns.x.name", STRING, true, "x");
-        addProperty("storage.accounts.columns.x.type", STRING, true, "REAL");
-        addProperty("storage.accounts.columns.x.disabled", BOOLEAN, true, false);
-
-        addProperty("storage.accounts.columns.y.id", STRING, true, "logit.accounts.y");
-        addProperty("storage.accounts.columns.y.name", STRING, true, "y");
-        addProperty("storage.accounts.columns.y.type", STRING, true, "REAL");
-        addProperty("storage.accounts.columns.y.disabled", BOOLEAN, true, false);
-
-        addProperty("storage.accounts.columns.z.id", STRING, true, "logit.accounts.z");
-        addProperty("storage.accounts.columns.z.name", STRING, true, "z");
-        addProperty("storage.accounts.columns.z.type", STRING, true, "REAL");
-        addProperty("storage.accounts.columns.z.disabled", BOOLEAN, true, false);
-
-        addProperty("storage.accounts.columns.yaw.id", STRING, true, "logit.accounts.yaw");
-        addProperty("storage.accounts.columns.yaw.name", STRING, true, "yaw");
-        addProperty("storage.accounts.columns.yaw.type", STRING, true, "REAL");
-        addProperty("storage.accounts.columns.yaw.disabled", BOOLEAN, true, false);
-
-        addProperty("storage.accounts.columns.pitch.id", STRING, true, "logit.accounts.pitch");
-        addProperty("storage.accounts.columns.pitch.name", STRING, true, "pitch");
-        addProperty("storage.accounts.columns.pitch.type", STRING, true, "REAL");
-        addProperty("storage.accounts.columns.pitch.disabled", BOOLEAN, true, false);
-
-        addProperty("storage.accounts.columns.waiting_room.id", STRING, true, "logit.accounts.waiting_room");
-        addProperty("storage.accounts.columns.waiting_room.name", STRING, true, "waiting_room");
-        addProperty("storage.accounts.columns.waiting_room.type", STRING, true, "INTEGER");
-        addProperty("storage.accounts.columns.waiting_room.disabled", BOOLEAN, true, false);
-        
-        addProperty("storage.inventories.filename", STRING, true, "inventories.db");
-        addProperty("storage.sessions.filename", STRING, false, "sessions.db");
-        
-        addProperty("backup.path", STRING, false, "backup");
-        addProperty("backup.filename-format", STRING, false, "yyyy-MM-dd_HH-mm-ss'.db'");
-        addProperty("backup.schedule.enabled", BOOLEAN, false, false);
-        addProperty("backup.schedule.interval", INT, false, 120);
+            
+            addProperty(path, type, requiresRestart, defaultValue, validator, observer);
+        }
         
         save();
     }
@@ -386,10 +329,11 @@ public final class LogItConfiguration extends PropertyObserver
                                PropertyType type,
                                boolean changeRequiresRestart,
                                Object defaultValue,
-                               Object[] validValues,
+                               PropertyValidator validator,
                                PropertyObserver obs)
     {
-        Property property = new Property(path, type, changeRequiresRestart, plugin.getConfig().get(path, defaultValue), validValues);
+        Property property =
+                new Property(path, type, changeRequiresRestart, plugin.getConfig().get(path, defaultValue), validator);
         
         if (obs != null)
             property.addObserver(obs);
@@ -413,9 +357,9 @@ public final class LogItConfiguration extends PropertyObserver
                                PropertyType type,
                                boolean changeRequiresRestart,
                                Object defaultValue,
-                               Object[] validValues)
+                               PropertyValidator validator)
     {
-        addProperty(path, type, changeRequiresRestart, defaultValue, validValues, null);
+        addProperty(path, type, changeRequiresRestart, defaultValue, validator, null);
     }
     
     protected void addProperty(String path,

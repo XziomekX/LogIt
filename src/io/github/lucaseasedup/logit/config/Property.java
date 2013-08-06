@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.config;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -32,13 +31,17 @@ import org.bukkit.util.Vector;
  */
 public class Property extends Observable
 {
-    public Property(String path, PropertyType type, boolean requiresRestart, Object value, Object[] validValues)
+    public Property(String path,
+                    PropertyType type,
+                    boolean requiresRestart,
+                    Object value,
+                    PropertyValidator validator)
     {
         this.path = path;
         this.type = type;
         this.requiresRestart = requiresRestart;
         this.value = value;
-        this.validValues = validValues;
+        this.validator = validator;
     }
     
     public Property(String path, PropertyType type, boolean changeRequiresRestart)
@@ -206,7 +209,7 @@ public class Property extends Observable
     
     public void set(Object value) throws InvalidPropertyValueException
     {
-        if (validValues != null && !Arrays.asList(validValues).contains(value))
+        if (validator != null && !validator.validate(path, type, value))
             throw new InvalidPropertyValueException("Invalid value: " + value.toString());
         
         if (!this.value.equals(value))
@@ -221,5 +224,5 @@ public class Property extends Observable
     private final PropertyType type;
     private final boolean requiresRestart;
     private Object value = null;
-    private final Object[] validValues;
+    private final PropertyValidator validator;
 }
