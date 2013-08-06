@@ -79,7 +79,7 @@ public final class LogItConfiguration extends PropertyObserver
             }
             catch (IllegalArgumentException ex)
             {
-                plugin.getCore().log(Level.WARNING, "Unknown property type: " + typeString);
+                plugin.getLogger().log(Level.WARNING, "Unknown property type: " + typeString);
                 
                 continue;
             }
@@ -322,7 +322,7 @@ public final class LogItConfiguration extends PropertyObserver
         plugin.getConfig().set(p.getPath(), p.getValue());
         plugin.saveConfig();
         
-        plugin.getCore().log(Level.INFO, LogItPlugin.getMessage("CONFIG_PROPERTY_SET_LOG", new String[]{
+        plugin.getLogger().log(Level.INFO, LogItPlugin.getMessage("CONFIG_PROPERTY_SET_LOG", new String[]{
             "%path%", p.getPath(),
             "%value%", p.toString(),
         }));
