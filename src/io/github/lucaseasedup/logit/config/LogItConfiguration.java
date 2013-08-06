@@ -200,9 +200,11 @@ public final class LogItConfiguration extends PropertyObserver
                 }
 
             }
-            catch (ReflectiveOperationException e)
+            catch (ReflectiveOperationException ex)
             {
-                plugin.getLogger().log(Level.WARNING, "Invalid property validator: " + validatorClassName);
+                plugin.getLogger().log(Level.WARNING,
+                        "Invalid property validator: " + validatorClassName + ". Stack trace:");
+                ex.printStackTrace();
                 
                 continue;
             }
@@ -220,8 +222,11 @@ public final class LogItConfiguration extends PropertyObserver
                 }
             }
             catch (ReflectiveOperationException e)
+            catch (ReflectiveOperationException ex)
             {
-                plugin.getLogger().log(Level.WARNING, "Invalid property observer: " + observerClassName);
+                plugin.getLogger().log(Level.WARNING,
+                        "Invalid property observer: " + observerClassName + ". Stack trace:");
+                ex.printStackTrace();
                 
                 continue;
             }
