@@ -196,7 +196,7 @@ public final class LogItConfiguration extends PropertyObserver
                     Class<PropertyValidator> validatorClass =
                             (Class<PropertyValidator>) Class.forName(validatorClassName);
                     
-                    validator = validatorClass.getConstructor(LogItCore.class).newInstance();
+                    validator = validatorClass.getConstructor().newInstance();
                 }
 
             }
@@ -218,10 +218,9 @@ public final class LogItConfiguration extends PropertyObserver
                     Class<PropertyObserver> observerClass =
                             (Class<PropertyObserver>) Class.forName(observerClassName);
                     
-                    observer = observerClass.getConstructor(LogItCore.class).newInstance();
+                    observer = observerClass.getConstructor(LogItCore.class).newInstance(plugin.getCore());
                 }
             }
-            catch (ReflectiveOperationException e)
             catch (ReflectiveOperationException ex)
             {
                 plugin.getLogger().log(Level.WARNING,
