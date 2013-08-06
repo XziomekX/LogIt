@@ -187,21 +187,31 @@ public final class LogItConfiguration extends PropertyObserver
                 throw new RuntimeException("Unknown property type.");
             }
             
+            String validatorClassName = configDef.getString(uuid, "validator");
+            
             try
             {
-                String validatorClassName = configDef.getString(uuid, "validator");
-                
-                if (validatorClassName != null)
+                if (validatorClassName != null && !validatorClassName.isEmpty())
                 {
                     Class<PropertyValidator> validatorClass =
                             (Class<PropertyValidator>) Class.forName(validatorClassName);
                     
                     validator = validatorClass.getConstructor(LogItCore.class).newInstance();
                 }
+
+            }
+            catch (ReflectiveOperationException e)
+            {
+                plugin.getLogger().log(Level.WARNING, "Invalid property validator: " + validatorClassName);
                 
-                String observerClassName = configDef.getString(uuid, "observer");
-                
-                if (observerClassName != null)
+                continue;
+            }
+            
+            String observerClassName = configDef.getString(uuid, "observer");
+            
+            try
+            {
+                if (observerClassName != null && !observerClassName.isEmpty())
                 {
                     Class<PropertyObserver> observerClass =
                             (Class<PropertyObserver>) Class.forName(observerClassName);
@@ -211,6 +221,9 @@ public final class LogItConfiguration extends PropertyObserver
             }
             catch (ReflectiveOperationException e)
             {
+                plugin.getLogger().log(Level.WARNING, "Invalid property observer: " + observerClassName);
+                
+                continue;
             }
             
             addProperty(path, type, requiresRestart, defaultValue, validator, observer);
