@@ -21,10 +21,14 @@ package io.github.lucaseasedup.logit.config;
 import io.github.lucaseasedup.logit.IniFile;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItPlugin;
+import io.github.lucaseasedup.logit.util.FileUtils;
 import it.sauronsoftware.base64.Base64;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -49,192 +53,25 @@ public final class LogItConfiguration extends PropertyObserver
         this.plugin = plugin;
     }
     
-    /**
-     * Loads settings from file and fills missing ones with default values.
-     */
     public void load() throws IOException
     {
         plugin.reloadConfig();
         plugin.getConfig().options().header(null);
         
-        File configDefFile = new File(plugin.getDataFolder(), "config-def.b64");
-        String configDefString = Base64.decode(IOUtils.toString(new FileInputStream(configDefFile)));
-        IniFile configDef = new IniFile(configDefString);
-        Set<String> properties = configDef.getSections();
+        File userDefFile = new File(plugin.getDataFolder(), "config-def.b64");
+        String userDefString = Base64.decode(IOUtils.toString(new FileInputStream(userDefFile)));
+        IniFile userDef = new IniFile(userDefString);
         
-        for (String uuid : properties)
+        InputStream packageDefInputStream = LogItConfiguration.class.getResourceAsStream("/config-def.b64");
+        String packageDefString = Base64.decode(IOUtils.toString(packageDefInputStream));
+        IniFile packageDef = new IniFile(packageDefString);
+        
+        if (!userDefString.equals(packageDefString))
         {
-            String path = configDef.getString(uuid, "path");
-            PropertyType type = null;
-            boolean requiresRestart = configDef.getBoolean(uuid, "requires_restart", true);
-            Object defaultValue = null;
-            PropertyValidator validator = null;
-            PropertyObserver observer = null;
-            
-            String typeString = configDef.getString(uuid, "type");
-            
-            try
-            {
-                type = PropertyType.valueOf(typeString);
-            }
-            catch (IllegalArgumentException ex)
-            {
-                plugin.getLogger().log(Level.WARNING, "Unknown property type: " + typeString);
-                
-                continue;
-            }
-            
-            String defaultValueString = configDef.getString(uuid, "default_value");
-            
-            switch (type)
-            {
-            case OBJECT:
-                defaultValue = null;
-                break;
-            case BOOLEAN:
-                defaultValue = Boolean.valueOf(defaultValueString);
-                break;
-            case COLOR:
-                if (defaultValueString.equalsIgnoreCase("aqua"))
-                    defaultValue = Color.AQUA;
-                else if (defaultValueString.equalsIgnoreCase("black"))
-                    defaultValue = Color.BLACK;
-                else if (defaultValueString.equalsIgnoreCase("blue"))
-                    defaultValue = Color.BLUE;
-                else if (defaultValueString.equalsIgnoreCase("fuchsia"))
-                    defaultValue = Color.FUCHSIA;
-                else if (defaultValueString.equalsIgnoreCase("gray"))
-                    defaultValue = Color.GRAY;
-                else if (defaultValueString.equalsIgnoreCase("green"))
-                    defaultValue = Color.GREEN;
-                else if (defaultValueString.equalsIgnoreCase("lime"))
-                    defaultValue = Color.LIME;
-                else if (defaultValueString.equalsIgnoreCase("maroon"))
-                    defaultValue = Color.MAROON;
-                else if (defaultValueString.equalsIgnoreCase("navy"))
-                    defaultValue = Color.NAVY;
-                else if (defaultValueString.equalsIgnoreCase("olive"))
-                    defaultValue = Color.OLIVE;
-                else if (defaultValueString.equalsIgnoreCase("orange"))
-                    defaultValue = Color.ORANGE;
-                else if (defaultValueString.equalsIgnoreCase("purple"))
-                    defaultValue = Color.PURPLE;
-                else if (defaultValueString.equalsIgnoreCase("red"))
-                    defaultValue = Color.RED;
-                else if (defaultValueString.equalsIgnoreCase("silver"))
-                    defaultValue = Color.SILVER;
-                else if (defaultValueString.equalsIgnoreCase("teal"))
-                    defaultValue = Color.TEAL;
-                else if (defaultValueString.equalsIgnoreCase("white"))
-                    defaultValue = Color.WHITE;
-                else if (defaultValueString.equalsIgnoreCase("yellow"))
-                    defaultValue = Color.YELLOW;
-                else
-                {
-                    String[] rgb = defaultValueString.split(" ");
-                    
-                    if (rgb.length == 3)
-                    {
-                        defaultValue = Color.fromRGB(Integer.valueOf(rgb[0]), Integer.valueOf(rgb[1]), Integer.valueOf(rgb[2]));
-                    }
-                    else
-                    {
-                        defaultValue = Color.BLACK;
-                    }
-                }
-                break;
-            case DOUBLE:
-                defaultValue = Double.valueOf(defaultValueString);
-                break;
-            case INT:
-                defaultValue = Integer.valueOf(defaultValueString);
-                break;
-            case ITEM_STACK:
-                defaultValue = null;
-            case LONG:
-                defaultValue = Long.valueOf(defaultValueString);
-                break;
-            case STRING:
-                defaultValue = defaultValueString;
-                break;
-            case VECTOR:
-                String[] axes = defaultValueString.split(" ");
-                
-                if (axes.length == 3)
-                {
-                    defaultValue = new Vector(Double.valueOf(axes[0]), Double.valueOf(axes[1]), Double.valueOf(axes[2]));
-                }
-                else
-                {
-                    defaultValue = new Vector(0, 0, 0);
-                }
-                
-                break;
-            case LIST:
-            case BOOLEAN_LIST:
-            case BYTE_LIST:
-            case CHARACTER_LIST:
-            case DOUBLE_LIST:
-            case FLOAT_LIST:
-            case INTEGER_LIST:
-            case LONG_LIST:
-            case MAP_LIST:
-            case SHORT_LIST:
-            case STRING_LIST:
-                defaultValue = new ArrayList<>(0);
-                break;
-            default:
-                throw new RuntimeException("Unknown property type.");
-            }
-            
-            String validatorClassName = configDef.getString(uuid, "validator");
-            
-            try
-            {
-                if (validatorClassName != null && !validatorClassName.isEmpty())
-                {
-                    @SuppressWarnings("unchecked")
-                    Class<PropertyValidator> validatorClass =
-                            (Class<PropertyValidator>) Class.forName(validatorClassName);
-                    
-                    validator = validatorClass.getConstructor().newInstance();
-                }
-
-            }
-            catch (ReflectiveOperationException ex)
-            {
-                plugin.getLogger().log(Level.WARNING,
-                        "Invalid property validator: " + validatorClassName + ". Stack trace:");
-                ex.printStackTrace();
-                
-                continue;
-            }
-            
-            String observerClassName = configDef.getString(uuid, "observer");
-            
-            try
-            {
-                if (observerClassName != null && !observerClassName.isEmpty())
-                {
-                    @SuppressWarnings("unchecked")
-                    Class<PropertyObserver> observerClass =
-                            (Class<PropertyObserver>) Class.forName(observerClassName);
-                    
-                    observer = observerClass.getConstructor(LogItCore.class).newInstance(plugin.getCore());
-                }
-            }
-            catch (ReflectiveOperationException ex)
-            {
-                plugin.getLogger().log(Level.WARNING,
-                        "Invalid property observer: " + observerClassName + ". Stack trace:");
-                ex.printStackTrace();
-                
-                continue;
-            }
-            
-            addProperty(path, type, requiresRestart, defaultValue, validator, observer);
+            updateConfigDef(userDef, packageDef, new FileOutputStream(userDefFile));
         }
         
+        loadConfigDef(userDef);
         save();
     }
     
@@ -390,6 +227,241 @@ public final class LogItConfiguration extends PropertyObserver
                                Object defaultValue)
     {
         addProperty(path, type, changeRequiresRestart, defaultValue, null, null);
+    }
+    
+    private void updateConfigDef(IniFile oldDef, IniFile newDef, OutputStream os) throws IOException
+    {
+        for (String uuid : newDef.getSections())
+        {
+            if (!oldDef.hasSection(uuid))
+            {
+                oldDef.putSection(uuid);
+                oldDef.putString(uuid, "path", newDef.getString(uuid, "path"));
+                oldDef.putString(uuid, "type", newDef.getString(uuid, "type"));
+                oldDef.putString(uuid, "requires_restart", newDef.getString(uuid, "requires_restart"));
+                oldDef.putString(uuid, "default_value", newDef.getString(uuid, "default_value"));
+                oldDef.putString(uuid, "validator", newDef.getString(uuid, "validator"));
+                oldDef.putString(uuid, "observer", newDef.getString(uuid, "observer"));
+            }
+            else
+            {
+                if (!oldDef.getString(uuid, "path").equals(newDef.getString(uuid, "path")))
+                {
+                    Object val = plugin.getConfig().get(oldDef.getString(uuid, "path"));
+                    
+                    plugin.getConfig().set(oldDef.getString(uuid, "path"),
+                            "**THIS PROPERTY IS NO LONGER USED. YOU CAN REMOVE IT.**");
+                    plugin.getConfig().set(newDef.getString(uuid, "path"), val);
+                    
+                    oldDef.putString(uuid, "path", newDef.getString(uuid, "path"));
+                }
+                
+                if (!oldDef.getString(uuid, "type").equals(newDef.getString(uuid, "type")))
+                {
+                    oldDef.putString(uuid, "type", newDef.getString(uuid, "type"));
+                }
+                
+                if (!oldDef.getString(uuid, "requires_restart").equals(newDef.getString(uuid, "requires_restart")))
+                {
+                    oldDef.putString(uuid, "requires_restart", newDef.getString(uuid, "requires_restart"));
+                }
+                
+                if (!oldDef.getString(uuid, "default_value").equals(newDef.getString(uuid, "default_value")))
+                {
+                    oldDef.putString(uuid, "default_value", newDef.getString(uuid, "default_value"));
+                }
+                
+                if (!oldDef.getString(uuid, "validator").equals(newDef.getString(uuid, "validator")))
+                {
+                    oldDef.putString(uuid, "validator", newDef.getString(uuid, "validator"));
+                }
+                
+                if (!oldDef.getString(uuid, "observer").equals(newDef.getString(uuid, "observer")))
+                {
+                    oldDef.putString(uuid, "observer", newDef.getString(uuid, "observer"));
+                }
+            }
+        }
+        
+        FileUtils.extractResource("/config-def.b64", new File(plugin.getDataFolder(), "config-def.b64"));
+    }
+    
+    private void loadConfigDef(IniFile def)
+    {
+        Set<String> properties = def.getSections();
+        
+        for (String uuid : properties)
+        {
+            String path = def.getString(uuid, "path");
+            PropertyType type = null;
+            boolean requiresRestart = def.getBoolean(uuid, "requires_restart", true);
+            Object defaultValue = null;
+            PropertyValidator validator = null;
+            PropertyObserver observer = null;
+            
+            String typeString = def.getString(uuid, "type");
+            
+            try
+            {
+                type = PropertyType.valueOf(typeString);
+            }
+            catch (IllegalArgumentException ex)
+            {
+                plugin.getLogger().log(Level.WARNING, "Unknown property type: " + typeString);
+                
+                continue;
+            }
+            
+            String defaultValueString = def.getString(uuid, "default_value");
+            
+            switch (type)
+            {
+            case OBJECT:
+                defaultValue = null;
+                break;
+            case BOOLEAN:
+                defaultValue = Boolean.valueOf(defaultValueString);
+                break;
+            case COLOR:
+                if (defaultValueString.equalsIgnoreCase("aqua"))
+                    defaultValue = Color.AQUA;
+                else if (defaultValueString.equalsIgnoreCase("black"))
+                    defaultValue = Color.BLACK;
+                else if (defaultValueString.equalsIgnoreCase("blue"))
+                    defaultValue = Color.BLUE;
+                else if (defaultValueString.equalsIgnoreCase("fuchsia"))
+                    defaultValue = Color.FUCHSIA;
+                else if (defaultValueString.equalsIgnoreCase("gray"))
+                    defaultValue = Color.GRAY;
+                else if (defaultValueString.equalsIgnoreCase("green"))
+                    defaultValue = Color.GREEN;
+                else if (defaultValueString.equalsIgnoreCase("lime"))
+                    defaultValue = Color.LIME;
+                else if (defaultValueString.equalsIgnoreCase("maroon"))
+                    defaultValue = Color.MAROON;
+                else if (defaultValueString.equalsIgnoreCase("navy"))
+                    defaultValue = Color.NAVY;
+                else if (defaultValueString.equalsIgnoreCase("olive"))
+                    defaultValue = Color.OLIVE;
+                else if (defaultValueString.equalsIgnoreCase("orange"))
+                    defaultValue = Color.ORANGE;
+                else if (defaultValueString.equalsIgnoreCase("purple"))
+                    defaultValue = Color.PURPLE;
+                else if (defaultValueString.equalsIgnoreCase("red"))
+                    defaultValue = Color.RED;
+                else if (defaultValueString.equalsIgnoreCase("silver"))
+                    defaultValue = Color.SILVER;
+                else if (defaultValueString.equalsIgnoreCase("teal"))
+                    defaultValue = Color.TEAL;
+                else if (defaultValueString.equalsIgnoreCase("white"))
+                    defaultValue = Color.WHITE;
+                else if (defaultValueString.equalsIgnoreCase("yellow"))
+                    defaultValue = Color.YELLOW;
+                else
+                {
+                    String[] rgb = defaultValueString.split(" ");
+                    
+                    if (rgb.length == 3)
+                    {
+                        defaultValue = Color.fromRGB(Integer.valueOf(rgb[0]), Integer.valueOf(rgb[1]), Integer.valueOf(rgb[2]));
+                    }
+                    else
+                    {
+                        defaultValue = Color.BLACK;
+                    }
+                }
+                break;
+            case DOUBLE:
+                defaultValue = Double.valueOf(defaultValueString);
+                break;
+            case INT:
+                defaultValue = Integer.valueOf(defaultValueString);
+                break;
+            case ITEM_STACK:
+                defaultValue = null;
+            case LONG:
+                defaultValue = Long.valueOf(defaultValueString);
+                break;
+            case STRING:
+                defaultValue = defaultValueString;
+                break;
+            case VECTOR:
+                String[] axes = defaultValueString.split(" ");
+                
+                if (axes.length == 3)
+                {
+                    defaultValue = new Vector(Double.valueOf(axes[0]), Double.valueOf(axes[1]), Double.valueOf(axes[2]));
+                }
+                else
+                {
+                    defaultValue = new Vector(0, 0, 0);
+                }
+                
+                break;
+            case LIST:
+            case BOOLEAN_LIST:
+            case BYTE_LIST:
+            case CHARACTER_LIST:
+            case DOUBLE_LIST:
+            case FLOAT_LIST:
+            case INTEGER_LIST:
+            case LONG_LIST:
+            case MAP_LIST:
+            case SHORT_LIST:
+            case STRING_LIST:
+                defaultValue = new ArrayList<>(0);
+                break;
+            default:
+                throw new RuntimeException("Unknown property type.");
+            }
+            
+            String validatorClassName = def.getString(uuid, "validator");
+            
+            try
+            {
+                if (validatorClassName != null && !validatorClassName.isEmpty())
+                {
+                    @SuppressWarnings("unchecked")
+                    Class<PropertyValidator> validatorClass =
+                            (Class<PropertyValidator>) Class.forName(validatorClassName);
+                    
+                    validator = validatorClass.getConstructor().newInstance();
+                }
+
+            }
+            catch (ReflectiveOperationException ex)
+            {
+                plugin.getLogger().log(Level.WARNING,
+                        "Invalid property validator: " + validatorClassName + ". Stack trace:");
+                ex.printStackTrace();
+                
+                continue;
+            }
+            
+            String observerClassName = def.getString(uuid, "observer");
+            
+            try
+            {
+                if (observerClassName != null && !observerClassName.isEmpty())
+                {
+                    @SuppressWarnings("unchecked")
+                    Class<PropertyObserver> observerClass =
+                            (Class<PropertyObserver>) Class.forName(observerClassName);
+                    
+                    observer = observerClass.getConstructor(LogItCore.class).newInstance(plugin.getCore());
+                }
+            }
+            catch (ReflectiveOperationException ex)
+            {
+                plugin.getLogger().log(Level.WARNING,
+                        "Invalid property observer: " + observerClassName + ". Stack trace:");
+                ex.printStackTrace();
+                
+                continue;
+            }
+            
+            addProperty(path, type, requiresRestart, defaultValue, validator, observer);
+        }
     }
     
     private final LogItPlugin plugin;
