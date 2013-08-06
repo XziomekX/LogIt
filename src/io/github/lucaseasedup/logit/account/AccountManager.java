@@ -514,7 +514,9 @@ public class AccountManager
                     if (username == null)
                         continue;
                     
-                    if (username.equals("Anonymous") && core.getIntegration() == IntegrationType.PHPBB2)
+                    username = username.toLowerCase();
+                    
+                    if (username.equals("anonymous") && core.getIntegration() == IntegrationType.PHPBB2)
                         continue;
                     
                     cSalt.put(username,       m.get("logit.accounts.salt"));
