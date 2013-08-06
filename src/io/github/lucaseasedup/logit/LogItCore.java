@@ -33,6 +33,7 @@ import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.account.AccountWatcher;
 import io.github.lucaseasedup.logit.command.ChangeEmailCommand;
 import io.github.lucaseasedup.logit.command.ChangePassCommand;
+import io.github.lucaseasedup.logit.command.DisabledCommandExecutor;
 import io.github.lucaseasedup.logit.command.LogItCommand;
 import io.github.lucaseasedup.logit.command.LoginCommand;
 import io.github.lucaseasedup.logit.command.LogoutCommand;
@@ -808,11 +809,19 @@ public final class LogItCore
         {
             plugin.getCommand("changeemail").setExecutor(new ChangeEmailCommand(this));
         }
+        else
+        {
+            plugin.getCommand("changeemail").setExecutor(new DisabledCommandExecutor(this));
+        }
         
         if (!accountTable.isColumnDisabled("logit.accounts.email")
                 && config.getBoolean("password-recovery.enabled"))
         {
             plugin.getCommand("recoverpass").setExecutor(new RecoverPassCommand(this));
+        }
+        else
+        {
+            plugin.getCommand("recoverpass").setExecutor(new DisabledCommandExecutor(this));
         }
     }
     
