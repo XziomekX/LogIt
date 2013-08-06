@@ -24,18 +24,17 @@ import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
 import io.github.lucaseasedup.logit.LogItCore.IntegrationType;
-import io.github.lucaseasedup.logit.db.SetClause;
 import io.github.lucaseasedup.logit.db.Table;
-import io.github.lucaseasedup.logit.db.WhereClause;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import javax.xml.bind.DatatypeConverter;
@@ -50,33 +49,23 @@ public class AccountManager
     public AccountManager(LogItCore core, Table accounts)
     {
         this.core     = core;
-        this.accounts = accounts;
+        this.table = accounts;
     }
     
     public Set<String> getRegisteredUsernames()
     {
-        return cPassword.keySet();
+        return accountMap.keySet();
     }
     
     /**
      * Checks if the given username is registered.
-     * <p/>
-     * If integration mode is set to phpBB, it always returns true.
      * 
      * @param username Username.
-     * @throws UnsupportedOperationException Thrown if current integration mode disallows this operation.
      * @return True if the username is registered.
      */
     public boolean isRegistered(String username)
     {
-        if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
-        {
-            return cPassword.containsKey(username.toLowerCase());
-        }
-        else
-        {
-            throw new UnsupportedOperationException();
-        }
+        return accountMap.containsKey(username);
     }
     
     /**
@@ -87,7 +76,7 @@ public class AccountManager
      * @param username Username.
      * @param password Password.
      */
-    public void createAccount(String username, String password) throws SQLException, UnsupportedOperationException
+    public void createAccount(String username, String password) throws SQLException
     {
         if (isRegistered(username))
             throw new RuntimeException("Account already exists.");
@@ -95,41 +84,25 @@ public class AccountManager
         HashingAlgorithm algorithm = core.getDefaultHashingAlgorithm();
         String salt = HashGenerator.generateSalt(algorithm);
         String hash = core.hash(password, salt, algorithm);
+        String now = String.valueOf(System.currentTimeMillis() / 1000L);
         
         try
         {
-            if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
-            {
-                accounts.insert(new String[]{
-                    "logit.accounts.username",
-                    "logit.accounts.salt",
-                    "logit.accounts.password",
-                    "logit.accounts.hashing_algorithm",
-                    "logit.accounts.last_active",
-                    "logit.accounts.reg_date",
-                }, new String[]{
-                    username.toLowerCase(),
-                    salt,
-                    hash,
-                    algorithm.encode(),
-                    String.valueOf(System.currentTimeMillis() / 1000L),
-                    String.valueOf(System.currentTimeMillis() / 1000L),
-                });
-            }
-            else
-            {
-                throw new UnsupportedOperationException();
-            }
+            Map<String, String> m = new HashMap<>();
             
-            cSalt.put(username.toLowerCase(), salt);
-            cPassword.put(username.toLowerCase(), hash);
-            cIp.put(username.toLowerCase(), null);
-            cLastActive.put(username.toLowerCase(), (int) (System.currentTimeMillis() / 1000L));
+            m.put("logit.accounts.username", username.toLowerCase());
+            m.put("logit.accounts.salt", salt);
+            m.put("logit.accounts.password", hash);
+            m.put("logit.accounts.hashing_algorithm", algorithm.encode());
+            m.put("logit.accounts.last_active", now);
+            m.put("logit.accounts.reg_date", now);
+            
+            accountMap.put(username, new Account(table, m));
             
             core.log(Level.FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
             Bukkit.getPluginManager().callEvent(new AccountCreateEvent(username, hash, SUCCESS));
         }
-        catch (SQLException | UnsupportedOperationException ex)
+        catch (SQLException ex)
         {
             core.log(Level.WARNING, getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username));
             Bukkit.getPluginManager().callEvent(new AccountCreateEvent(username, hash, FAILURE));
@@ -146,33 +119,19 @@ public class AccountManager
      * @param username Username.
      * @throws AccountNotFoundException Thrown if account does not exist.
      */
-    public void removeAccount(String username) throws SQLException, UnsupportedOperationException
+    public void removeAccount(String username) throws SQLException
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
         
         try
         {
-            if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
-            {
-                accounts.delete(new WhereClause[]{
-                    new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase())
-                });
-            }
-            else
-            {
-                throw new UnsupportedOperationException();
-            }
-            
-            cSalt.remove(username.toLowerCase());
-            cPassword.remove(username.toLowerCase());
-            cIp.remove(username.toLowerCase());
-            cLastActive.remove(username.toLowerCase());
+            accountMap.remove(username);
             
             core.log(Level.FINE, getMessage("REMOVE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
             Bukkit.getPluginManager().callEvent(new AccountRemoveEvent(username, SUCCESS));
         }
-        catch (SQLException | UnsupportedOperationException ex)
+        catch (SQLException ex)
         {
             core.log(Level.WARNING, getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username));
             Bukkit.getPluginManager().callEvent(new AccountRemoveEvent(username, FAILURE));
@@ -197,40 +156,26 @@ public class AccountManager
         if (!isRegistered(username))
             throw new AccountNotFoundException();
         
-        if (accounts.isColumnDisabled("logit.accounts.password"))
+        if (table.isColumnDisabled("logit.accounts.password"))
             return true;
         
-        if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
+        Account account = accountMap.get(username);
+        HashingAlgorithm algorithm = core.getDefaultHashingAlgorithm();
+        String userAlgorithm = account.get("logit.accounts.hashing_algorithm");
+        
+        if (userAlgorithm != null)
         {
-            HashingAlgorithm algorithm = core.getDefaultHashingAlgorithm();
-            String userAlgorithm = null;
-            
-            try
-            {
-                userAlgorithm = getAccountValue(username, "logit.accounts.hashing_algorithm");
-            }
-            catch (SQLException ex)
-            {
-            }
-            
-            if (userAlgorithm != null)
-            {
-                algorithm = HashingAlgorithm.decode(userAlgorithm);
-            }
-            
-            if (!accounts.isColumnDisabled("logit.accounts.salt"))
-            {
-                return core.checkPassword(password, cPassword.get(username.toLowerCase()),
-                        cSalt.get(username.toLowerCase()), algorithm);
-            }
-            else
-            {
-                return core.checkPassword(password, cPassword.get(username.toLowerCase()), algorithm);
-            }
+            algorithm = HashingAlgorithm.decode(userAlgorithm);
+        }
+        
+        if (!table.isColumnDisabled("logit.accounts.salt"))
+        {
+            return core.checkPassword(password, account.get("logit.accounts.password"),
+                    account.get("logit.accounts.salt"), algorithm);
         }
         else
         {
-            throw new UnsupportedOperationException();
+            return core.checkPassword(password, account.get("logit.accounts.password"), algorithm);
         }
     }
     
@@ -242,40 +187,27 @@ public class AccountManager
      * @param username Username.
      * @param newPassword New password.
      */
-    public void changeAccountPassword(String username, String newPassword) throws SQLException, UnsupportedOperationException
+    public void changeAccountPassword(String username, String newPassword) throws SQLException
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
         
+        Account account = accountMap.get(username);
         HashingAlgorithm algorithm = core.getDefaultHashingAlgorithm();
         String newSalt = HashGenerator.generateSalt(algorithm);
         String newHash = core.hash(newPassword, newSalt, algorithm);
-        String oldPassword = cPassword.get(username.toLowerCase());
+        String oldPassword = account.get("logit.accounts.password");
         
         try
         {
-            if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
-            {
-                accounts.update(new WhereClause[]{
-                    new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase())
-                }, new SetClause[]{
-                    new SetClause("logit.accounts.salt", newSalt),
-                    new SetClause("logit.accounts.password", newHash),
-                    new SetClause("logit.accounts.hashing_algorithm", algorithm.encode()),
-                });
-            }
-            else
-            {
-                throw new UnsupportedOperationException();
-            }
-            
-            cSalt.put(username.toLowerCase(), newSalt);
-            cPassword.put(username.toLowerCase(), newHash);
+            account.update("logit.accounts.salt", newSalt);
+            account.update("logit.accounts.password", newHash);
+            account.update("logit.accounts.hashing_algorithm", algorithm.encode());
             
             core.log(Level.FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
             Bukkit.getPluginManager().callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, SUCCESS));
         }
-        catch (SQLException | UnsupportedOperationException ex)
+        catch (SQLException ex)
         {
             core.log(Level.WARNING, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username));
             Bukkit.getPluginManager().callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, FAILURE));
@@ -284,34 +216,22 @@ public class AccountManager
         }
     }
     
-    public void changeEmail(String username, String newEmail) throws SQLException, UnsupportedOperationException
+    public void changeEmail(String username, String newEmail) throws SQLException
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
         
-        String oldEmail = cEmail.get(username.toLowerCase());
+        Account account = accountMap.get(username);
+        String oldEmail = account.get("logit.accounts.email");
         
         try
         {
-            if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
-            {
-                accounts.update(new WhereClause[]{
-                    new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase()),
-                }, new SetClause[]{
-                    new SetClause("logit.accounts.email", newEmail),
-                });
-            }
-            else
-            {
-                throw new UnsupportedOperationException();
-            }
-            
-            cEmail.put(username.toLowerCase(), newEmail);
+            account.update("logit.accounts.email", newEmail);
             
             core.log(Level.FINE, getMessage("CHANGE_EMAIL_SUCCESS_LOG").replace("%player%", username));
             Bukkit.getPluginManager().callEvent(new AccountChangeEmailEvent(username, oldEmail, newEmail, SUCCESS));
         }
-        catch (SQLException | UnsupportedOperationException ex)
+        catch (SQLException ex)
         {
             core.log(Level.WARNING, getMessage("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username));
             Bukkit.getPluginManager().callEvent(new AccountChangeEmailEvent(username, oldEmail, newEmail, FAILURE));
@@ -322,7 +242,7 @@ public class AccountManager
     
     public String getEmail(String username)
     {
-        return cEmail.get(username.toLowerCase());
+        return accountMap.get(username).get("logit.accounts.email");
     }
     
     /**
@@ -332,50 +252,30 @@ public class AccountManager
      * @param ip IP address.
      * @throws AccountNotFoundException Thrown if the account does not exist.
      */
-    public void attachIp(String username, String ip) throws SQLException, UnsupportedOperationException
+    public void attachIp(String username, String ip) throws SQLException
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
         
         try
         {
-            if (core.getIntegration() == IntegrationType.NONE)
+            if (core.getIntegration() == IntegrationType.PHPBB2)
             {
-                accounts.update(new WhereClause[]{
-                    new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase()),
-                }, new SetClause[]{
-                    new SetClause("logit.accounts.ip", ip),
-                });
-            }
-            else if (core.getIntegration() == IntegrationType.PHPBB2)
-            {
-                String hexIp = "";
-                
                 try
                 {
-                    hexIp = DatatypeConverter.printHexBinary(InetAddress.getByName(ip).getAddress()).toLowerCase();
+                    ip = DatatypeConverter.printHexBinary(InetAddress.getByName(ip).getAddress()).toLowerCase();
                 }
                 catch (UnknownHostException ex)
                 {
                 }
-                
-                accounts.update(new WhereClause[]{
-                    new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase()),
-                }, new SetClause[]{
-                    new SetClause("logit.accounts.ip", hexIp),
-                });
-            }
-            else
-            {
-                throw new UnsupportedOperationException();
             }
             
-            cIp.put(username.toLowerCase(), ip);
+            accountMap.get(username).update("logit.accounts.ip", ip);
             
             core.log(Level.FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username).replace("%ip%", ip));
             Bukkit.getPluginManager().callEvent(new AccountAttachIpEvent(username, ip, SUCCESS));
         }
-        catch (SQLException | UnsupportedOperationException ex)
+        catch (SQLException ex)
         {
             core.log(Level.WARNING, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username).replace("%ip%", ip));
             Bukkit.getPluginManager().callEvent(new AccountAttachIpEvent(username, ip, FAILURE));
@@ -396,93 +296,77 @@ public class AccountManager
         if (ip == null || ip.isEmpty())
             return 0;
         
-        return Collections.frequency(cIp.values(), ip);
+        int count = 0;
+        
+        for (Account account : accountMap.values())
+        {
+            if (account.get("logit.accounts.ip").equalsIgnoreCase(ip))
+            {
+                count++;
+            }
+        }
+        
+        return count;
     }
     
     public int countUniqueIps()
     {
-        return new HashSet<String>(cIp.values()).size();
+        List<String> ips = new ArrayList<>(accountMap.size());
+        
+        for (Account account : accountMap.values())
+        {
+            ips.add(account.get("logit.accounts.ip"));
+        }
+        
+        return new HashSet<String>(ips).size();
     }
     
     public void updateLastActiveDate(String username) throws SQLException
     {
-        int now = (int) (System.currentTimeMillis() / 1000L);
+        String now = String.valueOf((int) (System.currentTimeMillis() / 1000L));
         
-        accounts.update(new WhereClause[]{
-            new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase()),
-        }, new SetClause[]{
-            new SetClause("logit.accounts.last_active", String.valueOf(now)),
-        });
-        
-        cLastActive.put(username.toLowerCase(), now);
+        accountMap.get(username).update("logit.accounts.last_active", now);
     }
     
     public int getLastActiveDate(String username)
     {
-        return cLastActive.get(username.toLowerCase());
+        return Integer.parseInt(accountMap.get(username).get("logit.accounts.last_active"));
     }
     
     public void saveLocation(String username, Location location) throws SQLException
     {
-        accounts.update(new WhereClause[]{
-            new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase()),
-        }, new SetClause[]{
-            new SetClause("logit.accounts.world", location.getWorld().getName()),
-            new SetClause("logit.accounts.x", String.valueOf(location.getX())),
-            new SetClause("logit.accounts.y", String.valueOf(location.getY())),
-            new SetClause("logit.accounts.z", String.valueOf(location.getZ())),
-            new SetClause("logit.accounts.yaw", String.valueOf(location.getYaw())),
-            new SetClause("logit.accounts.pitch", String.valueOf(location.getPitch())),
-        });
+        Account account = accountMap.get(username);
+        
+        account.update("logit.accounts.world", location.getWorld().getName());
+        account.update("logit.accounts.x", String.valueOf(location.getX()));
+        account.update("logit.accounts.y", String.valueOf(location.getY()));
+        account.update("logit.accounts.z", String.valueOf(location.getZ()));
+        account.update("logit.accounts.yaw", String.valueOf(location.getYaw()));
+        account.update("logit.accounts.pitch", String.valueOf(location.getPitch()));
     }
     
     public Location getLocation(String username) throws SQLException
     {
-        List<Map<String, String>> rs = accounts.select(new String[]{
-            "logit.accounts.world",
-            "logit.accounts.x",
-            "logit.accounts.y",
-            "logit.accounts.z",
-            "logit.accounts.yaw",
-            "logit.accounts.pitch",
-        }, new WhereClause[]{
-            new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase()),
-        });
-        
-        if (rs.isEmpty())
-            return null;
+        Account account = accountMap.get(username);
         
         return new Location(
-            Bukkit.getWorld(rs.get(0).get("logit.accounts.world")),
-            Double.valueOf(rs.get(0).get("logit.accounts.x")),
-            Double.valueOf(rs.get(0).get("logit.accounts.y")),
-            Double.valueOf(rs.get(0).get("logit.accounts.z")),
-            Float.valueOf(rs.get(0).get("logit.accounts.yaw")),
-            Float.valueOf(rs.get(0).get("logit.accounts.pitch"))
+            Bukkit.getWorld(account.get("logit.accounts.world")),
+            Double.valueOf(account.get("logit.accounts.x")),
+            Double.valueOf(account.get("logit.accounts.y")),
+            Double.valueOf(account.get("logit.accounts.z")),
+            Float.valueOf(account.get("logit.accounts.yaw")),
+            Float.valueOf(account.get("logit.accounts.pitch"))
         );
     }
     
-    public String getAccountValue(String username, String column) throws SQLException
+    public String getAccountProperty(String username, String property)
     {
-        List<Map<String, String>> rs = accounts.select(new String[]{
-            column,
-        }, new WhereClause[]{
-            new WhereClause("logit.accounts.username", WhereClause.EQUAL, username.toLowerCase()),
-        });
-        
-        if (!rs.isEmpty())
-        {
-            return rs.get(0).get(column);
-        }
-        else
-        {
-            return null;
-        }
+        return accountMap.get(username).get(property);
     }
     
     public int getAccountCount()
     {
-        return cPassword.size();
+        return accountMap.size();
     }
     
     /**
@@ -490,54 +374,52 @@ public class AccountManager
      */
     public void loadAccounts() throws SQLException
     {
-        cSalt.clear();
-        cPassword.clear();
-        cIp.clear();
-        cEmail.clear();
-        cLastActive.clear();
+        Map<String, Account> loadedAccounts = new HashMap<>();
         
-        if (core.getIntegration() == IntegrationType.NONE || core.getIntegration() == IntegrationType.PHPBB2)
+        try
         {
-            try
+            List<Map<String, String>> rs = table.select();
+            
+            for (Map<String, String> m : rs)
             {
-                List<Map<String, String>> rs = accounts.select();
+                String username = m.get("logit.accounts.username");
                 
-                for (Map<String, String> m : rs)
+                if (username == null)
+                    continue;
+                
+                username = username.toLowerCase();
+                
+                if (core.getIntegration() == IntegrationType.PHPBB2)
                 {
-                    String username = m.get("logit.accounts.username");
-                    
-                    if (username == null)
+                    if (username.equals("anonymous"))
+                    {
                         continue;
-                    
-                    username = username.toLowerCase();
-                    
-                    if (username.equals("anonymous") && core.getIntegration() == IntegrationType.PHPBB2)
-                        continue;
-                    
-                    cSalt.put(username,       m.get("logit.accounts.salt"));
-                    cPassword.put(username,   m.get("logit.accounts.password"));
-                    cIp.put(username,         m.get("logit.accounts.ip"));
-                    cEmail.put(username,      m.get("logit.accounts.email"));
-                    cLastActive.put(username, Integer.valueOf(m.get("logit.accounts.last_active")));
+                    }
                 }
                 
-                core.log(Level.FINE, getMessage("LOAD_ACCOUNTS_SUCCESS").replace("%num%", String.valueOf(cPassword.size())));
-            }
-            catch (SQLException ex)
-            {
-                core.log(Level.WARNING, getMessage("LOAD_ACCOUNTS_FAIL"));
+                Map<String, String> account = new HashMap<>();
                 
-                throw ex;
+                for (Entry<String, String> e : m.entrySet())
+                {
+                    account.put(e.getKey(), e.getValue());
+                }
+                
+                loadedAccounts.put(username, new Account(table, account));
             }
+            
+            accountMap = new AccountMap(table, loadedAccounts);
+            
+            core.log(Level.FINE, getMessage("LOAD_ACCOUNTS_SUCCESS").replace("%num%", String.valueOf(accountMap.size())));
+        }
+        catch (SQLException ex)
+        {
+            core.log(Level.WARNING, getMessage("LOAD_ACCOUNTS_FAIL"));
+            
+            throw ex;
         }
     }
     
     private final LogItCore core;
-    private final Table accounts;
-    
-    private final HashMap<String, String> cSalt = new HashMap<>();
-    private final HashMap<String, String> cPassword = new HashMap<>();
-    private final HashMap<String, String> cIp = new HashMap<>();
-    private final HashMap<String, String> cEmail = new HashMap<>();
-    private final HashMap<String, Integer> cLastActive = new HashMap<>();
+    private final Table table;
+    private AccountMap accountMap = null;
 }

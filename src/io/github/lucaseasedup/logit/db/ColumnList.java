@@ -1,5 +1,5 @@
 /*
- * CaseInsensitiveArrayList.java
+ * ColumnList.java
  *
  * Copyright (C) 2012-2013 LucasEasedUp
  *
@@ -16,15 +16,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit;
+package io.github.lucaseasedup.logit.db;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author LucasEasedUp
  */
-public class CaseInsensitiveArrayList<T> extends ArrayList<T>
+public class ColumnList extends ArrayList<String>
 {
+    public ColumnList()
+    {
+    }
+    
+    public ColumnList(Collection<? extends String> c)
+    {
+        for (String el : c)
+        {
+            this.add(el);
+        }
+    }
+    
+    @Override
+    public final boolean add(String column)
+    {
+        if (!super.contains(column))
+        {
+            return super.add(column);
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
     @Override
     public boolean contains(Object o)
     {

@@ -18,16 +18,14 @@
  */
 package io.github.lucaseasedup.logit.db;
 
-import java.util.List;
-import io.github.lucaseasedup.logit.CaseInsensitiveArrayList;
 import io.github.lucaseasedup.logit.util.SqlUtils;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,11 +36,11 @@ public class H2Database extends Database
 {
     public H2Database(String host)
     {
-        super(host);
+        this.host = host;
     }
      
     @Override
-    public void connect() throws IOException, SQLException, ReflectiveOperationException
+    public void connect() throws SQLException
     {
         org.h2.Driver.load();
         
@@ -82,18 +80,18 @@ public class H2Database extends Database
     }
     
     @Override
-    public List<String> getColumnNames(String table) throws SQLException
+    public ColumnList getColumnNames(String table) throws SQLException
     {
         ResultSet tableInfo = executeQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS"
             + " WHERE TABLE_NAME = '" + SqlUtils.escapeQuotes(table, "'", false) + "';");
-        List<String> columnNames = new CaseInsensitiveArrayList<>();
+        ColumnList columnList = new ColumnList();
         
         while (tableInfo.next())
         {
-            columnNames.add(tableInfo.getString("COLUMN_NAME"));
+            columnList.add(tableInfo.getString("COLUMN_NAME"));
         }
         
-        return columnNames;
+        return columnList;
     }
     
     public ResultSet executeQuery(String sql) throws SQLException
@@ -112,18 +110,18 @@ public class H2Database extends Database
     }
     
     @Override
-    public ResultSet select(String table, String[] columns) throws SQLException
+    public List<Map<String, String>> select(String table, String[] columns) throws SQLException
     {
-        return statement.executeQuery("SELECT " + SqlUtils.implodeColumnArray(columns, "\"", false)
-            + " FROM \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\";");
+        return copyResultSet(statement.executeQuery("SELECT " + SqlUtils.implodeColumnArray(columns, "\"", false)
+            + " FROM \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\";"));
     }
     
     @Override
-    public ResultSet select(String table, String[] columns, String[] where) throws SQLException
+    public List<Map<String, String>> select(String table, String[] columns, String[] where) throws SQLException
     {
-        return statement.executeQuery("SELECT " + SqlUtils.implodeColumnArray(columns, "\"", false)
+        return copyResultSet(statement.executeQuery("SELECT " + SqlUtils.implodeColumnArray(columns, "\"", false)
             + " FROM \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
-            + " WHERE " + SqlUtils.implodeWhereArray(where, "\"", "'", false) + ";");
+            + " WHERE " + SqlUtils.implodeWhereArray(where, "\"", "'", false) + ";"));
     }
     
     @Override
@@ -214,6 +212,7 @@ public class H2Database extends Database
         statement.clearBatch();
     }
     
+    private final String host;
     private Connection connection;
     private Statement statement;
 }

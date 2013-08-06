@@ -40,8 +40,8 @@ import io.github.lucaseasedup.logit.command.RecoverPassCommand;
 import io.github.lucaseasedup.logit.command.RegisterCommand;
 import io.github.lucaseasedup.logit.command.UnregisterCommand;
 import io.github.lucaseasedup.logit.config.LogItConfiguration;
-import io.github.lucaseasedup.logit.db.Database;
 import io.github.lucaseasedup.logit.db.CsvDatabase;
+import io.github.lucaseasedup.logit.db.Database;
 import io.github.lucaseasedup.logit.db.H2Database;
 import io.github.lucaseasedup.logit.db.MySqlDatabase;
 import io.github.lucaseasedup.logit.db.Pinger;
@@ -66,10 +66,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -199,7 +200,7 @@ public final class LogItCore
                 }
             }
         }
-        catch (IOException | SQLException | ReflectiveOperationException ex)
+        catch (SQLException ex)
         {
             Logger.getLogger(LogItCore.class.getName()).log(Level.SEVERE, null, ex);
             plugin.disable();
@@ -263,15 +264,16 @@ public final class LogItCore
                 "inv_armor",    "TEXT"
             });
             
-            ResultSet rs = inventoryDatabase.select("inventories", new String[]{"username", "world", "inv_contents", "inv_armor"});
+            List<Map<String, String>> rs = inventoryDatabase.select("inventories",
+                    new String[]{"username", "world", "inv_contents", "inv_armor"});
             
-            while (rs.next())
+            for (Map<String, String> row : rs)
             {
                 try
                 {
-                    inventoryDepository.saveInventory(rs.getString("world"), rs.getString("username"),
-                        inventoryDepository.unserialize(rs.getString("inv_contents")),
-                        inventoryDepository.unserialize(rs.getString("inv_armor")));
+                    inventoryDepository.saveInventory(row.get("world"), row.get("username"),
+                        inventoryDepository.unserialize(row.get("inv_contents")),
+                        inventoryDepository.unserialize(row.get("inv_armor")));
                 }
                 catch (FileNotFoundException ex)
                 {

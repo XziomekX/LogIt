@@ -27,8 +27,8 @@ import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.db.SqliteDatabase;
 import java.io.File;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -274,21 +274,19 @@ public class SessionManager implements Runnable
                 if (getSession(player.getName()) == null)
                     createSession(player.getName(), "");
                 
-                ResultSet rs = sessionsDatabase.select("sessions", new String[]{
+                List<Map<String, String>> rs = sessionsDatabase.select("sessions", new String[]{
                     "status",
                     "ip"
                 }, new String[]{
                     "username", "=", player.getName().toLowerCase()
                 });
                 
-                if (rs.isBeforeFirst())
+                if (!rs.isEmpty())
                 {
-                    rs.next();
-                    
                     Session session = getSession(player.getName());
                     
-                    session.setStatus(rs.getInt("status"));
-                    session.setIp(rs.getString("ip"));
+                    session.setStatus(Integer.parseInt(rs.get(0).get("status")));
+                    session.setIp(rs.get(0).get("ip"));
                 }
             }
         }

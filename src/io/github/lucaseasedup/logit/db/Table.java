@@ -19,7 +19,6 @@
 package io.github.lucaseasedup.logit.db;
 
 import com.google.common.collect.ImmutableList;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,7 +69,7 @@ public class Table
         
         database.createTableIfNotExists(table, tableDefinition.toArray(new String[tableDefinition.size()]));
         
-        ArrayList<String> existingColumns = database.getColumnNames(table);
+        List<String> existingColumns = database.getColumnNames(table);
         
         database.setAutobatchEnabled(true);
         
@@ -106,7 +105,7 @@ public class Table
             }
         }
         
-        return copyResultSet(database.select(table, filteredColumnNames.toArray(new String[filteredColumnNames.size()]), convertWhereClauses(where)), filteredColumnIds);
+        return filterResultList(database.select(table, filteredColumnNames.toArray(new String[filteredColumnNames.size()]), convertWhereClauses(where)), filteredColumnIds);
     }
     
     public List<Map<String, String>> select(String[] columns) throws SQLException
@@ -126,8 +125,8 @@ public class Table
             }
         }
         
-        return copyResultSet(database.select(table, filteredColumnNames.toArray(new String[filteredColumnNames.size()])),
-                filteredColumnIds);
+        return filterResultList(database.select(table,
+                filteredColumnNames.toArray(new String[filteredColumnNames.size()])), filteredColumnIds);
     }
     
     public List<Map<String, String>> select() throws SQLException
@@ -261,25 +260,22 @@ public class Table
         return output.toArray(new String[output.size()]);
     }
     
-    private List<Map<String, String>> copyResultSet(ResultSet rs, Set<String> columns) throws SQLException
+    protected final List<Map<String, String>> filterResultList(List<Map<String, String>> rs, Set<String> columns)
+            throws SQLException
     {
         ImmutableList.Builder<Map<String, String>> result = new ImmutableList.Builder<>();
         
-        if (rs.isBeforeFirst())
+        if (rs != null && !rs.isEmpty())
         {
-            while (rs.next())
+            for (Map<String, String> row : rs)
             {
-                Map<String, String> row = new HashMap<>();
-                
-                for (String id : columns)
+                for (Entry<String, String> e : row.entrySet())
                 {
-                    row.put(id, rs.getString(getColumnName(id)));
+                    row.put(e.getKey(), e.getValue());
                 }
                 
                 result.add(row);
             }
-            
-            rs.close();
         }
         
         return result.build();

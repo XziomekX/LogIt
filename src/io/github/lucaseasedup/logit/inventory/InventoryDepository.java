@@ -34,11 +34,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -76,10 +76,10 @@ public class InventoryDepository
         
         try
         {
-            ResultSet rs = inventoryDatabase.select("inventories", new String[]{"username"},
+            List<Map<String, String>> rs = inventoryDatabase.select("inventories", new String[]{"username"},
                 new String[]{"username", "=", player.getName().toLowerCase()});
             
-            if (!rs.isBeforeFirst())
+            if (rs.isEmpty())
             {
                 inventoryDatabase.insert("inventories", new String[]{
                     "username",
@@ -132,20 +132,18 @@ public class InventoryDepository
         
         try
         {        
-            ResultSet rs = inventoryDatabase.select("inventories", new String[]{
+            List<Map<String, String>> rs = inventoryDatabase.select("inventories", new String[]{
                 "username", "world", "inv_contents", "inv_armor"
             }, new String[]{
                 "username", "=", player.getName().toLowerCase()
             });
             
-            if (rs.isBeforeFirst())
+            if (!rs.isEmpty())
             {
-                rs.next();
-                
-                if (rs.getString("world").equalsIgnoreCase(player.getWorld().getName()))
+                if (rs.get(0).get("world").equalsIgnoreCase(player.getWorld().getName()))
                 {
-                    player.getInventory().setContents(unserialize(rs.getString("inv_contents")).getContents());
-                    player.getInventory().setArmorContents(unserialize(rs.getString("inv_armor")).getContents());
+                    player.getInventory().setContents(unserialize(rs.get(0).get("inv_contents")).getContents());
+                    player.getInventory().setArmorContents(unserialize(rs.get(0).get("inv_armor")).getContents());
 
                     inventoryDatabase.delete("inventories", new String[]{
                         "username", "=", player.getName().toLowerCase()

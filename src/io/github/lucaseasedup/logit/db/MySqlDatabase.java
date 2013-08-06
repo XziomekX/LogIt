@@ -18,15 +18,14 @@
  */
 package io.github.lucaseasedup.logit.db;
 
-import java.util.List;
-import io.github.lucaseasedup.logit.CaseInsensitiveArrayList;
 import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,7 +36,7 @@ public class MySqlDatabase extends Database
 {
     public MySqlDatabase(String host)
     {
-        super(host);
+        this.host = host;
     }
     
     @Override
@@ -85,17 +84,17 @@ public class MySqlDatabase extends Database
     }
     
     @Override
-    public List<String> getColumnNames(String table) throws SQLException
+    public ColumnList getColumnNames(String table) throws SQLException
     {
         ResultSet tableInfo = executeQuery("DESCRIBE `" + SqlUtils.escapeQuotes(table, "`", true) + "`;");
-        List<String> columnNames = new CaseInsensitiveArrayList<>();
+        ColumnList columnList = new ColumnList();
         
         while (tableInfo.next())
         {
-            columnNames.add(tableInfo.getString("Field"));
+            columnList.add(tableInfo.getString("Field"));
         }
         
-        return columnNames;
+        return columnList;
     }
     
     public ResultSet executeQuery(String sql) throws SQLException
@@ -114,18 +113,18 @@ public class MySqlDatabase extends Database
     }
     
     @Override
-    public ResultSet select(String table, String[] columns) throws SQLException
+    public List<Map<String, String>> select(String table, String[] columns) throws SQLException
     {
-        return statement.executeQuery("SELECT " + SqlUtils.implodeColumnArray(columns, "`", true)
-            + " FROM `" + SqlUtils.escapeQuotes(table, "`", true) + "`;");
+        return copyResultSet(statement.executeQuery("SELECT " + SqlUtils.implodeColumnArray(columns, "`", true)
+            + " FROM `" + SqlUtils.escapeQuotes(table, "`", true) + "`;"));
     }
     
     @Override
-    public ResultSet select(String table, String[] columns, String[] where) throws SQLException
+    public List<Map<String, String>> select(String table, String[] columns, String[] where) throws SQLException
     {
-        return statement.executeQuery("SELECT " + SqlUtils.implodeColumnArray(columns, "`", true)
+        return copyResultSet(statement.executeQuery("SELECT " + SqlUtils.implodeColumnArray(columns, "`", true)
             + " FROM `" + SqlUtils.escapeQuotes(table, "`", true) + "`"
-            + " WHERE " + SqlUtils.implodeWhereArray(where, "`", "'", true) + ";");
+            + " WHERE " + SqlUtils.implodeWhereArray(where, "`", "'", true) + ";"));
     }
     
     @Override
@@ -214,6 +213,7 @@ public class MySqlDatabase extends Database
         statement.clearBatch();
     }
     
+    private final String host;
     private Connection connection;
     private Statement statement;
 }

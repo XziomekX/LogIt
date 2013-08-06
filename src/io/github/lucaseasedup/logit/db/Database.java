@@ -18,31 +18,28 @@
  */
 package io.github.lucaseasedup.logit.db;
 
-import java.io.IOException;
+import com.google.common.collect.ImmutableList;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author LucasEasedUp
  */
 public abstract class Database implements AutoCloseable
 {
-    public Database(String host)
-    {
-        this.host = host;
-    }
-    
-    public abstract void connect() throws IOException, SQLException, ReflectiveOperationException;
+    public abstract void connect() throws SQLException;
     public abstract boolean isConnected();
     public abstract void ping() throws SQLException;
     
     @Override
     public abstract void close() throws SQLException;
     
-    public abstract List<String> getColumnNames(String table) throws SQLException;
-    public abstract ResultSet select(String table, String[] columns) throws SQLException;
-    public abstract ResultSet select(String table, String[] columns, String[] where) throws SQLException;
+    public abstract ColumnList getColumnNames(String table) throws SQLException;
+    public abstract List<Map<String, String>> select(String table, String[] columns) throws SQLException;
+    public abstract List<Map<String, String>> select(String table, String[] columns, String[] where) throws SQLException;
     
     public abstract boolean createTable(String table, String[] columns) throws SQLException;
     public abstract boolean createTableIfNotExists(String table, String[] columns) throws SQLException;
@@ -68,11 +65,29 @@ public abstract class Database implements AutoCloseable
         autobatch = status;
     }
     
-    public String getHost()
+    protected final List<Map<String, String>> copyResultSet(ResultSet rs) throws SQLException
     {
-        return host;
+        ImmutableList.Builder<Map<String, String>> result = new ImmutableList.Builder<>();
+        
+        if (rs != null && rs.isBeforeFirst())
+        {
+            while (rs.next())
+            {
+                Map<String, String> row = new HashMap<>();
+                
+                for (int i = 1, n = rs.getMetaData().getColumnCount(); i <= n; i++)
+                {
+                    row.put(rs.getMetaData().getColumnLabel(i), rs.getString(i));
+                }
+                
+                result.add(row);
+            }
+            
+            rs.close();
+        }
+        
+        return result.build();
     }
     
     protected boolean autobatch = false;
-    protected final String host;
 }

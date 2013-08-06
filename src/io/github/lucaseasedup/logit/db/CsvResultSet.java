@@ -41,8 +41,8 @@ import java.sql.SQLXML;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,7 +50,7 @@ import java.util.Map;
  */
 public class CsvResultSet implements ResultSet
 {
-    public CsvResultSet(ArrayList<ArrayList<String>> values, ArrayList<String> columns)
+    public CsvResultSet(List<List<String>> values, List<String> columns)
     {
         this.values = values;
         this.columns = columns;
@@ -1235,8 +1235,8 @@ public class CsvResultSet implements ResultSet
         return values.get(pos).toArray(new String[values.get(pos).size()]);
     }
     
-    private final ArrayList<ArrayList<String>> values;
-    private final ArrayList<String> columns;
+    private final List<List<String>> values;
+    private final List<String> columns;
     private final int length;
     private int pos = -1;
 }

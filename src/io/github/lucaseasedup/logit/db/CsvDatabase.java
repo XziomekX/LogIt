@@ -18,18 +18,17 @@
  */
 package io.github.lucaseasedup.logit.db;
 
-import io.github.lucaseasedup.logit.CaseInsensitiveArrayList;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author LucasEasedUp
@@ -38,13 +37,11 @@ public class CsvDatabase extends Database
 {
     public CsvDatabase(File dir)
     {
-        super(dir.getPath());
-        
         this.dir = dir;
     }
     
     @Override
-    public void connect() throws SQLException, ReflectiveOperationException
+    public void connect() throws SQLException
     {
         connected = true;
     }
@@ -55,12 +52,12 @@ public class CsvDatabase extends Database
     }
     
     @Override
-    public List<String> getColumnNames(String table) throws SQLException
+    public ColumnList getColumnNames(String table) throws SQLException
     {
         if (!connected)
             throw new SQLException("Database closed.");
         
-        List<String> columnNames = new CaseInsensitiveArrayList<>();
+        ColumnList columnList = new ColumnList();
         
         try (BufferedReader br = new BufferedReader(new FileReader(new File(dir, table))))
         {
@@ -69,7 +66,7 @@ public class CsvDatabase extends Database
             
             for (int i = 0; i < topValues.length; i++)
             {
-                columnNames.add(unescapeValue(topValues[i]));
+                columnList.add(unescapeValue(topValues[i]));
             }
         }
         catch (IOException ex)
@@ -77,21 +74,27 @@ public class CsvDatabase extends Database
             throw new SQLException(ex.getMessage(), ex.getCause());
         }
         
-        return columnNames;
+        return columnList;
     }
     
     @Override
-    public ResultSet select(String table, String[] columns) throws SQLException
+    public List<Map<String, String>> select(String table, String[] columns) throws SQLException
     {
         if (!connected)
             throw new SQLException("Database closed.");
         
-        ArrayList<String> columnNames = getColumnNames(table);
-        ArrayList<ArrayList<String>> values = new ArrayList<>();
+        String[] tableColumns = null;
+        List<List<String>> values = new ArrayList<>();
         
         try (BufferedReader br = new BufferedReader(new FileReader(new File(dir, table))))
         {
             String line = br.readLine();
+            tableColumns = line.split(",");
+            
+            for (int i = 0; i < tableColumns.length; i++)
+            {
+                tableColumns[i] = unescapeValue(tableColumns[i]);
+            }
             
             while ((line = br.readLine()) != null)
             {
@@ -121,15 +124,15 @@ public class CsvDatabase extends Database
             throw new SQLException(ex.getMessage(), ex.getCause());
         }
         
-        return new CsvResultSet(values, columnNames);
+        return copyResultSet(new CsvResultSet(values, Arrays.asList(tableColumns)));
     }
-
+    
     @Override
-    public ResultSet select(String table, String[] columns, String[] where) throws SQLException
+    public List<Map<String, String>> select(String table, String[] columns, String[] where) throws SQLException
     {
         return select(table, columns);
     }
-
+    
     @Override
     public boolean createTable(String table, String[] columns) throws SQLException
     {
@@ -137,7 +140,7 @@ public class CsvDatabase extends Database
         
         return createTableIfNotExists(table, columns);
     }
-
+    
     @Override
     public boolean createTableIfNotExists(String table, String[] columns) throws SQLException
     {
@@ -229,21 +232,15 @@ public class CsvDatabase extends Database
         if (columnNames.contains(name))
             throw new SQLException("Column with this name already exists: " + name);
         
-        ResultSet rs = select(table, columnListToArray(columnNames, false));
+        List<Map<String, String>> rs = select(table, columnListToArray(columnNames, false));
         
         columnNames.add(name);
         createTable(table, columnListToArray(columnNames, true));
         
-        while (rs.next())
+        for (Map<String, String> row : rs)
         {
-            String[] columns = new String[columnNames.size()];
-            
-            for (int i = 0; i < columns.length - 1; i++)
-            {
-                columns[i] = rs.getString(i);
-            }
-            
-            insert(table, columnNames.toArray(new String[columnNames.size()]), columns);
+            insert(table, columnNames.toArray(new String[columnNames.size()]),
+                    row.values().toArray(new String[row.values().size()]));
         }
         
         return true;
