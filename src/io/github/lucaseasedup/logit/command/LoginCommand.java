@@ -88,7 +88,7 @@ public class LoginCommand extends AbstractCommandExecutor
             {
                 p.sendMessage(getMessage("NO_PERMS"));
             }
-            else if (args.length < 1)
+            else if (args.length < 1 && !core.getAccountTable().isColumnDisabled("logit.accounts.password"))
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
@@ -100,7 +100,9 @@ public class LoginCommand extends AbstractCommandExecutor
             {
                 p.sendMessage(getMessage("START_SESSION_ALREADY_SELF"));
             }
-            else if (!core.getAccountManager().checkAccountPassword(p.getName(), args[0]) && !core.checkGlobalPassword(args[0]))
+            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
+                    && !core.getAccountManager().checkAccountPassword(p.getName(), args[0])
+                    && !core.checkGlobalPassword(args[0]))
             {
                 String username = p.getName().toLowerCase();
                 

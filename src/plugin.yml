@@ -11,7 +11,7 @@ commands:
 
   login:
     description: Logs you in.
-    usage: /<command> <password>
+    usage: /<command> [password]
     aliases: [l]
 
   register:
