@@ -1,5 +1,5 @@
 /*
- * MessageSender.java
+ * MessageUtils.java
  *
  * Copyright (C) 2012-2013 LucasEasedUp
  *
