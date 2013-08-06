@@ -49,7 +49,7 @@ public final class LogItConfiguration extends PropertyObserver
     /**
      * Loads settings from file and fills missing ones with default values.
      */
-    public void load()
+    public void load() throws IOException
     {
         plugin.reloadConfig();
         plugin.getConfig().options().header(null);

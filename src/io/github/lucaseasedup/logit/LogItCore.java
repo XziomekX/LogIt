@@ -102,7 +102,19 @@ public final class LogItCore
         new File(plugin.getDataFolder(), "lib").mkdir();
         
         config = new LogItConfiguration(plugin);
-        config.load();
+        
+        try
+        {
+            config.load();
+        }
+        catch (IOException ex)
+        {
+            log(Level.SEVERE, "Could not load the configuration file. Stack trace:");
+            ex.printStackTrace();
+            plugin.disable();
+            
+            return;
+        }
         
         if (firstRun)
         {
