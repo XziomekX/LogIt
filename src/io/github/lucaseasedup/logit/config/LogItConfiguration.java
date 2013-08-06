@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.config;
 
+import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.IniFile;
 import io.github.lucaseasedup.logit.LogItPlugin;
 import it.sauronsoftware.base64.Base64;
@@ -43,6 +44,8 @@ public final class LogItConfiguration extends PropertyObserver
 {
     public LogItConfiguration(LogItPlugin plugin)
     {
+        super(plugin.getCore());
+        
         this.plugin = plugin;
     }
     
@@ -193,7 +196,7 @@ public final class LogItConfiguration extends PropertyObserver
                     Class<PropertyValidator> validatorClass =
                             (Class<PropertyValidator>) Class.forName(validatorClassName);
                     
-                    validator = validatorClass.newInstance();
+                    validator = validatorClass.getConstructor(LogItCore.class).newInstance();
                 }
                 
                 String observerClassName = configDef.getString(uuid, "observer");
@@ -203,7 +206,7 @@ public final class LogItConfiguration extends PropertyObserver
                     Class<PropertyObserver> observerClass =
                             (Class<PropertyObserver>) Class.forName(observerClassName);
                     
-                    observer = observerClass.newInstance();
+                    observer = observerClass.getConstructor(LogItCore.class).newInstance();
                 }
             }
             catch (ReflectiveOperationException e)
