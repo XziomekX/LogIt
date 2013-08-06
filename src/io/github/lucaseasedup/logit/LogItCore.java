@@ -797,7 +797,15 @@ public final class LogItCore
         plugin.getCommand("logout").setExecutor(new LogoutCommand(this));
         plugin.getCommand("register").setExecutor(new RegisterCommand(this));
         plugin.getCommand("unregister").setExecutor(new UnregisterCommand(this));
-        plugin.getCommand("changepass").setExecutor(new ChangePassCommand(this));
+        
+        if (!accountTable.isColumnDisabled("logit.accounts.password"))
+        {
+            plugin.getCommand("changepass").setExecutor(new ChangePassCommand(this));
+        }
+        else
+        {
+            plugin.getCommand("changepass").setExecutor(new DisabledCommandExecutor(this));
+        }
         
         if (!accountTable.isColumnDisabled("logit.accounts.email"))
         {
