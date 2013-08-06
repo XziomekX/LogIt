@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import com.google.common.collect.ImmutableMap;
 import io.github.lucaseasedup.logit.db.SetClause;
 import io.github.lucaseasedup.logit.db.Table;
 import io.github.lucaseasedup.logit.db.WhereClause;
@@ -50,11 +49,7 @@ public class Account
     
     public Map<String, String> getAll()
     {
-        ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<>();
-        
-        builder.putAll(data);
-        
-        return builder.build();
+        return new HashMap<>(data);
     }
     
     public String update(String property, String value) throws SQLException
