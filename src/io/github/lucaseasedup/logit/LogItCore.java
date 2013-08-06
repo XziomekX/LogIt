@@ -242,13 +242,14 @@ public final class LogItCore
         backupManager  = new BackupManager(this, accountTable);
         sessionManager = new SessionManager(this, accountManager);
         
-        if (config.getBoolean("password-recovery.enabled"))
+        if (!accountTable.isColumnDisabled("logit.accounts.email"))
         {
-            mailSender = new MailSender();
-            mailSender.configure(config.getString("mail.smtp-host"), config.getInt("mail.smtp-port"),
-                config.getString("mail.smtp-user"), config.getString("mail.smtp-password"));
-            
-            plugin.getCommand("recoverpass").setExecutor(new RecoverPassCommand(this));
+            if (config.getBoolean("password-recovery.enabled"))
+            {
+                mailSender = new MailSender();
+                mailSender.configure(config.getString("mail.smtp-host"), config.getInt("mail.smtp-port"),
+                    config.getString("mail.smtp-user"), config.getString("mail.smtp-password"));
+            }
         }
         
         SqliteDatabase inventoryDatabase = new SqliteDatabase("jdbc:sqlite:" +
@@ -304,6 +305,8 @@ public final class LogItCore
         {
             permissions = plugin.getServer().getServicesManager().getRegistration(Permission.class).getProvider();
         }
+        
+        setCommandExecutors();
         
         log(Level.FINE, getMessage("PLUGIN_START_SUCCESS")
                 .replace("%st%", getStorageAccountsDbType().name())
@@ -792,6 +795,27 @@ public final class LogItCore
         return started;
     }
     
+    private void setCommandExecutors()
+    {
+        plugin.getCommand("logit").setExecutor(new LogItCommand(this));
+        plugin.getCommand("login").setExecutor(new LoginCommand(this));
+        plugin.getCommand("logout").setExecutor(new LogoutCommand(this));
+        plugin.getCommand("register").setExecutor(new RegisterCommand(this));
+        plugin.getCommand("unregister").setExecutor(new UnregisterCommand(this));
+        plugin.getCommand("changepass").setExecutor(new ChangePassCommand(this));
+        
+        if (!accountTable.isColumnDisabled("logit.accounts.email"))
+        {
+            plugin.getCommand("changeemail").setExecutor(new ChangeEmailCommand(this));
+        }
+        
+        if (!accountTable.isColumnDisabled("logit.accounts.email")
+                && config.getBoolean("password-recovery.enabled"))
+        {
+            plugin.getCommand("recoverpass").setExecutor(new RecoverPassCommand(this));
+        }
+    }
+    
     private void load()
     {
         tickEventCaller = new TickEventCaller();
@@ -804,14 +828,6 @@ public final class LogItCore
         plugin.getServer().getPluginManager().registerEvents(new InventoryEventListener(this), plugin);
         plugin.getServer().getPluginManager().registerEvents(new AccountEventListener(this), plugin);
         plugin.getServer().getPluginManager().registerEvents(new SessionEventListener(this), plugin);
-        
-        plugin.getCommand("logit").setExecutor(new LogItCommand(this));
-        plugin.getCommand("login").setExecutor(new LoginCommand(this));
-        plugin.getCommand("logout").setExecutor(new LogoutCommand(this));
-        plugin.getCommand("register").setExecutor(new RegisterCommand(this));
-        plugin.getCommand("unregister").setExecutor(new UnregisterCommand(this));
-        plugin.getCommand("changepass").setExecutor(new ChangePassCommand(this));
-        plugin.getCommand("changeemail").setExecutor(new ChangeEmailCommand(this));
         
         loaded = true;
     }
