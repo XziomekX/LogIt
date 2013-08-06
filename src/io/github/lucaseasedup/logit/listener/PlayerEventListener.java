@@ -289,13 +289,16 @@ public class PlayerEventListener extends EventListener
         List<String> registerAliases = core.getPlugin().getCommand("register").getAliases();
         
         // Check if the sent command starts with "/login" or "/register".
-        if (message.startsWith("/login ") || message.startsWith("/register "))
+        if (message.startsWith("/login ") || message.equals("/login")
+                || message.startsWith("/register ") || message.equals("/register"))
+        {
             return;
+        }
         
         // Check if the sent command starts with any of "/login" aliases.
         for (String alias : loginAliases)
         {
-            if (message.startsWith("/" + alias + " "))
+            if (message.equalsIgnoreCase("/" + alias) || message.toLowerCase().startsWith("/" + alias + " "))
             {
                 return;
             }
@@ -304,7 +307,7 @@ public class PlayerEventListener extends EventListener
         // Check if the sent command starts with any of "/register" aliases.
         for (String alias : registerAliases)
         {
-            if (message.startsWith("/" + alias + " "))
+            if (message.equalsIgnoreCase("/" + alias) || message.toLowerCase().startsWith("/" + alias + " "))
             {
                 return;
             }
@@ -313,7 +316,7 @@ public class PlayerEventListener extends EventListener
         // Check if the sent command is one of the allowed in the config.
         for (String command : core.getConfig().getStringList("force-login.allowed-commands"))
         {
-            if (message.equalsIgnoreCase("/" + command) || message.startsWith("/" + command + " "))
+            if (message.equalsIgnoreCase("/" + command) || message.toLowerCase().startsWith("/" + command + " "))
             {
                 return;
             }
