@@ -126,9 +126,6 @@ public final class LogItCore
             }
         }
         
-        if (!loaded)
-            load();
-        
         if (getDefaultHashingAlgorithm().equals(HashingAlgorithm.UNKNOWN))
         {
             log(Level.SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM").replace("%ha%", getDefaultHashingAlgorithm().name()));
@@ -295,6 +292,7 @@ public final class LogItCore
         
         inventoryDepository = new InventoryDepository(this, inventoryDatabase);
         waitingRoom = new WaitingRoom(this, accountTable);
+        tickEventCaller = new TickEventCaller();
         
         pingerTaskId          = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, pinger, 0L, 2400L);
         sessionManagerTaskId  = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, sessionManager, 0L, 20L);
@@ -307,6 +305,7 @@ public final class LogItCore
             permissions = plugin.getServer().getServicesManager().getRegistration(Permission.class).getProvider();
         }
         
+        registerEvents();
         setCommandExecutors();
         
         log(Level.FINE, getMessage("PLUGIN_START_SUCCESS")
@@ -786,11 +785,6 @@ public final class LogItCore
         return firstRun;
     }
     
-    public boolean isLoaded()
-    {
-        return loaded;
-    }
-    
     public boolean isStarted()
     {
         return started;
@@ -825,10 +819,8 @@ public final class LogItCore
         }
     }
     
-    private void load()
+    private void registerEvents()
     {
-        tickEventCaller = new TickEventCaller();
-        
         plugin.getServer().getPluginManager().registerEvents(new TickEventListener(this), plugin);
         plugin.getServer().getPluginManager().registerEvents(new ServerEventListener(this), plugin);
         plugin.getServer().getPluginManager().registerEvents(new BlockEventListener(this), plugin);
@@ -837,8 +829,6 @@ public final class LogItCore
         plugin.getServer().getPluginManager().registerEvents(new InventoryEventListener(this), plugin);
         plugin.getServer().getPluginManager().registerEvents(new AccountEventListener(this), plugin);
         plugin.getServer().getPluginManager().registerEvents(new SessionEventListener(this), plugin);
-        
-        loaded = true;
     }
     
     /**
@@ -946,7 +936,6 @@ public final class LogItCore
     private final LogItPlugin plugin;
     
     private final boolean firstRun;
-    private boolean loaded = false;
     private boolean started = false;
     
     private LogItConfiguration  config;
