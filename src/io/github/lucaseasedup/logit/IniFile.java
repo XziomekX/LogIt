@@ -30,6 +30,11 @@ public class IniFile
         return entries.keySet();
     }
     
+    public boolean hasSection(String section)
+    {
+        return entries.containsKey(section);
+    }
+    
     public Set<String> getSectionKeys(String section)
     {
         Map<String, String> kv = entries.get(section);
