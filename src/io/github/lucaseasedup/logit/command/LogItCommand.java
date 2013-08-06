@@ -35,6 +35,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+/**
+ * @author LucasEasedUp
+ */
 public class LogItCommand extends AbstractCommandExecutor
 {
     public LogItCommand(LogItCore core)

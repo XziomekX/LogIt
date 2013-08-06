@@ -18,6 +18,9 @@
  */
 package io.github.lucaseasedup.logit.account;
 
+/**
+ * @author LucasEasedUp
+ */
 public interface AccountObserver
 {
     public void update(Account account, String propertyChanged);

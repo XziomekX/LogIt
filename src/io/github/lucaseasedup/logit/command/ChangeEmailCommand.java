@@ -29,6 +29,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * @author LucasEasedUp
+ */
 public class ChangeEmailCommand extends AbstractCommandExecutor
 {
     public ChangeEmailCommand(LogItCore core)

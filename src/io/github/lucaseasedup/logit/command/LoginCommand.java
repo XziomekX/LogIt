@@ -30,6 +30,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * @author LucasEasedUp
+ */
 public class LoginCommand extends AbstractCommandExecutor
 {
     public LoginCommand(LogItCore core)
