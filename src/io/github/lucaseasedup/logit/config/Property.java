@@ -44,9 +44,9 @@ public class Property extends Observable
         this.validator = validator;
     }
     
-    public Property(String path, PropertyType type, boolean changeRequiresRestart)
+    public Property(String path, PropertyType type, boolean requiresRestart)
     {
-        this(path, type, changeRequiresRestart, null, null);
+        this(path, type, requiresRestart, null, null);
     }
     
     public String getPath()
