@@ -35,6 +35,11 @@ public class IniFile
         return entries.containsKey(section);
     }
     
+    public void putSection(String section)
+    {
+        entries.put(section, new LinkedHashMap<String, String>());
+    }
+    
     public Set<String> getSectionKeys(String section)
     {
         Map<String, String> kv = entries.get(section);
