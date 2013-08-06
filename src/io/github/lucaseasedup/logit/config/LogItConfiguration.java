@@ -193,6 +193,7 @@ public final class LogItConfiguration extends PropertyObserver
             {
                 if (validatorClassName != null && !validatorClassName.isEmpty())
                 {
+                    @SuppressWarnings("unchecked")
                     Class<PropertyValidator> validatorClass =
                             (Class<PropertyValidator>) Class.forName(validatorClassName);
                     
@@ -215,6 +216,7 @@ public final class LogItConfiguration extends PropertyObserver
             {
                 if (observerClassName != null && !observerClassName.isEmpty())
                 {
+                    @SuppressWarnings("unchecked")
                     Class<PropertyObserver> observerClass =
                             (Class<PropertyObserver>) Class.forName(observerClassName);
                     
