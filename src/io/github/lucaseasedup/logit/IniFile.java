@@ -40,6 +40,11 @@ public class IniFile
         entries.put(section, new LinkedHashMap<String, String>());
     }
     
+    public void putString(String section, String key, String value)
+    {
+        entries.get(section).put(key, value);
+    }
+    
     public Set<String> getSectionKeys(String section)
     {
         Map<String, String> kv = entries.get(section);
