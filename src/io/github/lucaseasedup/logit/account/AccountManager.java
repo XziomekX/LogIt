@@ -43,8 +43,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 /**
- * Account manager.
- * 
  * @author LucasEasedUp
  */
 public class AccountManager
@@ -186,7 +184,8 @@ public class AccountManager
     /**
      * Checks if the given password matches that of account with the specified username.
      * <p/>
-     * The given password will be hashed using an algorithm specified in the config.
+     * The given password will be hashed using an algorithm specified
+     * in the database or in the config.
      * 
      * @param username Username.
      * @param password Password to check.
@@ -399,11 +398,6 @@ public class AccountManager
         return Collections.frequency(cIp.values(), ip);
     }
     
-    /**
-     * Counts unique IP addresses.
-     * 
-     * @return Number of unique IP addresses.
-     */
     public int countUniqueIps()
     {
         return new HashSet<String>(cIp.values()).size();
