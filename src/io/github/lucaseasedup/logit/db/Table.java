@@ -195,6 +195,19 @@ public class Table
         return tableColumns.get(id).getName();
     }
     
+    public String getColumnId(String name)
+    {
+        for (Entry<String, Column> e : tableColumns.entrySet())
+        {
+            if (e.getValue().getName().equalsIgnoreCase(name))
+            {
+                return e.getKey();
+            }
+        }
+        
+        return null;
+    }
+    
     public boolean isColumnDisabled(String id)
     {
         return tableColumns.get(id).isDisabled();
