@@ -162,7 +162,12 @@ public class Table
     
     public void update(WhereClause[] where, SetClause[] set) throws SQLException
     {
-        database.update(table, convertWhereClauses(where), convertSetClauses(set));
+        String[] convertedSet = convertSetClauses(set);
+        
+        if (convertedSet.length == 0)
+            return;
+        
+        database.update(table, convertWhereClauses(where), convertedSet);
     }
     
     public void truncate() throws SQLException
