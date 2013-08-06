@@ -109,7 +109,7 @@ public final class LogItCore
         }
         catch (IOException ex)
         {
-            log(Level.SEVERE, "Could not load the configuration file. Stack trace:");
+            plugin.getLogger().log(Level.SEVERE, "Could not load the configuration file. Stack trace:");
             ex.printStackTrace();
             plugin.disable();
             
