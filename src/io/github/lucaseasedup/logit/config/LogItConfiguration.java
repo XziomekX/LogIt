@@ -194,13 +194,13 @@ public final class LogItConfiguration extends PropertyObserver
     
     protected void addProperty(String path,
                                PropertyType type,
-                               boolean changeRequiresRestart,
+                               boolean requiresRestart,
                                Object defaultValue,
                                PropertyValidator validator,
                                PropertyObserver obs)
     {
         Property property =
-                new Property(path, type, changeRequiresRestart, plugin.getConfig().get(path, defaultValue), validator);
+                new Property(path, type, requiresRestart, plugin.getConfig().get(path, defaultValue), validator);
         
         if (obs != null)
             property.addObserver(obs);
@@ -213,28 +213,28 @@ public final class LogItConfiguration extends PropertyObserver
     
     protected void addProperty(String path,
                                PropertyType type,
-                               boolean changeRequiresRestart,
+                               boolean requiresRestart,
                                Object defaultValue,
                                PropertyObserver obs)
     {
-        addProperty(path, type, changeRequiresRestart, defaultValue, null, obs);
+        addProperty(path, type, requiresRestart, defaultValue, null, obs);
     }
     
     protected void addProperty(String path,
                                PropertyType type,
-                               boolean changeRequiresRestart,
+                               boolean requiresRestart,
                                Object defaultValue,
                                PropertyValidator validator)
     {
-        addProperty(path, type, changeRequiresRestart, defaultValue, validator, null);
+        addProperty(path, type, requiresRestart, defaultValue, validator, null);
     }
     
     protected void addProperty(String path,
                                PropertyType type,
-                               boolean changeRequiresRestart,
+                               boolean requiresRestart,
                                Object defaultValue)
     {
-        addProperty(path, type, changeRequiresRestart, defaultValue, null, null);
+        addProperty(path, type, requiresRestart, defaultValue, null, null);
     }
     
     private void updateConfigDef(IniFile oldDef, IniFile newDef, OutputStream os) throws IOException
