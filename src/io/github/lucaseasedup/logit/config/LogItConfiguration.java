@@ -65,15 +65,16 @@ public final class LogItConfiguration extends PropertyObserver
             FileUtils.extractResource("/config-def.b64", new File(plugin.getDataFolder(), "config-def.b64"));
         }
         
-        String userDefString = Base64.decode(IOUtils.toString(new FileInputStream(userDefFile)));
-        IniFile userDef = new IniFile(userDefString);
+        String userDefBase64String = IOUtils.toString(new FileInputStream(userDefFile));
+        IniFile userDef = new IniFile(Base64.decode(userDefBase64String));
         
         InputStream packageDefInputStream = LogItConfiguration.class.getResourceAsStream("/config-def.b64");
-        String packageDefString = Base64.decode(IOUtils.toString(packageDefInputStream));
-        IniFile packageDef = new IniFile(packageDefString);
+        String packageDefBase64String = IOUtils.toString(packageDefInputStream);
         
-        if (!userDefString.equals(packageDefString))
+        if (!userDefBase64String.equals(packageDefBase64String))
         {
+            IniFile packageDef = new IniFile(Base64.decode(packageDefBase64String));
+            
             updateConfigDef(userDef, packageDef, new FileOutputStream(userDefFile));
         }
         
