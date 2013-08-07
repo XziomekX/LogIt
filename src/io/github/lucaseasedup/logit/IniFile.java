@@ -1,14 +1,18 @@
 package io.github.lucaseasedup.logit;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -143,6 +147,26 @@ public class IniFile
             return defaultValue;
         
         return Boolean.parseBoolean(kv.get(key));
+    }
+    
+    public void save(OutputStream os) throws IOException
+    {
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os)))
+        {
+            for (Entry<String, Map<String, String>> section : entries.entrySet())
+            {
+                bw.write("[" + section.getKey() + "]");
+                bw.newLine();
+                
+                for (Entry<String, String> kv : section.getValue().entrySet())
+                {
+                    bw.write(kv.getKey() + "=" + kv.getValue());
+                    bw.newLine();
+                }
+                
+                bw.newLine();
+            }
+        }
     }
     
     private void load(InputStream is) throws IOException
