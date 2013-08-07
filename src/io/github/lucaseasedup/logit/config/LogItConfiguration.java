@@ -66,14 +66,14 @@ public final class LogItConfiguration extends PropertyObserver
         }
         
         String userDefBase64String = IOUtils.toString(new FileInputStream(userDefFile));
-        IniFile userDef = new IniFile(Base64.decode(userDefBase64String));
+        IniFile userDef = new IniFile(decodeConfigDef(userDefBase64String));
         
         InputStream packageDefInputStream = LogItConfiguration.class.getResourceAsStream(PACKAGE_CONFIG_DEF);
         String packageDefBase64String = IOUtils.toString(packageDefInputStream);
         
         if (!userDefBase64String.equals(packageDefBase64String))
         {
-            IniFile packageDef = new IniFile(Base64.decode(packageDefBase64String));
+            IniFile packageDef = new IniFile(decodeConfigDef(packageDefBase64String));
             
             updateConfigDef(userDef, packageDef, new FileOutputStream(userDefFile));
         }
@@ -469,6 +469,16 @@ public final class LogItConfiguration extends PropertyObserver
             
             addProperty(path, type, requiresRestart, defaultValue, validator, observer);
         }
+    }
+    
+    private String encodeConfigDef(String input)
+    {
+        return Base64.encode(input);
+    }
+    
+    private String decodeConfigDef(String input)
+    {
+        return Base64.decode(input);
     }
     
     public static final String USER_CONFIG_DEF = "config-def.b64";
