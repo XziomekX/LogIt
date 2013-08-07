@@ -57,7 +57,7 @@ public final class LogItConfiguration extends PropertyObserver
     public void load() throws IOException
     {
         plugin.reloadConfig();
-        plugin.getConfig().options().header(null);
+        plugin.getConfig().options().header("# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #\nVisit http://dev.bukkit.org/bukkit-plugins/logit/pages/configuration-v0-4-8-5/ for help in configuring LogIt. #\n# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #\n");
         
         File userDefFile = new File(plugin.getDataFolder(), USER_CONFIG_DEF);
         
