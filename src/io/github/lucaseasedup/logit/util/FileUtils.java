@@ -57,7 +57,9 @@ public class FileUtils
         }
     }
     
-    public static void loadLibrary(String filename) throws ReflectiveOperationException, FileNotFoundException, MalformedURLException
+    public static void loadLibrary(String filename) throws ReflectiveOperationException,
+                                                           FileNotFoundException,
+                                                           MalformedURLException
     {
         File file = new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename);
         URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
