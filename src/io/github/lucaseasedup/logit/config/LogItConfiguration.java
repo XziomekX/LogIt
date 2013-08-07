@@ -57,7 +57,10 @@ public final class LogItConfiguration extends PropertyObserver
     public void load() throws IOException
     {
         plugin.reloadConfig();
-        plugin.getConfig().options().header("# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #\nVisit http://dev.bukkit.org/bukkit-plugins/logit/pages/configuration-v0-4-8-5/ for help in configuring LogIt. #\n# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #\n");
+        plugin.getConfig().options().header(
+             "# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #\n"
+           + "Visit http://dev.bukkit.org/bukkit-plugins/logit/pages/configuration-v0-4-8-5/ for help in configuring LogIt. #\n"
+           + "# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #\n");
         
         File userDefFile = new File(plugin.getDataFolder(), USER_CONFIG_DEF);
         
@@ -382,7 +385,9 @@ public final class LogItConfiguration extends PropertyObserver
                     
                     if (rgb.length == 3)
                     {
-                        defaultValue = Color.fromRGB(Integer.valueOf(rgb[0]), Integer.valueOf(rgb[1]), Integer.valueOf(rgb[2]));
+                        defaultValue = Color.fromRGB(Integer.valueOf(rgb[0]),
+                                                     Integer.valueOf(rgb[1]),
+                                                     Integer.valueOf(rgb[2]));
                     }
                     else
                     {
@@ -409,7 +414,9 @@ public final class LogItConfiguration extends PropertyObserver
                 
                 if (axes.length == 3)
                 {
-                    defaultValue = new Vector(Double.valueOf(axes[0]), Double.valueOf(axes[1]), Double.valueOf(axes[2]));
+                    defaultValue = new Vector(Double.valueOf(axes[0]),
+                                              Double.valueOf(axes[1]),
+                                              Double.valueOf(axes[2]));
                 }
                 else
                 {
