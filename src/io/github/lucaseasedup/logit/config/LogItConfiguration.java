@@ -23,6 +23,7 @@ import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItPlugin;
 import io.github.lucaseasedup.logit.util.FileUtils;
 import it.sauronsoftware.base64.Base64;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -290,7 +291,14 @@ public final class LogItConfiguration extends PropertyObserver
             }
         }
         
-        FileUtils.extractResource(PACKAGE_CONFIG_DEF, new File(plugin.getDataFolder(), USER_CONFIG_DEF));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        
+        oldDef.save(baos);
+        
+        try (FileOutputStream fos = new FileOutputStream(new File(plugin.getDataFolder(), USER_CONFIG_DEF)))
+        {
+            fos.write(encodeConfigDef(baos.toString()).getBytes());
+        }
     }
     
     private void loadConfigDef(IniFile def)
