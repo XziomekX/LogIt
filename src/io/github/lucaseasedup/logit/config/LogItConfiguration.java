@@ -63,7 +63,7 @@ public final class LogItConfiguration extends PropertyObserver
         
         if (!userDefFile.exists())
         {
-            FileUtils.extractResource(PACKAGE_CONFIG_DEF, new File(plugin.getDataFolder(), USER_CONFIG_DEF));
+            FileUtils.extractResource(PACKAGE_CONFIG_DEF, userDefFile);
         }
         
         String userDefBase64String = IOUtils.toString(new FileInputStream(userDefFile));
