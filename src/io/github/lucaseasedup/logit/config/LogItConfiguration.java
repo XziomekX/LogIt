@@ -58,17 +58,17 @@ public final class LogItConfiguration extends PropertyObserver
         plugin.reloadConfig();
         plugin.getConfig().options().header(null);
         
-        File userDefFile = new File(plugin.getDataFolder(), "config-def.b64");
+        File userDefFile = new File(plugin.getDataFolder(), USER_CONFIG_DEF);
         
         if (!userDefFile.exists())
         {
-            FileUtils.extractResource("/config-def.b64", new File(plugin.getDataFolder(), "config-def.b64"));
+            FileUtils.extractResource(PACKAGE_CONFIG_DEF, new File(plugin.getDataFolder(), USER_CONFIG_DEF));
         }
         
         String userDefBase64String = IOUtils.toString(new FileInputStream(userDefFile));
         IniFile userDef = new IniFile(Base64.decode(userDefBase64String));
         
-        InputStream packageDefInputStream = LogItConfiguration.class.getResourceAsStream("/config-def.b64");
+        InputStream packageDefInputStream = LogItConfiguration.class.getResourceAsStream(PACKAGE_CONFIG_DEF);
         String packageDefBase64String = IOUtils.toString(packageDefInputStream);
         
         if (!userDefBase64String.equals(packageDefBase64String))
@@ -290,7 +290,7 @@ public final class LogItConfiguration extends PropertyObserver
             }
         }
         
-        FileUtils.extractResource("/config-def.b64", new File(plugin.getDataFolder(), "config-def.b64"));
+        FileUtils.extractResource(PACKAGE_CONFIG_DEF, new File(plugin.getDataFolder(), USER_CONFIG_DEF));
     }
     
     private void loadConfigDef(IniFile def)
@@ -470,6 +470,9 @@ public final class LogItConfiguration extends PropertyObserver
             addProperty(path, type, requiresRestart, defaultValue, validator, observer);
         }
     }
+    
+    public static final String USER_CONFIG_DEF = "config-def.b64";
+    public static final String PACKAGE_CONFIG_DEF = "/config-def.b64";
     
     private final LogItPlugin plugin;
     private final Map<String, Property> properties = new LinkedHashMap<>();
