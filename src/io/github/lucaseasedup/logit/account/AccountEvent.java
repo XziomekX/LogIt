@@ -71,5 +71,5 @@ public abstract class AccountEvent extends Event implements Cancellable
     private static final HandlerList handlers = new HandlerList();
     
     private final Account account;
-    private boolean cancelled;
+    private boolean cancelled = false;
 }
