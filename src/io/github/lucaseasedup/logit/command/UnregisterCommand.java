@@ -22,8 +22,6 @@ import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import io.github.lucaseasedup.logit.LogItCore;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -79,14 +77,15 @@ public class UnregisterCommand extends AbstractCommandExecutor
                 
                 try
                 {
-                    core.getAccountManager().removeAccount(args[1]);
-                    sendMessage(args[1], getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
-                    sender.sendMessage(getMessage("REMOVE_ACCOUNT_SUCCESS_OTHERS").replace("%player%", args[1]));
+                    if (core.getAccountManager().removeAccount(args[1]))
+                    {
+                        sendMessage(args[1], getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
+                        sender.sendMessage(getMessage("REMOVE_ACCOUNT_SUCCESS_OTHERS").replace("%player%", args[1]));
+                    }
                 }
-                catch (SQLException | UnsupportedOperationException ex)
+                catch (SQLException ex)
                 {
-                    Logger.getLogger(UnregisterCommand.class.getName()).log(Level.WARNING, null, ex);
-                    sender.sendMessage(getMessage("REMOVE_ACCOUNT_FAIL_SELF"));
+                    sender.sendMessage(getMessage("REMOVE_ACCOUNT_FAIL_OTHERS").replace("%player%", args[1]));
                 }
             }
         }
@@ -122,12 +121,13 @@ public class UnregisterCommand extends AbstractCommandExecutor
                 
                 try
                 {
-                    core.getAccountManager().removeAccount(p.getName());
-                    sender.sendMessage(getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
+                    if (core.getAccountManager().removeAccount(p.getName()))
+                    {
+                        sender.sendMessage(getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
+                    }
                 }
-                catch (SQLException | UnsupportedOperationException ex)
+                catch (SQLException ex)
                 {
-                    Logger.getLogger(UnregisterCommand.class.getName()).log(Level.WARNING, null, ex);
                     sender.sendMessage(getMessage("REMOVE_ACCOUNT_FAIL_SELF"));
                 }
             }
