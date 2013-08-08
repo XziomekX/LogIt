@@ -415,6 +415,11 @@ public class AccountManager
         return accountMap.get(username).get(property);
     }
     
+    public boolean isColumnDisabled(String id)
+    {
+        return table.isColumnDisabled(id);
+    }
+    
     public int getAccountCount()
     {
         return accountMap.size();
