@@ -63,7 +63,8 @@ public class RegisterCommand extends AbstractCommandExecutor
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
             }
-            else if (args.length < 3)
+            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
+                    && args.length < 3)
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
@@ -71,21 +72,30 @@ public class RegisterCommand extends AbstractCommandExecutor
             {
                 sender.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_OTHERS").replace("%player%", args[1]));
             }
-            else if (args[2].length() < core.getConfig().getInt("password.min-length"))
+            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
+                    && args[2].length() < core.getConfig().getInt("password.min-length"))
             {
                 sender.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
                         String.valueOf(core.getConfig().getInt("password.min-length"))));
             }
-            else if (args[2].length() > core.getConfig().getInt("password.max-length"))
+            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
+                    && args[2].length() > core.getConfig().getInt("password.max-length"))
             {
                 sender.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
                         String.valueOf(core.getConfig().getInt("password.max-length"))));
             }
             else
             {
+                String password = "";
+                
+                if (!core.getAccountTable().isColumnDisabled("logit.accounts.password"))
+                {
+                    password = args[2];
+                }
+                
                 try
                 {
-                    if (core.getAccountManager().createAccount(args[1], args[2]))
+                    if (core.getAccountManager().createAccount(args[1], password))
                     {
                         sendMessage(args[1], getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
                         sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_OTHERS")
@@ -126,11 +136,13 @@ public class RegisterCommand extends AbstractCommandExecutor
             {
                 p.sendMessage(getMessage("NO_PERMS"));
             }
-            else if (args.length < 1)
+            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
+                    && args.length < 1)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
-            else if (args.length < 2)
+            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
+                    && args.length < 2)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
             }
@@ -138,17 +150,20 @@ public class RegisterCommand extends AbstractCommandExecutor
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_SELF"));
             }
-            else if (args[0].length() < core.getConfig().getInt("password.min-length"))
+            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
+                    && args[0].length() < core.getConfig().getInt("password.min-length"))
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
                         String.valueOf(core.getConfig().getInt("password.min-length"))));
             }
-            else if (args[0].length() > core.getConfig().getInt("password.max-length"))
+            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
+                    && args[0].length() > core.getConfig().getInt("password.max-length"))
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
                         String.valueOf(core.getConfig().getInt("password.max-length"))));
             }
-            else if (!args[0].equals(args[1]))
+            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
+                    && !args[0].equals(args[1]))
             {
                 p.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
             }
@@ -159,9 +174,16 @@ public class RegisterCommand extends AbstractCommandExecutor
             }
             else
             {
+                String password = "";
+                
+                if (!core.getAccountTable().isColumnDisabled("logit.accounts.password"))
+                {
+                    password = args[0];
+                }
+                
                 try
                 {
-                    if (core.getAccountManager().createAccount(p.getName(), args[0]))
+                    if (core.getAccountManager().createAccount(p.getName(), password))
                     {
                         sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
                         
