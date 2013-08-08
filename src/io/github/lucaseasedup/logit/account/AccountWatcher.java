@@ -22,8 +22,6 @@ import io.github.lucaseasedup.logit.LogItCore;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author LucasEasedUp
@@ -59,9 +57,8 @@ public class AccountWatcher implements Runnable
                 {
                     accountManager.removeAccount(username);
                 }
-                catch (SQLException | UnsupportedOperationException ex)
+                catch (SQLException ex)
                 {
-                    Logger.getLogger(AccountWatcher.class.getName()).log(Level.WARNING, null, ex);
                 }
             }
         }
