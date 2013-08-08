@@ -67,6 +67,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -740,6 +742,33 @@ public final class LogItCore
         }
         
         plugin.getLogger().log(level, stripColor(message));
+    }
+    
+    public void log(Level level, String message, Throwable t)
+    {
+        String stackTrace = null;
+        
+        try (
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+        )
+        {
+            t.printStackTrace(pw);
+            
+            stackTrace = sw.toString();
+        }
+        catch (IOException ex)
+        {
+        }
+        
+        if (stackTrace != null)
+        {
+            log(level, message + " [Exception stack trace:\n" + stackTrace + "]");
+        }
+        else
+        {
+            log(level, message + " [Unknown exception stack trace]");
+        }
     }
     
     public Table getAccountTable()
