@@ -101,7 +101,8 @@ public class UnregisterCommand extends AbstractCommandExecutor
             {
                 p.sendMessage(getMessage("NO_PERMS"));
             }
-            else if (args.length < 1)
+            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
+                    && args.length < 1)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
@@ -109,7 +110,8 @@ public class UnregisterCommand extends AbstractCommandExecutor
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
             }
-            else if (!core.getAccountManager().checkAccountPassword(p.getName(), args[0]))
+            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
+                    && !core.getAccountManager().checkAccountPassword(p.getName(), args[0]))
             {
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
             }

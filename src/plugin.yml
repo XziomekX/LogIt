@@ -21,7 +21,7 @@ commands:
 
   unregister:
     description: Unregisters you.
-    usage: /<command> <password>
+    usage: /<command> [password]
 
   logout:
     description: Logs you out.
