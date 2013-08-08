@@ -26,8 +26,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author LucasEasedUp
@@ -53,18 +51,9 @@ public class MySqlDatabase extends Database
     }
     
     @Override
-    public boolean isConnected()
+    public boolean isConnected() throws SQLException
     {
-        try
-        {
-            return !connection.isClosed();
-        }
-        catch (SQLException ex)
-        {
-            Logger.getLogger(MySqlDatabase.class.getName()).log(Level.WARNING, null, ex);
-            
-            return false;
-        }
+        return !connection.isClosed();
     }
     
     @Override

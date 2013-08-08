@@ -26,8 +26,6 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author LucasEasedUp
@@ -47,18 +45,9 @@ public class SqliteDatabase extends Database
     }
     
     @Override
-    public boolean isConnected()
+    public boolean isConnected() throws SQLException
     {
-        try
-        {
-            return !connection.isClosed();
-        }
-        catch (SQLException ex)
-        {
-            Logger.getLogger(SqliteDatabase.class.getName()).log(Level.WARNING, null, ex);
-            
-            return false;
-        }
+        return !connection.isClosed();
     }
     
     @Override

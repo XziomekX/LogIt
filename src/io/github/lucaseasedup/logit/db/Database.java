@@ -31,7 +31,7 @@ import java.util.Map;
 public abstract class Database implements AutoCloseable
 {
     public abstract void connect() throws SQLException;
-    public abstract boolean isConnected();
+    public abstract boolean isConnected() throws SQLException;
     public abstract void ping() throws SQLException;
     
     @Override
