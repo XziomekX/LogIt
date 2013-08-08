@@ -18,8 +18,6 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import static io.github.lucaseasedup.logit.GeneralResult.FAILURE;
-import static io.github.lucaseasedup.logit.GeneralResult.SUCCESS;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
@@ -48,7 +46,7 @@ public class AccountManager
 {
     public AccountManager(LogItCore core, Table accounts)
     {
-        this.core     = core;
+        this.core = core;
         this.table = accounts;
     }
     
@@ -86,26 +84,31 @@ public class AccountManager
         String hash = core.hash(password, salt, algorithm);
         String now = String.valueOf(System.currentTimeMillis() / 1000L);
         
+        Map<String, String> m = new HashMap<>();
+        
+        m.put("logit.accounts.username", username.toLowerCase());
+        m.put("logit.accounts.salt", salt);
+        m.put("logit.accounts.password", hash);
+        m.put("logit.accounts.hashing_algorithm", algorithm.encode());
+        m.put("logit.accounts.last_active", now);
+        m.put("logit.accounts.reg_date", now);
+        
+        AccountEvent evt = new AccountCreateEvent(m);
+        
+        Bukkit.getPluginManager().callEvent(evt);
+        
+        if (evt.isCancelled())
+            return;
+        
         try
         {
-            Map<String, String> m = new HashMap<>();
-            
-            m.put("logit.accounts.username", username.toLowerCase());
-            m.put("logit.accounts.salt", salt);
-            m.put("logit.accounts.password", hash);
-            m.put("logit.accounts.hashing_algorithm", algorithm.encode());
-            m.put("logit.accounts.last_active", now);
-            m.put("logit.accounts.reg_date", now);
-            
             accountMap.put(username, new Account(table, m));
             
             core.log(Level.FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
-            Bukkit.getPluginManager().callEvent(new AccountCreateEvent(username, hash, SUCCESS));
         }
         catch (SQLException ex)
         {
             core.log(Level.WARNING, getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username));
-            Bukkit.getPluginManager().callEvent(new AccountCreateEvent(username, hash, FAILURE));
             
             throw ex;
         }
@@ -124,17 +127,23 @@ public class AccountManager
         if (!isRegistered(username))
             throw new AccountNotFoundException();
         
+        Account account = accountMap.get(username);
+        AccountEvent evt = new AccountRemoveEvent(account);
+        
+        Bukkit.getPluginManager().callEvent(evt);
+        
+        if (evt.isCancelled())
+            return;
+        
         try
         {
             accountMap.remove(username);
             
             core.log(Level.FINE, getMessage("REMOVE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
-            Bukkit.getPluginManager().callEvent(new AccountRemoveEvent(username, SUCCESS));
         }
         catch (SQLException ex)
         {
             core.log(Level.WARNING, getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username));
-            Bukkit.getPluginManager().callEvent(new AccountRemoveEvent(username, FAILURE));
             
             throw ex;
         }
@@ -193,10 +202,16 @@ public class AccountManager
             throw new AccountNotFoundException();
         
         Account account = accountMap.get(username);
+        AccountEvent evt = new AccountChangePasswordEvent(account, newPassword);
+        
+        Bukkit.getPluginManager().callEvent(evt);
+        
+        if (evt.isCancelled())
+            return;
+        
         HashingAlgorithm algorithm = core.getDefaultHashingAlgorithm();
         String newSalt = HashGenerator.generateSalt(algorithm);
         String newHash = core.hash(newPassword, newSalt, algorithm);
-        String oldPassword = account.get("logit.accounts.password");
         
         try
         {
@@ -205,12 +220,10 @@ public class AccountManager
             account.update("logit.accounts.hashing_algorithm", algorithm.encode());
             
             core.log(Level.FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
-            Bukkit.getPluginManager().callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, SUCCESS));
         }
         catch (SQLException ex)
         {
             core.log(Level.WARNING, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username));
-            Bukkit.getPluginManager().callEvent(new AccountChangePasswordEvent(username, oldPassword, newHash, FAILURE));
             
             throw ex;
         }
@@ -222,19 +235,22 @@ public class AccountManager
             throw new AccountNotFoundException();
         
         Account account = accountMap.get(username);
-        String oldEmail = account.get("logit.accounts.email");
+        AccountEvent evt = new AccountChangeEmailEvent(account, newEmail);
+        
+        Bukkit.getPluginManager().callEvent(evt);
+        
+        if (evt.isCancelled())
+            return;
         
         try
         {
             account.update("logit.accounts.email", newEmail);
             
             core.log(Level.FINE, getMessage("CHANGE_EMAIL_SUCCESS_LOG").replace("%player%", username));
-            Bukkit.getPluginManager().callEvent(new AccountChangeEmailEvent(username, oldEmail, newEmail, SUCCESS));
         }
         catch (SQLException ex)
         {
             core.log(Level.WARNING, getMessage("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username));
-            Bukkit.getPluginManager().callEvent(new AccountChangeEmailEvent(username, oldEmail, newEmail, FAILURE));
             
             throw ex;
         }
@@ -257,6 +273,14 @@ public class AccountManager
         if (!isRegistered(username))
             throw new AccountNotFoundException();
         
+        Account account = accountMap.get(username);
+        AccountEvent evt = new AccountAttachIpEvent(account, ip);
+        
+        Bukkit.getPluginManager().callEvent(evt);
+        
+        if (evt.isCancelled())
+            return;
+        
         try
         {
             if (core.getIntegration() == IntegrationType.PHPBB2)
@@ -270,15 +294,15 @@ public class AccountManager
                 }
             }
             
-            accountMap.get(username).update("logit.accounts.ip", ip);
+            account.update("logit.accounts.ip", ip);
             
-            core.log(Level.FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username).replace("%ip%", ip));
-            Bukkit.getPluginManager().callEvent(new AccountAttachIpEvent(username, ip, SUCCESS));
+            core.log(Level.FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username)
+                    .replace("%ip%", ip));
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username).replace("%ip%", ip));
-            Bukkit.getPluginManager().callEvent(new AccountAttachIpEvent(username, ip, FAILURE));
+            core.log(Level.WARNING, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username)
+                    .replace("%ip%", ip));
             
             throw ex;
         }

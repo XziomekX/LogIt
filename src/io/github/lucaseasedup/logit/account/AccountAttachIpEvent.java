@@ -18,16 +18,14 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import io.github.lucaseasedup.logit.GeneralResult;
-
 /**
  * @author LucasEasedUp
  */
 public class AccountAttachIpEvent extends AccountEvent
 {
-    public AccountAttachIpEvent(String username, String ip, GeneralResult result)
+    public AccountAttachIpEvent(Account account, String ip)
     {
-        super(username, result);
+        super(account);
         
         this.ip = ip;
     }

@@ -18,31 +18,22 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import io.github.lucaseasedup.logit.GeneralResult;
-
 /**
  * @author LucasEasedUp
  */
 public class AccountChangeEmailEvent extends AccountEvent
 {
-    public AccountChangeEmailEvent(String username, String oldEmail, String newEmail, GeneralResult result)
+    public AccountChangeEmailEvent(Account account, String email)
     {
-        super(username, result);
+        super(account);
         
-        this.oldEmail = oldEmail;
-        this.newEmail = newEmail;
-    }
-
-    public String getOldEmail()
-    {
-        return oldEmail;
-    }
-
-    public String getNewEmail()
-    {
-        return newEmail;
+        this.email = email;
     }
     
-    private final String oldEmail;
-    private final String newEmail;
+    public String getEmail()
+    {
+        return email;
+    }
+    
+    private final String email;
 }

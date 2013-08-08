@@ -18,20 +18,18 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import io.github.lucaseasedup.logit.GeneralResult;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
 
 /**
  * @author LucasEasedUp
  */
-public abstract class AccountEvent extends Event
+public abstract class AccountEvent extends Event implements Cancellable
 {
-    public AccountEvent(String username, GeneralResult result)
+    public AccountEvent(Account account)
     {
-        this.username = username.toLowerCase();
-        this.result   = result;
+        this.account = account;
     }
     
     @Override
@@ -39,15 +37,30 @@ public abstract class AccountEvent extends Event
     {
         return handlers;
     }
-
-    public String getUsername()
+    
+    public Account getAccount()
     {
-        return username;
+        return account;
     }
     
-    public boolean isSuccessful()
+    /**
+     * Equal to <code>getAccount().get("logit.accounts.username")</code>.
+     * 
+     * @return Username.
+     */
+    public String getUsername()
     {
-        return GeneralResult.toBoolean(result);
+        return account.get("logit.accounts.username");
+    }
+    
+    public boolean isCancelled()
+    {
+        return cancelled;
+    }
+    
+    public void setCancelled(boolean cancelled)
+    {
+        this.cancelled = cancelled;
     }
     
     public static HandlerList getHandlerList()
@@ -57,6 +70,6 @@ public abstract class AccountEvent extends Event
     
     private static final HandlerList handlers = new HandlerList();
     
-    private final String username;
-    private final GeneralResult result;
+    private final Account account;
+    private boolean cancelled;
 }

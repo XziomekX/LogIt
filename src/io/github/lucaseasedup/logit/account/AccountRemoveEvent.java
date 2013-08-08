@@ -18,15 +18,13 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import io.github.lucaseasedup.logit.GeneralResult;
-
 /**
  * @author LucasEasedUp
  */
 public class AccountRemoveEvent extends AccountEvent
 {
-    public AccountRemoveEvent(String username, GeneralResult result)
+    public AccountRemoveEvent(Account account)
     {
-        super(username, result);
+        super(account);
     }
 }

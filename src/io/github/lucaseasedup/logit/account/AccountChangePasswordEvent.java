@@ -18,31 +18,22 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import io.github.lucaseasedup.logit.GeneralResult;
-
 /**
  * @author LucasEasedUp
  */
 public class AccountChangePasswordEvent extends AccountEvent
 {
-    public AccountChangePasswordEvent(String username, String oldPassword, String newPassword, GeneralResult result)
+    public AccountChangePasswordEvent(Account account, String password)
     {
-        super(username, result);
+        super(account);
         
-        this.oldPassword = oldPassword;
-        this.newPassword = newPassword;
+        this.password = password;
     }
 
-    public String getOldPassword()
+    public String getPassword()
     {
-        return oldPassword;
+        return password;
     }
 
-    public String getNewPassword()
-    {
-        return newPassword;
-    }
-    
-    private final String oldPassword;
-    private final String newPassword;
+    private final String password;
 }

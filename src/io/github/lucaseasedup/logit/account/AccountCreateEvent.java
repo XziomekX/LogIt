@@ -18,24 +18,41 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import io.github.lucaseasedup.logit.GeneralResult;
+import java.util.Map;
 
 /**
  * @author LucasEasedUp
  */
 public class AccountCreateEvent extends AccountEvent
 {
-    public AccountCreateEvent(String username, String password, GeneralResult result)
+    public AccountCreateEvent(Map<String, String> properties)
     {
-        super(username, result);
+        super(null);
         
-        this.password = password;
-    }
-
-    public String getPassword()
-    {
-        return password;
+        this.properties = properties;
     }
     
-    private final String password;
+    /**
+     * Always returns <code>null</code>.
+     */
+    @Override
+    public Account getAccount()
+    {
+        return null;
+    }
+    
+    /**
+     * Equal to <code>getProperty("logit.accounts.username")</code>.
+     */
+    public String getUsername()
+    {
+        return properties.get("logit.accounts.username");
+    }
+    
+    public String getProperty(String name)
+    {
+        return properties.get(name);
+    }
+    
+    private final Map<String, String> properties;
 }
