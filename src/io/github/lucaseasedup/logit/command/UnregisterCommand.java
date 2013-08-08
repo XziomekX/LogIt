@@ -71,8 +71,10 @@ public class UnregisterCommand extends AbstractCommandExecutor
             {
                 if (core.getSessionManager().isSessionAlive(args[1]))
                 {
-                    core.getSessionManager().endSession(args[1]);
-                    sender.sendMessage(getMessage("END_SESSION_SUCCESS_SELF"));
+                    if (core.getSessionManager().endSession(args[1]))
+                    {
+                        sender.sendMessage(getMessage("END_SESSION_SUCCESS_SELF"));
+                    }
                 }
                 
                 try
@@ -115,8 +117,10 @@ public class UnregisterCommand extends AbstractCommandExecutor
             {
                 if (core.getSessionManager().isSessionAlive(p.getName()))
                 {
-                    core.getSessionManager().endSession(p.getName());
-                    sender.sendMessage(getMessage("END_SESSION_SUCCESS_SELF"));
+                    if (core.getSessionManager().endSession(p.getName()))
+                    {
+                        sender.sendMessage(getMessage("END_SESSION_SUCCESS_SELF"));
+                    }
                 }
                 
                 try

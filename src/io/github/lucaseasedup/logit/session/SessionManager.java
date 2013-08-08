@@ -143,15 +143,25 @@ public class SessionManager implements Runnable
      * 
      * @param username Username.
      * @param ip IP address.
+     * @return True if session has been created,
+     *         false if creation has been cancelled by an outside event listener.
      */
-    public void createSession(String username, String ip)
+    public boolean createSession(String username, String ip)
     {
+        SessionEvent evt = new SessionCreateEvent(username);
+        
+        Bukkit.getPluginManager().callEvent(evt);
+        
+        if (evt.isCancelled())
+            return false;
+        
         // Create session.
         Session session = new Session(ip);
         sessions.put(username.toLowerCase(), session);
         
         core.log(Level.FINE, getMessage("CREATE_SESSION_SUCCESS_LOG").replace("%player%", username));
-        Bukkit.getPluginManager().callEvent(new SessionCreateEvent(username, session));
+        
+        return true;
     }
     
     /**
@@ -160,17 +170,27 @@ public class SessionManager implements Runnable
      * If session does not exist, no action will be taken.
      * 
      * @param username Username.
+     * @return True if session has been destroyed,
+     *         false if operation has been cancelled by an outside event listener.
      */
-    public void destroySession(String username)
+    public boolean destroySession(String username)
     {
         if (getSession(username) == null)
-            return;
+            return true;
         
-        // Destroy session.
-        Session session = sessions.remove(username.toLowerCase());
+        Session session = sessions.get(username.toLowerCase());
+        SessionEvent evt = new SessionDestroyEvent(username, session);
+        
+        Bukkit.getPluginManager().callEvent(evt);
+        
+        if (evt.isCancelled())
+            return false;
+        
+        sessions.remove(username.toLowerCase());
         
         core.log(Level.FINE, getMessage("DESTROY_SESSION_SUCCESS_LOG").replace("%player%", getPlayerName(username)));
-        Bukkit.getPluginManager().callEvent(new SessionDestroyEvent(username, session));
+        
+        return true;
     }
     
     /**
@@ -178,13 +198,21 @@ public class SessionManager implements Runnable
      * 
      * @param username Username.
      * @throws SessionNotFoundException Thrown if the session does not exist.
+     * @return True if session has been started,
+     *         false if operation has been cancelled by an outside event listener.
      */
-    public void startSession(String username)
+    public boolean startSession(String username)
     {
         if (getSession(username) == null)
             throw new SessionNotFoundException();
         
         Session session = getSession(username);
+        SessionEvent evt = new SessionStartEvent(username, session);
+        
+        Bukkit.getPluginManager().callEvent(evt);
+        
+        if (evt.isCancelled())
+            return false;
         
         // Start session.
         session.setStatus(0L);
@@ -199,7 +227,8 @@ public class SessionManager implements Runnable
         }
         
         core.log(Level.FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
-        Bukkit.getPluginManager().callEvent(new SessionStartEvent(username, session));
+        
+        return true;
     }
     
     /**
@@ -207,13 +236,21 @@ public class SessionManager implements Runnable
      * 
      * @param username Username.
      * @throws SessionNotFoundException Thrown if the session does not exist.
+     * @return True if session has been ended,
+     *         false if operation has been cancelled by an outside event listener.
      */
-    public void endSession(String username)
+    public boolean endSession(String username)
     {
         if (getSession(username) == null)
             throw new SessionNotFoundException();
         
         Session session = getSession(username);
+        SessionEvent evt = new SessionEndEvent(username, session);
+        
+        Bukkit.getPluginManager().callEvent(evt);
+        
+        if (evt.isCancelled())
+            return false;
         
         // End session.
         session.setStatus(-1L);
@@ -228,7 +265,8 @@ public class SessionManager implements Runnable
         }
         
         core.log(Level.FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
-        Bukkit.getPluginManager().callEvent(new SessionEndEvent(username, session));
+        
+        return true;
     }
     
     public void exportSessions(File sessionsDatabaseFile) throws SQLException

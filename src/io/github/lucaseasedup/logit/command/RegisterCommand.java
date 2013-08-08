@@ -88,18 +88,22 @@ public class RegisterCommand extends AbstractCommandExecutor
                     if (core.getAccountManager().createAccount(args[1], args[2]))
                     {
                         sendMessage(args[1], getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
-                        sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_OTHERS").replace("%player%", args[1]));
+                        sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_OTHERS")
+                                .replace("%player%", args[1]));
                         
                         if (isPlayerOnline(args[1]))
                         {
                             core.getAccountManager().attachIp(args[1], getPlayerIp(getPlayer(args[1])));
                             
-                            core.getSessionManager().startSession(args[1]);
-                            sendMessage(args[1], getMessage("START_SESSION_SUCCESS_SELF"));
-                            sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
+                            if (core.getSessionManager().startSession(args[1]))
+                            {
+                                sendMessage(args[1], getMessage("START_SESSION_SUCCESS_SELF"));
+                                sender.sendMessage(getMessage("START_SESSION_SUCCESS_OTHERS")
+                                        .replace("%player%", args[1]));
+                            }
                             
                             if (core.getConfig().getBoolean("waiting-room.enabled")
-                                && core.getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
+                                    && core.getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
                             {
                                 getPlayer(args[1]).teleport(core.getWaitingRoom().getNewbieTeleportLocation());
                             }
@@ -163,8 +167,10 @@ public class RegisterCommand extends AbstractCommandExecutor
                         
                         core.getAccountManager().attachIp(p.getName(), getPlayerIp(p));
                         
-                        core.getSessionManager().startSession(p.getName());
-                        sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
+                        if (core.getSessionManager().startSession(p.getName()))
+                        {
+                            sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
+                        }
                         
                         if (core.getConfig().getBoolean("waiting-room.enabled")
                             && core.getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))

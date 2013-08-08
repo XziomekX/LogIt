@@ -24,7 +24,6 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCore;
 import java.util.HashMap;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -74,11 +73,11 @@ public class LoginCommand extends AbstractCommandExecutor
             }
             else
             {
-                core.getSessionManager().startSession(args[1]);
-                
-                sendMessage(args[1], getMessage("START_SESSION_SUCCESS_SELF"));
-                sender.sendMessage(getMessage("START_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
-                core.log(Level.FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", args[1]));
+                if (core.getSessionManager().startSession(args[1]))
+                {
+                    sendMessage(args[1], getMessage("START_SESSION_SUCCESS_SELF"));
+                    sender.sendMessage(getMessage("START_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
+                }
             }
         }
         else if (args.length <= 1)
@@ -135,12 +134,13 @@ public class LoginCommand extends AbstractCommandExecutor
             }
             else
             {
-                core.getSessionManager().startSession(p.getName());
-                failedLoginsToKick.remove(p.getName().toLowerCase());
-                failedLoginsToBan.remove(p.getName().toLowerCase());
-                
-                sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
-                core.log(Level.FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", p.getName()));
+                if (core.getSessionManager().startSession(p.getName()))
+                {
+                    failedLoginsToKick.remove(p.getName().toLowerCase());
+                    failedLoginsToBan.remove(p.getName().toLowerCase());
+                    
+                    sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
+                }
             }
         }
         else

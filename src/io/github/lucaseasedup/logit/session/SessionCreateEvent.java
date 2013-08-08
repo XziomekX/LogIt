@@ -23,8 +23,17 @@ package io.github.lucaseasedup.logit.session;
  */
 public class SessionCreateEvent extends SessionEvent
 {
-    public SessionCreateEvent(String username, Session session)
+    public SessionCreateEvent(String username)
     {
-        super(username, session);
+        super(username, null);
+    }
+    
+    /**
+     * Always returns <code>null</code> 
+     */
+    @Override
+    public Session getSession()
+    {
+        return null;
     }
 }

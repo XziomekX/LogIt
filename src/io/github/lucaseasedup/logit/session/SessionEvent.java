@@ -18,13 +18,14 @@
  */
 package io.github.lucaseasedup.logit.session;
 
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
  * @author LucasEasedUp
  */
-public abstract class SessionEvent extends Event
+public abstract class SessionEvent extends Event implements Cancellable
 {
     public SessionEvent(String username, Session session)
     {
@@ -38,6 +39,18 @@ public abstract class SessionEvent extends Event
         return handlers;
     }
 
+    @Override
+    public boolean isCancelled()
+    {
+        return cancelled;
+    }
+    
+    @Override
+    public void setCancelled(boolean cancelled)
+    {
+        this.cancelled = cancelled;
+    }
+    
     public String getUsername()
     {
         return username;
@@ -57,4 +70,5 @@ public abstract class SessionEvent extends Event
     
     private final String username;
     private final Session session;
+    private boolean cancelled = false;
 }
