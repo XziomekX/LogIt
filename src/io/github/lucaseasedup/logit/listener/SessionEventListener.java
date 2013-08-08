@@ -58,8 +58,7 @@ public class SessionEventListener extends EventListener
             }
             catch (InventorySerializationException ex)
             {
-                core.log(Level.WARNING, "Could not withdraw player's inventory. Stack trace:");
-                ex.printStackTrace();
+                core.log(Level.WARNING, "Could not withdraw player's inventory.", ex);
             }
             
             if (core.getConfig().getBoolean("groups.enabled"))
@@ -102,8 +101,7 @@ public class SessionEventListener extends EventListener
                 }
                 catch (InventorySerializationException ex)
                 {
-                    core.log(Level.WARNING, "Could not deposit player's inventory. Stack trace:");
-                    ex.printStackTrace();
+                    core.log(Level.WARNING, "Could not deposit player's inventory.", ex);
                 }
             }
             

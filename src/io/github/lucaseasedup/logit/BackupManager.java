@@ -31,7 +31,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This class runs a scheduled backup and provides
@@ -74,8 +73,7 @@ public class BackupManager implements Runnable
             }
             catch (IOException | SQLException ex)
             {
-                Logger.getLogger(BackupManager.class.getName()).log(Level.WARNING, null, ex);
-                core.log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"));
+                core.log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"), ex);
             }
             
             timer.reset();
@@ -91,71 +89,89 @@ public class BackupManager implements Runnable
         
         backupPath.mkdir();
         
-        if (!backupFile.createNewFile())
-            throw new IOException("Backup already exists.");
-        
-        try (SqliteDatabase backupDatabase = new SqliteDatabase("jdbc:sqlite:" + backupFile))
+        try
         {
-            backupDatabase.connect();
+            if (!backupFile.createNewFile())
+                throw new IOException("Backup already exists.");
             
-            Table backupTable = new Table(backupDatabase, accounts.getTableName(),
-                    core.getConfig().getConfigurationSection("storage.accounts.columns"));
-            backupTable.open();
-            
-            List<Map<String, String>> rs = accounts.select();
-            
-            for (Map<String, String> m : rs)
+            try (SqliteDatabase backupDatabase = new SqliteDatabase("jdbc:sqlite:" + backupFile))
             {
-                backupTable.insert(new String[]{
-                    "logit.accounts.username",
-                    "logit.accounts.salt",
-                    "logit.accounts.password",
-                    "logit.accounts.ip",
-                    "logit.accounts.last_active",
-                }, new String[]{
-                    m.get("logit.accounts.username"),
-                    m.get("logit.accounts.salt"),
-                    m.get("logit.accounts.password"),
-                    m.get("logit.accounts.ip"),
-                    m.get("logit.accounts.last_active"),
-                });
+                backupDatabase.connect();
+                
+                Table backupTable = new Table(backupDatabase, accounts.getTableName(),
+                        core.getConfig().getConfigurationSection("storage.accounts.columns"));
+                backupTable.open();
+                
+                List<Map<String, String>> rs = accounts.select();
+                
+                for (Map<String, String> m : rs)
+                {
+                    backupTable.insert(new String[]{
+                        "logit.accounts.username",
+                        "logit.accounts.salt",
+                        "logit.accounts.password",
+                        "logit.accounts.ip",
+                        "logit.accounts.last_active",
+                    }, new String[]{
+                        m.get("logit.accounts.username"),
+                        m.get("logit.accounts.salt"),
+                        m.get("logit.accounts.password"),
+                        m.get("logit.accounts.ip"),
+                        m.get("logit.accounts.last_active"),
+                    });
+                }
             }
+        }
+        catch (IOException | SQLException ex)
+        {
+            core.log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"), ex);
+            
+            throw ex;
         }
     }
     
     public void restoreBackup(String filename) throws FileNotFoundException, SQLException
     {
-        File backupFile = getBackup(filename);
-        
-        try (SqliteDatabase backupDatabase = new SqliteDatabase("jdbc:sqlite:" + backupFile))
+        try
         {
-            backupDatabase.connect();
+            File backupFile = getBackup(filename);
             
-            Table backupTable = new Table(backupDatabase, accounts.getTableName(),
-                    core.getConfig().getConfigurationSection("storage.accounts.columns"));
-            backupTable.open();
-            
-            // Clear the table before restoring.
-            accounts.truncate();
-            
-            List<Map<String, String>> rs = backupTable.select();
-            
-            for (Map<String, String> m : rs)
+            try (SqliteDatabase backupDatabase = new SqliteDatabase("jdbc:sqlite:" + backupFile))
             {
-                accounts.insert(new String[]{
-                    "logit.accounts.username",
-                    "logit.accounts.salt",
-                    "logit.accounts.password",
-                    "logit.accounts.ip",
-                    "logit.accounts.last_active",
-                }, new String[]{
-                    m.get("logit.accounts.username"),
-                    m.get("logit.accounts.salt"),
-                    m.get("logit.accounts.password"),
-                    m.get("logit.accounts.ip"),
-                    m.get("logit.accounts.last_active"),
-                });
+                backupDatabase.connect();
+                
+                Table backupTable = new Table(backupDatabase, accounts.getTableName(),
+                        core.getConfig().getConfigurationSection("storage.accounts.columns"));
+                backupTable.open();
+                
+                // Clear the table before restoring.
+                accounts.truncate();
+                
+                List<Map<String, String>> rs = backupTable.select();
+                
+                for (Map<String, String> m : rs)
+                {
+                    accounts.insert(new String[]{
+                        "logit.accounts.username",
+                        "logit.accounts.salt",
+                        "logit.accounts.password",
+                        "logit.accounts.ip",
+                        "logit.accounts.last_active",
+                    }, new String[]{
+                        m.get("logit.accounts.username"),
+                        m.get("logit.accounts.salt"),
+                        m.get("logit.accounts.password"),
+                        m.get("logit.accounts.ip"),
+                        m.get("logit.accounts.last_active"),
+                    });
+                }
             }
+        }
+        catch (FileNotFoundException | SQLException ex)
+        {
+            core.log(Level.WARNING, getMessage("RESTORE_BACKUP_FAIL"), ex);
+            
+            throw ex;
         }
     }
     
@@ -163,9 +179,8 @@ public class BackupManager implements Runnable
      * Removes a certain amount of backups starting from the oldest.
      * 
      * @param amount Amount of backups to remove.
-     * @throws IOException
      */
-    public void removeBackups(int amount) throws IOException
+    public void removeBackups(int amount)
     {
         File[] backups = getBackups(true);
         
@@ -176,6 +191,8 @@ public class BackupManager implements Runnable
                 backups[i].delete();
             }
         }
+        
+        core.log(Level.INFO, getMessage("REMOVE_BACKUPS_SUCCESS"));
     }
     
     public File[] getBackups(boolean sortAlphabetically)

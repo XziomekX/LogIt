@@ -43,8 +43,7 @@ public class LocaleObserver extends PropertyObserver
         }
         catch (IOException ex)
         {
-            core.log(Level.WARNING, "Could not load messages. Stack trace:");
-            ex.printStackTrace();
+            core.log(Level.WARNING, "Could not load messages.", ex);
         }
     }
 }

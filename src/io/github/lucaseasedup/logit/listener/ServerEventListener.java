@@ -24,7 +24,6 @@ import io.github.lucaseasedup.logit.inventory.InventorySerializationException;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -55,7 +54,7 @@ public class ServerEventListener extends EventListener
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(ServerEventListener.class.getName()).log(Level.WARNING, null, ex);
+            core.log(Level.WARNING, "Could not import sessions.", ex);
         }
         
         sessions.delete();
@@ -75,7 +74,7 @@ public class ServerEventListener extends EventListener
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(ServerEventListener.class.getName()).log(Level.WARNING, null, ex);
+            core.log(Level.WARNING, "Could not export sessions.", ex);
         }
         
         Player[] players = Bukkit.getOnlinePlayers();
@@ -91,8 +90,7 @@ public class ServerEventListener extends EventListener
             }
             catch (InventorySerializationException ex)
             {
-                core.log(Level.WARNING, "Could not withdraw player's inventory. Stack trace:");
-                ex.printStackTrace();
+                core.log(Level.WARNING, "Could not withdraw player's inventory.", ex);
             }
         }
         

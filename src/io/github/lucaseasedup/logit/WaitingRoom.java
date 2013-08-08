@@ -26,7 +26,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -69,7 +68,7 @@ public class WaitingRoom
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(WaitingRoom.class.getName()).log(Level.WARNING, null, ex);
+            core.log(Level.WARNING, "Could not update player waiting-room status.", ex);
         }
     }
     
@@ -97,7 +96,7 @@ public class WaitingRoom
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(WaitingRoom.class.getName()).log(Level.WARNING, null, ex);
+            core.log(Level.WARNING, "Could not update player waiting-room status.", ex);
         }
     }
     
@@ -118,7 +117,7 @@ public class WaitingRoom
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(WaitingRoom.class.getName()).log(Level.WARNING, null, ex);
+            core.log(Level.WARNING, "Could not update player waiting-room status.", ex);
         }
     }
     
@@ -145,7 +144,7 @@ public class WaitingRoom
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(WaitingRoom.class.getName()).log(Level.WARNING, null, ex);
+            core.log(Level.WARNING, "Could not retrieve player waiting-room status.", ex);
             
             return false;
         }

@@ -110,7 +110,7 @@ public class AccountManager
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username));
+            core.log(Level.WARNING, getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
             
             throw ex;
         }
@@ -149,7 +149,7 @@ public class AccountManager
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username));
+            core.log(Level.WARNING, getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
             
             throw ex;
         }
@@ -233,7 +233,7 @@ public class AccountManager
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username));
+            core.log(Level.WARNING, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username), ex);
             
             throw ex;
         }
@@ -271,7 +271,7 @@ public class AccountManager
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, getMessage("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username));
+            core.log(Level.WARNING, getMessage("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username), ex);
             
             throw ex;
         }
@@ -327,7 +327,7 @@ public class AccountManager
         catch (SQLException ex)
         {
             core.log(Level.WARNING, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username)
-                    .replace("%ip%", ip));
+                    .replace("%ip%", ip), ex);
             
             throw ex;
         }
@@ -464,7 +464,7 @@ public class AccountManager
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, getMessage("LOAD_ACCOUNTS_FAIL"));
+            core.log(Level.WARNING, getMessage("LOAD_ACCOUNTS_FAIL"), ex);
             
             throw ex;
         }

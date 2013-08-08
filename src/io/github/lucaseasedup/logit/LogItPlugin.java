@@ -83,8 +83,7 @@ public final class LogItPlugin extends JavaPlugin
         }
         catch (Exception ex)
         {
-            logger.log(Level.SEVERE, "Could not set up CraftBukkit reflection. Stack trace:");
-            ex.printStackTrace();
+            logger.log(Level.SEVERE, "Could not set up CraftBukkit reflection.", ex);
             disable();
             
             return;
@@ -99,7 +98,7 @@ public final class LogItPlugin extends JavaPlugin
         {
             // If messages could not be loaded, just log the failure.
             // They're not nessesary for LogIt to work.
-            getLogger().log(Level.WARNING, "Could not load messages.");
+            getLogger().log(Level.WARNING, "Could not load messages.", ex);
         }
         
         core = LogItCore.getInstance();
@@ -287,15 +286,14 @@ public final class LogItPlugin extends JavaPlugin
         }
         catch (FileNotFoundException | MalformedURLException ex)
         {
-            getInstanceLogger().log(Level.SEVERE, "Library {0} was not found.", filename);
+            logger.log(Level.SEVERE, "Library {0} was not found.", filename);
             getInstance().disable();
             
             throw new FatalReportedException(ex);
         }
         catch (ReflectiveOperationException ex)
         {
-            getInstanceLogger().log(Level.SEVERE, "Could not load library {0}. Stack trace:", filename);
-            ex.printStackTrace();
+            logger.log(Level.SEVERE, "Could not load library " + filename + ".", ex);
             getInstance().disable();
             
             throw new FatalReportedException(ex);

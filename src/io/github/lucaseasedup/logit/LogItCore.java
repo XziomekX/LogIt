@@ -76,7 +76,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -111,8 +110,7 @@ public final class LogItCore
         }
         catch (IOException ex)
         {
-            plugin.getLogger().log(Level.SEVERE, "Could not load the configuration file. Stack trace:");
-            ex.printStackTrace();
+            plugin.getLogger().log(Level.SEVERE, "Could not load the configuration file.", ex);
             plugin.disable();
             
             return;
@@ -134,15 +132,15 @@ public final class LogItCore
                 }
                 catch (IOException ex)
                 {
-                    log(Level.WARNING, "Could not copy resource password-recovery.html. Stack trace:");
-                    ex.printStackTrace();
+                    log(Level.WARNING, "Could not copy resource password-recovery.html.", ex);
                 }
             }
         }
         
         if (getDefaultHashingAlgorithm().equals(HashingAlgorithm.UNKNOWN))
         {
-            log(Level.SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM").replace("%ha%", getDefaultHashingAlgorithm().name()));
+            log(Level.SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM")
+                    .replace("%ha%", getDefaultHashingAlgorithm().name()));
             plugin.disable();
             
             return;
@@ -205,7 +203,8 @@ public final class LogItCore
                 }
                 default:
                 {
-                    log(Level.SEVERE, getMessage("UNKNOWN_STORAGE_TYPE").replace("%st%", getStorageAccountsDbType().name()));
+                    log(Level.SEVERE, getMessage("UNKNOWN_STORAGE_TYPE")
+                            .replace("%st%", getStorageAccountsDbType().name()));
                     plugin.disable();
                     
                     return;
@@ -214,7 +213,7 @@ public final class LogItCore
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(LogItCore.class.getName()).log(Level.SEVERE, null, ex);
+            log(Level.SEVERE, "Could not open database connection.", ex);
             plugin.disable();
             
             return;
@@ -230,7 +229,7 @@ public final class LogItCore
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(LogItCore.class.getName()).log(Level.SEVERE, null, ex);
+            log(Level.SEVERE, "Could not open account table.", ex);
             plugin.disable();
             
             return;
@@ -244,7 +243,6 @@ public final class LogItCore
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(LogItCore.class.getName()).log(Level.SEVERE, null, ex);
             plugin.disable();
             
             return;
@@ -297,8 +295,7 @@ public final class LogItCore
         }
         catch (IOException | SQLException | ReflectiveOperationException ex)
         {
-            log(Level.SEVERE, "Inventories could not be restored. Stack trace:");
-            ex.printStackTrace();
+            log(Level.SEVERE, "Inventories could not be restored.", ex);
             plugin.disable();
             
             return;
@@ -343,7 +340,7 @@ public final class LogItCore
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(LogItCore.class.getName()).log(Level.WARNING, null, ex);
+            log(Level.WARNING, "Could not close database connection.", ex);
         }
         
         Bukkit.getScheduler().cancelTask(pingerTaskId);
@@ -367,7 +364,7 @@ public final class LogItCore
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(LogItCore.class.getName()).log(Level.WARNING, null, ex);
+            log(Level.WARNING, "Could not export sessions.", ex);
         }
         
         stop();
@@ -378,7 +375,7 @@ public final class LogItCore
         }
         catch (IOException ex)
         {
-            Logger.getLogger(LogItCore.class.getName()).log(Level.WARNING, null, ex);
+            log(Level.WARNING, "Could not load messages.", ex);
         }
         
         start();
@@ -389,7 +386,7 @@ public final class LogItCore
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(LogItCore.class.getName()).log(Level.WARNING, null, ex);
+            log(Level.WARNING, "Could not import sessions.", ex);
         }
         
         sessions.delete();
@@ -516,7 +513,7 @@ public final class LogItCore
         {
             log(Level.WARNING, getMessage("RECOVER_PASSWORD_FAIL_LOG", new String[]{
                 "%player%", username,
-            }));
+            }), ex);
             
             throw ex;
         }
@@ -736,8 +733,7 @@ public final class LogItCore
             }
             catch (IOException ex)
             {
-                plugin.getLogger().log(Level.WARNING, "Could not log to file. Stack trace:");
-                ex.printStackTrace();
+                plugin.getLogger().log(Level.WARNING, "Could not log to a file.", ex);
             }
         }
         

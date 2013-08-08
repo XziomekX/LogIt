@@ -22,8 +22,6 @@ import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCore;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -82,7 +80,6 @@ public class RecoverPassCommand extends AbstractCommandExecutor
                 }
                 catch (IOException | SQLException ex)
                 {
-                    Logger.getLogger(RecoverPassCommand.class.getName()).log(Level.WARNING, null, ex);
                     sender.sendMessage(getMessage("RECOVER_PASSWORD_FAIL_SELF"));
                 }
             }

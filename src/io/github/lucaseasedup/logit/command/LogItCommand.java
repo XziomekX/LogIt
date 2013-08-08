@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Color;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -186,12 +185,10 @@ public class LogItCommand extends AbstractCommandExecutor
                     }
                     catch (IOException | SQLException ex)
                     {
-                        Logger.getLogger(LogItCommand.class.getName()).log(Level.WARNING, null, ex);
-                        
                         if (p != null)
+                        {
                             sender.sendMessage(getMessage("CREATE_BACKUP_FAIL"));
-                        
-                        core.log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"));
+                        }
                     }
                 }
             }
@@ -230,12 +227,10 @@ public class LogItCommand extends AbstractCommandExecutor
                     }
                     catch (FileNotFoundException | SQLException ex)
                     {
-                        Logger.getLogger(LogItCommand.class.getName()).log(Level.WARNING, null, ex);
-                        
                         if (p != null)
+                        {
                             sender.sendMessage(getMessage("RESTORE_BACKUP_FAIL"));
-                        
-                        core.log(Level.WARNING, getMessage("RESTORE_BACKUP_FAIL"));
+                        }
                     }
                 }
             }
@@ -253,21 +248,18 @@ public class LogItCommand extends AbstractCommandExecutor
                 {
                     try
                     {
-                        core.getBackupManager().removeBackups(Integer.parseInt(args[2]));
-
-                        if (p != null)
-                            sender.sendMessage(getMessage("REMOVE_BACKUPS_SUCCESS"));
-
-                        core.log(Level.INFO, getMessage("REMOVE_BACKUPS_SUCCESS"));
-                    }
-                    catch (NumberFormatException | IOException ex)
-                    {
-                        Logger.getLogger(LogItCommand.class.getName()).log(Level.WARNING, null, ex);
+                        int amount = Integer.parseInt(args[2]);
+                        
+                        core.getBackupManager().removeBackups(amount);
                         
                         if (p != null)
-                            sender.sendMessage(getMessage("REMOVE_BACKUPS_FAIL"));
-
-                        core.log(Level.WARNING, getMessage("REMOVE_BACKUPS_FAIL"));
+                        {
+                            sender.sendMessage(getMessage("REMOVE_BACKUPS_SUCCESS"));
+                        }
+                    }
+                    catch (NumberFormatException ex)
+                    {
+                        sender.sendMessage(getMessage("INVALID_PARAMETER").replace("%param%", "amount"));
                     }
                 }
             }

@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -223,7 +222,7 @@ public class SessionManager implements Runnable
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(SessionManager.class.getName()).log(Level.WARNING, null, ex);
+            core.log(Level.WARNING, "Could not update last-active date.", ex);
         }
         
         core.log(Level.FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
@@ -261,7 +260,7 @@ public class SessionManager implements Runnable
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(SessionManager.class.getName()).log(Level.WARNING, null, ex);
+            core.log(Level.WARNING, "Could not update last-active date.", ex);
         }
         
         core.log(Level.FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
