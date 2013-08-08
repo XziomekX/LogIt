@@ -158,7 +158,7 @@ public final class LogItCore
                 LogItPlugin.loadLibrary(LIB_MAIL);
             }
         }
-        catch (FatalReportedException ex)
+        catch (ReportedException ex)
         {
             return;
         }

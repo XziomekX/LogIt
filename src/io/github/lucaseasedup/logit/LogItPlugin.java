@@ -278,7 +278,7 @@ public final class LogItPlugin extends JavaPlugin
         return packageParts[packageParts.length - 1];
     }
     
-    public static void loadLibrary(String filename) throws FatalReportedException
+    public static void loadLibrary(String filename) throws ReportedException
     {
         try
         {
@@ -289,14 +289,14 @@ public final class LogItPlugin extends JavaPlugin
             logger.log(Level.SEVERE, "Library {0} was not found.", filename);
             getInstance().disable();
             
-            throw new FatalReportedException(ex);
+            throw new ReportedException(ex);
         }
         catch (ReflectiveOperationException ex)
         {
             logger.log(Level.SEVERE, "Could not load library " + filename + ".", ex);
             getInstance().disable();
             
-            throw new FatalReportedException(ex);
+            throw new ReportedException(ex);
         }
     }
     
