@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import org.bukkit.Bukkit;
 
 /**
  * @author LucasEasedUp
@@ -52,12 +53,23 @@ public class Account
         return new HashMap<>(data);
     }
     
-    public String update(String property, String value) throws SQLException
+    public boolean update(String property, String value) throws SQLException
     {
+        AccountEvent evt = new AccountPropertyUpdateEvent(this, property, value);
+        
+        Bukkit.getPluginManager().callEvent(evt);
+        
+        if (evt.isCancelled())
+            return false;
+        
         String previousValue = get(property);
         
-        if ((previousValue != null && previousValue.equals(value)) || (previousValue == null && value == null))
-            return value;
+        // Check if existing value is the same as the one to be updated to.
+        if ((previousValue != null && previousValue.equals(value))
+                || (previousValue == null && value == null))
+        {
+            return true;
+        }
         
         table.update(new WhereClause[]{
             new WhereClause("logit.accounts.username", WhereClause.EQUAL, get("logit.accounts.username")),
@@ -69,7 +81,7 @@ public class Account
         
         notifyObservers(property);
         
-        return previousValue;
+        return true;
     }
     
     public int size()
