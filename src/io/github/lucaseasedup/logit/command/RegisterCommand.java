@@ -87,28 +87,29 @@ public class RegisterCommand extends AbstractCommandExecutor
             {
                 try
                 {
-                    core.getAccountManager().createAccount(args[1], args[2]);
-                    sendMessage(args[1], getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
-                    sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_OTHERS").replace("%player%", args[1]));
-                    
-                    if (isPlayerOnline(args[1]))
+                    if (core.getAccountManager().createAccount(args[1], args[2]))
                     {
-                        core.getAccountManager().attachIp(args[1], getPlayerIp(getPlayer(args[1])));
+                        sendMessage(args[1], getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
+                        sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_OTHERS").replace("%player%", args[1]));
                         
-                        core.getSessionManager().startSession(args[1]);
-                        sendMessage(args[1], getMessage("START_SESSION_SUCCESS_SELF"));
-                        sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
-                        
-                        if (core.getConfig().getBoolean("waiting-room.enabled")
-                            && core.getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
+                        if (isPlayerOnline(args[1]))
                         {
-                            getPlayer(args[1]).teleport(core.getWaitingRoom().getNewbieTeleportLocation());
+                            core.getAccountManager().attachIp(args[1], getPlayerIp(getPlayer(args[1])));
+                            
+                            core.getSessionManager().startSession(args[1]);
+                            sendMessage(args[1], getMessage("START_SESSION_SUCCESS_SELF"));
+                            sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
+                            
+                            if (core.getConfig().getBoolean("waiting-room.enabled")
+                                && core.getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
+                            {
+                                getPlayer(args[1]).teleport(core.getWaitingRoom().getNewbieTeleportLocation());
+                            }
                         }
                     }
                 }
-                catch (SQLException | UnsupportedOperationException ex)
+                catch (SQLException ex)
                 {
-                    Logger.getLogger(RegisterCommand.class.getName()).log(Level.WARNING, null, ex);
                     sender.sendMessage(getMessage("CREATE_ACCOUNT_FAIL_OTHERS").replace("%player%", args[1]));
                 }
             }
@@ -158,23 +159,24 @@ public class RegisterCommand extends AbstractCommandExecutor
             {
                 try
                 {
-                    core.getAccountManager().createAccount(p.getName(), args[0]);
-                    sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
-                    
-                    core.getAccountManager().attachIp(p.getName(), getPlayerIp(p));
-                    
-                    core.getSessionManager().startSession(p.getName());
-                    sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
-                    
-                    if (core.getConfig().getBoolean("waiting-room.enabled")
-                        && core.getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
+                    if (core.getAccountManager().createAccount(p.getName(), args[0]))
                     {
-                        p.teleport(core.getWaitingRoom().getNewbieTeleportLocation());
+                        sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
+                        
+                        core.getAccountManager().attachIp(p.getName(), getPlayerIp(p));
+                        
+                        core.getSessionManager().startSession(p.getName());
+                        sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
+                        
+                        if (core.getConfig().getBoolean("waiting-room.enabled")
+                            && core.getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
+                        {
+                            p.teleport(core.getWaitingRoom().getNewbieTeleportLocation());
+                        }
                     }
                 }
-                catch (SQLException | UnsupportedOperationException ex)
+                catch (SQLException ex)
                 {
-                    Logger.getLogger(RegisterCommand.class.getName()).log(Level.WARNING, null, ex);
                     sender.sendMessage(getMessage("CREATE_ACCOUNT_FAIL_SELF"));
                 }
             }

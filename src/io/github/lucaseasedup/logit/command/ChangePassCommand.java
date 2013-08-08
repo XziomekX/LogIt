@@ -83,14 +83,14 @@ public class ChangePassCommand extends AbstractCommandExecutor
             {
                 try
                 {
-                    core.getAccountManager().changeAccountPassword(args[1], args[2]);
-                    
-                    sendMessage(args[1], getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
-                    sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_OTHERS").replace("%player%", args[1]));
+                    if (core.getAccountManager().changeAccountPassword(args[1], args[2]))
+                    {
+                        sendMessage(args[1], getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
+                        sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_OTHERS").replace("%player%", args[1]));
+                    }
                 }
-                catch (SQLException | UnsupportedOperationException ex)
+                catch (SQLException ex)
                 {
-                    Logger.getLogger(ChangePassCommand.class.getName()).log(Level.WARNING, null, ex);
                     sender.sendMessage(getMessage("CHANGE_PASSWORD_FAIL_OTHERS").replace("%player%", args[1]));
                 }
             }
@@ -143,12 +143,13 @@ public class ChangePassCommand extends AbstractCommandExecutor
             {
                 try
                 {
-                    core.getAccountManager().changeAccountPassword(p.getName(), args[1]);
-                    sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
+                    if (core.getAccountManager().changeAccountPassword(p.getName(), args[1]))
+                    {
+                        sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
+                    }
                 }
-                catch (SQLException | UnsupportedOperationException ex)
+                catch (SQLException ex)
                 {
-                    Logger.getLogger(ChangePassCommand.class.getName()).log(Level.WARNING, null, ex);
                     sender.sendMessage(getMessage("CHANGE_PASSWORD_FAIL_SELF"));
                 }
             }

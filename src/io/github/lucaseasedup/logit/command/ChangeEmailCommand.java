@@ -78,14 +78,14 @@ public class ChangeEmailCommand extends AbstractCommandExecutor
             {
                 try
                 {
-                    core.getAccountManager().changeEmail(args[1], args[2]);
-                    
-                    sendMessage(args[1], getMessage("CHANGE_EMAIL_SUCCESS_SELF").replace("%email%", args[2]));
-                    sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_OTHERS").replace("%player%", args[1]));
+                    if (core.getAccountManager().changeEmail(args[1], args[2]))
+                    {
+                        sendMessage(args[1], getMessage("CHANGE_EMAIL_SUCCESS_SELF").replace("%email%", args[2]));
+                        sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_OTHERS").replace("%player%", args[1]));
+                    }
                 }
-                catch (SQLException | UnsupportedOperationException ex)
+                catch (SQLException ex)
                 {
-                    Logger.getLogger(ChangeEmailCommand.class.getName()).log(Level.WARNING, null, ex);
                     sender.sendMessage(getMessage("CHANGE_EMAIL_FAIL_OTHERS").replace("%player%", args[1]));
                 }
             }
@@ -116,12 +116,13 @@ public class ChangeEmailCommand extends AbstractCommandExecutor
             {
                 try
                 {
-                    core.getAccountManager().changeEmail(p.getName(), args[0]);
-                    sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_SELF").replace("%email%", args[0]));
+                    if (core.getAccountManager().changeEmail(p.getName(), args[0]))
+                    {
+                        sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_SELF").replace("%email%", args[0]));
+                    }
                 }
-                catch (SQLException | UnsupportedOperationException ex)
+                catch (SQLException ex)
                 {
-                    Logger.getLogger(ChangeEmailCommand.class.getName()).log(Level.WARNING, null, ex);
                     sender.sendMessage(getMessage("CHANGE_EMAIL_FAIL_SELF"));
                 }
             }
