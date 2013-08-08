@@ -73,8 +73,10 @@ public class AccountManager
      * 
      * @param username Username.
      * @param password Password.
+     * @return True if account has been created,
+     *         false if creation has been cancelled by an outside event listener.
      */
-    public void createAccount(String username, String password) throws SQLException
+    public boolean createAccount(String username, String password) throws SQLException
     {
         if (isRegistered(username))
             throw new RuntimeException("Account already exists.");
@@ -98,7 +100,7 @@ public class AccountManager
         Bukkit.getPluginManager().callEvent(evt);
         
         if (evt.isCancelled())
-            return;
+            return false;
         
         try
         {
@@ -112,6 +114,8 @@ public class AccountManager
             
             throw ex;
         }
+        
+        return true;
     }
     
     /**
@@ -121,8 +125,10 @@ public class AccountManager
      * 
      * @param username Username.
      * @throws AccountNotFoundException Thrown if account does not exist.
+     * @return True if account has been removed,
+     *         false if removal has been cancelled by an outside event listener.
      */
-    public void removeAccount(String username) throws SQLException
+    public boolean removeAccount(String username) throws SQLException
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
@@ -133,7 +139,7 @@ public class AccountManager
         Bukkit.getPluginManager().callEvent(evt);
         
         if (evt.isCancelled())
-            return;
+            return false;
         
         try
         {
@@ -147,6 +153,8 @@ public class AccountManager
             
             throw ex;
         }
+        
+        return true;
     }
     
     /**
@@ -189,14 +197,16 @@ public class AccountManager
     }
     
     /**
-     * Changes password of an account with the specified username.
+     * Changes password of an account with the given username.
      * <p/>
      * The given password will be hashed using an algorithm specified in the config.
      * 
      * @param username Username.
      * @param newPassword New password.
+     * @return True if password has been changed,
+     *         false if operation has been cancelled by an outside event listener.
      */
-    public void changeAccountPassword(String username, String newPassword) throws SQLException
+    public boolean changeAccountPassword(String username, String newPassword) throws SQLException
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
@@ -207,7 +217,7 @@ public class AccountManager
         Bukkit.getPluginManager().callEvent(evt);
         
         if (evt.isCancelled())
-            return;
+            return false;
         
         HashingAlgorithm algorithm = core.getDefaultHashingAlgorithm();
         String newSalt = HashGenerator.generateSalt(algorithm);
@@ -227,9 +237,20 @@ public class AccountManager
             
             throw ex;
         }
+        
+        return true;
     }
     
-    public void changeEmail(String username, String newEmail) throws SQLException
+    /**
+     * Changes e-mail address of an account with the given username.
+     * 
+     * @param username Username.
+     * @param newEmail New e-mail address.
+     * @return True if e-mail address has been created,
+     *         false if operation has been cancelled by an outside event listener.
+     * @throws SQLException Thrown on SQL error.
+     */
+    public boolean changeEmail(String username, String newEmail) throws SQLException
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
@@ -240,7 +261,7 @@ public class AccountManager
         Bukkit.getPluginManager().callEvent(evt);
         
         if (evt.isCancelled())
-            return;
+            return false;
         
         try
         {
@@ -254,6 +275,8 @@ public class AccountManager
             
             throw ex;
         }
+        
+        return true;
     }
     
     public String getEmail(String username)
@@ -266,9 +289,11 @@ public class AccountManager
      * 
      * @param username Username.
      * @param ip IP address.
+     * @return True if IP has been attached,
+     *         false if operation has been cancelled by an outside event listener.
      * @throws AccountNotFoundException Thrown if the account does not exist.
      */
-    public void attachIp(String username, String ip) throws SQLException
+    public boolean attachIp(String username, String ip) throws SQLException
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
@@ -279,7 +304,7 @@ public class AccountManager
         Bukkit.getPluginManager().callEvent(evt);
         
         if (evt.isCancelled())
-            return;
+            return false;
         
         try
         {
@@ -306,6 +331,8 @@ public class AccountManager
             
             throw ex;
         }
+        
+        return true;
     }
     
     /**
