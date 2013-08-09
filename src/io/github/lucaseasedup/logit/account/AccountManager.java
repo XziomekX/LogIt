@@ -465,7 +465,8 @@ public class AccountManager
             
             accountMap = new AccountMap(table, loadedAccounts);
             
-            core.log(Level.FINE, getMessage("LOAD_ACCOUNTS_SUCCESS").replace("%num%", String.valueOf(accountMap.size())));
+            core.log(Level.FINE, getMessage("LOAD_ACCOUNTS_SUCCESS")
+                    .replace("%num%", String.valueOf(accountMap.size())));
         }
         catch (SQLException ex)
         {

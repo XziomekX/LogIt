@@ -62,9 +62,12 @@ public class SessionEventListener extends EventListener
             }
             
             if (core.getConfig().getBoolean("groups.enabled"))
+            {
                 core.updatePlayerGroup(player);
+            }
             
-            if (core.getConfig().getBoolean("force-login.global") && !player.hasPermission("logit.force-login.exempt"))
+            if (core.getConfig().getBoolean("force-login.global")
+                    && !player.hasPermission("logit.force-login.exempt"))
             {
                 broadcastJoinMessage(player, core.getConfig().getBoolean("reveal-spawn-world"));
             }

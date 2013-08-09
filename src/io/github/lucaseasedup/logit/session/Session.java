@@ -46,7 +46,8 @@ public class Session
     /**
      * Returns session status.
      * <p/>
-     * Values above or equal to 0 mean "session alive" (logged in). Values below 0 mean "session ended" (logged out).
+     * Values above or equal to 0 mean "session alive" (logged in).
+     * Values below 0 mean "session ended" (logged out).
      * 
      * @return Session status.
      */

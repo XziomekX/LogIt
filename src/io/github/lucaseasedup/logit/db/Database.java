@@ -39,7 +39,8 @@ public abstract class Database implements AutoCloseable
     
     public abstract ColumnList getColumnNames(String table) throws SQLException;
     public abstract List<Map<String, String>> select(String table, String[] columns) throws SQLException;
-    public abstract List<Map<String, String>> select(String table, String[] columns, String[] where) throws SQLException;
+    public abstract List<Map<String, String>> select(String table, String[] columns, String[] where)
+            throws SQLException;
     
     public abstract boolean createTable(String table, String[] columns) throws SQLException;
     public abstract boolean createTableIfNotExists(String table, String[] columns) throws SQLException;

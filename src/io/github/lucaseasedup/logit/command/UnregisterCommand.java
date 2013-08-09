@@ -82,7 +82,8 @@ public class UnregisterCommand extends AbstractCommandExecutor
                     if (core.getAccountManager().removeAccount(args[1]))
                     {
                         sendMessage(args[1], getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
-                        sender.sendMessage(getMessage("REMOVE_ACCOUNT_SUCCESS_OTHERS").replace("%player%", args[1]));
+                        sender.sendMessage(getMessage("REMOVE_ACCOUNT_SUCCESS_OTHERS")
+                                .replace("%player%", args[1]));
                     }
                 }
                 catch (SQLException ex)

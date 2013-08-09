@@ -324,7 +324,9 @@ public final class LogItCore
                 .replace("%ha%", getDefaultHashingAlgorithm().name()));
         
         if (firstRun)
+        {
             log(Level.INFO, getMessage("PLUGIN_FIRST_RUN"));
+        }
         
         started = true;
     }
@@ -485,9 +487,11 @@ public final class LogItCore
                 config.getString("password-recovery.password-combination"));
             accountManager.changeAccountPassword(username, playerPassword);
             
+            File bodyTemplateFile =
+                    new File(plugin.getDataFolder(), config.getString("password-recovery.body-template"));
             StringBuilder bodyBuilder = new StringBuilder();
             
-            try (FileReader fr = new FileReader(new File(plugin.getDataFolder(), config.getString("password-recovery.body-template"))))
+            try (FileReader fr = new FileReader(bodyTemplateFile))
             {
                 int b;
 
@@ -502,7 +506,8 @@ public final class LogItCore
                 "%password%", playerPassword
             });
             
-            mailSender.sendMail(new String[]{to}, from, subject, body, config.getBoolean("password-recovery.html-enabled"));
+            mailSender.sendMail(new String[]{to}, from, subject, body,
+                    config.getBoolean("password-recovery.html-enabled"));
             
             log(Level.FINE, getMessage("RECOVER_PASSWORD_SUCCESS_LOG", new String[]{
                 "%player%", username,
@@ -658,11 +663,17 @@ public final class LogItCore
         String hash;
         
         if (ha == HashingAlgorithm.BCRYPT)
+        {
             hash = getBCrypt(string, salt);
+        }
         else if (ha == HashingAlgorithm.PLAIN)
+        {
             hash = hash(string, ha);
+        }
         else
+        {
             hash = hash(string + salt, ha);
+        }
         
         return hash;
     }
@@ -727,10 +738,16 @@ public final class LogItCore
         if (config.getBoolean("log-to-file.enabled"))
         {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            File logFile = new File(plugin.getDataFolder(), config.getString("log-to-file.filename"));
             
-            try (FileWriter fileWriter = new FileWriter(new File(plugin.getDataFolder(), config.getString("log-to-file.filename")), true))
+            try (FileWriter fileWriter = new FileWriter(logFile, true))
             {
-                fileWriter.write(sdf.format(new Date()) + " [" + level.getName() + "] " + stripColor(message) + "\n");
+                fileWriter.write(sdf.format(new Date()));
+                fileWriter.write(" [");
+                fileWriter.write(level.getName());
+                fileWriter.write("] ");
+                fileWriter.write(stripColor(message));
+                fileWriter.write("\n");
             }
             catch (IOException ex)
             {

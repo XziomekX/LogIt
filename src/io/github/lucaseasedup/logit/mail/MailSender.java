@@ -77,9 +77,13 @@ public class MailSender
             message.setSubject(subject);
             
             if (html)
+            {
                 message.setContent(body, "text/html; charset=utf-8");
+            }
             else
+            {
                 message.setText(body);
+            }
             
             message.saveChanges();
             

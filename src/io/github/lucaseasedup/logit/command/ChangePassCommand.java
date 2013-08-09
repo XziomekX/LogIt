@@ -84,7 +84,8 @@ public class ChangePassCommand extends AbstractCommandExecutor
                     if (core.getAccountManager().changeAccountPassword(args[1], args[2]))
                     {
                         sendMessage(args[1], getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
-                        sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_OTHERS").replace("%player%", args[1]));
+                        sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_OTHERS")
+                                .replace("%player%", args[1]));
                     }
                 }
                 catch (SQLException ex)

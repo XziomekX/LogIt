@@ -69,7 +69,8 @@ public class SqliteDatabase extends Database
     @Override
     public ColumnList getColumnNames(String table) throws SQLException
     {
-        ResultSet tableInfo = executeQuery("PRAGMA table_info('" + SqlUtils.escapeQuotes(table, "'", true) + "');");
+        ResultSet tableInfo =
+                executeQuery("PRAGMA table_info('" + SqlUtils.escapeQuotes(table, "'", true) + "');");
         ColumnList columnList = new ColumnList();
         
         while (tableInfo.next())
@@ -161,14 +162,16 @@ public class SqliteDatabase extends Database
     public boolean insert(String table, String[] columns, String[] values) throws SQLException
     {
         return executeStatement("INSERT INTO `" + SqlUtils.escapeQuotes(table, "`", true) + "`"
-            + " (" + SqlUtils.implodeColumnArray(columns, "`", true) + ") VALUES (" + SqlUtils.implodeValueArray(values, "'", true) + ");");
+            + " (" + SqlUtils.implodeColumnArray(columns, "`", true) + ")"
+            + " VALUES (" + SqlUtils.implodeValueArray(values, "'", true) + ");");
     }
     
     @Override
     public boolean update(String table, String[] where, String[] set) throws SQLException
     {
         return executeStatement("UPDATE `" + SqlUtils.escapeQuotes(table, "`", true) + "`"
-            + " SET " + SqlUtils.implodeSetArray(set, "`", "'", true) + " WHERE " + SqlUtils.implodeWhereArray(where, "`", "'", true) + ";");
+            + " SET " + SqlUtils.implodeSetArray(set, "`", "'", true)
+            + " WHERE " + SqlUtils.implodeWhereArray(where, "`", "'", true) + ";");
     }
     
     @Override

@@ -213,7 +213,9 @@ public class Property extends Observable
             throw new InvalidPropertyValueException("Invalid value: " + value.toString());
         
         if (!this.value.equals(value))
+        {
             setChanged();
+        }
         
         this.value = value;
         

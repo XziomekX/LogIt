@@ -262,9 +262,13 @@ public class CsvDatabase extends Database
                     sb.append(",");
                 
                 if (values.length >= i)
+                {
                     sb.append(escapeValue(values[i]));
+                }
                 else
+                {
                     sb.append("\"\"");
+                }
             }
             
             sb.append("\r\n");
@@ -298,9 +302,13 @@ public class CsvDatabase extends Database
                 int valueIndex = insertColumns.indexOf(allColumns.get(i));
                 
                 if (valueIndex != -1 && values != null && valueIndex < values.length && values[valueIndex] != null)
+                {
                     sb.append(escapeValue(values[valueIndex]));
+                }
                 else
+                {
                     sb.append("\"\"");
+                }
             }
             
             sb.append("\r\n");
@@ -438,10 +446,14 @@ public class CsvDatabase extends Database
         s = s.replace("\\,", ",");
         
         if (s.startsWith("\""))
+        {
             s = s.substring(1);
+        }
         
         if (s.endsWith("\""))
+        {
             s = s.substring(0, s.length() - 1);
+        }
         
         return s;
     }

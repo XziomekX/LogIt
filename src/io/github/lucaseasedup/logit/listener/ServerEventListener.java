@@ -46,7 +46,8 @@ public class ServerEventListener extends EventListener
         if (!event.getPlugin().equals(core.getPlugin()))
             return;
         
-        File sessions = new File(core.getPlugin().getDataFolder() + "/" + core.getConfig().getString("storage.sessions.filename"));
+        File sessions =
+                new File(core.getPlugin().getDataFolder(), core.getConfig().getString("storage.sessions.filename"));
         
         try
         {
@@ -66,7 +67,8 @@ public class ServerEventListener extends EventListener
         if (!event.getPlugin().equals(core.getPlugin()) || !core.isStarted())
             return;
         
-        File sessions = new File(core.getPlugin().getDataFolder() + "/" + core.getConfig().getString("storage.sessions.filename"));
+        File sessions =
+                new File(core.getPlugin().getDataFolder(), core.getConfig().getString("storage.sessions.filename"));
         
         try
         {
@@ -82,7 +84,9 @@ public class ServerEventListener extends EventListener
         for (Player player : players)
         {
             if (core.getConfig().getBoolean("waiting-room.enabled"))
+            {
                 core.getWaitingRoom().remove(player);
+            }
             
             try
             {
@@ -94,6 +98,6 @@ public class ServerEventListener extends EventListener
             }
         }
         
-        new File(core.getPlugin().getDataFolder(), core.getConfig().getString("storage.inventories.filename")).delete();
+        sessions.delete();
     }
 }

@@ -105,7 +105,9 @@ public class Table
             }
         }
         
-        return filterResultList(database.select(table, filteredColumnNames.toArray(new String[filteredColumnNames.size()]), convertWhereClauses(where)), filteredColumnIds);
+        return filterResultList(database.select(table,
+                filteredColumnNames.toArray(new String[filteredColumnNames.size()]),
+                convertWhereClauses(where)), filteredColumnIds);
     }
     
     public List<Map<String, String>> select(String[] columns) throws SQLException

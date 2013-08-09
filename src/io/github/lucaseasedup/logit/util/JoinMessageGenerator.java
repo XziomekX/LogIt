@@ -38,9 +38,14 @@ public class JoinMessageGenerator
         String message = getMessage("JOIN").replace("%player%", player.getName());
         
         if (revealSpawnWorld)
-            message = message.replace("%in_world%", getMessage("IN_WORLD").replace("%world%", getWorldAlias(player.getWorld())));
+        {
+            message = message.replace("%in_world%",
+                    getMessage("IN_WORLD").replace("%world%", getWorldAlias(player.getWorld())));
+        }
         else
+        {
             message = message.replace("%in_world%", "");
+        }
         
         return message;
     }

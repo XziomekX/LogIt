@@ -210,7 +210,9 @@ public final class LogItConfiguration extends PropertyObserver
                 new Property(path, type, requiresRestart, plugin.getConfig().get(path, defaultValue), validator);
         
         if (obs != null)
+        {
             property.addObserver(obs);
+        }
         
         property.addObserver(this);
         
@@ -338,78 +340,57 @@ public final class LogItConfiguration extends PropertyObserver
             
             switch (type)
             {
-            case OBJECT:
-                defaultValue = null;
-                break;
-            case BOOLEAN:
-                defaultValue = Boolean.valueOf(defaultValueString);
-                break;
+            case OBJECT:  defaultValue = null;                                break;
+            case BOOLEAN: defaultValue = Boolean.valueOf(defaultValueString); break;
             case COLOR:
-                if (defaultValueString.equalsIgnoreCase("aqua"))
-                    defaultValue = Color.AQUA;
-                else if (defaultValueString.equalsIgnoreCase("black"))
-                    defaultValue = Color.BLACK;
-                else if (defaultValueString.equalsIgnoreCase("blue"))
-                    defaultValue = Color.BLUE;
-                else if (defaultValueString.equalsIgnoreCase("fuchsia"))
-                    defaultValue = Color.FUCHSIA;
-                else if (defaultValueString.equalsIgnoreCase("gray"))
-                    defaultValue = Color.GRAY;
-                else if (defaultValueString.equalsIgnoreCase("green"))
-                    defaultValue = Color.GREEN;
-                else if (defaultValueString.equalsIgnoreCase("lime"))
-                    defaultValue = Color.LIME;
-                else if (defaultValueString.equalsIgnoreCase("maroon"))
-                    defaultValue = Color.MAROON;
-                else if (defaultValueString.equalsIgnoreCase("navy"))
-                    defaultValue = Color.NAVY;
-                else if (defaultValueString.equalsIgnoreCase("olive"))
-                    defaultValue = Color.OLIVE;
-                else if (defaultValueString.equalsIgnoreCase("orange"))
-                    defaultValue = Color.ORANGE;
-                else if (defaultValueString.equalsIgnoreCase("purple"))
-                    defaultValue = Color.PURPLE;
-                else if (defaultValueString.equalsIgnoreCase("red"))
-                    defaultValue = Color.RED;
-                else if (defaultValueString.equalsIgnoreCase("silver"))
-                    defaultValue = Color.SILVER;
-                else if (defaultValueString.equalsIgnoreCase("teal"))
-                    defaultValue = Color.TEAL;
-                else if (defaultValueString.equalsIgnoreCase("white"))
-                    defaultValue = Color.WHITE;
-                else if (defaultValueString.equalsIgnoreCase("yellow"))
-                    defaultValue = Color.YELLOW;
-                else
+            {
+                switch (defaultValueString.toLowerCase())
                 {
-                    String[] rgb = defaultValueString.split(" ");
-                    
-                    if (rgb.length == 3)
+                case "aqua":    defaultValue = Color.AQUA;    break;
+                case "black":   defaultValue = Color.BLACK;   break;
+                case "blue":    defaultValue = Color.BLUE;    break;
+                case "fuchsia": defaultValue = Color.FUCHSIA; break;
+                case "gray":    defaultValue = Color.GRAY;    break;
+                case "green":   defaultValue = Color.GREEN;   break;
+                case "lime":    defaultValue = Color.LIME;    break;
+                case "maroon":  defaultValue = Color.MAROON;  break;
+                case "navy":    defaultValue = Color.NAVY;    break;
+                case "olive":   defaultValue = Color.OLIVE;   break;
+                case "orange":  defaultValue = Color.ORANGE;  break;
+                case "purple":  defaultValue = Color.PURPLE;  break;
+                case "red":     defaultValue = Color.RED;     break;
+                case "silver":  defaultValue = Color.SILVER;  break;
+                case "teal":    defaultValue = Color.TEAL;    break;
+                case "white":   defaultValue = Color.WHITE;   break;
+                case "yellow":  defaultValue = Color.YELLOW;  break;
+                default:
                     {
-                        defaultValue = Color.fromRGB(Integer.valueOf(rgb[0]),
-                                                     Integer.valueOf(rgb[1]),
-                                                     Integer.valueOf(rgb[2]));
-                    }
-                    else
-                    {
-                        defaultValue = Color.BLACK;
+                        String[] rgb = defaultValueString.split(" ");
+                        
+                        if (rgb.length == 3)
+                        {
+                            defaultValue = Color.fromRGB(Integer.valueOf(rgb[0]),
+                                                         Integer.valueOf(rgb[1]),
+                                                         Integer.valueOf(rgb[2]));
+                        }
+                        else
+                        {
+                            defaultValue = Color.BLACK;
+                        }
+                        
+                        break;
                     }
                 }
+                
                 break;
-            case DOUBLE:
-                defaultValue = Double.valueOf(defaultValueString);
-                break;
-            case INT:
-                defaultValue = Integer.valueOf(defaultValueString);
-                break;
-            case ITEM_STACK:
-                defaultValue = null;
-            case LONG:
-                defaultValue = Long.valueOf(defaultValueString);
-                break;
-            case STRING:
-                defaultValue = defaultValueString;
-                break;
+            }
+            case DOUBLE:     defaultValue = Double.valueOf(defaultValueString);  break;
+            case INT:        defaultValue = Integer.valueOf(defaultValueString); break;
+            case ITEM_STACK: defaultValue = null;                                break;
+            case LONG:       defaultValue = Long.valueOf(defaultValueString);    break;
+            case STRING:     defaultValue = defaultValueString;                  break;
             case VECTOR:
+            {
                 String[] axes = defaultValueString.split(" ");
                 
                 if (axes.length == 3)
@@ -424,6 +405,7 @@ public final class LogItConfiguration extends PropertyObserver
                 }
                 
                 break;
+            }
             case LIST:
             case BOOLEAN_LIST:
             case BYTE_LIST:
@@ -435,8 +417,7 @@ public final class LogItConfiguration extends PropertyObserver
             case MAP_LIST:
             case SHORT_LIST:
             case STRING_LIST:
-                defaultValue = new ArrayList<>(0);
-                break;
+                defaultValue = new ArrayList<>(0); break;
             default:
                 throw new RuntimeException("Unknown property type.");
             }

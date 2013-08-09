@@ -145,7 +145,8 @@ public class LogItCommand extends AbstractCommandExecutor
             }
             else
             {
-                sender.sendMessage(getMessage("PLUGIN_VERSION").replace("%version%", core.getPlugin().getDescription().getVersion()));
+                sender.sendMessage(getMessage("PLUGIN_VERSION")
+                        .replace("%version%", core.getPlugin().getDescription().getVersion()));
             }
         }
         else if (subcommand.equalsIgnoreCase("reload") && args.length == 1)
@@ -179,7 +180,9 @@ public class LogItCommand extends AbstractCommandExecutor
                         core.getBackupManager().createBackup();
 
                         if (p != null)
+                        {
                             sender.sendMessage(getMessage("CREATE_BACKUP_SUCCESS"));
+                        }
                         
                         core.log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS"));
                     }
@@ -221,7 +224,9 @@ public class LogItCommand extends AbstractCommandExecutor
                         core.getAccountManager().loadAccounts();
                         
                         if (p != null)
+                        {
                             sender.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS"));
+                        }
                         
                         core.log(Level.INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
                     }
@@ -359,7 +364,8 @@ public class LogItCommand extends AbstractCommandExecutor
             }
             else
             {
-                sender.sendMessage(getMessage("ACCOUNT_COUNT").replace("%num%", String.valueOf(core.getAccountManager().getAccountCount())));
+                sender.sendMessage(getMessage("ACCOUNT_COUNT")
+                        .replace("%num%", String.valueOf(core.getAccountManager().getAccountCount())));
             }
         }
         else if (subcommand.equalsIgnoreCase("ipcount") && args.length <= 2)
@@ -423,72 +429,58 @@ public class LogItCommand extends AbstractCommandExecutor
                         {
                         case OBJECT:
                             throw new Exception("Unsupported property type conversion.");
-                        case BOOLEAN:
-                            outputValue = Boolean.valueOf(inputValue);
-                            break;
+                        case BOOLEAN: outputValue = Boolean.valueOf(inputValue); break;
                         case COLOR:
-                            if (inputValue.equalsIgnoreCase("aqua"))
-                                outputValue = Color.AQUA;
-                            else if (inputValue.equalsIgnoreCase("black"))
-                                outputValue = Color.BLACK;
-                            else if (inputValue.equalsIgnoreCase("blue"))
-                                outputValue = Color.BLUE;
-                            else if (inputValue.equalsIgnoreCase("fuchsia"))
-                                outputValue = Color.FUCHSIA;
-                            else if (inputValue.equalsIgnoreCase("gray"))
-                                outputValue = Color.GRAY;
-                            else if (inputValue.equalsIgnoreCase("green"))
-                                outputValue = Color.GREEN;
-                            else if (inputValue.equalsIgnoreCase("lime"))
-                                outputValue = Color.LIME;
-                            else if (inputValue.equalsIgnoreCase("maroon"))
-                                outputValue = Color.MAROON;
-                            else if (inputValue.equalsIgnoreCase("navy"))
-                                outputValue = Color.NAVY;
-                            else if (inputValue.equalsIgnoreCase("olive"))
-                                outputValue = Color.OLIVE;
-                            else if (inputValue.equalsIgnoreCase("orange"))
-                                outputValue = Color.ORANGE;
-                            else if (inputValue.equalsIgnoreCase("purple"))
-                                outputValue = Color.PURPLE;
-                            else if (inputValue.equalsIgnoreCase("red"))
-                                outputValue = Color.RED;
-                            else if (inputValue.equalsIgnoreCase("silver"))
-                                outputValue = Color.SILVER;
-                            else if (inputValue.equalsIgnoreCase("teal"))
-                                outputValue = Color.TEAL;
-                            else if (inputValue.equalsIgnoreCase("white"))
-                                outputValue = Color.WHITE;
-                            else if (inputValue.equalsIgnoreCase("yellow"))
-                                outputValue = Color.YELLOW;
-                            else
+                        {
+                            switch (inputValue.toLowerCase())
                             {
-                                String[] rgb = inputValue.split(" ");
-                                
-                                if (rgb.length != 3)
-                                    throw new Exception("Malformed color representation.");
-                                
-                                outputValue = Color.fromRGB(Integer.valueOf(rgb[0]), Integer.valueOf(rgb[1]), Integer.valueOf(rgb[2]));
+                            case "aqua":    outputValue = Color.AQUA;    break;
+                            case "black":   outputValue = Color.BLACK;   break;
+                            case "blue":    outputValue = Color.BLUE;    break;
+                            case "fuchsia": outputValue = Color.FUCHSIA; break;
+                            case "gray":    outputValue = Color.GRAY;    break;
+                            case "green":   outputValue = Color.GREEN;   break;
+                            case "lime":    outputValue = Color.LIME;    break;
+                            case "maroon":  outputValue = Color.MAROON;  break;
+                            case "navy":    outputValue = Color.NAVY;    break;
+                            case "olive":   outputValue = Color.OLIVE;   break;
+                            case "orange":  outputValue = Color.ORANGE;  break;
+                            case "purple":  outputValue = Color.PURPLE;  break;
+                            case "red":     outputValue = Color.RED;     break;
+                            case "silver":  outputValue = Color.SILVER;  break;
+                            case "teal":    outputValue = Color.TEAL;    break;
+                            case "white":   outputValue = Color.WHITE;   break;
+                            case "yellow":  outputValue = Color.YELLOW;  break;
+                            default:
+                                {
+                                    String[] rgb = inputValue.split(" ");
+                                    
+                                    if (rgb.length != 3)
+                                        throw new Exception("Malformed color representation.");
+                                    
+                                    outputValue = Color.fromRGB(Integer.valueOf(rgb[0]),
+                                                                Integer.valueOf(rgb[1]),
+                                                                Integer.valueOf(rgb[2]));
+                                    
+                                    break;
+                                }
                             }
+                            
                             break;
-                        case DOUBLE:
-                            outputValue = Double.valueOf(inputValue);
-                            break;
-                        case INT:
-                            outputValue = Integer.valueOf(inputValue);
-                            break;
+                        }
+                        case DOUBLE: outputValue = Double.valueOf(inputValue);  break;
+                        case INT:    outputValue = Integer.valueOf(inputValue); break;
                         case ITEM_STACK:
                             throw new Exception("Unsupported property type conversion.");
-                        case LONG:
-                            outputValue = Long.valueOf(inputValue);
-                            break;
-                        case STRING:
-                            outputValue = inputValue;
-                            break;
+                        case LONG:   outputValue = Long.valueOf(inputValue);    break;
+                        case STRING: outputValue = inputValue;                  break;
                         case VECTOR:
+                        {
                             if (inputValue.equals("$") && p != null)
                             {
-                                outputValue = new Vector(p.getLocation().getX(), p.getLocation().getY(), p.getLocation().getZ());
+                                outputValue = new Vector(p.getLocation().getX(),
+                                                         p.getLocation().getY(),
+                                                         p.getLocation().getZ());
                             }
                             else
                             {
@@ -497,9 +489,13 @@ public class LogItCommand extends AbstractCommandExecutor
                                 if (axes.length != 3)
                                     throw new Exception("Malformed vector representation.");
                                 
-                                outputValue = new Vector(Double.valueOf(axes[0]), Double.valueOf(axes[1]), Double.valueOf(axes[2]));
+                                outputValue = new Vector(Double.valueOf(axes[0]),
+                                                         Double.valueOf(axes[1]),
+                                                         Double.valueOf(axes[2]));
                             }
+                            
                             break;
+                        }
                         case LIST:
                         case BOOLEAN_LIST:
                         case BYTE_LIST:
@@ -617,9 +613,13 @@ public class LogItCommand extends AbstractCommandExecutor
         else
         {
             if (p != null && !p.hasPermission("logit"))
+            {
                 sender.sendMessage(getMessage("NO_PERMS"));
+            }
             else
+            {
                 sender.sendMessage(getMessage("TYPE_FOR_HELP"));
+            }
         }
         
         return true;
@@ -630,9 +630,13 @@ public class LogItCommand extends AbstractCommandExecutor
         String line = getMessage("CMD_HELP");
         
         if (params != null)
+        {
             line = line.replace("%cmd%", "logit " + subcommand + " " + params);
+        }
         else
+        {
             line = line.replace("%cmd%", "logit " + subcommand);
+        }
         
         return line.replace("%desc%", getMessage("DESC_" + subcommand.replace(" ", "_").toUpperCase()));
     }

@@ -78,7 +78,8 @@ public class SessionManager implements Runnable
             }
             else if (isPlayerOnline(username))
             {
-                if (core.getAccountManager().isRegistered(username) && !player.hasPermission("logit.force-login.timeout.exempt")
+                if (core.getAccountManager().isRegistered(username)
+                        && !player.hasPermission("logit.force-login.timeout.exempt")
                         && core.isPlayerForcedToLogin(player))
                 {
                     if (session.getStatus() <= forceLoginTimeout)
@@ -187,7 +188,8 @@ public class SessionManager implements Runnable
         
         sessions.remove(username.toLowerCase());
         
-        core.log(Level.FINE, getMessage("DESTROY_SESSION_SUCCESS_LOG").replace("%player%", getPlayerName(username)));
+        core.log(Level.FINE, getMessage("DESTROY_SESSION_SUCCESS_LOG")
+                .replace("%player%", getPlayerName(username)));
         
         return true;
     }
@@ -309,7 +311,9 @@ public class SessionManager implements Runnable
             for (Player player : players)
             {
                 if (getSession(player.getName()) == null)
+                {
                     createSession(player.getName(), "");
+                }
                 
                 List<Map<String, String>> rs = sessionsDatabase.select("sessions", new String[]{
                     "status",

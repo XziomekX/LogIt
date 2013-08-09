@@ -32,7 +32,9 @@ public class SqlUtils
         string = string.replace(quote, quote + quote);
         
         if (escapeBackslashes)
+        {
             string = string.replace("\\", "\\\\");
+        }
         
         return string;
     }
@@ -44,14 +46,19 @@ public class SqlUtils
         if (columns.length >= 1)
         {
             if (columns[0].equals("*"))
+            {
                 output.append("*");
+            }
             else
+            {
                 output.append(quote).append(escapeQuotes(columns[0], quote, escapeBackslashes)).append(quote);
+            }
         }
         
         for (int i = 1; i < columns.length; i++)
         {
-            output.append(", ").append(quote).append(escapeQuotes(columns[i], quote, escapeBackslashes)).append(quote);
+            output.append(", ").append(quote).append(escapeQuotes(columns[i], quote, escapeBackslashes))
+                .append(quote);
         }
         
         return output.toString();
@@ -63,14 +70,14 @@ public class SqlUtils
         
         if (columns.length >= 2)
         {
-            output.append(quote).append(escapeQuotes(columns[0], quote, escapeBackslashes)).append(quote).append(" ")
-                .append(columns[1]);
+            output.append(quote).append(escapeQuotes(columns[0], quote, escapeBackslashes)).append(quote)
+                .append(" ").append(columns[1]);
         }
         
         for (int i = 2; i < columns.length; i += 2)
         {
-            output.append(", ").append(quote).append(escapeQuotes(columns[i], quote, escapeBackslashes)).append(quote)
-                .append(" ").append(columns[i + 1]);
+            output.append(", ").append(quote).append(escapeQuotes(columns[i], quote, escapeBackslashes))
+                .append(quote).append(" ").append(columns[i + 1]);
         }
         
         return output.toString();
@@ -82,28 +89,38 @@ public class SqlUtils
         
         if (values.length >= 1)
         {
-            output.append(valueQuote).append(escapeQuotes(values[0], valueQuote, escapeBackslashes)).append(valueQuote);
+            output.append(valueQuote).append(escapeQuotes(values[0], valueQuote, escapeBackslashes))
+                .append(valueQuote);
         }
         
         for (int i = 1; i < values.length; i++)
         {
             if (values[i] != null)
-                output.append(", ").append(valueQuote).append(escapeQuotes(values[i], valueQuote, escapeBackslashes)).append(valueQuote);
+            {
+                output.append(", ").append(valueQuote)
+                    .append(escapeQuotes(values[i], valueQuote, escapeBackslashes)).append(valueQuote);
+            }
             else
+            {
                 output.append(", NULL");
+            }
         }
         
         return output.toString();
     }
     
-    public static String implodeSetArray(String[] set, String columnQuote, String valueQuote, boolean escapeBackslashes)
+    public static String implodeSetArray(String[] set,
+                                         String columnQuote,
+                                         String valueQuote,
+                                         boolean escapeBackslashes)
     {
         StringBuilder output = new StringBuilder();
         
         if (set.length >= 2)
         {
-            output.append(columnQuote).append(escapeQuotes(set[0], columnQuote, escapeBackslashes)).append(columnQuote)
-                .append(" = ").append(valueQuote).append(escapeQuotes(set[1], valueQuote, escapeBackslashes)).append(valueQuote);
+            output.append(columnQuote).append(escapeQuotes(set[0], columnQuote, escapeBackslashes))
+                .append(columnQuote).append(" = ").append(valueQuote)
+                .append(escapeQuotes(set[1], valueQuote, escapeBackslashes)).append(valueQuote);
         }
         
         for (int i = 2; i < set.length; i += 2)
@@ -116,7 +133,10 @@ public class SqlUtils
         return output.toString();
     }
     
-    public static String implodeWhereArray(String[] conditions, String columnQuote, String valueQuote, boolean escapeBackslashes)
+    public static String implodeWhereArray(String[] conditions,
+                                           String columnQuote,
+                                           String valueQuote,
+                                           boolean escapeBackslashes)
     {
         StringBuilder output = new StringBuilder();
         
@@ -129,8 +149,9 @@ public class SqlUtils
         
         for (int i = 3; i < conditions.length; i += 3)
         {
-            output.append(" AND ").append(columnQuote).append(escapeQuotes(conditions[i], columnQuote, escapeBackslashes))
-                .append(columnQuote).append(" ").append(conditions[i + 1]).append(" ").append(valueQuote)
+            output.append(" AND ").append(columnQuote)
+                .append(escapeQuotes(conditions[i], columnQuote, escapeBackslashes)).append(columnQuote)
+                .append(" ").append(conditions[i + 1]).append(" ").append(valueQuote)
                 .append(escapeQuotes(conditions[i + 2], valueQuote, escapeBackslashes)).append(valueQuote);
         }
         

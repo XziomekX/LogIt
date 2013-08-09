@@ -111,9 +111,9 @@ public class LoginCommand extends AbstractCommandExecutor
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
                 
                 failedLoginsToKick.put(username,
-                                       (failedLoginsToKick.get(username) != null) ? failedLoginsToKick.get(username) + 1 : 1);
+                        (failedLoginsToKick.get(username) != null) ? failedLoginsToKick.get(username) + 1 : 1);
                 failedLoginsToBan.put(username,
-                                      (failedLoginsToBan.get(username) != null) ? failedLoginsToBan.get(username) + 1 : 1);
+                        (failedLoginsToBan.get(username) != null) ? failedLoginsToBan.get(username) + 1 : 1);
                 
                 if (failedLoginsToBan.get(username) >= core.getConfig().getInt("crowd-control.login-fails-to-ban")
                     && core.getConfig().getInt("crowd-control.login-fails-to-ban") > 0)

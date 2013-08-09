@@ -165,14 +165,16 @@ public class WaitingRoom
     public void setWaitingRoomLocation(Location location)
     {
         core.getConfig().set("waiting-room.location.world", location.getWorld().getName());
-        core.getConfig().set("waiting-room.location.position", new Vector(location.getX(), location.getY(), location.getZ()));
+        core.getConfig().set("waiting-room.location.position",
+                new Vector(location.getX(), location.getY(), location.getZ()));
         core.getConfig().set("waiting-room.location.yaw", (double) location.getYaw());
         core.getConfig().set("waiting-room.location.pitch", (double) location.getPitch());
     }
     
     public Location getNewbieTeleportLocation()
     {
-        World  world = Bukkit.getServer().getWorld(core.getConfig().getString("waiting-room.newbie-teleport.location.world"));
+        String worldName = core.getConfig().getString("waiting-room.newbie-teleport.location.world");
+        World  world = Bukkit.getServer().getWorld(worldName);
         double x = core.getConfig().getVector("waiting-room.newbie-teleport.location.position").getX();
         double y = core.getConfig().getVector("waiting-room.newbie-teleport.location.position").getY();
         double z = core.getConfig().getVector("waiting-room.newbie-teleport.location.position").getZ();

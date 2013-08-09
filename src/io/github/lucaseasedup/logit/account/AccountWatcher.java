@@ -52,7 +52,6 @@ public class AccountWatcher implements Runnable
             
             int absenceTime = (now - lastActiveDate);
             
-            //                                                                                     days to seconds
             if (absenceTime >= (core.getConfig().getInt("crowd-control.days-of-absence-to-unregister") * 86400))
             {
                 try

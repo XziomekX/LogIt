@@ -82,10 +82,9 @@ public class BackupManager implements Runnable
     
     public void createBackup() throws IOException, SQLException
     {
-        Date             date = new Date();
-        SimpleDateFormat sdf  = new SimpleDateFormat(core.getConfig().getString("backup.filename-format"));
-        File             backupPath = new File(core.getPlugin().getDataFolder(), core.getConfig().getString("backup.path"));
-        File             backupFile = new File(backupPath, sdf.format(date));
+        SimpleDateFormat sdf = new SimpleDateFormat(core.getConfig().getString("backup.filename-format"));
+        File backupPath = new File(core.getPlugin().getDataFolder(), core.getConfig().getString("backup.path"));
+        File backupFile = new File(backupPath, sdf.format(new Date()));
         
         backupPath.mkdir();
         

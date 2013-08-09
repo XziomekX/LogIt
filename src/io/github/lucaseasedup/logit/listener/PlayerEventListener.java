@@ -91,14 +91,15 @@ public class PlayerEventListener extends EventListener
             event.disallow(KICK_OTHER, getMessage("USERNAME_ALREADY_USED"));
         }
         else if (!core.getAccountManager().isRegistered(player.getName())
-            && core.getConfig().getBoolean("crowd-control.kick-unregistered"))
+                && core.getConfig().getBoolean("crowd-control.kick-unregistered"))
         {
             event.disallow(KICK_OTHER, getMessage("KICK_UNREGISTERED"));
         }
         else
         {
             int freeSlots = Bukkit.getMaxPlayers() - Bukkit.getOnlinePlayers().length;
-            List<String> preserveSlotsPlayers = core.getConfig().getStringList("crowd-control.preserve-slots.players");
+            List<String> preserveSlotsPlayers =
+                    core.getConfig().getStringList("crowd-control.preserve-slots.players");
             
             int preservedSlots = 0;
             boolean preservedForThisPlayer = false;
@@ -122,7 +123,7 @@ public class PlayerEventListener extends EventListener
             }
             
             if (freeSlots - (core.getConfig().getInt("crowd-control.preserve-slots.amount") - preservedSlots) <= 0
-                && !preservedForThisPlayer)
+                    && !preservedForThisPlayer)
             {
                 event.disallow(KICK_FULL, getMessage("NO_SLOTS_FREE"));
             }
@@ -139,10 +140,14 @@ public class PlayerEventListener extends EventListener
         event.setJoinMessage(null);
         
         if (core.getSessionManager().getSession(username) == null)
+        {
             core.getSessionManager().createSession(username, ip);
+        }
         
         if (core.getConfig().getBoolean("groups.enabled"))
+        {
             core.updatePlayerGroup(player);
+        }
         
         if (core.isPlayerForcedToLogin(player) && !core.getSessionManager().isSessionAlive(username)
                 && core.getConfig().getBoolean("force-login.hide-inventory"))
@@ -157,8 +162,10 @@ public class PlayerEventListener extends EventListener
             }
         }
         
-        if ((core.getSessionManager().isSessionAlive(player) && core.getSessionManager().getSession(username).getIp().equals(ip))
-                        || !core.getConfig().getBoolean("force-login.global") || player.hasPermission("logit.force-login.exempt"))
+        if ((core.getSessionManager().isSessionAlive(player)
+                && core.getSessionManager().getSession(username).getIp().equals(ip))
+                || !core.getConfig().getBoolean("force-login.global")
+                || player.hasPermission("logit.force-login.exempt"))
         {
             broadcastJoinMessage(player, core.getConfig().getBoolean("reveal-spawn-world"));
         }
@@ -193,7 +200,9 @@ public class PlayerEventListener extends EventListener
         event.setQuitMessage(null);
         
         if (core.getSessionManager().isSessionAlive(player))
+        {
             broadcastQuitMessage(player);
+        }
         
         try
         {
