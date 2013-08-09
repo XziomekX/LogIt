@@ -20,8 +20,7 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCore;
-import java.io.IOException;
-import java.sql.SQLException;
+import io.github.lucaseasedup.logit.ReportedException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -75,12 +74,18 @@ public class RecoverPassCommand extends AbstractCommandExecutor
             {
                 try
                 {
+                    ReportedException.incrementRequestCount();
+                    
                     core.sendPasswordRecoveryMail(p.getName());
                     sender.sendMessage(getMessage("RECOVER_PASSWORD_SUCCESS_SELF").replace("%email%", args[0]));
                 }
-                catch (IOException | SQLException ex)
+                catch (ReportedException ex)
                 {
                     sender.sendMessage(getMessage("RECOVER_PASSWORD_FAIL_SELF"));
+                }
+                finally
+                {
+                    ReportedException.decrementRequestCount();
                 }
             }
         }

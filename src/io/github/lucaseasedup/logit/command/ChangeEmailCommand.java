@@ -21,8 +21,8 @@ package io.github.lucaseasedup.logit.command;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.util.EmailUtils;
-import java.sql.SQLException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -76,15 +76,21 @@ public class ChangeEmailCommand extends AbstractCommandExecutor
             {
                 try
                 {
+                    ReportedException.incrementRequestCount();
+                    
                     if (core.getAccountManager().changeEmail(args[1], args[2]))
                     {
                         sendMessage(args[1], getMessage("CHANGE_EMAIL_SUCCESS_SELF").replace("%email%", args[2]));
                         sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_OTHERS").replace("%player%", args[1]));
                     }
                 }
-                catch (SQLException ex)
+                catch (ReportedException ex)
                 {
                     sender.sendMessage(getMessage("CHANGE_EMAIL_FAIL_OTHERS").replace("%player%", args[1]));
+                }
+                finally
+                {
+                    ReportedException.decrementRequestCount();
                 }
             }
         }
@@ -114,14 +120,20 @@ public class ChangeEmailCommand extends AbstractCommandExecutor
             {
                 try
                 {
+                    ReportedException.incrementRequestCount();
+                    
                     if (core.getAccountManager().changeEmail(p.getName(), args[0]))
                     {
                         sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_SELF").replace("%email%", args[0]));
                     }
                 }
-                catch (SQLException ex)
+                catch (ReportedException ex)
                 {
                     sender.sendMessage(getMessage("CHANGE_EMAIL_FAIL_SELF"));
+                }
+                finally
+                {
+                    ReportedException.decrementRequestCount();
                 }
             }
         }

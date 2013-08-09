@@ -22,6 +22,7 @@ import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
 import io.github.lucaseasedup.logit.LogItCore.IntegrationType;
+import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.db.Table;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
 import java.net.InetAddress;
@@ -76,7 +77,7 @@ public class AccountManager
      * @return True if account has been created,
      *         false if creation has been cancelled by an outside event listener.
      */
-    public boolean createAccount(String username, String password) throws SQLException
+    public boolean createAccount(String username, String password)
     {
         if (isRegistered(username))
             throw new RuntimeException("Account already exists.");
@@ -112,7 +113,7 @@ public class AccountManager
         {
             core.log(Level.WARNING, getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
             
-            throw ex;
+            ReportedException.throwNew(ex);
         }
         
         return true;
@@ -128,7 +129,7 @@ public class AccountManager
      * @return True if account has been removed,
      *         false if removal has been cancelled by an outside event listener.
      */
-    public boolean removeAccount(String username) throws SQLException
+    public boolean removeAccount(String username)
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
@@ -151,7 +152,7 @@ public class AccountManager
         {
             core.log(Level.WARNING, getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
             
-            throw ex;
+            ReportedException.throwNew(ex);
         }
         
         return true;
@@ -206,7 +207,7 @@ public class AccountManager
      * @return True if password has been changed,
      *         false if operation has been cancelled by an outside event listener.
      */
-    public boolean changeAccountPassword(String username, String newPassword) throws SQLException
+    public boolean changeAccountPassword(String username, String newPassword)
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
@@ -235,7 +236,7 @@ public class AccountManager
         {
             core.log(Level.WARNING, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username), ex);
             
-            throw ex;
+            ReportedException.throwNew(ex);
         }
         
         return true;
@@ -248,9 +249,8 @@ public class AccountManager
      * @param newEmail New e-mail address.
      * @return True if e-mail address has been created,
      *         false if operation has been cancelled by an outside event listener.
-     * @throws SQLException Thrown on SQL error.
      */
-    public boolean changeEmail(String username, String newEmail) throws SQLException
+    public boolean changeEmail(String username, String newEmail)
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
@@ -273,7 +273,7 @@ public class AccountManager
         {
             core.log(Level.WARNING, getMessage("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username), ex);
             
-            throw ex;
+            ReportedException.throwNew(ex);
         }
         
         return true;
@@ -293,7 +293,7 @@ public class AccountManager
      *         false if operation has been cancelled by an outside event listener.
      * @throws AccountNotFoundException Thrown if the account does not exist.
      */
-    public boolean attachIp(String username, String ip) throws SQLException
+    public boolean attachIp(String username, String ip)
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
@@ -329,7 +329,7 @@ public class AccountManager
             core.log(Level.WARNING, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username)
                     .replace("%ip%", ip), ex);
             
-            throw ex;
+            ReportedException.throwNew(ex);
         }
         
         return true;
@@ -372,11 +372,20 @@ public class AccountManager
         return new HashSet<String>(ips).size();
     }
     
-    public void updateLastActiveDate(String username) throws SQLException
+    public void updateLastActiveDate(String username)
     {
         String now = String.valueOf((int) (System.currentTimeMillis() / 1000L));
         
-        accountMap.get(username).update("logit.accounts.last_active", now);
+        try
+        {
+            accountMap.get(username).update("logit.accounts.last_active", now);
+        }
+        catch (SQLException ex)
+        {
+            core.log(Level.WARNING, "Could not update last-active date.", ex);
+            
+            ReportedException.throwNew(ex);
+        }
     }
     
     public int getLastActiveDate(String username)
@@ -384,19 +393,28 @@ public class AccountManager
         return Integer.parseInt(accountMap.get(username).get("logit.accounts.last_active"));
     }
     
-    public void saveLocation(String username, Location location) throws SQLException
+    public void saveLocation(String username, Location location)
     {
         Account account = accountMap.get(username);
         
-        account.update("logit.accounts.world", location.getWorld().getName());
-        account.update("logit.accounts.x", String.valueOf(location.getX()));
-        account.update("logit.accounts.y", String.valueOf(location.getY()));
-        account.update("logit.accounts.z", String.valueOf(location.getZ()));
-        account.update("logit.accounts.yaw", String.valueOf(location.getYaw()));
-        account.update("logit.accounts.pitch", String.valueOf(location.getPitch()));
+        try
+        {
+            account.update("logit.accounts.world", location.getWorld().getName());
+            account.update("logit.accounts.x", String.valueOf(location.getX()));
+            account.update("logit.accounts.y", String.valueOf(location.getY()));
+            account.update("logit.accounts.z", String.valueOf(location.getZ()));
+            account.update("logit.accounts.yaw", String.valueOf(location.getYaw()));
+            account.update("logit.accounts.pitch", String.valueOf(location.getPitch()));
+        }
+        catch (SQLException ex)
+        {
+            core.log(Level.WARNING, "Could not save player location.", ex);
+            
+            ReportedException.throwNew(ex);
+        }
     }
     
-    public Location getLocation(String username) throws SQLException
+    public Location getLocation(String username)
     {
         Account account = accountMap.get(username);
         
@@ -428,7 +446,7 @@ public class AccountManager
     /**
      * Loads accounts from the database.
      */
-    public void loadAccounts() throws SQLException
+    public void loadAccounts()
     {
         Map<String, Account> loadedAccounts = new HashMap<>();
         
@@ -472,7 +490,7 @@ public class AccountManager
         {
             core.log(Level.WARNING, getMessage("LOAD_ACCOUNTS_FAIL"), ex);
             
-            throw ex;
+            ReportedException.throwNew(ex);
         }
     }
     

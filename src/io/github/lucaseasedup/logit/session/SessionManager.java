@@ -218,14 +218,7 @@ public class SessionManager implements Runnable
         // Start session.
         session.setStatus(0L);
         
-        try
-        {
-            accountManager.updateLastActiveDate(username);
-        }
-        catch (SQLException ex)
-        {
-            core.log(Level.WARNING, "Could not update last-active date.", ex);
-        }
+        accountManager.updateLastActiveDate(username);
         
         core.log(Level.FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
         
@@ -256,14 +249,7 @@ public class SessionManager implements Runnable
         // End session.
         session.setStatus(-1L);
         
-        try
-        {
-            accountManager.updateLastActiveDate(username);
-        }
-        catch (SQLException ex)
-        {
-            core.log(Level.WARNING, "Could not update last-active date.", ex);
-        }
+        accountManager.updateLastActiveDate(username);
         
         core.log(Level.FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
         

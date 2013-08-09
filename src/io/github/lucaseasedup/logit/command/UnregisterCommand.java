@@ -21,7 +21,7 @@ package io.github.lucaseasedup.logit.command;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import io.github.lucaseasedup.logit.LogItCore;
-import java.sql.SQLException;
+import io.github.lucaseasedup.logit.ReportedException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -79,6 +79,8 @@ public class UnregisterCommand extends AbstractCommandExecutor
                 
                 try
                 {
+                    ReportedException.incrementRequestCount();
+                    
                     if (core.getAccountManager().removeAccount(args[1]))
                     {
                         sendMessage(args[1], getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
@@ -86,9 +88,13 @@ public class UnregisterCommand extends AbstractCommandExecutor
                                 .replace("%player%", args[1]));
                     }
                 }
-                catch (SQLException ex)
+                catch (ReportedException ex)
                 {
                     sender.sendMessage(getMessage("REMOVE_ACCOUNT_FAIL_OTHERS").replace("%player%", args[1]));
+                }
+                finally
+                {
+                    ReportedException.decrementRequestCount();
                 }
             }
         }
@@ -128,14 +134,20 @@ public class UnregisterCommand extends AbstractCommandExecutor
                 
                 try
                 {
+                    ReportedException.incrementRequestCount();
+                    
                     if (core.getAccountManager().removeAccount(p.getName()))
                     {
                         sender.sendMessage(getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
                     }
                 }
-                catch (SQLException ex)
+                catch (ReportedException ex)
                 {
                     sender.sendMessage(getMessage("REMOVE_ACCOUNT_FAIL_SELF"));
+                }
+                finally
+                {
+                    ReportedException.decrementRequestCount();
                 }
             }
         }

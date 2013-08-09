@@ -21,7 +21,7 @@ package io.github.lucaseasedup.logit.command;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import io.github.lucaseasedup.logit.LogItCore;
-import java.sql.SQLException;
+import io.github.lucaseasedup.logit.ReportedException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -81,6 +81,8 @@ public class ChangePassCommand extends AbstractCommandExecutor
             {
                 try
                 {
+                    ReportedException.incrementRequestCount();
+                    
                     if (core.getAccountManager().changeAccountPassword(args[1], args[2]))
                     {
                         sendMessage(args[1], getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
@@ -88,9 +90,13 @@ public class ChangePassCommand extends AbstractCommandExecutor
                                 .replace("%player%", args[1]));
                     }
                 }
-                catch (SQLException ex)
+                catch (ReportedException ex)
                 {
                     sender.sendMessage(getMessage("CHANGE_PASSWORD_FAIL_OTHERS").replace("%player%", args[1]));
+                }
+                finally
+                {
+                    ReportedException.decrementRequestCount();
                 }
             }
         }
@@ -142,14 +148,20 @@ public class ChangePassCommand extends AbstractCommandExecutor
             {
                 try
                 {
+                    ReportedException.incrementRequestCount();
+                    
                     if (core.getAccountManager().changeAccountPassword(p.getName(), args[1]))
                     {
                         sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
                     }
                 }
-                catch (SQLException ex)
+                catch (ReportedException ex)
                 {
                     sender.sendMessage(getMessage("CHANGE_PASSWORD_FAIL_SELF"));
+                }
+                finally
+                {
+                    ReportedException.decrementRequestCount();
                 }
             }
         }

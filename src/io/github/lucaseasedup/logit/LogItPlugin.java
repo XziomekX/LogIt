@@ -102,7 +102,17 @@ public final class LogItPlugin extends JavaPlugin
         }
         
         core = LogItCore.getInstance();
-        core.start();
+        
+        try
+        {
+            core.start();
+        }
+        catch (FatalReportedException ex)
+        {
+            core = null;
+            craftReflect = null;
+            prb = null;
+        }
     }
     
     @Override
@@ -159,7 +169,9 @@ public final class LogItPlugin extends JavaPlugin
             JarEntry jarEntry = jarFile.getJarEntry("messages" + suffix + ".properties");
             
             if (jarEntry == null)
+            {
                 jarEntry = jarFile.getJarEntry("messages.properties");
+            }
             
             if (jarEntry == null)
                 throw new FileNotFoundException("No message files found.");
@@ -278,7 +290,7 @@ public final class LogItPlugin extends JavaPlugin
         return packageParts[packageParts.length - 1];
     }
     
-    public static void loadLibrary(String filename) throws ReportedException
+    public static void loadLibrary(String filename)
     {
         try
         {
@@ -289,14 +301,14 @@ public final class LogItPlugin extends JavaPlugin
             logger.log(Level.SEVERE, "Library {0} was not found.", filename);
             getInstance().disable();
             
-            throw new ReportedException(ex);
+            ReportedException.throwNew(ex);
         }
         catch (ReflectiveOperationException ex)
         {
             logger.log(Level.SEVERE, "Could not load library " + filename + ".", ex);
             getInstance().disable();
             
-            throw new ReportedException(ex);
+            ReportedException.throwNew(ex);
         }
     }
     

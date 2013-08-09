@@ -23,7 +23,7 @@ package io.github.lucaseasedup.logit;
  * 
  * @author LucasEasedUp
  */
-public class ReportedException extends Exception
+public class ReportedException extends RuntimeException
 {
     public ReportedException()
     {
@@ -38,4 +38,85 @@ public class ReportedException extends Exception
     {
         super(cause);
     }
+    
+    public void rethrow()
+    {
+        decrementRequestCount();
+        
+        throw this;
+    }
+    
+    public void rethrowAsFatal() throws FatalReportedException
+    {
+        decrementRequestCount();
+        
+        throw new FatalReportedException(getCause());
+    }
+    
+    public static void throwNew()
+    {
+        if (shouldSignal())
+        {
+            throw new ReportedException();
+        }
+    }
+    
+    public static void throwNew(String msg)
+    {
+        if (shouldSignal())
+        {
+            throw new ReportedException(msg);
+        }
+    }
+    
+    public static void throwNew(Throwable cause)
+    {
+        if (shouldSignal())
+        {
+            throw new ReportedException(cause);
+        }
+    }
+    
+    public static void incrementRequestCount()
+    {
+        RequestCounter counter = requestCounter.get();
+
+        if (counter == null)
+        {
+            requestCounter.set(counter = new RequestCounter());
+        }
+        
+        counter.count++;
+    }
+    
+    public static void decrementRequestCount()
+    {
+        RequestCounter counter = requestCounter.get();
+
+        if (counter == null)
+        {
+            requestCounter.set(counter = new RequestCounter());
+        }
+        
+        counter.count--;
+    }
+    
+    public static boolean shouldSignal()
+    {
+        RequestCounter counter = requestCounter.get();
+        
+        if (counter == null)
+        {
+            requestCounter.set(counter = new RequestCounter());
+        }
+        
+        return counter.count > 0;
+    }
+    
+    private static class RequestCounter
+    {
+        public int count = 0;
+    }
+    
+    private static final ThreadLocal<RequestCounter> requestCounter = new ThreadLocal<RequestCounter>();
 }

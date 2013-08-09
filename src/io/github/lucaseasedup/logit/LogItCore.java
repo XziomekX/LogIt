@@ -95,7 +95,7 @@ public final class LogItCore
         this.firstRun = !new File(plugin.getDataFolder(), "config.yml").exists();
     }
     
-    public void start()
+    public void start() throws FatalReportedException
     {
         if (started)
             return;
@@ -113,7 +113,7 @@ public final class LogItCore
             plugin.getLogger().log(Level.SEVERE, "Could not load the configuration file.", ex);
             plugin.disable();
             
-            return;
+            FatalReportedException.throwNew(ex);
         }
         
         if (firstRun)
@@ -143,11 +143,13 @@ public final class LogItCore
                     .replace("%ha%", getDefaultHashingAlgorithm().name()));
             plugin.disable();
             
-            return;
+            ReportedException.throwNew("Unknown hashing algorithm.");
         }
         
         try
         {
+            ReportedException.incrementRequestCount();
+            
             if (getStorageAccountsDbType().equals(StorageType.H2))
             {
                 LogItPlugin.loadLibrary(LIB_H2);
@@ -160,7 +162,11 @@ public final class LogItCore
         }
         catch (ReportedException ex)
         {
-            return;
+            ex.rethrowAsFatal();
+        }
+        finally
+        {
+            ReportedException.decrementRequestCount();
         }
         
         try
@@ -207,7 +213,7 @@ public final class LogItCore
                             .replace("%st%", getStorageAccountsDbType().name()));
                     plugin.disable();
                     
-                    return;
+                    ReportedException.throwNew();
                 }
             }
         }
@@ -216,7 +222,7 @@ public final class LogItCore
             log(Level.SEVERE, "Could not open database connection.", ex);
             plugin.disable();
             
-            return;
+            ReportedException.throwNew(ex);
         }
         
         pinger = new Pinger(database);
@@ -232,20 +238,26 @@ public final class LogItCore
             log(Level.SEVERE, "Could not open account table.", ex);
             plugin.disable();
             
-            return;
+            ReportedException.throwNew(ex);
         }
         
         accountManager = new AccountManager(this, accountTable);
         
         try
         {
+            ReportedException.incrementRequestCount();
+            
             accountManager.loadAccounts();
         }
-        catch (SQLException ex)
+        catch (ReportedException ex)
         {
             plugin.disable();
             
-            return;
+            ex.rethrow();
+        }
+        finally
+        {
+            ReportedException.decrementRequestCount();
         }
         
         accountWatcher = new AccountWatcher(this, accountManager);
@@ -298,7 +310,7 @@ public final class LogItCore
             log(Level.SEVERE, "Inventories could not be restored.", ex);
             plugin.disable();
             
-            return;
+            ReportedException.throwNew(ex);
         }
         
         inventoryDepository = new InventoryDepository(this, inventoryDatabase);
@@ -356,7 +368,7 @@ public final class LogItCore
         started = false;
     }
     
-    public void restart()
+    public void restart() throws FatalReportedException
     {
         File sessions = new File(plugin.getDataFolder() + "/" + config.getString("storage.sessions.filename"));
         
@@ -470,10 +482,12 @@ public final class LogItCore
         log(Level.INFO, getMessage("GLOBALPASS_REMOVE_SUCCESS"));
     }
     
-    public void sendPasswordRecoveryMail(String username) throws IOException, SQLException
+    public void sendPasswordRecoveryMail(String username)
     {
         try
         {
+            ReportedException.incrementRequestCount();
+            
             if (mailSender == null)
                 throw new RuntimeException("MailSender not initialized.");
             
@@ -514,13 +528,17 @@ public final class LogItCore
                 "%email%", to,
             }));
         }
-        catch (IOException | SQLException ex)
+        catch (ReportedException | IOException ex)
         {
             log(Level.WARNING, getMessage("RECOVER_PASSWORD_FAIL_LOG", new String[]{
                 "%player%", username,
             }), ex);
             
-            throw ex;
+            ReportedException.throwNew(ex);
+        }
+        finally
+        {
+            ReportedException.decrementRequestCount();
         }
     }
     

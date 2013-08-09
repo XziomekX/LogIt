@@ -24,7 +24,7 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCore;
-import java.sql.SQLException;
+import io.github.lucaseasedup.logit.ReportedException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -95,6 +95,8 @@ public class RegisterCommand extends AbstractCommandExecutor
                 
                 try
                 {
+                    ReportedException.incrementRequestCount();
+                    
                     if (core.getAccountManager().createAccount(args[1], password))
                     {
                         sendMessage(args[1], getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
@@ -120,9 +122,13 @@ public class RegisterCommand extends AbstractCommandExecutor
                         }
                     }
                 }
-                catch (SQLException ex)
+                catch (ReportedException ex)
                 {
                     sender.sendMessage(getMessage("CREATE_ACCOUNT_FAIL_OTHERS").replace("%player%", args[1]));
+                }
+                finally
+                {
+                    ReportedException.decrementRequestCount();
                 }
             }
         }
@@ -183,6 +189,8 @@ public class RegisterCommand extends AbstractCommandExecutor
                 
                 try
                 {
+                    ReportedException.incrementRequestCount();
+                    
                     if (core.getAccountManager().createAccount(p.getName(), password))
                     {
                         sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
@@ -201,9 +209,13 @@ public class RegisterCommand extends AbstractCommandExecutor
                         }
                     }
                 }
-                catch (SQLException ex)
+                catch (ReportedException ex)
                 {
                     sender.sendMessage(getMessage("CREATE_ACCOUNT_FAIL_SELF"));
+                }
+                finally
+                {
+                    ReportedException.decrementRequestCount();
                 }
             }
         }

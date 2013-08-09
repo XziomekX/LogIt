@@ -19,7 +19,6 @@
 package io.github.lucaseasedup.logit.account;
 
 import io.github.lucaseasedup.logit.LogItCore;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Set;
 
@@ -54,13 +53,7 @@ public class AccountWatcher implements Runnable
             
             if (absenceTime >= (core.getConfig().getInt("crowd-control.days-of-absence-to-unregister") * 86400))
             {
-                try
-                {
-                    accountManager.removeAccount(username);
-                }
-                catch (SQLException ex)
-                {
-                }
+                accountManager.removeAccount(username);
             }
         }
     }

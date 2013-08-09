@@ -57,6 +57,8 @@ public class WaitingRoom
         
         try
         {
+            ReportedException.incrementRequestCount();
+            
             core.getAccountManager().saveLocation(player.getName(), player.getLocation());
             player.teleport(getWaitingRoomLocation());
             
@@ -66,9 +68,15 @@ public class WaitingRoom
                 new SetClause("logit.accounts.waiting_room", "1"),
             });
         }
-        catch (SQLException ex)
+        catch (ReportedException | SQLException ex)
         {
             core.log(Level.WARNING, "Could not update player waiting-room status.", ex);
+            
+            ReportedException.throwNew(ex);
+        }
+        finally
+        {
+            ReportedException.decrementRequestCount();
         }
     }
     
@@ -97,6 +105,8 @@ public class WaitingRoom
         catch (SQLException ex)
         {
             core.log(Level.WARNING, "Could not update player waiting-room status.", ex);
+            
+            ReportedException.throwNew(ex);
         }
     }
     
@@ -118,6 +128,8 @@ public class WaitingRoom
         catch (SQLException ex)
         {
             core.log(Level.WARNING, "Could not update player waiting-room status.", ex);
+            
+            ReportedException.throwNew(ex);
         }
     }
     
@@ -146,8 +158,10 @@ public class WaitingRoom
         {
             core.log(Level.WARNING, "Could not retrieve player waiting-room status.", ex);
             
-            return false;
+            ReportedException.throwNew(ex);
         }
+        
+        return false;
     }
     
     public Location getWaitingRoomLocation()

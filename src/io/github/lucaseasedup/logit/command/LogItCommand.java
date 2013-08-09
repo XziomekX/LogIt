@@ -19,13 +19,13 @@
 package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import io.github.lucaseasedup.logit.FatalReportedException;
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyType;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.logging.Level;
 import org.bukkit.Color;
@@ -157,7 +157,14 @@ public class LogItCommand extends AbstractCommandExecutor
             }
             else
             {
-                core.restart();
+                try
+                {
+                    core.restart();
+                }
+                catch (FatalReportedException ex)
+                {
+                    return true;
+                }
                 
                 if (p != null && core.getPlugin().isEnabled())
                 {
@@ -177,6 +184,8 @@ public class LogItCommand extends AbstractCommandExecutor
                 {
                     try
                     {
+                        ReportedException.incrementRequestCount();
+                        
                         core.getBackupManager().createBackup();
 
                         if (p != null)
@@ -186,12 +195,16 @@ public class LogItCommand extends AbstractCommandExecutor
                         
                         core.log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS"));
                     }
-                    catch (IOException | SQLException ex)
+                    catch (ReportedException ex)
                     {
                         if (p != null)
                         {
                             sender.sendMessage(getMessage("CREATE_BACKUP_FAIL"));
                         }
+                    }
+                    finally
+                    {
+                        ReportedException.decrementRequestCount();
                     }
                 }
             }
@@ -207,6 +220,8 @@ public class LogItCommand extends AbstractCommandExecutor
                     
                     try
                     {
+                        ReportedException.incrementRequestCount();
+                        
                         if (filename != null)
                         {
                             core.getBackupManager().restoreBackup(filename);
@@ -230,12 +245,16 @@ public class LogItCommand extends AbstractCommandExecutor
                         
                         core.log(Level.INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
                     }
-                    catch (FileNotFoundException | SQLException ex)
+                    catch (ReportedException | FileNotFoundException ex)
                     {
                         if (p != null)
                         {
                             sender.sendMessage(getMessage("RESTORE_BACKUP_FAIL"));
                         }
+                    }
+                    finally
+                    {
+                        ReportedException.decrementRequestCount();
                     }
                 }
             }

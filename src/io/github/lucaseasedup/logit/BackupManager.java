@@ -65,22 +65,15 @@ public class BackupManager implements Runnable
         
         if (timer.getElapsed() >= (core.getConfig().getInt("backup.schedule.interval") * 60L * 20L))
         {
-            try
-            {
-                createBackup();
-                
-                core.log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS"));
-            }
-            catch (IOException | SQLException ex)
-            {
-                core.log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"), ex);
-            }
+            createBackup();
+            
+            core.log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS"));
             
             timer.reset();
         }
     }
     
-    public void createBackup() throws IOException, SQLException
+    public void createBackup()
     {
         SimpleDateFormat sdf = new SimpleDateFormat(core.getConfig().getString("backup.filename-format"));
         File backupPath = new File(core.getPlugin().getDataFolder(), core.getConfig().getString("backup.path"));
@@ -125,11 +118,11 @@ public class BackupManager implements Runnable
         {
             core.log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"), ex);
             
-            throw ex;
+            ReportedException.throwNew(ex);
         }
     }
     
-    public void restoreBackup(String filename) throws FileNotFoundException, SQLException
+    public void restoreBackup(String filename)
     {
         try
         {
@@ -170,7 +163,7 @@ public class BackupManager implements Runnable
         {
             core.log(Level.WARNING, getMessage("RESTORE_BACKUP_FAIL"), ex);
             
-            throw ex;
+            ReportedException.throwNew(ex);
         }
     }
     

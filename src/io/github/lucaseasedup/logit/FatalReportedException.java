@@ -24,7 +24,7 @@ package io.github.lucaseasedup.logit;
  * 
  * @author LucasEasedUp
  */
-public class FatalReportedException extends ReportedException
+public class FatalReportedException extends Exception
 {
     public FatalReportedException()
     {
@@ -38,5 +38,25 @@ public class FatalReportedException extends ReportedException
     public FatalReportedException(Throwable cause)
     {
         super(cause);
+    }
+    
+    public void rethrow() throws FatalReportedException
+    {
+        throw this;
+    }
+    
+    public static void throwNew() throws FatalReportedException
+    {
+        throw new FatalReportedException();
+    }
+    
+    public static void throwNew(String msg) throws FatalReportedException
+    {
+        throw new FatalReportedException(msg);
+    }
+    
+    public static void throwNew(Throwable cause) throws FatalReportedException
+    {
+        throw new FatalReportedException(cause);
     }
 }
