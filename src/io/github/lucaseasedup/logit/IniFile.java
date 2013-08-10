@@ -21,6 +21,10 @@ import java.util.regex.Pattern;
 
 public class IniFile
 {
+    public IniFile()
+    {
+    }
+    
     public IniFile(File f) throws IOException
     {
         load(new FileInputStream(f));
