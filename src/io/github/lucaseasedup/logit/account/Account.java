@@ -38,11 +38,6 @@ public class Account
         this.table = table;
     }
     
-    public Account(Table table)
-    {
-        this(table, new HashMap<String, String>());
-    }
-    
     public String get(String property)
     {
         return data.get(property);
