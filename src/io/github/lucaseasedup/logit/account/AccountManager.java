@@ -498,7 +498,7 @@ public class AccountManager
             {
                 String username = m.get("logit.accounts.username");
                 
-                if (username == null)
+                if (username == null || loadedAccounts.containsKey(username))
                     continue;
                 
                 username = username.toLowerCase();
