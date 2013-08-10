@@ -194,6 +194,11 @@ public class IniFile
         
         for (Entry<String, Map<String, String>> section : entries.entrySet())
         {
+            if (sb.length() != 0)
+            {
+                sb.append("\n");
+            }
+            
             sb.append("[");
             sb.append(section.getKey());
             sb.append("]\n");
@@ -203,10 +208,8 @@ public class IniFile
                 sb.append(kv.getKey());
                 sb.append("=");
                 sb.append(kv.getValue());
-                sb.append("]\n");
+                sb.append("\n");
             }
-            
-            sb.append("\n");
         }
         
         return sb.toString();
