@@ -10,7 +10,7 @@ public class ImmutableIniFile extends IniFile
         super(f);
     }
     
-    public ImmutableIniFile(String s) throws IOException
+    public ImmutableIniFile(String s)
     {
         super(s);
     }

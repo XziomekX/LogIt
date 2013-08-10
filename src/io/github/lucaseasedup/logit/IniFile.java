@@ -3,7 +3,6 @@ package io.github.lucaseasedup.logit;
 import com.google.common.collect.ImmutableSet;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,12 +27,12 @@ public class IniFile
     
     public IniFile(File f) throws IOException
     {
-        load(new FileInputStream(f));
+        loadFromStream(new FileInputStream(f));
     }
     
-    public IniFile(String s) throws IOException
+    public IniFile(String s)
     {
-        load(new ByteArrayInputStream(s.getBytes()));
+        loadFromString(s);
     }
     
     public IniFile(IniFile ini)
@@ -232,7 +232,7 @@ public class IniFile
         }
     }
     
-    private void load(InputStream is) throws IOException
+    private void loadFromStream(InputStream is) throws IOException
     {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(is)))
         {
@@ -241,6 +241,41 @@ public class IniFile
             
             while ((line = br.readLine()) != null)
             {
+                Matcher m = sectionPattern.matcher(line);
+                
+                if (m.matches())
+                {
+                    section = m.group(1).trim();
+                    
+                    entries.put(section, new LinkedHashMap<String, String>());
+                }
+                else if (section != null)
+                {
+                    m = keyValuePattern.matcher(line);
+                    
+                    if (m.matches())
+                    {
+                        String key = m.group(1).trim();
+                        String value = m.group(2).trim();
+                        
+                        entries.get(section).put(key, value);
+                    }
+                }
+            }
+        }
+    }
+    
+    private void loadFromString(String s)
+    {
+        String line;
+        String section = null;
+        
+        try (Scanner scanner = new Scanner(s))
+        {
+            while (scanner.hasNextLine())
+            {
+                line = scanner.nextLine();
+                
                 Matcher m = sectionPattern.matcher(line);
                 
                 if (m.matches())
