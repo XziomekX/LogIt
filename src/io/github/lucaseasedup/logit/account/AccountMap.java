@@ -34,6 +34,9 @@ public class AccountMap
 {
     public AccountMap(Table table, Map<String, Account> initialData)
     {
+        if (table == null)
+            throw new NullPointerException();
+        
         this.data = new HashMap<>(initialData);
         this.table = table;
     }
