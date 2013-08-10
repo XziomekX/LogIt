@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,6 +29,23 @@ public class IniFile
     public IniFile(String s) throws IOException
     {
         load(new ByteArrayInputStream(s.getBytes()));
+    }
+    
+    public IniFile(IniFile ini)
+    {
+        Map<String, Map<String, String>> entries = new HashMap<>();
+        
+        for (String section : ini.getSections())
+        {
+            Map<String, String> keys = new HashMap<>();
+            
+            for (String key : ini.getSectionKeys(section))
+            {
+                keys.put(key, ini.getString(section, key));
+            }
+            
+            entries.put(section, keys);
+        }
     }
     
     public Set<String> getSections()
@@ -230,5 +248,5 @@ public class IniFile
     
     private final Pattern sectionPattern = Pattern.compile("\\s*\\[([^]]*)\\]\\s*");
     private final Pattern keyValuePattern = Pattern.compile("\\s*([^=]*)=(.*)");
-    private final Map<String, Map<String, String>> entries = new LinkedHashMap<>();
+    protected Map<String, Map<String, String>> entries = new LinkedHashMap<>();
 }
