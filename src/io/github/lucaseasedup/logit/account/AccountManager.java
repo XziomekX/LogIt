@@ -29,6 +29,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -471,6 +472,11 @@ public class AccountManager
     public boolean isColumnDisabled(String id)
     {
         return table.isColumnDisabled(id);
+    }
+    
+    public Collection<Account> getAccounts()
+    {
+        return accountMap.values();
     }
     
     public int getAccountCount()
