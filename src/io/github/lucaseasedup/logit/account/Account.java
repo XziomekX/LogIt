@@ -34,7 +34,7 @@ import org.bukkit.Bukkit;
 /**
  * @author LucasEasedUp
  */
-public class Account
+public final class Account
 {
     public Account(Table table, Map<String, String> initialData)
     {
