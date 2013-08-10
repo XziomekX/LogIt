@@ -40,6 +40,8 @@ public final class Account
     {
         this.data = new HashMap<>(initialData);
         this.table = table;
+        
+        refreshPersistence();
     }
     
     public String get(String property)
@@ -87,8 +89,18 @@ public final class Account
     {
         persistence = new LinkedHashMap<>();
         
-        String persistenceString = Base64.decode(get("logit.accounts.persistence"));
-        IniFile iniFile = new IniFile(persistenceString);
+        String persistanceBase64String = get("logit.accounts.persistence");
+        IniFile iniFile;
+        
+        if (persistanceBase64String != null)
+        {
+            String persistenceString = Base64.decode(persistanceBase64String);
+            iniFile = new IniFile(persistenceString);
+        }
+        else
+        {
+            iniFile = new IniFile();
+        }
         
         if (!iniFile.hasSection("persistence"))
         {

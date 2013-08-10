@@ -529,11 +529,6 @@ public class AccountManager
             
             accountMap = new AccountMap(table, loadedAccounts);
             
-            for (Account account : accountMap.values())
-            {
-                account.refreshPersistence();
-            }
-            
             core.log(Level.FINE, getMessage("LOAD_ACCOUNTS_SUCCESS")
                     .replace("%num%", String.valueOf(accountMap.size())));
         }
