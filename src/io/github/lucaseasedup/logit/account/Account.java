@@ -36,7 +36,7 @@ import org.bukkit.Bukkit;
  */
 public final class Account
 {
-    public Account(Table table, Map<String, String> initialData)
+    public Account(Table table, Map<String, String> initialData) throws SQLException
     {
         this.data = new HashMap<>(initialData);
         this.table = table;
@@ -85,7 +85,7 @@ public final class Account
         return true;
     }
     
-    public void refreshPersistence()
+    public void refreshPersistence() throws SQLException
     {
         persistence = new LinkedHashMap<>();
         
@@ -111,6 +111,8 @@ public final class Account
         {
             persistence.put(key, iniFile.getString("persistence", key));
         }
+        
+        savePersistence();
     }
     
     public String getPersistence(String key)
