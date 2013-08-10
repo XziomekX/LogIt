@@ -1,5 +1,6 @@
 package io.github.lucaseasedup.logit;
 
+import com.google.common.collect.ImmutableSet;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -31,7 +32,7 @@ public class IniFile
     
     public Set<String> getSections()
     {
-        return entries.keySet();
+        return ImmutableSet.copyOf(entries.keySet());
     }
     
     public boolean hasSection(String section)
@@ -56,7 +57,7 @@ public class IniFile
         if (kv == null)
             return null;
         
-        return kv.keySet();
+        return ImmutableSet.copyOf(kv.keySet());
     }
     
     public String getString(String section, String key, String defaultValue)
