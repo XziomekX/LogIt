@@ -43,6 +43,14 @@ public class Table
         {
             ConfigurationSection column = columnsSection.getConfigurationSection(s);
             
+            if (!column.contains("id")
+                    || !column.contains("name")
+                    || !column.contains("type")
+                    || !column.contains("disabled"))
+            {
+                continue;
+            }
+            
             tableColumns.put(column.getString("id"),
                     new Column(column.getString("name"), column.getString("type"), column.getBoolean("disabled")));
         }
