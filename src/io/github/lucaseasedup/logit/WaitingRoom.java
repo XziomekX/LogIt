@@ -18,8 +18,9 @@
  */
 package io.github.lucaseasedup.logit;
 
-import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import io.github.lucaseasedup.logit.account.AccountManager;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -50,28 +51,29 @@ public class WaitingRoom
         if (contains(player))
             return;
         
-        try
+        if (accountManager.isRegistered(player.getName()))
         {
-            ReportedException.incrementRequestCount();
-            
-            if (accountManager.isRegistered(player.getName()))
+            try
             {
+                ReportedException.incrementRequestCount();
+                
                 accountManager.updatePersistenceLocation(player.getName(), player.getLocation());
                 accountManager.updatePersistence(player.getName(), "waiting_room", "1");
             }
-            
-            player.teleport(getWaitingRoomLocation());
+            catch (ReportedException ex)
+            {
+                core.log(Level.WARNING, "Could not update player waiting-room status.", ex);
+                
+                ex.rethrow();
+            }
+            finally
+            {
+                ReportedException.decrementRequestCount();
+            }
         }
-        catch (ReportedException ex)
-        {
-            core.log(Level.WARNING, "Could not update player waiting-room status.", ex);
-            
-            ex.rethrow();
-        }
-        finally
-        {
-            ReportedException.decrementRequestCount();
-        }
+        
+        player.teleport(getWaitingRoomLocation());
+        players.add(player);
     }
     
     /**
@@ -86,19 +88,21 @@ public class WaitingRoom
         if (!contains(player))
             return;
         
-        player.teleport(accountManager.getPersistenceLocation(player.getName()));
+        if (accountManager.isRegistered(player.getName()))
+        {
+            player.teleport(accountManager.getPersistenceLocation(player.getName()));
+            
+            accountManager.updatePersistence(player.getName(), "waiting_room", "0");
+        }
         
-        accountManager.updatePersistence(player.getName(), "waiting_room", "0");
+        players.remove(player);
     }
     
     public void removeAll()
     {
-        for (String username : accountManager.getRegisteredUsernames())
+        for (Player player : players)
         {
-            if ("1".equals(accountManager.getPersistence(username, "waiting_room")))
-            {
-                remove(getPlayer(username));
-            }
+            remove(player);
         }
     }
     
@@ -110,7 +114,14 @@ public class WaitingRoom
      */
     public boolean contains(Player player)
     {
-        return "1".equals(accountManager.getPersistence(player.getName(), "waiting_room"));
+        if (accountManager.isRegistered(player.getName()))
+        {
+            return "1".equals(accountManager.getPersistence(player.getName(), "waiting_room"));
+        }
+        else
+        {
+            return players.contains(player);
+        }
     }
     
     public Location getWaitingRoomLocation()
@@ -149,4 +160,5 @@ public class WaitingRoom
     
     private final LogItCore core;
     private final AccountManager accountManager;
+    private final Set<Player> players = new HashSet<>();
 }
