@@ -115,7 +115,7 @@ public class Table
         
         return filterResultList(database.select(table,
                 filteredColumnNames.toArray(new String[filteredColumnNames.size()]),
-                convertWhereClauses(where)), filteredColumnIds);
+                convertWhereClauses(where)));
     }
     
     public List<Map<String, String>> select(String[] columns) throws SQLException
@@ -136,7 +136,7 @@ public class Table
         }
         
         return filterResultList(database.select(table,
-                filteredColumnNames.toArray(new String[filteredColumnNames.size()])), filteredColumnIds);
+                filteredColumnNames.toArray(new String[filteredColumnNames.size()])));
     }
     
     public List<Map<String, String>> select() throws SQLException
@@ -270,18 +270,24 @@ public class Table
         return output.toArray(new String[output.size()]);
     }
     
-    protected final List<Map<String, String>> filterResultList(List<Map<String, String>> rs, Set<String> columns)
-            throws SQLException
+    protected final List<Map<String, String>> filterResultList(List<Map<String, String>> rs) throws SQLException
     {
         ImmutableList.Builder<Map<String, String>> result = new ImmutableList.Builder<>();
         
         if (rs != null && !rs.isEmpty())
         {
-            for (Map<String, String> row : rs)
+            for (Map<String, String> m : rs)
             {
-                for (Entry<String, String> e : row.entrySet())
+                Map<String, String> row = new HashMap<>();
+                
+                for (Entry<String, String> e : m.entrySet())
                 {
-                    row.put(e.getKey(), e.getValue());
+                    String columnId = getColumnId(e.getKey());
+
+                    if (columnId != null)
+                    {
+                        row.put(columnId, e.getValue());
+                    }
                 }
                 
                 result.add(row);
