@@ -63,6 +63,21 @@ public class IniFile
         entries.put(section, new LinkedHashMap<String, String>());
     }
     
+    public void removeSection(String section)
+    {
+        entries.remove(section);
+    }
+    
+    public void removeSectionKey(String section, String key)
+    {
+        Map<String, String> kv = entries.get(section);
+        
+        if (kv != null)
+        {
+            kv.remove(key);
+        }
+    }
+    
     public void putString(String section, String key, String value)
     {
         entries.get(section).put(key, value);
