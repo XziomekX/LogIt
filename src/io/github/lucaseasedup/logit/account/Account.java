@@ -18,12 +18,16 @@
  */
 package io.github.lucaseasedup.logit.account;
 
+import io.github.lucaseasedup.logit.IniFile;
 import io.github.lucaseasedup.logit.db.SetClause;
 import io.github.lucaseasedup.logit.db.Table;
 import io.github.lucaseasedup.logit.db.WhereClause;
+import it.sauronsoftware.base64.Base64;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Vector;
 import org.bukkit.Bukkit;
 
@@ -79,6 +83,49 @@ public class Account
         return true;
     }
     
+    public void refreshPersistence()
+    {
+        persistence = new LinkedHashMap<>();
+        
+        String persistenceString = Base64.decode(get("logit.accounts.persistence"));
+        IniFile iniFile = new IniFile(persistenceString);
+        
+        if (!iniFile.hasSection("persistence"))
+        {
+            iniFile.putSection("persistence");
+        }
+        
+        for (String key : iniFile.getSectionKeys("persistence"))
+        {
+            persistence.put(key, iniFile.getString("persistence", key));
+        }
+    }
+    
+    public String getPersistence(String key)
+    {
+        return persistence.get(key);
+    }
+    
+    public void updatePersistence(String key, String value) throws SQLException
+    {
+        persistence.put(key, value);
+        
+        savePersistence();
+    }
+    
+    protected void savePersistence() throws SQLException
+    {
+        IniFile iniFile = new IniFile();
+        iniFile.putSection("persistence");
+        
+        for (Entry<String, String> kv : persistence.entrySet())
+        {
+            iniFile.putString("persistence", kv.getKey(), kv.getValue());
+        }
+        
+        update("logit.accounts.persistence", Base64.encode(iniFile.toString()));
+    }
+    
     public int size()
     {
         return data.size();
@@ -126,6 +173,7 @@ public class Account
     }
     
     private final Map<String, String> data;
+    private Map<String, String> persistence = null;
     private final Table table;
     private final Vector<AccountObserver> obs = new Vector<>();
 }

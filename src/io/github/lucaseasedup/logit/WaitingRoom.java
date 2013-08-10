@@ -19,12 +19,7 @@
 package io.github.lucaseasedup.logit;
 
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
-import io.github.lucaseasedup.logit.db.SetClause;
-import io.github.lucaseasedup.logit.db.Table;
-import io.github.lucaseasedup.logit.db.WhereClause;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
+import io.github.lucaseasedup.logit.account.AccountManager;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -37,10 +32,10 @@ import org.bukkit.util.Vector;
  */
 public class WaitingRoom
 {
-    public WaitingRoom(LogItCore core, Table accounts)
+    public WaitingRoom(LogItCore core, AccountManager accountManager)
     {
-        this.core     = core;
-        this.accounts = accounts;
+        this.core = core;
+        this.accountManager = accountManager;
     }
     
     /**
@@ -59,20 +54,19 @@ public class WaitingRoom
         {
             ReportedException.incrementRequestCount();
             
-            core.getAccountManager().saveLocation(player.getName(), player.getLocation());
-            player.teleport(getWaitingRoomLocation());
+            if (accountManager.isRegistered(player.getName()))
+            {
+                accountManager.updatePersistenceLocation(player.getName(), player.getLocation());
+                accountManager.updatePersistence(player.getName(), "waiting_room", "1");
+            }
             
-            accounts.update(new WhereClause[]{
-                new WhereClause("logit.accounts.username", WhereClause.EQUAL, player.getName().toLowerCase()),
-            }, new SetClause[]{
-                new SetClause("logit.accounts.waiting_room", "1"),
-            });
+            player.teleport(getWaitingRoomLocation());
         }
-        catch (ReportedException | SQLException ex)
+        catch (ReportedException ex)
         {
             core.log(Level.WARNING, "Could not update player waiting-room status.", ex);
             
-            ReportedException.throwNew(ex);
+            ex.rethrow();
         }
         finally
         {
@@ -92,44 +86,19 @@ public class WaitingRoom
         if (!contains(player))
             return;
         
-        try
-        {
-            player.teleport(core.getAccountManager().getLocation(player.getName()));
-            
-            accounts.update(new WhereClause[]{
-                new WhereClause("logit.accounts.username", WhereClause.EQUAL, player.getName().toLowerCase()),
-            }, new SetClause[]{
-                new SetClause("logit.accounts.waiting_room", "0"),
-            });
-        }
-        catch (SQLException ex)
-        {
-            core.log(Level.WARNING, "Could not update player waiting-room status.", ex);
-            
-            ReportedException.throwNew(ex);
-        }
+        player.teleport(accountManager.getPersistenceLocation(player.getName()));
+        
+        accountManager.updatePersistence(player.getName(), "waiting_room", "0");
     }
     
     public void removeAll()
     {
-        try
+        for (String username : accountManager.getRegisteredUsernames())
         {
-            List<Map<String, String>> rs = accounts.select(new String[]{
-                "logit.accounts.username",
-            }, new WhereClause[]{
-                new WhereClause("logit.accounts.waiting_room", WhereClause.EQUAL, "1"),
-            });
-            
-            for (Map<String, String> m : rs)
+            if ("1".equals(accountManager.getPersistence(username, "waiting_room")))
             {
-                remove(getPlayer(m.get("logit.accounts.username")));
+                remove(getPlayer(username));
             }
-        }
-        catch (SQLException ex)
-        {
-            core.log(Level.WARNING, "Could not update player waiting-room status.", ex);
-            
-            ReportedException.throwNew(ex);
         }
     }
     
@@ -141,27 +110,7 @@ public class WaitingRoom
      */
     public boolean contains(Player player)
     {
-        try
-        {
-            List<Map<String, String>> rs = accounts.select(new String[]{
-                "logit.accounts.waiting_room",
-            }, new WhereClause[]{
-                new WhereClause("logit.accounts.username", WhereClause.EQUAL, player.getName().toLowerCase()),
-            });
-            
-            if (rs.isEmpty())
-                return false;
-            
-            return "1".equals(rs.get(0).get("logit.accounts.waiting_room"));
-        }
-        catch (SQLException ex)
-        {
-            core.log(Level.WARNING, "Could not retrieve player waiting-room status.", ex);
-            
-            ReportedException.throwNew(ex);
-        }
-        
-        return false;
+        return "1".equals(accountManager.getPersistence(player.getName(), "waiting_room"));
     }
     
     public Location getWaitingRoomLocation()
@@ -199,5 +148,5 @@ public class WaitingRoom
     }
     
     private final LogItCore core;
-    private final Table accounts;
+    private final AccountManager accountManager;
 }

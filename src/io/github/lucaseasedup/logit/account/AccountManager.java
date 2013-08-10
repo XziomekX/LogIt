@@ -393,38 +393,73 @@ public class AccountManager
         return Integer.parseInt(accountMap.get(username).get("logit.accounts.last_active"));
     }
     
-    public void saveLocation(String username, Location location)
+    public String getPersistence(String username, String key)
     {
         Account account = accountMap.get(username);
         
+        if (account == null)
+            throw new AccountNotFoundException();
+        
+        return account.getPersistence(key);
+    }
+    
+    public void updatePersistence(String username, String key, String value)
+    {
+        Account account = accountMap.get(username);
+        
+        if (account == null)
+            throw new AccountNotFoundException();
+        
         try
         {
-            account.update("logit.accounts.world", location.getWorld().getName());
-            account.update("logit.accounts.x", String.valueOf(location.getX()));
-            account.update("logit.accounts.y", String.valueOf(location.getY()));
-            account.update("logit.accounts.z", String.valueOf(location.getZ()));
-            account.update("logit.accounts.yaw", String.valueOf(location.getYaw()));
-            account.update("logit.accounts.pitch", String.valueOf(location.getPitch()));
+            account.updatePersistence(key, value);
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, "Could not save player location.", ex);
+            core.log(Level.WARNING, "Could not update persistance: " + key + ".", ex);
             
             ReportedException.throwNew(ex);
         }
     }
     
-    public Location getLocation(String username)
+    public void updatePersistenceLocation(String username, Location location)
     {
         Account account = accountMap.get(username);
         
+        if (account == null)
+            throw new AccountNotFoundException();
+        
+        try
+        {
+            account.updatePersistence("world", location.getWorld().getName());
+            account.updatePersistence("x", String.valueOf(location.getX()));
+            account.updatePersistence("y", String.valueOf(location.getY()));
+            account.updatePersistence("z", String.valueOf(location.getZ()));
+            account.updatePersistence("yaw", String.valueOf(location.getYaw()));
+            account.updatePersistence("pitch", String.valueOf(location.getPitch()));
+        }
+        catch (SQLException ex)
+        {
+            core.log(Level.WARNING, "Could not update player persistence location.", ex);
+            
+            ReportedException.throwNew(ex);
+        }
+    }
+    
+    public Location getPersistenceLocation(String username)
+    {
+        Account account = accountMap.get(username);
+        
+        if (account == null)
+            throw new AccountNotFoundException();
+        
         return new Location(
-            Bukkit.getWorld(account.get("logit.accounts.world")),
-            Double.valueOf(account.get("logit.accounts.x")),
-            Double.valueOf(account.get("logit.accounts.y")),
-            Double.valueOf(account.get("logit.accounts.z")),
-            Float.valueOf(account.get("logit.accounts.yaw")),
-            Float.valueOf(account.get("logit.accounts.pitch"))
+            Bukkit.getWorld(account.getPersistence("world")),
+            Double.valueOf(account.getPersistence("x")),
+            Double.valueOf(account.getPersistence("y")),
+            Double.valueOf(account.getPersistence("z")),
+            Float.valueOf(account.getPersistence("yaw")),
+            Float.valueOf(account.getPersistence("pitch"))
         );
     }
     
@@ -487,6 +522,11 @@ public class AccountManager
             }
             
             accountMap = new AccountMap(table, loadedAccounts);
+            
+            for (Account account : accountMap.values())
+            {
+                account.refreshPersistence();
+            }
             
             core.log(Level.FINE, getMessage("LOAD_ACCOUNTS_SUCCESS")
                     .replace("%num%", String.valueOf(accountMap.size())));

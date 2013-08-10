@@ -314,7 +314,7 @@ public final class LogItCore
         }
         
         inventoryDepository = new InventoryDepository(this, inventoryDatabase);
-        waitingRoom = new WaitingRoom(this, accountTable);
+        waitingRoom = new WaitingRoom(this, accountManager);
         tickEventCaller = new TickEventCaller();
         
         pingerTaskId          = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, pinger, 0L, 2400L);
