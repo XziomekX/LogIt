@@ -78,6 +78,11 @@ public class AccountMap
         return data.keySet();
     }
     
+    public Set<Entry<String, Account>> entrySet()
+    {
+        return data.entrySet();
+    }
+    
     public Collection<Account> values()
     {
         return data.values();
