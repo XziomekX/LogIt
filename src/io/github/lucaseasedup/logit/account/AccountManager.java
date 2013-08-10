@@ -443,6 +443,11 @@ public class AccountManager
         return accountMap.size();
     }
     
+    public Table getTable()
+    {
+        return table;
+    }
+    
     /**
      * Loads accounts from the database.
      */
