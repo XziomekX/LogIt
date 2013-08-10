@@ -299,6 +299,16 @@ public final class LogItConfiguration extends PropertyObserver
             }
         }
         
+        for (String uuid : oldDef.getSections())
+        {
+            if (!newDef.hasSection(uuid))
+            {
+                plugin.getConfig().set(oldDef.getString(uuid, "path"), null);
+                
+                oldDef.removeSection(uuid);
+            }
+        }
+        
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         
         oldDef.save(baos);
