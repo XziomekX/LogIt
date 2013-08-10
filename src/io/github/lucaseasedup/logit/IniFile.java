@@ -149,6 +149,31 @@ public class IniFile
         return Boolean.parseBoolean(kv.get(key));
     }
     
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder(); 
+        
+        for (Entry<String, Map<String, String>> section : entries.entrySet())
+        {
+            sb.append("[");
+            sb.append(section.getKey());
+            sb.append("]\n");
+            
+            for (Entry<String, String> kv : section.getValue().entrySet())
+            {
+                sb.append(kv.getKey());
+                sb.append("=");
+                sb.append(kv.getValue());
+                sb.append("]\n");
+            }
+            
+            sb.append("\n");
+        }
+        
+        return sb.toString();
+    }
+    
     public void save(OutputStream os) throws IOException
     {
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os)))
