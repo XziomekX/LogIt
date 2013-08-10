@@ -266,8 +266,7 @@ public final class LogItConfiguration extends PropertyObserver
                 {
                     Object val = plugin.getConfig().get(oldDef.getString(uuid, "path"));
                     
-                    plugin.getConfig().set(oldDef.getString(uuid, "path"),
-                            "**THIS PROPERTY IS NO LONGER USED. YOU CAN REMOVE IT.**");
+                    plugin.getConfig().set(oldDef.getString(uuid, "path"), null);
                     plugin.getConfig().set(newDef.getString(uuid, "path"), val);
                     
                     oldDef.putString(uuid, "path", newDef.getString(uuid, "path"));
