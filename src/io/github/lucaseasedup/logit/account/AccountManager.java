@@ -423,11 +423,6 @@ public final class AccountManager extends LogItCoreObject
         return accountMap.get(username).get(property);
     }
     
-    public boolean isColumnDisabled(String id)
-    {
-        return table.isColumnDisabled(id);
-    }
-    
     public Collection<Account> getAccounts()
     {
         return accountMap.values();

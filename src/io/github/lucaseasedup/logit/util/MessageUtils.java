@@ -117,7 +117,7 @@ public class MessageUtils
     {
         if (accountManager.isRegistered(player.getName()))
         {
-            if (!accountManager.isColumnDisabled("logit.accounts.password"))
+            if (!accountManager.getTable().isColumnDisabled("logit.accounts.password"))
             {
                 player.sendMessage(getMessage("PLEASE_LOGIN"));
             }
@@ -128,7 +128,7 @@ public class MessageUtils
         }
         else
         {
-            if (!accountManager.isColumnDisabled("logit.accounts.password"))
+            if (!accountManager.getTable().isColumnDisabled("logit.accounts.password"))
             {
                 player.sendMessage(getMessage("PLEASE_REGISTER"));
             }
