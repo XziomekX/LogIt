@@ -225,6 +225,13 @@ public final class LogItCore
         accountTable = new Table(database, config.getString("storage.accounts.table"),
                 config.getConfigurationSection("storage.accounts.columns"));
         
+        if (accountTable.isColumnDisabled("logit.accounts.username"))
+        {
+            log(Level.SEVERE, "Username column must not be disabled.");
+            
+            FatalReportedException.throwNew();
+        }
+        
         try
         {
             accountTable.open();
