@@ -18,13 +18,12 @@
  */
 package io.github.lucaseasedup.logit;
 
+import io.github.lucaseasedup.logit.config.Location;
 import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 /**
  * @author LucasEasedUp
@@ -53,7 +52,7 @@ public final class WaitingRoom extends LogItCoreObject
             if (getAccountManager().isRegistered(player.getName()))
             {
                 String username = player.getName();
-                Location loc = player.getLocation();
+                org.bukkit.Location loc = player.getLocation();
                 
                 getAccountManager().updateAccountPersistence(username, "world", loc.getWorld().getName());
                 getAccountManager().updateAccountPersistence(username, "x", String.valueOf(loc.getX()));
@@ -89,7 +88,7 @@ public final class WaitingRoom extends LogItCoreObject
         if (getAccountManager().isRegistered(player.getName())
                 && !getAccountManager().getTable().isColumnDisabled("logit.accounts.persistence"))
         {
-            player.teleport(new Location(
+            player.teleport(new org.bukkit.Location(
                 Bukkit.getWorld(getAccountManager().getAccountPersistence(player.getName(), "world")),
                 Double.valueOf(getAccountManager().getAccountPersistence(player.getName(), "x")),
                 Double.valueOf(getAccountManager().getAccountPersistence(player.getName(), "y")),
@@ -124,28 +123,17 @@ public final class WaitingRoom extends LogItCoreObject
         }
     }
     
-    public Location getWaitingRoomLocation()
+    public org.bukkit.Location getWaitingRoomLocation()
     {
-        World  world = Bukkit.getServer().getWorld(getConfig().getString("waiting-room.location.world"));
-        double x = getConfig().getVector("waiting-room.location.position").getX();
-        double y = getConfig().getVector("waiting-room.location.position").getY();
-        double z = getConfig().getVector("waiting-room.location.position").getZ();
-        float  yaw = (float) getConfig().getDouble("waiting-room.location.yaw");
-        float  pitch = (float) getConfig().getDouble("waiting-room.location.pitch");
-        
-        return new Location(world, x, y, z, yaw, pitch);
+        return getConfig().getLocation("waiting-room.location").toBukkitLocation();
     }
     
-    public void setWaitingRoomLocation(Location location)
+    public void setWaitingRoomLocation(org.bukkit.Location location)
     {
-        getConfig().set("waiting-room.location.world", location.getWorld().getName());
-        getConfig().set("waiting-room.location.position",
-                new Vector(location.getX(), location.getY(), location.getZ()));
-        getConfig().set("waiting-room.location.yaw", (double) location.getYaw());
-        getConfig().set("waiting-room.location.pitch", (double) location.getPitch());
+        getConfig().set("waiting-room.location", Location.fromBukkitLocation(location));
     }
     
-    public Location getNewbieTeleportLocation()
+    public org.bukkit.Location getNewbieTeleportLocation()
     {
         String worldName = getConfig().getString("waiting-room.newbie-teleport.location.world");
         World  world = Bukkit.getServer().getWorld(worldName);
@@ -155,7 +143,7 @@ public final class WaitingRoom extends LogItCoreObject
         float  yaw = (float) getConfig().getDouble("waiting-room.newbie-teleport.location.yaw");
         float  pitch = (float) getConfig().getDouble("waiting-room.newbie-teleport.location.pitch");
         
-        return new Location(world, x, y, z, yaw, pitch);
+        return new org.bukkit.Location(world, x, y, z, yaw, pitch);
     }
     
     private final Set<Player> players = new HashSet<>();
