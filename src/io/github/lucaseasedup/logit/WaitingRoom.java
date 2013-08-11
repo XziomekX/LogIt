@@ -83,7 +83,7 @@ public final class WaitingRoom extends LogItCoreObject
      */
     public void remove(Player player)
     {
-        if (!contains(player))
+        if (!contains(player) || !getCore().isPlayerForcedToLogin(player))
             return;
         
         if (getAccountManager().isRegistered(player.getName()))

@@ -214,7 +214,7 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
             log(Level.WARNING, "Could not withdraw player's inventory.", ex);
         }
         
-        if (getConfig().getBoolean("waiting-room.enabled"))
+        if (getConfig().getBoolean("waiting-room.enabled") && getConfig().getBoolean("force-login.global"))
         {
             getWaitingRoom().put(player);
         }
@@ -236,7 +236,7 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
             log(Level.WARNING, "Could not withdraw player's inventory.", ex);
         }
         
-        if (getConfig().getBoolean("waiting-room.enabled"))
+        if (getConfig().getBoolean("waiting-room.enabled") && getConfig().getBoolean("force-login.global"))
         {
             getWaitingRoom().put(player);
         }
