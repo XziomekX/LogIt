@@ -26,6 +26,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 
 /**
  * @author LucasEasedUp
@@ -59,6 +60,22 @@ public class BlockEventListener extends LogItCoreObject implements Listener
             return;
         
         Player player = event.getPlayer();
+        
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        {
+            event.setCancelled(true);
+            sendForceLoginMessage(player, getAccountManager());
+        }
+    }
+    
+    @EventHandler
+    private void onHangingBreak(HangingBreakByEntityEvent event)
+    {
+        if (!getConfig().getBoolean("force-login.prevent.block-break")
+                || !(event.getRemover() instanceof Player))
+            return;
+        
+        Player player = (Player) event.getRemover();
         
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
