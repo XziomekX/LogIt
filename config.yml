@@ -248,40 +248,10 @@ storage:
         name: reg_date
         type: 'INTEGER'
         disabled: true
-      world:
-        id: logit.accounts.world
-        name: world
-        type: 'VARCHAR(512)'
-        disabled: false
-      x:
-        id: logit.accounts.x
-        name: x
-        type: 'REAL'
-        disabled: false
-      y:
-        id: logit.accounts.y
-        name: y
-        type: 'REAL'
-        disabled: false
-      z:
-        id: logit.accounts.z
-        name: z
-        type: 'REAL'
-        disabled: false
-      yaw:
-        id: logit.accounts.yaw
-        name: yaw
-        type: 'REAL'
-        disabled: false
-      pitch:
-        id: logit.accounts.pitch
-        name: pitch
-        type: 'REAL'
-        disabled: false
-      waiting_room:
-        id: logit.accounts.waiting_room
-        name: waiting_room
-        type: 'INTEGER'
+      persistence:
+        id: logit.accounts.persistence
+        name: persistence
+        type: TEXT
         disabled: false
   
   # This SQLite database stores player inventories
