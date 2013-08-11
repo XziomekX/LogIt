@@ -186,6 +186,16 @@ public class Location implements Cloneable, ConfigurationSerializable
         this.pitch = pitch;
     }
     
+    public static Location fromBukkitLocation(org.bukkit.Location location)
+    {
+        return new Location(location.getWorld().getName(),
+                            location.getX(),
+                            location.getY(),
+                            location.getZ(),
+                            location.getYaw(),
+                            location.getPitch());
+    }
+    
     private String world;
     private double x;
     private double y;
