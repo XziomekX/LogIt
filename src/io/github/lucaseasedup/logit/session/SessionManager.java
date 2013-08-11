@@ -122,12 +122,6 @@ public class SessionManager extends LogItCoreObject implements Runnable
         return (session != null) ? session.isAlive() : false;
     }
     
-    /**
-     * Checks if session of the specified player is alive.
-     * 
-     * @param player Player.
-     * @return True if alive.
-     */
     public boolean isSessionAlive(Player player)
     {
         return isSessionAlive(player.getName());

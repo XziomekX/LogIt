@@ -58,12 +58,6 @@ public final class AccountManager extends LogItCoreObject
         return accountMap.keySet();
     }
     
-    /**
-     * Checks if the given username is registered.
-     * 
-     * @param username Username.
-     * @return True if the username is registered.
-     */
     public boolean isRegistered(String username)
     {
         return accountMap.containsKey(username);

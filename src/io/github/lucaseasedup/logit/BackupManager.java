@@ -40,12 +40,6 @@ import java.util.logging.Level;
  */
 public final class BackupManager extends LogItCoreObject implements Runnable
 {
-    /**
-     * Sets up a new backup manager.
-     * 
-     * @param core The LogIt core.
-     * @param accounts Account table.
-     */
     public BackupManager(LogItCore core)
     {
         super(core);
@@ -202,13 +196,6 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         return backups;
     }
     
-    /**
-     * Searches for a backup with the given filename.
-     * 
-     * @param filename Backup filename.
-     * @return Backup file.
-     * @throws FileNotFoundException If no backup with the given filename exists.
-     */
     public File getBackup(String filename) throws FileNotFoundException
     {
         File backupPath = new File(getDataFolder(), getConfig().getString("backup.path"));

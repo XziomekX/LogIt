@@ -216,12 +216,6 @@ public final class LogItPlugin extends JavaPlugin
         return parseMessage(message, variables);
     }
     
-    /**
-     * Returns a message with the secified label.
-     * 
-     * @param label Message label.
-     * @return Message with that label.
-     */
     public static String getMessage(String label)
     {
         return getMessage(label, new String[0]);

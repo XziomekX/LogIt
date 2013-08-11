@@ -82,8 +82,6 @@ import org.bukkit.entity.Player;
 
 /**
  * LogItCore is the central part of LogIt.
- * </p>
- * It's also the most important part of API.
  * 
  * @author LucasEasedUp
  */

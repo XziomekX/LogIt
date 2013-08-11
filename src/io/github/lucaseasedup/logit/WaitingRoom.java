@@ -111,12 +111,6 @@ public final class WaitingRoom extends LogItCoreObject
         }
     }
     
-    /**
-     * Check if a player is in the waiting room.
-     * 
-     * @param player Player.
-     * @return True if the player is in the waiting room.
-     */
     public boolean contains(Player player)
     {
         if (getAccountManager().isRegistered(player.getName()))
