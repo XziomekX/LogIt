@@ -23,6 +23,7 @@ import io.github.lucaseasedup.logit.FatalReportedException;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
+import io.github.lucaseasedup.logit.config.Location;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyType;
 import java.io.File;
@@ -525,6 +526,31 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                         case SHORT_LIST:
                         case STRING_LIST:
                             throw new Exception("Unsupported property type conversion.");
+                        case LOCATION:
+                        {
+                            if (inputValue.equals("$"))
+                            {
+                                if (p != null)
+                                {
+                                    outputValue = new Location(p.getLocation().getWorld().getName(),
+                                                               p.getLocation().getX(),
+                                                               p.getLocation().getY(),
+                                                               p.getLocation().getZ(),
+                                                               p.getLocation().getYaw(),
+                                                               p.getLocation().getPitch());
+                                }
+                                else
+                                {
+                                    throw new Exception(getMessage("ONLY_PLAYERS"));
+                                }
+                            }
+                            else
+                            {
+                                throw new Exception("Unsupported property type conversion.");
+                            }
+                            
+                            break;
+                        }
                         default:
                             throw new Exception("Unknown property type.");
                         }
