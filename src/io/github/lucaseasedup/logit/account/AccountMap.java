@@ -52,10 +52,10 @@ public class AccountMap
         String[] values = new String[account.size()];
         
         int i = 0;
-        for (Entry<String, String> e : account.getAll().entrySet())
+        for (Entry<String, String> property : account.getAll().entrySet())
         {
-            columns[i] = e.getKey();
-            values[i] = e.getValue();
+            columns[i] = property.getKey();
+            values[i] = property.getValue();
             i++;
         }
         
