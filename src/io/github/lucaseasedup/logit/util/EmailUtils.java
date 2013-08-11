@@ -31,12 +31,11 @@ public class EmailUtils
     
     public static boolean validateEmail(String email)
     {
-        return pattern.matcher(email).matches();
+        return EMAIL_PATTERN.matcher(email).matches();
     }
     
-    private static final String EMAIL_PATTERN =
+    public static final Pattern EMAIL_PATTERN = Pattern.compile(
         "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
-        "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-    
-    private static Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+        "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
+    );
 }
