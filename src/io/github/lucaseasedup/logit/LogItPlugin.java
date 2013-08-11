@@ -187,19 +187,6 @@ public final class LogItPlugin extends JavaPlugin
         return craftReflect;
     }
     
-    /**
-     * Returns the LogIt core.
-     * 
-     * It is not the preferred way to get the core. You should use LogItCore.getInstance() instead,
-     * although getCore() works exactly the same.
-     * 
-     * @return The LogIt core.
-     */
-    public LogItCore getCore()
-    {
-        return core;
-    }
-    
     public static String getMessage(String label, String[] variables)
     {
         String message;
