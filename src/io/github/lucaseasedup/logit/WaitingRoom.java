@@ -22,7 +22,6 @@ import io.github.lucaseasedup.logit.config.Location;
 import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 /**
@@ -135,15 +134,7 @@ public final class WaitingRoom extends LogItCoreObject
     
     public org.bukkit.Location getNewbieTeleportLocation()
     {
-        String worldName = getConfig().getString("waiting-room.newbie-teleport.location.world");
-        World  world = Bukkit.getServer().getWorld(worldName);
-        double x = getConfig().getVector("waiting-room.newbie-teleport.location.position").getX();
-        double y = getConfig().getVector("waiting-room.newbie-teleport.location.position").getY();
-        double z = getConfig().getVector("waiting-room.newbie-teleport.location.position").getZ();
-        float  yaw = (float) getConfig().getDouble("waiting-room.newbie-teleport.location.yaw");
-        float  pitch = (float) getConfig().getDouble("waiting-room.newbie-teleport.location.pitch");
-        
-        return new org.bukkit.Location(world, x, y, z, yaw, pitch);
+        return getConfig().getLocation("waiting-room.newbie-teleport.location").toBukkitLocation();
     }
     
     private final Set<Player> players = new HashSet<>();
