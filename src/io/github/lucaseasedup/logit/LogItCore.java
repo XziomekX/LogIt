@@ -1012,7 +1012,7 @@ public final class LogItCore
     }
     
     public static final String LIB_H2 = "h2small-1.3.171.jar";
-    public static final String LIB_MAIL = "mail-1.4.5.jar";
+    public static final String LIB_MAIL = "mail-1.4.7.jar";
     
     private static final LogItCore INSTANCE = new LogItCore(LogItPlugin.getInstance());
     
