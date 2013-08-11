@@ -52,15 +52,16 @@ public final class WaitingRoom extends LogItCoreObject
         {
             if (getAccountManager().isRegistered(player.getName()))
             {
+                String username = player.getName();
                 Location loc = player.getLocation();
                 
-                getAccountManager().updatePersistence(player.getName(), "world", loc.getWorld().getName());
-                getAccountManager().updatePersistence(player.getName(), "x", String.valueOf(loc.getX()));
-                getAccountManager().updatePersistence(player.getName(), "y", String.valueOf(loc.getY()));
-                getAccountManager().updatePersistence(player.getName(), "z", String.valueOf(loc.getZ()));
-                getAccountManager().updatePersistence(player.getName(), "yaw", String.valueOf(loc.getYaw()));
-                getAccountManager().updatePersistence(player.getName(), "pitch", String.valueOf(loc.getPitch()));
-                getAccountManager().updatePersistence(player.getName(), "waiting_room", "1");
+                getAccountManager().updateAccountPersistence(username, "world", loc.getWorld().getName());
+                getAccountManager().updateAccountPersistence(username, "x", String.valueOf(loc.getX()));
+                getAccountManager().updateAccountPersistence(username, "y", String.valueOf(loc.getY()));
+                getAccountManager().updateAccountPersistence(username, "z", String.valueOf(loc.getZ()));
+                getAccountManager().updateAccountPersistence(username, "yaw", String.valueOf(loc.getYaw()));
+                getAccountManager().updateAccountPersistence(username, "pitch", String.valueOf(loc.getPitch()));
+                getAccountManager().updateAccountPersistence(username, "waiting_room", "1");
             }
             
             player.teleport(getWaitingRoomLocation());
@@ -89,15 +90,15 @@ public final class WaitingRoom extends LogItCoreObject
                 && !getAccountManager().getTable().isColumnDisabled("logit.accounts.persistence"))
         {
             player.teleport(new Location(
-                Bukkit.getWorld(getAccountManager().getPersistence(player.getName(), "world")),
-                Double.valueOf(getAccountManager().getPersistence(player.getName(), "x")),
-                Double.valueOf(getAccountManager().getPersistence(player.getName(), "y")),
-                Double.valueOf(getAccountManager().getPersistence(player.getName(), "z")),
-                Float.valueOf(getAccountManager().getPersistence(player.getName(), "yaw")),
-                Float.valueOf(getAccountManager().getPersistence(player.getName(), "pitch"))
+                Bukkit.getWorld(getAccountManager().getAccountPersistence(player.getName(), "world")),
+                Double.valueOf(getAccountManager().getAccountPersistence(player.getName(), "x")),
+                Double.valueOf(getAccountManager().getAccountPersistence(player.getName(), "y")),
+                Double.valueOf(getAccountManager().getAccountPersistence(player.getName(), "z")),
+                Float.valueOf(getAccountManager().getAccountPersistence(player.getName(), "yaw")),
+                Float.valueOf(getAccountManager().getAccountPersistence(player.getName(), "pitch"))
             ));
             
-            getAccountManager().updatePersistence(player.getName(), "waiting_room", "0");
+            getAccountManager().updateAccountPersistence(player.getName(), "waiting_room", "0");
         }
         
         players.remove(player);
@@ -115,7 +116,7 @@ public final class WaitingRoom extends LogItCoreObject
     {
         if (getAccountManager().isRegistered(player.getName()))
         {
-            return "1".equals(getAccountManager().getPersistence(player.getName(), "waiting_room"));
+            return "1".equals(getAccountManager().getAccountPersistence(player.getName(), "waiting_room"));
         }
         else
         {

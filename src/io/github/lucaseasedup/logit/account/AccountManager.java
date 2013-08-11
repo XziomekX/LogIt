@@ -389,7 +389,36 @@ public final class AccountManager extends LogItCoreObject
         return Integer.parseInt(accountMap.get(username).getProperty("logit.accounts.last_active"));
     }
     
-    public String getPersistence(String username, String key)
+    public String getAccountProperty(String username, String property)
+    {
+        Account account = accountMap.get(username);
+        
+        if (account == null)
+            throw new AccountNotFoundException();
+        
+        return accountMap.get(username).getProperty(property);
+    }
+    
+    public void updateAccountProperty(String username, String property, String value)
+    {
+        Account account = accountMap.get(username);
+        
+        if (account == null)
+            throw new AccountNotFoundException();
+        
+        try
+        {
+            accountMap.get(username).updateProperty(property, value);
+        }
+        catch (SQLException ex)
+        {
+            log(Level.WARNING, "Could not update account property: " + property + ".", ex);
+            
+            ReportedException.throwNew(ex);
+        }
+    }
+    
+    public String getAccountPersistence(String username, String key)
     {
         Account account = accountMap.get(username);
         
@@ -399,7 +428,7 @@ public final class AccountManager extends LogItCoreObject
         return account.getPersistence(key);
     }
     
-    public void updatePersistence(String username, String key, String value)
+    public void updateAccountPersistence(String username, String key, String value)
     {
         Account account = accountMap.get(username);
         
@@ -412,15 +441,10 @@ public final class AccountManager extends LogItCoreObject
         }
         catch (SQLException ex)
         {
-            log(Level.WARNING, "Could not update persistance: " + key + ".", ex);
+            log(Level.WARNING, "Could not update account persistance: " + key + ".", ex);
             
             ReportedException.throwNew(ex);
         }
-    }
-    
-    public String getAccountProperty(String username, String property)
-    {
-        return accountMap.get(username).getProperty(property);
     }
     
     public Collection<Account> getAccounts()
