@@ -268,7 +268,7 @@ public final class LogItCore
         {
             if (config.getBoolean("password-recovery.enabled"))
             {
-                mailSender = new MailSender();
+                mailSender = new MailSender(this);
                 mailSender.configure(config.getString("mail.smtp-host"), config.getInt("mail.smtp-port"),
                     config.getString("mail.smtp-user"), config.getString("mail.smtp-password"));
             }
