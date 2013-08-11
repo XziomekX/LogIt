@@ -65,13 +65,13 @@ public class LogoutCommand extends LogItCoreObject implements CommandExecutor
             {
                 sender.sendMessage(getMessage("NOT_ONLINE").replace("%player%", args[1]));
             }
-            else if (!core.getSessionManager().isSessionAlive(args[1]))
+            else if (!getSessionManager().isSessionAlive(args[1]))
             {
                 sender.sendMessage(getMessage("START_SESSION_NOT_OTHERS").replace("%player%", args[1]));
             }
             else
             {
-                if (core.getSessionManager().endSession(args[1]))
+                if (getSessionManager().endSession(args[1]))
                 {
                     sendMessage(args[1], getMessage("END_SESSION_SUCCESS_SELF"));
                     sender.sendMessage(getMessage("END_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
@@ -88,13 +88,13 @@ public class LogoutCommand extends LogItCoreObject implements CommandExecutor
             {
                 p.sendMessage(getMessage("NO_PERMS"));
             }
-            else if (!core.getSessionManager().isSessionAlive(p.getName()))
+            else if (!getSessionManager().isSessionAlive(p.getName()))
             {
                 p.sendMessage(getMessage("START_SESSION_NOT_SELF"));
             }
             else
             {
-                if (core.getSessionManager().endSession(p.getName()))
+                if (getSessionManager().endSession(p.getName()))
                 {
                     sender.sendMessage(getMessage("END_SESSION_SUCCESS_SELF"));
                 }

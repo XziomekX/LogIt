@@ -38,7 +38,7 @@ public class InventoryEventListener extends LogItCoreObject implements Listener
     @EventHandler
     private void onClick(InventoryClickEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.inventory-click")
+        if (!getConfig().getBoolean("force-login.prevent.inventory-click")
                 || !(event.getWhoClicked() instanceof Player))
         {
             return;
@@ -46,7 +46,7 @@ public class InventoryEventListener extends LogItCoreObject implements Listener
         
         Player player = (Player) event.getWhoClicked();
         
-        if (!core.getSessionManager().isSessionAlive(player.getName()) && core.isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player.getName()) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
         }

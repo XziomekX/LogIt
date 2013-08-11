@@ -52,26 +52,26 @@ public class SessionEventListener extends LogItCoreObject implements Listener
         {
             Player player = getPlayer(username);
             
-            core.getWaitingRoom().remove(player);
+            getWaitingRoom().remove(player);
             
             try
             {
-                core.getInventoryDepository().withdraw(player);
+                getInventoryDepository().withdraw(player);
             }
             catch (InventorySerializationException ex)
             {
                 log(Level.WARNING, "Could not withdraw player's inventory.", ex);
             }
             
-            if (core.getConfig().getBoolean("groups.enabled"))
+            if (getConfig().getBoolean("groups.enabled"))
             {
-                core.updatePlayerGroup(player);
+                getCore().updatePlayerGroup(player);
             }
             
-            if (core.getConfig().getBoolean("force-login.global")
+            if (getConfig().getBoolean("force-login.global")
                     && !player.hasPermission("logit.force-login.exempt"))
             {
-                broadcastJoinMessage(player, core.getConfig().getBoolean("reveal-spawn-world"));
+                broadcastJoinMessage(player, getConfig().getBoolean("reveal-spawn-world"));
             }
         }
     }
@@ -85,11 +85,11 @@ public class SessionEventListener extends LogItCoreObject implements Listener
         {
             Player player = getPlayer(username);
             
-            if (core.getConfig().getBoolean("force-login.global"))
+            if (getConfig().getBoolean("force-login.global"))
             {
-                if (core.getConfig().getBoolean("waiting-room.enabled"))
+                if (getConfig().getBoolean("waiting-room.enabled"))
                 {
-                    core.getWaitingRoom().put(player);
+                    getWaitingRoom().put(player);
                 }
                 
                 if (!player.hasPermission("logit.force-login.exempt"))
@@ -98,11 +98,11 @@ public class SessionEventListener extends LogItCoreObject implements Listener
                 }
             }
             
-            if (core.getConfig().getBoolean("force-login.hide-inventory"))
+            if (getConfig().getBoolean("force-login.hide-inventory"))
             {
                 try
                 {
-                    core.getInventoryDepository().deposit(player);
+                    getInventoryDepository().deposit(player);
                 }
                 catch (InventorySerializationException ex)
                 {
@@ -110,9 +110,9 @@ public class SessionEventListener extends LogItCoreObject implements Listener
                 }
             }
             
-            if (core.getConfig().getBoolean("groups.enabled"))
+            if (getConfig().getBoolean("groups.enabled"))
             {
-                core.updatePlayerGroup(player);
+                getCore().updatePlayerGroup(player);
             }
         }
     }

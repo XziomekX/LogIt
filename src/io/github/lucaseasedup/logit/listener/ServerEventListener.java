@@ -45,15 +45,15 @@ public class ServerEventListener extends LogItCoreObject implements Listener
     @EventHandler
     private void onPluginEnable(PluginEnableEvent event)
     {
-        if (!event.getPlugin().equals(core.getPlugin()))
+        if (!event.getPlugin().equals(getPlugin()))
             return;
         
         File sessions =
-                new File(core.getPlugin().getDataFolder(), core.getConfig().getString("storage.sessions.filename"));
+                new File(getPlugin().getDataFolder(), getConfig().getString("storage.sessions.filename"));
         
         try
         {
-            core.getSessionManager().importSessions(sessions);
+            getSessionManager().importSessions(sessions);
         }
         catch (SQLException ex)
         {
@@ -66,15 +66,15 @@ public class ServerEventListener extends LogItCoreObject implements Listener
     @EventHandler(priority = HIGHEST)
     private void onPluginDisable(PluginDisableEvent event)
     {
-        if (!event.getPlugin().equals(core.getPlugin()) || !core.isStarted())
+        if (!event.getPlugin().equals(getPlugin()) || !getCore().isStarted())
             return;
         
         File sessions =
-                new File(core.getPlugin().getDataFolder(), core.getConfig().getString("storage.sessions.filename"));
+                new File(getPlugin().getDataFolder(), getConfig().getString("storage.sessions.filename"));
         
         try
         {
-            core.getSessionManager().exportSessions(sessions);
+            getSessionManager().exportSessions(sessions);
         }
         catch (SQLException ex)
         {
@@ -85,14 +85,14 @@ public class ServerEventListener extends LogItCoreObject implements Listener
         
         for (Player player : players)
         {
-            if (core.getConfig().getBoolean("waiting-room.enabled"))
+            if (getConfig().getBoolean("waiting-room.enabled"))
             {
-                core.getWaitingRoom().remove(player);
+                getWaitingRoom().remove(player);
             }
             
             try
             {
-                core.getInventoryDepository().withdraw(player);
+                getInventoryDepository().withdraw(player);
             }
             catch (InventorySerializationException ex)
             {

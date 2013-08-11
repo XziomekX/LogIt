@@ -39,7 +39,7 @@ public class LocaleObserver extends PropertyObserver
     {
         try
         {
-            core.getPlugin().loadMessages();
+            getPlugin().loadMessages();
         }
         catch (IOException ex)
         {

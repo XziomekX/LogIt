@@ -40,7 +40,7 @@ public class WaitingRoomObserver extends PropertyObserver
         
         if (!p.getBoolean())
         {
-            core.getWaitingRoom().removeAll();
+            getWaitingRoom().removeAll();
         }
     }
 }

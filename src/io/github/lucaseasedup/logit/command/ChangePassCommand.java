@@ -65,19 +65,19 @@ public class ChangePassCommand extends LogItCoreObject implements CommandExecuto
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "newpassword"));
             }
-            else if (!core.getAccountManager().isRegistered(args[1]))
+            else if (!getAccountManager().isRegistered(args[1]))
             {
                 sender.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS").replace("%player%", args[1]));
             }
-            else if (args[2].length() < core.getConfig().getInt("password.min-length"))
+            else if (args[2].length() < getConfig().getInt("password.min-length"))
             {
                 sender.sendMessage(getMessage("PASSWORD_TOO_SHORT")
-                        .replace("%min-length%", String.valueOf(core.getConfig().getInt("password.min-length"))));
+                        .replace("%min-length%", String.valueOf(getConfig().getInt("password.min-length"))));
             }
-            else if (args[2].length() > core.getConfig().getInt("password.max-length"))
+            else if (args[2].length() > getConfig().getInt("password.max-length"))
             {
                 sender.sendMessage(getMessage("PASSWORD_TOO_LONG")
-                        .replace("%max-length%", String.valueOf(core.getConfig().getInt("password.max-length"))));
+                        .replace("%max-length%", String.valueOf(getConfig().getInt("password.max-length"))));
             }
             else
             {
@@ -85,7 +85,7 @@ public class ChangePassCommand extends LogItCoreObject implements CommandExecuto
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (core.getAccountManager().changeAccountPassword(args[1], args[2]))
+                    if (getAccountManager().changeAccountPassword(args[1], args[2]))
                     {
                         sendMessage(args[1], getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
                         sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_OTHERS")
@@ -124,23 +124,23 @@ public class ChangePassCommand extends LogItCoreObject implements CommandExecuto
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
             }
-            else if (!core.getAccountManager().isRegistered(p.getName()))
+            else if (!getAccountManager().isRegistered(p.getName()))
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
             }
-            else if (!core.getAccountManager().checkAccountPassword(p.getName(), args[0]))
+            else if (!getAccountManager().checkAccountPassword(p.getName(), args[0]))
             {
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
             }
-            else if (args[1].length() < core.getConfig().getInt("password.min-length"))
+            else if (args[1].length() < getConfig().getInt("password.min-length"))
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_SHORT")
-                        .replace("%min-length%", String.valueOf(core.getConfig().getInt("password.min-length"))));
+                        .replace("%min-length%", String.valueOf(getConfig().getInt("password.min-length"))));
             }
-            else if (args[1].length() > core.getConfig().getInt("password.max-length"))
+            else if (args[1].length() > getConfig().getInt("password.max-length"))
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_LONG")
-                        .replace("%max-length%", String.valueOf(core.getConfig().getInt("password.max-length"))));
+                        .replace("%max-length%", String.valueOf(getConfig().getInt("password.max-length"))));
             }
             else if (!args[1].equals(args[2]))
             {
@@ -152,7 +152,7 @@ public class ChangePassCommand extends LogItCoreObject implements CommandExecuto
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (core.getAccountManager().changeAccountPassword(p.getName(), args[1]))
+                    if (getAccountManager().changeAccountPassword(p.getName(), args[1]))
                     {
                         sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
                     }

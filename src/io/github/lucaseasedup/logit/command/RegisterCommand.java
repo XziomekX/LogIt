@@ -56,7 +56,7 @@ public class RegisterCommand extends LogItCoreObject implements CommandExecutor
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 3)
         {
-            if (p != null && ((core.isPlayerForcedToLogin(p) && !core.getSessionManager().isSessionAlive(p))
+            if (p != null && ((getCore().isPlayerForcedToLogin(p) && !getSessionManager().isSessionAlive(p))
                     || !p.hasPermission("logit.register.others")))
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
@@ -65,32 +65,32 @@ public class RegisterCommand extends LogItCoreObject implements CommandExecutor
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
             }
-            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
+            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
                     && args.length < 3)
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
-            else if (core.getAccountManager().isRegistered(args[1]))
+            else if (getAccountManager().isRegistered(args[1]))
             {
                 sender.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_OTHERS").replace("%player%", args[1]));
             }
-            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
-                    && args[2].length() < core.getConfig().getInt("password.min-length"))
+            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
+                    && args[2].length() < getConfig().getInt("password.min-length"))
             {
                 sender.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
-                        String.valueOf(core.getConfig().getInt("password.min-length"))));
+                        String.valueOf(getConfig().getInt("password.min-length"))));
             }
-            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
-                    && args[2].length() > core.getConfig().getInt("password.max-length"))
+            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
+                    && args[2].length() > getConfig().getInt("password.max-length"))
             {
                 sender.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
-                        String.valueOf(core.getConfig().getInt("password.max-length"))));
+                        String.valueOf(getConfig().getInt("password.max-length"))));
             }
             else
             {
                 String password = "";
                 
-                if (!core.getAccountTable().isColumnDisabled("logit.accounts.password"))
+                if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password"))
                 {
                     password = args[2];
                 }
@@ -99,7 +99,7 @@ public class RegisterCommand extends LogItCoreObject implements CommandExecutor
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (core.getAccountManager().createAccount(args[1], password))
+                    if (getAccountManager().createAccount(args[1], password))
                     {
                         sendMessage(args[1], getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
                         sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_OTHERS")
@@ -107,19 +107,19 @@ public class RegisterCommand extends LogItCoreObject implements CommandExecutor
                         
                         if (isPlayerOnline(args[1]))
                         {
-                            core.getAccountManager().attachIp(args[1], getPlayerIp(getPlayer(args[1])));
+                            getAccountManager().attachIp(args[1], getPlayerIp(getPlayer(args[1])));
                             
-                            if (core.getSessionManager().startSession(args[1]))
+                            if (getSessionManager().startSession(args[1]))
                             {
                                 sendMessage(args[1], getMessage("START_SESSION_SUCCESS_SELF"));
                                 sender.sendMessage(getMessage("START_SESSION_SUCCESS_OTHERS")
                                         .replace("%player%", args[1]));
                             }
                             
-                            if (core.getConfig().getBoolean("waiting-room.enabled")
-                                    && core.getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
+                            if (getConfig().getBoolean("waiting-room.enabled")
+                                    && getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
                             {
-                                getPlayer(args[1]).teleport(core.getWaitingRoom().getNewbieTeleportLocation());
+                                getPlayer(args[1]).teleport(getWaitingRoom().getNewbieTeleportLocation());
                             }
                         }
                     }
@@ -144,39 +144,39 @@ public class RegisterCommand extends LogItCoreObject implements CommandExecutor
             {
                 p.sendMessage(getMessage("NO_PERMS"));
             }
-            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
+            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
                     && args.length < 1)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
-            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
+            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
                     && args.length < 2)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
             }
-            else if (core.getAccountManager().isRegistered(p.getName()))
+            else if (getAccountManager().isRegistered(p.getName()))
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_SELF"));
             }
-            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
-                    && args[0].length() < core.getConfig().getInt("password.min-length"))
+            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
+                    && args[0].length() < getConfig().getInt("password.min-length"))
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
-                        String.valueOf(core.getConfig().getInt("password.min-length"))));
+                        String.valueOf(getConfig().getInt("password.min-length"))));
             }
-            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
-                    && args[0].length() > core.getConfig().getInt("password.max-length"))
+            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
+                    && args[0].length() > getConfig().getInt("password.max-length"))
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
-                        String.valueOf(core.getConfig().getInt("password.max-length"))));
+                        String.valueOf(getConfig().getInt("password.max-length"))));
             }
-            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
+            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
                     && !args[0].equals(args[1]))
             {
                 p.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
             }
-            else if (core.getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= core.getConfig().getInt("crowd-control.accounts-per-ip.amount")
-                && !core.getConfig().getStringList("crowd-control.accounts-per-ip.unrestricted-ips").contains(getPlayerIp(p)))
+            else if (getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= getConfig().getInt("crowd-control.accounts-per-ip.amount")
+                && !getConfig().getStringList("crowd-control.accounts-per-ip.unrestricted-ips").contains(getPlayerIp(p)))
             {
                 p.sendMessage(getMessage("ACCOUNTS_PER_IP_LIMIT"));
             }
@@ -184,7 +184,7 @@ public class RegisterCommand extends LogItCoreObject implements CommandExecutor
             {
                 String password = "";
                 
-                if (!core.getAccountTable().isColumnDisabled("logit.accounts.password"))
+                if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password"))
                 {
                     password = args[0];
                 }
@@ -193,21 +193,21 @@ public class RegisterCommand extends LogItCoreObject implements CommandExecutor
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (core.getAccountManager().createAccount(p.getName(), password))
+                    if (getAccountManager().createAccount(p.getName(), password))
                     {
                         sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
                         
-                        core.getAccountManager().attachIp(p.getName(), getPlayerIp(p));
+                        getAccountManager().attachIp(p.getName(), getPlayerIp(p));
                         
-                        if (core.getSessionManager().startSession(p.getName()))
+                        if (getSessionManager().startSession(p.getName()))
                         {
                             sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
                         }
                         
-                        if (core.getConfig().getBoolean("waiting-room.enabled")
-                            && core.getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
+                        if (getConfig().getBoolean("waiting-room.enabled")
+                                && getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
                         {
-                            p.teleport(core.getWaitingRoom().getNewbieTeleportLocation());
+                            p.teleport(getWaitingRoom().getNewbieTeleportLocation());
                         }
                     }
                 }

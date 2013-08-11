@@ -61,7 +61,7 @@ public class UnregisterCommand extends LogItCoreObject implements CommandExecuto
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
             }
-            else if (!core.getAccountManager().isRegistered(args[1]))
+            else if (!getAccountManager().isRegistered(args[1]))
             {
                 sender.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS").replace("%player%", args[1]));
             }
@@ -71,9 +71,9 @@ public class UnregisterCommand extends LogItCoreObject implements CommandExecuto
             }
             else
             {
-                if (core.getSessionManager().isSessionAlive(args[1]))
+                if (getSessionManager().isSessionAlive(args[1]))
                 {
-                    if (core.getSessionManager().endSession(args[1]))
+                    if (getSessionManager().endSession(args[1]))
                     {
                         sender.sendMessage(getMessage("END_SESSION_SUCCESS_SELF"));
                     }
@@ -83,7 +83,7 @@ public class UnregisterCommand extends LogItCoreObject implements CommandExecuto
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (core.getAccountManager().removeAccount(args[1]))
+                    if (getAccountManager().removeAccount(args[1]))
                     {
                         sendMessage(args[1], getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
                         sender.sendMessage(getMessage("REMOVE_ACCOUNT_SUCCESS_OTHERS")
@@ -110,25 +110,25 @@ public class UnregisterCommand extends LogItCoreObject implements CommandExecuto
             {
                 p.sendMessage(getMessage("NO_PERMS"));
             }
-            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
+            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
                     && args.length < 1)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
-            else if (!core.getAccountManager().isRegistered(p.getName()))
+            else if (!getAccountManager().isRegistered(p.getName()))
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
             }
-            else if (!core.getAccountTable().isColumnDisabled("logit.accounts.password")
-                    && !core.getAccountManager().checkAccountPassword(p.getName(), args[0]))
+            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
+                    && !getAccountManager().checkAccountPassword(p.getName(), args[0]))
             {
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
             }
             else
             {
-                if (core.getSessionManager().isSessionAlive(p.getName()))
+                if (getSessionManager().isSessionAlive(p.getName()))
                 {
-                    if (core.getSessionManager().endSession(p.getName()))
+                    if (getSessionManager().endSession(p.getName()))
                     {
                         sender.sendMessage(getMessage("END_SESSION_SUCCESS_SELF"));
                     }
@@ -138,7 +138,7 @@ public class UnregisterCommand extends LogItCoreObject implements CommandExecuto
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (core.getAccountManager().removeAccount(p.getName()))
+                    if (getAccountManager().removeAccount(p.getName()))
                     {
                         sender.sendMessage(getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
                     }

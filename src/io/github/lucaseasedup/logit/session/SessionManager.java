@@ -48,8 +48,8 @@ public class SessionManager extends LogItCoreObject implements Runnable
     @Override
     public void run()
     {
-        long forceLoginTimeout = (core.getConfig().getInt("force-login.timeout") > 0L)
-                ? (-core.getConfig().getInt("force-login.timeout") * 20L) : Long.MIN_VALUE;
+        long forceLoginTimeout = (getConfig().getInt("force-login.timeout") > 0L)
+                ? (-getConfig().getInt("force-login.timeout") * 20L) : Long.MIN_VALUE;
         
         for (Map.Entry<String, Session> entry : sessions.entrySet())
         {
@@ -59,7 +59,7 @@ public class SessionManager extends LogItCoreObject implements Runnable
             
             if (session.getStatus() >= 0L)
             {
-                if (session.getStatus() > (core.getConfig().getInt("session-lifetime") * 20L))
+                if (session.getStatus() > (getConfig().getInt("session-lifetime") * 20L))
                 {
                     if (isPlayerOnline(username))
                     {
@@ -77,9 +77,9 @@ public class SessionManager extends LogItCoreObject implements Runnable
             }
             else if (isPlayerOnline(username))
             {
-                if (core.getAccountManager().isRegistered(username)
+                if (getAccountManager().isRegistered(username)
                         && !player.hasPermission("logit.force-login.timeout.exempt")
-                        && core.isPlayerForcedToLogin(player))
+                        && getCore().isPlayerForcedToLogin(player))
                 {
                     if (session.getStatus() <= forceLoginTimeout)
                     {

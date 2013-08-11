@@ -70,21 +70,21 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_BLANK"));
         }
-        else if (!player.getName().matches(core.getConfig().getString("username.regex")))
+        else if (!player.getName().matches(getConfig().getString("username.regex")))
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_INVALID"));
         }
-        else if (player.getName().length() < core.getConfig().getInt("username.min-length"))
+        else if (player.getName().length() < getConfig().getInt("username.min-length"))
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_SHORT").replace("%min-length%",
-                    String.valueOf(core.getConfig().getInt("username.min-length"))));
+                    String.valueOf(getConfig().getInt("username.min-length"))));
         }
-        else if (player.getName().length() > core.getConfig().getInt("username.max-length"))
+        else if (player.getName().length() > getConfig().getInt("username.max-length"))
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_LONG").replace("%max-length%",
-                    String.valueOf(core.getConfig().getInt("username.max-length"))));
+                    String.valueOf(getConfig().getInt("username.max-length"))));
         }
-        else if (core.getConfig().getStringList("username.prohibited-usernames").contains(player.getName().toLowerCase()))
+        else if (getConfig().getStringList("username.prohibited-usernames").contains(player.getName().toLowerCase()))
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_PROHIBITED"));
         }
@@ -92,16 +92,15 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_ALREADY_USED"));
         }
-        else if (!core.getAccountManager().isRegistered(player.getName())
-                && core.getConfig().getBoolean("crowd-control.kick-unregistered"))
+        else if (!getAccountManager().isRegistered(player.getName())
+                && getConfig().getBoolean("crowd-control.kick-unregistered"))
         {
             event.disallow(KICK_OTHER, getMessage("KICK_UNREGISTERED"));
         }
         else
         {
             int freeSlots = Bukkit.getMaxPlayers() - Bukkit.getOnlinePlayers().length;
-            List<String> preserveSlotsPlayers =
-                    core.getConfig().getStringList("crowd-control.preserve-slots.players");
+            List<String> preserveSlotsPlayers = getConfig().getStringList("crowd-control.preserve-slots.players");
             
             int preservedSlots = 0;
             boolean preservedForThisPlayer = false;
@@ -124,7 +123,7 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
                 }
             }
             
-            if (freeSlots - (core.getConfig().getInt("crowd-control.preserve-slots.amount") - preservedSlots) <= 0
+            if (freeSlots - (getConfig().getInt("crowd-control.preserve-slots.amount") - preservedSlots) <= 0
                     && !preservedForThisPlayer)
             {
                 event.disallow(KICK_FULL, getMessage("NO_SLOTS_FREE"));
@@ -141,22 +140,22 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
         
         event.setJoinMessage(null);
         
-        if (core.getSessionManager().getSession(username) == null)
+        if (getSessionManager().getSession(username) == null)
         {
-            core.getSessionManager().createSession(username, ip);
+            getSessionManager().createSession(username, ip);
         }
         
-        if (core.getConfig().getBoolean("groups.enabled"))
+        if (getConfig().getBoolean("groups.enabled"))
         {
-            core.updatePlayerGroup(player);
+            getCore().updatePlayerGroup(player);
         }
         
-        if (core.isPlayerForcedToLogin(player) && !core.getSessionManager().isSessionAlive(username)
-                && core.getConfig().getBoolean("force-login.hide-inventory"))
+        if (getCore().isPlayerForcedToLogin(player) && !getSessionManager().isSessionAlive(username)
+                && getConfig().getBoolean("force-login.hide-inventory"))
         {
             try
             {
-                core.getInventoryDepository().deposit(player);
+                getInventoryDepository().deposit(player);
             }
             catch (InventorySerializationException ex)
             {
@@ -164,31 +163,31 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
             }
         }
         
-        if ((core.getSessionManager().isSessionAlive(player)
-                && core.getSessionManager().getSession(username).getIp().equals(ip))
-                || !core.getConfig().getBoolean("force-login.global")
+        if ((getSessionManager().isSessionAlive(player)
+                && getSessionManager().getSession(username).getIp().equals(ip))
+                || !getConfig().getBoolean("force-login.global")
                 || player.hasPermission("logit.force-login.exempt"))
         {
-            broadcastJoinMessage(player, core.getConfig().getBoolean("reveal-spawn-world"));
+            broadcastJoinMessage(player, getConfig().getBoolean("reveal-spawn-world"));
         }
         
-        Bukkit.getScheduler().scheduleSyncDelayedTask(core.getPlugin(), new Runnable()
+        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
         {
             @Override
             public void run()
             {
-                if (core.getConfig().getBoolean("waiting-room.enabled"))
+                if (getConfig().getBoolean("waiting-room.enabled"))
                 {
-                    core.getWaitingRoom().put(player);
+                    getWaitingRoom().put(player);
                 }
-                else if (core.getWaitingRoom().contains(player))
+                else if (getWaitingRoom().contains(player))
                 {
-                    core.getWaitingRoom().remove(player);
+                    getWaitingRoom().remove(player);
                 }
                 
-                if (core.isPlayerForcedToLogin(player) && !core.getSessionManager().isSessionAlive(username))
+                if (getCore().isPlayerForcedToLogin(player) && !getSessionManager().isSessionAlive(username))
                 {
-                    sendForceLoginMessage(player, core.getAccountManager());
+                    sendForceLoginMessage(player, getAccountManager());
                 }
             }
         }, 1L);
@@ -201,23 +200,23 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
         
         event.setQuitMessage(null);
         
-        if (core.getSessionManager().isSessionAlive(player))
+        if (getSessionManager().isSessionAlive(player))
         {
             broadcastQuitMessage(player);
         }
         
         try
         {
-            core.getInventoryDepository().withdraw(player);
+            getInventoryDepository().withdraw(player);
         }
         catch (InventorySerializationException ex)
         {
             log(Level.WARNING, "Could not withdraw player's inventory.", ex);
         }
         
-        if (core.getConfig().getBoolean("waiting-room.enabled"))
+        if (getConfig().getBoolean("waiting-room.enabled"))
         {
-            core.getWaitingRoom().put(player);
+            getWaitingRoom().put(player);
         }
     }
     
@@ -230,28 +229,28 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
         
         try
         {
-            core.getInventoryDepository().withdraw(player);
+            getInventoryDepository().withdraw(player);
         }
         catch (InventorySerializationException ex)
         {
             log(Level.WARNING, "Could not withdraw player's inventory.", ex);
         }
         
-        if (core.getConfig().getBoolean("waiting-room.enabled"))
+        if (getConfig().getBoolean("waiting-room.enabled"))
         {
-            core.getWaitingRoom().put(player);
+            getWaitingRoom().put(player);
         }
     }
     
     @EventHandler
     private void onMove(PlayerMoveEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.move"))
+        if (!getConfig().getBoolean("force-login.prevent.move"))
             return;
         
         Player player = event.getPlayer();
 
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setTo(event.getFrom());
         }
@@ -260,12 +259,12 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
     @EventHandler
     private void onToggleSneak(PlayerToggleSneakEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.toggle-sneak"))
+        if (!getConfig().getBoolean("force-login.prevent.toggle-sneak"))
             return;
         
         Player player = event.getPlayer();
         
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
         }
@@ -274,27 +273,27 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
     @EventHandler
     private void onChat(AsyncPlayerChatEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.chat"))
+        if (!getConfig().getBoolean("force-login.prevent.chat"))
             return;
         
         Player player = event.getPlayer();
         
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            sendForceLoginMessage(player, core.getAccountManager());
+            sendForceLoginMessage(player, getAccountManager());
         }
     }
     
     @EventHandler
     private void onCommandPreprocess(PlayerCommandPreprocessEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.command-preprocess"))
+        if (!getConfig().getBoolean("force-login.prevent.command-preprocess"))
             return;
         
         String       message = event.getMessage();
-        List<String> loginAliases = core.getPlugin().getCommand("login").getAliases();
-        List<String> registerAliases = core.getPlugin().getCommand("register").getAliases();
+        List<String> loginAliases = getPlugin().getCommand("login").getAliases();
+        List<String> registerAliases = getPlugin().getCommand("register").getAliases();
         
         // Check if the sent command starts with "/login" or "/register".
         if (message.startsWith("/login ") || message.equals("/login")
@@ -322,7 +321,7 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
         }
         
         // Check if the sent command is one of the allowed in the config.
-        for (String command : core.getConfig().getStringList("force-login.allowed-commands"))
+        for (String command : getConfig().getStringList("force-login.allowed-commands"))
         {
             if (message.equalsIgnoreCase("/" + command) || message.toLowerCase().startsWith("/" + command + " "))
             {
@@ -332,22 +331,22 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
         
         Player player = event.getPlayer();
         
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            sendForceLoginMessage(player, core.getAccountManager());
+            sendForceLoginMessage(player, getAccountManager());
         }
     }
     
     @EventHandler
     private void onInteract(PlayerInteractEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.interact"))
+        if (!getConfig().getBoolean("force-login.prevent.interact"))
             return;
         
         Player player = event.getPlayer();
         
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
             
@@ -356,7 +355,7 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
             // Check if not on a pressure plate to prevent spamming.
             if (clickedBlock == null || (clickedBlock.getTypeId() != 70 && clickedBlock.getTypeId() != 72))
             {
-                sendForceLoginMessage(player, core.getAccountManager());
+                sendForceLoginMessage(player, getAccountManager());
             }
         }
     }
@@ -364,27 +363,27 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
     @EventHandler
     private void onInteractEntity(PlayerInteractEntityEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.interact-entity"))
+        if (!getConfig().getBoolean("force-login.prevent.interact-entity"))
             return;
         
         Player player = event.getPlayer();
         
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            sendForceLoginMessage(player, core.getAccountManager());
+            sendForceLoginMessage(player, getAccountManager());
         }
     }
     
     @EventHandler
     private void onPickupItem(PlayerPickupItemEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.pickup-item"))
+        if (!getConfig().getBoolean("force-login.prevent.pickup-item"))
             return;
         
         Player player = event.getPlayer();
         
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
         }
@@ -393,15 +392,15 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
     @EventHandler
     private void onDropItem(PlayerDropItemEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.drop-item"))
+        if (!getConfig().getBoolean("force-login.prevent.drop-item"))
             return;
         
         Player player = event.getPlayer();
         
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            sendForceLoginMessage(player, core.getAccountManager());
+            sendForceLoginMessage(player, getAccountManager());
         }
     }
 }

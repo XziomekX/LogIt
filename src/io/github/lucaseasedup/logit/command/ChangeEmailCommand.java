@@ -66,7 +66,7 @@ public class ChangeEmailCommand extends LogItCoreObject implements CommandExecut
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "newemail"));
             }
-            else if (!core.getAccountManager().isRegistered(args[1]))
+            else if (!getAccountManager().isRegistered(args[1]))
             {
                 sender.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS").replace("%player%", args[1]));
             }
@@ -80,7 +80,7 @@ public class ChangeEmailCommand extends LogItCoreObject implements CommandExecut
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (core.getAccountManager().changeEmail(args[1], args[2]))
+                    if (getAccountManager().changeEmail(args[1], args[2]))
                     {
                         sendMessage(args[1], getMessage("CHANGE_EMAIL_SUCCESS_SELF").replace("%email%", args[2]));
                         sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_OTHERS").replace("%player%", args[1]));
@@ -110,7 +110,7 @@ public class ChangeEmailCommand extends LogItCoreObject implements CommandExecut
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "newemail"));
             }
-            else if (!core.getAccountManager().isRegistered(p.getName()))
+            else if (!getAccountManager().isRegistered(p.getName()))
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
             }
@@ -124,7 +124,7 @@ public class ChangeEmailCommand extends LogItCoreObject implements CommandExecut
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (core.getAccountManager().changeEmail(p.getName(), args[0]))
+                    if (getAccountManager().changeEmail(p.getName(), args[0]))
                     {
                         sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_SELF").replace("%email%", args[0]));
                     }

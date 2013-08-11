@@ -40,30 +40,30 @@ public class BlockEventListener extends LogItCoreObject implements Listener
     @EventHandler
     private void onPlace(BlockPlaceEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.block-place"))
+        if (!getConfig().getBoolean("force-login.prevent.block-place"))
             return;
         
         Player player = event.getPlayer();
         
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            sendForceLoginMessage(player, core.getAccountManager());
+            sendForceLoginMessage(player, getAccountManager());
         }
     }
     
     @EventHandler
     private void onBreak(BlockBreakEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.block-break"))
+        if (!getConfig().getBoolean("force-login.prevent.block-break"))
             return;
         
         Player player = event.getPlayer();
         
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            sendForceLoginMessage(player, core.getAccountManager());
+            sendForceLoginMessage(player, getAccountManager());
         }
     }
 }

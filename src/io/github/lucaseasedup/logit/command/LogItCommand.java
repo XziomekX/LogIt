@@ -148,7 +148,7 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
             else
             {
                 sender.sendMessage(getMessage("PLUGIN_VERSION")
-                        .replace("%version%", core.getPlugin().getDescription().getVersion()));
+                        .replace("%version%", getPlugin().getDescription().getVersion()));
             }
         }
         else if (subcommand.equalsIgnoreCase("reload") && args.length == 1)
@@ -161,14 +161,14 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
             {
                 try
                 {
-                    core.restart();
+                    getCore().restart();
                 }
                 catch (FatalReportedException ex)
                 {
                     return true;
                 }
                 
-                if (p != null && core.getPlugin().isEnabled())
+                if (p != null && getPlugin().isEnabled())
                 {
                     sender.sendMessage(getMessage("RELOADED"));
                 }
@@ -188,7 +188,7 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                     {
                         ReportedException.incrementRequestCount();
                         
-                        core.getBackupManager().createBackup();
+                        getBackupManager().createBackup();
 
                         if (p != null)
                         {
@@ -226,19 +226,19 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                         
                         if (filename != null)
                         {
-                            core.getBackupManager().restoreBackup(filename);
+                            getBackupManager().restoreBackup(filename);
                         }
                         else
                         {
-                            File[] backups = core.getBackupManager().getBackups(true);
+                            File[] backups = getBackupManager().getBackups(true);
                             
                             if (backups.length == 0)
                                 throw new FileNotFoundException();
                             
-                            core.getBackupManager().restoreBackup(backups[backups.length - 1].getName());
+                            getBackupManager().restoreBackup(backups[backups.length - 1].getName());
                         }
                         
-                        core.getAccountManager().loadAccounts();
+                        getAccountManager().loadAccounts();
                         
                         if (p != null)
                         {
@@ -276,7 +276,7 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                     {
                         int amount = Integer.parseInt(args[2]);
                         
-                        core.getBackupManager().removeBackups(amount);
+                        getBackupManager().removeBackups(amount);
                         
                         if (p != null)
                         {
@@ -302,8 +302,8 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
             }
             else
             {
-                core.getWaitingRoom().setWaitingRoomLocation(p.getLocation());
-                core.getConfig().save();
+                getWaitingRoom().setWaitingRoomLocation(p.getLocation());
+                getConfig().save();
                 
                 p.sendMessage(getMessage("WAITING_ROOM_SET"));
                 log(Level.INFO, getMessage("WAITING_ROOM_SET"));
@@ -321,7 +321,7 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
             }
             else
             {
-                p.teleport(core.getWaitingRoom().getWaitingRoomLocation());
+                p.teleport(getWaitingRoom().getWaitingRoomLocation());
             }
         }
         else if (subcommand.equalsIgnoreCase("globalpass") && args.length <= 3)
@@ -336,19 +336,19 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                 {
                     sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
                 }
-                else if (args[2].length() < core.getConfig().getInt("password.min-length"))
+                else if (args[2].length() < getConfig().getInt("password.min-length"))
                 {
                     sender.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
-                            String.valueOf(core.getConfig().getInt("password.min-length"))));
+                            String.valueOf(getConfig().getInt("password.min-length"))));
                 }
-                else if (args[2].length() > core.getConfig().getInt("password.max-length"))
+                else if (args[2].length() > getConfig().getInt("password.max-length"))
                 {
                     sender.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
-                            String.valueOf(core.getConfig().getInt("password.max-length"))));
+                            String.valueOf(getConfig().getInt("password.max-length"))));
                 }
                 else
                 {
-                    core.changeGlobalPassword(args[2]);
+                    getCore().changeGlobalPassword(args[2]);
                     
                     if (p != null)
                     {
@@ -364,7 +364,7 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                 }
                 else
                 {
-                    core.removeGlobalPassword();
+                    getCore().removeGlobalPassword();
                     
                     if (p != null)
                     {
@@ -386,7 +386,7 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
             else
             {
                 sender.sendMessage(getMessage("ACCOUNT_COUNT")
-                        .replace("%num%", String.valueOf(core.getAccountManager().getAccountCount())));
+                        .replace("%num%", String.valueOf(getAccountManager().getAccountCount())));
             }
         }
         else if (subcommand.equalsIgnoreCase("ipcount") && args.length <= 2)
@@ -400,13 +400,13 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                 if (args.length == 1)
                 {
                     sender.sendMessage(getMessage("IP_COUNT_UNIQUE")
-                        .replace("%num%", String.valueOf(core.getAccountManager().countUniqueIps())));
+                        .replace("%num%", String.valueOf(getAccountManager().countUniqueIps())));
                 }
                 else if (args.length == 2)
                 {
                     sender.sendMessage(getMessage("IP_COUNT_ACCOUNTS")
                         .replace("%ip%", args[1])
-                        .replace("%num%", String.valueOf(core.getAccountManager().countAccountsWithIp(args[1]))));
+                        .replace("%num%", String.valueOf(getAccountManager().countAccountsWithIp(args[1]))));
                 }
             }
         }
@@ -426,13 +426,13 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                 {
                     sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "value"));
                 }
-                else if (!core.getConfig().contains(args[2]))
+                else if (!getConfig().contains(args[2]))
                 {
                     sender.sendMessage(getMessage("CONFIG_PROPERTY_NOT_FOUND").replace("%param%", "path"));
                 }
                 else
                 {
-                    PropertyType type = core.getConfig().getType(args[2]);
+                    PropertyType type = getConfig().getType(args[2]);
                     String inputValue = "";
                     Object outputValue = null;
                     
@@ -533,17 +533,17 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                             throw new Exception("Unknown property type.");
                         }
                         
-                        core.getConfig().set(args[2], outputValue);
+                        getConfig().set(args[2], outputValue);
                         
                         if (p != null)
                         {
                             sender.sendMessage(getMessage("CONFIG_PROPERTY_SET_SUCCESS", new String[]{
                                 "%path%", args[2],
-                                "%value%", core.getConfig().toString(args[2]),
+                                "%value%", getConfig().toString(args[2]),
                             }));
                         }
                         
-                        if (core.getConfig().getProperty(args[2]).requiresRestart())
+                        if (getConfig().getProperty(args[2]).requiresRestart())
                         {
                             sender.sendMessage(getMessage("CONFIG_RELOAD_PLUGIN"));
                         }
@@ -566,7 +566,7 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                 {
                     sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "path"));
                 }
-                else if (!core.getConfig().contains(args[2]))
+                else if (!getConfig().contains(args[2]))
                 {
                     sender.sendMessage(getMessage("CONFIG_PROPERTY_NOT_FOUND").replace("%param%", "path"));
                 }
@@ -576,7 +576,7 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                     {
                         sender.sendMessage(getMessage("CONFIG_PROPERTY_GET", new String[]{
                             "%path%", args[2],
-                            "%value%", core.getConfig().toString(args[2]),
+                            "%value%", getConfig().toString(args[2]),
                         }));
                     }
                 }
@@ -591,7 +591,7 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                 {
                     final int PROPERTIES_PER_PAGE = 16;
                     int page = 1;
-                    int pages = (int) Math.floor(core.getConfig().getProperties().size() / PROPERTIES_PER_PAGE) + 1;
+                    int pages = (int) Math.floor(getConfig().getProperties().size() / PROPERTIES_PER_PAGE) + 1;
                     int i = 0, j = 0;
                     
                     if (args.length >= 3)
@@ -605,7 +605,7 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                         "%pages%", String.valueOf(pages),
                     }));
                     
-                    for (Map.Entry<String, Property> e : core.getConfig().getProperties().entrySet())
+                    for (Map.Entry<String, Property> e : getConfig().getProperties().entrySet())
                     {
                         if ((i > ((PROPERTIES_PER_PAGE * (page - 1)) - 1)) && (j < PROPERTIES_PER_PAGE))
                         {

@@ -39,12 +39,12 @@ public class TickEventListener extends LogItCoreObject implements Listener
     @EventHandler
     private void onTick(TickEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.air-depletion"))
+        if (!getConfig().getBoolean("force-login.prevent.air-depletion"))
             return;
         
         for (Player player : Bukkit.getOnlinePlayers())
         {
-            if (!core.getSessionManager().isSessionAlive(player.getName()))
+            if (!getSessionManager().isSessionAlive(player.getName()))
             {
                 player.setRemainingAir(player.getMaximumAir());
             }

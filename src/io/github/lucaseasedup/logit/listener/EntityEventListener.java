@@ -42,7 +42,7 @@ public class EntityEventListener extends LogItCoreObject implements Listener
     @EventHandler
     private void onDamageIn(EntityDamageEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.damage-in")
+        if (!getConfig().getBoolean("force-login.prevent.damage-in")
                 || !(event.getEntity() instanceof Player))
         {
             return;
@@ -50,7 +50,7 @@ public class EntityEventListener extends LogItCoreObject implements Listener
         
         Player player = (Player) event.getEntity();
         
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
         }
@@ -59,7 +59,7 @@ public class EntityEventListener extends LogItCoreObject implements Listener
     @EventHandler
     private void onDamageOut(EntityDamageByEntityEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.damage-out")
+        if (!getConfig().getBoolean("force-login.prevent.damage-out")
                 || !(event.getDamager() instanceof Player))
         {
             return;
@@ -67,7 +67,7 @@ public class EntityEventListener extends LogItCoreObject implements Listener
         
         Player player = (Player) event.getDamager();
         
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
         }
@@ -76,7 +76,7 @@ public class EntityEventListener extends LogItCoreObject implements Listener
     @EventHandler
     private void onRegainHealth(EntityRegainHealthEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.regain-health")
+        if (!getConfig().getBoolean("force-login.prevent.regain-health")
                 || !(event.getEntity() instanceof Player))
         {
             return;
@@ -84,7 +84,7 @@ public class EntityEventListener extends LogItCoreObject implements Listener
         
         Player player = (Player) event.getEntity();
         
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
         }
@@ -93,7 +93,7 @@ public class EntityEventListener extends LogItCoreObject implements Listener
     @EventHandler
     private void onFoodLevelChange(FoodLevelChangeEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.food-level-change")
+        if (!getConfig().getBoolean("force-login.prevent.food-level-change")
                 || !(event.getEntity() instanceof Player))
         {
             return;
@@ -101,7 +101,7 @@ public class EntityEventListener extends LogItCoreObject implements Listener
         
         Player player = (Player) event.getEntity();
         
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
         }
@@ -110,7 +110,7 @@ public class EntityEventListener extends LogItCoreObject implements Listener
     @EventHandler
     private void onEntityTarget(EntityTargetEvent event)
     {
-        if (!core.getConfig().getBoolean("force-login.prevent.entity-target")
+        if (!getConfig().getBoolean("force-login.prevent.entity-target")
                 || !(event.getTarget() instanceof Player))
         {
             return;
@@ -118,7 +118,7 @@ public class EntityEventListener extends LogItCoreObject implements Listener
         
         Player player = (Player) event.getTarget();
         
-        if (!core.getSessionManager().isSessionAlive(player) && core.isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
         }

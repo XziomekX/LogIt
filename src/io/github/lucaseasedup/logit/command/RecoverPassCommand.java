@@ -64,11 +64,11 @@ public class RecoverPassCommand extends LogItCoreObject implements CommandExecut
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "email"));
             }
-            else if (!core.getAccountManager().isRegistered(p.getName()))
+            else if (!getAccountManager().isRegistered(p.getName()))
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
             }
-            else if (!core.getAccountManager().getEmail(p.getName()).equals(args[0]))
+            else if (!getAccountManager().getEmail(p.getName()).equals(args[0]))
             {
                 p.sendMessage(getMessage("INCORRECT_EMAIL_ADDRESS"));
             }
@@ -78,7 +78,7 @@ public class RecoverPassCommand extends LogItCoreObject implements CommandExecut
                 {
                     ReportedException.incrementRequestCount();
                     
-                    core.sendPasswordRecoveryMail(p.getName());
+                    getCore().sendPasswordRecoveryMail(p.getName());
                     sender.sendMessage(getMessage("RECOVER_PASSWORD_SUCCESS_SELF").replace("%email%", args[0]));
                 }
                 catch (ReportedException ex)

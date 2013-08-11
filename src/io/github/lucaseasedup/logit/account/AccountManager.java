@@ -85,9 +85,9 @@ public final class AccountManager extends LogItCoreObject
         if (isRegistered(username))
             throw new RuntimeException("Account already exists.");
         
-        HashingAlgorithm algorithm = core.getDefaultHashingAlgorithm();
+        HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
         String salt = HashGenerator.generateSalt(algorithm);
-        String hash = core.hash(password, salt, algorithm);
+        String hash = getCore().hash(password, salt, algorithm);
         String now = String.valueOf(System.currentTimeMillis() / 1000L);
         
         Map<String, String> m = new HashMap<>();
@@ -181,7 +181,7 @@ public final class AccountManager extends LogItCoreObject
             return true;
         
         Account account = accountMap.get(username);
-        HashingAlgorithm algorithm = core.getDefaultHashingAlgorithm();
+        HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
         String userAlgorithm = account.get("logit.accounts.hashing_algorithm");
         
         if (userAlgorithm != null)
@@ -191,12 +191,12 @@ public final class AccountManager extends LogItCoreObject
         
         if (!table.isColumnDisabled("logit.accounts.salt"))
         {
-            return core.checkPassword(password, account.get("logit.accounts.password"),
+            return getCore().checkPassword(password, account.get("logit.accounts.password"),
                     account.get("logit.accounts.salt"), algorithm);
         }
         else
         {
-            return core.checkPassword(password, account.get("logit.accounts.password"), algorithm);
+            return getCore().checkPassword(password, account.get("logit.accounts.password"), algorithm);
         }
     }
     
@@ -223,9 +223,9 @@ public final class AccountManager extends LogItCoreObject
         if (evt.isCancelled())
             return false;
         
-        HashingAlgorithm algorithm = core.getDefaultHashingAlgorithm();
+        HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
         String newSalt = HashGenerator.generateSalt(algorithm);
-        String newHash = core.hash(newPassword, newSalt, algorithm);
+        String newHash = getCore().hash(newPassword, newSalt, algorithm);
         
         try
         {
@@ -311,7 +311,7 @@ public final class AccountManager extends LogItCoreObject
         
         try
         {
-            if (core.getIntegration() == IntegrationType.PHPBB2)
+            if (getCore().getIntegration() == IntegrationType.PHPBB2)
             {
                 try
                 {
@@ -511,7 +511,7 @@ public final class AccountManager extends LogItCoreObject
                 
                 username = username.toLowerCase();
                 
-                if (core.getIntegration() == IntegrationType.PHPBB2)
+                if (getCore().getIntegration() == IntegrationType.PHPBB2)
                 {
                     if (username.equals("anonymous"))
                     {

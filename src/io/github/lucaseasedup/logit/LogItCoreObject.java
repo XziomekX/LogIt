@@ -92,5 +92,5 @@ public abstract class LogItCoreObject
         }
     }
     
-    protected final LogItCore core;
+    private final LogItCore core;
 }

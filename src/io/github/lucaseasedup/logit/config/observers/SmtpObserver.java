@@ -35,8 +35,8 @@ public class SmtpObserver extends PropertyObserver
     @Override
     public void update(Property p)
     {
-        core.getMailSender().configure(core.getConfig().getString("mail.smtp-host"),
-                core.getConfig().getInt("mail.smtp-port"), core.getConfig().getString("mail.smtp-user"),
-                core.getConfig().getString("mail.smtp-password"));
+        getMailSender().configure(getConfig().getString("mail.smtp-host"),
+                getConfig().getInt("mail.smtp-port"), getConfig().getString("mail.smtp-user"),
+                getConfig().getString("mail.smtp-password"));
     }
 }
