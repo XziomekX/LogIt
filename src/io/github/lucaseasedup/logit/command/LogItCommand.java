@@ -98,10 +98,6 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                 {
                     sender.sendMessage(getLogItSubcommandHelp("backup remove", "<amount>"));
                 }
-                if (p != null && p.hasPermission("logit.setwr"))
-                {
-                    sender.sendMessage(getLogItSubcommandHelp("setwr", null));
-                }
                 if (p != null && p.hasPermission("logit.gotowr"))
                 {
                     sender.sendMessage(getLogItSubcommandHelp("gotowr", null));
@@ -285,25 +281,6 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                         sender.sendMessage(getMessage("INVALID_PARAMETER").replace("%param%", "amount"));
                     }
                 }
-            }
-        }
-        else if (subcommand.equalsIgnoreCase("setwr") && args.length == 1)
-        {
-            if (p == null)
-            {
-                sender.sendMessage(getMessage("ONLY_PLAYERS"));
-            }
-            else if (!p.hasPermission("logit.setwr"))
-            {
-                sender.sendMessage(getMessage("NO_PERMS"));
-            }
-            else
-            {
-                getWaitingRoom().setWaitingRoomLocation(p.getLocation());
-                getConfig().save();
-                
-                p.sendMessage(getMessage("WAITING_ROOM_SET"));
-                log(Level.INFO, getMessage("WAITING_ROOM_SET"));
             }
         }
         else if (subcommand.equalsIgnoreCase("gotowr") && args.length == 1)
