@@ -143,7 +143,7 @@ public final class LogItCore
                     .replace("%ha%", getDefaultHashingAlgorithm().name()));
             plugin.disable();
             
-            ReportedException.throwNew("Unknown hashing algorithm.");
+            FatalReportedException.throwNew();
         }
         
         try
@@ -213,7 +213,7 @@ public final class LogItCore
                             .replace("%st%", getStorageAccountsDbType().name()));
                     plugin.disable();
                     
-                    ReportedException.throwNew();
+                    FatalReportedException.throwNew();
                 }
             }
         }
@@ -222,7 +222,7 @@ public final class LogItCore
             log(Level.SEVERE, "Could not open database connection.", ex);
             plugin.disable();
             
-            ReportedException.throwNew(ex);
+            FatalReportedException.throwNew(ex);
         }
         
         pinger = new Pinger(database);
@@ -238,7 +238,7 @@ public final class LogItCore
             log(Level.SEVERE, "Could not open account table.", ex);
             plugin.disable();
             
-            ReportedException.throwNew(ex);
+            FatalReportedException.throwNew(ex);
         }
         
         accountManager = new AccountManager(this, accountTable);
@@ -253,7 +253,7 @@ public final class LogItCore
         {
             plugin.disable();
             
-            ex.rethrow();
+            ex.rethrowAsFatal();
         }
         finally
         {
@@ -310,7 +310,7 @@ public final class LogItCore
             log(Level.SEVERE, "Inventories could not be restored.", ex);
             plugin.disable();
             
-            ReportedException.throwNew(ex);
+            FatalReportedException.throwNew(ex);
         }
         
         inventoryDepository = new InventoryDepository(this, inventoryDatabase);
