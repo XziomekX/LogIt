@@ -40,16 +40,16 @@ public class AccountWatcher extends LogItCoreObject implements Runnable
             return;
         
         Set<String> usernames = Collections.synchronizedSet(getAccountManager().getRegisteredUsernames());
-        int now = (int) (System.currentTimeMillis() / 1000L);
+        long now = System.currentTimeMillis() / 1000L;
         
         for (String username : usernames)
         {
-            int lastActiveDate = getAccountManager().getLastActiveDate(username);
+            long lastActiveDate = getAccountManager().getAccount(username).getLong("logit.accounts.last_active");
             
             if (lastActiveDate == 0)
                 continue;
             
-            int absenceTime = (now - lastActiveDate);
+            long absenceTime = (now - lastActiveDate);
             
             if (absenceTime >= (getConfig().getInt("crowd-control.days-of-absence-to-unregister") * 86400))
             {

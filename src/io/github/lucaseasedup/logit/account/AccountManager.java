@@ -368,27 +368,6 @@ public final class AccountManager extends LogItCoreObject
         return new HashSet<String>(ips).size();
     }
     
-    public void updateLastActiveDate(String username)
-    {
-        String now = String.valueOf((int) (System.currentTimeMillis() / 1000L));
-        
-        try
-        {
-            accountMap.get(username).updateString("logit.accounts.last_active", now);
-        }
-        catch (SQLException ex)
-        {
-            log(Level.WARNING, "Could not update last-active date.", ex);
-            
-            ReportedException.throwNew(ex);
-        }
-    }
-    
-    public int getLastActiveDate(String username)
-    {
-        return Integer.parseInt(accountMap.get(username).getString("logit.accounts.last_active"));
-    }
-    
     public String getAccountProperty(String username, String property)
     {
         Account account = accountMap.get(username);
