@@ -87,6 +87,9 @@ public final class Account extends Observable
     
     public void refreshPersistence() throws SQLException
     {
+        if (table.isColumnDisabled("logit.accounts.persistence"))
+            return;
+        
         persistence = new LinkedHashMap<>();
         
         String persistanceBase64String = get("logit.accounts.persistence");
@@ -117,11 +120,17 @@ public final class Account extends Observable
     
     public String getPersistence(String key)
     {
+        if (table.isColumnDisabled("logit.accounts.persistence"))
+            return null;
+        
         return persistence.get(key);
     }
     
     public void updatePersistence(String key, String value) throws SQLException
     {
+        if (table.isColumnDisabled("logit.accounts.persistence"))
+            return;
+        
         persistence.put(key, value);
         
         savePersistence();
@@ -129,6 +138,8 @@ public final class Account extends Observable
     
     private void savePersistence() throws SQLException
     {
+        assert !table.isColumnDisabled("logit.accounts.persistence");
+        
         IniFile iniFile = new IniFile();
         iniFile.putSection("persistence");
         
