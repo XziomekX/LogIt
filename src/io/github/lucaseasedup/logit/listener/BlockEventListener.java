@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.listener;
 
-import static io.github.lucaseasedup.logit.util.MessageUtils.sendForceLoginMessage;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import org.bukkit.entity.Player;
@@ -49,7 +48,7 @@ public class BlockEventListener extends LogItCoreObject implements Listener
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            sendForceLoginMessage(player, getAccountManager());
+            getCore().sendForceLoginMessage(player);
         }
     }
     
@@ -64,7 +63,7 @@ public class BlockEventListener extends LogItCoreObject implements Listener
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            sendForceLoginMessage(player, getAccountManager());
+            getCore().sendForceLoginMessage(player);
         }
     }
     
@@ -80,7 +79,7 @@ public class BlockEventListener extends LogItCoreObject implements Listener
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            sendForceLoginMessage(player, getAccountManager());
+            getCore().sendForceLoginMessage(player);
         }
     }
 }

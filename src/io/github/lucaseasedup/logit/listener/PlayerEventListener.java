@@ -21,7 +21,6 @@ package io.github.lucaseasedup.logit.listener;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastJoinMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastQuitMessage;
-import static io.github.lucaseasedup.logit.util.MessageUtils.sendForceLoginMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static org.bukkit.event.EventPriority.HIGHEST;
@@ -187,7 +186,7 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
                 
                 if (getCore().isPlayerForcedToLogin(player) && !getSessionManager().isSessionAlive(username))
                 {
-                    sendForceLoginMessage(player, getAccountManager());
+                    getCore().sendForceLoginMessage(player);
                 }
             }
         }, 1L);
@@ -281,7 +280,7 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            sendForceLoginMessage(player, getAccountManager());
+            getCore().sendForceLoginMessage(player);
         }
     }
     
@@ -334,7 +333,7 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            sendForceLoginMessage(player, getAccountManager());
+            getCore().sendForceLoginMessage(player);
         }
     }
     
@@ -355,7 +354,7 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
             // Check if not on a pressure plate to prevent spamming.
             if (clickedBlock == null || (clickedBlock.getTypeId() != 70 && clickedBlock.getTypeId() != 72))
             {
-                sendForceLoginMessage(player, getAccountManager());
+                getCore().sendForceLoginMessage(player);
             }
         }
     }
@@ -371,7 +370,7 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            sendForceLoginMessage(player, getAccountManager());
+            getCore().sendForceLoginMessage(player);
         }
     }
     
@@ -400,7 +399,7 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
-            sendForceLoginMessage(player, getAccountManager());
+            getCore().sendForceLoginMessage(player);
         }
     }
 }

@@ -20,7 +20,6 @@ package io.github.lucaseasedup.logit.util;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
-import io.github.lucaseasedup.logit.account.AccountManager;
 import java.util.Arrays;
 import java.util.List;
 import org.bukkit.Bukkit;
@@ -105,37 +104,5 @@ public class MessageUtils
                 .replace("%player%", player.getName());
         
         broadcastMessageExcept(quitMessage, Arrays.asList(player));
-    }
-    
-    /**
-     * Sends a message to the specified player telling them to either login or register.
-     * 
-     * @param player Player.
-     * @param accountManager AccountManager.
-     */
-    public static void sendForceLoginMessage(Player player, AccountManager accountManager)
-    {
-        if (accountManager.isRegistered(player.getName()))
-        {
-            if (!accountManager.getTable().isColumnDisabled("logit.accounts.password"))
-            {
-                player.sendMessage(getMessage("PLEASE_LOGIN"));
-            }
-            else
-            {
-                player.sendMessage(getMessage("PLEASE_LOGIN_NOPASS"));
-            }
-        }
-        else
-        {
-            if (!accountManager.getTable().isColumnDisabled("logit.accounts.password"))
-            {
-                player.sendMessage(getMessage("PLEASE_REGISTER"));
-            }
-            else
-            {
-                player.sendMessage(getMessage("PLEASE_REGISTER_NOPASS"));
-            }
-        }
     }
 }

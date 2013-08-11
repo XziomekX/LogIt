@@ -576,6 +576,38 @@ public final class LogItCore
     }
     
     /**
+     * Sends a message to the specified player telling them to either login or register.
+     * 
+     * @param player Player.
+     * @param accountManager AccountManager.
+     */
+    public void sendForceLoginMessage(Player player)
+    {
+        if (accountManager.isRegistered(player.getName()))
+        {
+            if (!accountManager.getTable().isColumnDisabled("logit.accounts.password"))
+            {
+                player.sendMessage(getMessage("PLEASE_LOGIN"));
+            }
+            else
+            {
+                player.sendMessage(getMessage("PLEASE_LOGIN_NOPASS"));
+            }
+        }
+        else
+        {
+            if (!accountManager.getTable().isColumnDisabled("logit.accounts.password"))
+            {
+                player.sendMessage(getMessage("PLEASE_REGISTER"));
+            }
+            else
+            {
+                player.sendMessage(getMessage("PLEASE_REGISTER_NOPASS"));
+            }
+        }
+    }
+    
+    /**
      * Updates player group depending on whether they're logged in or logged out.
      * 
      * @param player Player whose group is to be updated.
