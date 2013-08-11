@@ -226,7 +226,18 @@ public final class LogItConfiguration extends PropertyObserver
         
         property.addObserver(this);
         
-        getPlugin().getConfig().set(property.getPath(), property.getValue());
+        Object value;
+        
+        if (!getPlugin().getConfig().isConfigurationSection(path))
+        {
+            value = property.getValue();
+        }
+        else
+        {
+            value = defaultValue;
+        }
+        
+        getPlugin().getConfig().set(property.getPath(), value);
         properties.put(property.getPath(), property);
     }
     
