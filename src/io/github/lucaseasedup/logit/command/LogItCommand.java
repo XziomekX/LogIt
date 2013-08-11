@@ -105,10 +105,6 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                 {
                     sender.sendMessage(getLogItSubcommandHelp("gotowr", null));
                 }
-                if (p != null && p.hasPermission("logit.togglewr"))
-                {
-                    sender.sendMessage(getLogItSubcommandHelp("togglewr", null));
-                }
                 if (p == null || p.hasPermission("logit.globalpass.set"))
                 {
                     sender.sendMessage(getLogItSubcommandHelp("globalpass set", "<password>"));
