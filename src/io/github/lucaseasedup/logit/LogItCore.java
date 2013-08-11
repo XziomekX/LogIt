@@ -808,11 +808,6 @@ public final class LogItCore
         return config.isLoaded();
     }
     
-    public Table getAccountTable()
-    {
-        return accountTable;
-    }
-    
     public Permission getPermissions()
     {
         return permissions;
