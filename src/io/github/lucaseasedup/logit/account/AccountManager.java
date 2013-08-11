@@ -447,7 +447,7 @@ public final class AccountManager extends LogItCoreObject
         }
     }
     
-    public Collection<Account> getAccounts()
+    public Collection<Account> getAllAccounts()
     {
         return accountMap.values();
     }
