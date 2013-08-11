@@ -98,7 +98,7 @@ public class SessionEventListener extends LogItCoreObject implements Listener
                 }
             }
             
-            if (getConfig().getBoolean("force-login.hide-inventory"))
+            if (getConfig().getBoolean("force-login.hide-inventory") && getCore().isPlayerForcedToLogin(player))
             {
                 try
                 {
