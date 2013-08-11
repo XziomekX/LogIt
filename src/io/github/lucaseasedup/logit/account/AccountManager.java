@@ -83,16 +83,16 @@ public final class AccountManager extends LogItCoreObject
         String hash = getCore().hash(password, salt, algorithm);
         String now = String.valueOf(System.currentTimeMillis() / 1000L);
         
-        Map<String, String> m = new HashMap<>();
+        Map<String, String> properties = new HashMap<>();
         
-        m.put("logit.accounts.username", username.toLowerCase());
-        m.put("logit.accounts.salt", salt);
-        m.put("logit.accounts.password", hash);
-        m.put("logit.accounts.hashing_algorithm", algorithm.encode());
-        m.put("logit.accounts.last_active", now);
-        m.put("logit.accounts.reg_date", now);
+        properties.put("logit.accounts.username", username.toLowerCase());
+        properties.put("logit.accounts.salt", salt);
+        properties.put("logit.accounts.password", hash);
+        properties.put("logit.accounts.hashing_algorithm", algorithm.encode());
+        properties.put("logit.accounts.last_active", now);
+        properties.put("logit.accounts.reg_date", now);
         
-        AccountEvent evt = new AccountCreateEvent(m);
+        AccountEvent evt = new AccountCreateEvent(properties);
         
         Bukkit.getPluginManager().callEvent(evt);
         
@@ -101,7 +101,7 @@ public final class AccountManager extends LogItCoreObject
         
         try
         {
-            accountMap.put(username, new Account(accountTable, m));
+            accountMap.put(username, new Account(accountTable, properties));
             
             log(Level.FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
         }
