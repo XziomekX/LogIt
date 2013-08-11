@@ -111,7 +111,7 @@ public final class LogItPlugin extends JavaPlugin
         {
             core = null;
             craftReflect = null;
-            prb = null;
+            messages = null;
             
             disable();
         }
@@ -154,14 +154,14 @@ public final class LogItPlugin extends JavaPlugin
         
         if ((file = new File(getDataFolder(), "lang/messages" + suffix + ".properties")).exists())
         {
-            prb = new PropertyResourceBundle(new FileInputStream(file));
+            messages = new PropertyResourceBundle(new FileInputStream(file));
             
             return;
         }
         
         if ((file = new File(getDataFolder(), "lang/messages.properties")).exists())
         {
-            prb = new PropertyResourceBundle(new FileInputStream(file));
+            messages = new PropertyResourceBundle(new FileInputStream(file));
             
             return;
         }
@@ -178,7 +178,7 @@ public final class LogItPlugin extends JavaPlugin
             if (jarEntry == null)
                 throw new FileNotFoundException("No message files found.");
             
-            prb = new PropertyResourceBundle(new InputStreamReader(jarFile.getInputStream(jarEntry), "UTF-8"));
+            messages = new PropertyResourceBundle(new InputStreamReader(jarFile.getInputStream(jarEntry), "UTF-8"));
         }
     }
     
@@ -206,7 +206,7 @@ public final class LogItPlugin extends JavaPlugin
         
         try
         {
-            message = formatColorCodes(prb.getString(label));
+            message = formatColorCodes(messages.getString(label));
         }
         catch (NullPointerException | MissingResourceException | ClassCastException ex)
         {
@@ -319,7 +319,7 @@ public final class LogItPlugin extends JavaPlugin
     }
     
     private static Logger logger;
-    private static PropertyResourceBundle prb;
+    private static PropertyResourceBundle messages;
     
     private LogItCore core;
     private CraftReflect craftReflect;
