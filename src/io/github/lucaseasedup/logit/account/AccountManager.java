@@ -368,35 +368,6 @@ public final class AccountManager extends LogItCoreObject
         return new HashSet<String>(ips).size();
     }
     
-    public String getAccountProperty(String username, String property)
-    {
-        Account account = accountMap.get(username);
-        
-        if (account == null)
-            throw new AccountNotFoundException();
-        
-        return accountMap.get(username).getString(property);
-    }
-    
-    public void updateAccountProperty(String username, String property, String value)
-    {
-        Account account = accountMap.get(username);
-        
-        if (account == null)
-            throw new AccountNotFoundException();
-        
-        try
-        {
-            accountMap.get(username).updateString(property, value);
-        }
-        catch (SQLException ex)
-        {
-            log(Level.WARNING, "Could not update account property: " + property + ".", ex);
-            
-            ReportedException.throwNew(ex);
-        }
-    }
-    
     public String getAccountPersistence(String username, String key)
     {
         Account account = accountMap.get(username);
