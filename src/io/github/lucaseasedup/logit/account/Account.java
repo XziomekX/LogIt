@@ -42,19 +42,20 @@ public final class Account extends Observable
         this.table = table;
         
         refreshPersistence();
+        savePersistence();
     }
     
-    public String get(String property)
+    public String getProperty(String property)
     {
         return data.get(property);
     }
     
-    public Map<String, String> getAll()
+    public Map<String, String> getAllProperties()
     {
         return new HashMap<>(data);
     }
     
-    public boolean update(String property, String value) throws SQLException
+    public boolean updateProperty(String property, String value) throws SQLException
     {
         AccountEvent evt = new AccountPropertyUpdateEvent(this, property, value);
         
@@ -63,7 +64,7 @@ public final class Account extends Observable
         if (evt.isCancelled())
             return false;
         
-        String previousValue = get(property);
+        String previousValue = getProperty(property);
         
         // Check if existing value is the same as the one to be updated to.
         if ((previousValue != null && previousValue.equals(value))
@@ -73,7 +74,7 @@ public final class Account extends Observable
         }
         
         table.update(new WhereClause[]{
-            new WhereClause("logit.accounts.username", WhereClause.EQUAL, get("logit.accounts.username")),
+            new WhereClause("logit.accounts.username", WhereClause.EQUAL, getProperty("logit.accounts.username")),
         }, new SetClause[]{
             new SetClause(property, value),
         });
@@ -85,14 +86,32 @@ public final class Account extends Observable
         return true;
     }
     
-    public void refreshPersistence() throws SQLException
+    public String getPersistence(String key)
+    {
+        if (table.isColumnDisabled("logit.accounts.persistence"))
+            return null;
+        
+        return persistence.get(key);
+    }
+    
+    public void updatePersistence(String key, String value) throws SQLException
+    {
+        if (table.isColumnDisabled("logit.accounts.persistence"))
+            return;
+        
+        persistence.put(key, value);
+        
+        savePersistence();
+    }
+    
+    private void refreshPersistence() throws SQLException
     {
         if (table.isColumnDisabled("logit.accounts.persistence"))
             return;
         
         persistence = new LinkedHashMap<>();
         
-        String persistanceBase64String = get("logit.accounts.persistence");
+        String persistanceBase64String = getProperty("logit.accounts.persistence");
         IniFile iniFile;
         
         if (persistanceBase64String != null)
@@ -114,31 +133,12 @@ public final class Account extends Observable
         {
             persistence.put(key, iniFile.getString("persistence", key));
         }
-        
-        savePersistence();
-    }
-    
-    public String getPersistence(String key)
-    {
-        if (table.isColumnDisabled("logit.accounts.persistence"))
-            return null;
-        
-        return persistence.get(key);
-    }
-    
-    public void updatePersistence(String key, String value) throws SQLException
-    {
-        if (table.isColumnDisabled("logit.accounts.persistence"))
-            return;
-        
-        persistence.put(key, value);
-        
-        savePersistence();
     }
     
     private void savePersistence() throws SQLException
     {
-        assert !table.isColumnDisabled("logit.accounts.persistence");
+        if (table.isColumnDisabled("logit.accounts.persistence"))
+            return;
         
         IniFile iniFile = new IniFile();
         iniFile.putSection("persistence");
@@ -148,12 +148,7 @@ public final class Account extends Observable
             iniFile.putString("persistence", kv.getKey(), kv.getValue());
         }
         
-        update("logit.accounts.persistence", Base64.encode(iniFile.toString()));
-    }
-    
-    public int size()
-    {
-        return data.size();
+        updateProperty("logit.accounts.persistence", Base64.encode(iniFile.toString()));
     }
     
     private final Map<String, String> data;

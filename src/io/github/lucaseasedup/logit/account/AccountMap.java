@@ -48,11 +48,12 @@ public class AccountMap
     
     public Account put(String username, Account account) throws SQLException
     {
-        String[] columns = new String[account.size()];
-        String[] values = new String[account.size()];
+        Map<String, String> properties = account.getAllProperties();
+        String[] columns = new String[properties.size()];
+        String[] values = new String[properties.size()];
         
         int i = 0;
-        for (Entry<String, String> property : account.getAll().entrySet())
+        for (Entry<String, String> property : properties.entrySet())
         {
             columns[i] = property.getKey();
             values[i] = property.getValue();

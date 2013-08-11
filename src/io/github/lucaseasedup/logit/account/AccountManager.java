@@ -175,7 +175,7 @@ public final class AccountManager extends LogItCoreObject
         
         Account account = accountMap.get(username);
         HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
-        String userAlgorithm = account.get("logit.accounts.hashing_algorithm");
+        String userAlgorithm = account.getProperty("logit.accounts.hashing_algorithm");
         
         if (userAlgorithm != null)
         {
@@ -184,12 +184,12 @@ public final class AccountManager extends LogItCoreObject
         
         if (!accountTable.isColumnDisabled("logit.accounts.salt"))
         {
-            return getCore().checkPassword(password, account.get("logit.accounts.password"),
-                    account.get("logit.accounts.salt"), algorithm);
+            return getCore().checkPassword(password, account.getProperty("logit.accounts.password"),
+                    account.getProperty("logit.accounts.salt"), algorithm);
         }
         else
         {
-            return getCore().checkPassword(password, account.get("logit.accounts.password"), algorithm);
+            return getCore().checkPassword(password, account.getProperty("logit.accounts.password"), algorithm);
         }
     }
     
@@ -222,9 +222,9 @@ public final class AccountManager extends LogItCoreObject
         
         try
         {
-            account.update("logit.accounts.salt", newSalt);
-            account.update("logit.accounts.password", newHash);
-            account.update("logit.accounts.hashing_algorithm", algorithm.encode());
+            account.updateProperty("logit.accounts.salt", newSalt);
+            account.updateProperty("logit.accounts.password", newHash);
+            account.updateProperty("logit.accounts.hashing_algorithm", algorithm.encode());
             
             log(Level.FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
         }
@@ -261,7 +261,7 @@ public final class AccountManager extends LogItCoreObject
         
         try
         {
-            account.update("logit.accounts.email", newEmail);
+            account.updateProperty("logit.accounts.email", newEmail);
             
             log(Level.FINE, getMessage("CHANGE_EMAIL_SUCCESS_LOG").replace("%player%", username));
         }
@@ -277,7 +277,7 @@ public final class AccountManager extends LogItCoreObject
     
     public String getEmail(String username)
     {
-        return accountMap.get(username).get("logit.accounts.email");
+        return accountMap.get(username).getProperty("logit.accounts.email");
     }
     
     /**
@@ -315,7 +315,7 @@ public final class AccountManager extends LogItCoreObject
                 }
             }
             
-            account.update("logit.accounts.ip", ip);
+            account.updateProperty("logit.accounts.ip", ip);
             
             log(Level.FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username)
                     .replace("%ip%", ip));
@@ -347,7 +347,7 @@ public final class AccountManager extends LogItCoreObject
         
         for (Account account : accountMap.values())
         {
-            if (account.get("logit.accounts.ip").equalsIgnoreCase(ip))
+            if (account.getProperty("logit.accounts.ip").equalsIgnoreCase(ip))
             {
                 count++;
             }
@@ -362,7 +362,7 @@ public final class AccountManager extends LogItCoreObject
         
         for (Account account : accountMap.values())
         {
-            ips.add(account.get("logit.accounts.ip"));
+            ips.add(account.getProperty("logit.accounts.ip"));
         }
         
         return new HashSet<String>(ips).size();
@@ -374,7 +374,7 @@ public final class AccountManager extends LogItCoreObject
         
         try
         {
-            accountMap.get(username).update("logit.accounts.last_active", now);
+            accountMap.get(username).updateProperty("logit.accounts.last_active", now);
         }
         catch (SQLException ex)
         {
@@ -386,7 +386,7 @@ public final class AccountManager extends LogItCoreObject
     
     public int getLastActiveDate(String username)
     {
-        return Integer.parseInt(accountMap.get(username).get("logit.accounts.last_active"));
+        return Integer.parseInt(accountMap.get(username).getProperty("logit.accounts.last_active"));
     }
     
     public String getPersistence(String username, String key)
@@ -420,7 +420,7 @@ public final class AccountManager extends LogItCoreObject
     
     public String getAccountProperty(String username, String property)
     {
-        return accountMap.get(username).get(property);
+        return accountMap.get(username).getProperty(property);
     }
     
     public Collection<Account> getAccounts()
