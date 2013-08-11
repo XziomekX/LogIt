@@ -127,7 +127,7 @@ public final class Account extends Observable
         savePersistence();
     }
     
-    protected void savePersistence() throws SQLException
+    private void savePersistence() throws SQLException
     {
         IniFile iniFile = new IniFile();
         iniFile.putSection("persistence");
