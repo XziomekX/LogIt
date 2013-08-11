@@ -437,6 +437,9 @@ public final class LogItCore
      */
     public boolean checkPassword(String password, String hashedPassword, String salt, HashingAlgorithm ha)
     {
+        if (hashedPassword == null)
+            return false;
+        
         if (ha == HashingAlgorithm.BCRYPT)
         {
             return BCrypt.checkpw(password, hashedPassword);
