@@ -232,6 +232,16 @@ public final class LogItConfiguration extends PropertyObserver
     
     private void updateConfigDef(IniFile oldDef, IniFile newDef, OutputStream os) throws IOException
     {
+        for (String uuid : oldDef.getSections())
+        {
+            if (!newDef.hasSection(uuid))
+            {
+                getPlugin().getConfig().set(oldDef.getString(uuid, "path"), null);
+                
+                oldDef.removeSection(uuid);
+            }
+        }
+        
         for (String uuid : newDef.getSections())
         {
             if (!oldDef.hasSection(uuid))
@@ -280,16 +290,6 @@ public final class LogItConfiguration extends PropertyObserver
                 {
                     oldDef.putString(uuid, "observer", newDef.getString(uuid, "observer"));
                 }
-            }
-        }
-        
-        for (String uuid : oldDef.getSections())
-        {
-            if (!newDef.hasSection(uuid))
-            {
-                getPlugin().getConfig().set(oldDef.getString(uuid, "path"), null);
-                
-                oldDef.removeSection(uuid);
             }
         }
         
