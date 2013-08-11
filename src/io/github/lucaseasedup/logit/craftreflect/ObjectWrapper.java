@@ -27,16 +27,18 @@ public abstract class ObjectWrapper
 {
     public <T2 extends ObjectWrapper> T2 cast(Class<T2> castTo) throws ReflectiveOperationException
     {
-        String version = LogItPlugin.getCraftBukkitVersion();
+        String bukkitVersion = LogItPlugin.getCraftBukkitVersion();
         
-        Class<?> wrapperCraftClass =
-            Class.forName("io.github.lucaseasedup.logit.craftreflect." + version + "." + castTo.getSimpleName());
+        String wrapperCraftClassName =
+                "io.github.lucaseasedup.logit.craftreflect." + bukkitVersion + "." + castTo.getSimpleName();
+        Class<?> wrapperCraftClass = Class.forName(wrapperCraftClassName);
         
         @SuppressWarnings("unchecked")
         T2 newWrapper = (T2) wrapperCraftClass.getConstructor().newInstance();
         
-        Class<?> objectCraftClass =
-            Class.forName(o.getClass().getName().replace(o.getClass().getSimpleName(), castTo.getSimpleName()));
+        String objectCraftClassName =
+                o.getClass().getName().replace(o.getClass().getSimpleName(), castTo.getSimpleName());
+        Class<?> objectCraftClass = Class.forName(objectCraftClassName);
         newWrapper.o = objectCraftClass.cast(o);
         
         return newWrapper;
