@@ -40,7 +40,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import javax.xml.bind.DatatypeConverter;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 
 /**
  * @author LucasEasedUp
@@ -423,47 +422,6 @@ public final class AccountManager extends LogItCoreObject
             
             ReportedException.throwNew(ex);
         }
-    }
-    
-    public void updatePersistenceLocation(String username, Location location)
-    {
-        Account account = accountMap.get(username);
-        
-        if (account == null)
-            throw new AccountNotFoundException();
-        
-        try
-        {
-            account.updatePersistence("world", location.getWorld().getName());
-            account.updatePersistence("x", String.valueOf(location.getX()));
-            account.updatePersistence("y", String.valueOf(location.getY()));
-            account.updatePersistence("z", String.valueOf(location.getZ()));
-            account.updatePersistence("yaw", String.valueOf(location.getYaw()));
-            account.updatePersistence("pitch", String.valueOf(location.getPitch()));
-        }
-        catch (SQLException ex)
-        {
-            log(Level.WARNING, "Could not update player persistence location.", ex);
-            
-            ReportedException.throwNew(ex);
-        }
-    }
-    
-    public Location getPersistenceLocation(String username)
-    {
-        Account account = accountMap.get(username);
-        
-        if (account == null)
-            throw new AccountNotFoundException();
-        
-        return new Location(
-            Bukkit.getWorld(account.getPersistence("world")),
-            Double.valueOf(account.getPersistence("x")),
-            Double.valueOf(account.getPersistence("y")),
-            Double.valueOf(account.getPersistence("z")),
-            Float.valueOf(account.getPersistence("yaw")),
-            Float.valueOf(account.getPersistence("pitch"))
-        );
     }
     
     public String getAccountProperty(String username, String property)

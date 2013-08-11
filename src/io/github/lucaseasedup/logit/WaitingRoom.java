@@ -20,7 +20,6 @@ package io.github.lucaseasedup.logit;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -51,23 +50,15 @@ public final class WaitingRoom extends LogItCoreObject
         
         if (getAccountManager().isRegistered(player.getName()))
         {
-            try
-            {
-                ReportedException.incrementRequestCount();
-                
-                getAccountManager().updatePersistenceLocation(player.getName(), player.getLocation());
-                getAccountManager().updatePersistence(player.getName(), "waiting_room", "1");
-            }
-            catch (ReportedException ex)
-            {
-                log(Level.WARNING, "Could not update player waiting-room status.", ex);
-                
-                ex.rethrow();
-            }
-            finally
-            {
-                ReportedException.decrementRequestCount();
-            }
+            Location loc = player.getLocation();
+            
+            getAccountManager().updatePersistence(player.getName(), "world", loc.getWorld().getName());
+            getAccountManager().updatePersistence(player.getName(), "x", String.valueOf(loc.getX()));
+            getAccountManager().updatePersistence(player.getName(), "y", String.valueOf(loc.getY()));
+            getAccountManager().updatePersistence(player.getName(), "z", String.valueOf(loc.getZ()));
+            getAccountManager().updatePersistence(player.getName(), "yaw", String.valueOf(loc.getYaw()));
+            getAccountManager().updatePersistence(player.getName(), "pitch", String.valueOf(loc.getPitch()));
+            getAccountManager().updatePersistence(player.getName(), "waiting_room", "1");
         }
         
         player.teleport(getWaitingRoomLocation());
@@ -86,9 +77,17 @@ public final class WaitingRoom extends LogItCoreObject
         if (!contains(player) || !getCore().isPlayerForcedToLogin(player))
             return;
         
-        if (getAccountManager().isRegistered(player.getName()))
+        if (getAccountManager().isRegistered(player.getName())
+                && !getAccountManager().getTable().isColumnDisabled("logit.accounts.persistence"))
         {
-            player.teleport(getAccountManager().getPersistenceLocation(player.getName()));
+            player.teleport(new Location(
+                Bukkit.getWorld(getAccountManager().getPersistence(player.getName(), "world")),
+                Double.valueOf(getAccountManager().getPersistence(player.getName(), "x")),
+                Double.valueOf(getAccountManager().getPersistence(player.getName(), "y")),
+                Double.valueOf(getAccountManager().getPersistence(player.getName(), "z")),
+                Float.valueOf(getAccountManager().getPersistence(player.getName(), "yaw")),
+                Float.valueOf(getAccountManager().getPersistence(player.getName(), "pitch"))
+            ));
             
             getAccountManager().updatePersistence(player.getName(), "waiting_room", "0");
         }
