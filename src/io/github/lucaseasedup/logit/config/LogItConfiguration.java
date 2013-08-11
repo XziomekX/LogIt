@@ -414,7 +414,7 @@ public final class LogItConfiguration extends PropertyObserver
             case LOCATION:
                 defaultValue = new Location("world", 0, 0, 0, 0, 0); break;
             default:
-                throw new RuntimeException("Unknown property type.");
+                throw new RuntimeException("Unknown property type: " + type.toString());
             }
             
             String validatorClassName = def.getString(uuid, "validator");
