@@ -61,6 +61,11 @@ public final class Account extends Observable
     {
         return Integer.parseInt(getString(property));
     }
+
+    public long getLong(String property)
+    {
+        return Long.parseLong(getString(property));
+    }
     
     public boolean updateString(String property, String value) throws SQLException
     {
@@ -94,6 +99,11 @@ public final class Account extends Observable
     }
     
     public boolean updateInt(String property, int value) throws SQLException
+    {
+        return updateString(property, String.valueOf(value));
+    }
+
+    public boolean updateLong(String property, long value) throws SQLException
     {
         return updateString(property, String.valueOf(value));
     }
