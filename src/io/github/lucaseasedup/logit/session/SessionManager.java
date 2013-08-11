@@ -24,7 +24,7 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerName;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCore;
-import io.github.lucaseasedup.logit.account.AccountManager;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.db.SqliteDatabase;
 import java.io.File;
 import java.sql.SQLException;
@@ -38,12 +38,11 @@ import org.bukkit.entity.Player;
 /**
  * @author LucasEasedUp
  */
-public class SessionManager implements Runnable
+public class SessionManager extends LogItCoreObject implements Runnable
 {
-    public SessionManager(LogItCore core, AccountManager accountManager)
+    public SessionManager(LogItCore core)
     {
-        this.core = core;
-        this.accountManager = accountManager;
+        super(core);
     }
     
     @Override
@@ -159,7 +158,7 @@ public class SessionManager implements Runnable
         Session session = new Session(ip);
         sessions.put(username.toLowerCase(), session);
         
-        core.log(Level.FINE, getMessage("CREATE_SESSION_SUCCESS_LOG").replace("%player%", username));
+        log(Level.FINE, getMessage("CREATE_SESSION_SUCCESS_LOG").replace("%player%", username));
         
         return true;
     }
@@ -188,7 +187,7 @@ public class SessionManager implements Runnable
         
         sessions.remove(username.toLowerCase());
         
-        core.log(Level.FINE, getMessage("DESTROY_SESSION_SUCCESS_LOG")
+        log(Level.FINE, getMessage("DESTROY_SESSION_SUCCESS_LOG")
                 .replace("%player%", getPlayerName(username)));
         
         return true;
@@ -218,9 +217,9 @@ public class SessionManager implements Runnable
         // Start session.
         session.setStatus(0L);
         
-        accountManager.updateLastActiveDate(username);
+        getAccountManager().updateLastActiveDate(username);
         
-        core.log(Level.FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
+        log(Level.FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
         
         return true;
     }
@@ -249,9 +248,9 @@ public class SessionManager implements Runnable
         // End session.
         session.setStatus(-1L);
         
-        accountManager.updateLastActiveDate(username);
+        getAccountManager().updateLastActiveDate(username);
         
-        core.log(Level.FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
+        log(Level.FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
         
         return true;
     }
@@ -318,9 +317,6 @@ public class SessionManager implements Runnable
             }
         }
     }
-    
-    private final LogItCore core;
-    private final AccountManager accountManager;
     
     private final ConcurrentHashMap<String, Session> sessions = new ConcurrentHashMap<>();
 }

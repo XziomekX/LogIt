@@ -19,11 +19,13 @@
 package io.github.lucaseasedup.logit.listener;
 
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
+import org.bukkit.event.Listener;
 
 /**
  * @author LucasEasedUp
  */
-public class AccountEventListener extends EventListener
+public class AccountEventListener extends LogItCoreObject implements Listener
 {
     public AccountEventListener(LogItCore core)
     {

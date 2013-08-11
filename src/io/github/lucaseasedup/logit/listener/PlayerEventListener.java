@@ -29,6 +29,7 @@ import static org.bukkit.event.EventPriority.LOWEST;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_FULL;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.inventory.InventorySerializationException;
 import java.util.List;
 import java.util.logging.Level;
@@ -36,6 +37,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -52,7 +54,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 /**
  * @author LucasEasedUp
  */
-public class PlayerEventListener extends EventListener
+public class PlayerEventListener extends LogItCoreObject implements Listener
 {
     public PlayerEventListener(LogItCore core)
     {
@@ -158,7 +160,7 @@ public class PlayerEventListener extends EventListener
             }
             catch (InventorySerializationException ex)
             {
-                core.log(Level.WARNING, "Could not deposit player's inventory.", ex);
+                log(Level.WARNING, "Could not deposit player's inventory.", ex);
             }
         }
         
@@ -210,7 +212,7 @@ public class PlayerEventListener extends EventListener
         }
         catch (InventorySerializationException ex)
         {
-            core.log(Level.WARNING, "Could not withdraw player's inventory.", ex);
+            log(Level.WARNING, "Could not withdraw player's inventory.", ex);
         }
         
         if (core.getConfig().getBoolean("waiting-room.enabled"))
@@ -232,7 +234,7 @@ public class PlayerEventListener extends EventListener
         }
         catch (InventorySerializationException ex)
         {
-            core.log(Level.WARNING, "Could not withdraw player's inventory.", ex);
+            log(Level.WARNING, "Could not withdraw player's inventory.", ex);
         }
         
         if (core.getConfig().getBoolean("waiting-room.enabled"))

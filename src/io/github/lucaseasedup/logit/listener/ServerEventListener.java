@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.listener;
 
 import static org.bukkit.event.EventPriority.HIGHEST;
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.inventory.InventorySerializationException;
 import java.io.File;
 import java.sql.SQLException;
@@ -27,13 +28,14 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 
 /**
  * @author LucasEasedUp
  */
-public class ServerEventListener extends EventListener
+public class ServerEventListener extends LogItCoreObject implements Listener
 {
     public ServerEventListener(LogItCore core)
     {
@@ -55,7 +57,7 @@ public class ServerEventListener extends EventListener
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, "Could not import sessions.", ex);
+            log(Level.WARNING, "Could not import sessions.", ex);
         }
         
         sessions.delete();
@@ -76,7 +78,7 @@ public class ServerEventListener extends EventListener
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, "Could not export sessions.", ex);
+            log(Level.WARNING, "Could not export sessions.", ex);
         }
         
         Player[] players = Bukkit.getOnlinePlayers();
@@ -94,7 +96,7 @@ public class ServerEventListener extends EventListener
             }
             catch (InventorySerializationException ex)
             {
-                core.log(Level.WARNING, "Could not withdraw player's inventory.", ex);
+                log(Level.WARNING, "Could not withdraw player's inventory.", ex);
             }
         }
         

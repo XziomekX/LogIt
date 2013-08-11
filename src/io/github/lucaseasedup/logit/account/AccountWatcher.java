@@ -19,45 +19,42 @@
 package io.github.lucaseasedup.logit.account;
 
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.util.Collections;
 import java.util.Set;
 
 /**
  * @author LucasEasedUp
  */
-public class AccountWatcher implements Runnable
+public class AccountWatcher extends LogItCoreObject implements Runnable
 {
-    public AccountWatcher(LogItCore core, AccountManager accountManager)
+    public AccountWatcher(LogItCore core)
     {
-        this.core = core;
-        this.accountManager = accountManager;
+        super(core);
     }
     
     @Override
     public void run()
     {
-        if (core.getConfig().getInt("crowd-control.days-of-absence-to-unregister") < 0)
+        if (getConfig().getInt("crowd-control.days-of-absence-to-unregister") < 0)
             return;
         
-        Set<String> usernames = Collections.synchronizedSet(accountManager.getRegisteredUsernames());
+        Set<String> usernames = Collections.synchronizedSet(getAccountManager().getRegisteredUsernames());
         int now = (int) (System.currentTimeMillis() / 1000L);
         
         for (String username : usernames)
         {
-            int lastActiveDate = accountManager.getLastActiveDate(username);
+            int lastActiveDate = getAccountManager().getLastActiveDate(username);
             
             if (lastActiveDate == 0)
                 continue;
             
             int absenceTime = (now - lastActiveDate);
             
-            if (absenceTime >= (core.getConfig().getInt("crowd-control.days-of-absence-to-unregister") * 86400))
+            if (absenceTime >= (getConfig().getInt("crowd-control.days-of-absence-to-unregister") * 86400))
             {
-                accountManager.removeAccount(username);
+                getAccountManager().removeAccount(username);
             }
         }
     }
-    
-    private final LogItCore core;
-    private final AccountManager accountManager;
 }

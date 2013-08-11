@@ -102,7 +102,7 @@ public final class LogItCore
         
         new File(plugin.getDataFolder(), "lib").mkdir();
         
-        config = new LogItConfiguration(plugin);
+        config = new LogItConfiguration(this);
         
         try
         {
@@ -260,9 +260,9 @@ public final class LogItCore
             ReportedException.decrementRequestCount();
         }
         
-        accountWatcher = new AccountWatcher(this, accountManager);
-        backupManager  = new BackupManager(this, accountTable);
-        sessionManager = new SessionManager(this, accountManager);
+        accountWatcher = new AccountWatcher(this);
+        backupManager  = new BackupManager(this);
+        sessionManager = new SessionManager(this);
         
         if (!accountTable.isColumnDisabled("logit.accounts.email"))
         {
@@ -314,7 +314,7 @@ public final class LogItCore
         }
         
         inventoryDepository = new InventoryDepository(this, inventoryDatabase);
-        waitingRoom = new WaitingRoom(this, accountManager);
+        waitingRoom = new WaitingRoom(this);
         tickEventCaller = new TickEventCaller();
         
         pingerTaskId          = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, pinger, 0L, 2400L);
@@ -801,6 +801,11 @@ public final class LogItCore
         {
             log(level, message + " [Unknown exception stack trace]");
         }
+    }
+    
+    public boolean isConfigLoaded()
+    {
+        return config.isLoaded();
     }
     
     public Table getAccountTable()

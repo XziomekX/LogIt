@@ -19,8 +19,10 @@
 package io.github.lucaseasedup.logit.listener;
 
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
@@ -30,7 +32,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 /**
  * @author LucasEasedUp
  */
-public class EntityEventListener extends EventListener
+public class EntityEventListener extends LogItCoreObject implements Listener
 {
     public EntityEventListener(LogItCore core)
     {

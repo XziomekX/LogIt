@@ -20,13 +20,15 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 /**
  * @author LucasEasedUp
  */
-public class DisabledCommandExecutor extends AbstractCommandExecutor
+public class DisabledCommandExecutor extends LogItCoreObject implements CommandExecutor
 {
     public DisabledCommandExecutor(LogItCore core)
     {

@@ -47,22 +47,20 @@ import org.bukkit.util.Vector;
  */
 public final class LogItConfiguration extends PropertyObserver
 {
-    public LogItConfiguration(LogItPlugin plugin)
+    public LogItConfiguration(LogItCore core)
     {
-        super(plugin.getCore());
-        
-        this.plugin = plugin;
+        super(core);
     }
     
     public void load() throws IOException
     {
-        plugin.reloadConfig();
-        plugin.getConfig().options().header(
+        getPlugin().reloadConfig();
+        getPlugin().getConfig().options().header(
              "# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #\n"
            + "Visit http://dev.bukkit.org/bukkit-plugins/logit/pages/configuration-v0-4-8-5/ for help in configuring LogIt. #\n"
            + "# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #\n");
         
-        File userDefFile = new File(plugin.getDataFolder(), USER_CONFIG_DEF);
+        File userDefFile = new File(getDataFolder(), USER_CONFIG_DEF);
         
         if (!userDefFile.exists())
         {
@@ -88,11 +86,13 @@ public final class LogItConfiguration extends PropertyObserver
         
         loadConfigDef(userDef);
         save();
+        
+        loaded = true;
     }
     
     public void save()
     {
-        plugin.saveConfig();
+        getPlugin().saveConfig();
     }
     
     public Map<String, Property> getProperties()
@@ -122,7 +122,7 @@ public final class LogItConfiguration extends PropertyObserver
     
     public ConfigurationSection getConfigurationSection(String path)
     {
-        return plugin.getConfig().getConfigurationSection(path);
+        return getPlugin().getConfig().getConfigurationSection(path);
     }
     
     public Object get(String path)
@@ -190,16 +190,21 @@ public final class LogItConfiguration extends PropertyObserver
     @Override
     public void update(Property p)
     {
-        plugin.getConfig().set(p.getPath(), p.getValue());
-        plugin.saveConfig();
+        getPlugin().getConfig().set(p.getPath(), p.getValue());
+        getPlugin().saveConfig();
         
-        plugin.getLogger().log(Level.INFO, LogItPlugin.getMessage("CONFIG_PROPERTY_SET_LOG", new String[]{
+        log(Level.INFO, LogItPlugin.getMessage("CONFIG_PROPERTY_SET_LOG", new String[]{
             "%path%", p.getPath(),
             "%value%", p.toString(),
         }));
     }
     
-    protected void addProperty(String path,
+    public boolean isLoaded()
+    {
+        return loaded;
+    }
+    
+    private void addProperty(String path,
                                PropertyType type,
                                boolean requiresRestart,
                                Object defaultValue,
@@ -207,7 +212,7 @@ public final class LogItConfiguration extends PropertyObserver
                                PropertyObserver obs)
     {
         Property property =
-                new Property(path, type, requiresRestart, plugin.getConfig().get(path, defaultValue), validator);
+                new Property(path, type, requiresRestart, getPlugin().getConfig().get(path, defaultValue), validator);
         
         if (obs != null)
         {
@@ -216,11 +221,11 @@ public final class LogItConfiguration extends PropertyObserver
         
         property.addObserver(this);
         
-        plugin.getConfig().set(property.getPath(), property.getValue());
+        getPlugin().getConfig().set(property.getPath(), property.getValue());
         properties.put(property.getPath(), property);
     }
     
-    protected void addProperty(String path,
+    private void addProperty(String path,
                                PropertyType type,
                                boolean requiresRestart,
                                Object defaultValue,
@@ -229,7 +234,7 @@ public final class LogItConfiguration extends PropertyObserver
         addProperty(path, type, requiresRestart, defaultValue, null, obs);
     }
     
-    protected void addProperty(String path,
+    private void addProperty(String path,
                                PropertyType type,
                                boolean requiresRestart,
                                Object defaultValue,
@@ -238,7 +243,7 @@ public final class LogItConfiguration extends PropertyObserver
         addProperty(path, type, requiresRestart, defaultValue, validator, null);
     }
     
-    protected void addProperty(String path,
+    private void addProperty(String path,
                                PropertyType type,
                                boolean requiresRestart,
                                Object defaultValue)
@@ -264,10 +269,10 @@ public final class LogItConfiguration extends PropertyObserver
             {
                 if (!oldDef.getString(uuid, "path").equals(newDef.getString(uuid, "path")))
                 {
-                    Object val = plugin.getConfig().get(oldDef.getString(uuid, "path"));
+                    Object val = getPlugin().getConfig().get(oldDef.getString(uuid, "path"));
                     
-                    plugin.getConfig().set(oldDef.getString(uuid, "path"), null);
-                    plugin.getConfig().set(newDef.getString(uuid, "path"), val);
+                    getPlugin().getConfig().set(oldDef.getString(uuid, "path"), null);
+                    getPlugin().getConfig().set(newDef.getString(uuid, "path"), val);
                     
                     oldDef.putString(uuid, "path", newDef.getString(uuid, "path"));
                 }
@@ -303,7 +308,7 @@ public final class LogItConfiguration extends PropertyObserver
         {
             if (!newDef.hasSection(uuid))
             {
-                plugin.getConfig().set(oldDef.getString(uuid, "path"), null);
+                getPlugin().getConfig().set(oldDef.getString(uuid, "path"), null);
                 
                 oldDef.removeSection(uuid);
             }
@@ -313,7 +318,7 @@ public final class LogItConfiguration extends PropertyObserver
         
         oldDef.save(baos);
         
-        try (FileOutputStream fos = new FileOutputStream(new File(plugin.getDataFolder(), USER_CONFIG_DEF)))
+        try (FileOutputStream fos = new FileOutputStream(new File(getDataFolder(), USER_CONFIG_DEF)))
         {
             fos.write(encodeConfigDef(baos.toString()).getBytes());
         }
@@ -340,7 +345,7 @@ public final class LogItConfiguration extends PropertyObserver
             }
             catch (IllegalArgumentException ex)
             {
-                plugin.getLogger().log(Level.WARNING, "Unknown property type: " + typeString);
+                log(Level.WARNING, "Unknown property type: " + typeString);
                 
                 continue;
             }
@@ -447,8 +452,7 @@ public final class LogItConfiguration extends PropertyObserver
             }
             catch (ReflectiveOperationException ex)
             {
-                plugin.getLogger().log(Level.WARNING,
-                        "Invalid property validator: " + validatorClassName + ".", ex);
+                log(Level.WARNING, "Invalid property validator: " + validatorClassName + ".", ex);
                 
                 continue;
             }
@@ -463,12 +467,12 @@ public final class LogItConfiguration extends PropertyObserver
                     Class<PropertyObserver> observerClass =
                             (Class<PropertyObserver>) Class.forName(observerClassName);
                     
-                    observer = observerClass.getConstructor(LogItCore.class).newInstance(plugin.getCore());
+                    observer = observerClass.getConstructor(LogItCore.class).newInstance(getCore());
                 }
             }
             catch (ReflectiveOperationException ex)
             {
-                plugin.getLogger().log(Level.WARNING,
+                getPlugin().getLogger().log(Level.WARNING,
                         "Invalid property observer: " + observerClassName + ".", ex);
                 
                 continue;
@@ -491,6 +495,6 @@ public final class LogItConfiguration extends PropertyObserver
     public static final String USER_CONFIG_DEF = "config-def.b64";
     public static final String PACKAGE_CONFIG_DEF = "/config-def.b64";
     
-    private final LogItPlugin plugin;
+    private boolean loaded = false;
     private final Map<String, Property> properties = new LinkedHashMap<>();
 }

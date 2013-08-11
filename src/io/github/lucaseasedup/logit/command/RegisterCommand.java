@@ -24,15 +24,17 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
  * @author LucasEasedUp
  */
-public class RegisterCommand extends AbstractCommandExecutor
+public class RegisterCommand extends LogItCoreObject implements CommandExecutor
 {
     public RegisterCommand(LogItCore core)
     {

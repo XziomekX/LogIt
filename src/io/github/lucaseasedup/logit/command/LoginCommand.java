@@ -23,16 +23,18 @@ import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
  * @author LucasEasedUp
  */
-public class LoginCommand extends AbstractCommandExecutor
+public class LoginCommand extends LogItCoreObject implements CommandExecutor
 {
     public LoginCommand(LogItCore core)
     {

@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit.command;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.FatalReportedException;
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyType;
@@ -30,6 +31,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import org.bukkit.Color;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -37,7 +39,7 @@ import org.bukkit.util.Vector;
 /**
  * @author LucasEasedUp
  */
-public class LogItCommand extends AbstractCommandExecutor
+public class LogItCommand extends LogItCoreObject implements CommandExecutor
 {
     public LogItCommand(LogItCore core)
     {
@@ -193,7 +195,7 @@ public class LogItCommand extends AbstractCommandExecutor
                             sender.sendMessage(getMessage("CREATE_BACKUP_SUCCESS"));
                         }
                         
-                        core.log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS"));
+                        log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS"));
                     }
                     catch (ReportedException ex)
                     {
@@ -243,7 +245,7 @@ public class LogItCommand extends AbstractCommandExecutor
                             sender.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS"));
                         }
                         
-                        core.log(Level.INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
+                        log(Level.INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
                     }
                     catch (ReportedException | FileNotFoundException ex)
                     {
@@ -304,7 +306,7 @@ public class LogItCommand extends AbstractCommandExecutor
                 core.getConfig().save();
                 
                 p.sendMessage(getMessage("WAITING_ROOM_SET"));
-                core.log(Level.INFO, getMessage("WAITING_ROOM_SET"));
+                log(Level.INFO, getMessage("WAITING_ROOM_SET"));
             }
         }
         else if (subcommand.equalsIgnoreCase("gotowr") && args.length == 1)

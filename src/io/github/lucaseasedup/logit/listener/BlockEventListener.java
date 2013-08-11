@@ -20,15 +20,17 @@ package io.github.lucaseasedup.logit.listener;
 
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendForceLoginMessage;
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 /**
  * @author LucasEasedUp
  */
-public class BlockEventListener extends EventListener
+public class BlockEventListener extends LogItCoreObject implements Listener
 {
     public BlockEventListener(LogItCore core)
     {

@@ -22,14 +22,16 @@ import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
  * @author LucasEasedUp
  */
-public class LogoutCommand extends AbstractCommandExecutor
+public class LogoutCommand extends LogItCoreObject implements CommandExecutor
 {
     public LogoutCommand(LogItCore core)
     {

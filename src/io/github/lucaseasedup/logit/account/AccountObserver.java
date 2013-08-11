@@ -18,10 +18,30 @@
  */
 package io.github.lucaseasedup.logit.account;
 
+import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.config.Property;
+import java.util.Observable;
+import java.util.Observer;
+
 /**
  * @author LucasEasedUp
  */
-public interface AccountObserver
+public abstract class AccountObserver extends LogItCoreObject implements Observer
 {
-    public void update(Account account, String propertyChanged);
+    public AccountObserver(LogItCore core)
+    {
+        super(core);
+    }
+    
+    @Override
+    public void update(Observable o, Object arg)
+    {
+        if (o instanceof Property && arg instanceof String)
+        {
+            update((Property) o, (String) arg);
+        }
+    }
+    
+    public abstract void update(Account account, String propertyChanged);
 }

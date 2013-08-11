@@ -22,6 +22,7 @@ import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
 import io.github.lucaseasedup.logit.LogItCore.IntegrationType;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.db.Table;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
@@ -44,11 +45,12 @@ import org.bukkit.Location;
 /**
  * @author LucasEasedUp
  */
-public class AccountManager
+public final class AccountManager extends LogItCoreObject
 {
     public AccountManager(LogItCore core, Table accounts)
     {
-        this.core = core;
+        super(core);
+        
         this.table = accounts;
     }
     
@@ -108,11 +110,11 @@ public class AccountManager
         {
             accountMap.put(username, new Account(table, m));
             
-            core.log(Level.FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
+            log(Level.FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
+            log(Level.WARNING, getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
             
             ReportedException.throwNew(ex);
         }
@@ -147,11 +149,11 @@ public class AccountManager
         {
             accountMap.remove(username);
             
-            core.log(Level.FINE, getMessage("REMOVE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
+            log(Level.FINE, getMessage("REMOVE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
+            log(Level.WARNING, getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
             
             ReportedException.throwNew(ex);
         }
@@ -231,11 +233,11 @@ public class AccountManager
             account.update("logit.accounts.password", newHash);
             account.update("logit.accounts.hashing_algorithm", algorithm.encode());
             
-            core.log(Level.FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
+            log(Level.FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username), ex);
+            log(Level.WARNING, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username), ex);
             
             ReportedException.throwNew(ex);
         }
@@ -268,11 +270,11 @@ public class AccountManager
         {
             account.update("logit.accounts.email", newEmail);
             
-            core.log(Level.FINE, getMessage("CHANGE_EMAIL_SUCCESS_LOG").replace("%player%", username));
+            log(Level.FINE, getMessage("CHANGE_EMAIL_SUCCESS_LOG").replace("%player%", username));
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, getMessage("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username), ex);
+            log(Level.WARNING, getMessage("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username), ex);
             
             ReportedException.throwNew(ex);
         }
@@ -322,12 +324,12 @@ public class AccountManager
             
             account.update("logit.accounts.ip", ip);
             
-            core.log(Level.FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username)
+            log(Level.FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username)
                     .replace("%ip%", ip));
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username)
+            log(Level.WARNING, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username)
                     .replace("%ip%", ip), ex);
             
             ReportedException.throwNew(ex);
@@ -383,7 +385,7 @@ public class AccountManager
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, "Could not update last-active date.", ex);
+            log(Level.WARNING, "Could not update last-active date.", ex);
             
             ReportedException.throwNew(ex);
         }
@@ -417,7 +419,7 @@ public class AccountManager
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, "Could not update persistance: " + key + ".", ex);
+            log(Level.WARNING, "Could not update persistance: " + key + ".", ex);
             
             ReportedException.throwNew(ex);
         }
@@ -441,7 +443,7 @@ public class AccountManager
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, "Could not update player persistence location.", ex);
+            log(Level.WARNING, "Could not update player persistence location.", ex);
             
             ReportedException.throwNew(ex);
         }
@@ -529,18 +531,17 @@ public class AccountManager
             
             accountMap = new AccountMap(table, loadedAccounts);
             
-            core.log(Level.FINE, getMessage("LOAD_ACCOUNTS_SUCCESS")
+            log(Level.FINE, getMessage("LOAD_ACCOUNTS_SUCCESS")
                     .replace("%num%", String.valueOf(accountMap.size())));
         }
         catch (SQLException ex)
         {
-            core.log(Level.WARNING, getMessage("LOAD_ACCOUNTS_FAIL"), ex);
+            log(Level.WARNING, getMessage("LOAD_ACCOUNTS_FAIL"), ex);
             
             ReportedException.throwNew(ex);
         }
     }
     
-    private final LogItCore core;
     private final Table table;
     private AccountMap accountMap = null;
 }

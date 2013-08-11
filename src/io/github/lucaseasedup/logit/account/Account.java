@@ -28,13 +28,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Vector;
+import java.util.Observable;
 import org.bukkit.Bukkit;
 
 /**
  * @author LucasEasedUp
  */
-public final class Account
+public final class Account extends Observable
 {
     public Account(Table table, Map<String, String> initialData) throws SQLException
     {
@@ -145,49 +145,7 @@ public final class Account
         return data.size();
     }
     
-    public synchronized void addObserver(AccountObserver o)
-    {
-        if (o == null)
-            throw new NullPointerException();
-        
-        if (!obs.contains(o))
-        {
-            obs.addElement(o);
-        }
-    }
-    
-    public synchronized void deleteObserver(AccountObserver o)
-    {
-        obs.removeElement(o);
-    }
-    
-    public synchronized void deleteObservers()
-    {
-        obs.removeAllElements();
-    }
-    
-    public synchronized int countObservers()
-    {
-        return obs.size();
-    }
-    
-    protected final void notifyObservers(String property)
-    {
-        Object[] observers;
-        
-        synchronized (this)
-        {
-            observers = obs.toArray(); 
-        }
-        
-        for (int i = 0; i < observers.length; i++)
-        {
-            ((AccountObserver) observers[i]).update(this, property);
-        }
-    }
-    
     private final Map<String, String> data;
     private Map<String, String> persistence = null;
     private final Table table;
-    private final Vector<AccountObserver> obs = new Vector<>();
 }

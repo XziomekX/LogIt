@@ -38,7 +38,7 @@ import java.util.logging.Level;
  * 
  * @author LucasEasedUp
  */
-public class BackupManager implements Runnable
+public final class BackupManager extends LogItCoreObject implements Runnable
 {
     /**
      * Sets up a new backup manager.
@@ -46,28 +46,27 @@ public class BackupManager implements Runnable
      * @param core The LogIt core.
      * @param accounts Account table.
      */
-    public BackupManager(LogItCore core, Table accounts)
+    public BackupManager(LogItCore core)
     {
+        super(core);
+        
         timer = new Timer(40L);
         timer.start();
-        
-        this.core = core;
-        this.accounts = accounts;
     }
     
     @Override
     public void run()
     {
-        if (!core.getConfig().getBoolean("backup.schedule.enabled"))
+        if (!getConfig().getBoolean("backup.schedule.enabled"))
             return;
         
         timer.run();
         
-        if (timer.getElapsed() >= (core.getConfig().getInt("backup.schedule.interval") * 60L * 20L))
+        if (timer.getElapsed() >= (getConfig().getInt("backup.schedule.interval") * 60L * 20L))
         {
             createBackup();
             
-            core.log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS"));
+            log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS"));
             
             timer.reset();
         }
@@ -75,8 +74,8 @@ public class BackupManager implements Runnable
     
     public void createBackup()
     {
-        SimpleDateFormat sdf = new SimpleDateFormat(core.getConfig().getString("backup.filename-format"));
-        File backupPath = new File(core.getPlugin().getDataFolder(), core.getConfig().getString("backup.path"));
+        SimpleDateFormat sdf = new SimpleDateFormat(getConfig().getString("backup.filename-format"));
+        File backupPath = new File(getDataFolder(), getConfig().getString("backup.path"));
         File backupFile = new File(backupPath, sdf.format(new Date()));
         
         backupPath.mkdir();
@@ -90,11 +89,11 @@ public class BackupManager implements Runnable
             {
                 backupDatabase.connect();
                 
-                Table backupTable = new Table(backupDatabase, accounts.getTableName(),
-                        core.getConfig().getConfigurationSection("storage.accounts.columns"));
+                Table backupTable = new Table(backupDatabase, getAccountManager().getTable().getTableName(),
+                        getConfig().getConfigurationSection("storage.accounts.columns"));
                 backupTable.open();
                 
-                List<Map<String, String>> rs = accounts.select();
+                List<Map<String, String>> rs = getAccountManager().getTable().select();
                 
                 for (Map<String, String> m : rs)
                 {
@@ -116,7 +115,7 @@ public class BackupManager implements Runnable
         }
         catch (IOException | SQLException ex)
         {
-            core.log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"), ex);
+            log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"), ex);
             
             ReportedException.throwNew(ex);
         }
@@ -132,18 +131,18 @@ public class BackupManager implements Runnable
             {
                 backupDatabase.connect();
                 
-                Table backupTable = new Table(backupDatabase, accounts.getTableName(),
-                        core.getConfig().getConfigurationSection("storage.accounts.columns"));
+                Table backupTable = new Table(backupDatabase, getAccountManager().getTable().getTableName(),
+                        getConfig().getConfigurationSection("storage.accounts.columns"));
                 backupTable.open();
                 
                 // Clear the table before restoring.
-                accounts.truncate();
+                getAccountManager().getTable().truncate();
                 
                 List<Map<String, String>> rs = backupTable.select();
                 
                 for (Map<String, String> m : rs)
                 {
-                    accounts.insert(new String[]{
+                    getAccountManager().getTable().insert(new String[]{
                         "logit.accounts.username",
                         "logit.accounts.salt",
                         "logit.accounts.password",
@@ -161,7 +160,7 @@ public class BackupManager implements Runnable
         }
         catch (FileNotFoundException | SQLException ex)
         {
-            core.log(Level.WARNING, getMessage("RESTORE_BACKUP_FAIL"), ex);
+            log(Level.WARNING, getMessage("RESTORE_BACKUP_FAIL"), ex);
             
             ReportedException.throwNew(ex);
         }
@@ -184,12 +183,12 @@ public class BackupManager implements Runnable
             }
         }
         
-        core.log(Level.INFO, getMessage("REMOVE_BACKUPS_SUCCESS"));
+        log(Level.INFO, getMessage("REMOVE_BACKUPS_SUCCESS"));
     }
     
     public File[] getBackups(boolean sortAlphabetically)
     {
-        File   backupPath = new File(core.getPlugin().getDataFolder(), core.getConfig().getString("backup.path"));
+        File   backupPath = new File(getDataFolder(), getConfig().getString("backup.path"));
         File[] backups = backupPath.listFiles();
         
         if (backups == null)
@@ -212,7 +211,7 @@ public class BackupManager implements Runnable
      */
     public File getBackup(String filename) throws FileNotFoundException
     {
-        File backupPath = new File(core.getPlugin().getDataFolder(), core.getConfig().getString("backup.path"));
+        File backupPath = new File(getDataFolder(), getConfig().getString("backup.path"));
         File backup = new File(backupPath, filename);
         
         if (!backup.exists())
@@ -221,7 +220,5 @@ public class BackupManager implements Runnable
         return backup;
     }
     
-    private final LogItCore core;
-    private final Table accounts;
     private final Timer timer;
 }

@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.inventory;
 
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.LogItPlugin;
 import io.github.lucaseasedup.logit.craftreflect.CraftInventoryCustom;
 import io.github.lucaseasedup.logit.craftreflect.CraftReflect;
@@ -54,11 +55,12 @@ import org.jnbt.Tag;
 /**
  * @author LucasEasedUp
  */
-public class InventoryDepository
+public class InventoryDepository extends LogItCoreObject
 {
     public InventoryDepository(LogItCore core, Database inventoryDatabase)
     {
-        this.core = core;
+        super(core);
+        
         this.inventoryDatabase = inventoryDatabase;
     }
     
@@ -295,7 +297,6 @@ public class InventoryDepository
         return (Inventory) storage.o;
     }
     
-    private final LogItCore core;
     private final Database inventoryDatabase;
     private final List<Player> players = new ArrayList<>();
 }

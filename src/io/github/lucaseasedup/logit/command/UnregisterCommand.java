@@ -21,15 +21,17 @@ package io.github.lucaseasedup.logit.command;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
  * @author LucasEasedUp
  */
-public class UnregisterCommand extends AbstractCommandExecutor
+public class UnregisterCommand extends LogItCoreObject implements CommandExecutor
 {
     public UnregisterCommand(LogItCore core)
     {

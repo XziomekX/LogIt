@@ -19,15 +19,17 @@
 package io.github.lucaseasedup.logit.listener;
 
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 /**
  * @author LucasEasedUp
  */
-public class TickEventListener extends EventListener
+public class TickEventListener extends LogItCoreObject implements Listener
 {
     public TickEventListener(LogItCore core)
     {

@@ -20,15 +20,17 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
  * @author LucasEasedUp
  */
-public class RecoverPassCommand extends AbstractCommandExecutor
+public class RecoverPassCommand extends LogItCoreObject implements CommandExecutor
 {
     public RecoverPassCommand(LogItCore core)
     {

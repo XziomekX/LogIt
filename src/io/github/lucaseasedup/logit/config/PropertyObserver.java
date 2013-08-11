@@ -19,17 +19,18 @@
 package io.github.lucaseasedup.logit.config;
 
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.util.Observable;
 import java.util.Observer;
 
 /**
  * @author LucasEasedUp
  */
-public abstract class PropertyObserver implements Observer
+public abstract class PropertyObserver extends LogItCoreObject implements Observer
 {
     public PropertyObserver(LogItCore core)
     {
-        this.core = core;
+        super(core);
     }
     
     @Override
@@ -42,6 +43,4 @@ public abstract class PropertyObserver implements Observer
     }
     
     public abstract void update(Property p);
-    
-    protected final LogItCore core;
 }

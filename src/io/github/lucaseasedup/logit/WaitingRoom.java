@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit;
 
-import io.github.lucaseasedup.logit.account.AccountManager;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -31,12 +30,11 @@ import org.bukkit.util.Vector;
 /**
  * @author LucasEasedUp
  */
-public class WaitingRoom
+public final class WaitingRoom extends LogItCoreObject
 {
-    public WaitingRoom(LogItCore core, AccountManager accountManager)
+    public WaitingRoom(LogItCore core)
     {
-        this.core = core;
-        this.accountManager = accountManager;
+        super(core);
     }
     
     /**
@@ -51,18 +49,18 @@ public class WaitingRoom
         if (contains(player))
             return;
         
-        if (accountManager.isRegistered(player.getName()))
+        if (getAccountManager().isRegistered(player.getName()))
         {
             try
             {
                 ReportedException.incrementRequestCount();
                 
-                accountManager.updatePersistenceLocation(player.getName(), player.getLocation());
-                accountManager.updatePersistence(player.getName(), "waiting_room", "1");
+                getAccountManager().updatePersistenceLocation(player.getName(), player.getLocation());
+                getAccountManager().updatePersistence(player.getName(), "waiting_room", "1");
             }
             catch (ReportedException ex)
             {
-                core.log(Level.WARNING, "Could not update player waiting-room status.", ex);
+                log(Level.WARNING, "Could not update player waiting-room status.", ex);
                 
                 ex.rethrow();
             }
@@ -88,11 +86,11 @@ public class WaitingRoom
         if (!contains(player))
             return;
         
-        if (accountManager.isRegistered(player.getName()))
+        if (getAccountManager().isRegistered(player.getName()))
         {
-            player.teleport(accountManager.getPersistenceLocation(player.getName()));
+            player.teleport(getAccountManager().getPersistenceLocation(player.getName()));
             
-            accountManager.updatePersistence(player.getName(), "waiting_room", "0");
+            getAccountManager().updatePersistence(player.getName(), "waiting_room", "0");
         }
         
         players.remove(player);
@@ -114,9 +112,9 @@ public class WaitingRoom
      */
     public boolean contains(Player player)
     {
-        if (accountManager.isRegistered(player.getName()))
+        if (getAccountManager().isRegistered(player.getName()))
         {
-            return "1".equals(accountManager.getPersistence(player.getName(), "waiting_room"));
+            return "1".equals(getAccountManager().getPersistence(player.getName(), "waiting_room"));
         }
         else
         {
@@ -126,39 +124,37 @@ public class WaitingRoom
     
     public Location getWaitingRoomLocation()
     {
-        World  world = Bukkit.getServer().getWorld(core.getConfig().getString("waiting-room.location.world"));
-        double x = core.getConfig().getVector("waiting-room.location.position").getX();
-        double y = core.getConfig().getVector("waiting-room.location.position").getY();
-        double z = core.getConfig().getVector("waiting-room.location.position").getZ();
-        float  yaw = (float) core.getConfig().getDouble("waiting-room.location.yaw");
-        float  pitch = (float) core.getConfig().getDouble("waiting-room.location.pitch");
+        World  world = Bukkit.getServer().getWorld(getConfig().getString("waiting-room.location.world"));
+        double x = getConfig().getVector("waiting-room.location.position").getX();
+        double y = getConfig().getVector("waiting-room.location.position").getY();
+        double z = getConfig().getVector("waiting-room.location.position").getZ();
+        float  yaw = (float) getConfig().getDouble("waiting-room.location.yaw");
+        float  pitch = (float) getConfig().getDouble("waiting-room.location.pitch");
         
         return new Location(world, x, y, z, yaw, pitch);
     }
     
     public void setWaitingRoomLocation(Location location)
     {
-        core.getConfig().set("waiting-room.location.world", location.getWorld().getName());
-        core.getConfig().set("waiting-room.location.position",
+        getConfig().set("waiting-room.location.world", location.getWorld().getName());
+        getConfig().set("waiting-room.location.position",
                 new Vector(location.getX(), location.getY(), location.getZ()));
-        core.getConfig().set("waiting-room.location.yaw", (double) location.getYaw());
-        core.getConfig().set("waiting-room.location.pitch", (double) location.getPitch());
+        getConfig().set("waiting-room.location.yaw", (double) location.getYaw());
+        getConfig().set("waiting-room.location.pitch", (double) location.getPitch());
     }
     
     public Location getNewbieTeleportLocation()
     {
-        String worldName = core.getConfig().getString("waiting-room.newbie-teleport.location.world");
+        String worldName = getConfig().getString("waiting-room.newbie-teleport.location.world");
         World  world = Bukkit.getServer().getWorld(worldName);
-        double x = core.getConfig().getVector("waiting-room.newbie-teleport.location.position").getX();
-        double y = core.getConfig().getVector("waiting-room.newbie-teleport.location.position").getY();
-        double z = core.getConfig().getVector("waiting-room.newbie-teleport.location.position").getZ();
-        float  yaw = (float) core.getConfig().getDouble("waiting-room.newbie-teleport.location.yaw");
-        float  pitch = (float) core.getConfig().getDouble("waiting-room.newbie-teleport.location.pitch");
+        double x = getConfig().getVector("waiting-room.newbie-teleport.location.position").getX();
+        double y = getConfig().getVector("waiting-room.newbie-teleport.location.position").getY();
+        double z = getConfig().getVector("waiting-room.newbie-teleport.location.position").getZ();
+        float  yaw = (float) getConfig().getDouble("waiting-room.newbie-teleport.location.yaw");
+        float  pitch = (float) getConfig().getDouble("waiting-room.newbie-teleport.location.pitch");
         
         return new Location(world, x, y, z, yaw, pitch);
     }
     
-    private final LogItCore core;
-    private final AccountManager accountManager;
     private final Set<Player> players = new HashSet<>();
 }

@@ -24,17 +24,19 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static org.bukkit.event.EventPriority.LOWEST;
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.inventory.InventorySerializationException;
 import io.github.lucaseasedup.logit.session.SessionEndEvent;
 import io.github.lucaseasedup.logit.session.SessionStartEvent;
 import java.util.logging.Level;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 /**
  * @author LucasEasedUp
  */
-public class SessionEventListener extends EventListener
+public class SessionEventListener extends LogItCoreObject implements Listener
 {
     public SessionEventListener(LogItCore core)
     {
@@ -58,7 +60,7 @@ public class SessionEventListener extends EventListener
             }
             catch (InventorySerializationException ex)
             {
-                core.log(Level.WARNING, "Could not withdraw player's inventory.", ex);
+                log(Level.WARNING, "Could not withdraw player's inventory.", ex);
             }
             
             if (core.getConfig().getBoolean("groups.enabled"))
@@ -104,7 +106,7 @@ public class SessionEventListener extends EventListener
                 }
                 catch (InventorySerializationException ex)
                 {
-                    core.log(Level.WARNING, "Could not deposit player's inventory.", ex);
+                    log(Level.WARNING, "Could not deposit player's inventory.", ex);
                 }
             }
             
