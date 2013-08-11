@@ -449,9 +449,9 @@ public final class AccountManager extends LogItCoreObject
         {
             List<Map<String, String>> rs = accountTable.select();
             
-            for (Map<String, String> m : rs)
+            for (Map<String, String> row : rs)
             {
-                String username = m.get("logit.accounts.username");
+                String username = row.get("logit.accounts.username");
                 
                 if (username == null || loadedAccounts.containsKey(username))
                     continue;
@@ -468,9 +468,9 @@ public final class AccountManager extends LogItCoreObject
                 
                 Map<String, String> account = new HashMap<>();
                 
-                for (Entry<String, String> e : m.entrySet())
+                for (Entry<String, String> column : row.entrySet())
                 {
-                    account.put(e.getKey(), e.getValue());
+                    account.put(column.getKey(), column.getValue());
                 }
                 
                 loadedAccounts.put(username, new Account(accountTable, account));
