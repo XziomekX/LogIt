@@ -112,6 +112,8 @@ public final class LogItPlugin extends JavaPlugin
             core = null;
             craftReflect = null;
             prb = null;
+            
+            disable();
         }
     }
     

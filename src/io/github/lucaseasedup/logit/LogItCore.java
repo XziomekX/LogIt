@@ -111,7 +111,6 @@ public final class LogItCore
         catch (IOException ex)
         {
             plugin.getLogger().log(Level.SEVERE, "Could not load the configuration file.", ex);
-            plugin.disable();
             
             FatalReportedException.throwNew(ex);
         }
@@ -141,7 +140,6 @@ public final class LogItCore
         {
             log(Level.SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM")
                     .replace("%ha%", getDefaultHashingAlgorithm().name()));
-            plugin.disable();
             
             FatalReportedException.throwNew();
         }
@@ -211,7 +209,6 @@ public final class LogItCore
                 {
                     log(Level.SEVERE, getMessage("UNKNOWN_STORAGE_TYPE")
                             .replace("%st%", getStorageAccountsDbType().name()));
-                    plugin.disable();
                     
                     FatalReportedException.throwNew();
                 }
@@ -220,7 +217,6 @@ public final class LogItCore
         catch (SQLException ex)
         {
             log(Level.SEVERE, "Could not open database connection.", ex);
-            plugin.disable();
             
             FatalReportedException.throwNew(ex);
         }
@@ -236,7 +232,6 @@ public final class LogItCore
         catch (SQLException ex)
         {
             log(Level.SEVERE, "Could not open account table.", ex);
-            plugin.disable();
             
             FatalReportedException.throwNew(ex);
         }
@@ -251,8 +246,6 @@ public final class LogItCore
         }
         catch (ReportedException ex)
         {
-            plugin.disable();
-            
             ex.rethrowAsFatal();
         }
         finally
@@ -308,7 +301,6 @@ public final class LogItCore
         catch (IOException | SQLException | ReflectiveOperationException ex)
         {
             log(Level.SEVERE, "Inventories could not be restored.", ex);
-            plugin.disable();
             
             FatalReportedException.throwNew(ex);
         }
