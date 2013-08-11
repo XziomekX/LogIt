@@ -26,14 +26,14 @@ import java.io.IOException;
  */
 public class ImmutableIniFile extends IniFile
 {
-    public ImmutableIniFile(File f) throws IOException
+    public ImmutableIniFile(File file) throws IOException
     {
-        super(f);
+        super(file);
     }
     
-    public ImmutableIniFile(String s)
+    public ImmutableIniFile(String string)
     {
-        super(s);
+        super(string);
     }
     
     public ImmutableIniFile(IniFile ini)

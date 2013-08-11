@@ -46,14 +46,14 @@ public class IniFile
     {
     }
     
-    public IniFile(File f) throws IOException
+    public IniFile(File file) throws IOException
     {
-        loadFromStream(new FileInputStream(f));
+        loadFromStream(new FileInputStream(file));
     }
     
-    public IniFile(String s)
+    public IniFile(String string)
     {
-        loadFromString(s);
+        loadFromString(string);
     }
     
     public IniFile(IniFile ini)
@@ -95,11 +95,11 @@ public class IniFile
     
     public void removeSectionKey(String section, String key)
     {
-        Map<String, String> kv = entries.get(section);
+        Map<String, String> keys = entries.get(section);
         
-        if (kv != null)
+        if (keys != null)
         {
-            kv.remove(key);
+            keys.remove(key);
         }
     }
     
@@ -110,102 +110,60 @@ public class IniFile
     
     public Set<String> getSectionKeys(String section)
     {
-        Map<String, String> kv = entries.get(section);
+        Map<String, String> keys = entries.get(section);
         
-        if (kv == null)
+        if (keys == null)
             return null;
         
-        return ImmutableSet.copyOf(kv.keySet());
+        return ImmutableSet.copyOf(keys.keySet());
     }
     
     public String getString(String section, String key, String defaultValue)
     {
-        Map<String, String> kv = entries.get(section);
+        Map<String, String> keys = entries.get(section);
         
-        if (kv == null)
+        if (keys == null)
             return defaultValue;
         
-        String v = kv.get(key);
+        String value = keys.get(key);
         
-        if (v == null)
+        if (value == null)
             return defaultValue;
         
-        return v;
+        return value;
     }
     
     public String getString(String section, String key)
     {
-        Map<String, String> kv = entries.get(section);
-        
-        if (kv == null)
-            return null;
-        
-        String v = kv.get(key);
-        
-        if (v == null)
-            return null;
-        
-        return v;
+        return getString(section, key, null);
     }
     
     public int getInt(String section, String key, int defaultValue)
     {
-        Map<String, String> kv = entries.get(section);
+        String value = getString(section, key, String.valueOf(defaultValue));
         
-        if (kv == null)
-            return defaultValue;
-
-        String v = kv.get(key);
-        
-        if (v == null)
-            return defaultValue;
-        
-        return Integer.parseInt(kv.get(key));
+        return Integer.parseInt(value);
     }
     
     public float getFloat(String section, String key, float defaultValue)
     {
-        Map<String, String> kv = entries.get(section);
+        String value = getString(section, key, String.valueOf(defaultValue));
         
-        if (kv == null)
-            return defaultValue;
-
-        String v = kv.get(key);
-        
-        if (v == null)
-            return defaultValue;
-        
-        return Float.parseFloat(kv.get(key));
+        return Float.parseFloat(value);
     }
     
     public double getDouble(String section, String key, double defaultValue)
     {
-        Map<String, String> kv = entries.get(section);
+        String value = getString(section, key, String.valueOf(defaultValue));
         
-        if (kv == null)
-            return defaultValue;
-
-        String v = kv.get(key);
-        
-        if (v == null)
-            return defaultValue;
-        
-        return Double.parseDouble(kv.get(key));
+        return Double.parseDouble(value);
     }
     
     public boolean getBoolean(String section, String key, boolean defaultValue)
     {
-        Map<String, String> kv = entries.get(section);
+        String value = getString(section, key, String.valueOf(defaultValue));
         
-        if (kv == null)
-            return defaultValue;
-
-        String v = kv.get(key);
-        
-        if (v == null)
-            return defaultValue;
-        
-        return Boolean.parseBoolean(kv.get(key));
+        return Boolean.parseBoolean(value);
     }
     
     @Override
@@ -265,22 +223,22 @@ public class IniFile
             
             while ((line = br.readLine()) != null)
             {
-                Matcher m = sectionPattern.matcher(line);
+                Matcher matcher = sectionPattern.matcher(line);
                 
-                if (m.matches())
+                if (matcher.matches())
                 {
-                    section = m.group(1).trim();
+                    section = matcher.group(1).trim();
                     
                     entries.put(section, new LinkedHashMap<String, String>());
                 }
                 else if (section != null)
                 {
-                    m = keyValuePattern.matcher(line);
+                    matcher = keyValuePattern.matcher(line);
                     
-                    if (m.matches())
+                    if (matcher.matches())
                     {
-                        String key = m.group(1).trim();
-                        String value = m.group(2).trim();
+                        String key = matcher.group(1).trim();
+                        String value = matcher.group(2).trim();
                         
                         entries.get(section).put(key, value);
                     }
@@ -300,22 +258,22 @@ public class IniFile
             {
                 line = scanner.nextLine();
                 
-                Matcher m = sectionPattern.matcher(line);
+                Matcher matcher = sectionPattern.matcher(line);
                 
-                if (m.matches())
+                if (matcher.matches())
                 {
-                    section = m.group(1).trim();
+                    section = matcher.group(1).trim();
                     
                     entries.put(section, new LinkedHashMap<String, String>());
                 }
                 else if (section != null)
                 {
-                    m = keyValuePattern.matcher(line);
+                    matcher = keyValuePattern.matcher(line);
                     
-                    if (m.matches())
+                    if (matcher.matches())
                     {
-                        String key = m.group(1).trim();
-                        String value = m.group(2).trim();
+                        String key = matcher.group(1).trim();
+                        String value = matcher.group(2).trim();
                         
                         entries.get(section).put(key, value);
                     }
