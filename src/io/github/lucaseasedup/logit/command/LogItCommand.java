@@ -436,7 +436,9 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                     for (int i = 3; i < args.length; i++)
                     {
                         if (!inputValue.isEmpty())
+                        {
                             inputValue += " ";
+                        }
                         
                         inputValue += args[i];
                     }
@@ -494,11 +496,18 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                         case STRING: outputValue = inputValue;                  break;
                         case VECTOR:
                         {
-                            if (inputValue.equals("$") && p != null)
+                            if (inputValue.equals("$"))
                             {
-                                outputValue = new Vector(p.getLocation().getX(),
-                                                         p.getLocation().getY(),
-                                                         p.getLocation().getZ());
+                                if (p != null)
+                                {
+                                    outputValue = new Vector(p.getLocation().getX(),
+                                                             p.getLocation().getY(),
+                                                             p.getLocation().getZ());
+                                }
+                                else
+                                {
+                                    throw new Exception(getMessage("ONLY_PLAYERS"));
+                                }
                             }
                             else
                             {
