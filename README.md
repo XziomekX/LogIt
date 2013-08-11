@@ -2,7 +2,7 @@ LogIt
 =====
 
 Installation steps:
-* Put LogIt.jar and LogIt data folder folder into your server's plugin directory.
+* Put LogIt.jar and LogIt data folder folder into "plugins" directory.
 * Open config.yml located in the LogIt data folder and customize it according to your preference.
 * Restart/reload your server and you're done!
 
