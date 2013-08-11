@@ -367,11 +367,11 @@ public final class LogItCore
     
     public void restart() throws FatalReportedException
     {
-        File sessionFiles = new File(plugin.getDataFolder() + "/" + config.getString("storage.sessions.filename"));
+        File sessionFile = new File(plugin.getDataFolder() + "/" + config.getString("storage.sessions.filename"));
         
         try
         {
-            sessionManager.exportSessions(sessionFiles);
+            sessionManager.exportSessions(sessionFile);
         }
         catch (SQLException ex)
         {
@@ -393,14 +393,14 @@ public final class LogItCore
         
         try
         {
-            sessionManager.importSessions(sessionFiles);
+            sessionManager.importSessions(sessionFile);
         }
         catch (SQLException ex)
         {
             log(Level.WARNING, "Could not import sessions.", ex);
         }
         
-        sessionFiles.delete();
+        sessionFile.delete();
         
         log(Level.INFO, getMessage("RELOADED"));
     }
