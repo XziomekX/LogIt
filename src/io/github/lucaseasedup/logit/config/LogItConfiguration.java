@@ -225,32 +225,6 @@ public final class LogItConfiguration extends PropertyObserver
         properties.put(property.getPath(), property);
     }
     
-    private void addProperty(String path,
-                               PropertyType type,
-                               boolean requiresRestart,
-                               Object defaultValue,
-                               PropertyObserver obs)
-    {
-        addProperty(path, type, requiresRestart, defaultValue, null, obs);
-    }
-    
-    private void addProperty(String path,
-                               PropertyType type,
-                               boolean requiresRestart,
-                               Object defaultValue,
-                               PropertyValidator validator)
-    {
-        addProperty(path, type, requiresRestart, defaultValue, validator, null);
-    }
-    
-    private void addProperty(String path,
-                               PropertyType type,
-                               boolean requiresRestart,
-                               Object defaultValue)
-    {
-        addProperty(path, type, requiresRestart, defaultValue, null, null);
-    }
-    
     private void updateConfigDef(IniFile oldDef, IniFile newDef, OutputStream os) throws IOException
     {
         for (String uuid : newDef.getSections())
