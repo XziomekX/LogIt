@@ -101,15 +101,15 @@ public abstract class LogItCoreObject
         }
     }
     
-    public void log(Level level, String msg, Throwable t)
+    public void log(Level level, String msg, Throwable throwable)
     {
         if (core.isConfigLoaded())
         {
-            core.log(level, msg, t);
+            core.log(level, msg, throwable);
         }
         else
         {
-            core.getPlugin().getLogger().log(level, msg, t);
+            core.getPlugin().getLogger().log(level, msg, throwable);
         }
     }
     

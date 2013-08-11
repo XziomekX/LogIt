@@ -119,13 +119,13 @@ public final class LogItCore
             new File(plugin.getDataFolder(), "mail").mkdir();
             new File(plugin.getDataFolder(), "lang").mkdir();
             
-            File mailPasswordRecovery = new File(plugin.getDataFolder(), "mail/password-recovery.html");
+            File passwordRecoveryTemplateFile = new File(plugin.getDataFolder(), "mail/password-recovery.html");
             
-            if (!mailPasswordRecovery.exists())
+            if (!passwordRecoveryTemplateFile.exists())
             {
                 try
                 {
-                    FileUtils.extractResource("/password-recovery.html", mailPasswordRecovery);
+                    FileUtils.extractResource("/password-recovery.html", passwordRecoveryTemplateFile);
                 }
                 catch (IOException ex)
                 {
@@ -367,11 +367,11 @@ public final class LogItCore
     
     public void restart() throws FatalReportedException
     {
-        File sessions = new File(plugin.getDataFolder() + "/" + config.getString("storage.sessions.filename"));
+        File sessionFiles = new File(plugin.getDataFolder() + "/" + config.getString("storage.sessions.filename"));
         
         try
         {
-            sessionManager.exportSessions(sessions);
+            sessionManager.exportSessions(sessionFiles);
         }
         catch (SQLException ex)
         {
@@ -393,14 +393,14 @@ public final class LogItCore
         
         try
         {
-            sessionManager.importSessions(sessions);
+            sessionManager.importSessions(sessionFiles);
         }
         catch (SQLException ex)
         {
             log(Level.WARNING, "Could not import sessions.", ex);
         }
         
-        sessions.delete();
+        sessionFiles.delete();
         
         log(Level.INFO, getMessage("RELOADED"));
     }
@@ -412,15 +412,15 @@ public final class LogItCore
      * @param hashedPassword Hashed password.
      * @return True if passwords match.
      */
-    public boolean checkPassword(String password, String hashedPassword, HashingAlgorithm ha)
+    public boolean checkPassword(String password, String hashedPassword, HashingAlgorithm hashingAlgorithm)
     {
-        if (ha == HashingAlgorithm.BCRYPT)
+        if (hashingAlgorithm == HashingAlgorithm.BCRYPT)
         {
             return BCrypt.checkpw(password, hashedPassword);
         }
         else
         {
-            return hashedPassword.equals(hash(password, ha));
+            return hashedPassword.equals(hash(password, hashingAlgorithm));
         }
     }
     
@@ -432,18 +432,21 @@ public final class LogItCore
      * @param salt Salt.
      * @return True if passwords match.
      */
-    public boolean checkPassword(String password, String hashedPassword, String salt, HashingAlgorithm ha)
+    public boolean checkPassword(String password,
+                                 String hashedPassword,
+                                 String salt,
+                                 HashingAlgorithm hashingAlgorithm)
     {
         if (hashedPassword == null)
             return false;
         
-        if (ha == HashingAlgorithm.BCRYPT)
+        if (hashingAlgorithm == HashingAlgorithm.BCRYPT)
         {
             return BCrypt.checkpw(password, hashedPassword);
         }
         else
         {
-            return hashedPassword.equals(hash(password, salt, ha));
+            return hashedPassword.equals(hash(password, salt, hashingAlgorithm));
         }
     }
     
@@ -497,9 +500,9 @@ public final class LogItCore
                 "%player%", username,
             });
             
-            String playerPassword = generatePassword(config.getInt("password-recovery.password-length"),
+            String newPassword = generatePassword(config.getInt("password-recovery.password-length"),
                 config.getString("password-recovery.password-combination"));
-            accountManager.changeAccountPassword(username, playerPassword);
+            accountManager.changeAccountPassword(username, newPassword);
             
             File bodyTemplateFile =
                     new File(plugin.getDataFolder(), config.getString("password-recovery.body-template"));
@@ -517,7 +520,7 @@ public final class LogItCore
             
             String body = parseMessage(bodyBuilder.toString(), new String[]{
                 "%player%", username,
-                "%password%", playerPassword
+                "%password%", newPassword
             });
             
             mailSender.sendMail(new String[]{to}, from, subject, body,
@@ -544,14 +547,13 @@ public final class LogItCore
     
     public String generatePassword(int length, String combination)
     {
-        char[] charTable = combination.toCharArray();
-        
+        char[] charArray = combination.toCharArray();
         StringBuilder sb = new StringBuilder(length);
         Random random = new Random();
         
-        for (int i = 0, n = charTable.length; i < length; i++)
+        for (int i = 0, n = charArray.length; i < length; i++)
         {
-            sb.append(charTable[random.nextInt(n)]);
+            sb.append(charArray[random.nextInt(n)]);
         }
         
         return sb.toString();
@@ -622,9 +624,9 @@ public final class LogItCore
      * @param string String to be hashed.
      * @return Resulting hash.
      */
-    public String hash(String string, HashingAlgorithm ha)
+    public String hash(String string, HashingAlgorithm hashingAlgorithm)
     {
-        switch (ha)
+        switch (hashingAlgorithm)
         {
             case PLAIN:
             {
@@ -676,21 +678,21 @@ public final class LogItCore
      * @param salt Salt.
      * @return Resulting hash.
      */
-    public String hash(String string, String salt, HashingAlgorithm ha)
+    public String hash(String string, String salt, HashingAlgorithm hashingAlgorithm)
     {
         String hash;
         
-        if (ha == HashingAlgorithm.BCRYPT)
+        if (hashingAlgorithm == HashingAlgorithm.BCRYPT)
         {
             hash = getBCrypt(string, salt);
         }
-        else if (ha == HashingAlgorithm.PLAIN)
+        else if (hashingAlgorithm == HashingAlgorithm.PLAIN)
         {
-            hash = hash(string, ha);
+            hash = hash(string, hashingAlgorithm);
         }
         else
         {
-            hash = hash(string + salt, ha);
+            hash = hash(string + salt, hashingAlgorithm);
         }
         
         return hash;
@@ -776,7 +778,7 @@ public final class LogItCore
         plugin.getLogger().log(level, stripColor(message));
     }
     
-    public void log(Level level, String message, Throwable t)
+    public void log(Level level, String message, Throwable throwable)
     {
         String stackTrace = null;
         
@@ -785,7 +787,7 @@ public final class LogItCore
             PrintWriter pw = new PrintWriter(sw);
         )
         {
-            t.printStackTrace(pw);
+            throwable.printStackTrace(pw);
             
             stackTrace = sw.toString();
         }

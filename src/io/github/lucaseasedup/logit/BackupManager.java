@@ -69,10 +69,10 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     public void createBackup()
     {
         SimpleDateFormat sdf = new SimpleDateFormat(getConfig().getString("backup.filename-format"));
-        File backupPath = new File(getDataFolder(), getConfig().getString("backup.path"));
-        File backupFile = new File(backupPath, sdf.format(new Date()));
+        File backupDir = new File(getDataFolder(), getConfig().getString("backup.path"));
+        File backupFile = new File(backupDir, sdf.format(new Date()));
         
-        backupPath.mkdir();
+        backupDir.mkdir();
         
         try
         {
@@ -89,7 +89,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
                 
                 List<Map<String, String>> rs = getAccountManager().getTable().select();
                 
-                for (Map<String, String> m : rs)
+                for (Map<String, String> row : rs)
                 {
                     backupTable.insert(new String[]{
                         "logit.accounts.username",
@@ -98,11 +98,11 @@ public final class BackupManager extends LogItCoreObject implements Runnable
                         "logit.accounts.ip",
                         "logit.accounts.last_active",
                     }, new String[]{
-                        m.get("logit.accounts.username"),
-                        m.get("logit.accounts.salt"),
-                        m.get("logit.accounts.password"),
-                        m.get("logit.accounts.ip"),
-                        m.get("logit.accounts.last_active"),
+                        row.get("logit.accounts.username"),
+                        row.get("logit.accounts.salt"),
+                        row.get("logit.accounts.password"),
+                        row.get("logit.accounts.ip"),
+                        row.get("logit.accounts.last_active"),
                     });
                 }
             }
@@ -134,7 +134,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
                 
                 List<Map<String, String>> rs = backupTable.select();
                 
-                for (Map<String, String> m : rs)
+                for (Map<String, String> row : rs)
                 {
                     getAccountManager().getTable().insert(new String[]{
                         "logit.accounts.username",
@@ -143,11 +143,11 @@ public final class BackupManager extends LogItCoreObject implements Runnable
                         "logit.accounts.ip",
                         "logit.accounts.last_active",
                     }, new String[]{
-                        m.get("logit.accounts.username"),
-                        m.get("logit.accounts.salt"),
-                        m.get("logit.accounts.password"),
-                        m.get("logit.accounts.ip"),
-                        m.get("logit.accounts.last_active"),
+                        row.get("logit.accounts.username"),
+                        row.get("logit.accounts.salt"),
+                        row.get("logit.accounts.password"),
+                        row.get("logit.accounts.ip"),
+                        row.get("logit.accounts.last_active"),
                     });
                 }
             }
@@ -167,13 +167,13 @@ public final class BackupManager extends LogItCoreObject implements Runnable
      */
     public void removeBackups(int amount)
     {
-        File[] backups = getBackups(true);
+        File[] backupFiles = getBackups(true);
         
         for (int i = 0; i < amount; i++)
         {
-            if (i < backups.length)
+            if (i < backupFiles.length)
             {
-                backups[i].delete();
+                backupFiles[i].delete();
             }
         }
         
@@ -182,29 +182,29 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     
     public File[] getBackups(boolean sortAlphabetically)
     {
-        File   backupPath = new File(getDataFolder(), getConfig().getString("backup.path"));
-        File[] backups = backupPath.listFiles();
+        File backupDir = new File(getDataFolder(), getConfig().getString("backup.path"));
+        File[] backupFiles = backupDir.listFiles();
         
-        if (backups == null)
+        if (backupFiles == null)
             return new File[0];
         
         if (sortAlphabetically)
         {
-            Arrays.sort(backups);
+            Arrays.sort(backupFiles);
         }
         
-        return backups;
+        return backupFiles;
     }
     
     public File getBackup(String filename) throws FileNotFoundException
     {
-        File backupPath = new File(getDataFolder(), getConfig().getString("backup.path"));
-        File backup = new File(backupPath, filename);
+        File backupDir = new File(getDataFolder(), getConfig().getString("backup.path"));
+        File backupFile = new File(backupDir, filename);
         
-        if (!backup.exists())
+        if (!backupFile.exists())
             throw new FileNotFoundException();
         
-        return backup;
+        return backupFile;
     }
     
     private final Timer timer;

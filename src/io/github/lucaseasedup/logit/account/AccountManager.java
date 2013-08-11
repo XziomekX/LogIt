@@ -46,11 +46,11 @@ import org.bukkit.Bukkit;
  */
 public final class AccountManager extends LogItCoreObject
 {
-    public AccountManager(LogItCore core, Table accounts)
+    public AccountManager(LogItCore core, Table accountTable)
     {
         super(core);
         
-        this.table = accounts;
+        this.accountTable = accountTable;
     }
     
     public Set<String> getRegisteredUsernames()
@@ -101,7 +101,7 @@ public final class AccountManager extends LogItCoreObject
         
         try
         {
-            accountMap.put(username, new Account(table, m));
+            accountMap.put(username, new Account(accountTable, m));
             
             log(Level.FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
         }
@@ -170,7 +170,7 @@ public final class AccountManager extends LogItCoreObject
         if (!isRegistered(username))
             throw new AccountNotFoundException();
         
-        if (table.isColumnDisabled("logit.accounts.password"))
+        if (accountTable.isColumnDisabled("logit.accounts.password"))
             return true;
         
         Account account = accountMap.get(username);
@@ -182,7 +182,7 @@ public final class AccountManager extends LogItCoreObject
             algorithm = HashingAlgorithm.decode(userAlgorithm);
         }
         
-        if (!table.isColumnDisabled("logit.accounts.salt"))
+        if (!accountTable.isColumnDisabled("logit.accounts.salt"))
         {
             return getCore().checkPassword(password, account.get("logit.accounts.password"),
                     account.get("logit.accounts.salt"), algorithm);
@@ -435,7 +435,7 @@ public final class AccountManager extends LogItCoreObject
     
     public Table getTable()
     {
-        return table;
+        return accountTable;
     }
     
     /**
@@ -447,7 +447,7 @@ public final class AccountManager extends LogItCoreObject
         
         try
         {
-            List<Map<String, String>> rs = table.select();
+            List<Map<String, String>> rs = accountTable.select();
             
             for (Map<String, String> m : rs)
             {
@@ -473,10 +473,10 @@ public final class AccountManager extends LogItCoreObject
                     account.put(e.getKey(), e.getValue());
                 }
                 
-                loadedAccounts.put(username, new Account(table, account));
+                loadedAccounts.put(username, new Account(accountTable, account));
             }
             
-            accountMap = new AccountMap(table, loadedAccounts);
+            accountMap = new AccountMap(accountTable, loadedAccounts);
             
             log(Level.FINE, getMessage("LOAD_ACCOUNTS_SUCCESS")
                     .replace("%num%", String.valueOf(accountMap.size())));
@@ -489,6 +489,6 @@ public final class AccountManager extends LogItCoreObject
         }
     }
     
-    private final Table table;
+    private final Table accountTable;
     private AccountMap accountMap = null;
 }
