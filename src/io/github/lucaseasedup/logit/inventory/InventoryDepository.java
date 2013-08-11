@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -179,12 +180,12 @@ public final class InventoryDepository extends LogItCoreObject
         }
 
         HashMap<String, Tag> newRootTagMap = new HashMap<>();
-
-        for (String tagName : rootCompoundTag.getValue().keySet())
+        
+        for (Entry<String, Tag> tag : rootCompoundTag.getValue().entrySet())
         {
-            newRootTagMap.put(tagName, (Tag) rootCompoundTag.getValue().get(tagName));
+            newRootTagMap.put(tag.getKey(), tag.getValue());
         }
-
+        
         List<Tag> inventoryTagList = new ArrayList<>();
 
         for (int i = 0; i < 36; i++)
