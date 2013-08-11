@@ -182,6 +182,11 @@ public final class LogItConfiguration extends PropertyObserver
         return (List<String>) properties.get(path).getValue();
     }
     
+    public Location getLocation(String path)
+    {
+        return (Location) properties.get(path).getValue();
+    }
+    
     public void set(String path, Object value) throws InvalidPropertyValueException
     {
         properties.get(path).set(value);
@@ -406,6 +411,8 @@ public final class LogItConfiguration extends PropertyObserver
             case SHORT_LIST:
             case STRING_LIST:
                 defaultValue = new ArrayList<>(0); break;
+            case LOCATION:
+                defaultValue = new Location("world", 0, 0, 0, 0, 0); break;
             default:
                 throw new RuntimeException("Unknown property type.");
             }

@@ -98,6 +98,9 @@ public class Property extends Observable
         case STRING_LIST:
             sb.append(StringUtils.join((List) value, ", "));
             break;
+        case LOCATION:
+            sb.append(value.toString());
+            break;
         default:
             throw new RuntimeException("Unknown property type.");
         }
@@ -150,6 +153,8 @@ public class Property extends Observable
             return (List<Short>) value;
         case STRING_LIST:
             return (List<String>) value;
+        case LOCATION:
+            return (Location) value;
         default:
             throw new RuntimeException("Unknown property type.");
         }
@@ -205,6 +210,11 @@ public class Property extends Observable
     public List<String> getStringList()
     {
         return (List<String>) value;
+    }
+    
+    public Location getLocation()
+    {
+        return (Location) value;
     }
     
     public void set(Object value) throws InvalidPropertyValueException

@@ -40,6 +40,7 @@ import static org.bukkit.ChatColor.STRIKETHROUGH;
 import static org.bukkit.ChatColor.UNDERLINE;
 import static org.bukkit.ChatColor.WHITE;
 import static org.bukkit.ChatColor.YELLOW;
+import io.github.lucaseasedup.logit.config.Location;
 import io.github.lucaseasedup.logit.craftreflect.CraftReflect;
 import io.github.lucaseasedup.logit.util.FileUtils;
 import java.io.File;
@@ -55,6 +56,7 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -303,6 +305,11 @@ public final class LogItPlugin extends JavaPlugin
     public static Logger getInstanceLogger()
     {
         return logger;
+    }
+    
+    static
+    {
+        ConfigurationSerialization.registerClass(Location.class);
     }
     
     private static Logger logger;
