@@ -48,20 +48,28 @@ public final class WaitingRoom extends LogItCoreObject
         if (contains(player))
             return;
         
-        if (getAccountManager().isRegistered(player.getName()))
+        if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.persistence"))
         {
-            Location loc = player.getLocation();
+            if (getAccountManager().isRegistered(player.getName()))
+            {
+                Location loc = player.getLocation();
+                
+                getAccountManager().updatePersistence(player.getName(), "world", loc.getWorld().getName());
+                getAccountManager().updatePersistence(player.getName(), "x", String.valueOf(loc.getX()));
+                getAccountManager().updatePersistence(player.getName(), "y", String.valueOf(loc.getY()));
+                getAccountManager().updatePersistence(player.getName(), "z", String.valueOf(loc.getZ()));
+                getAccountManager().updatePersistence(player.getName(), "yaw", String.valueOf(loc.getYaw()));
+                getAccountManager().updatePersistence(player.getName(), "pitch", String.valueOf(loc.getPitch()));
+                getAccountManager().updatePersistence(player.getName(), "waiting_room", "1");
+            }
             
-            getAccountManager().updatePersistence(player.getName(), "world", loc.getWorld().getName());
-            getAccountManager().updatePersistence(player.getName(), "x", String.valueOf(loc.getX()));
-            getAccountManager().updatePersistence(player.getName(), "y", String.valueOf(loc.getY()));
-            getAccountManager().updatePersistence(player.getName(), "z", String.valueOf(loc.getZ()));
-            getAccountManager().updatePersistence(player.getName(), "yaw", String.valueOf(loc.getYaw()));
-            getAccountManager().updatePersistence(player.getName(), "pitch", String.valueOf(loc.getPitch()));
-            getAccountManager().updatePersistence(player.getName(), "waiting_room", "1");
+            player.teleport(getWaitingRoomLocation());
+        }
+        else if (!getAccountManager().isRegistered(player.getName()))
+        {
+            player.teleport(getWaitingRoomLocation());
         }
         
-        player.teleport(getWaitingRoomLocation());
         players.add(player);
     }
     
