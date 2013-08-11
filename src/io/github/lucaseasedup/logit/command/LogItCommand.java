@@ -603,13 +603,10 @@ public class LogItCommand extends LogItCoreObject implements CommandExecutor
                 }
                 else
                 {
-                    if (p != null)
-                    {
-                        sender.sendMessage(getMessage("CONFIG_PROPERTY_GET", new String[]{
-                            "%path%", args[2],
-                            "%value%", getConfig().toString(args[2]),
-                        }));
-                    }
+                    sender.sendMessage(getMessage("CONFIG_PROPERTY_GET", new String[]{
+                        "%path%", args[2],
+                        "%value%", getConfig().toString(args[2]),
+                    }));
                 }
             }
             else if (args.length >= 2 && args[1].equalsIgnoreCase("list") && args.length <= 3)
