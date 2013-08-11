@@ -55,7 +55,7 @@ import org.jnbt.Tag;
 /**
  * @author LucasEasedUp
  */
-public class InventoryDepository extends LogItCoreObject
+public final class InventoryDepository extends LogItCoreObject
 {
     public InventoryDepository(LogItCore core, Database inventoryDatabase)
     {
@@ -273,7 +273,7 @@ public class InventoryDepository extends LogItCoreObject
         return inventoryDatabase;
     }
     
-    protected Inventory getArmorInventory(PlayerInventory inventory)
+    private Inventory getArmorInventory(PlayerInventory inventory)
     {
         CraftReflect reflect = LogItPlugin.getInstance().getCraftReflect();
         ItemStack[] armor = inventory.getArmorContents();
@@ -285,7 +285,7 @@ public class InventoryDepository extends LogItCoreObject
         return (Inventory) storage.o;
     }
     
-    protected Inventory getContentInventory(PlayerInventory inventory)
+    private Inventory getContentInventory(PlayerInventory inventory)
     {
         CraftReflect reflect = LogItPlugin.getInstance().getCraftReflect();
         ItemStack[] content = inventory.getContents();
