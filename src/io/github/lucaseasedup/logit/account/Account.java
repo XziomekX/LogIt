@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.account;
 
+import com.google.common.collect.ImmutableSet;
 import io.github.lucaseasedup.logit.IniFile;
 import io.github.lucaseasedup.logit.db.SetClause;
 import io.github.lucaseasedup.logit.db.Table;
@@ -29,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Observable;
+import java.util.Set;
 import org.bukkit.Bukkit;
 
 /**
@@ -45,17 +47,22 @@ public final class Account extends Observable
         savePersistence();
     }
     
-    public String getProperty(String property)
+    public Set<String> getProperties()
+    {
+        return ImmutableSet.copyOf(data.keySet());
+    }
+    
+    public String getString(String property)
     {
         return data.get(property);
     }
     
-    public Map<String, String> getAllProperties()
+    public int getInt(String property)
     {
-        return new HashMap<>(data);
+        return Integer.parseInt(getString(property));
     }
     
-    public boolean updateProperty(String property, String value) throws SQLException
+    public boolean updateString(String property, String value) throws SQLException
     {
         AccountEvent evt = new AccountPropertyUpdateEvent(this, property, value);
         
@@ -64,7 +71,7 @@ public final class Account extends Observable
         if (evt.isCancelled())
             return false;
         
-        String previousValue = getProperty(property);
+        String previousValue = getString(property);
         
         // Check if existing value is the same as the one to be updated to.
         if ((previousValue != null && previousValue.equals(value))
@@ -74,7 +81,7 @@ public final class Account extends Observable
         }
         
         table.update(new WhereClause[]{
-            new WhereClause("logit.accounts.username", WhereClause.EQUAL, getProperty("logit.accounts.username")),
+            new WhereClause("logit.accounts.username", WhereClause.EQUAL, getString("logit.accounts.username")),
         }, new SetClause[]{
             new SetClause(property, value),
         });
@@ -84,6 +91,11 @@ public final class Account extends Observable
         notifyObservers(property);
         
         return true;
+    }
+    
+    public boolean updateInt(String property, int value) throws SQLException
+    {
+        return updateString(property, String.valueOf(value));
     }
     
     public String getPersistence(String key)
@@ -111,7 +123,7 @@ public final class Account extends Observable
         
         persistence = new LinkedHashMap<>();
         
-        String persistanceBase64String = getProperty("logit.accounts.persistence");
+        String persistanceBase64String = getString("logit.accounts.persistence");
         IniFile iniFile;
         
         if (persistanceBase64String != null)
@@ -148,7 +160,7 @@ public final class Account extends Observable
             iniFile.putString("persistence", kv.getKey(), kv.getValue());
         }
         
-        updateProperty("logit.accounts.persistence", Base64.encode(iniFile.toString()));
+        updateString("logit.accounts.persistence", Base64.encode(iniFile.toString()));
     }
     
     private final Map<String, String> data;
