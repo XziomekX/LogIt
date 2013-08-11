@@ -38,121 +38,147 @@ public class SqlUtils
         
         return string;
     }
+
+    public static String buildColumnDefinition(String[] columns, String quote, boolean escapeBackslashes)
+    {
+        if ((columns.length % 2) != 0)
+            throw new IllegalArgumentException("Length of columns must be multiple of 2.");
+        
+        StringBuilder output = new StringBuilder();
+        
+        for (int i = 0; i < columns.length; i += 2)
+        {
+            if (output.length() != 0)
+            {
+                output.append(", ");
+            }
+            
+            // Column name
+            output.append(quote);
+            output.append(escapeQuotes(columns[i], quote, escapeBackslashes));
+            output.append(quote);
+            
+            // Column type
+            output.append(" ");
+            output.append(columns[i + 1]);
+        }
+        
+        return output.toString();
+    }
     
-    public static String implodeColumnArray(String[] columns, String quote, boolean escapeBackslashes)
+    public static String implodeColumns(String[] columns, String quote, boolean escapeBackslashes)
     {
         StringBuilder output = new StringBuilder();
         
-        if (columns.length >= 1)
+        if (columns.length == 1 && columns[0].equals("*"))
+            return "*";
+        
+        for (int i = 0; i < columns.length; i++)
         {
-            if (columns[0].equals("*"))
+            if (output.length() != 0)
             {
-                output.append("*");
+                output.append(", ");
+            }
+            
+            output.append(quote);
+            output.append(escapeQuotes(columns[i], quote, escapeBackslashes));
+            output.append(quote);
+        }
+        
+        return output.toString();
+    }
+    
+    public static String implodeValues(String[] values, String valueQuote, boolean escapeBackslashes)
+    {
+        StringBuilder output = new StringBuilder();
+        
+        for (int i = 0; i < values.length; i++)
+        {
+            if (output.length() != 0)
+            {
+                output.append(", ");
+            }
+            
+            if (values[i] == null)
+            {
+                output.append("NULL");
             }
             else
             {
-                output.append(quote).append(escapeQuotes(columns[0], quote, escapeBackslashes)).append(quote);
-            }
-        }
-        
-        for (int i = 1; i < columns.length; i++)
-        {
-            output.append(", ").append(quote).append(escapeQuotes(columns[i], quote, escapeBackslashes))
-                .append(quote);
-        }
-        
-        return output.toString();
-    }
-    
-    public static String implodeColumnDefinition(String[] columns, String quote, boolean escapeBackslashes)
-    {
-        StringBuilder output = new StringBuilder();
-        
-        if (columns.length >= 2)
-        {
-            output.append(quote).append(escapeQuotes(columns[0], quote, escapeBackslashes)).append(quote)
-                .append(" ").append(columns[1]);
-        }
-        
-        for (int i = 2; i < columns.length; i += 2)
-        {
-            output.append(", ").append(quote).append(escapeQuotes(columns[i], quote, escapeBackslashes))
-                .append(quote).append(" ").append(columns[i + 1]);
-        }
-        
-        return output.toString();
-    }
-    
-    public static String implodeValueArray(String[] values, String valueQuote, boolean escapeBackslashes)
-    {
-        StringBuilder output = new StringBuilder();
-        
-        if (values.length >= 1)
-        {
-            output.append(valueQuote).append(escapeQuotes(values[0], valueQuote, escapeBackslashes))
-                .append(valueQuote);
-        }
-        
-        for (int i = 1; i < values.length; i++)
-        {
-            if (values[i] != null)
-            {
-                output.append(", ").append(valueQuote)
-                    .append(escapeQuotes(values[i], valueQuote, escapeBackslashes)).append(valueQuote);
-            }
-            else
-            {
-                output.append(", NULL");
+                output.append(valueQuote);
+                output.append(escapeQuotes(values[i], valueQuote, escapeBackslashes));
+                output.append(valueQuote);
             }
         }
         
         return output.toString();
     }
     
-    public static String implodeSetArray(String[] set,
+    public static String implodeSet(String[] set,
                                          String columnQuote,
                                          String valueQuote,
                                          boolean escapeBackslashes)
     {
+        if ((set.length % 2) != 0)
+            throw new IllegalArgumentException("Length of set must be multiple of 2.");
+        
         StringBuilder output = new StringBuilder();
         
-        if (set.length >= 2)
+        for (int i = 0; i < set.length; i += 2)
         {
-            output.append(columnQuote).append(escapeQuotes(set[0], columnQuote, escapeBackslashes))
-                .append(columnQuote).append(" = ").append(valueQuote)
-                .append(escapeQuotes(set[1], valueQuote, escapeBackslashes)).append(valueQuote);
-        }
-        
-        for (int i = 2; i < set.length; i += 2)
-        {
-            output.append(", ").append(columnQuote).append(escapeQuotes(set[i], columnQuote, escapeBackslashes))
-                .append(columnQuote).append(" = ").append(valueQuote)
-                .append(escapeQuotes(set[i + 1], valueQuote, escapeBackslashes)).append(valueQuote);
+            if (output.length() != 0)
+            {
+                output.append(", ");
+            }
+            
+            // Column name
+            output.append(columnQuote);
+            output.append(escapeQuotes(set[i], columnQuote, escapeBackslashes));
+            output.append(columnQuote);
+            
+            // Assignment operator
+            output.append(" = ");
+            
+            // Value
+            output.append(valueQuote);
+            output.append(escapeQuotes(set[i + 1], valueQuote, escapeBackslashes));
+            output.append(valueQuote);
         }
         
         return output.toString();
     }
     
-    public static String implodeWhereArray(String[] conditions,
+    public static String implodeWhere(String[] conditions,
                                            String columnQuote,
                                            String valueQuote,
                                            boolean escapeBackslashes)
     {
+        if ((conditions.length % 3) != 0)
+            throw new IllegalArgumentException("Length of conditions must be multiple of 3.");
+        
         StringBuilder output = new StringBuilder();
         
-        if (conditions.length >= 3)
+        for (int i = 0; i < conditions.length; i += 3)
         {
-            output.append(columnQuote).append(escapeQuotes(conditions[0], columnQuote, escapeBackslashes))
-                .append(columnQuote).append(" ").append(conditions[1]).append(" ").append(valueQuote)
-                .append(escapeQuotes(conditions[2], valueQuote, escapeBackslashes)).append(valueQuote);
-        }
-        
-        for (int i = 3; i < conditions.length; i += 3)
-        {
-            output.append(" AND ").append(columnQuote)
-                .append(escapeQuotes(conditions[i], columnQuote, escapeBackslashes)).append(columnQuote)
-                .append(" ").append(conditions[i + 1]).append(" ").append(valueQuote)
-                .append(escapeQuotes(conditions[i + 2], valueQuote, escapeBackslashes)).append(valueQuote);
+            if (output.length() != 0)
+            {
+                output.append(" AND ");
+            }
+            
+            // Column name
+            output.append(columnQuote);
+            output.append(escapeQuotes(conditions[i], columnQuote, escapeBackslashes));
+            output.append(columnQuote);
+            
+            // Operator
+            output.append(" ");
+            output.append(conditions[i + 1]);
+            output.append(" ");
+            
+            // Value
+            output.append(valueQuote);
+            output.append(escapeQuotes(conditions[i + 2], valueQuote, escapeBackslashes));
+            output.append(valueQuote);
         }
         
         return output.toString();
