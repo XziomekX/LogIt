@@ -99,7 +99,9 @@ public class RegisterCommand extends LogItCoreObject implements CommandExecutor
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (getAccountManager().createAccount(args[1], password))
+                    boolean cancelled = getAccountManager().createAccount(args[1], password);
+                    
+                    if (!cancelled)
                     {
                         sendMessage(args[1], getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
                         sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_OTHERS")
@@ -193,7 +195,9 @@ public class RegisterCommand extends LogItCoreObject implements CommandExecutor
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (getAccountManager().createAccount(p.getName(), password))
+                    boolean cancelled = getAccountManager().createAccount(p.getName(), password);
+                    
+                    if (!cancelled)
                     {
                         sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
                         

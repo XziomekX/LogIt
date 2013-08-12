@@ -85,7 +85,9 @@ public class ChangePassCommand extends LogItCoreObject implements CommandExecuto
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (getAccountManager().changeAccountPassword(args[1], args[2]))
+                    boolean cancelled = getAccountManager().changeAccountPassword(args[1], args[2]);
+                    
+                    if (!cancelled)
                     {
                         sendMessage(args[1], getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
                         sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_OTHERS")
@@ -152,7 +154,9 @@ public class ChangePassCommand extends LogItCoreObject implements CommandExecuto
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (getAccountManager().changeAccountPassword(p.getName(), args[1]))
+                    boolean cancelled = getAccountManager().changeAccountPassword(p.getName(), args[1]);
+                    
+                    if (!cancelled)
                     {
                         sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
                     }
