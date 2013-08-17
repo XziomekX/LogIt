@@ -75,9 +75,7 @@ public class LoginCommand extends LogItCoreObject implements CommandExecutor
             }
             else
             {
-                boolean cancelled = getSessionManager().startSession(args[1]);
-                
-                if (!cancelled)
+                if (!getSessionManager().startSession(args[1]).isCancelled())
                 {
                     sendMessage(args[1], getMessage("START_SESSION_SUCCESS_SELF"));
                     sender.sendMessage(getMessage("START_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
@@ -138,9 +136,7 @@ public class LoginCommand extends LogItCoreObject implements CommandExecutor
             }
             else
             {
-                boolean cancelled = getSessionManager().startSession(p.getName());
-                
-                if (!cancelled)
+                if (!getSessionManager().startSession(p.getName()).isCancelled())
                 {
                     failedLoginsToKick.remove(p.getName().toLowerCase());
                     failedLoginsToBan.remove(p.getName().toLowerCase());

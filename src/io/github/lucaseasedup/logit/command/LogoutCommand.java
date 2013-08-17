@@ -71,9 +71,7 @@ public class LogoutCommand extends LogItCoreObject implements CommandExecutor
             }
             else
             {
-                boolean cancelled = getSessionManager().endSession(args[1]);
-                
-                if (!cancelled)
+                if (!getSessionManager().endSession(args[1]).isCancelled())
                 {
                     sendMessage(args[1], getMessage("END_SESSION_SUCCESS_SELF"));
                     sender.sendMessage(getMessage("END_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
@@ -96,9 +94,7 @@ public class LogoutCommand extends LogItCoreObject implements CommandExecutor
             }
             else
             {
-                boolean cancelled = getSessionManager().endSession(p.getName());
-                
-                if (!cancelled)
+                if (!getSessionManager().endSession(p.getName()).isCancelled())
                 {
                     sender.sendMessage(getMessage("END_SESSION_SUCCESS_SELF"));
                 }

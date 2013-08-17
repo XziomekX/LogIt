@@ -80,9 +80,7 @@ public class ChangeEmailCommand extends LogItCoreObject implements CommandExecut
                 {
                     ReportedException.incrementRequestCount();
                     
-                    boolean cancelled = getAccountManager().changeEmail(args[1], args[2]);
-                    
-                    if (!cancelled)
+                    if (!getAccountManager().changeEmail(args[1], args[2]).isCancelled())
                     {
                         sendMessage(args[1], getMessage("CHANGE_EMAIL_SUCCESS_SELF").replace("%email%", args[2]));
                         sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_OTHERS").replace("%player%", args[1]));
@@ -126,9 +124,7 @@ public class ChangeEmailCommand extends LogItCoreObject implements CommandExecut
                 {
                     ReportedException.incrementRequestCount();
                     
-                    boolean cancelled = getAccountManager().changeEmail(p.getName(), args[0]);
-                    
-                    if (!cancelled)
+                    if (!getAccountManager().changeEmail(p.getName(), args[0]).isCancelled())
                     {
                         sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_SELF").replace("%email%", args[0]));
                     }

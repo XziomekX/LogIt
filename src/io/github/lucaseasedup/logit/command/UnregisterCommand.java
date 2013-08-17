@@ -73,9 +73,7 @@ public class UnregisterCommand extends LogItCoreObject implements CommandExecuto
             {
                 if (getSessionManager().isSessionAlive(args[1]))
                 {
-                    boolean cancelled = getSessionManager().endSession(args[1]);
-                    
-                    if (!cancelled)
+                    if (!getSessionManager().endSession(args[1]).isCancelled())
                     {
                         sender.sendMessage(getMessage("END_SESSION_SUCCESS_SELF"));
                     }
@@ -85,9 +83,7 @@ public class UnregisterCommand extends LogItCoreObject implements CommandExecuto
                 {
                     ReportedException.incrementRequestCount();
                     
-                    boolean cancelled = getAccountManager().removeAccount(args[1]);
-                    
-                    if (!cancelled)
+                    if (!getAccountManager().removeAccount(args[1]).isCancelled())
                     {
                         sendMessage(args[1], getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
                         sender.sendMessage(getMessage("REMOVE_ACCOUNT_SUCCESS_OTHERS")
@@ -132,9 +128,7 @@ public class UnregisterCommand extends LogItCoreObject implements CommandExecuto
             {
                 if (getSessionManager().isSessionAlive(p.getName()))
                 {
-                    boolean cancelled = getSessionManager().endSession(p.getName());
-                    
-                    if (!cancelled)
+                    if (!getSessionManager().endSession(p.getName()).isCancelled())
                     {
                         sender.sendMessage(getMessage("END_SESSION_SUCCESS_SELF"));
                     }
@@ -144,9 +138,7 @@ public class UnregisterCommand extends LogItCoreObject implements CommandExecuto
                 {
                     ReportedException.incrementRequestCount();
                     
-                    boolean cancelled = getAccountManager().removeAccount(p.getName());
-                    
-                    if (!cancelled)
+                    if (!getAccountManager().removeAccount(p.getName()).isCancelled())
                     {
                         sender.sendMessage(getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
                     }

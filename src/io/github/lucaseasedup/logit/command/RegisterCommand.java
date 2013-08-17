@@ -99,9 +99,7 @@ public class RegisterCommand extends LogItCoreObject implements CommandExecutor
                 {
                     ReportedException.incrementRequestCount();
                     
-                    boolean cancelled = getAccountManager().createAccount(args[1], password);
-                    
-                    if (!cancelled)
+                    if (!getAccountManager().createAccount(args[1], password).isCancelled())
                     {
                         sendMessage(args[1], getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
                         sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_OTHERS")
@@ -111,7 +109,7 @@ public class RegisterCommand extends LogItCoreObject implements CommandExecutor
                         {
                             getAccountManager().attachIp(args[1], getPlayerIp(getPlayer(args[1])));
                             
-                            if (getSessionManager().startSession(args[1]))
+                            if (!getSessionManager().startSession(args[1]).isCancelled())
                             {
                                 sendMessage(args[1], getMessage("START_SESSION_SUCCESS_SELF"));
                                 sender.sendMessage(getMessage("START_SESSION_SUCCESS_OTHERS")
@@ -195,15 +193,13 @@ public class RegisterCommand extends LogItCoreObject implements CommandExecutor
                 {
                     ReportedException.incrementRequestCount();
                     
-                    boolean cancelled = getAccountManager().createAccount(p.getName(), password);
-                    
-                    if (!cancelled)
+                    if (!getAccountManager().createAccount(p.getName(), password).isCancelled())
                     {
                         sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
                         
                         getAccountManager().attachIp(p.getName(), getPlayerIp(p));
                         
-                        if (getSessionManager().startSession(p.getName()))
+                        if (!getSessionManager().startSession(p.getName()).isCancelled())
                         {
                             sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
                         }

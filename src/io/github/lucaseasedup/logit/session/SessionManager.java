@@ -23,6 +23,7 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerName;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
+import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.db.SqliteDatabase;
@@ -136,17 +137,15 @@ public class SessionManager extends LogItCoreObject implements Runnable
      * 
      * @param username Username.
      * @param ip IP address.
-     * @return True if session has been created,
-     *         false if creation has been cancelled by an outside event listener.
      */
-    public boolean createSession(String username, String ip)
+    public CancelledState createSession(String username, String ip)
     {
         SessionEvent evt = new SessionCreateEvent(username);
         
         Bukkit.getPluginManager().callEvent(evt);
         
         if (evt.isCancelled())
-            return false;
+            return CancelledState.CANCELLED;
         
         // Create session.
         Session session = new Session(ip);
@@ -154,7 +153,7 @@ public class SessionManager extends LogItCoreObject implements Runnable
         
         log(Level.FINE, getMessage("CREATE_SESSION_SUCCESS_LOG").replace("%player%", username));
         
-        return true;
+        return CancelledState.NOT_CANCELLED;
     }
     
     /**
@@ -163,28 +162,26 @@ public class SessionManager extends LogItCoreObject implements Runnable
      * If session does not exist, no action will be taken.
      * 
      * @param username Username.
-     * @return True if session has been destroyed,
-     *         false if operation has been cancelled by an outside event listener.
      */
-    public boolean destroySession(String username)
+    public CancelledState destroySession(String username)
     {
-        if (getSession(username) == null)
-            return true;
+        if (getSession(username) != null)
+        {
+            Session session = sessions.get(username.toLowerCase());
+            SessionEvent evt = new SessionDestroyEvent(username, session);
+            
+            Bukkit.getPluginManager().callEvent(evt);
+            
+            if (evt.isCancelled())
+                return CancelledState.CANCELLED;
+            
+            sessions.remove(username.toLowerCase());
+            
+            log(Level.FINE, getMessage("DESTROY_SESSION_SUCCESS_LOG")
+                    .replace("%player%", getPlayerName(username)));
+        }
         
-        Session session = sessions.get(username.toLowerCase());
-        SessionEvent evt = new SessionDestroyEvent(username, session);
-        
-        Bukkit.getPluginManager().callEvent(evt);
-        
-        if (evt.isCancelled())
-            return false;
-        
-        sessions.remove(username.toLowerCase());
-        
-        log(Level.FINE, getMessage("DESTROY_SESSION_SUCCESS_LOG")
-                .replace("%player%", getPlayerName(username)));
-        
-        return true;
+        return CancelledState.NOT_CANCELLED;
     }
     
     /**
@@ -192,10 +189,8 @@ public class SessionManager extends LogItCoreObject implements Runnable
      * 
      * @param username Username.
      * @throws SessionNotFoundException Thrown if the session does not exist.
-     * @return True if session has been started,
-     *         false if operation has been cancelled by an outside event listener.
      */
-    public boolean startSession(String username)
+    public CancelledState startSession(String username)
     {
         if (getSession(username) == null)
             throw new SessionNotFoundException();
@@ -206,7 +201,7 @@ public class SessionManager extends LogItCoreObject implements Runnable
         Bukkit.getPluginManager().callEvent(evt);
         
         if (evt.isCancelled())
-            return false;
+            return CancelledState.CANCELLED;
         
         // Start session.
         session.setStatus(0L);
@@ -222,7 +217,7 @@ public class SessionManager extends LogItCoreObject implements Runnable
         
         log(Level.FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
         
-        return true;
+        return CancelledState.NOT_CANCELLED;
     }
     
     /**
@@ -230,10 +225,8 @@ public class SessionManager extends LogItCoreObject implements Runnable
      * 
      * @param username Username.
      * @throws SessionNotFoundException Thrown if the session does not exist.
-     * @return True if session has been ended,
-     *         false if operation has been cancelled by an outside event listener.
      */
-    public boolean endSession(String username)
+    public CancelledState endSession(String username)
     {
         if (getSession(username) == null)
             throw new SessionNotFoundException();
@@ -244,7 +237,7 @@ public class SessionManager extends LogItCoreObject implements Runnable
         Bukkit.getPluginManager().callEvent(evt);
         
         if (evt.isCancelled())
-            return false;
+            return CancelledState.CANCELLED;
         
         // End session.
         session.setStatus(-1L);
@@ -260,7 +253,7 @@ public class SessionManager extends LogItCoreObject implements Runnable
         
         log(Level.FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
         
-        return true;
+        return CancelledState.NOT_CANCELLED;
     }
     
     public void exportSessions(File sessionsDatabaseFile) throws SQLException

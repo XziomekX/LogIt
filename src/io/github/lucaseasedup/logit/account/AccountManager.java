@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.account;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
 import io.github.lucaseasedup.logit.LogItCore.IntegrationType;
@@ -70,10 +71,8 @@ public final class AccountManager extends LogItCoreObject
      * 
      * @param username Username.
      * @param password Password.
-     * @return True if account has been created,
-     *         false if creation has been cancelled by an outside event listener.
      */
-    public boolean createAccount(String username, String password)
+    public CancelledState createAccount(String username, String password)
     {
         if (isRegistered(username))
             throw new RuntimeException("Account already exists.");
@@ -97,7 +96,7 @@ public final class AccountManager extends LogItCoreObject
         Bukkit.getPluginManager().callEvent(evt);
         
         if (evt.isCancelled())
-            return false;
+            return CancelledState.CANCELLED;
         
         try
         {
@@ -112,7 +111,7 @@ public final class AccountManager extends LogItCoreObject
             ReportedException.throwNew(ex);
         }
         
-        return true;
+        return CancelledState.NOT_CANCELLED;
     }
     
     /**
@@ -122,10 +121,8 @@ public final class AccountManager extends LogItCoreObject
      * 
      * @param username Username.
      * @throws AccountNotFoundException Thrown if account does not exist.
-     * @return True if account has been removed,
-     *         false if removal has been cancelled by an outside event listener.
      */
-    public boolean removeAccount(String username)
+    public CancelledState removeAccount(String username)
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
@@ -136,7 +133,7 @@ public final class AccountManager extends LogItCoreObject
         Bukkit.getPluginManager().callEvent(evt);
         
         if (evt.isCancelled())
-            return false;
+            return CancelledState.CANCELLED;
         
         try
         {
@@ -151,7 +148,7 @@ public final class AccountManager extends LogItCoreObject
             ReportedException.throwNew(ex);
         }
         
-        return true;
+        return CancelledState.NOT_CANCELLED;
     }
     
     /**
@@ -200,10 +197,8 @@ public final class AccountManager extends LogItCoreObject
      * 
      * @param username Username.
      * @param newPassword New password.
-     * @return True if password has been changed,
-     *         false if operation has been cancelled by an outside event listener.
      */
-    public boolean changeAccountPassword(String username, String newPassword)
+    public CancelledState changeAccountPassword(String username, String newPassword)
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
@@ -214,7 +209,7 @@ public final class AccountManager extends LogItCoreObject
         Bukkit.getPluginManager().callEvent(evt);
         
         if (evt.isCancelled())
-            return false;
+            return CancelledState.CANCELLED;
         
         HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
         String newSalt = HashGenerator.generateSalt(algorithm);
@@ -235,7 +230,7 @@ public final class AccountManager extends LogItCoreObject
             ReportedException.throwNew(ex);
         }
         
-        return true;
+        return CancelledState.NOT_CANCELLED;
     }
     
     /**
@@ -243,10 +238,8 @@ public final class AccountManager extends LogItCoreObject
      * 
      * @param username Username.
      * @param newEmail New e-mail address.
-     * @return True if e-mail address has been created,
-     *         false if operation has been cancelled by an outside event listener.
      */
-    public boolean changeEmail(String username, String newEmail)
+    public CancelledState changeEmail(String username, String newEmail)
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
@@ -257,7 +250,7 @@ public final class AccountManager extends LogItCoreObject
         Bukkit.getPluginManager().callEvent(evt);
         
         if (evt.isCancelled())
-            return false;
+            return CancelledState.CANCELLED;
         
         try
         {
@@ -272,7 +265,7 @@ public final class AccountManager extends LogItCoreObject
             ReportedException.throwNew(ex);
         }
         
-        return true;
+        return CancelledState.NOT_CANCELLED;
     }
     
     public String getEmail(String username)
@@ -285,11 +278,9 @@ public final class AccountManager extends LogItCoreObject
      * 
      * @param username Username.
      * @param ip IP address.
-     * @return True if IP has been attached,
-     *         false if operation has been cancelled by an outside event listener.
      * @throws AccountNotFoundException Thrown if the account does not exist.
      */
-    public boolean attachIp(String username, String ip)
+    public CancelledState attachIp(String username, String ip)
     {
         if (!isRegistered(username))
             throw new AccountNotFoundException();
@@ -300,7 +291,7 @@ public final class AccountManager extends LogItCoreObject
         Bukkit.getPluginManager().callEvent(evt);
         
         if (evt.isCancelled())
-            return false;
+            return CancelledState.CANCELLED;
         
         try
         {
@@ -328,7 +319,7 @@ public final class AccountManager extends LogItCoreObject
             ReportedException.throwNew(ex);
         }
         
-        return true;
+        return CancelledState.NOT_CANCELLED;
     }
     
     /**
