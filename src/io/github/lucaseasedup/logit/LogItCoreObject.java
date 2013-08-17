@@ -36,22 +36,22 @@ public abstract class LogItCoreObject
         this.core = core;
     }
     
-    public LogItCore getCore()
+    protected LogItCore getCore()
     {
         return core;
     }
     
-    public LogItPlugin getPlugin()
+    protected LogItPlugin getPlugin()
     {
         return core.getPlugin();
     }
     
-    public File getDataFolder()
+    protected File getDataFolder()
     {
         return core.getPlugin().getDataFolder();
     }
     
-    public LogItConfiguration getConfig()
+    protected LogItConfiguration getConfig()
     {
         if (!core.isConfigLoaded())
             return null;
@@ -59,37 +59,37 @@ public abstract class LogItCoreObject
         return core.getConfig();
     }
     
-    public AccountManager getAccountManager()
+    protected AccountManager getAccountManager()
     {
         return core.getAccountManager();
     }
     
-    public BackupManager getBackupManager()
+    protected BackupManager getBackupManager()
     {
         return core.getBackupManager();
     }
     
-    public SessionManager getSessionManager()
+    protected SessionManager getSessionManager()
     {
         return core.getSessionManager();
     }
     
-    public WaitingRoom getWaitingRoom()
+    protected WaitingRoom getWaitingRoom()
     {
         return core.getWaitingRoom();
     }
     
-    public InventoryDepository getInventoryDepository()
+    protected InventoryDepository getInventoryDepository()
     {
         return core.getInventoryDepository();
     }
     
-    public MailSender getMailSender()
+    protected MailSender getMailSender()
     {
         return core.getMailSender();
     }
     
-    public void log(Level level, String msg)
+    protected void log(Level level, String msg)
     {
         if (core.isConfigLoaded())
         {
@@ -101,7 +101,7 @@ public abstract class LogItCoreObject
         }
     }
     
-    public void log(Level level, String msg, Throwable throwable)
+    protected void log(Level level, String msg, Throwable throwable)
     {
         if (core.isConfigLoaded())
         {
