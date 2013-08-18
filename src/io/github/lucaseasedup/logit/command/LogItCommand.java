@@ -295,7 +295,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else
             {
-                p.teleport(getWaitingRoom().getWaitingRoomLocation());
+                p.teleport(getConfig().getLocation("waiting-room.location").toBukkitLocation());
             }
         }
         else if (subcommand.equalsIgnoreCase("globalpass") && args.length <= 3)
