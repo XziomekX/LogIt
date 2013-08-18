@@ -23,6 +23,7 @@ import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.PlayerHolder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -65,7 +66,7 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
             {
                 sender.sendMessage(getMessage("NOT_ONLINE").replace("%player%", args[1]));
             }
-            else if (!getSessionManager().isSessionAlive(args[1]))
+            else if (!getSessionManager().isSessionAlive(PlayerHolder.getExact(args[1])))
             {
                 sender.sendMessage(getMessage("START_SESSION_NOT_OTHERS").replace("%player%", args[1]));
             }
@@ -88,7 +89,7 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
             {
                 p.sendMessage(getMessage("NO_PERMS"));
             }
-            else if (!getSessionManager().isSessionAlive(p.getName()))
+            else if (!getSessionManager().isSessionAlive(PlayerHolder.getExact(p.getName())))
             {
                 p.sendMessage(getMessage("START_SESSION_NOT_SELF"));
             }

@@ -26,6 +26,7 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.PlayerHolder;
 import io.github.lucaseasedup.logit.db.SqliteDatabase;
 import java.io.File;
 import java.sql.SQLException;
@@ -114,21 +115,27 @@ public class SessionManager extends LogItCoreObject implements Runnable
     }
     
     /**
-     * Checks if the session of a player with the specified player is alive.
+     * Checks if a session is alive.
      * 
-     * @param username Username.
-     * @return True if alive.
+     * <p> Returns {@code true} if {@code player} is not {@code null}, the session is alive
+     * and player IP matches session IP; {@code false} otherwise.
+     * 
+     * @param player a player which the session is tied to.
+     * @return {@code true} if the session is alive; {@code false} otherwise.
      */
-    public boolean isSessionAlive(String username)
-    {
-        Session session = getSession(username);
-        
-        return (session != null) ? session.isAlive() : false;
-    }
-    
     public boolean isSessionAlive(Player player)
     {
-        return isSessionAlive(player.getName());
+        if (player == null)
+            return false;
+        
+        Session session = getSession(player.getName());
+        
+        if (session == null)
+            return false;
+        
+        String ip = getPlayerIp(player);
+        
+        return session.isAlive() && ip.equals(session.getIp());
     }
     
     /**

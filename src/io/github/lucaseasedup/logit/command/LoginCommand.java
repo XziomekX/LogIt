@@ -24,6 +24,7 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.PlayerHolder;
 import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -69,7 +70,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             {
                 sender.sendMessage(getMessage("NOT_ONLINE").replace("%player%", args[1]));
             }
-            else if (getSessionManager().isSessionAlive(args[1]))
+            else if (getSessionManager().isSessionAlive(PlayerHolder.getExact(args[1])))
             {
                 sender.sendMessage(getMessage("START_SESSION_ALREADY_OTHERS").replace("%player%", args[1]));
             }
@@ -100,7 +101,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
             }
-            else if (getSessionManager().isSessionAlive(p.getName()))
+            else if (getSessionManager().isSessionAlive(PlayerHolder.getExact(p.getName())))
             {
                 p.sendMessage(getMessage("START_SESSION_ALREADY_SELF"));
             }

@@ -46,7 +46,7 @@ public class InventoryEventListener extends LogItCoreObject implements Listener
         
         Player player = (Player) event.getWhoClicked();
         
-        if (!getSessionManager().isSessionAlive(player.getName()) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
         {
             event.setCancelled(true);
         }

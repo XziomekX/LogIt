@@ -22,6 +22,7 @@ import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.PlayerHolder;
 import io.github.lucaseasedup.logit.ReportedException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -71,7 +72,7 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             }
             else
             {
-                if (getSessionManager().isSessionAlive(args[1]))
+                if (getSessionManager().isSessionAlive(PlayerHolder.getExact(args[1])))
                 {
                     if (!getSessionManager().endSession(args[1]).isCancelled())
                     {
@@ -126,7 +127,7 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             }
             else
             {
-                if (getSessionManager().isSessionAlive(p.getName()))
+                if (getSessionManager().isSessionAlive(PlayerHolder.getExact(p.getName())))
                 {
                     if (!getSessionManager().endSession(p.getName()).isCancelled())
                     {
