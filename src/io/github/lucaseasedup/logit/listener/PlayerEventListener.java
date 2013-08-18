@@ -183,13 +183,20 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
                 {
                     getWaitingRoom().remove(player);
                 }
-                
+            }
+        }, 1L);
+        
+        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
+        {
+            @Override
+            public void run()
+            {
                 if (getCore().isPlayerForcedToLogin(player) && !getSessionManager().isSessionAlive(username))
                 {
                     getCore().sendForceLoginMessage(player);
                 }
             }
-        }, 1L);
+        }, 15L);
     }
     
     @EventHandler
