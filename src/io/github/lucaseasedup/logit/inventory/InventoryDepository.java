@@ -30,28 +30,14 @@ import it.sauronsoftware.base64.Base64;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.jnbt.ByteTag;
-import org.jnbt.CompoundTag;
-import org.jnbt.ListTag;
-import org.jnbt.NBTInputStream;
-import org.jnbt.NBTOutputStream;
-import org.jnbt.ShortTag;
-import org.jnbt.Tag;
 
 /**
  * @author LucasEasedUp
@@ -160,74 +146,6 @@ public final class InventoryDepository extends LogItCoreObject
         }
         
         players.remove(player);
-    }
-    
-    public void saveInventory(String world, String username, Inventory contentsInventory, Inventory armorInventory)
-        throws IOException
-    {
-        File playerFile = new File(System.getProperty("user.dir") + "/" + world + "/players/" + username + ".dat");
-
-        if (!playerFile.exists())
-            throw new FileNotFoundException();
-        
-        ItemStack[] contents = contentsInventory.getContents();
-        ItemStack[] armor = armorInventory.getContents();
-        CompoundTag rootCompoundTag;
-        
-        try (NBTInputStream is = new NBTInputStream(new FileInputStream(playerFile)))
-        {
-            rootCompoundTag = (CompoundTag) is.readTag();
-        }
-
-        HashMap<String, Tag> newRootTagMap = new HashMap<>();
-        
-        for (Entry<String, Tag> tag : rootCompoundTag.getValue().entrySet())
-        {
-            newRootTagMap.put(tag.getKey(), tag.getValue());
-        }
-        
-        List<Tag> inventoryTagList = new ArrayList<>();
-
-        for (int i = 0; i < 36; i++)
-        {
-            if (contents[i] != null)
-            {
-                HashMap<String, Tag> tagMap = new HashMap<>();
-                tagMap.put("id", new ShortTag("id", (short) contents[i].getTypeId()));
-                tagMap.put("Damage", new ShortTag("Damage", contents[i].getDurability()));
-                tagMap.put("Count", new ByteTag("Count", (byte) contents[i].getAmount()));
-                tagMap.put("Slot", new ByteTag("Slot", (byte) i));
-
-                if (contents[i].getTypeId() > 0)
-                {
-                    inventoryTagList.add(new CompoundTag("", tagMap));
-                }
-            }
-        }
-
-        for (int i = 0; i < 4; i++)
-        {
-            if (armor[i] != null)
-            {
-                HashMap<String, Tag> tagMap = new HashMap<>();
-                tagMap.put("id", new ShortTag("id", (short) armor[i].getTypeId()));
-                tagMap.put("Damage", new ShortTag("Damage", armor[i].getDurability()));
-                tagMap.put("Count", new ByteTag("Count", (byte) 1));
-                tagMap.put("Slot", new ByteTag("Slot", (byte) (i + 100)));
-
-                if (armor[i].getTypeId() > 0)
-                {
-                    inventoryTagList.add(new CompoundTag("", tagMap));
-                }
-            }
-        }
-
-        newRootTagMap.put("Inventory", new ListTag("Inventory", CompoundTag.class, inventoryTagList));
-
-        try (NBTOutputStream os = new NBTOutputStream(new FileOutputStream(playerFile)))
-        {
-            os.writeTag(new CompoundTag("", newRootTagMap));
-        }
     }
     
     public String serialize(Inventory inventory) throws ReflectiveOperationException

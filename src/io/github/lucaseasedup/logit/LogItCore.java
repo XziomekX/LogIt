@@ -292,7 +292,7 @@ public final class LogItCore
             {
                 try
                 {
-                    inventoryDepository.saveInventory(row.get("world"), row.get("username"),
+                    MinecraftUtils.saveInventory(row.get("world"), row.get("username"),
                         inventoryDepository.unserialize(row.get("inv_contents")),
                         inventoryDepository.unserialize(row.get("inv_armor")));
                 }
