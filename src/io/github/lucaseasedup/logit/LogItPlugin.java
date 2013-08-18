@@ -103,6 +103,8 @@ public final class LogItPlugin extends JavaPlugin
             getLogger().log(Level.WARNING, "Could not load messages.", ex);
         }
         
+        PlayerHolder.registerListenerForPlugin(this);
+        
         core = LogItCore.getInstance();
         
         try
