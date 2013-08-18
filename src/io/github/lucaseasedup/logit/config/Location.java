@@ -52,9 +52,9 @@ public class Location implements Cloneable, ConfigurationSerializable
         {
             return (Location) super.clone();
         }
-        catch (CloneNotSupportedException e)
+        catch (CloneNotSupportedException ex)
         {
-            throw new Error(e);
+            throw new Error(ex);
         }
     }
     
