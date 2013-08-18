@@ -58,6 +58,7 @@ public class SessionManager extends LogItCoreObject implements Runnable
             Session session  = entry.getValue();
             Player  player   = getPlayer(username);
             
+            // Player logged in.
             if (session.getStatus() >= 0L)
             {
                 if (session.getStatus() > (getConfig().getInt("session-lifetime") * 20L))
@@ -76,6 +77,7 @@ public class SessionManager extends LogItCoreObject implements Runnable
                     session.updateStatus(20L);
                 }
             }
+            // Player logged out and online.
             else if (isPlayerOnline(username))
             {
                 if (getAccountManager().isRegistered(username)
@@ -92,6 +94,7 @@ public class SessionManager extends LogItCoreObject implements Runnable
                     }
                 }
             }
+            // Player logged out and offline.
             else
             {
                 destroySession(username);
