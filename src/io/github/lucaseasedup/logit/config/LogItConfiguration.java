@@ -22,6 +22,7 @@ import io.github.lucaseasedup.logit.IniFile;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItPlugin;
 import io.github.lucaseasedup.logit.util.FileUtils;
+import io.github.lucaseasedup.logit.util.IoUtils;
 import it.sauronsoftware.base64.Base64;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import org.apache.commons.io.IOUtils;
 import org.bukkit.Color;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -67,14 +67,14 @@ public final class LogItConfiguration extends PropertyObserver
             FileUtils.extractResource(PACKAGE_CONFIG_DEF, userDefFile);
         }
         
-        String userDefBase64String = IOUtils.toString(new FileInputStream(userDefFile));
+        String userDefBase64String = IoUtils.toString(new FileInputStream(userDefFile));
         IniFile userDef = new IniFile(decodeConfigDef(userDefBase64String));
         
         InputStream packageDefInputStream = LogItConfiguration.class.getResourceAsStream(PACKAGE_CONFIG_DEF);
         
         if (packageDefInputStream != null)
         {
-            String packageDefBase64String = IOUtils.toString(packageDefInputStream);
+            String packageDefBase64String = IoUtils.toString(packageDefInputStream);
             
             if (!userDefBase64String.equals(packageDefBase64String))
             {
