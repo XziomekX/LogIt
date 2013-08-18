@@ -560,19 +560,28 @@ public final class LogItCore
     }
     
     /**
-     * Checks if the player is forced to login (by either "force-login.global" set to true, or
-     * the player being in a world with forced login).
-     * <p/>
-     * If the player has the "logit.force-login.exempt" permission, it returns false.
+     * Checks if a player is forced to log in.
      * 
-     * @param player Player.
-     * @return True if the specified player is forced to log in.
+     * <p> Returns {@code true} if <i>"force-login.global"</i> is set to <i>true</i>,
+     * or the player is in a world with forced login; {@code false} otherwise.
+     * 
+     * <p> If the player has the <i>"logit.force-login.exempt"</i> permission,
+     * it always returns {@code false}.
+     * 
+     * <p> Note that this method does not check if the player is already logged in.
+     * For that purpose, use {@link SessionManager#isSessionAlive(Player)}
+     * or {@link SessionManager#isSessionAlive(String)}.
+     * 
+     * @param  player player whom the check will be ran on.
+     * @return {@code true} if the player is forced to log in; {@code false} otherwise.
      */
     public boolean isPlayerForcedToLogin(Player player)
     {
+        String worldName = player.getWorld().getName();
+        
         return (config.getBoolean("force-login.global")
-                || config.getStringList("force-login.in-worlds").contains(player.getWorld().getName()))
-                && !player.hasPermission("logit.force-login.exempt");
+             || config.getStringList("force-login.in-worlds").contains(worldName))
+             && !player.hasPermission("logit.force-login.exempt");
     }
     
     /**
