@@ -100,7 +100,8 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
         else
         {
             int freeSlots = Bukkit.getMaxPlayers() - Bukkit.getOnlinePlayers().length;
-            List<String> preserveSlotsPlayers = getConfig().getStringList("crowd-control.preserve-slots.players");
+            List<String> preserveForPlayers =
+                    getConfig().getStringList("crowd-control.preserve-slots.players");
             
             int preservedSlots = 0;
             boolean preservedForThisPlayer = false;
@@ -108,14 +109,14 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
             // Calculate how many players for which slots should be preserved are online.
             for (Player p : Bukkit.getOnlinePlayers())
             {
-                if (preserveSlotsPlayers.contains(p.getName()))
+                if (preserveForPlayers.contains(p.getName()))
                 {
                     preservedSlots++;
                 }
             }
             
             // Determine if the player currently trying to log in can occupy preserved slots.
-            for (String name : preserveSlotsPlayers)
+            for (String name : preserveForPlayers)
             {
                 if (name.equalsIgnoreCase(username))
                 {
