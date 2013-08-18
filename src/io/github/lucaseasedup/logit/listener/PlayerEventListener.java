@@ -123,8 +123,11 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
                 }
             }
             
-            if (freeSlots - (getConfig().getInt("crowd-control.preserve-slots.amount") - preservedSlots) <= 0
-                    && !preservedForThisPlayer)
+            int maxPreservedSlots = getConfig().getInt("crowd-control.preserve-slots.amount");
+            int unusedPreservedSlots = maxPreservedSlots - preservedSlots;
+            int actualFreeSlots = freeSlots - unusedPreservedSlots;
+            
+            if (actualFreeSlots <= 0 && !preservedForThisPlayer)
             {
                 event.disallow(KICK_FULL, getMessage("NO_SLOTS_FREE"));
             }
