@@ -26,7 +26,7 @@ import java.util.Set;
 /**
  * @author LucasEasedUp
  */
-public class AccountWatcher extends LogItCoreObject implements Runnable
+public final class AccountWatcher extends LogItCoreObject implements Runnable
 {
     public AccountWatcher(LogItCore core)
     {
