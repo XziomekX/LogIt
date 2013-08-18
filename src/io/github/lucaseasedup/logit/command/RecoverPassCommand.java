@@ -30,7 +30,7 @@ import org.bukkit.entity.Player;
 /**
  * @author LucasEasedUp
  */
-public class RecoverPassCommand extends LogItCoreObject implements CommandExecutor
+public final class RecoverPassCommand extends LogItCoreObject implements CommandExecutor
 {
     public RecoverPassCommand(LogItCore core)
     {

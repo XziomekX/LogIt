@@ -34,7 +34,7 @@ import org.bukkit.entity.Player;
 /**
  * @author LucasEasedUp
  */
-public class LoginCommand extends LogItCoreObject implements CommandExecutor
+public final class LoginCommand extends LogItCoreObject implements CommandExecutor
 {
     public LoginCommand(LogItCore core)
     {

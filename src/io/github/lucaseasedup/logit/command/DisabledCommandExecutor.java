@@ -28,7 +28,7 @@ import org.bukkit.command.CommandSender;
 /**
  * @author LucasEasedUp
  */
-public class DisabledCommandExecutor extends LogItCoreObject implements CommandExecutor
+public final class DisabledCommandExecutor extends LogItCoreObject implements CommandExecutor
 {
     public DisabledCommandExecutor(LogItCore core)
     {

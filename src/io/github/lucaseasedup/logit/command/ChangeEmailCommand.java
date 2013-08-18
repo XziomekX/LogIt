@@ -32,7 +32,7 @@ import org.bukkit.entity.Player;
 /**
  * @author LucasEasedUp
  */
-public class ChangeEmailCommand extends LogItCoreObject implements CommandExecutor
+public final class ChangeEmailCommand extends LogItCoreObject implements CommandExecutor
 {
     public ChangeEmailCommand(LogItCore core)
     {

@@ -40,7 +40,7 @@ import org.bukkit.util.Vector;
 /**
  * @author LucasEasedUp
  */
-public class LogItCommand extends LogItCoreObject implements CommandExecutor
+public final class LogItCommand extends LogItCoreObject implements CommandExecutor
 {
     public LogItCommand(LogItCore core)
     {

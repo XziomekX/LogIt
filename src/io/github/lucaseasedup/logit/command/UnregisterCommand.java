@@ -31,7 +31,7 @@ import org.bukkit.entity.Player;
 /**
  * @author LucasEasedUp
  */
-public class UnregisterCommand extends LogItCoreObject implements CommandExecutor
+public final class UnregisterCommand extends LogItCoreObject implements CommandExecutor
 {
     public UnregisterCommand(LogItCore core)
     {

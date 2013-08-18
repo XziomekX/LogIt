@@ -31,7 +31,7 @@ import org.bukkit.entity.Player;
 /**
  * @author LucasEasedUp
  */
-public class ChangePassCommand extends LogItCoreObject implements CommandExecutor
+public final class ChangePassCommand extends LogItCoreObject implements CommandExecutor
 {
     public ChangePassCommand(LogItCore core)
     {

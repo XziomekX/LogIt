@@ -34,7 +34,7 @@ import org.bukkit.entity.Player;
 /**
  * @author LucasEasedUp
  */
-public class RegisterCommand extends LogItCoreObject implements CommandExecutor
+public final class RegisterCommand extends LogItCoreObject implements CommandExecutor
 {
     public RegisterCommand(LogItCore core)
     {
