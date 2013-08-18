@@ -48,8 +48,7 @@ public class ServerEventListener extends LogItCoreObject implements Listener
         if (!event.getPlugin().equals(getPlugin()))
             return;
         
-        File sessions =
-                new File(getPlugin().getDataFolder(), getConfig().getString("storage.sessions.filename"));
+        File sessions = new File(getDataFolder(), getConfig().getString("storage.sessions.filename"));
         
         try
         {
@@ -69,8 +68,7 @@ public class ServerEventListener extends LogItCoreObject implements Listener
         if (!event.getPlugin().equals(getPlugin()) || !getCore().isStarted())
             return;
         
-        File sessions =
-                new File(getPlugin().getDataFolder(), getConfig().getString("storage.sessions.filename"));
+        File sessions = new File(getDataFolder(), getConfig().getString("storage.sessions.filename"));
         
         try
         {
