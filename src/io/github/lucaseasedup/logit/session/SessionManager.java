@@ -171,21 +171,26 @@ public class SessionManager extends LogItCoreObject implements Runnable
      */
     public CancelledState destroySession(String username)
     {
-        if (getSession(username) != null)
+        if (getSession(username) == null)
+            return CancelledState.NOT_CANCELLED;
+        
+        if (isSessionAlive(PlayerHolder.getExact(username)))
         {
-            Session session = sessions.get(username.toLowerCase());
-            SessionEvent evt = new SessionDestroyEvent(username, session);
-            
-            Bukkit.getPluginManager().callEvent(evt);
-            
-            if (evt.isCancelled())
-                return CancelledState.CANCELLED;
-            
-            sessions.remove(username.toLowerCase());
-            
-            log(Level.FINE, getMessage("DESTROY_SESSION_SUCCESS_LOG")
-                    .replace("%player%", getPlayerName(username)));
+            endSession(username);
         }
+        
+        Session session = sessions.get(username.toLowerCase());
+        SessionEvent evt = new SessionDestroyEvent(username, session);
+        
+        Bukkit.getPluginManager().callEvent(evt);
+        
+        if (evt.isCancelled())
+            return CancelledState.CANCELLED;
+        
+        sessions.remove(username.toLowerCase());
+        
+        log(Level.FINE, getMessage("DESTROY_SESSION_SUCCESS_LOG")
+                .replace("%player%", getPlayerName(username)));
         
         return CancelledState.NOT_CANCELLED;
     }
