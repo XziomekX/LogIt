@@ -64,8 +64,9 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
     private void onLogin(PlayerLoginEvent event)
     {
         Player player = event.getPlayer();
+        String username = player.getName().toLowerCase();
         
-        if (player.getName().trim().isEmpty())
+        if (username.trim().isEmpty())
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_BLANK"));
         }
@@ -73,25 +74,25 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_INVALID"));
         }
-        else if (player.getName().length() < getConfig().getInt("username.min-length"))
+        else if (username.length() < getConfig().getInt("username.min-length"))
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_SHORT").replace("%min-length%",
                     String.valueOf(getConfig().getInt("username.min-length"))));
         }
-        else if (player.getName().length() > getConfig().getInt("username.max-length"))
+        else if (username.length() > getConfig().getInt("username.max-length"))
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_LONG").replace("%max-length%",
                     String.valueOf(getConfig().getInt("username.max-length"))));
         }
-        else if (getConfig().getStringList("username.prohibited-usernames").contains(player.getName().toLowerCase()))
+        else if (getConfig().getStringList("username.prohibited-usernames").contains(username))
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_PROHIBITED"));
         }
-        else if (isPlayerOnline(player.getName()))
+        else if (isPlayerOnline(username))
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_ALREADY_USED"));
         }
-        else if (!getAccountManager().isRegistered(player.getName())
+        else if (!getAccountManager().isRegistered(username)
                 && getConfig().getBoolean("crowd-control.kick-unregistered"))
         {
             event.disallow(KICK_OTHER, getMessage("KICK_UNREGISTERED"));
@@ -116,7 +117,7 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
             // Determine if the player currently trying to log in can occupy preserved slots.
             for (String name : preserveSlotsPlayers)
             {
-                if (name.equalsIgnoreCase(player.getName()))
+                if (name.equalsIgnoreCase(username))
                 {
                     preservedForThisPlayer = true;
                 }
