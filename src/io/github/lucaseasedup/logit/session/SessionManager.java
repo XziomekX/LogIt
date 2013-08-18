@@ -143,6 +143,9 @@ public class SessionManager extends LogItCoreObject implements Runnable
      */
     public CancelledState createSession(String username, String ip)
     {
+        if (getSession(username) != null)
+            return CancelledState.NOT_CANCELLED;
+        
         SessionEvent evt = new SessionCreateEvent(username);
         
         Bukkit.getPluginManager().callEvent(evt);
