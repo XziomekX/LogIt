@@ -26,6 +26,7 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -119,7 +120,10 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                             if (getConfig().getBoolean("waiting-room.enabled")
                                     && getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
                             {
-                                getPlayer(args[1]).teleport(getWaitingRoom().getNewbieTeleportLocation());
+                                Location newbieTeleportLocation =
+                                        getConfig().getLocation("waiting-room.newbie-teleport.location").toBukkitLocation();
+                                
+                                getPlayer(args[1]).teleport(newbieTeleportLocation);
                             }
                         }
                     }
@@ -207,7 +211,10 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         if (getConfig().getBoolean("waiting-room.enabled")
                                 && getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
                         {
-                            p.teleport(getWaitingRoom().getNewbieTeleportLocation());
+                            Location newbieTeleportLocation =
+                                    getConfig().getLocation("waiting-room.newbie-teleport.location").toBukkitLocation();
+                            
+                            p.teleport(newbieTeleportLocation);
                         }
                     }
                 }
