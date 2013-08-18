@@ -364,7 +364,7 @@ public final class AccountManager extends LogItCoreObject
         Account account = accountMap.get(username);
         
         if (account == null)
-            throw new AccountNotFoundException();
+            return null;
         
         return account.getPersistence(key);
     }
@@ -374,7 +374,7 @@ public final class AccountManager extends LogItCoreObject
         Account account = accountMap.get(username);
         
         if (account == null)
-            throw new AccountNotFoundException();
+            return;
         
         try
         {
