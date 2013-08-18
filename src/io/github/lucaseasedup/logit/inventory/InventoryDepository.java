@@ -281,7 +281,9 @@ public final class InventoryDepository extends LogItCoreObject
         CraftInventoryCustom storage = reflect.newCraftInventoryCustom(armor.length);
         
         for (int i = 0; i < armor.length; i++)
+        {
             storage.setItem(i, armor[i]);
+        }
         
         return (Inventory) storage.o;
     }
@@ -293,7 +295,9 @@ public final class InventoryDepository extends LogItCoreObject
         CraftInventoryCustom storage = reflect.newCraftInventoryCustom(content.length);
         
         for (int i = 0; i < content.length; i++)
+        {
             storage.setItem(i, content[i]);
+        }
         
         return (Inventory) storage.o;
     }
