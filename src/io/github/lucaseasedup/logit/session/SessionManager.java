@@ -252,6 +252,9 @@ public class SessionManager extends LogItCoreObject implements Runnable
         if (getSession(username) == null)
             throw new SessionNotFoundException();
         
+        if (!isSessionAlive(PlayerHolder.getExact(username)))
+            return CancelledState.NOT_CANCELLED;
+        
         Session session = getSession(username);
         SessionEvent evt = new SessionEndEvent(username, session);
         
