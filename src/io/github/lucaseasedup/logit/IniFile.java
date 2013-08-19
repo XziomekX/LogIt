@@ -184,10 +184,13 @@ public class IniFile
             
             for (Entry<String, String> kv : section.getValue().entrySet())
             {
-                sb.append(kv.getKey());
-                sb.append("=");
-                sb.append(kv.getValue());
-                sb.append("\n");
+                if (kv.getValue() != null)
+                {
+                    sb.append(kv.getKey());
+                    sb.append("=");
+                    sb.append(kv.getValue());
+                    sb.append("\n");
+                }
             }
         }
         
@@ -200,13 +203,20 @@ public class IniFile
         {
             for (Entry<String, Map<String, String>> section : entries.entrySet())
             {
-                bw.write("[" + section.getKey() + "]");
+                bw.write("[");
+                bw.write(section.getKey());
+                bw.write("]");
                 bw.newLine();
                 
                 for (Entry<String, String> kv : section.getValue().entrySet())
                 {
-                    bw.write(kv.getKey() + "=" + kv.getValue());
-                    bw.newLine();
+                    if (kv.getValue() != null)
+                    {
+                        bw.write(kv.getKey());
+                        bw.write("=");
+                        bw.write(kv.getValue());
+                        bw.newLine();
+                    }
                 }
                 
                 bw.newLine();
