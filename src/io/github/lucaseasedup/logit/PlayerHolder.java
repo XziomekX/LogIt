@@ -105,5 +105,5 @@ public final class PlayerHolder
         }, plugin);
     }
     
-    public static Set<Player> players = new HashSet<>();
+    public static final Set<Player> players = new HashSet<>();
 }
