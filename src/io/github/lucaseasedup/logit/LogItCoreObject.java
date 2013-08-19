@@ -22,6 +22,7 @@ import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.config.LogItConfiguration;
 import io.github.lucaseasedup.logit.inventory.InventoryDepository;
 import io.github.lucaseasedup.logit.mail.MailSender;
+import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import java.io.File;
 import java.util.logging.Level;
@@ -74,9 +75,9 @@ public abstract class LogItCoreObject
         return core.getSessionManager();
     }
     
-    protected WaitingRoom getWaitingRoom()
+    protected PersistenceManager getPersistenceManager()
     {
-        return core.getWaitingRoom();
+        return core.getPersistenceManager();
     }
     
     protected InventoryDepository getInventoryDepository()

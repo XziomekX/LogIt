@@ -19,8 +19,11 @@
 package io.github.lucaseasedup.logit.config.observers;
 
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.PlayerHolder;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyObserver;
+import io.github.lucaseasedup.logit.persistence.LocationSerializer;
+import org.bukkit.entity.Player;
 
 /**
  * @author LucasEasedUp
@@ -38,9 +41,19 @@ public class WaitingRoomObserver extends PropertyObserver
         if (!p.getPath().equalsIgnoreCase("waiting-room.enabled"))
             return;
         
-        if (!p.getBoolean())
+        if (p.getBoolean())
         {
-            getWaitingRoom().removeAll();
+            for (Player player : PlayerHolder.getAll())
+            {
+                getPersistenceManager().serializeUsing(player, LocationSerializer.class);
+            }
+        }
+        else
+        {
+            for (Player player : PlayerHolder.getAll())
+            {
+                getPersistenceManager().unserializeUsing(player, LocationSerializer.class);
+            }
         }
     }
 }

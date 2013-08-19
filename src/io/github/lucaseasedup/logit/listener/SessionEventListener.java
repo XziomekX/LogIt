@@ -20,15 +20,15 @@ package io.github.lucaseasedup.logit.listener;
 
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastJoinMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastQuitMessage;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static org.bukkit.event.EventPriority.LOWEST;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.PlayerHolder;
 import io.github.lucaseasedup.logit.inventory.InventorySerializationException;
 import io.github.lucaseasedup.logit.session.SessionEndEvent;
 import io.github.lucaseasedup.logit.session.SessionStartEvent;
 import java.util.logging.Level;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -47,58 +47,46 @@ public class SessionEventListener extends LogItCoreObject implements Listener
     private void onStart(SessionStartEvent event)
     {
         String username = event.getUsername();
+        final Player player = PlayerHolder.getExact(username);
         
-        if (isPlayerOnline(username))
+        try
         {
-            Player player = getPlayer(username);
-            
-            getWaitingRoom().remove(player);
-            
-            try
-            {
-                getInventoryDepository().withdraw(player);
-            }
-            catch (InventorySerializationException ex)
-            {
-                log(Level.WARNING, "Could not withdraw player's inventory.", ex);
-            }
-            
-            if (getConfig().getBoolean("groups.enabled"))
-            {
-                getCore().updatePlayerGroup(player);
-            }
-            
-            if (getConfig().getBoolean("force-login.global")
-                    && !player.hasPermission("logit.force-login.exempt"))
-            {
-                broadcastJoinMessage(player, getConfig().getBoolean("reveal-spawn-world"));
-            }
+            getInventoryDepository().withdraw(player);
         }
+        catch (InventorySerializationException ex)
+        {
+            log(Level.WARNING, "Could not withdraw player's inventory.", ex);
+        }
+        
+        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                if (getConfig().getBoolean("groups.enabled"))
+                {
+                    getCore().updatePlayerGroup(player);
+                }
+                
+                if (getCore().isPlayerForcedToLogin(player))
+                {
+                    broadcastJoinMessage(player, getConfig().getBoolean("reveal-spawn-world"));
+                }
+            }
+        }, 1L);
+        
+        getPersistenceManager().unserialize(player);
     }
     
     @EventHandler(priority = LOWEST)
     private void onEnd(SessionEndEvent event)
     {
         String username = event.getUsername();
+        final Player player = PlayerHolder.getExact(username);
         
-        if (isPlayerOnline(username))
+        if (getCore().isPlayerForcedToLogin(player))
         {
-            Player player = getPlayer(username);
-            
-            if (getConfig().getBoolean("force-login.global"))
-            {
-                if (getConfig().getBoolean("waiting-room.enabled"))
-                {
-                    getWaitingRoom().put(player);
-                }
-                
-                if (!player.hasPermission("logit.force-login.exempt"))
-                {
-                    broadcastQuitMessage(player);
-                }
-            }
-            
-            if (getConfig().getBoolean("force-login.hide-inventory") && getCore().isPlayerForcedToLogin(player))
+            if (getConfig().getBoolean("force-login.hide-inventory"))
             {
                 try
                 {
@@ -109,11 +97,25 @@ public class SessionEventListener extends LogItCoreObject implements Listener
                     log(Level.WARNING, "Could not deposit player's inventory.", ex);
                 }
             }
-            
-            if (getConfig().getBoolean("groups.enabled"))
-            {
-                getCore().updatePlayerGroup(player);
-            }
         }
+        
+        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                if (getConfig().getBoolean("groups.enabled"))
+                {
+                    getCore().updatePlayerGroup(player);
+                }
+                
+                if (getCore().isPlayerForcedToLogin(player))
+                {
+                    broadcastQuitMessage(player);
+                }
+            }
+        }, 1L);
+        
+        getPersistenceManager().serialize(player);
     }
 }

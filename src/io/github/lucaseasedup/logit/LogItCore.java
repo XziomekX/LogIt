@@ -60,8 +60,12 @@ import io.github.lucaseasedup.logit.listener.ServerEventListener;
 import io.github.lucaseasedup.logit.listener.SessionEventListener;
 import io.github.lucaseasedup.logit.listener.TickEventListener;
 import io.github.lucaseasedup.logit.mail.MailSender;
+import io.github.lucaseasedup.logit.persistence.AirBarSerializer;
+import io.github.lucaseasedup.logit.persistence.LocationSerializer;
+import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.util.FileUtils;
+import io.github.lucaseasedup.logit.util.MinecraftUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -258,6 +262,20 @@ public final class LogItCore
             ReportedException.decrementRequestCount();
         }
         
+        persistenceManager = new PersistenceManager(this);
+        
+        try
+        {
+            persistenceManager.registerSerializer(LocationSerializer.class);
+            persistenceManager.registerSerializer(AirBarSerializer.class);
+        }
+        catch (ReflectiveOperationException ex)
+        {
+            log(Level.SEVERE, "Could not register persistence serializers.", ex);
+            
+            FatalReportedException.throwNew(ex);
+        }
+        
         accountWatcher = new AccountWatcher(this);
         backupManager  = new BackupManager(this);
         sessionManager = new SessionManager(this);
@@ -311,7 +329,6 @@ public final class LogItCore
         }
         
         inventoryDepository = new InventoryDepository(this, inventoryDatabase);
-        waitingRoom = new WaitingRoom(this);
         tickEventCaller = new TickEventCaller();
         
         pingerTaskId          = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, pinger, 0L, 2400L);
@@ -856,9 +873,9 @@ public final class LogItCore
         return permissions;
     }
     
-    public WaitingRoom getWaitingRoom()
+    public PersistenceManager getPersistenceManager()
     {
-        return waitingRoom;
+        return persistenceManager;
     }
     
     public InventoryDepository getInventoryDepository()
@@ -1071,7 +1088,7 @@ public final class LogItCore
     private AccountManager      accountManager;
     private AccountWatcher      accountWatcher;
     private BackupManager       backupManager;
-    private WaitingRoom         waitingRoom;
+    private PersistenceManager  persistenceManager;
     private InventoryDepository inventoryDepository;
     private MailSender          mailSender;
     private TickEventCaller     tickEventCaller;

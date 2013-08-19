@@ -20,7 +20,6 @@ package io.github.lucaseasedup.logit.listener;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastJoinMessage;
-import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastQuitMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static org.bukkit.event.EventPriority.HIGHEST;
@@ -33,6 +32,7 @@ import io.github.lucaseasedup.logit.inventory.InventorySerializationException;
 import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -154,103 +154,66 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
             getCore().updatePlayerGroup(player);
         }
         
-        if (getCore().isPlayerForcedToLogin(player) && !getSessionManager().isSessionAlive(username)
-                && getConfig().getBoolean("force-login.hide-inventory"))
+        if (!getAccountManager().isRegistered(username))
         {
-            try
+            Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
             {
-                getInventoryDepository().deposit(player);
-            }
-            catch (InventorySerializationException ex)
-            {
-                log(Level.WARNING, "Could not deposit player's inventory.", ex);
-            }
+                @Override
+                public void run()
+                {
+                    if (getConfig().getBoolean("waiting-room.enabled"))
+                    {
+                        Location waitingRoomLocation =
+                                getConfig().getLocation("waiting-room.location").toBukkitLocation();
+                        
+                        player.teleport(waitingRoomLocation);
+                    }
+                }
+            }, 1L);
         }
         
-        if ((getSessionManager().isSessionAlive(player)
-                && getSessionManager().getSession(username).getIp().equals(ip))
-                || !getConfig().getBoolean("force-login.global")
-                || player.hasPermission("logit.force-login.exempt"))
+        if (getSessionManager().isSessionAlive(player) || !getCore().isPlayerForcedToLogin(player))
         {
             broadcastJoinMessage(player, getConfig().getBoolean("reveal-spawn-world"));
         }
-        
-        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
+        else
         {
-            @Override
-            public void run()
+            if (getConfig().getBoolean("force-login.hide-inventory"))
             {
-                if (getConfig().getBoolean("waiting-room.enabled"))
+                try
                 {
-                    getWaitingRoom().put(player);
+                    getInventoryDepository().deposit(player);
                 }
-                else if (getWaitingRoom().contains(player))
+                catch (InventorySerializationException ex)
                 {
-                    getWaitingRoom().remove(player);
+                    log(Level.WARNING, "Could not deposit player's inventory.", ex);
                 }
             }
-        }, 1L);
-        
-        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
-        {
-            @Override
-            public void run()
+            
+            Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
             {
-                if (getCore().isPlayerForcedToLogin(player) && !getSessionManager().isSessionAlive(username))
+                @Override
+                public void run()
                 {
-                    getCore().sendForceLoginMessage(player);
+                    if (getCore().isPlayerForcedToLogin(player) && !getSessionManager().isSessionAlive(player))
+                    {
+                        getCore().sendForceLoginMessage(player);
+                    }
                 }
-            }
-        }, 15L);
+            }, 15L);
+        }
     }
     
     @EventHandler
     private void onQuit(PlayerQuitEvent event)
     {
-        Player player = event.getPlayer();
-        
         event.setQuitMessage(null);
-        
-        if (getSessionManager().isSessionAlive(player))
-        {
-            broadcastQuitMessage(player);
-        }
-        
-        try
-        {
-            getInventoryDepository().withdraw(player);
-        }
-        catch (InventorySerializationException ex)
-        {
-            log(Level.WARNING, "Could not withdraw player's inventory.", ex);
-        }
-        
-        if (getConfig().getBoolean("waiting-room.enabled") && getConfig().getBoolean("force-login.global"))
-        {
-            getWaitingRoom().put(player);
-        }
     }
     
     @EventHandler
     private void onKick(PlayerKickEvent event)
     {
-        Player player = event.getPlayer();
-        
         event.setLeaveMessage(null);
-        
-        try
-        {
-            getInventoryDepository().withdraw(player);
-        }
-        catch (InventorySerializationException ex)
-        {
-            log(Level.WARNING, "Could not withdraw player's inventory.", ex);
-        }
-        
-        if (getConfig().getBoolean("waiting-room.enabled") && getConfig().getBoolean("force-login.global"))
-        {
-            getWaitingRoom().put(player);
-        }
     }
     
     @EventHandler

@@ -83,11 +83,6 @@ public class ServerEventListener extends LogItCoreObject implements Listener
         
         for (Player player : players)
         {
-            if (getConfig().getBoolean("waiting-room.enabled"))
-            {
-                getWaitingRoom().remove(player);
-            }
-            
             try
             {
                 getInventoryDepository().withdraw(player);

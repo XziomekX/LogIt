@@ -21,8 +21,6 @@ package io.github.lucaseasedup.logit.listener;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TickEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -39,15 +37,5 @@ public class TickEventListener extends LogItCoreObject implements Listener
     @EventHandler
     private void onTick(TickEvent event)
     {
-        if (!getConfig().getBoolean("force-login.prevent.air-depletion"))
-            return;
-        
-        for (Player player : Bukkit.getOnlinePlayers())
-        {
-            if (!getSessionManager().isSessionAlive(player.getName()))
-            {
-                player.setRemainingAir(player.getMaximumAir());
-            }
-        }
     }
 }
