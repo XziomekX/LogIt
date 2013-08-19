@@ -54,34 +54,40 @@ public final class LocationSerializer extends PersistenceSerializer
         data.put("yaw", String.valueOf(location.getYaw()));
         data.put("pitch", String.valueOf(location.getPitch()));
         
-        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
+        if (player.isOnline())
         {
-            @Override
-            public void run()
+            Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
             {
-                player.teleport(getWaitingRoomLocation());
-            }
-        }, 1L);
+                @Override
+                public void run()
+                {
+                    player.teleport(getWaitingRoomLocation());
+                }
+            }, 1L);
+        }
     }
     
     @Override
     public void unserialize(final Map<String, String> data, final Player player)
     {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
+        if (player.isOnline())
         {
-            @Override
-            public void run()
+            Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
             {
-                player.teleport(new org.bukkit.Location(
-                    Bukkit.getWorld(data.get("world")),
-                    Double.valueOf(data.get("x")),
-                    Double.valueOf(data.get("y")),
-                    Double.valueOf(data.get("z")),
-                    Float.valueOf(data.get("yaw")),
-                    Float.valueOf(data.get("pitch"))
-                ));
-            }
-        }, 1L);
+                @Override
+                public void run()
+                {
+                    player.teleport(new org.bukkit.Location(
+                        Bukkit.getWorld(data.get("world")),
+                        Double.valueOf(data.get("x")),
+                        Double.valueOf(data.get("y")),
+                        Double.valueOf(data.get("z")),
+                        Float.valueOf(data.get("yaw")),
+                        Float.valueOf(data.get("pitch"))
+                    ));
+                }
+            }, 1L);
+        }
     }
     
     private org.bukkit.Location getWaitingRoomLocation()
