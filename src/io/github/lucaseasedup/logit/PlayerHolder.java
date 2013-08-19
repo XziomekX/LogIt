@@ -37,6 +37,11 @@ public final class PlayerHolder
     {
     }
     
+    public static Player[] getAll()
+    {
+        return players.toArray(new Player[players.size()]);
+    }
+    
     public static Player get(String name)
     {
         Player foundPlayer = null;
