@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.bukkit.Bukkit;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jnbt.ByteTag;
 import org.jnbt.CompoundTag;
@@ -60,8 +59,8 @@ public final class MinecraftUtils
     
     public static void saveInventory(String world,
                                      String username,
-                                     Inventory contentsInventory,
-                                     Inventory armorInventory) throws IOException
+                                     ItemStack[] contents,
+                                     ItemStack[] armor) throws IOException
     {
         File playerFile = getPlayerFile(world, username);
         
@@ -74,8 +73,6 @@ public final class MinecraftUtils
         {
             rootTagMap = readRootTagMap(is);
         }
-        ItemStack[] contents = contentsInventory.getContents();
-        ItemStack[] armor = armorInventory.getContents();
         
         List<Tag> inventoryTagList = new ArrayList<>();
         
