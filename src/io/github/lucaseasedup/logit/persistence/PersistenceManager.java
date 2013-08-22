@@ -145,16 +145,24 @@ public final class PersistenceManager extends LogItCoreObject
      * Serializes player data using all enabled serializers registered
      * using {@link #registerSerializer} method.
      * 
-     * @param player player whose data will be serialized.
+     * @param player                 player whose data will be serialized.
+     * @param skipOfflineSerializers if {@code true}, offline serializers will not be used.
      */
-    public void serialize(Player player)
+    public void serialize(Player player, boolean skipOfflineSerializers)
     {
         for (Class<? extends PersistenceSerializer> clazz : serializers.keySet())
         {
             if (!isSerializerEnabled(clazz))
                 return;
             
-            serializeUsing(player, clazz);
+            OfflineSerializable offlineSerializable =
+                    clazz.getAnnotation(OfflineSerializable.class);
+            
+            if (offlineSerializable == null || !offlineSerializable.value()
+                    || !skipOfflineSerializers)
+            {
+                serializeUsing(player, clazz);
+            }
         }
     }
 
@@ -210,16 +218,24 @@ public final class PersistenceManager extends LogItCoreObject
      * Unserializes player data using all enabled serializers registered
      * using {@link #registerSerializer} method.
      * 
-     * @param player player whose data will be unserialized.
+     * @param player                 player whose data will be unserialized.
+     * @param skipOfflineSerializers if {@code true}, offline serializers will not be used.
      */
-    public void unserialize(Player player)
+    public void unserialize(Player player, boolean skipOfflineSerializers)
     {
         for (Class<? extends PersistenceSerializer> clazz : serializers.keySet())
         {
             if (!isSerializerEnabled(clazz))
                 return;
             
-            unserializeUsing(player, clazz);
+            OfflineSerializable offlineSerializable =
+                    clazz.getAnnotation(OfflineSerializable.class);
+            
+            if (offlineSerializable == null || !offlineSerializable.value()
+                    || !skipOfflineSerializers)
+            {
+                unserializeUsing(player, clazz);
+            }
         }
     }
     
