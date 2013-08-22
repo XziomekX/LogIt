@@ -68,11 +68,16 @@ public final class MinecraftUtils
         if (!playerFile.exists())
             throw new FileNotFoundException();
         
+        Map<String, Tag> rootTagMap;
+        
+        try (InputStream is = new FileInputStream(playerFile))
+        {
+            rootTagMap = readRootTagMap(is);
+        }
         ItemStack[] contents = contentsInventory.getContents();
         ItemStack[] armor = armorInventory.getContents();
         
-        Map<String, Tag> rootTagMap = readRootTagMap(new FileInputStream(playerFile));
-        List<Tag>  inventoryTagList = new ArrayList<>();
+        List<Tag> inventoryTagList = new ArrayList<>();
         
         for (int i = 0; i < 36; i++)
         {
@@ -109,8 +114,11 @@ public final class MinecraftUtils
         }
 
         rootTagMap.put("Inventory", new ListTag("Inventory", CompoundTag.class, inventoryTagList));
-
-        writeRootTagMap(new FileOutputStream(playerFile), rootTagMap);
+        
+        try (OutputStream os = new FileOutputStream(playerFile))
+        {
+            writeRootTagMap(os, rootTagMap);
+        }
     }
     
     public static void saveAir(String world, String username, short air) throws IOException
@@ -120,11 +128,19 @@ public final class MinecraftUtils
         if (!playerFile.exists())
             throw new FileNotFoundException();
         
-        Map<String, Tag> rootTagMap = readRootTagMap(new FileInputStream(playerFile));
+        Map<String, Tag> rootTagMap;
+        
+        try (InputStream is = new FileInputStream(playerFile))
+        {
+            rootTagMap = readRootTagMap(is);
+        }
         
         rootTagMap.put("Air", new ShortTag("Air", air));
         
-        writeRootTagMap(new FileOutputStream(playerFile), rootTagMap);
+        try (OutputStream os = new FileOutputStream(playerFile))
+        {
+            writeRootTagMap(os, rootTagMap);
+        }
     }
     
     private static Map<String, Tag> readRootTagMap(InputStream is) throws IOException
