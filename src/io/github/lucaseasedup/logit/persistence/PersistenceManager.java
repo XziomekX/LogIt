@@ -252,6 +252,9 @@ public final class PersistenceManager extends LogItCoreObject
         
         Account account = getAccountManager().getAccount(player.getName());
         
+        if (account == null)
+            return false;
+        
         for (Key key : getSerializerKeys(serializer.getClass()))
         {
             String value = account.getPersistence(key.name());
