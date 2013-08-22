@@ -207,13 +207,29 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
     @EventHandler
     private void onQuit(PlayerQuitEvent event)
     {
+        Player player = event.getPlayer();
+        
         event.setQuitMessage(null);
+        
+        if (getCore().getSessionManager().isSessionAlive(player)
+                && getCore().isPlayerForcedToLogin(player))
+        {
+            getCore().getPersistenceManager().serialize(player, true);
+        }
     }
     
     @EventHandler
     private void onKick(PlayerKickEvent event)
     {
+        Player player = event.getPlayer();
+        
         event.setLeaveMessage(null);
+        
+        if (getCore().getSessionManager().isSessionAlive(player)
+                && getCore().isPlayerForcedToLogin(player))
+        {
+            getCore().getPersistenceManager().serialize(player, true);
+        }
     }
     
     @EventHandler
