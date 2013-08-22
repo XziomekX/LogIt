@@ -149,11 +149,6 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
             getSessionManager().createSession(username, ip);
         }
         
-        if (getConfig().getBoolean("groups.enabled"))
-        {
-            getCore().updatePlayerGroup(player);
-        }
-        
         if (!getAccountManager().isRegistered(username))
         {
             Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
@@ -201,6 +196,11 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
                     }
                 }
             }, 15L);
+        }
+        
+        if (getConfig().getBoolean("groups.enabled"))
+        {
+            getCore().updatePlayerGroup(player);
         }
     }
     
