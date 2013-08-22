@@ -171,6 +171,10 @@ public final class PersistenceManager extends LogItCoreObject
     public void unserializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
     {
         Account account = getAccountManager().getAccount(player.getName());
+        
+        if (account == null)
+            return;
+        
         PersistenceSerializer serializer = serializers.get(clazz);
         
         if (serializer == null)
