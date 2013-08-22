@@ -121,11 +121,14 @@ public final class PersistenceManager extends LogItCoreObject
             
             serializer.serialize(data, player);
             
-            for (Entry<String, String> entry : data.entrySet())
+            if (account != null)
             {
-                if (containsKey(serializer.getClass(), entry.getKey()))
+                for (Entry<String, String> entry : data.entrySet())
                 {
-                    account.updatePersistence(entry.getKey(), entry.getValue());
+                    if (containsKey(serializer.getClass(), entry.getKey()))
+                    {
+                        account.updatePersistence(entry.getKey(), entry.getValue());
+                    }
                 }
             }
         }
