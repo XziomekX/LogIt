@@ -50,7 +50,6 @@ import io.github.lucaseasedup.logit.db.SqliteDatabase;
 import io.github.lucaseasedup.logit.db.Table;
 import io.github.lucaseasedup.logit.hash.BCrypt;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
-import io.github.lucaseasedup.logit.inventory.InventoryDepository;
 import io.github.lucaseasedup.logit.listener.AccountEventListener;
 import io.github.lucaseasedup.logit.listener.BlockEventListener;
 import io.github.lucaseasedup.logit.listener.EntityEventListener;
@@ -61,13 +60,12 @@ import io.github.lucaseasedup.logit.listener.SessionEventListener;
 import io.github.lucaseasedup.logit.listener.TickEventListener;
 import io.github.lucaseasedup.logit.mail.MailSender;
 import io.github.lucaseasedup.logit.persistence.AirBarSerializer;
+import io.github.lucaseasedup.logit.persistence.InventorySerializer;
 import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.util.FileUtils;
-import io.github.lucaseasedup.logit.util.MinecraftUtils;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -76,8 +74,6 @@ import java.io.StringWriter;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import net.milkbowl.vault.permission.Permission;
@@ -268,6 +264,7 @@ public final class LogItCore
         {
             persistenceManager.registerSerializer(LocationSerializer.class);
             persistenceManager.registerSerializer(AirBarSerializer.class);
+            persistenceManager.registerSerializer(InventorySerializer.class);
         }
         catch (ReflectiveOperationException ex)
         {
@@ -279,6 +276,7 @@ public final class LogItCore
         accountWatcher = new AccountWatcher(this);
         backupManager  = new BackupManager(this);
         sessionManager = new SessionManager(this);
+        tickEventCaller = new TickEventCaller();
         
         if (!accountTable.isColumnDisabled("logit.accounts.email"))
         {
@@ -289,47 +287,6 @@ public final class LogItCore
                     config.getString("mail.smtp-user"), config.getString("mail.smtp-password"));
             }
         }
-        
-        SqliteDatabase inventoryDatabase = new SqliteDatabase("jdbc:sqlite:" +
-            plugin.getDataFolder() + "/" + config.getString("storage.inventories.filename"));
-        
-        try
-        {
-            inventoryDatabase.connect();
-            inventoryDatabase.createTableIfNotExists("inventories", new String[]{
-                "username",     "VARCHAR(16)",
-                "world",        "VARCHAR(512)",
-                "inv_contents", "TEXT",
-                "inv_armor",    "TEXT"
-            });
-            
-            List<Map<String, String>> rs = inventoryDatabase.select("inventories",
-                    new String[]{"username", "world", "inv_contents", "inv_armor"});
-            
-            for (Map<String, String> row : rs)
-            {
-                try
-                {
-                    MinecraftUtils.saveInventory(row.get("world"), row.get("username"),
-                        inventoryDepository.unserialize(row.get("inv_contents")),
-                        inventoryDepository.unserialize(row.get("inv_armor")));
-                }
-                catch (FileNotFoundException ex)
-                {
-                }
-            }
-            
-            inventoryDatabase.truncateTable("inventories");
-        }
-        catch (IOException | SQLException | ReflectiveOperationException ex)
-        {
-            log(Level.SEVERE, "Inventories could not be restored.", ex);
-            
-            FatalReportedException.throwNew(ex);
-        }
-        
-        inventoryDepository = new InventoryDepository(this, inventoryDatabase);
-        tickEventCaller = new TickEventCaller();
         
         pingerTaskId          = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, pinger, 0L, 2400L);
         sessionManagerTaskId  = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, sessionManager, 0L, 20L);
@@ -878,11 +835,6 @@ public final class LogItCore
         return persistenceManager;
     }
     
-    public InventoryDepository getInventoryDepository()
-    {
-        return inventoryDepository;
-    }
-    
     public MailSender getMailSender()
     {
         return mailSender;
@@ -1089,7 +1041,6 @@ public final class LogItCore
     private AccountWatcher      accountWatcher;
     private BackupManager       backupManager;
     private PersistenceManager  persistenceManager;
-    private InventoryDepository inventoryDepository;
     private MailSender          mailSender;
     private TickEventCaller     tickEventCaller;
     

@@ -20,7 +20,6 @@ package io.github.lucaseasedup.logit;
 
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.config.LogItConfiguration;
-import io.github.lucaseasedup.logit.inventory.InventoryDepository;
 import io.github.lucaseasedup.logit.mail.MailSender;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.session.SessionManager;
@@ -78,11 +77,6 @@ public abstract class LogItCoreObject
     protected PersistenceManager getPersistenceManager()
     {
         return core.getPersistenceManager();
-    }
-    
-    protected InventoryDepository getInventoryDepository()
-    {
-        return core.getInventoryDepository();
     }
     
     protected MailSender getMailSender()

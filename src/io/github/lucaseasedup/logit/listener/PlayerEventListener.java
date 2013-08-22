@@ -28,11 +28,8 @@ import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_FULL;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.inventory.InventorySerializationException;
 import java.util.List;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -149,42 +146,12 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
             getSessionManager().createSession(username, ip);
         }
         
-        if (!getAccountManager().isRegistered(username))
-        {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    if (getConfig().getBoolean("waiting-room.enabled"))
-                    {
-                        Location waitingRoomLocation =
-                                getConfig().getLocation("waiting-room.location").toBukkitLocation();
-                        
-                        player.teleport(waitingRoomLocation);
-                    }
-                }
-            }, 1L);
-        }
-        
         if (getSessionManager().isSessionAlive(player) || !getCore().isPlayerForcedToLogin(player))
         {
             broadcastJoinMessage(player, getConfig().getBoolean("reveal-spawn-world"));
         }
         else
         {
-            if (getConfig().getBoolean("force-login.hide-inventory"))
-            {
-                try
-                {
-                    getInventoryDepository().deposit(player);
-                }
-                catch (InventorySerializationException ex)
-                {
-                    log(Level.WARNING, "Could not deposit player's inventory.", ex);
-                }
-            }
-            
             Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
             {
                 @Override

@@ -24,10 +24,8 @@ import static org.bukkit.event.EventPriority.LOWEST;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.PlayerHolder;
-import io.github.lucaseasedup.logit.inventory.InventorySerializationException;
 import io.github.lucaseasedup.logit.session.SessionEndEvent;
 import io.github.lucaseasedup.logit.session.SessionStartEvent;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,15 +46,6 @@ public class SessionEventListener extends LogItCoreObject implements Listener
     {
         String username = event.getUsername();
         final Player player = PlayerHolder.getExact(username);
-        
-        try
-        {
-            getInventoryDepository().withdraw(player);
-        }
-        catch (InventorySerializationException ex)
-        {
-            log(Level.WARNING, "Could not withdraw player's inventory.", ex);
-        }
         
         Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
         {
@@ -86,21 +75,6 @@ public class SessionEventListener extends LogItCoreObject implements Listener
     {
         String username = event.getUsername();
         final Player player = PlayerHolder.getExact(username);
-        
-        if (getCore().isPlayerForcedToLogin(player))
-        {
-            if (getConfig().getBoolean("force-login.hide-inventory"))
-            {
-                try
-                {
-                    getInventoryDepository().deposit(player);
-                }
-                catch (InventorySerializationException ex)
-                {
-                    log(Level.WARNING, "Could not deposit player's inventory.", ex);
-                }
-            }
-        }
         
         Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
         {
