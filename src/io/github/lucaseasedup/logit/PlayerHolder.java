@@ -37,6 +37,19 @@ public final class PlayerHolder
     {
     }
     
+    /**
+     * Adds all players from the given array to {@code PlayerHolder}. 
+     * 
+     * @param players players to be added.
+     */
+    public static void addAll(Player[] players)
+    {
+        for (int i = 0; i < players.length; i++)
+        {
+            PlayerHolder.players.add(players[i]);
+        }
+    }
+    
     public static Player[] getAll()
     {
         return players.toArray(new Player[players.size()]);
