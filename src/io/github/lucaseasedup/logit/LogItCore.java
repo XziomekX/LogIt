@@ -262,9 +262,20 @@ public final class LogItCore
         
         try
         {
-            persistenceManager.registerSerializer(LocationSerializer.class);
-            persistenceManager.registerSerializer(AirBarSerializer.class);
-            persistenceManager.registerSerializer(InventorySerializer.class);
+            if (getConfig().getBoolean("waiting-room.enabled"))
+            {
+                persistenceManager.registerSerializer(LocationSerializer.class);
+            }
+            
+            if (getConfig().getBoolean("force-login.prevent.air-depletion"))
+            {
+                persistenceManager.registerSerializer(AirBarSerializer.class);
+            }
+            
+            if (getConfig().getBoolean("force-login.hide-inventory"))
+            {
+                persistenceManager.registerSerializer(InventorySerializer.class);
+            }
         }
         catch (ReflectiveOperationException ex)
         {
