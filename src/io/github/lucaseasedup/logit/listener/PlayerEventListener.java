@@ -152,6 +152,8 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
         }
         else
         {
+            getCore().getPersistenceManager().serialize(player);
+            
             Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
             {
                 @Override
