@@ -183,7 +183,7 @@ public final class PersistenceManager extends LogItCoreObject
         if (serializers.containsKey(clazz))
             return false;
         
-        serializers.put(clazz, clazz.getConstructor(LogItCore.class).newInstance(getCore()));
+        serializers.put(clazz, constructSerializer(clazz));
         
         return true;
     }
@@ -206,6 +206,12 @@ public final class PersistenceManager extends LogItCoreObject
         serializers.remove(clazz);
         
         return true;
+    }
+    
+    private PersistenceSerializer constructSerializer(Class<? extends PersistenceSerializer> clazz)
+            throws ReflectiveOperationException
+    {
+        return clazz.getConstructor(LogItCore.class).newInstance(getCore());
     }
     
     @SuppressWarnings("incomplete-switch")
