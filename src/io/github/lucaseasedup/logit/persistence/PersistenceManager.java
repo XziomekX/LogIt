@@ -46,23 +46,26 @@ public final class PersistenceManager extends LogItCoreObject
     /**
      * Serializes player data using the specified serializer
      * 
-     * <p> It does nothing if {@code clazz} is {@code null}, the player has already
-     * been serialized using this serializer, or the serializer has not been registered
-     * using {@link #registerSerializer} method.
+     * <p> It does nothing if {@code clazz} is {@code null}, or the player has already
+     * been serialized using this serializer.
      * 
      * @param player player whose data will be serialized.
      * @param clazz serializer class.
+     * @throws ReflectiveOperationException if serializer construction failed
      */
     public void serializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
+            throws ReflectiveOperationException
     {
         Account account = getAccountManager().getAccount(player.getName());
         PersistenceSerializer serializer = serializers.get(clazz);
         
-        if (serializer == null)
-            return;
-        
         if (isSerializedUsing(player, clazz))
             return;
+
+        if (serializer == null)
+        {
+            serializer = constructSerializer(clazz);
+        }
         
         try
         {
@@ -100,21 +103,28 @@ public final class PersistenceManager extends LogItCoreObject
     {
         for (Class<? extends PersistenceSerializer> clazz : serializers.keySet())
         {
-            serializeUsing(player, clazz);
+            try
+            {
+                serializeUsing(player, clazz);
+            }
+            catch (ReflectiveOperationException ex)
+            {
+            }
         }
     }
 
     /**
      * Unserializes player data using the specified serializer
      * 
-     * <p> It does nothing if {@code clazz} is {@code null}, the player has not
-     * been serialized using this serializer, or the serializer has not been registered
-     * using {@link #registerSerializer} method.
+     * <p> It does nothing if {@code clazz} is {@code null}, or the player has not
+     * been serialized using this serializer.
      * 
      * @param player player whose data will be unserialized.
      * @param clazz serializer class.
+     * @throws ReflectiveOperationException if serializer construction failed
      */
     public void unserializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
+            throws ReflectiveOperationException
     {
         Account account = getAccountManager().getAccount(player.getName());
         
@@ -123,11 +133,13 @@ public final class PersistenceManager extends LogItCoreObject
         
         PersistenceSerializer serializer = serializers.get(clazz);
         
-        if (serializer == null)
-            return;
-        
         if (!isSerializedUsing(player, clazz))
             return;
+
+        if (serializer == null)
+        {
+            serializer = constructSerializer(clazz);
+        }
         
         try
         {
@@ -162,7 +174,13 @@ public final class PersistenceManager extends LogItCoreObject
     {
         for (Class<? extends PersistenceSerializer> clazz : serializers.keySet())
         {
-            unserializeUsing(player, clazz);
+            try
+            {
+                unserializeUsing(player, clazz);
+            }
+            catch (ReflectiveOperationException ex)
+            {
+            }
         }
     }
     
@@ -219,13 +237,25 @@ public final class PersistenceManager extends LogItCoreObject
     {
         PersistenceSerializer serializer = serializers.get(clazz);
         
-        if (serializer == null || player == null)
+        if (player == null)
             return false;
         
         Account account = getAccountManager().getAccount(player.getName());
         
         if (account == null)
             return false;
+        
+        if (serializer == null)
+        {
+            try
+            {
+                serializer = constructSerializer(clazz);
+            }
+            catch (ReflectiveOperationException ex)
+            {
+                return false;
+            }
+        }
         
         for (Key key : getSerializerKeys(serializer.getClass()))
         {
@@ -259,7 +289,7 @@ public final class PersistenceManager extends LogItCoreObject
     
     private Key[] getSerializerKeys(Class<? extends PersistenceSerializer> clazz)
     {
-        if (clazz == null || !serializers.containsKey(clazz))
+        if (clazz == null)
             return new Key[0];
         
         Keys keys = clazz.getAnnotation(Keys.class);

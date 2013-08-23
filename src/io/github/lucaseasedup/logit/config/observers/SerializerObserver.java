@@ -71,7 +71,13 @@ public final class SerializerObserver extends PropertyObserver
         {
             for (Player player : PlayerHolder.getAll())
             {
-                getPersistenceManager().serializeUsing(player, clazz);
+                try
+                {
+                    getPersistenceManager().serializeUsing(player, clazz);
+                }
+                catch (ReflectiveOperationException ex)
+                {
+                }
             }
             
             try
@@ -87,7 +93,13 @@ public final class SerializerObserver extends PropertyObserver
         {
             for (Player player : PlayerHolder.getAll())
             {
-                getPersistenceManager().unserializeUsing(player, clazz);
+                try
+                {
+                    getPersistenceManager().unserializeUsing(player, clazz);
+                }
+                catch (ReflectiveOperationException ex)
+                {
+                }
             }
             
             getPersistenceManager().unregisterSerializer(clazz);
