@@ -227,8 +227,9 @@ public final class PersistenceManager extends LogItCoreObject
      * Registers a serializer class.
      * 
      * @param clazz serializer class.
-     * @throws ReflectiveOperationException if serializer constructor invocation failed.
      * @throws IllegalArgumentException if {@code clazz} is {@code null}.
+     * @throws RuntimeException if the serializer class is already registered.
+     * @throws ReflectiveOperationException if serializer constructor invocation failed.
      */
     public void registerSerializer(Class<? extends PersistenceSerializer> clazz)
             throws ReflectiveOperationException
