@@ -41,7 +41,6 @@ import org.bukkit.inventory.PlayerInventory;
  * @author LucasEasedUp
  */
 @Keys({
-    @Key(name = "inv_world", constraint = KeyConstraint.NOT_EMPTY),
     @Key(name = "inv_contents", constraint = KeyConstraint.NOT_EMPTY),
     @Key(name = "inv_armor", constraint = KeyConstraint.NOT_EMPTY),
 })
@@ -60,7 +59,6 @@ public final class InventorySerializer extends PersistenceSerializer
         {
             data.put("inv_contents", serialize(getContentInventory(player.getInventory())));
             data.put("inv_armor", serialize(getArmorInventory(player.getInventory())));
-            data.put("inv_world", player.getWorld().getName());
             
             if (player.isOnline())
             {
@@ -84,8 +82,7 @@ public final class InventorySerializer extends PersistenceSerializer
             final ItemStack[] contents = unserialize(data.get("inv_contents")).getContents();
             final ItemStack[] armor = unserialize(data.get("inv_armor")).getContents();
             
-            if (player.isOnline()
-                    && data.get("inv_world").equalsIgnoreCase(player.getWorld().getName()))
+            if (player.isOnline())
             {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
                 {
