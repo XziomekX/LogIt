@@ -44,57 +44,6 @@ public final class PersistenceManager extends LogItCoreObject
     }
     
     /**
-     * Checks if a serializer is enabled.
-     * 
-     * <p> This method looks for the following annotations in this order
-     * (if found, all other are ignored):<ol>
-     *  <li>{@link EnabledStatic} set to {@code true},</li>
-     *  <li><code>{@link EnabledCheckerClass}.value().newInstance().isEnabled</code>
-     *      returning {@code true},</li>
-     *  <li>{@link EnabledConfigProperty} pointing to a config property set to <i>true</i>.</li>
-     * </ol>
-     * 
-     * @param clazz serializer class.
-     * @return {@code true} is the serializer is enabled; {@code false} otherwise.
-     */
-    public boolean isSerializerEnabled(Class<? extends PersistenceSerializer> clazz)
-    {
-        if (!serializers.containsKey(clazz))
-            return false;
-        
-        EnabledStatic enabledStatic = clazz.getAnnotation(EnabledStatic.class);
-        
-        if (enabledStatic != null)
-        {
-            return enabledStatic.value();
-        }
-        
-        EnabledCheckerClass enabledCheckerClass =
-                clazz.getAnnotation(EnabledCheckerClass.class);
-        
-        if (enabledCheckerClass != null)
-        {
-            try
-            {
-                return enabledCheckerClass.value().newInstance().isEnabled();
-            }
-            catch (InstantiationException | IllegalAccessException ex)
-            {
-            }
-        }
-        
-        EnabledConfigProperty enabledConfigProperty =
-                clazz.getAnnotation(EnabledConfigProperty.class);
-        
-        if (enabledConfigProperty != null)
-        {
-            return getConfig().getBoolean(enabledConfigProperty.value());
-        }
-        
-        return false;
-    }
-    
-    /**
      * Serializes player data using the specified serializer
      * 
      * <p> It does nothing if {@code clazz} is {@code null}, the player has already
@@ -151,9 +100,6 @@ public final class PersistenceManager extends LogItCoreObject
     {
         for (Class<? extends PersistenceSerializer> clazz : serializers.keySet())
         {
-            if (!isSerializerEnabled(clazz))
-                return;
-            
             serializeUsing(player, clazz);
         }
     }
@@ -216,9 +162,6 @@ public final class PersistenceManager extends LogItCoreObject
     {
         for (Class<? extends PersistenceSerializer> clazz : serializers.keySet())
         {
-            if (!isSerializerEnabled(clazz))
-                return;
-            
             unserializeUsing(player, clazz);
         }
     }

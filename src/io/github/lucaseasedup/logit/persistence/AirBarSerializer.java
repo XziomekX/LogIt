@@ -28,7 +28,6 @@ import org.bukkit.entity.Player;
 @Keys({
     @Key(name = "air", constraint = KeyConstraint.NOT_EMPTY),
 })
-@EnabledConfigProperty("force-login.prevent.air-depletion")
 public final class AirBarSerializer extends PersistenceSerializer
 {
     public AirBarSerializer(LogItCore core)

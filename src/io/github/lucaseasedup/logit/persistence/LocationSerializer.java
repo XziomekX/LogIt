@@ -37,7 +37,6 @@ import org.bukkit.entity.Player;
     @Key(name = "yaw", constraint = KeyConstraint.NOT_EMPTY),
     @Key(name = "pitch", constraint = KeyConstraint.NOT_EMPTY),
 })
-@EnabledConfigProperty("waiting-room.enabled")
 public final class LocationSerializer extends PersistenceSerializer
 {
     public LocationSerializer(LogItCore core)
