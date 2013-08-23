@@ -19,8 +19,6 @@
 package io.github.lucaseasedup.logit.persistence;
 
 import io.github.lucaseasedup.logit.LogItCore;
-import io.github.lucaseasedup.logit.util.MinecraftUtils;
-import java.io.IOException;
 import java.util.Map;
 import org.bukkit.entity.Player;
 

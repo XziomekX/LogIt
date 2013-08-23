@@ -18,20 +18,18 @@
  */
 package io.github.lucaseasedup.logit.persistence;
 
-import org.bukkit.Bukkit;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItPlugin;
 import io.github.lucaseasedup.logit.craftreflect.CraftInventoryCustom;
 import io.github.lucaseasedup.logit.craftreflect.CraftReflect;
 import io.github.lucaseasedup.logit.craftreflect.NBTTagCompound;
 import io.github.lucaseasedup.logit.craftreflect.NBTTagList;
-import io.github.lucaseasedup.logit.util.MinecraftUtils;
 import it.sauronsoftware.base64.Base64;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.Map;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
