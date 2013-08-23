@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.util;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 /**
@@ -76,5 +77,35 @@ public class PlayerUtils
             return "";
         
         return player.getAddress().getAddress().getHostAddress();
+    }
+    
+    /**
+     * Checks if the player is within the specified radius of a {@link org.bukkit.Location}.
+     * 
+     * @param player   a player whose location will be checked.
+     * @param location the location which will be compared with the player location.
+     * @param radiusX  the maximum radius on X-axis.
+     * @param radiusY  the maximum radius on Y-axis.
+     * @param radiusZ  the maximum radius on Z-axis.
+     * @return {@code true} if the player is within the radius; {@code false} otherwise.
+     */
+    public static boolean isPlayerAt(Player player, Location location,
+                                     double radiusX, double radiusY, double radiusZ)
+    {
+        Location playerLocation = player.getLocation();
+        
+        if (playerLocation.getWorld() != location.getWorld())
+            return false;
+        
+        if (Math.abs(playerLocation.getX() - location.getX()) > radiusX)
+            return false;
+
+        if (Math.abs(playerLocation.getY() - location.getY()) > radiusY)
+            return false;
+
+        if (Math.abs(playerLocation.getZ() - location.getZ()) > radiusZ)
+            return false;
+        
+        return true;
     }
 }
