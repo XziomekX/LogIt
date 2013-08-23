@@ -164,7 +164,7 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
                         getCore().sendForceLoginMessage(player);
                     }
                 }
-            }, 15L);
+            }, 5L);
         }
         
         if (getConfig().getBoolean("groups.enabled"))
