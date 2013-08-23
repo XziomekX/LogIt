@@ -76,7 +76,9 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
                 {
                     if (!getSessionManager().endSession(args[1]).isCancelled())
                     {
-                        sender.sendMessage(getMessage("END_SESSION_SUCCESS_SELF"));
+                        sendMessage(args[1], getMessage("END_SESSION_SUCCESS_SELF"));
+                        sender.sendMessage(getMessage("END_SESSION_SUCCESS_OTHERS")
+                                .replace("%player%", args[1]));
                     }
                 }
                 
