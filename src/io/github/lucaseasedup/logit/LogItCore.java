@@ -63,6 +63,7 @@ import io.github.lucaseasedup.logit.persistence.AirBarSerializer;
 import io.github.lucaseasedup.logit.persistence.InventorySerializer;
 import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
+import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.util.FileUtils;
 import java.io.File;
@@ -260,29 +261,12 @@ public final class LogItCore
         
         persistenceManager = new PersistenceManager(this);
         
-        try
-        {
-            if (getConfig().getBoolean("waiting-room.enabled"))
-            {
-                persistenceManager.registerSerializer(LocationSerializer.class);
-            }
-            
-            if (getConfig().getBoolean("force-login.prevent.air-depletion"))
-            {
-                persistenceManager.registerSerializer(AirBarSerializer.class);
-            }
-            
-            if (getConfig().getBoolean("force-login.hide-inventory"))
-            {
-                persistenceManager.registerSerializer(InventorySerializer.class);
-            }
-        }
-        catch (ReflectiveOperationException ex)
-        {
-            log(Level.SEVERE, "Could not register persistence serializers.", ex);
-            
-            FatalReportedException.throwNew(ex);
-        }
+        setSerializerEnabled(LocationSerializer.class,
+                getConfig().getBoolean("waiting-room.enabled"));
+        setSerializerEnabled(AirBarSerializer.class,
+                getConfig().getBoolean("force-login.prevent.air-depletion"));
+        setSerializerEnabled(InventorySerializer.class,
+                getConfig().getBoolean("force-login.hide-inventory"));
         
         accountWatcher = new AccountWatcher(this);
         backupManager  = new BackupManager(this);
@@ -937,6 +921,25 @@ public final class LogItCore
         plugin.getServer().getPluginManager().registerEvents(new InventoryEventListener(this), plugin);
         plugin.getServer().getPluginManager().registerEvents(new AccountEventListener(this), plugin);
         plugin.getServer().getPluginManager().registerEvents(new SessionEventListener(this), plugin);
+    }
+    
+    private void setSerializerEnabled(Class<? extends PersistenceSerializer> clazz, boolean status)
+            throws FatalReportedException
+    {
+        try
+        {
+            if (status)
+            {
+                persistenceManager.registerSerializer(clazz);
+            }
+        }
+        catch (ReflectiveOperationException ex)
+        {
+            log(Level.SEVERE,
+                    "Could not register persistence serializer: " + clazz.getSimpleName(), ex);
+            
+            FatalReportedException.throwNew(ex);
+        }
     }
     
     /**
