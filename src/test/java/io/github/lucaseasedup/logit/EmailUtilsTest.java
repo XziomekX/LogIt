@@ -1,4 +1,5 @@
 package io.github.lucaseasedup.logit;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import io.github.lucaseasedup.logit.util.EmailUtils;
