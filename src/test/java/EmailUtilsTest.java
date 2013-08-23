@@ -6,7 +6,7 @@ import org.junit.Test;
 public class EmailUtilsTest
 {
     @Test
-    public void test()
+    public void testValidation()
     {
         assertTrue(EmailUtils.validateEmail("example123@website321.com"));
         assertFalse(EmailUtils.validateEmail(""));
