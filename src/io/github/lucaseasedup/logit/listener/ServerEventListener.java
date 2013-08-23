@@ -75,7 +75,5 @@ public class ServerEventListener extends LogItCoreObject implements Listener
         {
             log(Level.WARNING, "Could not export sessions.", ex);
         }
-        
-        sessions.delete();
     }
 }
