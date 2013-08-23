@@ -104,6 +104,7 @@ public final class LogItPlugin extends JavaPlugin
         }
         
         PlayerHolder.registerListenerForPlugin(this);
+        PlayerHolder.addAll(Bukkit.getOnlinePlayers());
         
         core = LogItCore.getInstance();
         
