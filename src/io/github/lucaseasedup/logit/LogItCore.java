@@ -932,6 +932,13 @@ public final class LogItCore
             {
                 persistenceManager.registerSerializer(clazz);
             }
+            else
+            {
+                for (Player player : Bukkit.getOnlinePlayers())
+                {
+                    persistenceManager.unserializeUsing(player, clazz);
+                }
+            }
         }
         catch (ReflectiveOperationException ex)
         {
