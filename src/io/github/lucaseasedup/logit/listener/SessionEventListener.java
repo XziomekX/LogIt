@@ -66,7 +66,7 @@ public class SessionEventListener extends LogItCoreObject implements Listener
         
         if (getCore().isPlayerForcedToLogin(player))
         {
-            getPersistenceManager().unserialize(player, false);
+            getPersistenceManager().unserialize(player);
         }
     }
     
@@ -95,7 +95,7 @@ public class SessionEventListener extends LogItCoreObject implements Listener
         
         if (getCore().isPlayerForcedToLogin(player))
         {
-            getPersistenceManager().serialize(player, false);
+            getPersistenceManager().serialize(player);
         }
     }
 }

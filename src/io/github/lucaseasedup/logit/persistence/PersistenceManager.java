@@ -145,24 +145,16 @@ public final class PersistenceManager extends LogItCoreObject
      * Serializes player data using all enabled serializers registered
      * using {@link #registerSerializer} method.
      * 
-     * @param player                 player whose data will be serialized.
-     * @param skipOfflineSerializers if {@code true}, offline serializers will not be used.
+     * @param player player whose data will be serialized.
      */
-    public void serialize(Player player, boolean skipOfflineSerializers)
+    public void serialize(Player player)
     {
         for (Class<? extends PersistenceSerializer> clazz : serializers.keySet())
         {
             if (!isSerializerEnabled(clazz))
                 return;
             
-            OfflineSerializable offlineSerializable =
-                    clazz.getAnnotation(OfflineSerializable.class);
-            
-            if (offlineSerializable == null || !offlineSerializable.value()
-                    || !skipOfflineSerializers)
-            {
-                serializeUsing(player, clazz);
-            }
+            serializeUsing(player, clazz);
         }
     }
 
@@ -218,24 +210,16 @@ public final class PersistenceManager extends LogItCoreObject
      * Unserializes player data using all enabled serializers registered
      * using {@link #registerSerializer} method.
      * 
-     * @param player                 player whose data will be unserialized.
-     * @param skipOfflineSerializers if {@code true}, offline serializers will not be used.
+     * @param player player whose data will be unserialized.
      */
-    public void unserialize(Player player, boolean skipOfflineSerializers)
+    public void unserialize(Player player)
     {
         for (Class<? extends PersistenceSerializer> clazz : serializers.keySet())
         {
             if (!isSerializerEnabled(clazz))
                 return;
             
-            OfflineSerializable offlineSerializable =
-                    clazz.getAnnotation(OfflineSerializable.class);
-            
-            if (offlineSerializable == null || !offlineSerializable.value()
-                    || !skipOfflineSerializers)
-            {
-                unserializeUsing(player, clazz);
-            }
+            unserializeUsing(player, clazz);
         }
     }
     

@@ -45,7 +45,6 @@ import org.bukkit.inventory.PlayerInventory;
     @Key(name = "inv_armor", constraint = KeyConstraint.NOT_EMPTY),
 })
 @EnabledConfigProperty("force-login.hide-inventory")
-@OfflineSerializable(true)
 public final class InventorySerializer extends PersistenceSerializer
 {
     public InventorySerializer(LogItCore core)
