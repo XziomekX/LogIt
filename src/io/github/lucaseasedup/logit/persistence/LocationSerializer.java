@@ -19,8 +19,11 @@
 package io.github.lucaseasedup.logit.persistence;
 
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 /**
@@ -56,7 +59,39 @@ public final class LocationSerializer extends PersistenceSerializer
         
         if (player.isOnline())
         {
-            player.teleport(getWaitingRoomLocation());
+            final Location waitingRoomLocation = getWaitingRoomLocation();
+            final AtomicInteger teleporterTaskId = new AtomicInteger();
+            
+            // First teleport attempt is not delayed.
+            player.teleport(waitingRoomLocation);
+            
+            // Now, check if player location changed (e.g. by another plugin).  
+            teleporterTaskId.set(Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(),
+                    new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    if (++passes > MAX_PASSES)
+                    {
+                        Bukkit.getScheduler().cancelTask(teleporterTaskId.get());
+                    }
+                    else if (!PlayerUtils.isPlayerAt(player, waitingRoomLocation, 0.5, 0.5, 0.5))
+                    {
+                        player.teleport(waitingRoomLocation);
+                    }
+                }
+                
+                /**
+                 * Tells how many times the location will be checked.
+                 */
+                private final int MAX_PASSES = 2;
+                
+                /**
+                 * Tells how many checks has been done so far.
+                 */
+                private int passes = 0;
+            }, 1L, 1L));
         }
     }
     
