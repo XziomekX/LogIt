@@ -56,37 +56,23 @@ public final class LocationSerializer extends PersistenceSerializer
         
         if (player.isOnline())
         {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    player.teleport(getWaitingRoomLocation());
-                }
-            }, 1L);
+            player.teleport(getWaitingRoomLocation());
         }
     }
     
     @Override
-    public void unserialize(final Map<String, String> data, final Player player)
+    public void unserialize(Map<String, String> data, Player player)
     {
         if (player.isOnline())
         {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    player.teleport(new org.bukkit.Location(
-                        Bukkit.getWorld(data.get("world")),
-                        Double.valueOf(data.get("x")),
-                        Double.valueOf(data.get("y")),
-                        Double.valueOf(data.get("z")),
-                        Float.valueOf(data.get("yaw")),
-                        Float.valueOf(data.get("pitch"))
-                    ));
-                }
-            }, 1L);
+            player.teleport(new org.bukkit.Location(
+                Bukkit.getWorld(data.get("world")),
+                Double.valueOf(data.get("x")),
+                Double.valueOf(data.get("y")),
+                Double.valueOf(data.get("z")),
+                Float.valueOf(data.get("yaw")),
+                Float.valueOf(data.get("pitch"))
+            ));
         }
     }
     
