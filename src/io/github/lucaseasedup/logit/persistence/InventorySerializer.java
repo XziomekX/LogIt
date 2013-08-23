@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.persistence;
 
+import org.bukkit.Bukkit;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItPlugin;
 import io.github.lucaseasedup.logit.craftreflect.CraftInventoryCustom;
@@ -76,18 +77,25 @@ public final class InventorySerializer extends PersistenceSerializer
     }
     
     @Override
-    public void unserialize(Map<String, String> data, Player player)
+    public void unserialize(Map<String, String> data, final Player player)
     {
         try
         {
-            ItemStack[] contents = unserialize(data.get("inv_contents")).getContents();
-            ItemStack[] armor = unserialize(data.get("inv_armor")).getContents();
+            final ItemStack[] contents = unserialize(data.get("inv_contents")).getContents();
+            final ItemStack[] armor = unserialize(data.get("inv_armor")).getContents();
             
             if (player.isOnline()
                     && data.get("inv_world").equalsIgnoreCase(player.getWorld().getName()))
             {
-                player.getInventory().setContents(contents);
-                player.getInventory().setArmorContents(armor);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        player.getInventory().setContents(contents);
+                        player.getInventory().setArmorContents(armor);
+                    }
+                }, 1L);
             }
         }
         catch (ReflectiveOperationException ex)
