@@ -62,16 +62,6 @@ public final class AirBarSerializer extends PersistenceSerializer
             {
                 player.setRemainingAir(Integer.valueOf(air));
             }
-            else
-            {
-                try
-                {
-                    MinecraftUtils.saveAir(player.getWorld().getName(), player.getName(), Short.valueOf(air));
-                }
-                catch (IOException ex)
-                {
-                }
-            }
         }
     }
 }

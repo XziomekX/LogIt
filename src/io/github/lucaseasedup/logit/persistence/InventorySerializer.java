@@ -89,13 +89,8 @@ public final class InventorySerializer extends PersistenceSerializer
                 player.getInventory().setContents(contents);
                 player.getInventory().setArmorContents(armor);
             }
-            else
-            {
-                MinecraftUtils.saveInventory(player.getWorld().getName(), player.getName(),
-                        contents, armor);
-            }
         }
-        catch (ReflectiveOperationException | IOException ex)
+        catch (ReflectiveOperationException ex)
         {
         }
     }
