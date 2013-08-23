@@ -242,6 +242,24 @@ public final class PersistenceManager extends LogItCoreObject
         serializers.put(clazz, clazz.getConstructor(LogItCore.class).newInstance(getCore()));
     }
     
+    /**
+     * Unregisters a serializer class.
+     * 
+     * @param clazz serializer class to be unregistered.
+     * @throws IllegalArgumentException if {@code clazz} is {@code null}.
+     * @throws RuntimeException if the serializer class is not registered.
+     */
+    public void unregisterSerializer(Class<? extends PersistenceSerializer> clazz)
+    {
+        if (clazz == null)
+            throw new IllegalArgumentException("Serializer class must not be null.");
+        
+        if (!serializers.containsKey(clazz))
+            throw new RuntimeException(clazz.getSimpleName() + " is not registered.");
+        
+        serializers.remove(clazz);
+    }
+    
     @SuppressWarnings("incomplete-switch")
     private boolean isSerializedUsing(Player player, Class<? extends PersistenceSerializer> clazz)
     {
