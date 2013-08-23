@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,13 +85,12 @@ public class CsvDatabase extends Database
         if (!connected)
             throw new SQLException("Database closed.");
         
-        String[] tableColumns = null;
-        List<List<String>> values = new ArrayList<>();
+        List<Map<String, String>> rs = new ArrayList<>();
         
         try (BufferedReader br = new BufferedReader(new FileReader(new File(dir, table))))
         {
             String line = br.readLine();
-            tableColumns = line.split(",");
+            String[] tableColumns = line.split(",");
             
             for (int i = 0; i < tableColumns.length; i++)
             {
@@ -109,14 +110,14 @@ public class CsvDatabase extends Database
                 }
                 
                 String[] lineValues = line.split("(?<=\"),(?=\")");
-                ArrayList<String> row = new ArrayList<>();
+                Map<String, String> row = new LinkedHashMap<>();
                 
                 for (int i = 0; i < lineValues.length; i++)
                 {
-                    row.add(unescapeValue(lineValues[i]));
+                    row.put(tableColumns[i], unescapeValue(lineValues[i]));
                 }
                 
-                values.add(row);
+                rs.add(row);
             }
         }
         catch (IOException ex)
@@ -124,7 +125,7 @@ public class CsvDatabase extends Database
             throw new SQLException(ex.getMessage(), ex.getCause());
         }
         
-        return copyResultSet(new CsvResultSet(values, Arrays.asList(tableColumns)));
+        return rs;
     }
     
     @Override
@@ -329,11 +330,11 @@ public class CsvDatabase extends Database
             throw new SQLException("Database closed.");
         
         List<String> columnNames = getColumnNames(table);
-        CsvResultSet rs = (CsvResultSet) select(table, columnListToArray(columnNames, false));
+        List<Map<String, String>> rs = select(table, columnListToArray(columnNames, false));
         
         createTable(table, columnListToArray(columnNames, true));
         
-        while (rs.next())
+        for (Map<String, String> row : rs)
         {
             boolean updateRow = false;
             
@@ -341,7 +342,7 @@ public class CsvDatabase extends Database
             {
                 if ("=".equals(where[i + 1]))
                 {
-                    updateRow = rs.getString(where[i]).equals(where[i + 2]);
+                    updateRow = row.get(where[i]).equals(where[i + 2]);
                 }
             }
             
@@ -349,11 +350,14 @@ public class CsvDatabase extends Database
             {
                 for (int i = 0; i < set.length; i += 2)
                 {
-                    rs.updateString(set[i], set[i + 1]);
+                    row.put(set[i], set[i + 1]);
                 }
             }
             
-            insert(table, columnListToArray(columnNames, false), rs.getRowArray());
+            Collection<String> values = row.values();
+            
+            insert(table, columnListToArray(columnNames, false),
+                    values.toArray(new String[values.size()]));
         }
         
         return true;
@@ -366,11 +370,11 @@ public class CsvDatabase extends Database
             throw new SQLException("Database closed.");
         
         List<String> columnNames = getColumnNames(table);
-        CsvResultSet rs = (CsvResultSet) select(table, columnListToArray(columnNames, false));
+        List<Map<String, String>> rs = select(table, columnListToArray(columnNames, false));
         
         createTable(table, columnListToArray(columnNames, true));
         
-        while (rs.next())
+        for (Map<String, String> row : rs)
         {
             boolean insertRow = true;
             
@@ -378,13 +382,16 @@ public class CsvDatabase extends Database
             {
                 if ("=".equals(where[i + 1]))
                 {
-                    insertRow = !rs.getString(where[i]).equals(where[i + 2]);
+                    insertRow = !row.get(where[i]).equals(where[i + 2]);
                 }
             }
             
             if (insertRow)
             {
-                insert(table, columnListToArray(columnNames, false), rs.getRowArray());
+                Collection<String> values = row.values();
+                
+                insert(table, columnListToArray(columnNames, false),
+                        values.toArray(new String[values.size()]));
             }
         }
         
