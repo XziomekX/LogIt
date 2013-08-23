@@ -5,6 +5,7 @@
 /javadoc
 /lib
 /nbproject
+/src/internal
 /test
 /build.xml
 .*
