@@ -17,13 +17,11 @@ public class EmailUtilsTest
         assertFalse(EmailUtils.validateEmail("example@@website.com"));
         assertFalse(EmailUtils.validateEmail("examp,le@website.com"));
         assertFalse(EmailUtils.validateEmail("example@website.com "));
-        
-        try
-        {
-            assertFalse(EmailUtils.validateEmail(null));
-        }
-        catch (Throwable ex)
-        {
-        }
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void testValidationNullEmail()
+    {
+        EmailUtils.validateEmail(null);
     }
 }
