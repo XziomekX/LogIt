@@ -82,9 +82,6 @@ public final class SerializerObserver extends PropertyObserver
             {
                 log(Level.WARNING, "Could not register serializer: " + clazz.getSimpleName(), ex);
             }
-            catch (RuntimeException ex)
-            {
-            }
         }
         else
         {
@@ -93,13 +90,7 @@ public final class SerializerObserver extends PropertyObserver
                 getPersistenceManager().unserializeUsing(player, clazz);
             }
             
-            try
-            {
-                getPersistenceManager().unregisterSerializer(clazz);
-            }
-            catch (RuntimeException ex)
-            {
-            }
+            getPersistenceManager().unregisterSerializer(clazz);
         }
     }
 }

@@ -171,19 +171,21 @@ public final class PersistenceManager extends LogItCoreObject
      * 
      * @param clazz serializer class.
      * @throws IllegalArgumentException if {@code clazz} is {@code null}.
-     * @throws RuntimeException if the serializer class is already registered.
      * @throws ReflectiveOperationException if serializer constructor invocation failed.
+     * @return {@code false} if the serializer class is already registered; {@code true} otherwise.
      */
-    public void registerSerializer(Class<? extends PersistenceSerializer> clazz)
+    public boolean registerSerializer(Class<? extends PersistenceSerializer> clazz)
             throws ReflectiveOperationException
     {
         if (clazz == null)
             throw new IllegalArgumentException("Serializer class must not be null.");
         
         if (serializers.containsKey(clazz))
-            throw new RuntimeException(clazz.getSimpleName() + " is already registered.");
+            return false;
         
         serializers.put(clazz, clazz.getConstructor(LogItCore.class).newInstance(getCore()));
+        
+        return true;
     }
     
     /**
@@ -191,17 +193,19 @@ public final class PersistenceManager extends LogItCoreObject
      * 
      * @param clazz serializer class to be unregistered.
      * @throws IllegalArgumentException if {@code clazz} is {@code null}.
-     * @throws RuntimeException if the serializer class is not registered.
+     * @return {@code false} if the serializer class is not registered; {@code true} otherwise.
      */
-    public void unregisterSerializer(Class<? extends PersistenceSerializer> clazz)
+    public boolean unregisterSerializer(Class<? extends PersistenceSerializer> clazz)
     {
         if (clazz == null)
             throw new IllegalArgumentException("Serializer class must not be null.");
         
         if (!serializers.containsKey(clazz))
-            throw new RuntimeException(clazz.getSimpleName() + " is not registered.");
+            return false;
         
         serializers.remove(clazz);
+        
+        return true;
     }
     
     @SuppressWarnings("incomplete-switch")
