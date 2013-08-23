@@ -330,6 +330,10 @@ public final class LogItCore
         if (!started)
             return;
         
+        persistenceManager.unregisterSerializer(LocationSerializer.class);
+        persistenceManager.unregisterSerializer(AirBarSerializer.class);
+        persistenceManager.unregisterSerializer(InventorySerializer.class);
+        
         try
         {
             database.close();
