@@ -23,6 +23,7 @@ import io.github.lucaseasedup.logit.PlayerHolder;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyObserver;
 import io.github.lucaseasedup.logit.persistence.AirBarSerializer;
+import io.github.lucaseasedup.logit.persistence.HealthBarSerializer;
 import io.github.lucaseasedup.logit.persistence.InventorySerializer;
 import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
@@ -52,6 +53,10 @@ public final class SerializerObserver extends PropertyObserver
             
         case "force-login.obfuscate-bars.air":
             clazz = AirBarSerializer.class;
+            break;
+
+        case "force-login.obfuscate-bars.health":
+            clazz = HealthBarSerializer.class;
             break;
             
         case "force-login.hide-inventory":
