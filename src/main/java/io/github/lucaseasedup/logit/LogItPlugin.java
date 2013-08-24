@@ -210,7 +210,7 @@ public final class LogItPlugin extends JavaPlugin
     
     public static String getMessage(String label)
     {
-        return getMessage(label, new String[0]);
+        return getMessage(label, NO_STRINGS);
     }
     
     public static String parseMessage(String message, String[] variables)
@@ -232,7 +232,7 @@ public final class LogItPlugin extends JavaPlugin
     
     public static String parseMessage(String message)
     {
-        return parseMessage(message, new String[0]);
+        return parseMessage(message, NO_STRINGS);
     }
     
     /**
@@ -314,6 +314,8 @@ public final class LogItPlugin extends JavaPlugin
     {
         ConfigurationSerialization.registerClass(Location.class);
     }
+    
+    private static final String[] NO_STRINGS = new String[0];
     
     private static Logger logger;
     private static PropertyResourceBundle messages;

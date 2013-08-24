@@ -355,12 +355,12 @@ public final class PersistenceManager extends LogItCoreObject
     private Key[] getSerializerKeys(Class<? extends PersistenceSerializer> clazz)
     {
         if (clazz == null)
-            return new Key[0];
+            return NO_KEYS;
         
         Keys keys = clazz.getAnnotation(Keys.class);
         
         if (keys == null)
-            return new Key[0];
+            return NO_KEYS;
         
         return keys.value();
     }
@@ -379,6 +379,8 @@ public final class PersistenceManager extends LogItCoreObject
         
         return false;
     }
+    
+    private static final Key[] NO_KEYS = new Key[0];
     
     private final Map<Class<? extends PersistenceSerializer>, PersistenceSerializer> serializers;
 }

@@ -186,7 +186,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         File[] backupFiles = backupDir.listFiles();
         
         if (backupFiles == null)
-            return new File[0];
+            return NO_FILES;
         
         if (sortAlphabetically)
         {
@@ -206,6 +206,8 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         
         return backupFile;
     }
+    
+    private static final File[] NO_FILES = new File[0];
     
     private final Timer timer;
 }
