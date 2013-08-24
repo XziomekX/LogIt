@@ -28,7 +28,7 @@ import java.util.Random;
  * 
  * @author LucasEasedUp
  */
-public class HashGenerator
+public final class HashGenerator
 {
     private HashGenerator()
     {
