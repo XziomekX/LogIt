@@ -9,4 +9,4 @@ Installation steps:
 
 Optional libraries for enhanced functionality (already included in the LogIt folder):
 * mail-[version].jar - for sending e-mails (e.g. password recovery)
-* h2-[version].jar - for H2 database support
+* h2small-[version].jar - for H2 database support
