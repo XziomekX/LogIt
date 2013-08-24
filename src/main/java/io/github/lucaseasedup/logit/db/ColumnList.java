@@ -24,7 +24,7 @@ import java.util.Collection;
 /**
  * @author LucasEasedUp
  */
-public class ColumnList extends ArrayList<String>
+public final class ColumnList extends ArrayList<String>
 {
     public ColumnList()
     {
