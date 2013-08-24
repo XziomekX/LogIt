@@ -35,7 +35,7 @@ public abstract class AccountObserver extends LogItCoreObject implements Observe
     }
     
     @Override
-    public void update(Observable o, Object arg)
+    public final void update(Observable o, Object arg)
     {
         if (o instanceof Property && arg instanceof String)
         {
