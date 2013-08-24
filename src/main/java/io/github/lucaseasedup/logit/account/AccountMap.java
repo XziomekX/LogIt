@@ -98,7 +98,7 @@ public class AccountMap
     {
         for (String s : data.keySet())
         {
-            if (s.equalsIgnoreCase((String) username))
+            if (s.equalsIgnoreCase(username))
             {
                 return true;
             }
