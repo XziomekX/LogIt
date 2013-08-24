@@ -103,7 +103,7 @@ public final class InventorySerializer extends PersistenceSerializer
         DataOutputStream dataOutput = new DataOutputStream(outputStream);
         NBTTagList itemList = reflect.newNBTTagList();
         
-        for (int i = 0; i < inventory.getSize(); i++)
+        for (int i = 0, n = inventory.getSize(); i < n; i++)
         {
             NBTTagCompound outputObject = reflect.newNBTTagCompound();
             reflect.saveItemStack(inventory.getItem(i), outputObject);
@@ -122,7 +122,7 @@ public final class InventorySerializer extends PersistenceSerializer
         NBTTagList itemList = reflect.readNBTTag(inputStream).cast(NBTTagList.class);
         CraftInventoryCustom inventory = reflect.newCraftInventoryCustom(itemList.size());
         
-        for (int i = 0; i < itemList.size(); i++)
+        for (int i = 0, n = itemList.size(); i < n; i++)
         {
             NBTTagCompound inputObject = itemList.get(i).cast(NBTTagCompound.class);
             

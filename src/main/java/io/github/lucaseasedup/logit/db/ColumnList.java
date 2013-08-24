@@ -100,7 +100,7 @@ public final class ColumnList extends ArrayList<String>
     @Override
     public int indexOf(Object o)
     {
-        for (int i = 0; i < size(); i++)
+        for (int i = 0, n = size(); i < n; i++)
         {
             Object el = get(i);
             

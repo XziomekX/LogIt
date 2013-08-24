@@ -350,7 +350,7 @@ public class Whirlpool
         {
             byte[] data = new byte[source.length()];
             
-            for (int i = 0; i < source.length(); i++)
+            for (int i = 0, n = source.length(); i < n; i++)
             {
                 data[i] = (byte)source.charAt(i);
             }
