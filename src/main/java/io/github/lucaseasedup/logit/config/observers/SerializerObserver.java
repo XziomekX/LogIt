@@ -50,7 +50,7 @@ public final class SerializerObserver extends PropertyObserver
             clazz = LocationSerializer.class;
             break;
             
-        case "force-login.prevent.air-depletion":
+        case "force-login.obfuscate-bars.air":
             clazz = AirBarSerializer.class;
             break;
             

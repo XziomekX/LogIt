@@ -264,7 +264,7 @@ public final class LogItCore
         setSerializerEnabled(LocationSerializer.class,
                 getConfig().getBoolean("waiting-room.enabled"));
         setSerializerEnabled(AirBarSerializer.class,
-                getConfig().getBoolean("force-login.prevent.air-depletion"));
+                getConfig().getBoolean("force-login.obfuscate-bars.air"));
         setSerializerEnabled(InventorySerializer.class,
                 getConfig().getBoolean("force-login.hide-inventory"));
         
