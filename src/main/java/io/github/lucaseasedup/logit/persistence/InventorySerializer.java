@@ -29,7 +29,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.util.Map;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -81,15 +80,8 @@ public final class InventorySerializer extends PersistenceSerializer
             
             if (player.isOnline())
             {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        player.getInventory().setContents(contents);
-                        player.getInventory().setArmorContents(armor);
-                    }
-                }, 1L);
+                player.getInventory().setContents(contents);
+                player.getInventory().setArmorContents(armor);
             }
         }
         catch (ReflectiveOperationException ex)
