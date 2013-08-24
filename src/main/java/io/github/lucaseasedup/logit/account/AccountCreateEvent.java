@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * @author LucasEasedUp
  */
-public class AccountCreateEvent extends AccountEvent
+public final class AccountCreateEvent extends AccountEvent
 {
     public AccountCreateEvent(Map<String, String> properties)
     {

@@ -21,7 +21,7 @@ package io.github.lucaseasedup.logit.account;
 /**
  * @author LucasEasedUp
  */
-public class AccountRemoveEvent extends AccountEvent
+public final class AccountRemoveEvent extends AccountEvent
 {
     public AccountRemoveEvent(Account account)
     {

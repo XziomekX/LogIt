@@ -21,7 +21,7 @@ package io.github.lucaseasedup.logit.session;
 /**
  * @author LucasEasedUp
  */
-public class SessionDestroyEvent extends SessionEvent
+public final class SessionDestroyEvent extends SessionEvent
 {
     public SessionDestroyEvent(String username, Session session)
     {

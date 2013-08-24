@@ -21,7 +21,7 @@ package io.github.lucaseasedup.logit.account;
 /**
  * @author LucasEasedUp
  */
-public class AccountChangePasswordEvent extends AccountEvent
+public final class AccountChangePasswordEvent extends AccountEvent
 {
     public AccountChangePasswordEvent(Account account, String password)
     {

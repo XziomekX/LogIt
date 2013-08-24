@@ -21,7 +21,7 @@ package io.github.lucaseasedup.logit.session;
 /**
  * @author LucasEasedUp
  */
-public class SessionCreateEvent extends SessionEvent
+public final class SessionCreateEvent extends SessionEvent
 {
     public SessionCreateEvent(String username)
     {

@@ -21,7 +21,7 @@ package io.github.lucaseasedup.logit.account;
 /**
  * @author LucasEasedUp
  */
-public class AccountChangeEmailEvent extends AccountEvent
+public final class AccountChangeEmailEvent extends AccountEvent
 {
     public AccountChangeEmailEvent(Account account, String email)
     {

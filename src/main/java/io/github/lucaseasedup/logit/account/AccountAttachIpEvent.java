@@ -21,7 +21,7 @@ package io.github.lucaseasedup.logit.account;
 /**
  * @author LucasEasedUp
  */
-public class AccountAttachIpEvent extends AccountEvent
+public final class AccountAttachIpEvent extends AccountEvent
 {
     public AccountAttachIpEvent(Account account, String ip)
     {
