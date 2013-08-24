@@ -276,21 +276,21 @@ public class Table
         
         if (rs != null && !rs.isEmpty())
         {
-            for (Map<String, String> m : rs)
+            for (Map<String, String> row : rs)
             {
-                Map<String, String> row = new HashMap<>();
+                Map<String, String> filteredRow = new HashMap<>();
                 
-                for (Entry<String, String> e : m.entrySet())
+                for (Entry<String, String> column : row.entrySet())
                 {
-                    String columnId = getColumnId(e.getKey());
-
+                    String columnId = getColumnId(column.getKey());
+                    
                     if (columnId != null)
                     {
-                        row.put(columnId, e.getValue());
+                        filteredRow.put(columnId, column.getValue());
                     }
                 }
                 
-                result.add(row);
+                result.add(filteredRow);
             }
         }
         
