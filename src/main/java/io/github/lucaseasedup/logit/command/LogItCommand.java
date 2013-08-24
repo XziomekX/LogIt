@@ -106,9 +106,13 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 {
                     sender.sendMessage(getLogItSubcommandHelp("globalpass remove", null));
                 }
-                if (p == null || p.hasPermission("logit.accountcount"))
+                if (p == null || p.hasPermission("logit.account.count"))
                 {
-                    sender.sendMessage(getLogItSubcommandHelp("accountcount", null));
+                    sender.sendMessage(getLogItSubcommandHelp("account count", null));
+                }
+                if (p == null || p.hasPermission("logit.account.status"))
+                {
+                    sender.sendMessage(getLogItSubcommandHelp("account status", "<username>"));
                 }
                 if (p == null || p.hasPermission("logit.ipcount"))
                 {
@@ -347,16 +351,51 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 sender.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
             }
         }
-        else if (subcommand.equalsIgnoreCase("accountcount") && args.length == 1)
+        else if (subcommand.equalsIgnoreCase("account") && args.length >= 2)
         {
-            if (p != null && !p.hasPermission("logit.accountcount"))
+            if (args[1].equalsIgnoreCase("count") && args.length == 2)
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                if (p != null && !p.hasPermission("logit.account.count"))
+                {
+                    sender.sendMessage(getMessage("NO_PERMS"));
+                }
+                else
+                {
+                    sender.sendMessage(getMessage("ACCOUNT_COUNT")
+                            .replace("%num%", String.valueOf(getAccountManager().getAccountCount())));
+                }
+            }
+            else if (args[1].equalsIgnoreCase("status") && args.length <= 3)
+            {
+                if (p != null && !p.hasPermission("logit.account.status"))
+                {
+                    sender.sendMessage(getMessage("NO_PERMS"));
+                }
+                else if (args.length < 3)
+                {
+                    sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "username"));
+                }
+                else
+                {
+                    StringBuilder status = new StringBuilder(); 
+                    
+                    if (getAccountManager().isRegistered(args[2]))
+                    {
+                        status.append(getMessage("ACCOUNT_STATUS_REGISTERED"));
+                    }
+                    else
+                    {
+                        status.append(getMessage("ACCOUNT_STATUS_NOT_REGISTERED"));
+                    }
+                    
+                    sender.sendMessage(getMessage("ACCOUNT_STATUS")
+                            .replace("%username%", args[2])
+                            .replace("%status%", status.toString()));
+                }
             }
             else
             {
-                sender.sendMessage(getMessage("ACCOUNT_COUNT")
-                        .replace("%num%", String.valueOf(getAccountManager().getAccountCount())));
+                sender.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
             }
         }
         else if (subcommand.equalsIgnoreCase("ipcount") && args.length <= 2)
