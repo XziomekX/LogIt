@@ -8,5 +8,5 @@ Installation steps:
 * Type "logit reload" and you're done!
 
 Optional libraries for enhanced functionality (already included in the LogIt folder):
-* mail-<version>.jar - for sending e-mails (e.g. password recovery)
-* h2-<version>.jar - for H2 database support
+* mail-[version].jar - for sending e-mails (e.g. password recovery)
+* h2-[version].jar - for H2 database support
