@@ -23,7 +23,7 @@ import org.bukkit.Bukkit;
 /**
  * @author LucasEasedUp
  */
-public class TickEventCaller implements Runnable
+public final class TickEventCaller implements Runnable
 {
     @Override
     public void run()
