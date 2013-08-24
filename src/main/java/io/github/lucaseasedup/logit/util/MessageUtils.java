@@ -28,7 +28,7 @@ import org.bukkit.entity.Player;
 /**
  * @author LucasEasedUp
  */
-public class MessageUtils
+public final class MessageUtils
 {
     private MessageUtils()
     {

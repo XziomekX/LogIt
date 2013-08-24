@@ -21,7 +21,7 @@ package io.github.lucaseasedup.logit.util;
 /**
  * @author LucasEasedUp
  */
-public class SqlUtils
+public final class SqlUtils
 {
     private SqlUtils()
     {

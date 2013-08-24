@@ -25,7 +25,7 @@ import org.bukkit.entity.Player;
 /**
  * @author LucasEasedUp
  */
-public class PlayerUtils
+public final class PlayerUtils
 {
     private PlayerUtils()
     {

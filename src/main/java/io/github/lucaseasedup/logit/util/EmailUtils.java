@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 /**
  * @author LucasEasedUp
  */
-public class EmailUtils
+public final class EmailUtils
 {
     private EmailUtils()
     {

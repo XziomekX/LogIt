@@ -34,7 +34,7 @@ import java.util.Arrays;
 /**
  * @author LucasEasedUp
  */
-public class FileUtils
+public final class FileUtils
 {
     private FileUtils()
     {

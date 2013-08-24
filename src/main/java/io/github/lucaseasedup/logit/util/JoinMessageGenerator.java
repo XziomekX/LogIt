@@ -27,7 +27,7 @@ import org.bukkit.entity.Player;
 /**
  * @author LucasEasedUp
  */
-public class JoinMessageGenerator
+public final class JoinMessageGenerator
 {
     private JoinMessageGenerator()
     {
