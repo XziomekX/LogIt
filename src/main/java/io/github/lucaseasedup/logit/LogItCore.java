@@ -116,6 +116,20 @@ public final class LogItCore
             FatalReportedException.throwNew(ex);
         }
         
+        if (config.getBoolean("log-to-file.enabled"))
+        {
+            File logFile = getDataFile(config.getString("log-to-file.filename"));
+            
+            try
+            {
+                logFileWriter = new FileWriter(logFile, true);
+            }
+            catch (IOException ex)
+            {
+                plugin.getLogger().log(Level.WARNING, "Could not open log file for writing.", ex);
+            }
+        }
+        
         if (firstRun)
         {
             getDataFile("backup").mkdir();
@@ -336,6 +350,20 @@ public final class LogItCore
         Bukkit.getScheduler().cancelTask(tickEventCallerTaskId);
         Bukkit.getScheduler().cancelTask(accountWatcherTaskId);
         Bukkit.getScheduler().cancelTask(backupManagerTaskId);
+        
+        if (logFileWriter != null)
+        {
+            try
+            {
+                logFileWriter.close();
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, "Could not close log file.", ex);
+            }
+            
+            logFileWriter = null;
+        }
         
         log(Level.FINE, getMessage("PLUGIN_STOP_SUCCESS"));
         
@@ -773,19 +801,16 @@ public final class LogItCore
      */
     public void log(Level level, String message)
     {
-        if (config.getBoolean("log-to-file.enabled"))
+        if (config.getBoolean("log-to-file.enabled") && logFileWriter != null)
         {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            File logFile = new File(plugin.getDataFolder(), config.getString("log-to-file.filename"));
-            
-            try (FileWriter fileWriter = new FileWriter(logFile, true))
+            try
             {
-                fileWriter.write(sdf.format(new Date()));
-                fileWriter.write(" [");
-                fileWriter.write(level.getName());
-                fileWriter.write("] ");
-                fileWriter.write(stripColor(message));
-                fileWriter.write("\n");
+                logFileWriter.write(logDateFormat.format(new Date()));
+                logFileWriter.write(" [");
+                logFileWriter.write(level.getName());
+                logFileWriter.write("] ");
+                logFileWriter.write(stripColor(message));
+                logFileWriter.write("\n");
             }
             catch (IOException ex)
             {
@@ -1065,6 +1090,9 @@ public final class LogItCore
     
     private final boolean firstRun;
     private boolean started = false;
+    
+    private FileWriter logFileWriter;
+    private final SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
     private LogItConfiguration  config;
     private Database            database;
