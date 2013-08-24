@@ -30,7 +30,7 @@ import java.util.Set;
 /**
  * @author LucasEasedUp
  */
-public class AccountMap
+public final class AccountMap
 {
     public AccountMap(Table table, Map<String, Account> initialData)
     {
