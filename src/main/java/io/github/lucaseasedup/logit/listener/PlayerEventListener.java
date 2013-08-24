@@ -180,7 +180,7 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
         
         event.setQuitMessage(null);
         
-        if (getCore().getSessionManager().isSessionAlive(player)
+        if (!getCore().getSessionManager().isSessionAlive(player)
                 && getCore().isPlayerForcedToLogin(player))
         {
             getCore().getPersistenceManager().unserialize(player);
@@ -194,7 +194,7 @@ public class PlayerEventListener extends LogItCoreObject implements Listener
         
         event.setLeaveMessage(null);
         
-        if (getCore().getSessionManager().isSessionAlive(player)
+        if (!getCore().getSessionManager().isSessionAlive(player)
                 && getCore().isPlayerForcedToLogin(player))
         {
             getCore().getPersistenceManager().unserialize(player);
