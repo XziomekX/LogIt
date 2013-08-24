@@ -26,6 +26,7 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
+import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -140,6 +141,10 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
         }
         else if (args.length <= 2)
         {
+            final int accountsPerIp = getConfig().getInt("crowd-control.accounts-per-ip.amount");
+            final List<String> unrestrictedIps =
+                    getConfig().getStringList("crowd-control.accounts-per-ip.unrestricted-ips");
+            
             if (p == null)
             {
                 sender.sendMessage(getMessage("ONLY_PLAYERS"));
@@ -179,8 +184,8 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             {
                 p.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
             }
-            else if (getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= getConfig().getInt("crowd-control.accounts-per-ip.amount")
-                && !getConfig().getStringList("crowd-control.accounts-per-ip.unrestricted-ips").contains(getPlayerIp(p)))
+            else if (getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= accountsPerIp
+                    && !unrestrictedIps.contains(getPlayerIp(p)) && accountsPerIp >= 0)
             {
                 p.sendMessage(getMessage("ACCOUNTS_PER_IP_LIMIT"));
             }
