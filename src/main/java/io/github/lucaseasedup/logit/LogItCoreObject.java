@@ -36,22 +36,22 @@ public abstract class LogItCoreObject
         this.core = core;
     }
     
-    protected LogItCore getCore()
+    protected final LogItCore getCore()
     {
         return core;
     }
     
-    protected LogItPlugin getPlugin()
+    protected final LogItPlugin getPlugin()
     {
         return core.getPlugin();
     }
     
-    protected File getDataFolder()
+    protected final File getDataFolder()
     {
         return core.getPlugin().getDataFolder();
     }
     
-    protected LogItConfiguration getConfig()
+    protected final LogItConfiguration getConfig()
     {
         if (!core.isConfigLoaded())
             return null;
@@ -59,32 +59,32 @@ public abstract class LogItCoreObject
         return core.getConfig();
     }
     
-    protected AccountManager getAccountManager()
+    protected final AccountManager getAccountManager()
     {
         return core.getAccountManager();
     }
     
-    protected BackupManager getBackupManager()
+    protected final BackupManager getBackupManager()
     {
         return core.getBackupManager();
     }
     
-    protected SessionManager getSessionManager()
+    protected final SessionManager getSessionManager()
     {
         return core.getSessionManager();
     }
     
-    protected PersistenceManager getPersistenceManager()
+    protected final PersistenceManager getPersistenceManager()
     {
         return core.getPersistenceManager();
     }
     
-    protected MailSender getMailSender()
+    protected final MailSender getMailSender()
     {
         return core.getMailSender();
     }
     
-    protected void log(Level level, String msg)
+    protected final void log(Level level, String msg)
     {
         if (core.isConfigLoaded())
         {
@@ -96,7 +96,7 @@ public abstract class LogItCoreObject
         }
     }
     
-    protected void log(Level level, String msg, Throwable throwable)
+    protected final void log(Level level, String msg, Throwable throwable)
     {
         if (core.isConfigLoaded())
         {
