@@ -62,6 +62,7 @@ import io.github.lucaseasedup.logit.mail.MailSender;
 import io.github.lucaseasedup.logit.persistence.AirBarSerializer;
 import io.github.lucaseasedup.logit.persistence.ExperienceSerializer;
 import io.github.lucaseasedup.logit.persistence.HealthBarSerializer;
+import io.github.lucaseasedup.logit.persistence.HungerBarSerializer;
 import io.github.lucaseasedup.logit.persistence.InventorySerializer;
 import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
@@ -288,6 +289,8 @@ public final class LogItCore
                 getConfig().getBoolean("force-login.obfuscate-bars.health"));
         setSerializerEnabled(ExperienceSerializer.class,
                 getConfig().getBoolean("force-login.obfuscate-bars.experience"));
+        setSerializerEnabled(HungerBarSerializer.class,
+                getConfig().getBoolean("force-login.obfuscate-bars.hunger"));
         setSerializerEnabled(InventorySerializer.class,
                 getConfig().getBoolean("force-login.hide-inventory"));
         
