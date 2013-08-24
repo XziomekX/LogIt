@@ -21,7 +21,7 @@ package io.github.lucaseasedup.logit.session;
 /**
  * @author LucasEasedUp
  */
-public class Session
+public final class Session
 {
     public Session(String ip)
     {

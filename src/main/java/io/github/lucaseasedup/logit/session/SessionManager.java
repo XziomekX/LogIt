@@ -40,7 +40,7 @@ import org.bukkit.entity.Player;
 /**
  * @author LucasEasedUp
  */
-public class SessionManager extends LogItCoreObject implements Runnable
+public final class SessionManager extends LogItCoreObject implements Runnable
 {
     public SessionManager(LogItCore core)
     {
