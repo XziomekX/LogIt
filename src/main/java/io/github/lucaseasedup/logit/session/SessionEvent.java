@@ -38,15 +38,15 @@ public abstract class SessionEvent extends Event implements Cancellable
     {
         return handlers;
     }
-
+    
     @Override
-    public boolean isCancelled()
+    public final boolean isCancelled()
     {
         return cancelled;
     }
     
     @Override
-    public void setCancelled(boolean cancelled)
+    public final void setCancelled(boolean cancelled)
     {
         this.cancelled = cancelled;
     }

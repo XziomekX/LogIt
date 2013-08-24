@@ -53,12 +53,12 @@ public abstract class AccountEvent extends Event implements Cancellable
         return account.getString("logit.accounts.username");
     }
     
-    public boolean isCancelled()
+    public final boolean isCancelled()
     {
         return cancelled;
     }
     
-    public void setCancelled(boolean cancelled)
+    public final void setCancelled(boolean cancelled)
     {
         this.cancelled = cancelled;
     }
