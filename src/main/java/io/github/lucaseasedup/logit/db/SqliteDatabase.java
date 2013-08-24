@@ -30,7 +30,7 @@ import java.util.Properties;
 /**
  * @author LucasEasedUp
  */
-public class SqliteDatabase extends Database
+public final class SqliteDatabase extends Database
 {
     public SqliteDatabase(String host)
     {

@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * @author LucasEasedUp
  */
-public class MySqlDatabase extends Database
+public final class MySqlDatabase extends Database
 {
     public MySqlDatabase(String host)
     {

@@ -35,7 +35,7 @@ import java.util.Map;
 /**
  * @author LucasEasedUp
  */
-public class CsvDatabase extends Database
+public final class CsvDatabase extends Database
 {
     public CsvDatabase(File dir)
     {
@@ -420,7 +420,7 @@ public class CsvDatabase extends Database
         return connected;
     }
     
-    protected String[] columnListToArray(List<String> columnList, boolean precedeType)
+    private String[] columnListToArray(List<String> columnList, boolean precedeType)
     {
         if (precedeType)
         {
@@ -440,14 +440,14 @@ public class CsvDatabase extends Database
         }
     }
     
-    protected String escapeValue(String s)
+    private String escapeValue(String s)
     {
         s = s.replace(",", "\\,");
         
         return "\"" + s + "\"";
     }
     
-    protected String unescapeValue(String s)
+    private String unescapeValue(String s)
     {
         s = s.trim();
         s = s.replace("\\,", ",");
