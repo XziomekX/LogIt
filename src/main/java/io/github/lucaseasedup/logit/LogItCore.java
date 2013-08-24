@@ -67,8 +67,9 @@ import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.util.FileUtils;
+import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -513,19 +514,8 @@ public final class LogItCore
             accountManager.changeAccountPassword(username, newPassword);
             
             File bodyTemplateFile = getDataFile(config.getString("password-recovery.body-template"));
-            StringBuilder bodyBuilder = new StringBuilder();
-            
-            try (FileReader fr = new FileReader(bodyTemplateFile))
-            {
-                int b;
-
-                while ((b = fr.read()) != -1)
-                {
-                    bodyBuilder.append((char) b);
-                }
-            }
-            
-            String body = parseMessage(bodyBuilder.toString(), new String[]{
+            String bodyTemplate = IoUtils.toString(new FileInputStream(bodyTemplateFile));
+            String body = parseMessage(bodyTemplate, new String[]{
                 "%player%", username,
                 "%password%", newPassword
             });
