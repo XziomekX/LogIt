@@ -32,23 +32,51 @@ public final class ColumnList extends ArrayList<String>
     
     public ColumnList(Collection<? extends String> c)
     {
-        for (String el : c)
-        {
-            this.add(el);
-        }
+        addAll(c);
     }
     
     @Override
-    public final boolean add(String column)
+    public boolean add(String column)
     {
-        if (!super.contains(column))
-        {
-            return super.add(column);
-        }
-        else
-        {
+        if (contains(column))
             return false;
+        
+        return super.add(column);
+    }
+    
+    @Override
+    public void add(int index, String column)
+    {
+        if (contains(column))
+            return;
+        
+        super.add(index, column);
+    }
+    
+    @Override
+    public boolean addAll(Collection<? extends String> c)
+    {
+        boolean changed = false;
+        
+        for (String el : c)
+        {
+            changed = add(el);
         }
+        
+        return changed;
+    }
+    
+    @Override
+    public boolean addAll(int index, Collection<? extends String> c)
+    {
+        int initSize = size();
+        
+        for (String el : c)
+        {
+            add(index++, el);
+        }
+        
+        return initSize != size();
     }
     
     @Override
