@@ -23,7 +23,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({EmailUtilsTest.class, CsvDatabaseTest.class})
+@SuiteClasses({EmailUtilsTest.class, CsvDatabaseTest.class, ColumnListTest.class})
 public class LogItTestSuite
 {
 }
