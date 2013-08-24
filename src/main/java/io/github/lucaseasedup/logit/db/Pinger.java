@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 /**
  * @author LucasEasedUp
  */
-public class Pinger implements Runnable
+public final class Pinger implements Runnable
 {
     public Pinger(Database database)
     {

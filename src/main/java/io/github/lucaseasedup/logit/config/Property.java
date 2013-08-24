@@ -29,7 +29,7 @@ import org.bukkit.util.Vector;
 /**
  * @author LucasEasedUp
  */
-public class Property extends Observable
+public final class Property extends Observable
 {
     public Property(String path,
                     PropertyType type,

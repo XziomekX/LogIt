@@ -32,7 +32,7 @@ import org.bukkit.configuration.ConfigurationSection;
 /**
  * @author LucasEasedUp
  */
-public class Table
+public final class Table
 {
     public Table(Database database, String tableName, ConfigurationSection columnsSection)
     {

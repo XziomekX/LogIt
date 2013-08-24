@@ -28,7 +28,7 @@ import org.bukkit.configuration.serialization.SerializableAs;
  * @author LucasEasedUp
  */
 @SerializableAs("Location")
-public class Location implements Cloneable, ConfigurationSerializable
+public final class Location implements Cloneable, ConfigurationSerializable
 {
     public Location(String world, double x, double y, double z, float yaw, float pitch)
     {

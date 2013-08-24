@@ -24,7 +24,7 @@ import java.io.IOException;
 /**
  * @author LucasEasedUp
  */
-public class ImmutableIniFile extends IniFile
+public final class ImmutableIniFile extends IniFile
 {
     public ImmutableIniFile(File file) throws IOException
     {
