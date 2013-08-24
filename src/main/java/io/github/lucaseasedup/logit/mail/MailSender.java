@@ -56,7 +56,8 @@ public final class MailSender extends LogItCoreObject
         this.password = password;
     }
     
-    public void sendMail(String[] to, String from, String subject, String body, boolean html) throws IOException
+    public void sendMail(String[] to, String from, String subject, String body, boolean html)
+            throws IOException
     {
         Session session = Session.getDefaultInstance(properties, new Authenticator()
         {

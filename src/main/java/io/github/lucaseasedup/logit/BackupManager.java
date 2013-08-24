@@ -83,11 +83,12 @@ public final class BackupManager extends LogItCoreObject implements Runnable
             {
                 backupDatabase.connect();
                 
-                Table backupTable = new Table(backupDatabase, getAccountManager().getTable().getTableName(),
+                Table sourceTable = getAccountManager().getTable();
+                Table backupTable = new Table(backupDatabase, sourceTable.getTableName(),
                         getConfig().getConfigurationSection("storage.accounts.columns"));
                 backupTable.open();
                 
-                List<Map<String, String>> rs = getAccountManager().getTable().select();
+                List<Map<String, String>> rs = sourceTable.select();
                 
                 for (Map<String, String> row : rs)
                 {
@@ -125,18 +126,19 @@ public final class BackupManager extends LogItCoreObject implements Runnable
             {
                 backupDatabase.connect();
                 
-                Table backupTable = new Table(backupDatabase, getAccountManager().getTable().getTableName(),
+                Table sourceTable = getAccountManager().getTable();
+                Table backupTable = new Table(backupDatabase, sourceTable.getTableName(),
                         getConfig().getConfigurationSection("storage.accounts.columns"));
                 backupTable.open();
                 
                 // Clear the table before restoring.
-                getAccountManager().getTable().truncate();
+                sourceTable.truncate();
                 
                 List<Map<String, String>> rs = backupTable.select();
                 
                 for (Map<String, String> row : rs)
                 {
-                    getAccountManager().getTable().insert(new String[]{
+                    sourceTable.insert(new String[]{
                         "logit.accounts.username",
                         "logit.accounts.salt",
                         "logit.accounts.password",

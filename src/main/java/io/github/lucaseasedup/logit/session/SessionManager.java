@@ -27,6 +27,7 @@ import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.PlayerHolder;
+import io.github.lucaseasedup.logit.db.Database;
 import io.github.lucaseasedup.logit.db.SqliteDatabase;
 import java.io.File;
 import java.sql.SQLException;
@@ -229,7 +230,8 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         
         try
         {
-            getAccountManager().getAccount(username).updateLong(username, System.currentTimeMillis() / 1000L);
+            getAccountManager().getAccount(username).updateLong(username,
+                    System.currentTimeMillis() / 1000L);
         }
         catch (SQLException ex)
         {
@@ -268,7 +270,8 @@ public final class SessionManager extends LogItCoreObject implements Runnable
 
         try
         {
-            getAccountManager().getAccount(username).updateLong(username, System.currentTimeMillis() / 1000L);
+            getAccountManager().getAccount(username).updateLong(username,
+                    System.currentTimeMillis() / 1000L);
         }
         catch (SQLException ex)
         {
@@ -284,7 +287,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
     {
         sessionsDatabaseFile.delete();
         
-        try (SqliteDatabase sessionsDatabase = new SqliteDatabase("jdbc:sqlite:" + sessionsDatabaseFile))
+        try (Database sessionsDatabase = new SqliteDatabase("jdbc:sqlite:" + sessionsDatabaseFile))
         {
             sessionsDatabase.connect();
             sessionsDatabase.createTableIfNotExists("sessions", new String[]{

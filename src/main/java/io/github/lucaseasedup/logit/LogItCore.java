@@ -136,13 +136,14 @@ public final class LogItCore
             getDataFile("mail").mkdir();
             getDataFile("lang").mkdir();
             
-            File passwordRecoveryTemplateFile = new File(plugin.getDataFolder(), "mail/password-recovery.html");
+            File passwordRecoveryTemplateFile = getDataFile("mail/password-recovery.html");
             
             if (!passwordRecoveryTemplateFile.exists())
             {
                 try
                 {
-                    FileUtils.extractResource("/password-recovery.html", passwordRecoveryTemplateFile);
+                    FileUtils.extractResource("/password-recovery.html",
+                            passwordRecoveryTemplateFile);
                 }
                 catch (IOException ex)
                 {
@@ -188,8 +189,8 @@ public final class LogItCore
             {
                 case SQLITE:
                 {
-                    database = new SqliteDatabase("jdbc:sqlite:" +
-                        plugin.getDataFolder() + "/" + config.getString("storage.accounts.sqlite.filename"));
+                    database = new SqliteDatabase("jdbc:sqlite:" + dataFolder
+                            + "/" + config.getString("storage.accounts.sqlite.filename"));
                     database.connect();
                     
                     break;
@@ -207,8 +208,8 @@ public final class LogItCore
                 }
                 case H2:
                 {
-                    database = new H2Database("jdbc:h2:" +
-                        plugin.getDataFolder() + "/" + config.getString("storage.accounts.h2.filename"));
+                    database = new H2Database("jdbc:h2:" + dataFolder
+                            + "/" + config.getString("storage.accounts.h2.filename"));
                     database.connect();
                     
                     break;
@@ -307,9 +308,9 @@ public final class LogItCore
         accountWatcherTaskId  = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, accountWatcher, 0L, 12000L);
         backupManagerTaskId   = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, backupManager, 0L, 40L);
         
-        if (plugin.getServer().getPluginManager().isPluginEnabled("Vault"))
+        if (Bukkit.getPluginManager().isPluginEnabled("Vault"))
         {
-            permissions = plugin.getServer().getServicesManager().getRegistration(Permission.class).getProvider();
+            permissions = Bukkit.getServicesManager().getRegistration(Permission.class).getProvider();
         }
         
         registerEvents();
@@ -372,7 +373,7 @@ public final class LogItCore
     
     public void restart() throws FatalReportedException
     {
-        File sessionFile = new File(plugin.getDataFolder() + "/" + config.getString("storage.sessions.filename"));
+        File sessionFile = getDataFile(config.getString("storage.sessions.filename"));
         
         try
         {
@@ -417,7 +418,8 @@ public final class LogItCore
      * @param hashedPassword Hashed password.
      * @return True if passwords match.
      */
-    public boolean checkPassword(String password, String hashedPassword, HashingAlgorithm hashingAlgorithm)
+    public boolean checkPassword(String password, String hashedPassword,
+                                 HashingAlgorithm hashingAlgorithm)
     {
         if (hashingAlgorithm == HashingAlgorithm.BCRYPT)
         {
@@ -477,7 +479,8 @@ public final class LogItCore
         String salt = HashGenerator.generateSalt(getDefaultHashingAlgorithm());
         
         config.set("password.global-password.salt", salt);
-        config.set("password.global-password.hash", hash(password, salt, getDefaultHashingAlgorithm()));
+        config.set("password.global-password.hash",
+                hash(password, salt, getDefaultHashingAlgorithm()));
         
         log(Level.INFO, getMessage("GLOBALPASS_SET_SUCCESS"));
     }
@@ -509,8 +512,7 @@ public final class LogItCore
                 config.getString("password-recovery.password-combination"));
             accountManager.changeAccountPassword(username, newPassword);
             
-            File bodyTemplateFile =
-                    new File(plugin.getDataFolder(), config.getString("password-recovery.body-template"));
+            File bodyTemplateFile = getDataFile(config.getString("password-recovery.body-template"));
             StringBuilder bodyBuilder = new StringBuilder();
             
             try (FileReader fr = new FileReader(bodyTemplateFile))
@@ -655,7 +657,8 @@ public final class LogItCore
     }
     
     /**
-     * Checks if LogIt is linked to Vault (e.i.&nbsp;LogItCore has been loaded and Vault is enabled).
+     * Checks if LogIt is linked to Vault
+     * (e.i.&nbsp;LogItCore has been loaded and Vault is enabled).
      * 
      * @return True if LogIt is linked to Vault.
      */

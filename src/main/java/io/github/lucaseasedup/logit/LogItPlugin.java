@@ -47,7 +47,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.MalformedURLException;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
@@ -72,7 +74,9 @@ public final class LogItPlugin extends JavaPlugin
         try
         {
             String version = getCraftBukkitVersion();
-            Class<?> craftClass = Class.forName("io.github.lucaseasedup.logit.craftreflect." + version + ".CraftReflect");
+            String craftClassName =
+                    "io.github.lucaseasedup.logit.craftreflect." + version + ".CraftReflect";
+            Class<?> craftClass = Class.forName(craftClassName);
             
             craftReflect = (CraftReflect) craftClass.getConstructor().newInstance();
         }
@@ -145,9 +149,10 @@ public final class LogItPlugin extends JavaPlugin
      * Loads messages from file.
      * <p/>
      * First, it tries to load messages_{locale}.properties from the data folder
-     * (where {locale} is the "locale" config property). If it does not exist, it tries to load messages.properties.
-     * If this fails too, it does it all again but within JAR file. If the JAR file does not contain any of
-     * the aforementioned files, it throws FileNotFoundException.
+     * (where {locale} is the "locale" config property). If it does not exist,
+     * it tries to load messages.properties. If this fails too, it does it all again
+     * but within JAR file. If the JAR file does not contain any of the aforementioned files,
+     * it throws FileNotFoundException.
      * 
      * @throws FileNotFoundException Thrown if no message file has been found.
      * @throws IOException Thrown if there was an error while reading.
@@ -183,7 +188,10 @@ public final class LogItPlugin extends JavaPlugin
             if (jarEntry == null)
                 throw new FileNotFoundException("No message files found.");
             
-            messages = new PropertyResourceBundle(new InputStreamReader(jarFile.getInputStream(jarEntry), "UTF-8"));
+            InputStream messagesInputStream = jarFile.getInputStream(jarEntry);
+            Reader messagesReader = new InputStreamReader(messagesInputStream, "UTF-8");
+            
+            messages = new PropertyResourceBundle(messagesReader);
         }
     }
     
@@ -221,7 +229,8 @@ public final class LogItPlugin extends JavaPlugin
         }
         
         message = message.replace("%bukkit_version%", Bukkit.getBukkitVersion());
-        message = message.replace("%logit_version%", LogItPlugin.getInstance().getDescription().getVersion());
+        message = message.replace("%logit_version%",
+                LogItPlugin.getInstance().getDescription().getVersion());
         message = message.replace("%server_id%", Bukkit.getServerId());
         message = message.replace("%server_ip%", Bukkit.getIp());
         message = message.replace("%server_motd%", Bukkit.getMotd());

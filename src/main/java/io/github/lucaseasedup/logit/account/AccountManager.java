@@ -106,7 +106,8 @@ public final class AccountManager extends LogItCoreObject
         }
         catch (SQLException ex)
         {
-            log(Level.WARNING, getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
+            log(Level.WARNING,
+                    getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
             
             ReportedException.throwNew(ex);
         }
@@ -143,7 +144,8 @@ public final class AccountManager extends LogItCoreObject
         }
         catch (SQLException ex)
         {
-            log(Level.WARNING, getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
+            log(Level.WARNING,
+                    getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
             
             ReportedException.throwNew(ex);
         }
@@ -164,13 +166,17 @@ public final class AccountManager extends LogItCoreObject
      */
     public boolean checkAccountPassword(String username, String password)
     {
-        if (!isRegistered(username))
-            throw new AccountNotFoundException();
-        
         if (accountTable.isColumnDisabled("logit.accounts.password"))
             return true;
         
         Account account = accountMap.get(username);
+        
+        if (account == null)
+            throw new AccountNotFoundException();
+        
+        String actualHashedPassword = account.getString("logit.accounts.password");
+        String actualSalt           = account.getString("logit.accounts.salt");
+        
         HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
         String userAlgorithm = account.getString("logit.accounts.hashing_algorithm");
         
@@ -181,12 +187,11 @@ public final class AccountManager extends LogItCoreObject
         
         if (!accountTable.isColumnDisabled("logit.accounts.salt"))
         {
-            return getCore().checkPassword(password, account.getString("logit.accounts.password"),
-                    account.getString("logit.accounts.salt"), algorithm);
+            return getCore().checkPassword(password, actualHashedPassword, actualSalt, algorithm);
         }
         else
         {
-            return getCore().checkPassword(password, account.getString("logit.accounts.password"), algorithm);
+            return getCore().checkPassword(password, actualHashedPassword, algorithm);
         }
     }
     
@@ -221,11 +226,13 @@ public final class AccountManager extends LogItCoreObject
             account.updateString("logit.accounts.password", newHash);
             account.updateString("logit.accounts.hashing_algorithm", algorithm.encode());
             
-            log(Level.FINE, getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
+            log(Level.FINE,
+                    getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
         }
         catch (SQLException ex)
         {
-            log(Level.WARNING, getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username), ex);
+            log(Level.WARNING,
+                    getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username), ex);
             
             ReportedException.throwNew(ex);
         }
@@ -260,7 +267,8 @@ public final class AccountManager extends LogItCoreObject
         }
         catch (SQLException ex)
         {
-            log(Level.WARNING, getMessage("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username), ex);
+            log(Level.WARNING,
+                    getMessage("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username), ex);
             
             ReportedException.throwNew(ex);
         }
@@ -299,7 +307,8 @@ public final class AccountManager extends LogItCoreObject
             {
                 try
                 {
-                    ip = DatatypeConverter.printHexBinary(InetAddress.getByName(ip).getAddress()).toLowerCase();
+                    ip = DatatypeConverter.printHexBinary(InetAddress.getByName(ip).getAddress())
+                            .toLowerCase();
                 }
                 catch (UnknownHostException ex)
                 {
