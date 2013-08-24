@@ -25,7 +25,7 @@ import org.bukkit.event.Listener;
 /**
  * @author LucasEasedUp
  */
-public class AccountEventListener extends LogItCoreObject implements Listener
+public final class AccountEventListener extends LogItCoreObject implements Listener
 {
     public AccountEventListener(LogItCore core)
     {

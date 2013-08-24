@@ -30,7 +30,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 /**
  * @author LucasEasedUp
  */
-public class BlockEventListener extends LogItCoreObject implements Listener
+public final class BlockEventListener extends LogItCoreObject implements Listener
 {
     public BlockEventListener(LogItCore core)
     {

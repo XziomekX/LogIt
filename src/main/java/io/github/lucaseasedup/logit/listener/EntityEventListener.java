@@ -32,7 +32,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 /**
  * @author LucasEasedUp
  */
-public class EntityEventListener extends LogItCoreObject implements Listener
+public final class EntityEventListener extends LogItCoreObject implements Listener
 {
     public EntityEventListener(LogItCore core)
     {

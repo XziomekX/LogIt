@@ -50,7 +50,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 /**
  * @author LucasEasedUp
  */
-public class PlayerEventListener extends LogItCoreObject implements Listener
+public final class PlayerEventListener extends LogItCoreObject implements Listener
 {
     public PlayerEventListener(LogItCore core)
     {

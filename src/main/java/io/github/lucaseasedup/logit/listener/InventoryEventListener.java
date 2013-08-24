@@ -28,7 +28,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 /**
  * @author LucasEasedUp
  */
-public class InventoryEventListener extends LogItCoreObject implements Listener
+public final class InventoryEventListener extends LogItCoreObject implements Listener
 {
     public InventoryEventListener(LogItCore core)
     {

@@ -34,7 +34,7 @@ import org.bukkit.event.Listener;
 /**
  * @author LucasEasedUp
  */
-public class SessionEventListener extends LogItCoreObject implements Listener
+public final class SessionEventListener extends LogItCoreObject implements Listener
 {
     public SessionEventListener(LogItCore core)
     {

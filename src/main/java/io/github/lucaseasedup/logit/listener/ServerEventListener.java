@@ -32,7 +32,7 @@ import org.bukkit.event.server.PluginEnableEvent;
 /**
  * @author LucasEasedUp
  */
-public class ServerEventListener extends LogItCoreObject implements Listener
+public final class ServerEventListener extends LogItCoreObject implements Listener
 {
     public ServerEventListener(LogItCore core)
     {

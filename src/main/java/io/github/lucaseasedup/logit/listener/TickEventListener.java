@@ -29,7 +29,7 @@ import org.bukkit.event.Listener;
 /**
  * @author LucasEasedUp
  */
-public class TickEventListener extends LogItCoreObject implements Listener
+public final class TickEventListener extends LogItCoreObject implements Listener
 {
     public TickEventListener(LogItCore core)
     {
