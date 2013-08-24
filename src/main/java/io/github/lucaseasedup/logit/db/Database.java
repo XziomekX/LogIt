@@ -56,12 +56,12 @@ public abstract class Database implements AutoCloseable
     public abstract void executeBatch() throws SQLException;
     public abstract void clearBatch() throws SQLException;
     
-    public boolean isAutobatchEnabled()
+    public final boolean isAutobatchEnabled()
     {
         return autobatch;
     }
     
-    public void setAutobatchEnabled(boolean status)
+    public final void setAutobatchEnabled(boolean status)
     {
         autobatch = status;
     }
@@ -90,5 +90,5 @@ public abstract class Database implements AutoCloseable
         return result.build();
     }
     
-    protected boolean autobatch = false;
+    private boolean autobatch = false;
 }
