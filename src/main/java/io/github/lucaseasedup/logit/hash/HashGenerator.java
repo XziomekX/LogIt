@@ -125,7 +125,7 @@ public final class HashGenerator
     
     private static String getHash(String string, String algorithm)
     {
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         MessageDigest messageDigest;
         
         try
@@ -141,9 +141,11 @@ public final class HashGenerator
         byte bytes[] = messageDigest.digest();
         
         for (byte b : bytes)
-            stringBuilder.append(Integer.toString((b & 0xFF) + 0x100, 16).substring(1));
+        {
+            sb.append(Integer.toString((b & 0xFF) + 0x100, 16).substring(1));
+        }
         
-        return stringBuilder.toString();
+        return sb.toString();
     }
     
     public static String generateSalt(HashingAlgorithm hashingAlgorithm)
