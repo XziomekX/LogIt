@@ -92,7 +92,8 @@ public final class LogItCore
     private LogItCore(LogItPlugin plugin)
     {
         this.plugin = plugin;
-        this.firstRun = !new File(plugin.getDataFolder(), "config.yml").exists();
+        this.dataFolder = plugin.getDataFolder();
+        this.firstRun = !getDataFile("config.yml").exists();
     }
     
     public void start() throws FatalReportedException
@@ -100,7 +101,7 @@ public final class LogItCore
         if (started)
             return;
         
-        new File(plugin.getDataFolder(), "lib").mkdir();
+        getDataFile("lib").mkdir();
         
         config = new LogItConfiguration(this);
         
@@ -117,9 +118,9 @@ public final class LogItCore
         
         if (firstRun)
         {
-            new File(plugin.getDataFolder(), "backup").mkdir();
-            new File(plugin.getDataFolder(), "mail").mkdir();
-            new File(plugin.getDataFolder(), "lang").mkdir();
+            getDataFile("backup").mkdir();
+            getDataFile("mail").mkdir();
+            getDataFile("lang").mkdir();
             
             File passwordRecoveryTemplateFile = new File(plugin.getDataFolder(), "mail/password-recovery.html");
             
@@ -200,7 +201,7 @@ public final class LogItCore
                 }
                 case CSV:
                 {
-                    database = new CsvDatabase(plugin.getDataFolder());
+                    database = new CsvDatabase(dataFolder);
                     database.connect();
                     
                     break;
@@ -877,6 +878,11 @@ public final class LogItCore
         return started;
     }
     
+    protected File getDataFile(String path)
+    {
+        return new File(dataFolder, path);
+    }
+    
     private void setCommandExecutors()
     {
         plugin.getCommand("logit").setExecutor(new LogItCommand(this));
@@ -1055,6 +1061,7 @@ public final class LogItCore
     private static final LogItCore INSTANCE = new LogItCore(LogItPlugin.getInstance());
     
     private final LogItPlugin plugin;
+    private final File dataFolder;
     
     private final boolean firstRun;
     private boolean started = false;

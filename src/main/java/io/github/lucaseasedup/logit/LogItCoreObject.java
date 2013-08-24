@@ -108,5 +108,10 @@ public abstract class LogItCoreObject
         }
     }
     
+    protected final File getDataFile(String path)
+    {
+        return core.getDataFile(path);
+    }
+    
     private final LogItCore core;
 }
