@@ -38,6 +38,18 @@ public abstract class AccountEvent extends Event implements Cancellable
         return handlers;
     }
     
+    @Override
+    public final boolean isCancelled()
+    {
+        return cancelled;
+    }
+    
+    @Override
+    public final void setCancelled(boolean cancelled)
+    {
+        this.cancelled = cancelled;
+    }
+    
     public Account getAccount()
     {
         return account;
@@ -51,16 +63,6 @@ public abstract class AccountEvent extends Event implements Cancellable
     public String getUsername()
     {
         return account.getString("logit.accounts.username");
-    }
-    
-    public final boolean isCancelled()
-    {
-        return cancelled;
-    }
-    
-    public final void setCancelled(boolean cancelled)
-    {
-        this.cancelled = cancelled;
     }
     
     public static HandlerList getHandlerList()
