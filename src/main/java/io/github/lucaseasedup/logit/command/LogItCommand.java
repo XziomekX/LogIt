@@ -82,10 +82,6 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 {
                     sender.sendMessage(getLogItSubcommandHelp("reload", null));
                 }
-                if (p == null || p.hasPermission("logit.purge"))
-                {
-                    sender.sendMessage(getLogItSubcommandHelp("purge", null));
-                }
                 if (p == null || p.hasPermission("logit.backup.force"))
                 {
                     sender.sendMessage(getLogItSubcommandHelp("backup force", null));
