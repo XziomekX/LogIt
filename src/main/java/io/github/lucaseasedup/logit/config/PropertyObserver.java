@@ -34,7 +34,7 @@ public abstract class PropertyObserver extends LogItCoreObject implements Observ
     }
     
     @Override
-    public void update(Observable o, Object arg)
+    public final void update(Observable o, Object arg)
     {
         if (o instanceof Property)
         {
