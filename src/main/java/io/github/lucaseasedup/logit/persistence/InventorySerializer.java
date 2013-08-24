@@ -41,6 +41,7 @@ import org.bukkit.inventory.PlayerInventory;
     @Key(name = "inv_contents", constraint = KeyConstraint.NOT_EMPTY),
     @Key(name = "inv_armor", constraint = KeyConstraint.NOT_EMPTY),
 })
+@Before(LocationSerializer.class)
 public final class InventorySerializer extends PersistenceSerializer
 {
     public InventorySerializer(LogItCore core)
@@ -51,6 +52,9 @@ public final class InventorySerializer extends PersistenceSerializer
     @Override
     public void serialize(Map<String, String> data, Player player)
     {
+        if (player.getWorld() != getWaitingRoomLocation().getWorld())
+            return;
+        
         try
         {
             data.put("inv_contents", serialize(getContentInventory(player.getInventory())));
@@ -73,6 +77,9 @@ public final class InventorySerializer extends PersistenceSerializer
     @Override
     public void unserialize(Map<String, String> data, final Player player)
     {
+        if (player.getWorld() != getWaitingRoomLocation().getWorld())
+            return;
+        
         try
         {
             final ItemStack[] contents = unserialize(data.get("inv_contents")).getContents();
@@ -154,5 +161,10 @@ public final class InventorySerializer extends PersistenceSerializer
         }
         
         return (Inventory) storage.o;
+    }
+    
+    private org.bukkit.Location getWaitingRoomLocation()
+    {
+        return getConfig().getLocation("waiting-room.location").toBukkitLocation();
     }
 }
