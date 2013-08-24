@@ -23,9 +23,12 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.account.Account;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Level;
 import org.bukkit.entity.Player;
 
@@ -101,7 +104,7 @@ public final class PersistenceManager extends LogItCoreObject
      */
     public void serialize(Player player)
     {
-        for (Class<? extends PersistenceSerializer> clazz : serializers.keySet())
+        for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
         {
             try
             {
@@ -172,7 +175,7 @@ public final class PersistenceManager extends LogItCoreObject
      */
     public void unserialize(Player player)
     {
-        for (Class<? extends PersistenceSerializer> clazz : serializers.keySet())
+        for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
         {
             try
             {
@@ -285,6 +288,68 @@ public final class PersistenceManager extends LogItCoreObject
         }
         
         return true;
+    }
+    
+    private Class<? extends PersistenceSerializer>[] getSerializersInOrder()
+    {
+        Set<Class<? extends PersistenceSerializer>> classes = serializers.keySet();
+        
+        @SuppressWarnings("unchecked")
+        Class<? extends PersistenceSerializer>[] result =
+                classes.toArray(new Class[classes.size()]);
+        
+        Arrays.sort(result, new Comparator<Class<? extends PersistenceSerializer>>()
+        {
+            @Override
+            public int compare(Class<? extends PersistenceSerializer> o1,
+                               Class<? extends PersistenceSerializer> o2)
+            {
+                if (o1 == o2)
+                    return 0;
+                
+                Before o1BeforeAnnotation = o1.getAnnotation(Before.class);
+                After o1AfterAnnotation = o1.getAnnotation(After.class);
+                Before o2BeforeAnnotation = o2.getAnnotation(Before.class);
+                After o2AfterAnnotation = o2.getAnnotation(After.class);
+                
+                Class<? extends PersistenceSerializer> o1Before =
+                        (o1BeforeAnnotation != null) ? o1BeforeAnnotation.value() : null;
+                Class<? extends PersistenceSerializer> o1After =
+                        (o1AfterAnnotation != null) ? o1AfterAnnotation.value() : null;
+                Class<? extends PersistenceSerializer> o2Before =
+                        (o2BeforeAnnotation != null) ? o2BeforeAnnotation.value() : null;
+                Class<? extends PersistenceSerializer> o2After =
+                        (o2AfterAnnotation != null) ? o2AfterAnnotation.value() : null;
+                
+                if (o1Before == o1After && (o1Before != null || o1After != null))
+                    throw new RuntimeException();
+                
+                if (o2Before == o2After && (o2Before != null || o2After != null))
+                    throw new RuntimeException();
+                
+                if (o1Before == o2Before && (o1Before != null || o2Before != null))
+                    throw new RuntimeException("Circular serializer dependency.");
+
+                if (o1After == o2After && (o1After != null || o2After != null))
+                    throw new RuntimeException("Circular serializer dependency.");
+                
+                if (o1Before == o2)
+                    return -1;
+                
+                if (o1After == o2)
+                    return 1;
+                
+                if (o2Before == o1)
+                    return 1;
+                
+                if (o2After == o1)
+                    return -1;
+                
+                return 0;
+            }
+        });
+        
+        return result;
     }
     
     private Key[] getSerializerKeys(Class<? extends PersistenceSerializer> clazz)
