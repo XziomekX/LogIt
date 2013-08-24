@@ -24,7 +24,7 @@ import io.github.lucaseasedup.logit.config.PropertyValidator;
 /**
  * @author LucasEasedUp
  */
-public class DbTypeValidator implements PropertyValidator
+public final class DbTypeValidator implements PropertyValidator
 {
     @Override
     public boolean validate(String path, PropertyType type, Object value)

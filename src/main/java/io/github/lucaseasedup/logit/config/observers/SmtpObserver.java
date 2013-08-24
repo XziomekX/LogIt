@@ -25,7 +25,7 @@ import io.github.lucaseasedup.logit.config.PropertyObserver;
 /**
  * @author LucasEasedUp
  */
-public class SmtpObserver extends PropertyObserver
+public final class SmtpObserver extends PropertyObserver
 {
     public SmtpObserver(LogItCore core)
     {

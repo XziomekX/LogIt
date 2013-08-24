@@ -27,7 +27,7 @@ import java.util.logging.Level;
 /**
  * @author LucasEasedUp
  */
-public class LocaleObserver extends PropertyObserver
+public final class LocaleObserver extends PropertyObserver
 {
     public LocaleObserver(LogItCore core)
     {

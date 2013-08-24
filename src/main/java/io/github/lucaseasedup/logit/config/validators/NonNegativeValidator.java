@@ -24,7 +24,7 @@ import io.github.lucaseasedup.logit.config.PropertyValidator;
 /**
  * @author LucasEasedUp
  */
-public class NonNegativeValidator implements PropertyValidator
+public final class NonNegativeValidator implements PropertyValidator
 {
     @Override
     public boolean validate(String path, PropertyType type, Object value)
