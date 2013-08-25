@@ -590,8 +590,9 @@ public final class LogItCore
      * <p> If the player has the <i>"logit.force-login.exempt"</i> permission,
      * it always returns {@code false}.
      * 
-     * <p> Note that this method does not check if the player is already logged in.
-     * For that purpose, use {@link SessionManager#isSessionAlive(Player)}.
+     * <p> Note that this method does not check if the player is logged in.
+     * For that purpose, use {@link SessionManager#isSessionAlive(Player)}
+     * or {@link SessionManager#isSessionAlive(String)}.
      * 
      * @param player the player whom this check will be ran on.
      * @return {@code true} if the player is forced to log in; {@code false} otherwise.
@@ -637,9 +638,9 @@ public final class LogItCore
     }
     
     /**
-     * Updates player group depending on whether they're logged in or logged out.
+     * Updates a player's group.
      * 
-     * @param player the player whose group is to be updated.
+     * @param player the player whose group should be updated.
      */
     public void updatePlayerGroup(Player player)
     {
