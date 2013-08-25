@@ -57,6 +57,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         Player player = event.getPlayer();
         String username = player.getName().toLowerCase();
         
+        int minUsernameLength = getConfig().getInt("username.min-length");
+        int maxUsernameLength = getConfig().getInt("username.max-length");
+        
         if (username.trim().isEmpty())
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_BLANK"));
@@ -65,15 +68,15 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_INVALID"));
         }
-        else if (username.length() < getConfig().getInt("username.min-length"))
+        else if (username.length() < minUsernameLength)
         {
-            event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_SHORT").replace("%min-length%",
-                    String.valueOf(getConfig().getInt("username.min-length"))));
+            event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_SHORT")
+                    .replace("%min-length%", String.valueOf(minUsernameLength)));
         }
-        else if (username.length() > getConfig().getInt("username.max-length"))
+        else if (username.length() > maxUsernameLength)
         {
-            event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_LONG").replace("%max-length%",
-                    String.valueOf(getConfig().getInt("username.max-length"))));
+            event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_LONG")
+                    .replace("%max-length%", String.valueOf(maxUsernameLength)));
         }
         else if (getConfig().getStringList("username.prohibited-usernames").contains(username))
         {
