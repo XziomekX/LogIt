@@ -330,6 +330,8 @@ public final class LogItCore
         registerEvents();
         setCommandExecutors();
         
+        started = true;
+        
         log(Level.FINE, getMessage("PLUGIN_START_SUCCESS")
                 .replace("%st%", getStorageAccountsDbType().name())
                 .replace("%ha%", getDefaultHashingAlgorithm().name()));
@@ -338,8 +340,6 @@ public final class LogItCore
         {
             log(Level.INFO, getMessage("PLUGIN_FIRST_RUN"));
         }
-        
-        started = true;
     }
     
     /**
@@ -388,9 +388,9 @@ public final class LogItCore
             logFileWriter = null;
         }
         
-        log(Level.FINE, getMessage("PLUGIN_STOP_SUCCESS"));
-        
         started = false;
+        
+        log(Level.FINE, getMessage("PLUGIN_STOP_SUCCESS"));
     }
     
     /**
