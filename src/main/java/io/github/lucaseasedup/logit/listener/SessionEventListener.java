@@ -44,6 +44,9 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
     @EventHandler(priority = EventPriority.MONITOR)
     private void onStart(SessionStartEvent event)
     {
+        if (event.isCancelled())
+            return;
+        
         String username = event.getUsername();
         final Player player = PlayerHolder.getExact(username);
         
@@ -73,6 +76,9 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
     @EventHandler(priority = EventPriority.MONITOR)
     private void onEnd(SessionEndEvent event)
     {
+        if (event.isCancelled())
+            return;
+        
         String username = event.getUsername();
         final Player player = PlayerHolder.getExact(username);
         
