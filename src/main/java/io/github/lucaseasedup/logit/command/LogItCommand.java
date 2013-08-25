@@ -293,6 +293,9 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         }
         else if (checkSubcommand("globalpass set", 1))
         {
+            int minPasswordLength = getConfig().getInt("password.min-length");
+            int maxPasswordLength = getConfig().getInt("password.max-length");
+            
             if (p != null && !p.hasPermission("logit.globalpass.set"))
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
@@ -301,15 +304,15 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
-            else if (args[2].length() < getConfig().getInt("password.min-length"))
+            else if (args[2].length() < minPasswordLength)
             {
-                sender.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
-                        String.valueOf(getConfig().getInt("password.min-length"))));
+                sender.sendMessage(getMessage("PASSWORD_TOO_SHORT")
+                        .replace("%min-length%", String.valueOf(minPasswordLength)));
             }
-            else if (args[2].length() > getConfig().getInt("password.max-length"))
+            else if (args[2].length() > maxPasswordLength)
             {
-                sender.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
-                        String.valueOf(getConfig().getInt("password.max-length"))));
+                sender.sendMessage(getMessage("PASSWORD_TOO_LONG")
+                        .replace("%max-length%", String.valueOf(maxPasswordLength)));
             }
             else
             {
