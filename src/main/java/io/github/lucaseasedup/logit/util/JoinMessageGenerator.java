@@ -23,6 +23,7 @@ import com.onarandombox.MultiverseCore.MultiverseCore;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 /**
  * @author LucasEasedUp
@@ -55,7 +56,13 @@ public final class JoinMessageGenerator
         if (!Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core"))
             return world.getName();
         
-        MultiverseCore multiverseCore = (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("Multiverse-Core");
+        
+        if (!(plugin instanceof MultiverseCore))
+            return world.getName();
+        
+        MultiverseCore multiverseCore =
+                (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");
         
         return multiverseCore.getMVWorldManager().getMVWorld(world).getAlias();
     }
