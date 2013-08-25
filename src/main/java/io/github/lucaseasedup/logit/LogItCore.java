@@ -334,8 +334,7 @@ public final class LogItCore
         started = true;
         
         log(Level.FINE, getMessage("PLUGIN_START_SUCCESS")
-                .replace("%st%", getStorageAccountsDbType().name())
-                .replace("%ha%", getDefaultHashingAlgorithm().name()));
+                .replace("%st%", getStorageAccountsDbType().name()));
         
         if (firstRun)
         {
