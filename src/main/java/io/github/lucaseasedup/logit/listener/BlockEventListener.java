@@ -39,7 +39,7 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
         
         Player player = event.getPlayer();
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
             getCore().sendForceLoginMessage(player);
@@ -54,7 +54,7 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
         
         Player player = event.getPlayer();
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
             getCore().sendForceLoginMessage(player);
@@ -70,7 +70,7 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
         
         Player player = (Player) event.getRemover();
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
             getCore().sendForceLoginMessage(player);

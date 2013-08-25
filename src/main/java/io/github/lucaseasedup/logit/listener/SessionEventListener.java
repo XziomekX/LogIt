@@ -54,14 +54,14 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
                     getCore().updatePlayerGroup(player);
                 }
                 
-                if (getCore().isPlayerForcedToLogin(player))
+                if (getCore().isPlayerForcedToLogIn(player))
                 {
                     broadcastJoinMessage(player, getConfig().getBoolean("reveal-spawn-world"));
                 }
             }
         }, 1L);
         
-        if (getCore().isPlayerForcedToLogin(player))
+        if (getCore().isPlayerForcedToLogIn(player))
         {
             getPersistenceManager().unserialize(player);
         }
@@ -86,14 +86,14 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
                     getCore().updatePlayerGroup(player);
                 }
                 
-                if (getCore().isPlayerForcedToLogin(player))
+                if (getCore().isPlayerForcedToLogIn(player))
                 {
                     broadcastQuitMessage(player);
                 }
             }
         }, 1L);
         
-        if (getCore().isPlayerForcedToLogin(player) && player.isOnline())
+        if (getCore().isPlayerForcedToLogIn(player) && player.isOnline())
         {
             getPersistenceManager().serialize(player);
         }

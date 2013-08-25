@@ -140,7 +140,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             getSessionManager().createSession(username, ip);
         }
         
-        if (getSessionManager().isSessionAlive(player) || !getCore().isPlayerForcedToLogin(player))
+        if (getSessionManager().isSessionAlive(player) || !getCore().isPlayerForcedToLogIn(player))
         {
             broadcastJoinMessage(player, getConfig().getBoolean("reveal-spawn-world"));
         }
@@ -153,7 +153,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 @Override
                 public void run()
                 {
-                    if (getCore().isPlayerForcedToLogin(player)
+                    if (getCore().isPlayerForcedToLogIn(player)
                             && !getSessionManager().isSessionAlive(player))
                     {
                         getCore().sendForceLoginMessage(player);
@@ -176,7 +176,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         event.setQuitMessage(null);
         
         if (!getCore().getSessionManager().isSessionAlive(player)
-                && getCore().isPlayerForcedToLogin(player))
+                && getCore().isPlayerForcedToLogIn(player))
         {
             getCore().getPersistenceManager().unserialize(player);
         }
@@ -190,7 +190,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         event.setLeaveMessage(null);
         
         if (!getCore().getSessionManager().isSessionAlive(player)
-                && getCore().isPlayerForcedToLogin(player))
+                && getCore().isPlayerForcedToLogIn(player))
         {
             getCore().getPersistenceManager().unserialize(player);
         }
@@ -204,7 +204,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         Player player = event.getPlayer();
 
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setTo(event.getFrom());
         }
@@ -218,7 +218,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         Player player = event.getPlayer();
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
         }
@@ -232,7 +232,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         Player player = event.getPlayer();
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
             getCore().sendForceLoginMessage(player);
@@ -288,7 +288,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         Player player = event.getPlayer();
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
             getCore().sendForceLoginMessage(player);
@@ -303,7 +303,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         Player player = event.getPlayer();
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
             
@@ -326,7 +326,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         Player player = event.getPlayer();
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
             getCore().sendForceLoginMessage(player);
@@ -341,7 +341,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         Player player = event.getPlayer();
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
         }
@@ -355,7 +355,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         Player player = event.getPlayer();
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
             getCore().sendForceLoginMessage(player);

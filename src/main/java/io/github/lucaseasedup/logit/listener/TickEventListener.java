@@ -39,7 +39,7 @@ public final class TickEventListener extends LogItCoreObject implements Listener
         for (Player player : Bukkit.getOnlinePlayers())
         {
             if (!getSessionManager().isSessionAlive(player)
-                    && getCore().isPlayerForcedToLogin(player))
+                    && getCore().isPlayerForcedToLogIn(player))
             {
                 player.setRemainingAir(player.getMaximumAir());
             }

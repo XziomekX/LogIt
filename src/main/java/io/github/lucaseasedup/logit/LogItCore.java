@@ -578,7 +578,7 @@ public final class LogItCore
      * @param  player player whom the check will be ran on.
      * @return {@code true} if the player is forced to log in; {@code false} otherwise.
      */
-    public boolean isPlayerForcedToLogin(Player player)
+    public boolean isPlayerForcedToLogIn(Player player)
     {
         String worldName = player.getWorld().getName();
         

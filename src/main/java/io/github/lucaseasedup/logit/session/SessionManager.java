@@ -78,7 +78,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
             {
                 if (getAccountManager().isRegistered(username)
                         && !player.hasPermission("logit.force-login.timeout.exempt")
-                        && getCore().isPlayerForcedToLogin(player))
+                        && getCore().isPlayerForcedToLogIn(player))
                 {
                     if (session.getStatus() <= forceLoginTimeout)
                     {

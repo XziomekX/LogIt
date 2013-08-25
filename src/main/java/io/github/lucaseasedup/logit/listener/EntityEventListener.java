@@ -44,7 +44,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
         
         Player player = (Player) event.getEntity();
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
         }
@@ -61,7 +61,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
         
         Player player = (Player) event.getDamager();
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
         }
@@ -78,7 +78,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
         
         Player player = (Player) event.getEntity();
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
         }
@@ -95,7 +95,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
         
         Player player = (Player) event.getEntity();
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
         }
@@ -112,7 +112,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
         
         Player player = (Player) event.getTarget();
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogin(player))
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
         }

@@ -51,7 +51,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 2)
         {
-            if (p != null && ((getCore().isPlayerForcedToLogin(p) && !getSessionManager().isSessionAlive(p))
+            if (p != null && ((getCore().isPlayerForcedToLogIn(p) && !getSessionManager().isSessionAlive(p))
                     || !p.hasPermission("logit.login.others")))
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
