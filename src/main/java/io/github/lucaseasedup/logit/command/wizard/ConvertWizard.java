@@ -39,6 +39,7 @@ public final class ConvertWizard extends Wizard
         super(sender, args, Step.WELCOME);
     }
     
+    @Override
     protected void onCreate()
     {
         getSender().sendMessage("");
