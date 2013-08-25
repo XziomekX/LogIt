@@ -18,9 +18,6 @@
  */
 package io.github.lucaseasedup.logit.config;
 
-/**
- * @author LucasEasedUp
- */
 public class InvalidPropertyValueException extends RuntimeException
 {
     public InvalidPropertyValueException()

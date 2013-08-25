@@ -25,8 +25,6 @@ import java.util.Random;
 
 /**
  * Provides a hashing tool for different algorithms.
- * 
- * @author LucasEasedUp
  */
 public final class HashGenerator
 {

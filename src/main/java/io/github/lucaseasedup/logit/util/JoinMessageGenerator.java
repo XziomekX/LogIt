@@ -25,9 +25,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-/**
- * @author LucasEasedUp
- */
 public final class JoinMessageGenerator
 {
     private JoinMessageGenerator()

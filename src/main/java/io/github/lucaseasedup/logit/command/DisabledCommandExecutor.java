@@ -24,9 +24,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-/**
- * @author LucasEasedUp
- */
 public final class DisabledCommandExecutor extends LogItCoreObject implements CommandExecutor
 {
     @Override

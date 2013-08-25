@@ -46,9 +46,6 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
-/**
- * @author LucasEasedUp
- */
 public final class PlayerEventListener extends LogItCoreObject implements Listener
 {
     @EventHandler(priority = EventPriority.LOWEST)

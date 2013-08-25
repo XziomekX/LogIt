@@ -41,9 +41,6 @@ import java.util.logging.Level;
 import javax.xml.bind.DatatypeConverter;
 import org.bukkit.Bukkit;
 
-/**
- * @author LucasEasedUp
- */
 public final class AccountManager extends LogItCoreObject
 {
     public AccountManager(Table accountTable)

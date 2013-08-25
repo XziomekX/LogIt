@@ -25,9 +25,6 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-/**
- * @author LucasEasedUp
- */
 public final class MessageUtils
 {
     private MessageUtils()

@@ -20,9 +20,6 @@ package io.github.lucaseasedup.logit.craftreflect;
 
 import io.github.lucaseasedup.logit.LogItPlugin;
 
-/**
- * @author LucasEasedUp
- */
 public abstract class ObjectWrapper
 {
     public <T2 extends ObjectWrapper> T2 cast(Class<T2> castTo) throws ReflectiveOperationException

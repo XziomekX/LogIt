@@ -33,9 +33,6 @@ import java.util.Observable;
 import java.util.Set;
 import org.bukkit.Bukkit;
 
-/**
- * @author LucasEasedUp
- */
 public final class Account extends Observable
 {
     public Account(Table table, Map<String, String> initialData) throws SQLException

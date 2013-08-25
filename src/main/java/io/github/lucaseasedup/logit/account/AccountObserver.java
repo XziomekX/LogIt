@@ -23,9 +23,6 @@ import io.github.lucaseasedup.logit.config.Property;
 import java.util.Observable;
 import java.util.Observer;
 
-/**
- * @author LucasEasedUp
- */
 public abstract class AccountObserver extends LogItCoreObject implements Observer
 {
     @Override

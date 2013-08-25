@@ -29,9 +29,6 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 
-/**
- * @author LucasEasedUp
- */
 public final class EntityEventListener extends LogItCoreObject implements Listener
 {
     @EventHandler(priority = EventPriority.NORMAL)

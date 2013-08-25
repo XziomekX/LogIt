@@ -25,9 +25,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-/**
- * @author LucasEasedUp
- */
 @Keys({
     @Key(name = "world", constraint = KeyConstraint.NOT_EMPTY),
     @Key(name = "x", constraint = KeyConstraint.NOT_EMPTY),

@@ -89,8 +89,6 @@ import org.bukkit.event.HandlerList;
 
 /**
  * This class is the central part of LogIt.
- * 
- * @author LucasEasedUp
  */
 public final class LogItCore
 {

@@ -21,8 +21,6 @@ package io.github.lucaseasedup.logit;
 /**
  * Exception that does not need any further logging,
  * and is a signal to stop execution immediately.
- * 
- * @author LucasEasedUp
  */
 public class FatalReportedException extends Exception
 {

@@ -18,9 +18,6 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-/**
- * @author LucasEasedUp
- */
 public class AccountNotFoundException extends RuntimeException
 {
     /**

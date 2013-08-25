@@ -22,9 +22,6 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.util.Map;
 import org.bukkit.entity.Player;
 
-/**
- * @author LucasEasedUp
- */
 public abstract class PersistenceSerializer extends LogItCoreObject
 {
     public abstract void serialize(Map<String, String> data, Player player);

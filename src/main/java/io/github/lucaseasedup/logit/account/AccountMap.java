@@ -27,9 +27,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-/**
- * @author LucasEasedUp
- */
 public final class AccountMap
 {
     public AccountMap(Table table, Map<String, Account> initialData)

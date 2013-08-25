@@ -41,9 +41,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-/**
- * @author LucasEasedUp
- */
 public final class LogItConfiguration extends PropertyObserver
 {
     public void load() throws IOException

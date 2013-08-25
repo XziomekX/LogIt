@@ -18,9 +18,6 @@
  */
 package io.github.lucaseasedup.logit;
 
-/**
- * @author LucasEasedUp
- */
 public class Timer implements Runnable
 {
     public Timer(long interval)

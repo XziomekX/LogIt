@@ -20,9 +20,6 @@ package io.github.lucaseasedup.logit;
 
 import org.bukkit.Bukkit;
 
-/**
- * @author LucasEasedUp
- */
 public final class TickEventCaller implements Runnable
 {
     @Override

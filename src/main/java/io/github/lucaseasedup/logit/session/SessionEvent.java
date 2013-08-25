@@ -22,9 +22,6 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-/**
- * @author LucasEasedUp
- */
 public abstract class SessionEvent extends Event implements Cancellable
 {
     public SessionEvent(String username, Session session)

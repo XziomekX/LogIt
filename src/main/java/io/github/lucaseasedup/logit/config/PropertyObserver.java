@@ -22,9 +22,6 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.util.Observable;
 import java.util.Observer;
 
-/**
- * @author LucasEasedUp
- */
 public abstract class PropertyObserver extends LogItCoreObject implements Observer
 {
     @Override

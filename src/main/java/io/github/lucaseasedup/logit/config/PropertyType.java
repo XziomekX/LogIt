@@ -18,9 +18,6 @@
  */
 package io.github.lucaseasedup.logit.config;
 
-/**
- * @author LucasEasedUp
- */
 public enum PropertyType
 {
     OBJECT, BOOLEAN, COLOR, DOUBLE, INT, ITEM_STACK, LONG, STRING, VECTOR,

@@ -25,9 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author LucasEasedUp
- */
 public abstract class Database implements AutoCloseable
 {
     public abstract void connect() throws SQLException;

@@ -22,9 +22,6 @@ import java.io.DataInputStream;
 import java.io.InputStream;
 import org.bukkit.inventory.ItemStack;
 
-/**
- * @author LucasEasedUp
- */
 public class CraftReflect implements io.github.lucaseasedup.logit.craftreflect.CraftReflect
 {
     @Override

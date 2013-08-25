@@ -61,9 +61,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
-/**
- * @author LucasEasedUp
- */
 public final class LogItPlugin extends JavaPlugin
 {
     @Override

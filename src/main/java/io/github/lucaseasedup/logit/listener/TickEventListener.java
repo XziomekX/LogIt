@@ -26,9 +26,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-/**
- * @author LucasEasedUp
- */
 public final class TickEventListener extends LogItCoreObject implements Listener
 {
     @EventHandler(priority = EventPriority.NORMAL)

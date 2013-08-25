@@ -21,9 +21,6 @@ package io.github.lucaseasedup.logit.db;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * @author LucasEasedUp
- */
 public final class ColumnList extends ArrayList<String>
 {
     public ColumnList()

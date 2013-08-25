@@ -21,9 +21,6 @@ package io.github.lucaseasedup.logit;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * @author LucasEasedUp
- */
 public final class ImmutableIniFile extends IniFile
 {
     public ImmutableIniFile(File file) throws IOException

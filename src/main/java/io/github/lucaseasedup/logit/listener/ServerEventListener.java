@@ -28,9 +28,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 
-/**
- * @author LucasEasedUp
- */
 public final class ServerEventListener extends LogItCoreObject implements Listener
 {
     @EventHandler(priority = EventPriority.NORMAL)

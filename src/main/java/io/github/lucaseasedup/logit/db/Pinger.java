@@ -22,9 +22,6 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * @author LucasEasedUp
- */
 public final class Pinger implements Runnable
 {
     public Pinger(Database database)

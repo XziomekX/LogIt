@@ -18,9 +18,6 @@
  */
 package io.github.lucaseasedup.logit;
 
-/**
- * @author LucasEasedUp
- */
 public enum CancelledState
 {
     CANCELLED, NOT_CANCELLED;

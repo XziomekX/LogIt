@@ -37,9 +37,6 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-/**
- * @author LucasEasedUp
- */
 public final class SessionManager extends LogItCoreObject implements Runnable
 {
     @Override

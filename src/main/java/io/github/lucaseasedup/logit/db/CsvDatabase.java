@@ -32,9 +32,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author LucasEasedUp
- */
 public final class CsvDatabase extends Database
 {
     public CsvDatabase(File dir)

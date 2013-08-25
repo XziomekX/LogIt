@@ -33,8 +33,6 @@ import org.bukkit.entity.Player;
 
 /**
  * Provides a centred persistence serialization interface.
- * 
- * @author LucasEasedUp
  */
 public final class PersistenceManager extends LogItCoreObject
 {

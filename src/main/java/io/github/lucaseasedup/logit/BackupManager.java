@@ -35,8 +35,6 @@ import java.util.logging.Level;
 /**
  * This class runs a scheduled backup and provides
  * methods for manual backup.
- * 
- * @author LucasEasedUp
  */
 public final class BackupManager extends LogItCoreObject implements Runnable
 {

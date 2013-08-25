@@ -29,9 +29,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import org.bukkit.configuration.ConfigurationSection;
 
-/**
- * @author LucasEasedUp
- */
 public final class Table
 {
     public Table(Database database, String tableName, ConfigurationSection columnsSection)

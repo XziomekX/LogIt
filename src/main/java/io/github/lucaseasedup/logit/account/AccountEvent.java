@@ -22,9 +22,6 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-/**
- * @author LucasEasedUp
- */
 public abstract class AccountEvent extends Event implements Cancellable
 {
     public AccountEvent(Account account)

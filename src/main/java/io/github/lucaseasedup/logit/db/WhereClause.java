@@ -18,9 +18,6 @@
  */
 package io.github.lucaseasedup.logit.db;
 
-/**
- * @author LucasEasedUp
- */
 public final class WhereClause
 {
     public WhereClause(String columnId, String operator, String value)

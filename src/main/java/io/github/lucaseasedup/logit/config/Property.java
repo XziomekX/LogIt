@@ -26,9 +26,6 @@ import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-/**
- * @author LucasEasedUp
- */
 public final class Property extends Observable
 {
     public Property(String path,

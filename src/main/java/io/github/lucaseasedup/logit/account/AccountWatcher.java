@@ -22,9 +22,6 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.util.Collections;
 import java.util.Set;
 
-/**
- * @author LucasEasedUp
- */
 public final class AccountWatcher extends LogItCoreObject implements Runnable
 {
     @Override

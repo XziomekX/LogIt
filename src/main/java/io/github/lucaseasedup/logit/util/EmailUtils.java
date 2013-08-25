@@ -20,9 +20,6 @@ package io.github.lucaseasedup.logit.util;
 
 import java.util.regex.Pattern;
 
-/**
- * @author LucasEasedUp
- */
 public final class EmailUtils
 {
     private EmailUtils()

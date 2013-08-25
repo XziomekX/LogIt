@@ -18,9 +18,6 @@
  */
 package io.github.lucaseasedup.logit.persistence;
 
-/**
- * @author LucasEasedUp
- */
 public enum KeyConstraint
 {
     /**

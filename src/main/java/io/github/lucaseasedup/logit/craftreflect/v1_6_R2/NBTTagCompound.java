@@ -20,9 +20,6 @@ package io.github.lucaseasedup.logit.craftreflect.v1_6_R2;
 
 import java.io.DataOutput;
 
-/**
- * @author LucasEasedUp
- */
 public class NBTTagCompound extends io.github.lucaseasedup.logit.craftreflect.NBTTagCompound
 {
     public NBTTagCompound()

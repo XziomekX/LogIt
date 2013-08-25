@@ -22,9 +22,6 @@ package io.github.lucaseasedup.logit.craftreflect;
 import java.io.InputStream;
 import org.bukkit.inventory.ItemStack;
 
-/**
- * @author LucasEasedUp
- */
 public interface CraftReflect
 {
     public NBTTagList newNBTTagList();

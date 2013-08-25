@@ -27,9 +27,6 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author LucasEasedUp
- */
 public final class MySqlDatabase extends Database
 {
     public MySqlDatabase(String host)

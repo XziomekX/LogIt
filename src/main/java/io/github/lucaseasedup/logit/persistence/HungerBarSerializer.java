@@ -21,9 +21,6 @@ package io.github.lucaseasedup.logit.persistence;
 import java.util.Map;
 import org.bukkit.entity.Player;
 
-/**
- * @author LucasEasedUp
- */
 @Keys({
     @Key(name = "hunger", constraint = KeyConstraint.NOT_EMPTY),
 })

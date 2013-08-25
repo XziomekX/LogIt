@@ -21,9 +21,6 @@ package io.github.lucaseasedup.logit.listener;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import org.bukkit.event.Listener;
 
-/**
- * @author LucasEasedUp
- */
 public final class AccountEventListener extends LogItCoreObject implements Listener
 {
 }

@@ -24,9 +24,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
-/**
- * @author LucasEasedUp
- */
 @SerializableAs("Location")
 public final class Location implements Cloneable, ConfigurationSerializable
 {

@@ -33,9 +33,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-/**
- * @author LucasEasedUp
- */
 @Keys({
     @Key(name = "inv_contents", constraint = KeyConstraint.NOT_EMPTY),
     @Key(name = "inv_armor", constraint = KeyConstraint.NOT_EMPTY),

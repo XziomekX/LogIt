@@ -23,9 +23,6 @@ import io.github.lucaseasedup.logit.config.PropertyObserver;
 import java.io.IOException;
 import java.util.logging.Level;
 
-/**
- * @author LucasEasedUp
- */
 public final class LocaleObserver extends PropertyObserver
 {
     @Override

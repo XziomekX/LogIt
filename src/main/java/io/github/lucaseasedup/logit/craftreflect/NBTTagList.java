@@ -18,9 +18,6 @@
  */
 package io.github.lucaseasedup.logit.craftreflect;
 
-/**
- * @author LucasEasedUp
- */
 public abstract class NBTTagList extends NBTBase
 {
     public abstract void add(NBTBase nbtb);

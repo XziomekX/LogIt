@@ -40,9 +40,6 @@ import org.jnbt.NBTOutputStream;
 import org.jnbt.ShortTag;
 import org.jnbt.Tag;
 
-/**
- * @author LucasEasedUp
- */
 public final class MinecraftUtils
 {
     private MinecraftUtils()

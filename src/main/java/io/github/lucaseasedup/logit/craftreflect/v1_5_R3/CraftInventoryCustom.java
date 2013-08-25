@@ -20,9 +20,6 @@ package io.github.lucaseasedup.logit.craftreflect.v1_5_R3;
 
 import org.bukkit.inventory.ItemStack;
 
-/**
- * @author LucasEasedUp
- */
 public class CraftInventoryCustom extends io.github.lucaseasedup.logit.craftreflect.CraftInventoryCustom
 {
     public CraftInventoryCustom(int size)

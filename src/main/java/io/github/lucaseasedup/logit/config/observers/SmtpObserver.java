@@ -21,9 +21,6 @@ package io.github.lucaseasedup.logit.config.observers;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyObserver;
 
-/**
- * @author LucasEasedUp
- */
 public final class SmtpObserver extends PropertyObserver
 {
     @Override

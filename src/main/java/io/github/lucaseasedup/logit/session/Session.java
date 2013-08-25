@@ -18,9 +18,6 @@
  */
 package io.github.lucaseasedup.logit.session;
 
-/**
- * @author LucasEasedUp
- */
 public final class Session
 {
     public Session(String ip)

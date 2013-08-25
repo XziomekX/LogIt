@@ -18,9 +18,6 @@
  */
 package io.github.lucaseasedup.logit.db;
 
-/**
- * @author LucasEasedUp
- */
 public final class SetClause
 {
     public SetClause(String columnId, String value)

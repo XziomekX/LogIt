@@ -21,9 +21,6 @@ package io.github.lucaseasedup.logit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-/**
- * @author LucasEasedUp
- */
 public class TickEvent extends Event
 {
     public TickEvent()

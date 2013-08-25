@@ -23,9 +23,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 
-/**
- * @author LucasEasedUp
- */
 public final class IoUtils
 {
     private IoUtils()

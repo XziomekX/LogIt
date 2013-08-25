@@ -27,9 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-/**
- * @author LucasEasedUp
- */
 public final class SqliteDatabase extends Database
 {
     public SqliteDatabase(String host)

@@ -38,9 +38,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-/**
- * @author LucasEasedUp
- */
 public final class LogItCommand extends LogItCoreObject implements CommandExecutor
 {
     @Override

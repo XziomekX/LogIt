@@ -20,9 +20,6 @@ package io.github.lucaseasedup.logit.account;
 
 import java.util.Map;
 
-/**
- * @author LucasEasedUp
- */
 public final class AccountCreateEvent extends AccountEvent
 {
     public AccountCreateEvent(Map<String, String> properties)

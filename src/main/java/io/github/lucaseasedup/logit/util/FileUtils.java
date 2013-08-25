@@ -31,9 +31,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 
-/**
- * @author LucasEasedUp
- */
 public final class FileUtils
 {
     private FileUtils()

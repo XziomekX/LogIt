@@ -20,8 +20,6 @@ package io.github.lucaseasedup.logit;
 
 /**
  * Exception that does not need any further logging.
- * 
- * @author LucasEasedUp
  */
 public class ReportedException extends RuntimeException
 {
