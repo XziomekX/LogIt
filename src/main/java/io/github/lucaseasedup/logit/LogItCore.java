@@ -85,6 +85,7 @@ import java.util.logging.Level;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 
 /**
  * LogItCore is the central part of LogIt.
@@ -373,6 +374,9 @@ public final class LogItCore
         Bukkit.getScheduler().cancelTask(tickEventCallerTaskId);
         Bukkit.getScheduler().cancelTask(accountWatcherTaskId);
         Bukkit.getScheduler().cancelTask(backupManagerTaskId);
+        
+        // Unregister all event listeners.
+        HandlerList.unregisterAll(getPlugin());
         
         if (logFileWriter != null)
         {
