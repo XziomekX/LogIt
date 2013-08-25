@@ -315,7 +315,8 @@ public final class LogItCore
         
         if (Bukkit.getPluginManager().isPluginEnabled("Vault"))
         {
-            permissions = Bukkit.getServicesManager().getRegistration(Permission.class).getProvider();
+            vaultPermissions =
+                    Bukkit.getServicesManager().getRegistration(Permission.class).getProvider();
         }
         
         registerEvents();
@@ -630,24 +631,24 @@ public final class LogItCore
         
         if (accountManager.isRegistered(player.getName()))
         {
-            permissions.playerRemoveGroup(player, config.getString("groups.unregistered"));
-            permissions.playerAddGroup(player, config.getString("groups.registered"));
+            vaultPermissions.playerRemoveGroup(player, config.getString("groups.unregistered"));
+            vaultPermissions.playerAddGroup(player, config.getString("groups.registered"));
         }
         else
         {
-            permissions.playerRemoveGroup(player, config.getString("groups.registered"));
-            permissions.playerAddGroup(player, config.getString("groups.unregistered"));
+            vaultPermissions.playerRemoveGroup(player, config.getString("groups.registered"));
+            vaultPermissions.playerAddGroup(player, config.getString("groups.unregistered"));
         }
         
         if (sessionManager.isSessionAlive(player))
         {
-            permissions.playerRemoveGroup(player, config.getString("groups.logged-out"));
-            permissions.playerAddGroup(player, config.getString("groups.logged-in"));
+            vaultPermissions.playerRemoveGroup(player, config.getString("groups.logged-out"));
+            vaultPermissions.playerAddGroup(player, config.getString("groups.logged-in"));
         }
         else
         {
-            permissions.playerRemoveGroup(player, config.getString("groups.logged-in"));
-            permissions.playerAddGroup(player, config.getString("groups.logged-out"));
+            vaultPermissions.playerRemoveGroup(player, config.getString("groups.logged-in"));
+            vaultPermissions.playerAddGroup(player, config.getString("groups.logged-out"));
         }
     }
     
@@ -659,7 +660,7 @@ public final class LogItCore
      */
     public boolean isLinkedToVault()
     {
-        return permissions != null;
+        return vaultPermissions != null;
     }
     
     /**
@@ -851,11 +852,6 @@ public final class LogItCore
         return config.isLoaded();
     }
     
-    protected Permission getPermissions()
-    {
-        return permissions;
-    }
-    
     public PersistenceManager getPersistenceManager()
     {
         return persistenceManager;
@@ -904,6 +900,11 @@ public final class LogItCore
     protected File getDataFile(String path)
     {
         return new File(dataFolder, path);
+    }
+    
+    protected Permission getVaultPermissions()
+    {
+        return vaultPermissions;
     }
     
     private void setCommandExecutors()
@@ -982,9 +983,9 @@ public final class LogItCore
     }
     
     /**
-     * The preferred way to obtain the instance of LogIt core.
+     * The preferred way to obtain the instance of LogItCore.
      * 
-     * @return Instance of LogIt core.
+     * @return the instance of LogItCore.
      */
     public static LogItCore getInstance()
     {
@@ -1101,7 +1102,7 @@ public final class LogItCore
     private Database            database;
     private Table               accountTable;
     private Pinger              pinger;
-    private Permission          permissions;
+    private Permission          vaultPermissions;
     private SessionManager      sessionManager;
     private AccountManager      accountManager;
     private AccountWatcher      accountWatcher;
