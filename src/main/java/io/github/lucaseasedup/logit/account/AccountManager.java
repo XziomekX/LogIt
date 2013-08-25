@@ -63,11 +63,11 @@ public final class AccountManager extends LogItCoreObject
     
     /**
      * Creates a new account with the given username and password.
-     * <p/>
-     * The given password will be hashed using an algorithm specified in the config.
      * 
-     * @param username Username.
-     * @param password Password.
+     * <p> The given password will be hashed using the default algorithm.
+     * 
+     * @param username username.
+     * @param password password.
      */
     public CancelledState createAccount(String username, String password)
     {
@@ -114,11 +114,11 @@ public final class AccountManager extends LogItCoreObject
     
     /**
      * Removes an account with the specified username.
-     * <p/>
-     * Removing a player's account does not entail logging them out.
      * 
-     * @param username Username.
-     * @throws AccountNotFoundException Thrown if account does not exist.
+     * <p> Removing an account does not entail logging out.
+     * 
+     * @param username username.
+     * @throws AccountNotFoundException if account does not exist.
      */
     public CancelledState removeAccount(String username)
     {
@@ -152,14 +152,14 @@ public final class AccountManager extends LogItCoreObject
     
     /**
      * Checks if the given password matches that of account with the specified username.
-     * <p/>
-     * The given password will be hashed using an algorithm specified
+     * 
+     * <p> The given password will be hashed using an algorithm specified
      * in the database or in the config.
      * 
-     * @param username Username.
-     * @param password Password to check.
-     * @throws AccountNotFoundException Thrown if no such account exists.
-     * @return True if they match.
+     * @param username username.
+     * @param password the password to check.
+     * @throws AccountNotFoundException if no such account exists.
+     * @return {@code true} if they match.
      */
     public boolean checkAccountPassword(String username, String password)
     {
@@ -194,11 +194,11 @@ public final class AccountManager extends LogItCoreObject
     
     /**
      * Changes password of an account with the given username.
-     * <p/>
-     * The given password will be hashed using an algorithm specified in the config.
      * 
-     * @param username Username.
-     * @param newPassword New password.
+     * <p> The given password will be hashed using the default algorithm.
+     * 
+     * @param username    username.
+     * @param newPassword a new password.
      */
     public CancelledState changeAccountPassword(String username, String newPassword)
     {
@@ -240,8 +240,8 @@ public final class AccountManager extends LogItCoreObject
     /**
      * Changes e-mail address of an account with the given username.
      * 
-     * @param username Username.
-     * @param newEmail New e-mail address.
+     * @param username username.
+     * @param newEmail a new e-mail address.
      */
     public CancelledState changeEmail(String username, String newEmail)
     {
@@ -281,9 +281,9 @@ public final class AccountManager extends LogItCoreObject
     /**
      * Attaches IP address to an account with the specified username.
      * 
-     * @param username Username.
-     * @param ip IP address.
-     * @throws AccountNotFoundException Thrown if the account does not exist.
+     * @param username username.
+     * @param ip       an IP address.
+     * @throws AccountNotFoundException if the account does not exist.
      */
     public CancelledState attachIp(String username, String ip)
     {
@@ -330,10 +330,11 @@ public final class AccountManager extends LogItCoreObject
     
     /**
      * Returns number of accounts with the given IP.
-     * If "ip" is null or an empty string, the returned value is 0.
+     * 
+     * <p> If "ip" is null or an empty string, the returned value is 0.
      * 
      * @param ip IP address.
-     * @return Number of accounts with the given IP.
+     * @return number of accounts with the given IP.
      */
     public int countAccountsWithIp(String ip)
     {

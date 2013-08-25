@@ -29,7 +29,7 @@ public final class Session
     }
     
     /**
-     * Returns an IP address associated with the session.
+     * Returns an IP address associated with this session.
      * 
      * @return IP address.
      */
@@ -45,11 +45,11 @@ public final class Session
     
     /**
      * Returns session status.
-     * <p/>
-     * Values above or equal to 0 mean "session alive" (logged in).
-     * Values below 0 mean "session ended" (logged out).
      * 
-     * @return Session status.
+     * <p> Values above or equal to {@code 0} mean <i>session alive/logged in</i>.
+     * Values below {@code 0} mean <i>session ended/logged out</i>.
+     * 
+     * @return session status.
      */
     public long getStatus()
     {
@@ -59,7 +59,7 @@ public final class Session
     /**
      * Sets session status to value of {@code status}.
      * 
-     * @param status Session status.
+     * @param status the new session status.
      */
     public void setStatus(long status)
     {
@@ -67,9 +67,9 @@ public final class Session
     }
     
     /**
-     * Updates session status by adding {@code update} to current status.
+     * Updates session status by adding {@code update} to the current status.
      * 
-     * @param update Update value.
+     * @param update update value.
      */
     public void updateStatus(long update)
     {
@@ -77,11 +77,11 @@ public final class Session
     }
     
     /**
-     * Check if the session is alive.
-     * <p/>
-     * A session is alive when its status is below or equal to 0.
+     * Checks if the session is alive.
      * 
-     * @return True if the session is alive.
+     * <p> A session is alive when its status is below or equal to {@code 0}.
+     * 
+     * @return {@code true} if the session is alive.
      */
     public boolean isAlive()
     {

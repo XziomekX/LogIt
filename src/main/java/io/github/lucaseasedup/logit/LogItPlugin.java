@@ -147,15 +147,15 @@ public final class LogItPlugin extends JavaPlugin
     
     /**
      * Loads messages from file.
-     * <p/>
-     * First, it tries to load messages_{locale}.properties from the data folder
+     * 
+     * <p> First, it tries to load messages_{locale}.properties from the data folder
      * (where {locale} is the "locale" config property). If it does not exist,
      * it tries to load messages.properties. If this fails too, it does it all again
      * but within JAR file. If the JAR file does not contain any of the aforementioned files,
      * it throws FileNotFoundException.
      * 
-     * @throws FileNotFoundException Thrown if no message file has been found.
-     * @throws IOException Thrown if there was an error while reading.
+     * @throws FileNotFoundException if no message file has been found.
+     * @throws IOException if there was an error while reading.
      */
     public void loadMessages() throws IOException
     {
@@ -247,8 +247,8 @@ public final class LogItPlugin extends JavaPlugin
     /**
      * Replaces macros with their ChatColor equivalents.
      * 
-     * @param s String to be formatted.
-     * @return Formatted string.
+     * @param s the string to be formatted.
+     * @return formatted string.
      */
     public static String formatColorCodes(String s)
     {

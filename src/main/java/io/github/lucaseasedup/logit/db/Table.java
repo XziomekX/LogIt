@@ -56,10 +56,10 @@ public final class Table
     }
     
     /**
-     * Creates the table if it does not exists
+     * Creates the table if it does not exists,
      * and adds columns that are enabled but missing.
      * 
-     * @throws SQLException Thrown on SQL error.
+     * @throws SQLException if an SQL error occured.
      */
     public void open() throws SQLException
     {

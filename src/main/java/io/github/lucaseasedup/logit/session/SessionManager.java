@@ -101,8 +101,8 @@ public final class SessionManager extends LogItCoreObject implements Runnable
     /**
      * Returns a session attached to the specified username.
      * 
-     * @param username Username.
-     * @return Session object.
+     * @param username username.
+     * @return session object.
      */
     public Session getSession(String username)
     {
@@ -135,13 +135,11 @@ public final class SessionManager extends LogItCoreObject implements Runnable
     
     /**
      * Creates a session for a player with the specified username.
-     * <p/>
-     * Providing a valid IP address is important as it prevents session hijacking.
-     * <p/>
-     * If session already exists, it will be ignored and overridden.
      * 
-     * @param username Username.
-     * @param ip IP address.
+     * <p> If session already exists, it will be ignored and overridden.
+     * 
+     * @param username username.
+     * @param ip       IP address.
      */
     public CancelledState createSession(String username, String ip)
     {
@@ -166,10 +164,10 @@ public final class SessionManager extends LogItCoreObject implements Runnable
     
     /**
      * Destroys session belonging to a player with the specified username.
-     * <p/>
-     * If session does not exist, no action will be taken.
      * 
-     * @param username Username.
+     * <p> If session does not exist, no action will be taken.
+     * 
+     * @param username ysername.
      */
     public CancelledState destroySession(String username)
     {
@@ -200,8 +198,8 @@ public final class SessionManager extends LogItCoreObject implements Runnable
     /**
      * Starts the session of a player with the specified username.
      * 
-     * @param username Username.
-     * @throws SessionNotFoundException Thrown if the session does not exist.
+     * @param username username.
+     * @throws SessionNotFoundException if the session does not exist.
      */
     public CancelledState startSession(String username)
     {
@@ -240,8 +238,8 @@ public final class SessionManager extends LogItCoreObject implements Runnable
     /**
      * Ends the session of a player with the specified username.
      * 
-     * @param username Username.
-     * @throws SessionNotFoundException Thrown if the session does not exist.
+     * @param username username.
+     * @throws SessionNotFoundException if the session does not exist.
      */
     public CancelledState endSession(String username)
     {

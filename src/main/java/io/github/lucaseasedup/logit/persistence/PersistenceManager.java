@@ -49,7 +49,7 @@ public final class PersistenceManager extends LogItCoreObject
      * <p> It does nothing if {@code clazz} is {@code null}, or the player has already
      * been serialized using this serializer.
      * 
-     * @param player player whose data will be serialized.
+     * @param player the player whose data will be serialized.
      * @param clazz serializer class.
      * @throws ReflectiveOperationException if serializer construction failed
      */
@@ -119,7 +119,7 @@ public final class PersistenceManager extends LogItCoreObject
      * <p> It does nothing if {@code clazz} is {@code null}, or the player has not
      * been serialized using this serializer.
      * 
-     * @param player player whose data will be unserialized.
+     * @param player the player whose data will be unserialized.
      * @param clazz serializer class.
      * @throws ReflectiveOperationException if serializer construction failed
      */

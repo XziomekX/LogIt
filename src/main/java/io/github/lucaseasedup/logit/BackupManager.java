@@ -163,7 +163,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     /**
      * Removes a certain amount of backups starting from the oldest.
      * 
-     * @param amount Amount of backups to remove.
+     * @param amount the amount of backups to remove.
      */
     public void removeBackups(int amount)
     {

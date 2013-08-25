@@ -99,6 +99,13 @@ public final class LogItCore
         this.firstRun = !getDataFile("config.yml").exists();
     }
     
+    /**
+     * Starts up the LogItCore.
+     * 
+     * <p> Does nothing if it has already been started.
+     * 
+     * @throws FatalReportedException if critical error occured and LogIt could not start.
+     */
     public void start() throws FatalReportedException
     {
         if (started)
@@ -334,6 +341,11 @@ public final class LogItCore
         started = true;
     }
     
+    /**
+     * Stops the LogItCore.
+     * 
+     * <p> Does nothing if it has not been started.
+     */
     public void stop()
     {
         if (!started)
@@ -380,6 +392,11 @@ public final class LogItCore
         started = false;
     }
     
+    /**
+     * Restarts the LogItCore by invoking {@link #stop} and {@link #start}.
+     * 
+     * @throws FatalReportedException if LogItCore could not be started again.
+     */
     public void restart() throws FatalReportedException
     {
         File sessionFile = getDataFile(config.getString("storage.sessions.filename"));
@@ -423,9 +440,9 @@ public final class LogItCore
     /**
      * Checks if the given password matches its hashed equivalent.
      * 
-     * @param password Plain-text password.
-     * @param hashedPassword Hashed password.
-     * @return True if passwords match.
+     * @param password       plain-text password.
+     * @param hashedPassword hashed password.
+     * @return {@code true} if passwords match.
      */
     public boolean checkPassword(String password, String hashedPassword,
                                  HashingAlgorithm hashingAlgorithm)
@@ -443,10 +460,10 @@ public final class LogItCore
     /**
      * Checks if the given password matches its hashed equivalent.
      * 
-     * @param password Plain-text password.
-     * @param hashedPassword Hashed password.
-     * @param salt Salt.
-     * @return True if passwords match.
+     * @param password       plain-text password.
+     * @param hashedPassword hashed password.
+     * @param salt           salt.
+     * @return {@code true} if passwords match.
      */
     public boolean checkPassword(String password,
                                  String hashedPassword,
@@ -469,8 +486,8 @@ public final class LogItCore
     /**
      * Checks if the given password matches the global password.
      * 
-     * @param password Plain-text password.
-     * @return True if passwords match.
+     * @param password plain-text password.
+     * @return {@code true} if passwords match.
      */
     public boolean checkGlobalPassword(String password)
     {
@@ -481,7 +498,7 @@ public final class LogItCore
     /**
      * Changes the global password.
      * 
-     * @param password New global password;
+     * @param password new global password;
      */
     public void changeGlobalPassword(String password)
     {
@@ -576,7 +593,7 @@ public final class LogItCore
      * <p> Note that this method does not check if the player is already logged in.
      * For that purpose, use {@link SessionManager#isSessionAlive(Player)}.
      * 
-     * @param  player player whom the check will be ran on.
+     * @param player the player whom this check will be ran on.
      * @return {@code true} if the player is forced to log in; {@code false} otherwise.
      */
     public boolean isPlayerForcedToLogIn(Player player)
@@ -622,7 +639,7 @@ public final class LogItCore
     /**
      * Updates player group depending on whether they're logged in or logged out.
      * 
-     * @param player Player whose group is to be updated.
+     * @param player the player whose group is to be updated.
      */
     public void updatePlayerGroup(Player player)
     {
@@ -654,9 +671,9 @@ public final class LogItCore
     
     /**
      * Checks if LogIt is linked to Vault
-     * (e.i.&nbsp;LogItCore has been loaded and Vault is enabled).
+     * (e.i.&nbsp;LogItCore has been started and Vault is enabled).
      * 
-     * @return True if LogIt is linked to Vault.
+     * @return {@code true} if LogIt is linked to Vault.
      */
     public boolean isLinkedToVault()
     {
@@ -664,10 +681,10 @@ public final class LogItCore
     }
     
     /**
-     * Hashes the given string through algorithm specified in the config.
+     * Hashes a string using the specified algorithm.
      * 
-     * @param string String to be hashed.
-     * @return Resulting hash.
+     * @param string the string to be hashed.
+     * @return resulting hash.
      */
     public String hash(String string, HashingAlgorithm hashingAlgorithm)
     {
@@ -717,11 +734,11 @@ public final class LogItCore
     }
     
     /**
-     * Hashes the given string and salt through algorithm specified in the config.
+     * Hashes a string and salt using the specified algorithm.
      * 
-     * @param string String to be hashed.
-     * @param salt Salt.
-     * @return Resulting hash.
+     * @param string string to be hashed.
+     * @param salt   salt.
+     * @return resulting hash.
      */
     public String hash(String string, String salt, HashingAlgorithm hashingAlgorithm)
     {
@@ -795,8 +812,8 @@ public final class LogItCore
     /**
      * Logs a message in the name of LogIt.
      * 
-     * @param level Message level.
-     * @param message Message.
+     * @param level   message level.
+     * @param message message.
      */
     public void log(Level level, String message)
     {

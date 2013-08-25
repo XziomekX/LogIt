@@ -37,8 +37,8 @@ public final class HashGenerator
     /**
      * Returns an MD2 hash of the given string.
      * 
-     * @param string String to be hashed.
-     * @return Hashed string.
+     * @param string the string to be hashed.
+     * @return hashed string.
      */
     public static String getMd2(String string)
     {
@@ -48,8 +48,8 @@ public final class HashGenerator
     /**
      * Returns an MD5 hash of the given string.
      * 
-     * @param string String to be hashed.
-     * @return Hashed string.
+     * @param string the string to be hashed.
+     * @return hashed string.
      */
     public static String getMd5(String string)
     {
@@ -59,8 +59,8 @@ public final class HashGenerator
     /**
      * Returns a SHA-1 hash of the given string.
      * 
-     * @param string String to be hashed.
-     * @return Hashed string.
+     * @param string the string to be hashed.
+     * @return hashed string.
      */
     public static String getSha1(String string)
     {
@@ -70,8 +70,8 @@ public final class HashGenerator
     /**
      * Returns a SHA-256 hash of the given string.
      * 
-     * @param string String to be hashed.
-     * @return Hashed string.
+     * @param string the string to be hashed.
+     * @return hashed string.
      */
     public static String getSha256(String string)
     {
@@ -81,8 +81,8 @@ public final class HashGenerator
     /**
      * Returns a SHA-384 hash of the given string.
      * 
-     * @param string String to be hashed.
-     * @return Hashed string.
+     * @param string the string to be hashed.
+     * @return hashed string.
      */
     public static String getSha384(String string)
     {
@@ -92,8 +92,8 @@ public final class HashGenerator
     /**
      * Returns a SHA-512 hash of the given string.
      * 
-     * @param string String to be hashed.
-     * @return Hashed string.
+     * @param string the string to be hashed.
+     * @return hashed string.
      */
     public static String getSha512(String string)
     {
@@ -103,8 +103,8 @@ public final class HashGenerator
     /**
      * Returns a Whirlpool hash of the given string.
      * 
-     * @param string String to be hashed.
-     * @return Hashed string.
+     * @param string the string to be hashed.
+     * @return hashed string.
      */
     public static String getWhirlpool(String string)
     {
