@@ -21,9 +21,9 @@ package io.github.lucaseasedup.logit.listener;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastJoinMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastQuitMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.PlayerHolder;
 import io.github.lucaseasedup.logit.session.SessionEndEvent;
 import io.github.lucaseasedup.logit.session.SessionStartEvent;
+import io.github.lucaseasedup.logit.util.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,11 +38,12 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
     @EventHandler(priority = EventPriority.MONITOR)
     private void onStart(SessionStartEvent event)
     {
-        if (event.isCancelled())
+        String username = event.getUsername();
+        
+        if (event.isCancelled() || !PlayerUtils.isPlayerOnline(username))
             return;
         
-        String username = event.getUsername();
-        final Player player = PlayerHolder.getExact(username);
+        final Player player = PlayerUtils.getPlayer(username);
         
         Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
         {
@@ -70,11 +71,12 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
     @EventHandler(priority = EventPriority.MONITOR)
     private void onEnd(SessionEndEvent event)
     {
-        if (event.isCancelled())
+        String username = event.getUsername();
+        
+        if (event.isCancelled() || !PlayerUtils.isPlayerOnline(username))
             return;
         
-        String username = event.getUsername();
-        final Player player = PlayerHolder.getExact(username);
+        final Player player = PlayerUtils.getPlayer(username);
         
         Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
         {
@@ -93,7 +95,7 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
             }
         }, 1L);
         
-        if (getCore().isPlayerForcedToLogIn(player) && player.isOnline())
+        if (getCore().isPlayerForcedToLogIn(player))
         {
             getPersistenceManager().serialize(player);
         }

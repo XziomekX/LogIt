@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.config.observers;
 
-import io.github.lucaseasedup.logit.PlayerHolder;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyObserver;
 import io.github.lucaseasedup.logit.persistence.AirBarSerializer;
@@ -29,6 +28,7 @@ import io.github.lucaseasedup.logit.persistence.InventorySerializer;
 import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
 import java.util.logging.Level;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**
@@ -78,7 +78,7 @@ public final class SerializerObserver extends PropertyObserver
     {
         if (status)
         {
-            for (Player player : PlayerHolder.getAll())
+            for (Player player : Bukkit.getOnlinePlayers())
             {
                 try
                 {
@@ -100,7 +100,7 @@ public final class SerializerObserver extends PropertyObserver
         }
         else
         {
-            for (Player player : PlayerHolder.getAll())
+            for (Player player : Bukkit.getOnlinePlayers())
             {
                 try
                 {

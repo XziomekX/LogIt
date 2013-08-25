@@ -107,9 +107,6 @@ public final class LogItPlugin extends JavaPlugin
             getLogger().log(Level.WARNING, "Could not load messages.", ex);
         }
         
-        PlayerHolder.registerListenerForPlugin(this);
-        PlayerHolder.addAll(Bukkit.getOnlinePlayers());
-        
         core = LogItCore.getInstance();
         
         try
