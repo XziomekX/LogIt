@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit.listener;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -31,7 +32,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
  */
 public final class BlockEventListener extends LogItCoreObject implements Listener
 {
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onPlace(BlockPlaceEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.block-place"))
@@ -46,7 +47,7 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onBreak(BlockBreakEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.block-break"))
@@ -61,7 +62,7 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onHangingBreak(HangingBreakByEntityEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.block-break")

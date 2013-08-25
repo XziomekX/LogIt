@@ -23,8 +23,6 @@ import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastJoinMessag
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastQuitMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
-import static org.bukkit.event.EventPriority.HIGHEST;
-import static org.bukkit.event.EventPriority.LOWEST;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_FULL;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
 import io.github.lucaseasedup.logit.LogItCoreObject;
@@ -33,6 +31,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -52,7 +51,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
  */
 public final class PlayerEventListener extends LogItCoreObject implements Listener
 {
-    @EventHandler(priority = LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     private void onLogin(PlayerLoginEvent event)
     {
         Player player = event.getPlayer();
@@ -130,7 +129,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler(priority = HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     private void onJoin(PlayerJoinEvent event)
     {
         final Player player   = event.getPlayer();
@@ -172,7 +171,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onQuit(PlayerQuitEvent event)
     {
         Player player = event.getPlayer();
@@ -190,7 +189,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onKick(PlayerKickEvent event)
     {
         Player player = event.getPlayer();
@@ -208,7 +207,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onMove(PlayerMoveEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.move"))
@@ -222,7 +221,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onToggleSneak(PlayerToggleSneakEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.toggle-sneak"))
@@ -236,7 +235,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onChat(AsyncPlayerChatEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.chat"))
@@ -251,7 +250,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onCommandPreprocess(PlayerCommandPreprocessEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.command-preprocess"))
@@ -307,7 +306,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onInteract(PlayerInteractEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.interact"))
@@ -330,7 +329,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onInteractEntity(PlayerInteractEntityEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.interact-entity"))
@@ -345,7 +344,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onPickupItem(PlayerPickupItemEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.pickup-item"))
@@ -359,7 +358,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onDropItem(PlayerDropItemEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.drop-item"))

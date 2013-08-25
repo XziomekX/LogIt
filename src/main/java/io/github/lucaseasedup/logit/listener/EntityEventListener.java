@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit.listener;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -33,7 +34,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
  */
 public final class EntityEventListener extends LogItCoreObject implements Listener
 {
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onDamageIn(EntityDamageEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.damage-in")
@@ -50,7 +51,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onDamageOut(EntityDamageByEntityEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.damage-out")
@@ -67,7 +68,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onRegainHealth(EntityRegainHealthEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.regain-health")
@@ -84,7 +85,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onFoodLevelChange(FoodLevelChangeEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.food-level-change")
@@ -101,7 +102,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onEntityTarget(EntityTargetEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.entity-target")
