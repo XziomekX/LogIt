@@ -988,7 +988,12 @@ public final class LogItCore
      */
     public static LogItCore getInstance()
     {
-        return INSTANCE;
+        if (instance == null)
+        {
+            instance = new LogItCore(LogItPlugin.getInstance());
+        }
+        
+        return instance;
     }
     
     public static enum StorageType
@@ -1081,7 +1086,7 @@ public final class LogItCore
     public static final String LIB_H2 = "h2small-1.3.171.jar";
     public static final String LIB_MAIL = "mail-1.4.7.jar";
     
-    private static final LogItCore INSTANCE = new LogItCore(LogItPlugin.getInstance());
+    private static LogItCore instance = null;
     
     private final LogItPlugin plugin;
     private final File dataFolder;
