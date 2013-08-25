@@ -101,86 +101,111 @@ public final class H2Database extends Database
     @Override
     public List<Map<String, String>> select(String table, String[] columns) throws SQLException
     {
-        return copyResultSet(statement.executeQuery("SELECT " + SqlUtils.implodeColumns(columns, "\"", false)
-            + " FROM \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\";"));
+        String sql = "SELECT " + SqlUtils.implodeColumns(columns, "\"", false)
+                + " FROM \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\";";
+        
+        return copyResultSet(statement.executeQuery(sql));
     }
     
     @Override
-    public List<Map<String, String>> select(String table, String[] columns, String[] where) throws SQLException
+    public List<Map<String, String>> select(String table, String[] columns, String[] where)
+            throws SQLException
     {
-        return copyResultSet(statement.executeQuery("SELECT " + SqlUtils.implodeColumns(columns, "\"", false)
-            + " FROM \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
-            + " WHERE " + SqlUtils.implodeWhere(where, "\"", "'", false) + ";"));
+        String sql = "SELECT " + SqlUtils.implodeColumns(columns, "\"", false)
+                + " FROM \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
+                + " WHERE " + SqlUtils.implodeWhere(where, "\"", "'", false) + ";";
+        
+        return copyResultSet(statement.executeQuery(sql));
     }
     
     @Override
     public boolean createTable(String table, String[] columns) throws SQLException
     {
-        return executeStatement("CREATE TABLE \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
-            + " (" + SqlUtils.buildColumnDefinition(columns, "\"", false) + ");");
+        String sql = "CREATE TABLE \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
+                + " (" + SqlUtils.buildColumnDefinition(columns, "\"", false) + ");";
+        
+        return executeStatement(sql);
     }
     
     @Override
     public boolean createTableIfNotExists(String table, String[] columns) throws SQLException
     {
-        return executeStatement("CREATE TABLE IF NOT EXISTS \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
-            + " (" + SqlUtils.buildColumnDefinition(columns, "\"", false) + ");");
+        String sql = "CREATE TABLE IF NOT EXISTS \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
+                + " (" + SqlUtils.buildColumnDefinition(columns, "\"", false) + ");";
+        
+        return executeStatement(sql);
     }
     
     @Override
     public boolean renameTable(String table, String newTable) throws SQLException
     {
-        return executeStatement("ALTER TABLE \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
-            + " RENAME TO \"" + SqlUtils.escapeQuotes(newTable, "\"", false) + "\";");
+        String sql = "ALTER TABLE \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
+                + " RENAME TO \"" + SqlUtils.escapeQuotes(newTable, "\"", false) + "\";";
+        
+        return executeStatement(sql);
     }
     
     @Override
     public boolean truncateTable(String table) throws SQLException
     {
-        return executeStatement("TRUNCATE TABLE \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\";");
+        String sql = "TRUNCATE TABLE \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\";";
+        
+        return executeStatement(sql);
     }
     
     @Override
     public boolean dropTable(String table) throws SQLException
     {
-        return executeStatement("DROP TABLE \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\";");
+        String sql = "DROP TABLE \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\";";
+        
+        return executeStatement(sql);
     }
     
     @Override
     public boolean addColumn(String table, String name, String type) throws SQLException
     {
-        return executeStatement("ALTER TABLE \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
-            + " ADD COLUMN \"" + SqlUtils.escapeQuotes(name, "\"", false) + "\" " + type + ";");
+        String sql = "ALTER TABLE \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
+                + " ADD COLUMN \"" + SqlUtils.escapeQuotes(name, "\"", false) + "\" " + type + ";";
+        
+        return executeStatement(sql);
     }
     
     @Override
     public boolean insert(String table, String[] values) throws SQLException
     {
-        return executeStatement("INSERT INTO \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
-            + " VALUES (" + SqlUtils.implodeValues(values, "'", false) + ");");
+        String sql = "INSERT INTO \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
+                + " VALUES (" + SqlUtils.implodeValues(values, "'", false) + ");";
+        
+        return executeStatement(sql);
     }
     
     @Override
     public boolean insert(String table, String[] columns, String[] values) throws SQLException
     {
-        return executeStatement("INSERT INTO \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
-            + " (" + SqlUtils.implodeColumns(columns, "\"", false) + ")"
-            + " VALUES (" + SqlUtils.implodeValues(values, "'", false) + ");");
+        String sql = "INSERT INTO \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
+                + " (" + SqlUtils.implodeColumns(columns, "\"", false) + ")"
+                + " VALUES (" + SqlUtils.implodeValues(values, "'", false) + ");";
+        
+        return executeStatement(sql);
     }
     
     @Override
     public boolean update(String table, String[] where, String[] set) throws SQLException
     {
-        return executeStatement("UPDATE \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
-            + " SET " + SqlUtils.implodeSet(set, "\"", "'", false)
-            + " WHERE " + SqlUtils.implodeWhere(where, "\"", "'", false) + ";");
+        String sql = "UPDATE \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
+                + " SET " + SqlUtils.implodeSet(set, "\"", "'", false)
+                + " WHERE " + SqlUtils.implodeWhere(where, "\"", "'", false) + ";";
+        
+        return executeStatement(sql);
     }
     
     @Override
     public boolean delete(String table, String[] where) throws SQLException
     {
-        return executeStatement("DELETE FROM \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
-            + " WHERE " + SqlUtils.implodeWhere(where, "\"", "'", false) + ";");
+        String sql = "DELETE FROM \"" + SqlUtils.escapeQuotes(table, "\"", false) + "\""
+                + " WHERE " + SqlUtils.implodeWhere(where, "\"", "'", false) + ";";
+        
+        return executeStatement(sql);
     }
     
     public void addBatch(String sql) throws SQLException

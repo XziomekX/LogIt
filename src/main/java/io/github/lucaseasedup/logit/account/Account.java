@@ -86,7 +86,8 @@ public final class Account extends Observable
         }
         
         table.update(new WhereClause[]{
-            new WhereClause("logit.accounts.username", WhereClause.EQUAL, getString("logit.accounts.username")),
+            new WhereClause("logit.accounts.username",
+                    WhereClause.EQUAL, getString("logit.accounts.username")),
         }, new SetClause[]{
             new SetClause(property, value),
         });

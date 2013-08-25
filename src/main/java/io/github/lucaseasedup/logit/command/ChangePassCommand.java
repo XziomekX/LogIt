@@ -51,6 +51,9 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
         {
         }
         
+        int minPasswordLength = getConfig().getInt("password.min-length");
+        int maxPasswordLength = getConfig().getInt("password.max-length");
+        
         if (args.length > 0 && args[0].equals("-x") && args.length <= 3)
         {
             if (p != null && !p.hasPermission("logit.changepass.others"))
@@ -67,17 +70,18 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
             }
             else if (!getAccountManager().isRegistered(args[1]))
             {
-                sender.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS").replace("%player%", args[1]));
+                sender.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS")
+                        .replace("%player%", args[1]));
             }
-            else if (args[2].length() < getConfig().getInt("password.min-length"))
+            else if (args[2].length() < minPasswordLength)
             {
                 sender.sendMessage(getMessage("PASSWORD_TOO_SHORT")
-                        .replace("%min-length%", String.valueOf(getConfig().getInt("password.min-length"))));
+                        .replace("%min-length%", String.valueOf(minPasswordLength)));
             }
-            else if (args[2].length() > getConfig().getInt("password.max-length"))
+            else if (args[2].length() > maxPasswordLength)
             {
                 sender.sendMessage(getMessage("PASSWORD_TOO_LONG")
-                        .replace("%max-length%", String.valueOf(getConfig().getInt("password.max-length"))));
+                        .replace("%max-length%", String.valueOf(maxPasswordLength)));
             }
             else
             {
@@ -94,7 +98,8 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
                 }
                 catch (ReportedException ex)
                 {
-                    sender.sendMessage(getMessage("CHANGE_PASSWORD_FAIL_OTHERS").replace("%player%", args[1]));
+                    sender.sendMessage(getMessage("CHANGE_PASSWORD_FAIL_OTHERS")
+                            .replace("%player%", args[1]));
                 }
                 finally
                 {
@@ -132,15 +137,15 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
             {
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
             }
-            else if (args[1].length() < getConfig().getInt("password.min-length"))
+            else if (args[1].length() < minPasswordLength)
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_SHORT")
-                        .replace("%min-length%", String.valueOf(getConfig().getInt("password.min-length"))));
+                        .replace("%min-length%", String.valueOf(minPasswordLength)));
             }
-            else if (args[1].length() > getConfig().getInt("password.max-length"))
+            else if (args[1].length() > maxPasswordLength)
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_LONG")
-                        .replace("%max-length%", String.valueOf(getConfig().getInt("password.max-length"))));
+                        .replace("%max-length%", String.valueOf(maxPasswordLength)));
             }
             else if (!args[1].equals(args[2]))
             {

@@ -79,7 +79,8 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                     ReportedException.incrementRequestCount();
                     
                     getCore().sendPasswordRecoveryMail(p.getName());
-                    sender.sendMessage(getMessage("RECOVER_PASSWORD_SUCCESS_SELF").replace("%email%", args[0]));
+                    sender.sendMessage(getMessage("RECOVER_PASSWORD_SUCCESS_SELF")
+                            .replace("%email%", args[0]));
                 }
                 catch (ReportedException ex)
                 {

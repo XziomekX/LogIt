@@ -129,7 +129,8 @@ public final class CsvDatabase extends Database
     }
     
     @Override
-    public List<Map<String, String>> select(String table, String[] columns, String[] where) throws SQLException
+    public List<Map<String, String>> select(String table, String[] columns, String[] where)
+            throws SQLException
     {
         return select(table, columns);
     }
@@ -302,7 +303,8 @@ public final class CsvDatabase extends Database
                 
                 int valueIndex = insertColumns.indexOf(allColumns.get(i));
                 
-                if (valueIndex != -1 && values != null && valueIndex < values.length && values[valueIndex] != null)
+                if (valueIndex != -1 && values != null && valueIndex < values.length
+                        && values[valueIndex] != null)
                 {
                     sb.append(escapeValue(values[valueIndex]));
                 }

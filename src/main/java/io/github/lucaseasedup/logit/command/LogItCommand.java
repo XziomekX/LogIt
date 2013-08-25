@@ -29,6 +29,7 @@ import io.github.lucaseasedup.logit.config.PropertyType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import org.bukkit.Color;
 import org.bukkit.command.Command;
@@ -278,7 +279,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                     }
                     catch (NumberFormatException ex)
                     {
-                        sender.sendMessage(getMessage("INVALID_PARAMETER").replace("%param%", "amount"));
+                        sender.sendMessage(getMessage("INVALID_PARAMETER")
+                                .replace("%param%", "amount"));
                     }
                 }
             }
@@ -404,19 +406,16 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
             }
-            else
+            else if (args.length == 1)
             {
-                if (args.length == 1)
-                {
-                    sender.sendMessage(getMessage("IP_COUNT_UNIQUE")
-                        .replace("%num%", String.valueOf(getAccountManager().countUniqueIps())));
-                }
-                else if (args.length == 2)
-                {
-                    sender.sendMessage(getMessage("IP_COUNT_ACCOUNTS")
-                        .replace("%ip%", args[1])
-                        .replace("%num%", String.valueOf(getAccountManager().countAccountsWithIp(args[1]))));
-                }
+                sender.sendMessage(getMessage("IP_COUNT_UNIQUE")
+                    .replace("%num%", String.valueOf(getAccountManager().countUniqueIps())));
+            }
+            else if (args.length == 2)
+            {
+                sender.sendMessage(getMessage("IP_COUNT_ACCOUNTS")
+                    .replace("%ip%", args[1])
+                    .replace("%num%", String.valueOf(getAccountManager().countAccountsWithIp(args[1]))));
             }
         }
         else if (subcommand.equalsIgnoreCase("config"))
@@ -437,7 +436,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 }
                 else if (!getConfig().contains(args[2]))
                 {
-                    sender.sendMessage(getMessage("CONFIG_PROPERTY_NOT_FOUND").replace("%param%", "path"));
+                    sender.sendMessage(getMessage("CONFIG_PROPERTY_NOT_FOUND")
+                            .replace("%param%", "path"));
                 }
                 else
                 {
@@ -611,7 +611,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 }
                 else if (!getConfig().contains(args[2]))
                 {
-                    sender.sendMessage(getMessage("CONFIG_PROPERTY_NOT_FOUND").replace("%param%", "path"));
+                    sender.sendMessage(getMessage("CONFIG_PROPERTY_NOT_FOUND")
+                            .replace("%param%", "path"));
                 }
                 else
                 {
@@ -629,9 +630,11 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 }
                 else
                 {
+                    Map<String, Property> properties = getConfig().getProperties();
+                    
                     final int PROPERTIES_PER_PAGE = 16;
                     int page = 1;
-                    int pages = (int) Math.floor(getConfig().getProperties().size() / PROPERTIES_PER_PAGE) + 1;
+                    int pages = (int) Math.floor(properties.size() / PROPERTIES_PER_PAGE) + 1;
                     int i = 0, j = 0;
                     
                     if (args.length >= 3)
@@ -645,7 +648,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                         "%pages%", String.valueOf(pages),
                     }));
                     
-                    for (Map.Entry<String, Property> e : getConfig().getProperties().entrySet())
+                    for (Entry<String, Property> e : properties.entrySet())
                     {
                         if ((i > ((PROPERTIES_PER_PAGE * (page - 1)) - 1)) && (j < PROPERTIES_PER_PAGE))
                         {

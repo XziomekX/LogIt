@@ -64,7 +64,8 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             }
             else if (!getAccountManager().isRegistered(args[1]))
             {
-                sender.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS").replace("%player%", args[1]));
+                sender.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS")
+                        .replace("%player%", args[1]));
             }
             else if (p != null && p.getName().equalsIgnoreCase(args[1]))
             {
@@ -95,7 +96,8 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
                 }
                 catch (ReportedException ex)
                 {
-                    sender.sendMessage(getMessage("REMOVE_ACCOUNT_FAIL_OTHERS").replace("%player%", args[1]));
+                    sender.sendMessage(getMessage("REMOVE_ACCOUNT_FAIL_OTHERS")
+                            .replace("%player%", args[1]));
                 }
                 finally
                 {

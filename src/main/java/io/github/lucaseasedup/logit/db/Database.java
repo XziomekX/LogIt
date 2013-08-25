@@ -38,7 +38,8 @@ public abstract class Database implements AutoCloseable
     public abstract void close() throws SQLException;
     
     public abstract ColumnList getColumnNames(String table) throws SQLException;
-    public abstract List<Map<String, String>> select(String table, String[] columns) throws SQLException;
+    public abstract List<Map<String, String>> select(String table, String[] columns)
+            throws SQLException;
     public abstract List<Map<String, String>> select(String table, String[] columns, String[] where)
             throws SQLException;
     

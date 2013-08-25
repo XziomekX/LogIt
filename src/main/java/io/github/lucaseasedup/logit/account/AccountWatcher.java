@@ -36,22 +36,27 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
     @Override
     public void run()
     {
-        if (getConfig().getInt("crowd-control.days-of-absence-to-unregister") < 0)
+        int daysOfAbsenceToUnregister =
+                getConfig().getInt("crowd-control.days-of-absence-to-unregister");
+        
+        if (daysOfAbsenceToUnregister < 0)
             return;
         
-        Set<String> usernames = Collections.synchronizedSet(getAccountManager().getRegisteredUsernames());
+        Set<String> usernames =
+                Collections.synchronizedSet(getAccountManager().getRegisteredUsernames());
         long now = System.currentTimeMillis() / 1000L;
         
         for (String username : usernames)
         {
-            long lastActiveDate = getAccountManager().getAccount(username).getLong("logit.accounts.last_active");
+            long lastActiveDate =
+                    getAccountManager().getAccount(username).getLong("logit.accounts.last_active");
             
             if (lastActiveDate == 0)
                 continue;
             
             long absenceTime = (now - lastActiveDate);
             
-            if (absenceTime >= (getConfig().getInt("crowd-control.days-of-absence-to-unregister") * 86400))
+            if (absenceTime >= (daysOfAbsenceToUnregister * 86400))
             {
                 getAccountManager().removeAccount(username);
             }

@@ -65,8 +65,10 @@ public class CraftReflect implements io.github.lucaseasedup.logit.craftreflect.C
     @Override
     public ItemStack createStack(io.github.lucaseasedup.logit.craftreflect.NBTTagCompound tagCompound)
     {
+        net.minecraft.server.v1_6_R2.NBTTagCompound nbtTagCompound =
+                (net.minecraft.server.v1_6_R2.NBTTagCompound) tagCompound.o;
         net.minecraft.server.v1_6_R2.ItemStack is =
-            net.minecraft.server.v1_6_R2.ItemStack.createStack((net.minecraft.server.v1_6_R2.NBTTagCompound) tagCompound.o);
+            net.minecraft.server.v1_6_R2.ItemStack.createStack(nbtTagCompound);
         
         return org.bukkit.craftbukkit.v1_6_R2.inventory.CraftItemStack.asBukkitCopy(is);
     }

@@ -159,7 +159,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 @Override
                 public void run()
                 {
-                    if (getCore().isPlayerForcedToLogin(player) && !getSessionManager().isSessionAlive(player))
+                    if (getCore().isPlayerForcedToLogin(player)
+                            && !getSessionManager().isSessionAlive(player))
                     {
                         getCore().sendForceLoginMessage(player);
                     }
@@ -264,7 +265,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         // Check if the sent command starts with any of "/login" aliases.
         for (String alias : loginAliases)
         {
-            if (message.equalsIgnoreCase("/" + alias) || message.toLowerCase().startsWith("/" + alias + " "))
+            if (message.equalsIgnoreCase("/" + alias)
+                    || message.toLowerCase().startsWith("/" + alias + " "))
             {
                 return;
             }
@@ -273,7 +275,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         // Check if the sent command starts with any of "/register" aliases.
         for (String alias : registerAliases)
         {
-            if (message.equalsIgnoreCase("/" + alias) || message.toLowerCase().startsWith("/" + alias + " "))
+            if (message.equalsIgnoreCase("/" + alias)
+                    || message.toLowerCase().startsWith("/" + alias + " "))
             {
                 return;
             }
@@ -282,7 +285,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         // Check if the sent command is one of the allowed in the config.
         for (String command : getConfig().getStringList("force-login.allowed-commands"))
         {
-            if (message.equalsIgnoreCase("/" + command) || message.toLowerCase().startsWith("/" + command + " "))
+            if (message.equalsIgnoreCase("/" + command)
+                    || message.toLowerCase().startsWith("/" + command + " "))
             {
                 return;
             }
@@ -312,7 +316,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             Block clickedBlock = event.getClickedBlock();
             
             // Check if not on a pressure plate to prevent spamming.
-            if (clickedBlock == null || (clickedBlock.getTypeId() != 70 && clickedBlock.getTypeId() != 72))
+            if (clickedBlock == null
+                    || (clickedBlock.getTypeId() != 70 && clickedBlock.getTypeId() != 72))
             {
                 getCore().sendForceLoginMessage(player);
             }

@@ -43,16 +43,15 @@ public final class Table
         {
             ConfigurationSection column = columnsSection.getConfigurationSection(s);
             
-            if (!column.contains("id")
-                    || !column.contains("name")
-                    || !column.contains("type")
-                    || !column.contains("disabled"))
-            {
-                continue;
-            }
+            String id = column.getString("id");
+            String name = column.getString("name");
+            String type = column.getString("type");
+            boolean disabled = column.getBoolean("disabled");
             
-            tableColumns.put(column.getString("id"),
-                    new Column(column.getString("name"), column.getString("type"), column.getBoolean("disabled")));
+            if (id != null && name != null && type != null)
+            {
+                tableColumns.put(id, new Column(name, type, disabled));
+            }
         }
     }
     
@@ -75,7 +74,8 @@ public final class Table
             tableDefinition.add(column.getType());
         }
         
-        database.createTableIfNotExists(table, tableDefinition.toArray(new String[tableDefinition.size()]));
+        database.createTableIfNotExists(table,
+                tableDefinition.toArray(new String[tableDefinition.size()]));
         
         List<String> existingColumns = database.getColumnNames(table);
         
@@ -270,7 +270,8 @@ public final class Table
         return output.toArray(new String[output.size()]);
     }
     
-    protected final List<Map<String, String>> filterResultList(List<Map<String, String>> rs) throws SQLException
+    protected final List<Map<String, String>> filterResultList(List<Map<String, String>> rs)
+            throws SQLException
     {
         ImmutableList.Builder<Map<String, String>> result = new ImmutableList.Builder<>();
         

@@ -72,19 +72,31 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             }
             else if (getSessionManager().isSessionAlive(PlayerHolder.getExact(args[1])))
             {
-                sender.sendMessage(getMessage("START_SESSION_ALREADY_OTHERS").replace("%player%", args[1]));
+                sender.sendMessage(getMessage("START_SESSION_ALREADY_OTHERS")
+                        .replace("%player%", args[1]));
             }
             else
             {
                 if (!getSessionManager().startSession(args[1]).isCancelled())
                 {
                     sendMessage(args[1], getMessage("START_SESSION_SUCCESS_SELF"));
-                    sender.sendMessage(getMessage("START_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
+                    sender.sendMessage(getMessage("START_SESSION_SUCCESS_OTHERS")
+                            .replace("%player%", args[1]));
                 }
             }
         }
         else if (args.length <= 1)
         {
+            String username = null;
+            
+            if (p != null)
+            {
+                username = p.getName().toLowerCase();
+            }
+            
+            int failsToKick = getConfig().getInt("crowd-control.login-fails-to-kick");
+            int failsToBan = getConfig().getInt("crowd-control.login-fails-to-ban");
+            
             if (p == null)
             {
                 sender.sendMessage(getMessage("ONLY_PLAYERS"));
@@ -93,33 +105,34 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             {
                 p.sendMessage(getMessage("NO_PERMS"));
             }
-            else if (args.length < 1 && !getAccountManager().getTable().isColumnDisabled("logit.accounts.password"))
+            else if (args.length < 1
+                    && !getAccountManager().getTable().isColumnDisabled("logit.accounts.password"))
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
-            else if (!getAccountManager().isRegistered(p.getName()))
+            else if (!getAccountManager().isRegistered(username))
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
             }
-            else if (getSessionManager().isSessionAlive(PlayerHolder.getExact(p.getName())))
+            else if (getSessionManager().isSessionAlive(PlayerHolder.getExact(username)))
             {
                 p.sendMessage(getMessage("START_SESSION_ALREADY_SELF"));
             }
             else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
-                    && !getAccountManager().checkAccountPassword(p.getName(), args[0])
+                    && !getAccountManager().checkAccountPassword(username, args[0])
                     && !getCore().checkGlobalPassword(args[0]))
             {
-                String username = p.getName().toLowerCase();
-                
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
                 
-                failedLoginsToKick.put(username,
-                        (failedLoginsToKick.get(username) != null) ? failedLoginsToKick.get(username) + 1 : 1);
-                failedLoginsToBan.put(username,
-                        (failedLoginsToBan.get(username) != null) ? failedLoginsToBan.get(username) + 1 : 1);
+                Integer currentFailedLoginsToKick = failedLoginsToKick.get(username);
+                Integer currentFailedLoginsToBan = failedLoginsToBan.get(username);
                 
-                if (failedLoginsToBan.get(username) >= getConfig().getInt("crowd-control.login-fails-to-ban")
-                    && getConfig().getInt("crowd-control.login-fails-to-ban") > 0)
+                failedLoginsToKick.put(username,
+                        (currentFailedLoginsToKick != null) ? currentFailedLoginsToKick + 1 : 1);
+                failedLoginsToBan.put(username,
+                        (currentFailedLoginsToBan != null) ? currentFailedLoginsToBan + 1 : 1);
+                
+                if (failedLoginsToBan.get(username) >= failsToBan && failsToBan > 0)
                 {
                     Bukkit.banIP(getPlayerIp(p));
                     p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS_BAN"));
@@ -127,8 +140,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     failedLoginsToKick.remove(username);
                     failedLoginsToBan.remove(username);
                 }
-                else if (failedLoginsToKick.get(username) >= getConfig().getInt("crowd-control.login-fails-to-kick")
-                    && getConfig().getInt("crowd-control.login-fails-to-kick") > 0)
+                else if (failedLoginsToKick.get(username) >= failsToKick && failsToKick > 0)
                 {
                     p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS_KICK"));
                     
@@ -137,10 +149,10 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             }
             else
             {
-                if (!getSessionManager().startSession(p.getName()).isCancelled())
+                if (!getSessionManager().startSession(username).isCancelled())
                 {
-                    failedLoginsToKick.remove(p.getName().toLowerCase());
-                    failedLoginsToBan.remove(p.getName().toLowerCase());
+                    failedLoginsToKick.remove(username);
+                    failedLoginsToBan.remove(username);
                     
                     sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
                 }

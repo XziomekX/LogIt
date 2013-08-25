@@ -70,7 +70,8 @@ public final class LogItConfiguration extends PropertyObserver
         String userDefBase64String = IoUtils.toString(new FileInputStream(userDefFile));
         IniFile userDef = new IniFile(decodeConfigDef(userDefBase64String));
         
-        InputStream packageDefInputStream = LogItConfiguration.class.getResourceAsStream(PACKAGE_CONFIG_DEF);
+        InputStream packageDefInputStream =
+                LogItConfiguration.class.getResourceAsStream(PACKAGE_CONFIG_DEF);
         
         if (packageDefInputStream != null)
         {
@@ -216,8 +217,8 @@ public final class LogItConfiguration extends PropertyObserver
                                PropertyValidator validator,
                                PropertyObserver obs)
     {
-        Property property =
-                new Property(path, type, requiresRestart, getPlugin().getConfig().get(path, defaultValue), validator);
+        Object existingValue = getPlugin().getConfig().get(path, defaultValue);
+        Property property = new Property(path, type, requiresRestart, existingValue, validator);
         
         if (obs != null)
         {
@@ -264,43 +265,43 @@ public final class LogItConfiguration extends PropertyObserver
                 oldDef.putString(uuid, "default_value", newDef.getString(uuid, "default_value"));
                 oldDef.putString(uuid, "validator", newDef.getString(uuid, "validator"));
                 oldDef.putString(uuid, "observer", newDef.getString(uuid, "observer"));
+                
+                continue;
             }
-            else
+            
+            if (!oldDef.getString(uuid, "path").equals(newDef.getString(uuid, "path")))
             {
-                if (!oldDef.getString(uuid, "path").equals(newDef.getString(uuid, "path")))
-                {
-                    Object val = getPlugin().getConfig().get(oldDef.getString(uuid, "path"));
-                    
-                    getPlugin().getConfig().set(oldDef.getString(uuid, "path"), null);
-                    getPlugin().getConfig().set(newDef.getString(uuid, "path"), val);
-                    
-                    oldDef.putString(uuid, "path", newDef.getString(uuid, "path"));
-                }
+                Object val = getPlugin().getConfig().get(oldDef.getString(uuid, "path"));
                 
-                if (!oldDef.getString(uuid, "type").equals(newDef.getString(uuid, "type")))
-                {
-                    oldDef.putString(uuid, "type", newDef.getString(uuid, "type"));
-                }
+                getPlugin().getConfig().set(oldDef.getString(uuid, "path"), null);
+                getPlugin().getConfig().set(newDef.getString(uuid, "path"), val);
                 
-                if (!oldDef.getString(uuid, "requires_restart").equals(newDef.getString(uuid, "requires_restart")))
-                {
-                    oldDef.putString(uuid, "requires_restart", newDef.getString(uuid, "requires_restart"));
-                }
-                
-                if (!oldDef.getString(uuid, "default_value").equals(newDef.getString(uuid, "default_value")))
-                {
-                    oldDef.putString(uuid, "default_value", newDef.getString(uuid, "default_value"));
-                }
-                
-                if (!oldDef.getString(uuid, "validator").equals(newDef.getString(uuid, "validator")))
-                {
-                    oldDef.putString(uuid, "validator", newDef.getString(uuid, "validator"));
-                }
-                
-                if (!oldDef.getString(uuid, "observer").equals(newDef.getString(uuid, "observer")))
-                {
-                    oldDef.putString(uuid, "observer", newDef.getString(uuid, "observer"));
-                }
+                oldDef.putString(uuid, "path", newDef.getString(uuid, "path"));
+            }
+            
+            if (!oldDef.getString(uuid, "type").equals(newDef.getString(uuid, "type")))
+            {
+                oldDef.putString(uuid, "type", newDef.getString(uuid, "type"));
+            }
+            
+            if (!oldDef.getString(uuid, "requires_restart").equals(newDef.getString(uuid, "requires_restart")))
+            {
+                oldDef.putString(uuid, "requires_restart", newDef.getString(uuid, "requires_restart"));
+            }
+            
+            if (!oldDef.getString(uuid, "default_value").equals(newDef.getString(uuid, "default_value")))
+            {
+                oldDef.putString(uuid, "default_value", newDef.getString(uuid, "default_value"));
+            }
+            
+            if (!oldDef.getString(uuid, "validator").equals(newDef.getString(uuid, "validator")))
+            {
+                oldDef.putString(uuid, "validator", newDef.getString(uuid, "validator"));
+            }
+            
+            if (!oldDef.getString(uuid, "observer").equals(newDef.getString(uuid, "observer")))
+            {
+                oldDef.putString(uuid, "observer", newDef.getString(uuid, "observer"));
             }
         }
         

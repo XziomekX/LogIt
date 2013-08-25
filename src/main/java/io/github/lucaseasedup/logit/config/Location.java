@@ -61,7 +61,12 @@ public final class Location implements Cloneable, ConfigurationSerializable
     @Override
     public String toString()
     {
-        return "world: " + world + "; x: " + x + "; y: " + y + "; z: " + z + "; yaw: " + yaw + "; pitch: " + pitch;
+        return "world: " + world
+                + "; x: " + x
+                + "; y: " + y
+                + "; z: " + z
+                + "; yaw: " + yaw
+                + "; pitch: " + pitch;
     }
     
     public org.bukkit.Location toBukkitLocation()

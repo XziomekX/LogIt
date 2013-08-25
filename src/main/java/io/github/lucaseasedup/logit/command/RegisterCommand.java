@@ -55,6 +55,9 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
         catch (ClassCastException ex)
         {
         }
+
+        int minPasswordLength = getConfig().getInt("password.min-length");
+        int maxPasswordLength = getConfig().getInt("password.max-length");
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 3)
         {
@@ -74,19 +77,20 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             }
             else if (getAccountManager().isRegistered(args[1]))
             {
-                sender.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_OTHERS").replace("%player%", args[1]));
+                sender.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_OTHERS")
+                        .replace("%player%", args[1]));
             }
             else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
-                    && args[2].length() < getConfig().getInt("password.min-length"))
+                    && args[2].length() < minPasswordLength)
             {
-                sender.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
-                        String.valueOf(getConfig().getInt("password.min-length"))));
+                sender.sendMessage(getMessage("PASSWORD_TOO_SHORT")
+                        .replace("%min-length%", String.valueOf(minPasswordLength)));
             }
             else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
-                    && args[2].length() > getConfig().getInt("password.max-length"))
+                    && args[2].length() > maxPasswordLength)
             {
-                sender.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
-                        String.valueOf(getConfig().getInt("password.max-length"))));
+                sender.sendMessage(getMessage("PASSWORD_TOO_LONG")
+                        .replace("%max-length%", String.valueOf(maxPasswordLength)));
             }
             else
             {
@@ -131,7 +135,8 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 }
                 catch (ReportedException ex)
                 {
-                    sender.sendMessage(getMessage("CREATE_ACCOUNT_FAIL_OTHERS").replace("%player%", args[1]));
+                    sender.sendMessage(getMessage("CREATE_ACCOUNT_FAIL_OTHERS")
+                            .replace("%player%", args[1]));
                 }
                 finally
                 {
@@ -168,16 +173,16 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 p.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_SELF"));
             }
             else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
-                    && args[0].length() < getConfig().getInt("password.min-length"))
+                    && args[0].length() < minPasswordLength)
             {
-                p.sendMessage(getMessage("PASSWORD_TOO_SHORT").replace("%min-length%",
-                        String.valueOf(getConfig().getInt("password.min-length"))));
+                p.sendMessage(getMessage("PASSWORD_TOO_SHORT")
+                        .replace("%min-length%", String.valueOf(minPasswordLength)));
             }
             else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
-                    && args[0].length() > getConfig().getInt("password.max-length"))
+                    && args[0].length() > maxPasswordLength)
             {
-                p.sendMessage(getMessage("PASSWORD_TOO_LONG").replace("%max-length%",
-                        String.valueOf(getConfig().getInt("password.max-length"))));
+                p.sendMessage(getMessage("PASSWORD_TOO_LONG")
+                        .replace("%max-length%", String.valueOf(maxPasswordLength)));
             }
             else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
                     && !args[0].equals(args[1]))

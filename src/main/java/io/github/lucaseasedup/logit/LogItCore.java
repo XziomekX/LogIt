@@ -299,14 +299,12 @@ public final class LogItCore
         sessionManager = new SessionManager(this);
         tickEventCaller = new TickEventCaller();
         
-        if (!accountTable.isColumnDisabled("logit.accounts.email"))
+        if (config.getBoolean("password-recovery.enabled")
+                && !accountTable.isColumnDisabled("logit.accounts.email"))
         {
-            if (config.getBoolean("password-recovery.enabled"))
-            {
-                mailSender = new MailSender(this);
-                mailSender.configure(config.getString("mail.smtp-host"), config.getInt("mail.smtp-port"),
-                    config.getString("mail.smtp-user"), config.getString("mail.smtp-password"));
-            }
+            mailSender = new MailSender(this);
+            mailSender.configure(config.getString("mail.smtp-host"), config.getInt("mail.smtp-port"),
+                config.getString("mail.smtp-user"), config.getString("mail.smtp-password"));
         }
         
         pingerTaskId          = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, pinger, 0L, 2400L);

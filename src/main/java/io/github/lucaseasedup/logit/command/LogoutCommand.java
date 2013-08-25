@@ -68,14 +68,16 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
             }
             else if (!getSessionManager().isSessionAlive(PlayerHolder.getExact(args[1])))
             {
-                sender.sendMessage(getMessage("START_SESSION_NOT_OTHERS").replace("%player%", args[1]));
+                sender.sendMessage(getMessage("START_SESSION_NOT_OTHERS")
+                        .replace("%player%", args[1]));
             }
             else
             {
                 if (!getSessionManager().endSession(args[1]).isCancelled())
                 {
                     sendMessage(args[1], getMessage("END_SESSION_SUCCESS_SELF"));
-                    sender.sendMessage(getMessage("END_SESSION_SUCCESS_OTHERS").replace("%player%", args[1]));
+                    sender.sendMessage(getMessage("END_SESSION_SUCCESS_OTHERS")
+                            .replace("%player%", args[1]));
                 }
             }
         }
