@@ -22,6 +22,7 @@ import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.FatalReportedException;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
+import io.github.lucaseasedup.logit.command.wizard.ConvertWizard;
 import io.github.lucaseasedup.logit.config.Location;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyType;
@@ -124,6 +125,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 if (p == null || p.hasPermission("logit.config.list"))
                 {
                     sender.sendMessage(getLogItSubcommandHelp("config list", "[page]"));
+                }
+                if (p == null || p.hasPermission("logit.convert"))
+                {
+                    sender.sendMessage(getLogItSubcommandHelp("convert", null));
                 }
             }
         }
@@ -649,6 +654,17 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 {
                     sender.sendMessage(getMessage("CONFIG_PROPERTY_LIST_NO_PROPERTIES"));
                 }
+            }
+        }
+        else if (checkSubcommand("convert", 0))
+        {
+            if (p != null && !p.hasPermission("logit.convert"))
+            {
+                sender.sendMessage(getMessage("NO_PERMS"));
+            }
+            else
+            {
+                new ConvertWizard(sender, args).createWizard();
             }
         }
         else
