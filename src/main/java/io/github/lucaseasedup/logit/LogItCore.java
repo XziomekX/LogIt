@@ -342,6 +342,9 @@ public final class LogItCore
         
         persistenceManager.unregisterSerializer(LocationSerializer.class);
         persistenceManager.unregisterSerializer(AirBarSerializer.class);
+        persistenceManager.unregisterSerializer(HealthBarSerializer.class);
+        persistenceManager.unregisterSerializer(ExperienceSerializer.class);
+        persistenceManager.unregisterSerializer(HungerBarSerializer.class);
         persistenceManager.unregisterSerializer(InventorySerializer.class);
         
         try
