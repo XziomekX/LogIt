@@ -851,7 +851,7 @@ public final class LogItCore
         return config.isLoaded();
     }
     
-    public Permission getPermissions()
+    protected Permission getPermissions()
     {
         return permissions;
     }
