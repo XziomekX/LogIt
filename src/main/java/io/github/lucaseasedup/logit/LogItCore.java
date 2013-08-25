@@ -573,8 +573,7 @@ public final class LogItCore
      * it always returns {@code false}.
      * 
      * <p> Note that this method does not check if the player is already logged in.
-     * For that purpose, use {@link SessionManager#isSessionAlive(Player)}
-     * or {@link SessionManager#isSessionAlive(String)}.
+     * For that purpose, use {@link SessionManager#isSessionAlive(Player)}.
      * 
      * @param  player player whom the check will be ran on.
      * @return {@code true} if the player is forced to log in; {@code false} otherwise.
@@ -589,10 +588,9 @@ public final class LogItCore
     }
     
     /**
-     * Sends a message to the specified player telling them to either login or register.
+     * Sends a message to the specified player telling them to either log in or register.
      * 
-     * @param player Player.
-     * @param accountManager AccountManager.
+     * @param player the player to whom the message will be sent.
      */
     public void sendForceLoginMessage(Player player)
     {
