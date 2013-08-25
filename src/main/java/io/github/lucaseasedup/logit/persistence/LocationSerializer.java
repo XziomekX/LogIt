@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.persistence;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,11 +38,6 @@ import org.bukkit.entity.Player;
 })
 public final class LocationSerializer extends PersistenceSerializer
 {
-    public LocationSerializer(LogItCore core)
-    {
-        super(core);
-    }
-    
     @Override
     public void serialize(Map<String, String> data, final Player player)
     {

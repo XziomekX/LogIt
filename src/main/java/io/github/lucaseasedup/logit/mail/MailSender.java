@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.mail;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.io.IOException;
 import java.util.Date;
@@ -37,10 +36,8 @@ import javax.mail.internet.MimeMessage;
  */
 public final class MailSender extends LogItCoreObject
 {
-    public MailSender(LogItCore core)
+    public MailSender()
     {
-        super(core);
-        
         this.properties = new Properties();
     }
     

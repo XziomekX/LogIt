@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.listener;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import org.bukkit.event.Listener;
 
@@ -27,8 +26,4 @@ import org.bukkit.event.Listener;
  */
 public final class AccountEventListener extends LogItCoreObject implements Listener
 {
-    public AccountEventListener(LogItCore core)
-    {
-        super(core);
-    }
 }

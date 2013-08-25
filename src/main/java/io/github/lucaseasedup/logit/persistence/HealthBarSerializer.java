@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.persistence;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import java.util.Map;
 import org.bukkit.entity.Player;
 
@@ -30,11 +29,6 @@ import org.bukkit.entity.Player;
 })
 public final class HealthBarSerializer extends PersistenceSerializer
 {
-    public HealthBarSerializer(LogItCore core)
-    {
-        super(core);
-    }
-    
     @Override
     public void serialize(Map<String, String> data, Player player)
     {

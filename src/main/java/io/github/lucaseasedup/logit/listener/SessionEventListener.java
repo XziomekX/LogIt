@@ -20,7 +20,6 @@ package io.github.lucaseasedup.logit.listener;
 
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastJoinMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastQuitMessage;
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.PlayerHolder;
 import io.github.lucaseasedup.logit.session.SessionEndEvent;
@@ -36,11 +35,6 @@ import org.bukkit.event.Listener;
  */
 public final class SessionEventListener extends LogItCoreObject implements Listener
 {
-    public SessionEventListener(LogItCore core)
-    {
-        super(core);
-    }
-    
     @EventHandler(priority = EventPriority.MONITOR)
     private void onStart(SessionStartEvent event)
     {

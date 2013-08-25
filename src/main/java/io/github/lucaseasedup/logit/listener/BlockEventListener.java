@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.listener;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,11 +31,6 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
  */
 public final class BlockEventListener extends LogItCoreObject implements Listener
 {
-    public BlockEventListener(LogItCore core)
-    {
-        super(core);
-    }
-    
     @EventHandler
     private void onPlace(BlockPlaceEvent event)
     {

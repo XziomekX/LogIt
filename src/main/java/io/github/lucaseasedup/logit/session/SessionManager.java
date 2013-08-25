@@ -24,7 +24,6 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerName;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.CancelledState;
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.PlayerHolder;
 import io.github.lucaseasedup.logit.db.Database;
@@ -43,11 +42,6 @@ import org.bukkit.entity.Player;
  */
 public final class SessionManager extends LogItCoreObject implements Runnable
 {
-    public SessionManager(LogItCore core)
-    {
-        super(core);
-    }
-    
     @Override
     public void run()
     {

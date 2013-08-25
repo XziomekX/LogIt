@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.config.observers;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.PlayerHolder;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyObserver;
@@ -37,11 +36,6 @@ import org.bukkit.entity.Player;
  */
 public final class SerializerObserver extends PropertyObserver
 {
-    public SerializerObserver(LogItCore core)
-    {
-        super(core);
-    }
-    
     @Override
     public void update(Property p)
     {

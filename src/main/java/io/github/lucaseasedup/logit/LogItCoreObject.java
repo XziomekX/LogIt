@@ -31,9 +31,14 @@ import java.util.logging.Level;
  */
 public abstract class LogItCoreObject
 {
-    public LogItCoreObject(LogItCore core)
+    public LogItCoreObject()
     {
-        this.core = core;
+        this.core = LogItCore.getInstance();
+        
+        if (this.core == null)
+        {
+            throw new NullPointerException("No LogItCore instance found.");
+        }
     }
     
     protected final LogItCore getCore()

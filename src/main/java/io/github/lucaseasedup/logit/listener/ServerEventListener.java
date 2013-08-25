@@ -19,7 +19,6 @@
 package io.github.lucaseasedup.logit.listener;
 
 import static org.bukkit.event.EventPriority.HIGHEST;
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.io.File;
 import java.sql.SQLException;
@@ -34,11 +33,6 @@ import org.bukkit.event.server.PluginEnableEvent;
  */
 public final class ServerEventListener extends LogItCoreObject implements Listener
 {
-    public ServerEventListener(LogItCore core)
-    {
-        super(core);
-    }
-    
     @EventHandler
     private void onPluginEnable(PluginEnableEvent event)
     {

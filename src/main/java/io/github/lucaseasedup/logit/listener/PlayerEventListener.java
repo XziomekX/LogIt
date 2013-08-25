@@ -26,7 +26,6 @@ import static org.bukkit.event.EventPriority.HIGHEST;
 import static org.bukkit.event.EventPriority.LOWEST;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_FULL;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.util.List;
 import org.bukkit.Bukkit;
@@ -52,11 +51,6 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
  */
 public final class PlayerEventListener extends LogItCoreObject implements Listener
 {
-    public PlayerEventListener(LogItCore core)
-    {
-        super(core);
-    }
-    
     @EventHandler(priority = LOWEST)
     private void onLogin(PlayerLoginEvent event)
     {

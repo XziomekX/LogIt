@@ -40,10 +40,8 @@ import java.util.logging.Level;
  */
 public final class BackupManager extends LogItCoreObject implements Runnable
 {
-    public BackupManager(LogItCore core)
+    public BackupManager()
     {
-        super(core);
-        
         timer = new Timer(40L);
         timer.start();
     }

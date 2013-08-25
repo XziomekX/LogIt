@@ -23,7 +23,6 @@ import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import java.util.List;
@@ -38,11 +37,6 @@ import org.bukkit.entity.Player;
  */
 public final class RegisterCommand extends LogItCoreObject implements CommandExecutor
 {
-    public RegisterCommand(LogItCore core)
-    {
-        super(core);
-    }
-    
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {

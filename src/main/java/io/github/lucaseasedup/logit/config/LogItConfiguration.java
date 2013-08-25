@@ -19,7 +19,6 @@
 package io.github.lucaseasedup.logit.config;
 
 import io.github.lucaseasedup.logit.IniFile;
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItPlugin;
 import io.github.lucaseasedup.logit.util.FileUtils;
 import io.github.lucaseasedup.logit.util.IoUtils;
@@ -47,11 +46,6 @@ import org.bukkit.util.Vector;
  */
 public final class LogItConfiguration extends PropertyObserver
 {
-    public LogItConfiguration(LogItCore core)
-    {
-        super(core);
-    }
-    
     public void load() throws IOException
     {
         getPlugin().reloadConfig();
@@ -460,7 +454,7 @@ public final class LogItConfiguration extends PropertyObserver
                     Class<PropertyObserver> observerClass =
                             (Class<PropertyObserver>) Class.forName(observerClassName);
                     
-                    observer = observerClass.getConstructor(LogItCore.class).newInstance(getCore());
+                    observer = observerClass.getConstructor().newInstance();
                 }
             }
             catch (ReflectiveOperationException ex)

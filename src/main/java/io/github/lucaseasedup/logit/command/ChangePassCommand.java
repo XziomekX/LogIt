@@ -20,7 +20,6 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import org.bukkit.command.Command;
@@ -33,11 +32,6 @@ import org.bukkit.entity.Player;
  */
 public final class ChangePassCommand extends LogItCoreObject implements CommandExecutor
 {
-    public ChangePassCommand(LogItCore core)
-    {
-        super(core);
-    }
-    
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {

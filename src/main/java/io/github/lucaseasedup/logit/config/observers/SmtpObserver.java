@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.config.observers;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyObserver;
 
@@ -27,11 +26,6 @@ import io.github.lucaseasedup.logit.config.PropertyObserver;
  */
 public final class SmtpObserver extends PropertyObserver
 {
-    public SmtpObserver(LogItCore core)
-    {
-        super(core);
-    }
-    
     @Override
     public void update(Property p)
     {

@@ -106,7 +106,7 @@ public final class LogItCore
         
         getDataFile("lib").mkdir();
         
-        config = new LogItConfiguration(this);
+        config = new LogItConfiguration();
         
         try
         {
@@ -262,7 +262,7 @@ public final class LogItCore
             FatalReportedException.throwNew(ex);
         }
         
-        accountManager = new AccountManager(this, accountTable);
+        accountManager = new AccountManager(accountTable);
         
         try
         {
@@ -279,7 +279,7 @@ public final class LogItCore
             ReportedException.decrementRequestCount();
         }
         
-        persistenceManager = new PersistenceManager(this);
+        persistenceManager = new PersistenceManager();
         
         setSerializerEnabled(LocationSerializer.class,
                 getConfig().getBoolean("waiting-room.enabled"));
@@ -294,15 +294,15 @@ public final class LogItCore
         setSerializerEnabled(InventorySerializer.class,
                 getConfig().getBoolean("force-login.hide-inventory"));
         
-        accountWatcher = new AccountWatcher(this);
-        backupManager  = new BackupManager(this);
-        sessionManager = new SessionManager(this);
+        accountWatcher = new AccountWatcher();
+        backupManager  = new BackupManager();
+        sessionManager = new SessionManager();
         tickEventCaller = new TickEventCaller();
         
         if (config.getBoolean("password-recovery.enabled")
                 && !accountTable.isColumnDisabled("logit.accounts.email"))
         {
-            mailSender = new MailSender(this);
+            mailSender = new MailSender();
             mailSender.configure(config.getString("mail.smtp-host"), config.getInt("mail.smtp-port"),
                 config.getString("mail.smtp-user"), config.getString("mail.smtp-password"));
         }
@@ -910,51 +910,51 @@ public final class LogItCore
     
     private void setCommandExecutors()
     {
-        plugin.getCommand("logit").setExecutor(new LogItCommand(this));
-        plugin.getCommand("login").setExecutor(new LoginCommand(this));
-        plugin.getCommand("logout").setExecutor(new LogoutCommand(this));
-        plugin.getCommand("register").setExecutor(new RegisterCommand(this));
-        plugin.getCommand("unregister").setExecutor(new UnregisterCommand(this));
+        plugin.getCommand("logit").setExecutor(new LogItCommand());
+        plugin.getCommand("login").setExecutor(new LoginCommand());
+        plugin.getCommand("logout").setExecutor(new LogoutCommand());
+        plugin.getCommand("register").setExecutor(new RegisterCommand());
+        plugin.getCommand("unregister").setExecutor(new UnregisterCommand());
         
         if (!accountTable.isColumnDisabled("logit.accounts.password"))
         {
-            plugin.getCommand("changepass").setExecutor(new ChangePassCommand(this));
+            plugin.getCommand("changepass").setExecutor(new ChangePassCommand());
         }
         else
         {
-            plugin.getCommand("changepass").setExecutor(new DisabledCommandExecutor(this));
+            plugin.getCommand("changepass").setExecutor(new DisabledCommandExecutor());
         }
         
         if (!accountTable.isColumnDisabled("logit.accounts.email"))
         {
-            plugin.getCommand("changeemail").setExecutor(new ChangeEmailCommand(this));
+            plugin.getCommand("changeemail").setExecutor(new ChangeEmailCommand());
         }
         else
         {
-            plugin.getCommand("changeemail").setExecutor(new DisabledCommandExecutor(this));
+            plugin.getCommand("changeemail").setExecutor(new DisabledCommandExecutor());
         }
         
         if (!accountTable.isColumnDisabled("logit.accounts.email")
                 && config.getBoolean("password-recovery.enabled"))
         {
-            plugin.getCommand("recoverpass").setExecutor(new RecoverPassCommand(this));
+            plugin.getCommand("recoverpass").setExecutor(new RecoverPassCommand());
         }
         else
         {
-            plugin.getCommand("recoverpass").setExecutor(new DisabledCommandExecutor(this));
+            plugin.getCommand("recoverpass").setExecutor(new DisabledCommandExecutor());
         }
     }
     
     private void registerEvents()
     {
-        plugin.getServer().getPluginManager().registerEvents(new TickEventListener(this), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new ServerEventListener(this), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new BlockEventListener(this), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new EntityEventListener(this), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new PlayerEventListener(this), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new InventoryEventListener(this), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new AccountEventListener(this), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new SessionEventListener(this), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new TickEventListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new ServerEventListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new BlockEventListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new EntityEventListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new PlayerEventListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new InventoryEventListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new AccountEventListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new SessionEventListener(), plugin);
     }
     
     private void setSerializerEnabled(Class<? extends PersistenceSerializer> clazz, boolean status)

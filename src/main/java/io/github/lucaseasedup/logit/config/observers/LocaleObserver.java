@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.config.observers;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyObserver;
 import java.io.IOException;
@@ -29,11 +28,6 @@ import java.util.logging.Level;
  */
 public final class LocaleObserver extends PropertyObserver
 {
-    public LocaleObserver(LogItCore core)
-    {
-        super(core);
-    }
-    
     @Override
     public void update(Property p)
     {

@@ -20,7 +20,6 @@ package io.github.lucaseasedup.logit.account;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.CancelledState;
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
 import io.github.lucaseasedup.logit.LogItCore.IntegrationType;
 import io.github.lucaseasedup.logit.LogItCoreObject;
@@ -47,10 +46,8 @@ import org.bukkit.Bukkit;
  */
 public final class AccountManager extends LogItCoreObject
 {
-    public AccountManager(LogItCore core, Table accountTable)
+    public AccountManager(Table accountTable)
     {
-        super(core);
-        
         this.accountTable = accountTable;
     }
     

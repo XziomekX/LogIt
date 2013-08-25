@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.listener;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TickEvent;
 import org.bukkit.Bukkit;
@@ -31,11 +30,6 @@ import org.bukkit.event.Listener;
  */
 public final class TickEventListener extends LogItCoreObject implements Listener
 {
-    public TickEventListener(LogItCore core)
-    {
-        super(core);
-    }
-    
     @EventHandler
     private void onTick(TickEvent event)
     {

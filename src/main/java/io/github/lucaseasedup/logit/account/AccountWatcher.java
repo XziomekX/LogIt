@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.util.Collections;
 import java.util.Set;
@@ -28,11 +27,6 @@ import java.util.Set;
  */
 public final class AccountWatcher extends LogItCoreObject implements Runnable
 {
-    public AccountWatcher(LogItCore core)
-    {
-        super(core);
-    }
-    
     @Override
     public void run()
     {

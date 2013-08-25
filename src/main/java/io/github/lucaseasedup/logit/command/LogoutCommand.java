@@ -21,7 +21,6 @@ package io.github.lucaseasedup.logit.command;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.PlayerHolder;
 import org.bukkit.command.Command;
@@ -34,11 +33,6 @@ import org.bukkit.entity.Player;
  */
 public final class LogoutCommand extends LogItCoreObject implements CommandExecutor
 {
-    public LogoutCommand(LogItCore core)
-    {
-        super(core);
-    }
-
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {

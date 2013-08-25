@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.persistence;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItPlugin;
 import io.github.lucaseasedup.logit.craftreflect.CraftInventoryCustom;
 import io.github.lucaseasedup.logit.craftreflect.CraftReflect;
@@ -44,11 +43,6 @@ import org.bukkit.inventory.PlayerInventory;
 @Before(LocationSerializer.class)
 public final class InventorySerializer extends PersistenceSerializer
 {
-    public InventorySerializer(LogItCore core)
-    {
-        super(core);
-    }
-    
     @Override
     public void serialize(Map<String, String> data, Player player)
     {

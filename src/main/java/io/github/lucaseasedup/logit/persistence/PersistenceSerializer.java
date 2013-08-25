@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.persistence;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.util.Map;
 import org.bukkit.entity.Player;
@@ -28,11 +27,6 @@ import org.bukkit.entity.Player;
  */
 public abstract class PersistenceSerializer extends LogItCoreObject
 {
-    public PersistenceSerializer(LogItCore core)
-    {
-        super(core);
-    }
-    
     public abstract void serialize(Map<String, String> data, Player player);
     public abstract void unserialize(Map<String, String> data, Player player);
 }

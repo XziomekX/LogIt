@@ -20,7 +20,6 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.FatalReportedException;
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.config.Location;
@@ -43,11 +42,6 @@ import org.bukkit.util.Vector;
  */
 public final class LogItCommand extends LogItCoreObject implements CommandExecutor
 {
-    public LogItCommand(LogItCore core)
-    {
-        super(core);
-    }
-    
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {

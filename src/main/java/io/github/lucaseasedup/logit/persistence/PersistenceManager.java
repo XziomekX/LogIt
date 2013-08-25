@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.persistence;
 
-import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.account.Account;
@@ -39,10 +38,8 @@ import org.bukkit.entity.Player;
  */
 public final class PersistenceManager extends LogItCoreObject
 {
-    public PersistenceManager(LogItCore core)
+    public PersistenceManager()
     {
-        super(core);
-        
         serializers = new HashMap<>();
     }
     
@@ -232,7 +229,7 @@ public final class PersistenceManager extends LogItCoreObject
     private PersistenceSerializer constructSerializer(Class<? extends PersistenceSerializer> clazz)
             throws ReflectiveOperationException
     {
-        return clazz.getConstructor(LogItCore.class).newInstance(getCore());
+        return clazz.getConstructor().newInstance();
     }
     
     @SuppressWarnings("incomplete-switch")
