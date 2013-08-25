@@ -40,7 +40,7 @@ public final class MySqlDatabase extends Database
     @Override
     public void connect() throws SQLException
     {
-        throw new UnsupportedOperationException("Cannot connect to a MySQL without specifying database name.");
+        throw new UnsupportedOperationException("Cannot connect to a MySQL database without specifying database name.");
     }
     
     public void connect(String user, String password, String database) throws SQLException
