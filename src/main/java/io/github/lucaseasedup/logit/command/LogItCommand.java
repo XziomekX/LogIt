@@ -613,10 +613,14 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 int i = 0, j = 0;
                 
                 if (args.length >= 3)
+                {
                     page = Integer.valueOf(args[2]);
+                }
                 
                 if (page <= 0)
+                {
                     page = 1;
+                }
                 
                 sender.sendMessage(getMessage("CONFIG_PROPERTY_LIST_HEADER", new String[]{
                     "%page%", String.valueOf(page),
