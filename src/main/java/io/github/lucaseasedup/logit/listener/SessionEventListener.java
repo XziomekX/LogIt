@@ -20,7 +20,6 @@ package io.github.lucaseasedup.logit.listener;
 
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastJoinMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastQuitMessage;
-import static org.bukkit.event.EventPriority.LOWEST;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.PlayerHolder;
@@ -29,6 +28,7 @@ import io.github.lucaseasedup.logit.session.SessionStartEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 /**
@@ -41,7 +41,7 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
         super(core);
     }
     
-    @EventHandler(priority = LOWEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     private void onStart(SessionStartEvent event)
     {
         String username = event.getUsername();
@@ -70,7 +70,7 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
         }
     }
     
-    @EventHandler(priority = LOWEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     private void onEnd(SessionEndEvent event)
     {
         String username = event.getUsername();
