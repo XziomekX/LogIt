@@ -25,9 +25,9 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerName;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.PlayerHolder;
 import io.github.lucaseasedup.logit.db.Database;
 import io.github.lucaseasedup.logit.db.SqliteDatabase;
+import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
@@ -134,6 +134,38 @@ public final class SessionManager extends LogItCoreObject implements Runnable
     }
     
     /**
+     * Checks if a session is alive.
+     * 
+     * <p> Returns {@code true} if {@code name} is not {@code null}, the session is alive
+     * and, if the player is online, player IP matches session IP; {@code false} otherwise.
+     * 
+     * @param name player name.
+     * @return {@code true} if the session is alive; {@code false} otherwise.
+     */
+    public boolean isSessionAlive(String name)
+    {
+        if (name == null)
+            return false;
+        
+        Session session = getSession(name);
+        
+        if (session == null)
+            return false;
+        
+        if (PlayerUtils.isPlayerOnline(name))
+        {
+            Player player = getPlayer(name);
+            String ip     = getPlayerIp(player);
+            
+            return session.isAlive() && ip.equals(session.getIp());
+        }
+        else
+        {
+            return session.isAlive();
+        }
+    }
+    
+    /**
      * Creates a session for a player with the specified username.
      * 
      * <p> If session already exists, it will be ignored and overridden.
@@ -174,7 +206,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         if (getSession(username) == null)
             return CancelledState.NOT_CANCELLED;
         
-        if (isSessionAlive(PlayerHolder.getExact(username)))
+        if (isSessionAlive(username))
         {
             endSession(username);
         }
@@ -206,7 +238,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         if (getSession(username) == null)
             throw new SessionNotFoundException();
         
-        if (isSessionAlive(PlayerHolder.getExact(username)))
+        if (isSessionAlive(username))
             return CancelledState.NOT_CANCELLED;
         
         Session session = getSession(username);
@@ -246,7 +278,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         if (getSession(username) == null)
             throw new SessionNotFoundException();
         
-        if (!isSessionAlive(PlayerHolder.getExact(username)))
+        if (!isSessionAlive(username))
             return CancelledState.NOT_CANCELLED;
         
         Session session = getSession(username);
