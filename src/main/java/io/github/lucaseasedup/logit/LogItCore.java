@@ -88,7 +88,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
 /**
- * LogItCore is the central part of LogIt.
+ * This class is the central part of LogIt.
  * 
  * @author LucasEasedUp
  */
