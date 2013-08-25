@@ -85,7 +85,7 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
             {
                 p.sendMessage(getMessage("NO_PERMS"));
             }
-            else if (!getSessionManager().isSessionAlive(PlayerHolder.getExact(p.getName())))
+            else if (!getSessionManager().isSessionAlive(p))
             {
                 p.sendMessage(getMessage("START_SESSION_NOT_SELF"));
             }

@@ -108,7 +108,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
             }
-            else if (getSessionManager().isSessionAlive(PlayerHolder.getExact(username)))
+            else if (getSessionManager().isSessionAlive(p))
             {
                 p.sendMessage(getMessage("START_SESSION_ALREADY_SELF"));
             }

@@ -125,7 +125,7 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             }
             else
             {
-                if (getSessionManager().isSessionAlive(PlayerHolder.getExact(p.getName())))
+                if (getSessionManager().isSessionAlive(p))
                 {
                     if (!getSessionManager().endSession(p.getName()).isCancelled())
                     {
