@@ -35,6 +35,6 @@ public final class DbTypeValidator implements PropertyValidator
         String string = value.toString();
         
         return string.equalsIgnoreCase("sqlite") || string.equalsIgnoreCase("mysql")
-                || string.equalsIgnoreCase("h2") || string.equalsIgnoreCase("csv-1");
+                || string.equalsIgnoreCase("h2") || string.equalsIgnoreCase("csv");
     }
 }
