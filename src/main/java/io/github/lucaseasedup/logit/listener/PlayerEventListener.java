@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.listener;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastJoinMessage;
+import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastQuitMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static org.bukkit.event.EventPriority.HIGHEST;
@@ -183,6 +184,10 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             getCore().getPersistenceManager().unserialize(player);
         }
+        else
+        {
+            broadcastQuitMessage(player);
+        }
     }
     
     @EventHandler
@@ -196,6 +201,10 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 && getCore().isPlayerForcedToLogIn(player))
         {
             getCore().getPersistenceManager().unserialize(player);
+        }
+        else
+        {
+            broadcastQuitMessage(player);
         }
     }
     
