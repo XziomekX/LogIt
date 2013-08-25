@@ -199,7 +199,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
      * 
      * <p> If session does not exist, no action will be taken.
      * 
-     * @param username ysername.
+     * @param username username.
      */
     public CancelledState destroySession(String username)
     {
