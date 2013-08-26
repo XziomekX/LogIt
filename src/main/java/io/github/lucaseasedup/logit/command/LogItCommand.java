@@ -226,8 +226,6 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                         getBackupManager().restoreBackup(backups[backups.length - 1].getName());
                     }
                     
-                    getAccountManager().loadAccounts();
-                    
                     if (p != null)
                     {
                         sender.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS"));

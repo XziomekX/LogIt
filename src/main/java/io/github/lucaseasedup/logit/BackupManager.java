@@ -106,10 +106,19 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         }
     }
     
+    /**
+     * Restores a backup.
+     * 
+     * <p> Automatically reloads the {@code AccountManager} tied to {@code LogItCore}.
+     * 
+     * @param filename backup filename.
+     */
     public void restoreBackup(String filename)
     {
         try
         {
+            ReportedException.incrementRequestCount();
+            
             File backupFile = getBackup(filename);
             
             try (SqliteDatabase backupDatabase = new SqliteDatabase("jdbc:sqlite:" + backupFile))
@@ -135,12 +144,24 @@ public final class BackupManager extends LogItCoreObject implements Runnable
                             values.toArray(new String[values.size()]));
                 }
             }
+            
+            getAccountManager().loadAccounts();
         }
         catch (FileNotFoundException | SQLException ex)
         {
             log(Level.WARNING, getMessage("RESTORE_BACKUP_FAIL"), ex);
             
             ReportedException.throwNew(ex);
+        }
+        catch (ReportedException ex)
+        {
+            log(Level.WARNING, getMessage("RESTORE_BACKUP_FAIL"), ex);
+            
+            ex.rethrow();
+        }
+        finally
+        {
+            ReportedException.decrementRequestCount();
         }
     }
     
