@@ -342,7 +342,7 @@ public final class AccountManager extends LogItCoreObject
         
         for (Account account : accountMap.values())
         {
-            if (account.getString("logit.accounts.ip").equalsIgnoreCase(ip))
+            if (ip.equalsIgnoreCase(account.getString("logit.accounts.ip")))
             {
                 count++;
             }
