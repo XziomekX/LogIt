@@ -27,9 +27,11 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -88,19 +90,11 @@ public final class BackupManager extends LogItCoreObject implements Runnable
                 
                 for (Map<String, String> row : rs)
                 {
-                    backupTable.insert(new String[]{
-                        "logit.accounts.username",
-                        "logit.accounts.salt",
-                        "logit.accounts.password",
-                        "logit.accounts.ip",
-                        "logit.accounts.last_active",
-                    }, new String[]{
-                        row.get("logit.accounts.username"),
-                        row.get("logit.accounts.salt"),
-                        row.get("logit.accounts.password"),
-                        row.get("logit.accounts.ip"),
-                        row.get("logit.accounts.last_active"),
-                    });
+                    Set<String> columns = row.keySet();
+                    Collection<String> values = row.values();
+                    
+                    backupTable.insert(columns.toArray(new String[columns.size()]),
+                            values.toArray(new String[values.size()]));
                 }
             }
         }
@@ -134,19 +128,11 @@ public final class BackupManager extends LogItCoreObject implements Runnable
                 
                 for (Map<String, String> row : rs)
                 {
-                    sourceTable.insert(new String[]{
-                        "logit.accounts.username",
-                        "logit.accounts.salt",
-                        "logit.accounts.password",
-                        "logit.accounts.ip",
-                        "logit.accounts.last_active",
-                    }, new String[]{
-                        row.get("logit.accounts.username"),
-                        row.get("logit.accounts.salt"),
-                        row.get("logit.accounts.password"),
-                        row.get("logit.accounts.ip"),
-                        row.get("logit.accounts.last_active"),
-                    });
+                    Set<String> columns = row.keySet();
+                    Collection<String> values = row.values();
+                    
+                    sourceTable.insert(columns.toArray(new String[columns.size()]),
+                            values.toArray(new String[values.size()]));
                 }
             }
         }
