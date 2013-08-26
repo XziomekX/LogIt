@@ -254,6 +254,8 @@ public final class ConvertWizard extends Wizard
                             table.insert(columns.toArray(new String[columns.size()]),
                                     values.toArray(new String[values.size()]));
                         }
+                        
+                        getAccountManager().loadAccounts();
                     }
                     
                     if (getSender() instanceof Player)
