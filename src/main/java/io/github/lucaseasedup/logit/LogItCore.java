@@ -574,6 +574,14 @@ public final class LogItCore
         }
     }
     
+    /**
+     * Generates a random password of length equal to {@code length},
+     * consisting only of the characters contained in {@code combination}.
+     * 
+     * @param length      the desired password length.
+     * @param combination the letterset used in the generation process.
+     * @return the generated password.
+     */
     public String generatePassword(int length, String combination)
     {
         char[] charArray = combination.toCharArray();
