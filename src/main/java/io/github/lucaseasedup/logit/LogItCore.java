@@ -68,6 +68,7 @@ import io.github.lucaseasedup.logit.persistence.InventorySerializer;
 import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
+import io.github.lucaseasedup.logit.profile.ProfileManager;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.util.FileUtils;
 import io.github.lucaseasedup.logit.util.IoUtils;
@@ -284,6 +285,18 @@ public final class LogItCore
         finally
         {
             ReportedException.decrementRequestCount();
+        }
+        
+        if (getConfig().getBoolean("profiles.enabled"))
+        {
+            File profilesPath = getDataFile(getConfig().getString("profiles.path"));
+            
+            if (!profilesPath.exists())
+            {
+                profilesPath.mkdir();
+            }
+            
+            profileManager = new ProfileManager(profilesPath);
         }
         
         persistenceManager = new PersistenceManager();
@@ -882,6 +895,11 @@ public final class LogItCore
         return persistenceManager;
     }
     
+    public ProfileManager getProfileManager()
+    {
+        return profileManager;
+    }
+    
     public MailSender getMailSender()
     {
         return mailSender;
@@ -1135,6 +1153,7 @@ public final class LogItCore
     private AccountWatcher      accountWatcher;
     private BackupManager       backupManager;
     private PersistenceManager  persistenceManager;
+    private ProfileManager      profileManager;
     private MailSender          mailSender;
     private TickEventCaller     tickEventCaller;
     
