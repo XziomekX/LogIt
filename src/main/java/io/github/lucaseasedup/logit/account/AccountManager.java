@@ -357,7 +357,12 @@ public final class AccountManager extends LogItCoreObject
         
         for (Account account : accountMap.values())
         {
-            ips.add(account.getString("logit.accounts.ip"));
+            String accountIp = account.getString("logit.accounts.ip");
+            
+            if (accountIp != null)
+            {
+                ips.add(accountIp);
+            }
         }
         
         return new HashSet<String>(ips).size();
