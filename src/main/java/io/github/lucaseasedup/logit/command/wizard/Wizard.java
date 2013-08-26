@@ -106,6 +106,11 @@ public abstract class Wizard extends LogItCoreObject implements Listener
     protected abstract void onCreate();
     protected abstract void onMessage(String message);
     
+    protected final void sendMessage(String message)
+    {
+        getSender().sendMessage(message);
+    }
+    
     protected final void cancelWizard()
     {
         HandlerList.unregisterAll(this);
