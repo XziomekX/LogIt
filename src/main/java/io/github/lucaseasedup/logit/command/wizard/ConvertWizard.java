@@ -42,10 +42,10 @@ public final class ConvertWizard extends Wizard
     @Override
     protected void onCreate()
     {
-        getSender().sendMessage("");
-        getSender().sendMessage(getMessage("CONVERT_WELCOME"));
-        getSender().sendMessage(getMessage("ORANGE_HORIZONTAL_LINE"));
-        getSender().sendMessage(getMessage("CONVERT_WELCOME_CHOICE"));
+        sendMessage("");
+        sendMessage(getMessage("CONVERT_WELCOME"));
+        sendMessage(getMessage("ORANGE_HORIZONTAL_LINE"));
+        sendMessage(getMessage("CONVERT_WELCOME_CHOICE"));
         
         updateStep(Step.WELCOME_CHOICE);
     }
@@ -57,13 +57,13 @@ public final class ConvertWizard extends Wizard
         {
             if (message.equals("proceed"))
             {
-                getSender().sendMessage(getMessage("CONVERT_ENTER_DBTYPE"));
+                sendMessage(getMessage("CONVERT_ENTER_DBTYPE"));
                 
                 updateStep(Step.ENTER_DBTYPE);
             }
             else
             {
-                getSender().sendMessage(getMessage("WIZARD_CANCELLED"));
+                sendMessage(getMessage("WIZARD_CANCELLED"));
                 
                 cancelWizard();
             }
@@ -73,33 +73,33 @@ public final class ConvertWizard extends Wizard
             if (!new DbTypeValidator()
                     .validate("storage.accounts.db-type", PropertyType.STRING, message))
             {
-                getSender().sendMessage(getMessage("CONVERT_INVALID_DBTYPE")
+                sendMessage(getMessage("CONVERT_INVALID_DBTYPE")
                         .replace("%dbtype%", message));
             }
             else
             {
                 dbtype = message;
                 
-                getSender().sendMessage(getMessage("CONVERT_ENTERED_DBTYPE")
+                sendMessage(getMessage("CONVERT_ENTERED_DBTYPE")
                         .replace("%dbtype%", message));
                 
                 switch (dbtype)
                 {
                 case "sqlite":
                 case "h2":
-                    getSender().sendMessage(getMessage("CONVERT_ENTER_FILENAME"));
+                    sendMessage(getMessage("CONVERT_ENTER_FILENAME"));
                     
                     updateStep(Step.ENTER_FILENAME);
                     break;
                     
                 case "mysql":
-                    getSender().sendMessage(getMessage("CONVERT_ENTER_HOST"));
+                    sendMessage(getMessage("CONVERT_ENTER_HOST"));
                     
                     updateStep(Step.ENTER_HOST);
                     break;
                     
                 case "csv":
-                    getSender().sendMessage(getMessage("CONVERT_ENTER_TABLE"));
+                    sendMessage(getMessage("CONVERT_ENTER_TABLE"));
                     
                     updateStep(Step.ENTER_TABLE);
                     break;
@@ -110,14 +110,14 @@ public final class ConvertWizard extends Wizard
         {
             filename = message;
 
-            getSender().sendMessage(getMessage("CONVERT_ENTERED_FILENAME")
+            sendMessage(getMessage("CONVERT_ENTERED_FILENAME")
                     .replace("%filename%", message));
             
             switch (dbtype)
             {
             case "sqlite":
             case "h2":
-                getSender().sendMessage(getMessage("CONVERT_ENTER_TABLE"));
+                sendMessage(getMessage("CONVERT_ENTER_TABLE"));
                 
                 updateStep(Step.ENTER_TABLE);
                 break;
@@ -127,13 +127,13 @@ public final class ConvertWizard extends Wizard
         {
             host = message;
 
-            getSender().sendMessage(getMessage("CONVERT_ENTERED_HOST")
+            sendMessage(getMessage("CONVERT_ENTERED_HOST")
                     .replace("%host%", message));
             
             switch (dbtype)
             {
             case "mysql":
-                getSender().sendMessage(getMessage("CONVERT_ENTER_USER"));
+                sendMessage(getMessage("CONVERT_ENTER_USER"));
                 
                 updateStep(Step.ENTER_USER);
                 break;
@@ -143,13 +143,13 @@ public final class ConvertWizard extends Wizard
         {
             user = message;
             
-            getSender().sendMessage(getMessage("CONVERT_ENTERED_USER")
+            sendMessage(getMessage("CONVERT_ENTERED_USER")
                     .replace("%user%", message));
             
             switch (dbtype)
             {
             case "mysql":
-                getSender().sendMessage(getMessage("CONVERT_ENTER_PASSWORD"));
+                sendMessage(getMessage("CONVERT_ENTER_PASSWORD"));
                 
                 updateStep(Step.ENTER_PASSWORD);
                 break;
@@ -158,14 +158,14 @@ public final class ConvertWizard extends Wizard
         else if (getCurrentStep() == Step.ENTER_PASSWORD)
         {
             password = message;
-
-            getSender().sendMessage(getMessage("CONVERT_ENTERED_PASSWORD")
+            
+            sendMessage(getMessage("CONVERT_ENTERED_PASSWORD")
                     .replace("%password%", message.replaceAll(".", "*")));
             
             switch (dbtype)
             {
             case "mysql":
-                getSender().sendMessage(getMessage("CONVERT_ENTER_DATABASE"));
+                sendMessage(getMessage("CONVERT_ENTER_DATABASE"));
                 
                 updateStep(Step.ENTER_DATABASE);
                 break;
@@ -174,14 +174,14 @@ public final class ConvertWizard extends Wizard
         else if (getCurrentStep() == Step.ENTER_DATABASE)
         {
             database = message;
-
-            getSender().sendMessage(getMessage("CONVERT_ENTERED_DATABASE")
+            
+            sendMessage(getMessage("CONVERT_ENTERED_DATABASE")
                     .replace("%database%", message));
             
             switch (dbtype)
             {
             case "mysql":
-                getSender().sendMessage(getMessage("CONVERT_ENTER_TABLE"));
+                sendMessage(getMessage("CONVERT_ENTER_TABLE"));
                 
                 updateStep(Step.ENTER_TABLE);
                 break;
@@ -191,9 +191,9 @@ public final class ConvertWizard extends Wizard
         {
             table = message;
             
-            getSender().sendMessage(getMessage("CONVERT_ENTERED_TABLE")
+            sendMessage(getMessage("CONVERT_ENTERED_TABLE")
                     .replace("%table%", message));
-            getSender().sendMessage(getMessage("CONVERT_COPY_OR_LEAVE"));
+            sendMessage(getMessage("CONVERT_COPY_OR_LEAVE"));
             
             updateStep(Step.COPY_OR_LEAVE);
         }
@@ -201,7 +201,7 @@ public final class ConvertWizard extends Wizard
         {
             copyAccounts = message.equalsIgnoreCase("copy");
             
-            getSender().sendMessage(getMessage("CONVERT_FINISH_CHOICE"));
+            sendMessage(getMessage("CONVERT_FINISH_CHOICE"));
             
             updateStep(Step.FINISH_CHOICE);
         }
@@ -258,7 +258,7 @@ public final class ConvertWizard extends Wizard
                     
                     if (getSender() instanceof Player)
                     {
-                        getSender().sendMessage(getMessage("CONVERT_SUCCESS")
+                        sendMessage(getMessage("CONVERT_SUCCESS")
                                 .replace("%dbtype%", dbtype));
                     }
                     
@@ -271,7 +271,7 @@ public final class ConvertWizard extends Wizard
                 {
                     if (getSender() instanceof Player)
                     {
-                        getSender().sendMessage(getMessage("CONVERT_FAIL"));
+                        sendMessage(getMessage("CONVERT_FAIL"));
                     }
                     
                     log(Level.SEVERE, getMessage("CONVERT_FAIL"), ex);
@@ -283,7 +283,7 @@ public final class ConvertWizard extends Wizard
             }
             else
             {
-                getSender().sendMessage(getMessage("WIZARD_CANCELLED"));
+                sendMessage(getMessage("WIZARD_CANCELLED"));
                 
                 cancelWizard();
             }
