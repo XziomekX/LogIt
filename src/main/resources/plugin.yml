@@ -39,6 +39,10 @@ commands:
     description: Recovers your password through e-mail.
     usage: /<command> <email>
   
+  profile:
+    description: Allows to view and edit player profiles.
+    usage: /<command> <view [player]|edit [player]>
+  
   $logit-nop-command:
     description: Reserved for internal use.
     usage: /<command>
@@ -61,6 +65,9 @@ permissions:
       logit.changepass.self: true
       logit.changeemail.self: true
       logit.recoverpass: true
+      logit.profile.view.self: true
+      logit.profile.view.others: true
+      logit.profile.edit.self: true
   logit.mod:
     default: op
     children:
@@ -72,6 +79,7 @@ permissions:
       logit.unregister.others: true
       logit.changepass.others: true
       logit.changeemail.others: true
+      logit.profile.edit.others: true
   logit.admin:
     default: false
     children:
@@ -184,6 +192,22 @@ permissions:
   logit.changeemail.others:
     default: false
   logit.recoverpass:
+    default: false
+  logit.profile.view:
+    default: false
+    children:
+      logit.profile.view.self: true
+  logit.profile.view.self:
+    default: false
+  logit.profile.view.others:
+    default: false
+  logit.profile.edit:
+    default: false
+    children:
+      logit.profile.edit.self: true
+  logit.profile.edit.self:
+    default: false
+  logit.profile.edit.others:
     default: false
   logit.force-login.exempt:
     default: false

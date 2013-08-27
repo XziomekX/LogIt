@@ -38,6 +38,7 @@ import io.github.lucaseasedup.logit.command.LogItCommand;
 import io.github.lucaseasedup.logit.command.LoginCommand;
 import io.github.lucaseasedup.logit.command.LogoutCommand;
 import io.github.lucaseasedup.logit.command.NopCommandExecutor;
+import io.github.lucaseasedup.logit.command.ProfileCommand;
 import io.github.lucaseasedup.logit.command.RecoverPassCommand;
 import io.github.lucaseasedup.logit.command.RegisterCommand;
 import io.github.lucaseasedup.logit.command.UnregisterCommand;
@@ -68,6 +69,7 @@ import io.github.lucaseasedup.logit.persistence.InventorySerializer;
 import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
+import io.github.lucaseasedup.logit.profile.ProfileManager;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.util.FileUtils;
 import io.github.lucaseasedup.logit.util.IoUtils;
@@ -284,6 +286,19 @@ public final class LogItCore
         finally
         {
             ReportedException.decrementRequestCount();
+        }
+        
+        if (getConfig().getBoolean("profiles.enabled"))
+        {
+            File profilesPath = getDataFile(getConfig().getString("profiles.path"));
+            
+            if (!profilesPath.exists())
+            {
+                profilesPath.mkdir();
+            }
+            
+            profileManager = new ProfileManager(profilesPath,
+                    config.getConfigurationSection("profiles.fields"));
         }
         
         persistenceManager = new PersistenceManager();
@@ -890,6 +905,11 @@ public final class LogItCore
         return persistenceManager;
     }
     
+    public ProfileManager getProfileManager()
+    {
+        return profileManager;
+    }
+    
     public MailSender getMailSender()
     {
         return mailSender;
@@ -974,6 +994,15 @@ public final class LogItCore
         else
         {
             plugin.getCommand("recoverpass").setExecutor(new DisabledCommandExecutor());
+        }
+        
+        if (config.getBoolean("profiles.enabled"))
+        {
+            plugin.getCommand("profile").setExecutor(new ProfileCommand());
+        }
+        else
+        {
+            plugin.getCommand("profile").setExecutor(new DisabledCommandExecutor());
         }
         
         plugin.getCommand("$logit-nop-command").setExecutor(new NopCommandExecutor());
@@ -1143,6 +1172,7 @@ public final class LogItCore
     private AccountWatcher      accountWatcher;
     private BackupManager       backupManager;
     private PersistenceManager  persistenceManager;
+    private ProfileManager      profileManager;
     private MailSender          mailSender;
     private TickEventCaller     tickEventCaller;
     

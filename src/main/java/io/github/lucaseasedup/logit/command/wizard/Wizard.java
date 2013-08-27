@@ -53,7 +53,6 @@ public abstract class Wizard extends LogItCoreObject implements Listener
         if (event.getPlayer() == sender)
         {
             onMessage(event.getMessage());
-            
             event.setCancelled(true);
         }
     }
@@ -64,7 +63,6 @@ public abstract class Wizard extends LogItCoreObject implements Listener
         if (event.getPlayer() == sender)
         {
             onMessage(event.getMessage());
-            
             event.setCancelled(true);
         }
     }
@@ -75,7 +73,6 @@ public abstract class Wizard extends LogItCoreObject implements Listener
         if (event.getSender() == sender)
         {
             onMessage(event.getCommand());
-            
             event.setCommand("$logit-nop-command");
         }
     }

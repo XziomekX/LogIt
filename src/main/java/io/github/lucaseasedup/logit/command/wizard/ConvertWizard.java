@@ -58,13 +58,11 @@ public final class ConvertWizard extends Wizard
             if (message.equals("proceed"))
             {
                 sendMessage(getMessage("CONVERT_ENTER_DBTYPE"));
-                
                 updateStep(Step.ENTER_DBTYPE);
             }
             else
             {
                 sendMessage(getMessage("WIZARD_CANCELLED"));
-                
                 cancelWizard();
             }
         }
@@ -88,19 +86,16 @@ public final class ConvertWizard extends Wizard
                 case "sqlite":
                 case "h2":
                     sendMessage(getMessage("CONVERT_ENTER_FILENAME"));
-                    
                     updateStep(Step.ENTER_FILENAME);
                     break;
                     
                 case "mysql":
                     sendMessage(getMessage("CONVERT_ENTER_HOST"));
-                    
                     updateStep(Step.ENTER_HOST);
                     break;
                     
                 case "csv":
                     sendMessage(getMessage("CONVERT_ENTER_TABLE"));
-                    
                     updateStep(Step.ENTER_TABLE);
                     break;
                 }
@@ -118,7 +113,6 @@ public final class ConvertWizard extends Wizard
             case "sqlite":
             case "h2":
                 sendMessage(getMessage("CONVERT_ENTER_TABLE"));
-                
                 updateStep(Step.ENTER_TABLE);
                 break;
             }
@@ -134,7 +128,6 @@ public final class ConvertWizard extends Wizard
             {
             case "mysql":
                 sendMessage(getMessage("CONVERT_ENTER_USER"));
-                
                 updateStep(Step.ENTER_USER);
                 break;
             }
@@ -150,7 +143,6 @@ public final class ConvertWizard extends Wizard
             {
             case "mysql":
                 sendMessage(getMessage("CONVERT_ENTER_PASSWORD"));
-                
                 updateStep(Step.ENTER_PASSWORD);
                 break;
             }
@@ -166,7 +158,6 @@ public final class ConvertWizard extends Wizard
             {
             case "mysql":
                 sendMessage(getMessage("CONVERT_ENTER_DATABASE"));
-                
                 updateStep(Step.ENTER_DATABASE);
                 break;
             }
@@ -182,7 +173,6 @@ public final class ConvertWizard extends Wizard
             {
             case "mysql":
                 sendMessage(getMessage("CONVERT_ENTER_TABLE"));
-                
                 updateStep(Step.ENTER_TABLE);
                 break;
             }
@@ -194,7 +184,6 @@ public final class ConvertWizard extends Wizard
             sendMessage(getMessage("CONVERT_ENTERED_TABLE")
                     .replace("%table%", message));
             sendMessage(getMessage("CONVERT_COPY_OR_LEAVE"));
-            
             updateStep(Step.COPY_OR_LEAVE);
         }
         else if (getCurrentStep() == Step.COPY_OR_LEAVE)
@@ -202,7 +191,6 @@ public final class ConvertWizard extends Wizard
             copyAccounts = message.equalsIgnoreCase("copy");
             
             sendMessage(getMessage("CONVERT_FINISH_CHOICE"));
-            
             updateStep(Step.FINISH_CHOICE);
         }
         else if (getCurrentStep() == Step.FINISH_CHOICE)
@@ -286,7 +274,6 @@ public final class ConvertWizard extends Wizard
             else
             {
                 sendMessage(getMessage("WIZARD_CANCELLED"));
-                
                 cancelWizard();
             }
         }
