@@ -161,22 +161,6 @@ public final class ProfileManager extends LogItCoreObject
                     configuration = YamlConfiguration.loadConfiguration(profileFile));
         }
         
-        for (Field field : definedFields)
-        {
-            if (configuration.get(field.getName()) == null)
-            {
-                configuration.set(field.getName(), "");
-            }
-        }
-        
-        try
-        {
-            configuration.save(profileFile);
-        }
-        catch (IOException ex)
-        {
-        }
-        
         return configuration;
     }
     
