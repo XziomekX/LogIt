@@ -25,11 +25,11 @@ import org.bukkit.command.CommandSender;
 
 public final class ProfileViewWizard extends Wizard
 {
-    public ProfileViewWizard(CommandSender sender, String player)
+    public ProfileViewWizard(CommandSender sender, String playerName)
     {
         super(sender, new String[0], Step.VIEW);
         
-        this.player = player;
+        this.playerName = playerName;
     }
     
     @Override
@@ -39,7 +39,7 @@ public final class ProfileViewWizard extends Wizard
         
         sendMessage("");
         sendMessage(getMessage("PROFILE_HEADER")
-                .replace("%player%", player));
+                .replace("%player%", playerName));
         sendMessage(getMessage("ORANGE_HORIZONTAL_LINE"));
         
         if (!fields.isEmpty())
@@ -47,7 +47,7 @@ public final class ProfileViewWizard extends Wizard
             for (Field field : fields)
             {
                 Object value = getCore().getProfileManager()
-                        .getProfileObject(player, field.getName());
+                        .getProfileObject(playerName, field.getName());
                 
                 if (value == null)
                 {
@@ -79,5 +79,5 @@ public final class ProfileViewWizard extends Wizard
         VIEW
     }
     
-    private final String player;
+    private final String playerName;
 }
