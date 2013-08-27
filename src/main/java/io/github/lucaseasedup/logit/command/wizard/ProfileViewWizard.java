@@ -64,6 +64,8 @@ public final class ProfileViewWizard extends Wizard
             sendMessage(getMessage("PROFILE_VIEW_NO_FIELDS"));
         }
         
+        sendMessage(getMessage("ORANGE_HORIZONTAL_LINE"));
+        
         cancelWizard();
     }
     
