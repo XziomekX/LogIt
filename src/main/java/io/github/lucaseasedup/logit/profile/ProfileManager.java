@@ -130,14 +130,25 @@ public final class ProfileManager extends LogItCoreObject
     {
         Field field = getField(fieldName);
         
-        if (!(field instanceof StringField))
+        if (field instanceof StringField)
+        {
+            StringField stringField = (StringField) field;
+            
+            if (value.length() < stringField.getMinLength()
+                    || value.length() > stringField.getMaxLength())
+                throw new IllegalArgumentException();
+        }
+        else if (field instanceof SetField)
+        {
+            SetField setField = (SetField) field;
+            
+            if (!setField.isAccepted(value))
+                throw new IllegalArgumentException();
+        }
+        else
+        {
             throw new RuntimeException("Incompatible field type: " + field.getClass().getSimpleName());
-        
-        StringField stringField = (StringField) field;
-        
-        if (value.length() < stringField.getMinLength()
-                || value.length() > stringField.getMaxLength())
-            throw new IllegalArgumentException();
+        }
         
         getProfileConfiguration(playerName).set(fieldName, value);
         saveProfileConfiguration(playerName);
