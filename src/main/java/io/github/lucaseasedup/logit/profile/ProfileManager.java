@@ -43,13 +43,13 @@ public final class ProfileManager extends LogItCoreObject
     {
         this.path = path;
         
-        for (String displayName : fieldsSection.getKeys(false))
+        for (String fieldName : fieldsSection.getKeys(false))
         {
-            String fieldDefinition = fieldsSection.getString(displayName);
+            String fieldDefinition = fieldsSection.getString(fieldName);
             
             if (fieldDefinition != null)
             {
-                definedFields.add(newField(displayName, fieldDefinition));
+                definedFields.add(newField(fieldName, fieldDefinition));
             }
         }
     }
