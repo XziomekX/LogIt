@@ -27,6 +27,19 @@ public final class SetField extends Field
         this.values = values;
     }
     
+    public boolean isAccepted(String value)
+    {
+        for (String s : values)
+        {
+            if (s.equals(value))
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     public String[] getAcceptedValues()
     {
         return values;
