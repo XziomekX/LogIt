@@ -38,6 +38,7 @@ import io.github.lucaseasedup.logit.command.LogItCommand;
 import io.github.lucaseasedup.logit.command.LoginCommand;
 import io.github.lucaseasedup.logit.command.LogoutCommand;
 import io.github.lucaseasedup.logit.command.NopCommandExecutor;
+import io.github.lucaseasedup.logit.command.ProfileCommand;
 import io.github.lucaseasedup.logit.command.RecoverPassCommand;
 import io.github.lucaseasedup.logit.command.RegisterCommand;
 import io.github.lucaseasedup.logit.command.UnregisterCommand;
@@ -984,6 +985,15 @@ public final class LogItCore
         else
         {
             plugin.getCommand("recoverpass").setExecutor(new DisabledCommandExecutor());
+        }
+        
+        if (config.getBoolean("profiles.enabled"))
+        {
+            plugin.getCommand("profile").setExecutor(new ProfileCommand());
+        }
+        else
+        {
+            plugin.getCommand("profile").setExecutor(new DisabledCommandExecutor());
         }
         
         plugin.getCommand("$logit-nop-command").setExecutor(new NopCommandExecutor());
