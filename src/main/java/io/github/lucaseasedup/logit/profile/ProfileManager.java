@@ -58,6 +58,19 @@ public final class ProfileManager extends LogItCoreObject
         return ImmutableList.copyOf(fields);
     }
     
+    public boolean isFieldDefined(String fieldName)
+    {
+        for (Field field : fields)
+        {
+            if (field.getName().equals(fieldName))
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     public Object getProfileObject(String player, String field)
     {
         Configuration profileConfiguration = getProfileConfiguration(player);
