@@ -61,7 +61,7 @@ public final class ProfileViewWizard extends Wizard
         }
         else
         {
-            sendMessage(getMessage("PROFILE_NO_FIELDS"));
+            sendMessage(getMessage("PROFILE_VIEW_NO_FIELDS"));
         }
         
         cancelWizard();
