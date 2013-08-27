@@ -33,7 +33,7 @@ public final class ProfileManager extends LogItCoreObject
     
     public Configuration getProfile(String name)
     {
-        File profileFile = new File(path, name + ".yml");
+        File profileFile = new File(path, name.toLowerCase() + ".yml");
         
         if (!profileFile.exists())
             return null;
