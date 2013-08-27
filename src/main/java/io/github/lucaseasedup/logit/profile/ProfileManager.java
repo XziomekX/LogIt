@@ -18,6 +18,8 @@
  */
 package io.github.lucaseasedup.logit.profile;
 
+import java.util.HashMap;
+import java.util.Map;
 import com.google.common.collect.ImmutableList;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.profile.field.Field;
@@ -141,10 +143,23 @@ public final class ProfileManager extends LogItCoreObject
         });
     }
     
-    private YamlConfiguration getProfileConfiguration(String player)
+    private YamlConfiguration getProfileConfiguration(String playerName)
     {
-        File profileFile = new File(path, player.toLowerCase() + ".yml");
-        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(profileFile);
+        File profileFile = profileFiles.get(playerName);
+        
+        if (profileFile == null)
+        {
+            profileFiles.put(playerName,
+                    profileFile = new File(path, playerName.toLowerCase() + ".yml"));
+        }
+        
+        YamlConfiguration configuration = configurationCache.get(playerName);
+        
+        if (configuration == null)
+        {
+            configurationCache.put(playerName,
+                    configuration = YamlConfiguration.loadConfiguration(profileFile));
+        }
         
         for (Field field : definedFields)
         {
@@ -249,4 +264,6 @@ public final class ProfileManager extends LogItCoreObject
     
     private final File path;
     private final List<Field> definedFields = new LinkedList<>();
+    private final Map<String, File> profileFiles = new HashMap<>();
+    private final Map<String, YamlConfiguration> configurationCache = new HashMap<>();
 }
