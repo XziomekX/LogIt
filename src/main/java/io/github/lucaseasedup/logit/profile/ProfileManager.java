@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -86,25 +85,25 @@ public final class ProfileManager extends LogItCoreObject
         return false;
     }
     
-    public Object getProfileObject(String player, String field)
+    public Object getProfileObject(String playerName, String fieldName)
     {
-        return getProfileConfiguration(player).get(field);
+        return getProfileConfiguration(playerName).get(fieldName);
     }
     
-    public String getProfileString(String player, String field)
+    public String getProfileString(String playerName, String fieldName)
     {
-        return getProfileConfiguration(player).getString(field);
+        return getProfileConfiguration(playerName).getString(fieldName);
     }
     
-    public int getProfileInteger(String player, String field)
+    public int getProfileInteger(String playerName, String fieldName)
     {
-        return getProfileConfiguration(player).getInt(field);
+        return getProfileConfiguration(playerName).getInt(fieldName);
     }
     
-    public double getProfileFloat(String player, String field)
+    public double getProfileFloat(String playerName, String fieldName)
     {
-        return getProfileConfiguration(player).getDouble(field);
-    }
+        return getProfileConfiguration(playerName).getDouble(fieldName);
+    }   
     
     public void setProfileString(String playerName, String fieldName, String value)
     {
@@ -219,7 +218,7 @@ public final class ProfileManager extends LogItCoreObject
         }
     }
     
-    private Field newField(String name, String definitionString)
+    private Field newField(String fieldName, String definitionString)
     {
         Matcher definitionMatcher = FIELD_DEFINITION_PATTERN.matcher(definitionString);
         
@@ -236,7 +235,7 @@ public final class ProfileManager extends LogItCoreObject
                 
                 if (rangeMatcher.find())
                 {
-                    return new StringField(name, Integer.valueOf(rangeMatcher.group(1)),
+                    return new StringField(fieldName, Integer.valueOf(rangeMatcher.group(1)),
                             Integer.valueOf(rangeMatcher.group(2)));
                 }
                 
@@ -248,7 +247,7 @@ public final class ProfileManager extends LogItCoreObject
                 
                 if (rangeMatcher.find())
                 {
-                    return new IntegerField(name, Integer.valueOf(rangeMatcher.group(1)),
+                    return new IntegerField(fieldName, Integer.valueOf(rangeMatcher.group(1)),
                             Integer.valueOf(rangeMatcher.group(2)));
                 }
                 
@@ -260,18 +259,18 @@ public final class ProfileManager extends LogItCoreObject
                 
                 if (rangeMatcher.find())
                 {
-                    return new FloatField(name, Double.valueOf(rangeMatcher.group(1)),
+                    return new FloatField(fieldName, Double.valueOf(rangeMatcher.group(1)),
                             Double.valueOf(rangeMatcher.group(2)));
                 }
                 
                 break;
             }
             case "SET":
-                return new SetField(name, arguments.split("(?<!\\\\),"));
+                return new SetField(fieldName, arguments.split("(?<!\\\\),"));
             }
         }
         
-        throw new RuntimeException("Could not load field definition. Field name: " + name);
+        throw new RuntimeException("Could not load field definition. Field name: " + fieldName);
     }
     
     private final static Pattern FIELD_DEFINITION_PATTERN =
