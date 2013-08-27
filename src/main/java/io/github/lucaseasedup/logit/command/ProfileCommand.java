@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.command.wizard.ProfileEditWizard;
 import io.github.lucaseasedup.logit.command.wizard.ProfileViewWizard;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -72,7 +73,7 @@ public final class ProfileCommand extends LogItCoreObject implements CommandExec
             }
             else
             {
-                
+                new ProfileEditWizard(sender, p.getName()).createWizard();
             }
         }
         else if (args.length == 2 && args[0].equalsIgnoreCase("edit"))
@@ -83,7 +84,7 @@ public final class ProfileCommand extends LogItCoreObject implements CommandExec
             }
             else
             {
-                
+                new ProfileEditWizard(sender, args[1]).createWizard();
             }
         }
         else
