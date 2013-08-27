@@ -88,42 +88,22 @@ public final class ProfileManager extends LogItCoreObject
     
     public Object getProfileObject(String player, String field)
     {
-        Configuration profileConfiguration = getProfileConfiguration(player);
-        
-        if (profileConfiguration == null)
-            throw new NullPointerException();
-        
-        return profileConfiguration.get(field);
+        return getProfileConfiguration(player).get(field);
     }
     
     public String getProfileString(String player, String field)
     {
-        Configuration profileConfiguration = getProfileConfiguration(player);
-        
-        if (profileConfiguration == null)
-            throw new NullPointerException();
-        
-        return profileConfiguration.getString(field);
+        return getProfileConfiguration(player).getString(field);
     }
     
     public int getProfileInteger(String player, String field)
     {
-        Configuration profileConfiguration = getProfileConfiguration(player);
-        
-        if (profileConfiguration == null)
-            throw new NullPointerException();
-        
-        return profileConfiguration.getInt(field);
+        return getProfileConfiguration(player).getInt(field);
     }
     
     public double getProfileFloat(String player, String field)
     {
-        Configuration profileConfiguration = getProfileConfiguration(player);
-        
-        if (profileConfiguration == null)
-            throw new NullPointerException();
-        
-        return profileConfiguration.getDouble(field);
+        return getProfileConfiguration(player).getDouble(field);
     }
     
     public void setProfileString(String playerName, String fieldName, String value)
