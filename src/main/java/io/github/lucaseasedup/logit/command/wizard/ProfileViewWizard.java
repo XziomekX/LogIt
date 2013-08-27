@@ -54,7 +54,7 @@ public final class ProfileViewWizard extends Wizard
                     value = "";
                 }
                 
-                sendMessage(getMessage("PROFILE_FIELD")
+                sendMessage(getMessage("PROFILE_VIEW_FIELD")
                         .replace("%field%", field.getName())
                         .replace("%value%", value.toString()));
             }
