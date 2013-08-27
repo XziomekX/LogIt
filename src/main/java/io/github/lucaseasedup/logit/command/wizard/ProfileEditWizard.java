@@ -58,7 +58,7 @@ public final class ProfileEditWizard extends Wizard
     {
         if (getCurrentStep() == Step.ENTER_FIELD_NUMBER)
         {
-            if (message.equalsIgnoreCase("cancel"))
+            if (message.equalsIgnoreCase("done"))
             {
                 sendMessage(getMessage("ORANGE_HORIZONTAL_LINE"));
                 cancelWizard();
