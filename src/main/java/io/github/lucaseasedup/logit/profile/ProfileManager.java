@@ -48,7 +48,7 @@ public final class ProfileManager extends LogItCoreObject
             
             if (fieldDefinition != null)
             {
-                fields.add(newField(displayName, fieldDefinition));
+                definedFields.add(newField(displayName, fieldDefinition));
             }
         }
     }
@@ -68,12 +68,12 @@ public final class ProfileManager extends LogItCoreObject
     
     public List<Field> getDefinedFields()
     {
-        return ImmutableList.copyOf(fields);
+        return ImmutableList.copyOf(definedFields);
     }
     
     public boolean isFieldDefined(String fieldName)
     {
-        for (Field field : fields)
+        for (Field field : definedFields)
         {
             if (field.getName().equals(fieldName))
             {
@@ -146,7 +146,7 @@ public final class ProfileManager extends LogItCoreObject
         File profileFile = new File(path, player.toLowerCase() + ".yml");
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(profileFile);
         
-        for (Field field : fields)
+        for (Field field : definedFields)
         {
             if (configuration.get(field.getName()) == null)
             {
@@ -248,5 +248,5 @@ public final class ProfileManager extends LogItCoreObject
                            + "\\s*(-?[0-9]+\\.[0-9]+)\\s*$"); // Max
     
     private final File path;
-    private final List<Field> fields = new LinkedList<>();
+    private final List<Field> definedFields = new LinkedList<>();
 }
