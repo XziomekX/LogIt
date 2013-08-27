@@ -160,6 +160,23 @@ public final class ProfileManager extends LogItCoreObject
         saveProfileConfiguration(playerName);
     }
     
+    public void setProfileFloat(String playerName, String fieldName, double value)
+    {
+        Field field = getField(fieldName);
+        
+        if (!(field instanceof FloatField))
+            throw new RuntimeException("Incompatible field type: " + field.getClass().getSimpleName());
+        
+        FloatField floatField = (FloatField) field;
+        
+        if (value < floatField.getMinValue()
+                || value > floatField.getMaxValue())
+            throw new IllegalArgumentException();
+        
+        getProfileConfiguration(playerName).set(fieldName, value);
+        saveProfileConfiguration(playerName);
+    }
+    
     public File getPath()
     {
         return path;
