@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.bukkit.configuration.ConfigurationSection;
@@ -47,9 +48,15 @@ public final class ProfileManager extends LogItCoreObject
         {
             String fieldDefinition = fieldsSection.getString(fieldName);
             
-            if (fieldDefinition != null)
+            try
             {
                 definedFields.add(newField(fieldName, fieldDefinition));
+            }
+            catch (RuntimeException ex)
+            {
+                log(Level.WARNING, "Invalid field definition."
+                        + " Field name: " + fieldName + "."
+                        + " Cause: " + ex.getMessage());
             }
         }
     }
@@ -238,8 +245,10 @@ public final class ProfileManager extends LogItCoreObject
                     return new StringField(fieldName, Integer.valueOf(rangeMatcher.group(1)),
                             Integer.valueOf(rangeMatcher.group(2)));
                 }
-                
-                break;
+                else
+                {
+                    throw new RuntimeException("Malformed argument list.");
+                }
             }
             case "INTEGER":
             {
@@ -250,8 +259,10 @@ public final class ProfileManager extends LogItCoreObject
                     return new IntegerField(fieldName, Integer.valueOf(rangeMatcher.group(1)),
                             Integer.valueOf(rangeMatcher.group(2)));
                 }
-                
-                break;
+                else
+                {
+                    throw new RuntimeException("Malformed argument list.");
+                }
             }
             case "FLOAT":
             {
@@ -262,15 +273,22 @@ public final class ProfileManager extends LogItCoreObject
                     return new FloatField(fieldName, Double.valueOf(rangeMatcher.group(1)),
                             Double.valueOf(rangeMatcher.group(2)));
                 }
-                
-                break;
+                else
+                {
+                    throw new RuntimeException("Malformed argument list.");
+                }
             }
             case "SET":
                 return new SetField(fieldName, arguments.split("(?<!\\\\),"));
+                
+            default:
+                throw new RuntimeException("Unknown field type.");
             }
         }
-        
-        throw new RuntimeException("Could not load field definition. Field name: " + fieldName);
+        else
+        {
+            throw new RuntimeException("Malformed field definition.");
+        }
     }
     
     private final static Pattern FIELD_DEFINITION_PATTERN =
