@@ -61,7 +61,7 @@ public final class ProfileCommand extends LogItCoreObject implements CommandExec
             }
             else
             {
-                
+                new ProfileViewWizard(sender, args[1]).createWizard();
             }
         }
         else if (args.length == 1 && args[0].equalsIgnoreCase("edit"))
