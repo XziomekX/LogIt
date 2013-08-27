@@ -18,8 +18,6 @@
  */
 package io.github.lucaseasedup.logit.profile;
 
-import java.util.HashMap;
-import java.util.Map;
 import com.google.common.collect.ImmutableList;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.profile.field.Field;
@@ -30,8 +28,10 @@ import io.github.lucaseasedup.logit.profile.field.StringField;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.bukkit.configuration.Configuration;
