@@ -152,6 +152,19 @@ public final class ProfileManager extends LogItCoreObject
         return configuration;
     }
     
+    private void saveProfileConfiguration(String playerName)
+    {
+        YamlConfiguration configuration = getProfileConfiguration(playerName);
+        
+        try
+        {
+            configuration.save(profileFiles.get(playerName));
+        }
+        catch (IOException ex)
+        {
+        }
+    }
+    
     private Field newField(String name, String definitionString)
     {
         Matcher definitionMatcher = FIELD_DEFINITION_PATTERN.matcher(definitionString);
