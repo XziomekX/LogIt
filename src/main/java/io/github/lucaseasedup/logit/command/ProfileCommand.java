@@ -20,8 +20,7 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.profile.field.Field;
-import java.util.List;
+import io.github.lucaseasedup.logit.command.wizard.ProfileViewWizard;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -51,34 +50,7 @@ public final class ProfileCommand extends LogItCoreObject implements CommandExec
             }
             else
             {
-                List<Field> fields = getCore().getProfileManager().getDefinedFields();
-                
-                sender.sendMessage("");
-                sender.sendMessage(getMessage("PROFILE_HEADER")
-                        .replace("%player%", p.getName()));
-                sender.sendMessage(getMessage("ORANGE_HORIZONTAL_LINE"));
-                
-                if (!fields.isEmpty())
-                {
-                    for (Field field : fields)
-                    {
-                        Object value = getCore().getProfileManager()
-                                .getProfileObject(p.getName(), field.getName());
-                        
-                        if (value == null)
-                        {
-                            value = "";
-                        }
-                        
-                        sender.sendMessage(getMessage("PROFILE_FIELD")
-                                .replace("%field%", field.getName())
-                                .replace("%value%", value.toString()));
-                    }
-                }
-                else
-                {
-                    sender.sendMessage(getMessage("PROFILE_NO_FIELDS"));
-                }
+                new ProfileViewWizard(sender, p.getName()).createWizard();
             }
         }
         else if (args.length == 2 && args[0].equalsIgnoreCase("view"))
