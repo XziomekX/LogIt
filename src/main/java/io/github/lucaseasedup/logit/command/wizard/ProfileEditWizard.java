@@ -160,7 +160,6 @@ public final class ProfileEditWizard extends Wizard
             else if (field instanceof IntegerField)
             {
                 IntegerField integerField = (IntegerField) field;
-                
                 int value;
                 
                 try
@@ -198,7 +197,6 @@ public final class ProfileEditWizard extends Wizard
             else if (field instanceof FloatField)
             {
                 FloatField floatField = (FloatField) field;
-                
                 double value;
                 
                 try

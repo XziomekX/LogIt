@@ -65,7 +65,6 @@ public final class ProfileViewWizard extends Wizard
         }
         
         sendMessage(getMessage("ORANGE_HORIZONTAL_LINE"));
-        
         cancelWizard();
     }
     
