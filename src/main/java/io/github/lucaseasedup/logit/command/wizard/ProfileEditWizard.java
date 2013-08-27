@@ -90,22 +90,16 @@ public final class ProfileEditWizard extends Wizard
             
             if (field instanceof StringField)
             {
-                StringField stringField = (StringField) field;
-                
                 sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_STRING")
                         .replace("%field%", field.getName()));
             }
             else if (field instanceof IntegerField)
             {
-                IntegerField integerField = (IntegerField) field;
-                
                 sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_INTEGER")
                         .replace("%field%", field.getName()));
             }
             else if (field instanceof FloatField)
             {
-                FloatField floatField = (FloatField) field;
-                
                 sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_FLOAT")
                         .replace("%field%", field.getName()));
             }
