@@ -297,7 +297,8 @@ public final class LogItCore
                 profilesPath.mkdir();
             }
             
-            profileManager = new ProfileManager(profilesPath);
+            profileManager = new ProfileManager(profilesPath,
+                    config.getConfigurationSection("profiles.fields"));
         }
         
         persistenceManager = new PersistenceManager();
