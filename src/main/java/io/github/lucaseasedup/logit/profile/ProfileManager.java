@@ -53,6 +53,19 @@ public final class ProfileManager extends LogItCoreObject
         }
     }
     
+    public Field getField(String fieldName)
+    {
+        for (Field field : definedFields)
+        {
+            if (field.getName().equals(fieldName))
+            {
+                return field;
+            }
+        }
+        
+        return null;
+    }
+    
     public List<Field> getDefinedFields()
     {
         return ImmutableList.copyOf(fields);
