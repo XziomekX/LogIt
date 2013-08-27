@@ -242,9 +242,9 @@ public final class ProfileEditWizard extends Wizard
             else if (field instanceof SetField)
             {
                 SetField setField = (SetField) field;
-                String trimmerMessage = message.trim();
+                String trimmedMessage = message.trim();
                 
-                if (!setField.isAccepted(trimmerMessage))
+                if (!setField.isAccepted(trimmedMessage))
                 {
                     sendMessage(getMessage("PROFILE_EDIT_INVALID_VALUE")
                             .replace("%value%", message));
@@ -253,7 +253,7 @@ public final class ProfileEditWizard extends Wizard
                 }
                 
                 getCore().getProfileManager().setProfileString(playerName,
-                        field.getName(), trimmerMessage);
+                        field.getName(), trimmedMessage);
             }
             else
             {
