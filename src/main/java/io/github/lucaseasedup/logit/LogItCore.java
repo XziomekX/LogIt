@@ -845,28 +845,14 @@ public final class LogItCore
     
     public void log(Level level, String message, Throwable throwable)
     {
-        String stackTrace = null;
+        StringWriter sw = new StringWriter();
         
-        try (
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-        )
+        try (PrintWriter pw = new PrintWriter(sw))
         {
             throwable.printStackTrace(pw);
-            stackTrace = sw.toString();
-        }
-        catch (IOException ex)
-        {
         }
         
-        if (stackTrace != null)
-        {
-            log(level, message + " [Exception stack trace:\n" + stackTrace + "]");
-        }
-        else
-        {
-            log(level, message + " [Unknown exception stack trace]");
-        }
+        log(level, message + " [Exception stack trace:\n" + sw.toString() + "]");
     }
     
     public boolean isConfigLoaded()
