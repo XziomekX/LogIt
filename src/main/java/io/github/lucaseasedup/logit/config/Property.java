@@ -19,7 +19,6 @@
 package io.github.lucaseasedup.logit.config;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Color;
@@ -105,56 +104,9 @@ public final class Property extends Observable
         return sb.toString();
     }
     
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public Object getValue()
     {
-        switch (type)
-        {
-        case OBJECT:
-            return value;
-        case BOOLEAN:
-            return (Boolean) value;
-        case COLOR:
-            return (Color) value;
-        case DOUBLE:
-            return (Double) value;
-        case INT:
-            return (Integer) value;
-        case ITEM_STACK:
-            return (ItemStack) value;
-        case LONG:
-            return (Long) value;
-        case STRING:
-            return (String) value;
-        case VECTOR:
-            return (Vector) value;
-        case LIST:
-            return (List) value;
-        case BOOLEAN_LIST:
-            return (List<Boolean>) value;
-        case BYTE_LIST:
-            return (List<Byte>) value;
-        case CHARACTER_LIST:
-            return (List<Character>) value;
-        case DOUBLE_LIST:
-            return (List<Double>) value;
-        case FLOAT_LIST:
-            return (List<Float>) value;
-        case INTEGER_LIST:
-            return (List<Integer>) value;
-        case LONG_LIST:
-            return (List<Long>) value;
-        case MAP_LIST:
-            return (List<Map>) value;
-        case SHORT_LIST:
-            return (List<Short>) value;
-        case STRING_LIST:
-            return (List<String>) value;
-        case LOCATION:
-            return (Location) value;
-        default:
-            throw new RuntimeException("Unknown property type.");
-        }
+        return value;
     }
     
     public boolean getBoolean()
