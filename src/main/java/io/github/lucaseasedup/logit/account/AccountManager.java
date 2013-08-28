@@ -320,11 +320,12 @@ public final class AccountManager extends LogItCoreObject
     }
     
     /**
-     * Returns number of accounts with the given IP.
+     * Returns number of accounts with the given IP address.
      * 
-     * <p> If "ip" is null or an empty string, the returned value is 0.
+     * <p> If {@code ip} is {@code null} or an empty string, the returned value is {@code 0}.
      * 
-     * @param ip IP address.
+     * @param ip the IP address.
+     * 
      * @return number of accounts with the given IP.
      */
     public int countAccountsWithIp(String ip)
