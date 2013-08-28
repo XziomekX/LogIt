@@ -800,28 +800,7 @@ public final class LogItCore
     
     public StorageType getStorageAccountsDbType()
     {
-        String s = plugin.getConfig().getString("storage.accounts.db-type");
-        
-        if (s.equalsIgnoreCase("sqlite"))
-        {
-            return StorageType.SQLITE;
-        }
-        else if (s.equalsIgnoreCase("mysql"))
-        {
-            return StorageType.MYSQL;
-        }
-        else if (s.equalsIgnoreCase("h2"))
-        {
-            return StorageType.H2;
-        }
-        else if (s.equalsIgnoreCase("csv"))
-        {
-            return StorageType.CSV;
-        }
-        else
-        {
-            return StorageType.UNKNOWN;
-        }
+        return StorageType.decode(plugin.getConfig().getString("storage.accounts.db-type"));
     }
     
     public HashingAlgorithm getDefaultHashingAlgorithm()
@@ -831,20 +810,7 @@ public final class LogItCore
     
     public IntegrationType getIntegration()
     {
-        String s = plugin.getConfig().getString("integration");
-        
-        if (s.equalsIgnoreCase("none"))
-        {
-            return IntegrationType.NONE;
-        }
-        else if (s.equalsIgnoreCase("phpbb2"))
-        {
-            return IntegrationType.PHPBB2;
-        }
-        else
-        {
-            return IntegrationType.UNKNOWN;
-        }
+        return IntegrationType.decode(plugin.getConfig().getString("integration"));
     }
     
     /**
