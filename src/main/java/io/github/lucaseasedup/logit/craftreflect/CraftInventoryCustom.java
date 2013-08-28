@@ -24,6 +24,7 @@ public abstract class CraftInventoryCustom extends ObjectWrapper
 {
     public CraftInventoryCustom(int size)
     {
+        // This constructor forces child classes to take the above arguments.
     }
     
     public abstract void setItem(int i, ItemStack itemstack);

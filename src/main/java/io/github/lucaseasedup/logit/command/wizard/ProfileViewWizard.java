@@ -71,6 +71,7 @@ public final class ProfileViewWizard extends Wizard
     @Override
     protected void onMessage(String message)
     {
+        // ProfileViewWizard is cancelled as soon as it is created.
     }
     
     public static enum Step

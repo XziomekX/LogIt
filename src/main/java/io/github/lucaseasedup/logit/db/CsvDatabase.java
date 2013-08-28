@@ -400,11 +400,13 @@ public final class CsvDatabase extends Database
     @Override
     public void executeBatch() throws SQLException
     {
+        // Batching is not supported.
     }
     
     @Override
     public void clearBatch() throws SQLException
     {
+        // Batching is not supported.
     }
     
     @Override
