@@ -158,14 +158,20 @@ public final class LogItPlugin extends JavaPlugin
         
         if ((file = new File(getDataFolder(), "lang/messages" + suffix + ".properties")).exists())
         {
-            messages = new PropertyResourceBundle(new FileInputStream(file));
+            try (InputStream is = new FileInputStream(file))
+            {
+                messages = new PropertyResourceBundle(is);
+            }
             
             return;
         }
         
         if ((file = new File(getDataFolder(), "lang/messages.properties")).exists())
         {
-            messages = new PropertyResourceBundle(new FileInputStream(file));
+            try (InputStream is = new FileInputStream(file))
+            {
+                messages = new PropertyResourceBundle(is);
+            }
             
             return;
         }
