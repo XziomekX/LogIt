@@ -59,6 +59,10 @@ public final class FileUtils
                                                            MalformedURLException
     {
         File file = new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename);
+        
+        if (!file.exists())
+            throw new FileNotFoundException();
+        
         URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
         URL url = file.toURI().toURL();
         
