@@ -58,7 +58,13 @@ public final class LogItConfiguration extends PropertyObserver
             FileUtils.extractResource(PACKAGE_CONFIG_DEF, userDefFile);
         }
         
-        String userDefBase64String = IoUtils.toString(new FileInputStream(userDefFile));
+        String userDefBase64String;
+        
+        try (InputStream userDefInputStream = new FileInputStream(userDefFile))
+        {
+            userDefBase64String = IoUtils.toString(userDefInputStream);
+        }
+        
         IniFile userDef = new IniFile(decodeConfigDef(userDefBase64String));
         
         InputStream packageDefInputStream =
@@ -72,7 +78,10 @@ public final class LogItConfiguration extends PropertyObserver
             {
                 IniFile packageDef = new IniFile(decodeConfigDef(packageDefBase64String));
                 
-                updateConfigDef(userDef, packageDef, new FileOutputStream(userDefFile));
+                try (OutputStream userDefOutputStream = new FileOutputStream(userDefFile))
+                {
+                    updateConfigDef(userDef, packageDef, userDefOutputStream);
+                }
             }
         }
         
