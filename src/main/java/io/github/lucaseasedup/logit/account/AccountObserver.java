@@ -30,7 +30,7 @@ public abstract class AccountObserver extends LogItCoreObject implements Observe
     {
         if (o instanceof Property && arg instanceof String)
         {
-            update((Property) o, (String) arg);
+            update(o, arg);
         }
     }
     
