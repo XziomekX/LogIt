@@ -87,6 +87,7 @@ import java.util.Random;
 import java.util.logging.Level;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
@@ -939,50 +940,33 @@ public final class LogItCore
     
     private void setCommandExecutors()
     {
-        plugin.getCommand("logit").setExecutor(new LogItCommand());
-        plugin.getCommand("login").setExecutor(new LoginCommand());
-        plugin.getCommand("logout").setExecutor(new LogoutCommand());
-        plugin.getCommand("register").setExecutor(new RegisterCommand());
-        plugin.getCommand("unregister").setExecutor(new UnregisterCommand());
-        
-        if (!accountTable.isColumnDisabled("logit.accounts.password"))
+        setCommandExecutor("logit", new LogItCommand(), true);
+        setCommandExecutor("logit", new LogItCommand(), true);
+        setCommandExecutor("login", new LoginCommand(), true);
+        setCommandExecutor("logout", new LogoutCommand(), true);
+        setCommandExecutor("register", new RegisterCommand(), true);
+        setCommandExecutor("unregister", new UnregisterCommand(), true);
+        setCommandExecutor("changepass", new ChangePassCommand(),
+                !accountTable.isColumnDisabled("logit.accounts.password"));
+        setCommandExecutor("changeemail", new ChangeEmailCommand(),
+                !accountTable.isColumnDisabled("logit.accounts.email"));
+        setCommandExecutor("recoverpass", new RecoverPassCommand(),
+                !accountTable.isColumnDisabled("logit.accounts.email")
+                && config.getBoolean("password-recovery.enabled"));
+        setCommandExecutor("profile", new ProfileCommand(), config.getBoolean("profiles.enabled"));
+        setCommandExecutor("$logit-nop-command", new NopCommandExecutor(), true);
+    }
+    
+    private void setCommandExecutor(String command, CommandExecutor executor, boolean enabled)
+    {
+        if (enabled)
         {
-            plugin.getCommand("changepass").setExecutor(new ChangePassCommand());
+            plugin.getCommand(command).setExecutor(executor);
         }
         else
         {
-            plugin.getCommand("changepass").setExecutor(new DisabledCommandExecutor());
+            plugin.getCommand(command).setExecutor(new DisabledCommandExecutor());
         }
-        
-        if (!accountTable.isColumnDisabled("logit.accounts.email"))
-        {
-            plugin.getCommand("changeemail").setExecutor(new ChangeEmailCommand());
-        }
-        else
-        {
-            plugin.getCommand("changeemail").setExecutor(new DisabledCommandExecutor());
-        }
-        
-        if (!accountTable.isColumnDisabled("logit.accounts.email")
-                && config.getBoolean("password-recovery.enabled"))
-        {
-            plugin.getCommand("recoverpass").setExecutor(new RecoverPassCommand());
-        }
-        else
-        {
-            plugin.getCommand("recoverpass").setExecutor(new DisabledCommandExecutor());
-        }
-        
-        if (config.getBoolean("profiles.enabled"))
-        {
-            plugin.getCommand("profile").setExecutor(new ProfileCommand());
-        }
-        else
-        {
-            plugin.getCommand("profile").setExecutor(new DisabledCommandExecutor());
-        }
-        
-        plugin.getCommand("$logit-nop-command").setExecutor(new NopCommandExecutor());
     }
     
     private void registerEvents()
