@@ -64,7 +64,7 @@ public abstract class Database implements AutoCloseable
         autobatch = status;
     }
     
-    protected final List<Map<String, String>> copyResultSet(ResultSet rs) throws SQLException
+    public static List<Map<String, String>> copyResultSet(ResultSet rs) throws SQLException
     {
         ImmutableList.Builder<Map<String, String>> result = new ImmutableList.Builder<>();
         

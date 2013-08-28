@@ -224,12 +224,6 @@ public final class PersistenceManager extends LogItCoreObject
         return true;
     }
     
-    private PersistenceSerializer constructSerializer(Class<? extends PersistenceSerializer> clazz)
-            throws ReflectiveOperationException
-    {
-        return clazz.getConstructor().newInstance();
-    }
-    
     @SuppressWarnings("incomplete-switch")
     private boolean isSerializedUsing(Player player, Class<? extends PersistenceSerializer> clazz)
     {
@@ -373,6 +367,12 @@ public final class PersistenceManager extends LogItCoreObject
         }
         
         return false;
+    }
+    
+    private static PersistenceSerializer constructSerializer(Class<? extends PersistenceSerializer> clazz)
+            throws ReflectiveOperationException
+    {
+        return clazz.getConstructor().newInstance();
     }
     
     private static final Key[] NO_KEYS = new Key[0];

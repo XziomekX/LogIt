@@ -419,7 +419,7 @@ public final class CsvDatabase extends Database
         return connected;
     }
     
-    private String[] columnListToArray(List<String> columnList, boolean precedeType)
+    private static String[] columnListToArray(List<String> columnList, boolean precedeType)
     {
         if (precedeType)
         {
@@ -439,14 +439,14 @@ public final class CsvDatabase extends Database
         }
     }
     
-    private String escapeValue(String s)
+    private static String escapeValue(String s)
     {
         s = s.replace(",", "\\,");
         
         return "\"" + s + "\"";
     }
     
-    private String unescapeValue(String s)
+    private static String unescapeValue(String s)
     {
         s = s.trim();
         s = s.replace("\\,", ",");
