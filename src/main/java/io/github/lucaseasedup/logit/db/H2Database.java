@@ -68,13 +68,16 @@ public final class H2Database extends Database
     @Override
     public ColumnList getColumnNames(String table) throws SQLException
     {
-        ResultSet tableInfo = executeQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS"
-            + " WHERE TABLE_NAME = '" + SqlUtils.escapeQuotes(table, "'", false) + "';");
         ColumnList columnList = new ColumnList();
+        String sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS"
+                   + " WHERE TABLE_NAME = '" + SqlUtils.escapeQuotes(table, "'", false) + "';";
         
-        while (tableInfo.next())
+        try (ResultSet tableInfo = executeQuery(sql))
         {
-            columnList.add(tableInfo.getString("COLUMN_NAME"));
+            while (tableInfo.next())
+            {
+                columnList.add(tableInfo.getString("COLUMN_NAME"));
+            }
         }
         
         return columnList;

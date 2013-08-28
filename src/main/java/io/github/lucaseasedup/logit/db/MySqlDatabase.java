@@ -73,13 +73,15 @@ public final class MySqlDatabase extends Database
     @Override
     public ColumnList getColumnNames(String table) throws SQLException
     {
-        ResultSet tableInfo =
-                executeQuery("DESCRIBE `" + SqlUtils.escapeQuotes(table, "`", true) + "`;");
         ColumnList columnList = new ColumnList();
+        String sql = "DESCRIBE `" + SqlUtils.escapeQuotes(table, "`", true) + "`;";
         
-        while (tableInfo.next())
+        try (ResultSet tableInfo = executeQuery(sql))
         {
-            columnList.add(tableInfo.getString("Field"));
+            while (tableInfo.next())
+            {
+                columnList.add(tableInfo.getString("Field"));
+            }
         }
         
         return columnList;

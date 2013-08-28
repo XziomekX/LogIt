@@ -66,13 +66,15 @@ public final class SqliteDatabase extends Database
     @Override
     public ColumnList getColumnNames(String table) throws SQLException
     {
-        ResultSet tableInfo =
-                executeQuery("PRAGMA table_info('" + SqlUtils.escapeQuotes(table, "'", true) + "');");
         ColumnList columnList = new ColumnList();
+        String sql = "PRAGMA table_info('" + SqlUtils.escapeQuotes(table, "'", true) + "');";
         
-        while (tableInfo.next())
+        try (ResultSet tableInfo = executeQuery(sql))
         {
-            columnList.add(tableInfo.getString("name"));
+            while (tableInfo.next())
+            {
+                columnList.add(tableInfo.getString("name"));
+            }
         }
         
         return columnList;
