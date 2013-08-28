@@ -461,11 +461,12 @@ public final class LogItCore
     }
     
     /**
-     * Checks if the given password matches its hashed equivalent.
+     * Checks if a plain-text password is equal, after hashing, to {@code hashedPassword}.
      * 
-     * @param password       plain-text password.
-     * @param hashedPassword hashed password.
-     * @return {@code true} if passwords match.
+     * @param password         the plain-text password.
+     * @param hashedPassword   the hashed password.
+     * @param hashingAlgorithm the algorithm used when hashing {@code hashedPassword}.
+     * @return {@code true} if passwords match; {@code false} otherwise.
      */
     public boolean checkPassword(String password, String hashedPassword,
                                  HashingAlgorithm hashingAlgorithm)
@@ -481,12 +482,14 @@ public final class LogItCore
     }
     
     /**
-     * Checks if the given password matches its hashed equivalent.
+     * Checks if a plain-text password with a salt appended
+     * is equal, after hashing, to {@code hashedPassword}.
      * 
-     * @param password       plain-text password.
-     * @param hashedPassword hashed password.
-     * @param salt           salt.
-     * @return {@code true} if passwords match.
+     * @param password         the plain-text password.
+     * @param hashedPassword   the hashed password.
+     * @param salt             the salt to be appended to {@code password}.
+     * @param hashingAlgorithm the algorithm used when hashing {@code hashedPassword}.
+     * @return {@code true} if passwords match; {@code false} otherwise.
      */
     public boolean checkPassword(String password,
                                  String hashedPassword,
@@ -721,7 +724,8 @@ public final class LogItCore
     /**
      * Hashes a string using the specified algorithm.
      * 
-     * @param string the string to be hashed.
+     * @param string           the string to be hashed.
+     * @param hashingAlgorithm the hashing algorithm algorithm to be used.
      * @return resulting hash.
      */
     public String hash(String string, HashingAlgorithm hashingAlgorithm)
@@ -772,10 +776,11 @@ public final class LogItCore
     }
     
     /**
-     * Hashes a string and salt using the specified algorithm.
+     * Hashes a string with a salt using the specified algorithm.
      * 
-     * @param string string to be hashed.
-     * @param salt   salt.
+     * @param string           the string to be hashed.
+     * @param salt             the salt to be appended to {@code string}.
+     * @param hashingAlgorithm the hashing algorithm to be used.
      * @return resulting hash.
      */
     public String hash(String string, String salt, HashingAlgorithm hashingAlgorithm)
