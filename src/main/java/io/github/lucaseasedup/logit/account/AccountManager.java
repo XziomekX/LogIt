@@ -299,14 +299,8 @@ public final class AccountManager extends LogItCoreObject
         {
             if (getCore().getIntegration() == IntegrationType.PHPBB2)
             {
-                try
-                {
-                    ip = DatatypeConverter.printHexBinary(InetAddress.getByName(ip).getAddress())
-                            .toLowerCase();
-                }
-                catch (UnknownHostException ex)
-                {
-                }
+                ip = DatatypeConverter.printHexBinary(InetAddress.getByName(ip).getAddress())
+                        .toLowerCase();
             }
             
             account.updateString("logit.accounts.ip", ip);
@@ -314,7 +308,7 @@ public final class AccountManager extends LogItCoreObject
             log(Level.FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username)
                     .replace("%ip%", ip));
         }
-        catch (SQLException ex)
+        catch (SQLException | UnknownHostException ex)
         {
             log(Level.WARNING, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username)
                     .replace("%ip%", ip), ex);
