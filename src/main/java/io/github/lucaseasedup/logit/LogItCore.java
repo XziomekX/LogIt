@@ -1152,7 +1152,23 @@ public final class LogItCore
     
     public static enum IntegrationType
     {
-        UNKNOWN, NONE, PHPBB2
+        UNKNOWN, NONE, PHPBB2;
+        
+        public static IntegrationType decode(String s)
+        {
+            if (s.equalsIgnoreCase("none"))
+            {
+                return NONE;
+            }
+            else if (s.equalsIgnoreCase("phpbb2"))
+            {
+                return PHPBB2;
+            }
+            else
+            {
+                return UNKNOWN;
+            }
+        }
     }
     
     public static final String LIB_H2 = "h2small-1.3.171.jar";
