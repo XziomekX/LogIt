@@ -67,7 +67,11 @@ public final class ProfileCommand extends LogItCoreObject implements CommandExec
         }
         else if (args.length == 1 && args[0].equalsIgnoreCase("edit"))
         {
-            if (p != null && !p.hasPermission("logit.profile.edit.self"))
+            if (p == null)
+            {
+                sender.sendMessage(getMessage("ONLY_PLAYERS"));
+            }
+            else if (!p.hasPermission("logit.profile.edit.self"))
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
             }
