@@ -1044,25 +1044,13 @@ public final class LogItCore
         
         public static StorageType decode(String s)
         {
-            if (s.equalsIgnoreCase("sqlite"))
+            switch (s.toLowerCase())
             {
-                return SQLITE;
-            }
-            else if (s.equalsIgnoreCase("mysql"))
-            {
-                return MYSQL;
-            }
-            else if (s.equalsIgnoreCase("h2"))
-            {
-                return H2;
-            }
-            else if (s.equalsIgnoreCase("csv"))
-            {
-                return CSV;
-            }
-            else
-            {
-                return UNKNOWN;
+            case "sqlite": return SQLITE;
+            case "mysql":  return MYSQL;
+            case "h2":     return H2;
+            case "csv":    return CSV;
+            default:       return UNKNOWN;
             }
         }
     }
@@ -1073,45 +1061,18 @@ public final class LogItCore
         
         public static HashingAlgorithm decode(String s)
         {
-            if (s.equalsIgnoreCase("plain"))
+            switch (s.toLowerCase())
             {
-                return PLAIN;
-            }
-            else if (s.equalsIgnoreCase("md2"))
-            {
-                return MD2;
-            }
-            else if (s.equalsIgnoreCase("md5"))
-            {
-                return MD5;
-            }
-            else if (s.equalsIgnoreCase("sha-1"))
-            {
-                return SHA1;
-            }
-            else if (s.equalsIgnoreCase("sha-256"))
-            {
-                return SHA256;
-            }
-            else if (s.equalsIgnoreCase("sha-384"))
-            {
-                return SHA384;
-            }
-            else if (s.equalsIgnoreCase("sha-512"))
-            {
-                return SHA512;
-            }
-            else if (s.equalsIgnoreCase("whirlpool"))
-            {
-                return WHIRLPOOL;
-            }
-            else if (s.equalsIgnoreCase("bcrypt"))
-            {
-                return BCRYPT;
-            }
-            else
-            {
-                return UNKNOWN;
+            case "plain":     return PLAIN;
+            case "md2":       return MD2;
+            case "md5":       return MD5;
+            case "sha-1":     return SHA1;
+            case "sha-256":   return SHA256;
+            case "sha-384":   return SHA384;
+            case "sha-512":   return SHA512;
+            case "whirlpool": return WHIRLPOOL;
+            case "bcrypt":    return BCRYPT;
+            default:          return UNKNOWN;
             }
         }
         
@@ -1119,27 +1080,16 @@ public final class LogItCore
         {
             switch (this)
             {
-            case PLAIN:
-                return "plain";
-            case MD2:
-                return "md2";
-            case MD5:
-                return "md5";
-            case SHA1:
-                return "sha-1";
-            case SHA256:
-                return "sha-256";
-            case SHA384:
-                return "sha-384";
-            case SHA512:
-                return "sha-512";
-            case WHIRLPOOL:
-                return "whirlpool";
-            case BCRYPT:
-                return "bcrypt";
-            case UNKNOWN:
-            default:
-                return null;
+            case PLAIN:     return "plain";
+            case MD2:       return "md2";
+            case MD5:       return "md5";
+            case SHA1:      return "sha-1";
+            case SHA256:    return "sha-256";
+            case SHA384:    return "sha-384";
+            case SHA512:    return "sha-512";
+            case WHIRLPOOL: return "whirlpool";
+            case BCRYPT:    return "bcrypt";
+            default:        return null;
             }
         }
     }
@@ -1150,17 +1100,11 @@ public final class LogItCore
         
         public static IntegrationType decode(String s)
         {
-            if (s.equalsIgnoreCase("none"))
+            switch (s.toLowerCase())
             {
-                return NONE;
-            }
-            else if (s.equalsIgnoreCase("phpbb2"))
-            {
-                return PHPBB2;
-            }
-            else
-            {
-                return UNKNOWN;
+            case "none":   return NONE;
+            case "phpbb2": return PHPBB2;
+            default:       return UNKNOWN;
             }
         }
     }
