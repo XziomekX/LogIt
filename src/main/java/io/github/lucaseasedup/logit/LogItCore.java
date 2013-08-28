@@ -77,6 +77,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
@@ -561,7 +562,13 @@ public final class LogItCore
             accountManager.changeAccountPassword(username, newPassword);
             
             File bodyTemplateFile = getDataFile(config.getString("password-recovery.body-template"));
-            String bodyTemplate = IoUtils.toString(new FileInputStream(bodyTemplateFile));
+            String bodyTemplate;
+            
+            try (InputStream bodyTemplateInputStream = new FileInputStream(bodyTemplateFile))
+            {
+                bodyTemplate = IoUtils.toString(bodyTemplateInputStream);
+            }
+            
             String body = parseMessage(bodyTemplate, new String[]{
                 "%player%", username,
                 "%password%", newPassword
