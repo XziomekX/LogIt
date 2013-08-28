@@ -1076,6 +1076,13 @@ public final class LogItCore
             }
         }
         
+        /**
+         * Converts this {@code HashingAlgorithm} to a string representation.
+         * 
+         * @return the string representation of this {@code HashingAlgorithm},
+         *         or {@code null} if no representation for this
+         *         {@code HashingAlgorithm} was implemented.
+         */
         public String encode()
         {
             switch (this)
