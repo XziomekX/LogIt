@@ -48,7 +48,8 @@ public final class PersistenceManager extends LogItCoreObject
      * been serialized using this serializer.
      * 
      * @param player the player whose data will be serialized.
-     * @param clazz serializer class.
+     * @param clazz  serializer class.
+     * 
      * @throws ReflectiveOperationException if serializer construction failed
      */
     public void serializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
@@ -95,7 +96,7 @@ public final class PersistenceManager extends LogItCoreObject
      * Serializes player data using all enabled serializers registered
      * using {@link #registerSerializer} method.
      * 
-     * @param player player whose data will be serialized.
+     * @param player the player whose data will be serialized.
      */
     public void serialize(Player player)
     {
@@ -118,7 +119,8 @@ public final class PersistenceManager extends LogItCoreObject
      * been serialized using this serializer.
      * 
      * @param player the player whose data will be unserialized.
-     * @param clazz serializer class.
+     * @param clazz  serializer class.
+     * 
      * @throws ReflectiveOperationException if serializer construction failed
      */
     public void unserializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
@@ -166,7 +168,7 @@ public final class PersistenceManager extends LogItCoreObject
      * Unserializes player data using all enabled serializers registered
      * using {@link #registerSerializer} method.
      * 
-     * @param player player whose data will be unserialized.
+     * @param player the player whose data will be unserialized.
      */
     public void unserialize(Player player)
     {
@@ -186,9 +188,12 @@ public final class PersistenceManager extends LogItCoreObject
      * Registers a serializer class.
      * 
      * @param clazz serializer class.
-     * @throws IllegalArgumentException if {@code clazz} is {@code null}.
-     * @throws ReflectiveOperationException if serializer constructor invocation failed.
+     * 
      * @return {@code false} if the serializer class is already registered; {@code true} otherwise.
+     * 
+     * @throws IllegalArgumentException     if {@code clazz} is {@code null}.
+     * @throws ReflectiveOperationException if serializer constructor invocation failed.
+     * 
      */
     public boolean registerSerializer(Class<? extends PersistenceSerializer> clazz)
             throws ReflectiveOperationException
@@ -208,8 +213,10 @@ public final class PersistenceManager extends LogItCoreObject
      * Unregisters a serializer class.
      * 
      * @param clazz serializer class to be unregistered.
-     * @throws IllegalArgumentException if {@code clazz} is {@code null}.
+     * 
      * @return {@code false} if the serializer class is not registered; {@code true} otherwise.
+     * 
+     * @throws IllegalArgumentException if {@code clazz} is {@code null}.
      */
     public boolean unregisterSerializer(Class<? extends PersistenceSerializer> clazz)
     {
