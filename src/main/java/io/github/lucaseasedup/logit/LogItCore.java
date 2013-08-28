@@ -980,26 +980,34 @@ public final class LogItCore
     private void setSerializerEnabled(Class<? extends PersistenceSerializer> clazz, boolean status)
             throws FatalReportedException
     {
-        try
+        if (status)
         {
-            if (status)
+            try
             {
                 persistenceManager.registerSerializer(clazz);
             }
-            else
+            catch (ReflectiveOperationException ex)
             {
-                for (Player player : Bukkit.getOnlinePlayers())
+                log(Level.SEVERE,
+                        "Could not register persistence serializer: " + clazz.getSimpleName(), ex);
+                
+                FatalReportedException.throwNew(ex);
+            }
+        }
+        else
+        {
+            for (Player player : Bukkit.getOnlinePlayers())
+            {
+                try
                 {
                     persistenceManager.unserializeUsing(player, clazz);
                 }
+                catch (ReflectiveOperationException | SQLException ex)
+                {
+                    log(Level.WARNING,
+                            "Could not unserialize persistence for player: " + player.getName(), ex);
+                }
             }
-        }
-        catch (ReflectiveOperationException ex)
-        {
-            log(Level.SEVERE,
-                    "Could not register persistence serializer: " + clazz.getSimpleName(), ex);
-            
-            FatalReportedException.throwNew(ex);
         }
     }
     
