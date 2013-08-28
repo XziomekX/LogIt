@@ -41,7 +41,6 @@ public final class Account extends Observable
         this.table = table;
         
         refreshPersistence();
-        savePersistence();
     }
     
     public Set<String> getProperties()
@@ -153,6 +152,8 @@ public final class Account extends Observable
         {
             persistence.put(key, iniFile.getString("persistence", key));
         }
+        
+        savePersistence();
     }
     
     private void savePersistence() throws SQLException
