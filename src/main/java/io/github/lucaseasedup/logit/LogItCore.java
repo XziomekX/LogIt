@@ -735,41 +735,32 @@ public final class LogItCore
         switch (hashingAlgorithm)
         {
             case PLAIN:
-            {
                 return string;
-            }
+                
             case MD2:
-            {
                 return getMd2(string);
-            }
+                
             case MD5:
-            {
                 return getMd5(string);
-            }
+                
             case SHA1:
-            {
                 return getSha1(string);
-            }
+                
             case SHA256:
-            {
                 return getSha256(string);
-            }
+                
             case SHA384:
-            {
                 return getSha384(string);
-            }
+                
             case SHA512:
-            {
                 return getSha512(string);
-            }
+                
             case WHIRLPOOL:
-            {
                 return getWhirlpool(string);
-            }
+                
             case BCRYPT:
-            {
                 return getBCrypt(string, "");
-            }
+                
             default:
                 throw new IllegalArgumentException("Unknown algorithm: " + hashingAlgorithm.toString());
         }
@@ -856,7 +847,6 @@ public final class LogItCore
         )
         {
             throwable.printStackTrace(pw);
-            
             stackTrace = sw.toString();
         }
         catch (IOException ex)
