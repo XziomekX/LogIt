@@ -41,6 +41,7 @@ public final class AccountCreateEvent extends AccountEvent
     /**
      * Equal to <code>getProperty("logit.accounts.username")</code>.
      */
+    @Override
     public String getUsername()
     {
         return properties.get("logit.accounts.username");
