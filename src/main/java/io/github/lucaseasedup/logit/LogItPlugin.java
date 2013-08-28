@@ -183,9 +183,11 @@ public final class LogItPlugin extends JavaPlugin
                 throw new FileNotFoundException("No message files found.");
             
             InputStream messagesInputStream = jarFile.getInputStream(jarEntry);
-            Reader messagesReader = new InputStreamReader(messagesInputStream, "UTF-8");
             
-            messages = new PropertyResourceBundle(messagesReader);
+            try (Reader messagesReader = new InputStreamReader(messagesInputStream, "UTF-8"))
+            {
+                messages = new PropertyResourceBundle(messagesReader);
+            }
         }
     }
     
