@@ -727,6 +727,7 @@ public final class LogItCore
      * @param string           the string to be hashed.
      * @param hashingAlgorithm the hashing algorithm algorithm to be used.
      * @return resulting hash.
+     * @throws IllegalArgumentException if this method does not support the given algorithm.
      */
     public String hash(String string, HashingAlgorithm hashingAlgorithm)
     {
@@ -769,9 +770,7 @@ public final class LogItCore
                 return getBCrypt(string, "");
             }
             default:
-            {
-                return null;
-            }
+                throw new IllegalArgumentException("Unknown algorithm: " + hashingAlgorithm.toString());
         }
     }
     
