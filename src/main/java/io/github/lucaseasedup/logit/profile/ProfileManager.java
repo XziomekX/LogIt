@@ -222,6 +222,8 @@ public final class ProfileManager extends LogItCoreObject
         }
         catch (IOException ex)
         {
+            log(Level.WARNING,
+                    "Could not save profile configuration with player name: " + playerName, ex);
         }
     }
     
