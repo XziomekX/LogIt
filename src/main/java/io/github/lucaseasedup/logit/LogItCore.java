@@ -1071,43 +1071,43 @@ public final class LogItCore
         {
             if (s.equalsIgnoreCase("plain"))
             {
-                return HashingAlgorithm.PLAIN;
+                return PLAIN;
             }
             else if (s.equalsIgnoreCase("md2"))
             {
-                return HashingAlgorithm.MD2;
+                return MD2;
             }
             else if (s.equalsIgnoreCase("md5"))
             {
-                return HashingAlgorithm.MD5;
+                return MD5;
             }
             else if (s.equalsIgnoreCase("sha-1"))
             {
-                return HashingAlgorithm.SHA1;
+                return SHA1;
             }
             else if (s.equalsIgnoreCase("sha-256"))
             {
-                return HashingAlgorithm.SHA256;
+                return SHA256;
             }
             else if (s.equalsIgnoreCase("sha-384"))
             {
-                return HashingAlgorithm.SHA384;
+                return SHA384;
             }
             else if (s.equalsIgnoreCase("sha-512"))
             {
-                return HashingAlgorithm.SHA512;
+                return SHA512;
             }
             else if (s.equalsIgnoreCase("whirlpool"))
             {
-                return HashingAlgorithm.WHIRLPOOL;
+                return WHIRLPOOL;
             }
             else if (s.equalsIgnoreCase("bcrypt"))
             {
-                return HashingAlgorithm.BCRYPT;
+                return BCRYPT;
             }
             else
             {
-                return HashingAlgorithm.UNKNOWN;
+                return UNKNOWN;
             }
         }
         
