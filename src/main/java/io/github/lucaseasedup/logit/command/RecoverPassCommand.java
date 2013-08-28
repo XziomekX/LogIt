@@ -33,12 +33,9 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
     {
         Player p = null;
         
-        try
+        if (sender instanceof Player)
         {
             p = (Player) sender;
-        }
-        catch (ClassCastException ex)
-        {
         }
         
         if (args.length <= 1)

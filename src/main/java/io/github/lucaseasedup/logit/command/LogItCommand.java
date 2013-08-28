@@ -45,12 +45,9 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
     {
         Player p = null;
         
-        try
+        if (sender instanceof Player)
         {
             p = (Player) sender;
-        }
-        catch (ClassCastException ex)
-        {
         }
         
         this.args = args;

@@ -34,12 +34,9 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
     {
         Player p = null;
         
-        try
+        if (sender instanceof Player)
         {
             p = (Player) sender;
-        }
-        catch (ClassCastException ex)
-        {
         }
         
         int minPasswordLength = getConfig().getInt("password.min-length");

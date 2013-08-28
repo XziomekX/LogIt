@@ -39,14 +39,11 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
     {
         Player p = null;
         
-        try
+        if (sender instanceof Player)
         {
             p = (Player) sender;
         }
-        catch (ClassCastException ex)
-        {
-        }
-
+        
         int minPasswordLength = getConfig().getInt("password.min-length");
         int maxPasswordLength = getConfig().getInt("password.max-length");
         

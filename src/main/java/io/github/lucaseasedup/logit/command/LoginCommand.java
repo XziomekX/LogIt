@@ -38,12 +38,9 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
     {
         Player p = null;
         
-        try
+        if (sender instanceof Player)
         {
             p = (Player) sender;
-        }
-        catch (ClassCastException ex)
-        {
         }
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 2)
