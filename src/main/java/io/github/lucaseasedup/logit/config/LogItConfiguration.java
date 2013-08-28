@@ -308,11 +308,7 @@ public final class LogItConfiguration extends PropertyObserver
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         
         oldDef.save(baos);
-        
-        try (FileOutputStream fos = new FileOutputStream(new File(getDataFolder(), USER_CONFIG_DEF)))
-        {
-            fos.write(encodeConfigDef(baos.toString()).getBytes());
-        }
+        os.write(encodeConfigDef(baos.toString()).getBytes());
     }
     
     private void loadConfigDef(IniFile def)
