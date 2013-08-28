@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.persistence;
 
 import io.github.lucaseasedup.logit.LogItPlugin;
+import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.craftreflect.CraftInventoryCustom;
 import io.github.lucaseasedup.logit.craftreflect.CraftReflect;
 import io.github.lucaseasedup.logit.craftreflect.NBTTagCompound;
@@ -28,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.util.Map;
+import java.util.logging.Level;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -60,8 +62,11 @@ public final class InventorySerializer extends PersistenceSerializer
                 player.getInventory().setBoots(null);
             }
         }
-        catch (ReflectiveOperationException e)
+        catch (ReflectiveOperationException ex)
         {
+            log(Level.WARNING, "Could not serialize location for player: " + player.getName(), ex);
+            
+            ReportedException.throwNew(ex);
         }
     }
     
@@ -84,9 +89,13 @@ public final class InventorySerializer extends PersistenceSerializer
         }
         catch (ReflectiveOperationException ex)
         {
+            log(Level.WARNING, "Could not unserialize location for player: " + player.getName(), ex);
+            
+            ReportedException.throwNew(ex);
         }
     }
     
+    @SuppressWarnings("unused")
     private String serialize(Inventory inventory) throws ReflectiveOperationException
     {
         CraftReflect reflect = LogItPlugin.getInstance().getCraftReflect();
