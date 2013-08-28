@@ -268,7 +268,6 @@ public final class Table
     }
     
     protected final List<Map<String, String>> filterResultList(List<Map<String, String>> rs)
-            throws SQLException
     {
         ImmutableList.Builder<Map<String, String>> result = new ImmutableList.Builder<>();
         
