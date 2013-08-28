@@ -365,7 +365,7 @@ public final class AccountManager extends LogItCoreObject
             }
         }
         
-        return new HashSet<String>(ips).size();
+        return new HashSet<>(ips).size();
     }
     
     public String getAccountPersistence(String username, String key)

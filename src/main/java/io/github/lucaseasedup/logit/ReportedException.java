@@ -116,5 +116,5 @@ public class ReportedException extends RuntimeException
         public int count = 0;
     }
     
-    private static final ThreadLocal<RequestCounter> requestCounter = new ThreadLocal<RequestCounter>();
+    private static final ThreadLocal<RequestCounter> requestCounter = new ThreadLocal<>();
 }

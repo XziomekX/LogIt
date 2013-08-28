@@ -74,7 +74,7 @@ public final class Location implements Cloneable, ConfigurationSerializable
     @Override
     public Map<String, Object> serialize()
     {
-        Map<String, Object> result = new LinkedHashMap<String, Object>();
+        Map<String, Object> result = new LinkedHashMap<>();
         
         result.put("world", world);
         result.put("x", x);
