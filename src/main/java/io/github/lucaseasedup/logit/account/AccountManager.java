@@ -346,6 +346,11 @@ public final class AccountManager extends LogItCoreObject
         return count;
     }
     
+    /**
+     * Counts how many unique, non-null, IP addresses are in the database.
+     * 
+     * @return number of unique IP addresses.
+     */
     public int countUniqueIps()
     {
         List<String> ips = new ArrayList<>(accountMap.size());
