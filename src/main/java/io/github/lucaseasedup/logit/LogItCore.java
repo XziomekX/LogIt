@@ -511,10 +511,10 @@ public final class LogItCore
     }
     
     /**
-     * Checks if the given password matches the global password.
+     * Checks if a password is equal, after hashing, to the global password.
      * 
-     * @param password plain-text password.
-     * @return {@code true} if passwords match.
+     * @param password the plain-text password.
+     * @return {@code true} if the passwords match; {@code false} otherwise.
      */
     public boolean checkGlobalPassword(String password)
     {
@@ -525,7 +525,11 @@ public final class LogItCore
     /**
      * Changes the global password.
      * 
-     * @param password new global password;
+     * <p> The password will be hashed using the default hashing algorithm.
+     * 
+     * <p> A salt is automatically generated and appended to {@code password}. 
+     * 
+     * @param password the new global password.
      */
     public void changeGlobalPassword(String password)
     {
@@ -727,7 +731,9 @@ public final class LogItCore
      * 
      * @param string           the string to be hashed.
      * @param hashingAlgorithm the hashing algorithm algorithm to be used.
-     * @return resulting hash.
+     * 
+     * @return the resulting hash.
+     * 
      * @throws IllegalArgumentException if this method does not support the given algorithm.
      */
     public String hash(String string, HashingAlgorithm hashingAlgorithm)
