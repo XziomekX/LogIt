@@ -1070,7 +1070,31 @@ public final class LogItCore
     
     public static enum StorageType
     {
-        UNKNOWN, SQLITE, MYSQL, H2, CSV
+        UNKNOWN, SQLITE, MYSQL, H2, CSV;
+        
+        public static StorageType decode(String s)
+        {
+            if (s.equalsIgnoreCase("sqlite"))
+            {
+                return SQLITE;
+            }
+            else if (s.equalsIgnoreCase("mysql"))
+            {
+                return MYSQL;
+            }
+            else if (s.equalsIgnoreCase("h2"))
+            {
+                return H2;
+            }
+            else if (s.equalsIgnoreCase("csv"))
+            {
+                return CSV;
+            }
+            else
+            {
+                return UNKNOWN;
+            }
+        }
     }
     
     public static enum HashingAlgorithm
