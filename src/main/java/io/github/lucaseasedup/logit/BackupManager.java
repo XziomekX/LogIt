@@ -67,7 +67,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     public void createBackup()
     {
         SimpleDateFormat sdf = new SimpleDateFormat(getConfig().getString("backup.filename-format"));
-        File backupDir = new File(getDataFolder(), getConfig().getString("backup.path"));
+        File backupDir = getDataFile(getConfig().getString("backup.path"));
         File backupFile = new File(backupDir, sdf.format(new Date()));
         
         backupDir.mkdir();
@@ -187,7 +187,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     
     public File[] getBackups(boolean sortAlphabetically)
     {
-        File backupDir = new File(getDataFolder(), getConfig().getString("backup.path"));
+        File backupDir = getDataFile(getConfig().getString("backup.path"));
         File[] backupFiles = backupDir.listFiles();
         
         if (backupFiles == null)
@@ -203,7 +203,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     
     public File getBackup(String filename) throws FileNotFoundException
     {
-        File backupDir = new File(getDataFolder(), getConfig().getString("backup.path"));
+        File backupDir = getDataFile(getConfig().getString("backup.path"));
         File backupFile = new File(backupDir, filename);
         
         if (!backupFile.exists())

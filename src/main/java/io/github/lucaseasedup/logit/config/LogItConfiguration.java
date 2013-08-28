@@ -51,7 +51,7 @@ public final class LogItConfiguration extends PropertyObserver
            + "Visit http://dev.bukkit.org/bukkit-plugins/logit/pages/configuration-v0-4-9/ for help in configuring LogIt. #\n"
            + "# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #\n");
         
-        File userDefFile = new File(getDataFolder(), USER_CONFIG_DEF);
+        File userDefFile = getDataFile(USER_CONFIG_DEF);
         
         if (!userDefFile.exists())
         {
