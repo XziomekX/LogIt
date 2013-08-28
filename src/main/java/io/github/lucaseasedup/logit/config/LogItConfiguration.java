@@ -67,20 +67,20 @@ public final class LogItConfiguration extends PropertyObserver
         
         IniFile userDef = new IniFile(decodeConfigDef(userDefBase64String));
         
-        InputStream packageDefInputStream =
-                LogItConfiguration.class.getResourceAsStream(PACKAGE_CONFIG_DEF);
-        
-        if (packageDefInputStream != null)
+        try (InputStream packageDefInputStream = getClass().getResourceAsStream(PACKAGE_CONFIG_DEF))
         {
-            String packageDefBase64String = IoUtils.toString(packageDefInputStream);
-            
-            if (!userDefBase64String.equals(packageDefBase64String))
+            if (packageDefInputStream != null)
             {
-                IniFile packageDef = new IniFile(decodeConfigDef(packageDefBase64String));
+                String packageDefBase64String = IoUtils.toString(packageDefInputStream);
                 
-                try (OutputStream userDefOutputStream = new FileOutputStream(userDefFile))
+                if (!userDefBase64String.equals(packageDefBase64String))
                 {
-                    updateConfigDef(userDef, packageDef, userDefOutputStream);
+                    IniFile packageDef = new IniFile(decodeConfigDef(packageDefBase64String));
+                    
+                    try (OutputStream userDefOutputStream = new FileOutputStream(userDefFile))
+                    {
+                        updateConfigDef(userDef, packageDef, userDefOutputStream);
+                    }
                 }
             }
         }
