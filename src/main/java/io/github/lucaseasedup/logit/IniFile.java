@@ -45,7 +45,10 @@ public class IniFile
     
     public IniFile(File file) throws IOException
     {
-        loadFromStream(new FileInputStream(file));
+        try (InputStream is = new FileInputStream(file))
+        {
+            loadFromStream(is);
+        }
     }
     
     public IniFile(String string)
