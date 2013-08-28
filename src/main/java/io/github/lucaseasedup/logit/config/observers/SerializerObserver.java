@@ -84,6 +84,8 @@ public final class SerializerObserver extends PropertyObserver
                 }
                 catch (ReflectiveOperationException | SQLException ex)
                 {
+                    log(Level.WARNING,
+                            "Could not serialize persistence for player: " + player.getName(), ex);
                 }
             }
             
@@ -106,6 +108,8 @@ public final class SerializerObserver extends PropertyObserver
                 }
                 catch (ReflectiveOperationException | SQLException ex)
                 {
+                    log(Level.WARNING,
+                            "Could not unserialize persistence for player: " + player.getName(), ex);
                 }
             }
             
