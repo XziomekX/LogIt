@@ -859,6 +859,15 @@ public final class LogItCore
         plugin.getLogger().log(level, stripColor(message));
     }
     
+    /**
+     * Logs a message with a {@code Throwable} in the name of LogIt.
+     * 
+     * @param level     the message level.
+     * @param message   the message to be logged.
+     * @param throwable the throwable whose stack trace should be appended to the log.
+     * 
+     * @see #log(Level, String)
+     */
     public void log(Level level, String message, Throwable throwable)
     {
         StringWriter sw = new StringWriter();
