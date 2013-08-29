@@ -97,11 +97,13 @@ public final class AccountManager extends LogItCoreObject
             accountMap.put(username, new Account(accountTable, properties));
             
             log(Level.FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
+            evt.executeSuccessTasks();
         }
         catch (SQLException ex)
         {
             log(Level.WARNING,
                     getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
+            evt.executeFailureTasks();
             
             ReportedException.throwNew(ex);
         }
@@ -135,11 +137,13 @@ public final class AccountManager extends LogItCoreObject
             accountMap.remove(username);
             
             log(Level.FINE, getMessage("REMOVE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
+            evt.executeSuccessTasks();
         }
         catch (SQLException ex)
         {
             log(Level.WARNING,
                     getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
+            evt.executeFailureTasks();
             
             ReportedException.throwNew(ex);
         }
@@ -222,11 +226,13 @@ public final class AccountManager extends LogItCoreObject
             
             log(Level.FINE,
                     getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
+            evt.executeSuccessTasks();
         }
         catch (SQLException ex)
         {
             log(Level.WARNING,
                     getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username), ex);
+            evt.executeFailureTasks();
             
             ReportedException.throwNew(ex);
         }
@@ -258,11 +264,13 @@ public final class AccountManager extends LogItCoreObject
             account.updateString("logit.accounts.email", newEmail);
             
             log(Level.FINE, getMessage("CHANGE_EMAIL_SUCCESS_LOG").replace("%player%", username));
+            evt.executeSuccessTasks();
         }
         catch (SQLException ex)
         {
             log(Level.WARNING,
                     getMessage("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username), ex);
+            evt.executeFailureTasks();
             
             ReportedException.throwNew(ex);
         }
@@ -307,11 +315,13 @@ public final class AccountManager extends LogItCoreObject
             
             log(Level.FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username)
                     .replace("%ip%", ip));
+            evt.executeSuccessTasks();
         }
         catch (SQLException | UnknownHostException ex)
         {
             log(Level.WARNING, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username)
                     .replace("%ip%", ip), ex);
+            evt.executeFailureTasks();
             
             ReportedException.throwNew(ex);
         }
