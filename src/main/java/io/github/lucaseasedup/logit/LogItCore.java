@@ -166,10 +166,12 @@ public final class LogItCore
             }
         }
         
-        if (getDefaultHashingAlgorithm().equals(HashingAlgorithm.UNKNOWN))
+        HashingAlgorithm defaultHashingAlgorithm = getDefaultHashingAlgorithm();
+        
+        if (defaultHashingAlgorithm.equals(HashingAlgorithm.UNKNOWN))
         {
             log(Level.SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM")
-                    .replace("%ha%", getDefaultHashingAlgorithm().name()));
+                    .replace("%ha%", defaultHashingAlgorithm.name()));
             
             FatalReportedException.throwNew();
         }
