@@ -43,6 +43,13 @@ import org.bukkit.Bukkit;
 
 public final class AccountManager extends LogItCoreObject
 {
+    /**
+     * Creates a new {@code AccountManager}.
+     * 
+     * @param accountTable a table with accounts.
+     * 
+     * @throws NullPointerException if {@code accountTable} is {@code null}.
+     */
     public AccountManager(Table accountTable)
     {
         if (accountTable == null)
@@ -64,10 +71,16 @@ public final class AccountManager extends LogItCoreObject
     /**
      * Creates a new account with the given username and password.
      * 
-     * <p> The given password will be hashed using the default algorithm.
+     * <p> The password will be hashed using the default algorithm.
      * 
-     * @param username username.
-     * @param password password.
+     * @param username the username.
+     * @param password the password.
+     * 
+     * @return a {@code CancellableState} indicating whether
+     *         the operation was cancelled or not by a Bukkit event.
+     * 
+     * @throws AccountAlreadyExistsException if an account with the given username already exists.
+     * @throws ReportedException             if account creation failed. 
      */
     public CancelledState createAccount(String username, String password)
     {
@@ -119,8 +132,13 @@ public final class AccountManager extends LogItCoreObject
      * 
      * <p> Removing an account does not entail logging out.
      * 
-     * @param username username.
-     * @throws AccountNotFoundException if account does not exist.
+     * @param username a username representing the account to be removed.
+     * 
+     * @return a {@code CancellableState} indicating whether
+     *         the operation was cancelled or not by a Bukkit event.
+     * 
+     * @throws AccountNotFoundException if an account with this username does not exist.
+     * @throws ReportedException if account removal failed.
      */
     public CancelledState removeAccount(String username)
     {
@@ -155,15 +173,18 @@ public final class AccountManager extends LogItCoreObject
     }
     
     /**
-     * Checks if the given password matches that of account with the specified username.
+     * Checks if a plain-text password is equal, after hashing,
+     * to the password of an account represented by the specified username.
      * 
-     * <p> The given password will be hashed using an algorithm specified
-     * in the database or in the config.
+     * <p> The plain-text password will be hashed using the algorithm stored
+     * in the account row, or the one in the configuration file if the column was null.
      * 
-     * @param username username.
-     * @param password the password to check.
+     * @param username a username representing the account whose data will be altered.
+     * @param password the plain-text password.
+     * 
+     * @return {@code true} if they match; {@code false} otherwise.
+     * 
      * @throws AccountNotFoundException if no such account exists.
-     * @return {@code true} if they match.
      */
     public boolean checkAccountPassword(String username, String password)
     {
@@ -197,12 +218,18 @@ public final class AccountManager extends LogItCoreObject
     }
     
     /**
-     * Changes password of an account with the given username.
+     * Changes password of an account with the specified username.
      * 
-     * <p> The given password will be hashed using the default algorithm.
+     * <p> The password will be hashed using the default algorithm.
      * 
-     * @param username    username.
-     * @param newPassword a new password.
+     * @param username    a username representing the account to be removed.
+     * @param newPassword the new password.
+     * 
+     * @return a {@code CancellableState} indicating whether
+     *         the operation was cancelled or not by a Bukkit event.
+     * 
+     * @throws AccountNotFoundException if an account with this username does not exist.
+     * @throws ReportedException if this operation failed.
      */
     public CancelledState changeAccountPassword(String username, String newPassword)
     {
@@ -244,10 +271,16 @@ public final class AccountManager extends LogItCoreObject
     }
     
     /**
-     * Changes e-mail address of an account with the given username.
+     * Changes e-mail address of an account with the specified username.
      * 
-     * @param username username.
-     * @param newEmail a new e-mail address.
+     * @param username a username representing the account to be removed.
+     * @param newEmail the new e-mail address.
+     * 
+     * @return a {@code CancellableState} indicating whether
+     *         the operation was cancelled or not by a Bukkit event.
+     * 
+     * @throws AccountNotFoundException if an account with this username does not exist.
+     * @throws ReportedException if this operation failed.
      */
     public CancelledState changeEmail(String username, String newEmail)
     {
@@ -289,9 +322,14 @@ public final class AccountManager extends LogItCoreObject
     /**
      * Attaches IP address to an account with the specified username.
      * 
-     * @param username username.
-     * @param ip       an IP address.
-     * @throws AccountNotFoundException if the account does not exist.
+     * @param username a username representing the account to be removed.
+     * @param ip       the new IP address.
+     * 
+     * @return a {@code CancellableState} indicating whether
+     *         the operation was cancelled or not by a Bukkit event.
+     * 
+     * @throws AccountNotFoundException if an account with this username does not exist.
+     * @throws ReportedException if this operation failed.
      */
     public CancelledState attachIp(String username, String ip)
     {
@@ -432,6 +470,9 @@ public final class AccountManager extends LogItCoreObject
     
     /**
      * Loads accounts from the database.
+     * 
+     * @return a {@code CancellableState} indicating whether
+     *         the operation was cancelled or not by a Bukkit event.
      */
     public CancelledState loadAccounts()
     {
