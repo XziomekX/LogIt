@@ -18,13 +18,12 @@
  */
 package io.github.lucaseasedup.logit.account;
 
+import io.github.lucaseasedup.logit.CancellableEvent;
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public abstract class AccountEvent extends Event implements Cancellable
+public abstract class AccountEvent extends CancellableEvent
 {
     public AccountEvent(Account account)
     {
@@ -37,18 +36,6 @@ public abstract class AccountEvent extends Event implements Cancellable
     public HandlerList getHandlers()
     {
         return handlers;
-    }
-    
-    @Override
-    public final boolean isCancelled()
-    {
-        return cancelled;
-    }
-    
-    @Override
-    public final void setCancelled(boolean cancelled)
-    {
-        this.cancelled = cancelled;
     }
     
     public Account getAccount()
@@ -154,7 +141,6 @@ public abstract class AccountEvent extends Event implements Cancellable
     private static final HandlerList handlers = new HandlerList();
     
     private final Account account;
-    private boolean cancelled = false;
     private List<Runnable> successTasks;
     private List<Runnable> failureTasks;
 }

@@ -18,11 +18,10 @@
  */
 package io.github.lucaseasedup.logit.session;
 
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
+import io.github.lucaseasedup.logit.CancellableEvent;
 import org.bukkit.event.HandlerList;
 
-public abstract class SessionEvent extends Event implements Cancellable
+public abstract class SessionEvent extends CancellableEvent
 {
     public SessionEvent(String username, Session session)
     {
@@ -34,18 +33,6 @@ public abstract class SessionEvent extends Event implements Cancellable
     public HandlerList getHandlers()
     {
         return handlers;
-    }
-    
-    @Override
-    public final boolean isCancelled()
-    {
-        return cancelled;
-    }
-    
-    @Override
-    public final void setCancelled(boolean cancelled)
-    {
-        this.cancelled = cancelled;
     }
     
     public String getUsername()
@@ -67,5 +54,4 @@ public abstract class SessionEvent extends Event implements Cancellable
     
     private final String username;
     private final Session session;
-    private boolean cancelled = false;
 }
