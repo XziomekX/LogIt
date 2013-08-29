@@ -107,6 +107,9 @@ public final class LogItCore
      * Starts up the {@code LogItCore} if stopped.
      * 
      * @throws FatalReportedException if critical error occured and LogIt could not start.
+     * 
+     * @see #isStarted()
+     * @see #stop()
      */
     public void start() throws FatalReportedException
     {
@@ -368,6 +371,8 @@ public final class LogItCore
     /**
      * Stops the {@code LogItCore} if started.
      * 
+     * @see #isStarted()
+     * @see #start()
      */
     public void stop()
     {
@@ -477,6 +482,8 @@ public final class LogItCore
      * @param hashingAlgorithm the algorithm used when hashing {@code hashedPassword}.
      * 
      * @return {@code true} if passwords match; {@code false} otherwise.
+     * 
+     * @see #checkPassword(String, String, String, HashingAlgorithm)
      */
     public boolean checkPassword(String password, String hashedPassword,
                                  HashingAlgorithm hashingAlgorithm)
@@ -501,6 +508,8 @@ public final class LogItCore
      * @param hashingAlgorithm the algorithm used when hashing {@code hashedPassword}.
      * 
      * @return {@code true} if passwords match; {@code false} otherwise.
+     * 
+     * @see #checkPassword(String, String, HashingAlgorithm)
      */
     public boolean checkPassword(String password,
                                  String hashedPassword,
@@ -764,6 +773,8 @@ public final class LogItCore
      * @return the resulting hash.
      * 
      * @throws IllegalArgumentException if this method does not support the given algorithm.
+     * 
+     * @see #hash(String, String, HashingAlgorithm)
      */
     public String hash(String string, HashingAlgorithm hashingAlgorithm)
     {
@@ -809,6 +820,8 @@ public final class LogItCore
      * @param hashingAlgorithm the hashing algorithm to be used.
      * 
      * @return resulting hash.
+     * 
+     * @see #hash(String, HashingAlgorithm)
      */
     public String hash(String string, String salt, HashingAlgorithm hashingAlgorithm)
     {
@@ -845,6 +858,8 @@ public final class LogItCore
      * 
      * @param level   the message level.
      * @param message the message to be logged.
+     * 
+     * @see #log(Level, String, Throwable)
      */
     public void log(Level level, String message)
     {
