@@ -422,12 +422,18 @@ public final class LogItCore
     }
     
     /**
-     * Restarts the LogItCore by invoking {@link #stop} and {@link #start}.
+     * Restarts the {@code LogItCore}, if started,
+     * by invoking {@link #stop} and {@link #start}.
      * 
      * @throws FatalReportedException if LogItCore could not be started again.
+     * 
+     * @see #isStarted()
      */
     public void restart() throws FatalReportedException
     {
+        if (!started)
+            return;
+        
         File sessionFile = getDataFile(config.getString("storage.sessions.filename"));
         
         try
