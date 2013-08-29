@@ -516,9 +516,11 @@ public final class LogItCore
     }
     
     /**
-     * Checks if a password is equal, after hashing, to the global password.
+     * Checks if a password is equal, after hashing
+     * using the default algorithm, to the global password.
      * 
      * @param password the plain-text password.
+     * 
      * @return {@code true} if the passwords match; {@code false} otherwise.
      */
     public boolean checkGlobalPassword(String password)
