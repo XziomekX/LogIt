@@ -92,7 +92,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
 /**
- * This class is the central part of LogIt.
+ * The central part of LogIt.
  */
 public final class LogItCore
 {
@@ -104,9 +104,7 @@ public final class LogItCore
     }
     
     /**
-     * Starts up the LogItCore.
-     * 
-     * <p> Does nothing if it has already been started.
+     * Starts up the {@code LogItCore} if stopped.
      * 
      * @throws FatalReportedException if critical error occured and LogIt could not start.
      */
@@ -368,9 +366,8 @@ public final class LogItCore
     }
     
     /**
-     * Stops the LogItCore.
+     * Stops the {@code LogItCore} if started.
      * 
-     * <p> Does nothing if it has not been started.
      */
     public void stop()
     {
@@ -478,6 +475,7 @@ public final class LogItCore
      * @param password         the plain-text password.
      * @param hashedPassword   the hashed password.
      * @param hashingAlgorithm the algorithm used when hashing {@code hashedPassword}.
+     * 
      * @return {@code true} if passwords match; {@code false} otherwise.
      */
     public boolean checkPassword(String password, String hashedPassword,
@@ -501,6 +499,7 @@ public final class LogItCore
      * @param hashedPassword   the hashed password.
      * @param salt             the salt to be appended to {@code password}.
      * @param hashingAlgorithm the algorithm used when hashing {@code hashedPassword}.
+     * 
      * @return {@code true} if passwords match; {@code false} otherwise.
      */
     public boolean checkPassword(String password,
@@ -538,9 +537,7 @@ public final class LogItCore
     /**
      * Changes the global password.
      * 
-     * <p> The password will be hashed using the default hashing algorithm.
-     * 
-     * <p> A salt is automatically generated and appended to {@code password}. 
+     * <p> Hashes {@code password} with a random salt using the default algorithm.
      * 
      * @param password the new global password.
      */
@@ -564,7 +561,7 @@ public final class LogItCore
     }
     
     /**
-     * Changes a player's password with a randomly generated one,
+     * Changes a player's password to a randomly generated one,
      * and sends it to the player's e-mail address.
      * 
      * @param username a username of the player whom the mail will be sent.
@@ -632,6 +629,7 @@ public final class LogItCore
      * 
      * @param length      the desired password length.
      * @param combination the letterset used in the generation process.
+     * 
      * @return the generated password.
      */
     public String generatePassword(int length, String combination)
@@ -662,6 +660,7 @@ public final class LogItCore
      * or {@link SessionManager#isSessionAlive(String)}.
      * 
      * @param player the player whom this check will be ran on.
+     * 
      * @return {@code true} if the player is forced to log in; {@code false} otherwise.
      */
     public boolean isPlayerForcedToLogIn(Player player)
@@ -808,6 +807,7 @@ public final class LogItCore
      * @param string           the string to be hashed.
      * @param salt             the salt to be appended to {@code string}.
      * @param hashingAlgorithm the hashing algorithm to be used.
+     * 
      * @return resulting hash.
      */
     public String hash(String string, String salt, HashingAlgorithm hashingAlgorithm)
@@ -843,8 +843,8 @@ public final class LogItCore
     /**
      * Logs a message in the name of LogIt.
      * 
-     * @param level   message level.
-     * @param message message.
+     * @param level   the message level.
+     * @param message the message to be logged.
      */
     public void log(Level level, String message)
     {
@@ -1032,7 +1032,7 @@ public final class LogItCore
     }
     
     /**
-     * The preferred way to obtain the instance of LogItCore.
+     * The preferred way to obtain the instance of {@code LogItCore}.
      * 
      * @return the instance of LogItCore.
      */
