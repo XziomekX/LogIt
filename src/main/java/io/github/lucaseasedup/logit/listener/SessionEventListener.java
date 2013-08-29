@@ -32,12 +32,12 @@ import org.bukkit.event.Listener;
 
 public final class SessionEventListener extends LogItCoreObject implements Listener
 {
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onStart(SessionStartEvent event)
     {
         String username = event.getUsername();
         
-        if (event.isCancelled() || !PlayerUtils.isPlayerOnline(username))
+        if (!PlayerUtils.isPlayerOnline(username))
             return;
         
         final Player player = PlayerUtils.getPlayer(username);
@@ -65,12 +65,12 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
         }
     }
     
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onEnd(SessionEndEvent event)
     {
         String username = event.getUsername();
         
-        if (event.isCancelled() || !PlayerUtils.isPlayerOnline(username))
+        if (!PlayerUtils.isPlayerOnline(username))
             return;
         
         final Player player = PlayerUtils.getPlayer(username);
