@@ -174,11 +174,14 @@ public final class LogItCore
             FatalReportedException.throwNew();
         }
         
+        StorageType storageType =
+                StorageType.decode(plugin.getConfig().getString("storage.accounts.db-type"));
+        
         try
         {
             ReportedException.incrementRequestCount();
             
-            if (getStorageAccountsDbType().equals(StorageType.H2))
+            if (storageType.equals(StorageType.H2))
             {
                 LogItPlugin.loadLibrary(LIB_H2);
             }
@@ -199,7 +202,7 @@ public final class LogItCore
         
         try
         {
-            switch (getStorageAccountsDbType())
+            switch (storageType)
             {
                 case SQLITE:
                 {
@@ -238,7 +241,7 @@ public final class LogItCore
                 default:
                 {
                     log(Level.SEVERE, getMessage("UNKNOWN_STORAGE_TYPE")
-                            .replace("%st%", getStorageAccountsDbType().name()));
+                            .replace("%st%", storageType.name()));
                     
                     FatalReportedException.throwNew();
                 }
@@ -354,7 +357,7 @@ public final class LogItCore
         started = true;
         
         log(Level.FINE, getMessage("PLUGIN_START_SUCCESS")
-                .replace("%st%", getStorageAccountsDbType().name()));
+                .replace("%st%", storageType.name()));
         
         if (firstRun)
         {
@@ -798,11 +801,6 @@ public final class LogItCore
         }
         
         return hash;
-    }
-    
-    public StorageType getStorageAccountsDbType()
-    {
-        return StorageType.decode(plugin.getConfig().getString("storage.accounts.db-type"));
     }
     
     public HashingAlgorithm getDefaultHashingAlgorithm()
