@@ -430,8 +430,15 @@ public final class AccountManager extends LogItCoreObject
     /**
      * Loads accounts from the database.
      */
-    public void loadAccounts()
+    public CancelledState loadAccounts()
     {
+        AccountEvent evt = new AccountsLoadEvent();
+        
+        Bukkit.getPluginManager().callEvent(evt);
+        
+        if (evt.isCancelled())
+            return CancelledState.CANCELLED;
+        
         Map<String, Account> loadedAccounts = new HashMap<>();
         
         try
@@ -476,6 +483,8 @@ public final class AccountManager extends LogItCoreObject
             
             ReportedException.throwNew(ex);
         }
+        
+        return CancelledState.NOT_CANCELLED;
     }
     
     private final Table accountTable;
