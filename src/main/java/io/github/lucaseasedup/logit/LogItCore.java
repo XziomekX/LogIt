@@ -696,9 +696,18 @@ public final class LogItCore
     }
     
     /**
-     * Updates a player's group.
+     * Updates permission groups for a player if LogIt is linked to Vault.
      * 
-     * @param player the player whose group should be updated.
+     * <p> Permission groups currently supported: <ul>
+     *  <li>Registered</li>
+     *  <li>Not registered</li>
+     *  <li>Logged in</li>
+     *  <li>Logged out</li>
+     * </ul>
+     * 
+     * <p> Exact group names are taken from the LogIt configuration file.
+     * 
+     * @param player the player whose permission groups should be updated.
      */
     public void updatePlayerGroup(Player player)
     {
