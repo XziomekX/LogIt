@@ -56,7 +56,7 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
             }
-            else if (!getAccountManager().getEmail(p.getName()).equals(args[0]))
+            else if (!args[0].equals(getAccountManager().getEmail(p.getName())))
             {
                 p.sendMessage(getMessage("INCORRECT_EMAIL_ADDRESS"));
             }
