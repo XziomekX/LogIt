@@ -557,6 +557,12 @@ public final class LogItCore
         log(Level.INFO, getMessage("GLOBALPASS_REMOVE_SUCCESS"));
     }
     
+    /**
+     * Changes a player's password with a randomly generated one,
+     * and sends it to the player's e-mail address.
+     * 
+     * @param username a username of the player whom the mail will be sent.
+     */
     public void recoverPassword(String username)
     {
         try
