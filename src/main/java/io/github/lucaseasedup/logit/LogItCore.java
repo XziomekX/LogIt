@@ -736,7 +736,7 @@ public final class LogItCore
      * Hashes a string using the specified algorithm.
      * 
      * @param string           the string to be hashed.
-     * @param hashingAlgorithm the hashing algorithm algorithm to be used.
+     * @param hashingAlgorithm the hashing algorithm to be used.
      * 
      * @return the resulting hash.
      * 
