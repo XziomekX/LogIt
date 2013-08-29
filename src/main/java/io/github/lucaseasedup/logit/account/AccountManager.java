@@ -72,7 +72,7 @@ public final class AccountManager extends LogItCoreObject
     public CancelledState createAccount(String username, String password)
     {
         if (isRegistered(username))
-            throw new RuntimeException("Account already exists.");
+            throw new AccountAlreadyExistsException();
         
         HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
         String salt = HashGenerator.generateSalt(algorithm);
