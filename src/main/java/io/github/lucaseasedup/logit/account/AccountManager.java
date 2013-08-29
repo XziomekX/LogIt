@@ -45,6 +45,9 @@ public final class AccountManager extends LogItCoreObject
 {
     public AccountManager(Table accountTable)
     {
+        if (accountTable == null)
+            throw new NullPointerException();
+        
         this.accountTable = accountTable;
     }
     
