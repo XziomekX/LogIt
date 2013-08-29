@@ -24,24 +24,12 @@ public final class AccountCreateEvent extends AccountEvent
 {
     public AccountCreateEvent(Map<String, String> properties)
     {
-        super(null);
-        
         this.properties = properties;
-    }
-    
-    /**
-     * Always returns <code>null</code>.
-     */
-    @Override
-    public Account getAccount()
-    {
-        return null;
     }
     
     /**
      * Equal to <code>getProperty("logit.accounts.username")</code>.
      */
-    @Override
     public String getUsername()
     {
         return properties.get("logit.accounts.username");

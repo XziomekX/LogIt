@@ -22,15 +22,30 @@ public final class AccountChangePasswordEvent extends AccountEvent
 {
     public AccountChangePasswordEvent(Account account, String password)
     {
-        super(account);
-        
+        this.account = account;
         this.password = password;
     }
-
+    
+    public Account getAccount()
+    {
+        return account;
+    }
+    
+    /**
+     * Equal to <code>getAccount().get("logit.accounts.username")</code>.
+     * 
+     * @return Username.
+     */
+    public String getUsername()
+    {
+        return account.getString("logit.accounts.username");
+    }
+    
     public String getPassword()
     {
         return password;
     }
-
+    
+    private final Account account;
     private final String password;
 }

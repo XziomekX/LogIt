@@ -22,6 +22,23 @@ public final class AccountRemoveEvent extends AccountEvent
 {
     public AccountRemoveEvent(Account account)
     {
-        super(account);
+        this.account = account;
     }
+    
+    public Account getAccount()
+    {
+        return account;
+    }
+    
+    /**
+     * Equal to <code>getAccount().get("logit.accounts.username")</code>.
+     * 
+     * @return Username.
+     */
+    public String getUsername()
+    {
+        return account.getString("logit.accounts.username");
+    }
+    
+    private final Account account;
 }

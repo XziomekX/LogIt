@@ -22,9 +22,23 @@ public final class AccountAttachIpEvent extends AccountEvent
 {
     public AccountAttachIpEvent(Account account, String ip)
     {
-        super(account);
-        
+        this.account = account;
         this.ip = ip;
+    }
+    
+    public Account getAccount()
+    {
+        return account;
+    }
+    
+    /**
+     * Equal to <code>getAccount().get("logit.accounts.username")</code>.
+     * 
+     * @return Username.
+     */
+    public String getUsername()
+    {
+        return account.getString("logit.accounts.username");
     }
     
     public String getIp()
@@ -32,5 +46,6 @@ public final class AccountAttachIpEvent extends AccountEvent
         return ip;
     }
     
+    private final Account account;
     private final String ip;
 }

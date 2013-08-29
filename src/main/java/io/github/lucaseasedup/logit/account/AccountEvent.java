@@ -25,9 +25,8 @@ import org.bukkit.event.HandlerList;
 
 public abstract class AccountEvent extends CancellableEvent
 {
-    public AccountEvent(Account account)
+    public AccountEvent()
     {
-        this.account = account;
         this.successTasks = new ArrayList<>();
         this.failureTasks = new ArrayList<>();
     }
@@ -36,21 +35,6 @@ public abstract class AccountEvent extends CancellableEvent
     public HandlerList getHandlers()
     {
         return handlers;
-    }
-    
-    public Account getAccount()
-    {
-        return account;
-    }
-    
-    /**
-     * Equal to <code>getAccount().get("logit.accounts.username")</code>.
-     * 
-     * @return Username.
-     */
-    public String getUsername()
-    {
-        return account.getString("logit.accounts.username");
     }
     
     /**
@@ -140,7 +124,6 @@ public abstract class AccountEvent extends CancellableEvent
     
     private static final HandlerList handlers = new HandlerList();
     
-    private final Account account;
     private List<Runnable> successTasks;
     private List<Runnable> failureTasks;
 }

@@ -22,9 +22,23 @@ public final class AccountChangeEmailEvent extends AccountEvent
 {
     public AccountChangeEmailEvent(Account account, String email)
     {
-        super(account);
-        
+        this.account = account;
         this.email = email;
+    }
+    
+    public Account getAccount()
+    {
+        return account;
+    }
+    
+    /**
+     * Equal to <code>getAccount().get("logit.accounts.username")</code>.
+     * 
+     * @return Username.
+     */
+    public String getUsername()
+    {
+        return account.getString("logit.accounts.username");
     }
     
     public String getEmail()
@@ -32,5 +46,6 @@ public final class AccountChangeEmailEvent extends AccountEvent
         return email;
     }
     
+    private final Account account;
     private final String email;
 }
