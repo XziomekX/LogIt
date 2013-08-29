@@ -18,6 +18,8 @@
  */
 package io.github.lucaseasedup.logit.account;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -27,6 +29,8 @@ public abstract class AccountEvent extends Event implements Cancellable
     public AccountEvent(Account account)
     {
         this.account = account;
+        this.successTasks = new ArrayList<>();
+        this.failureTasks = new ArrayList<>();
     }
     
     @Override
@@ -62,6 +66,86 @@ public abstract class AccountEvent extends Event implements Cancellable
         return account.getString("logit.accounts.username");
     }
     
+    /**
+     * Schedules a task to be executed when the action following
+     * this event is succeeds.
+     * 
+     * @param task the task to be scheduled.
+     * 
+     * @throws IllegalStateException if tasks has already been executed.
+     * @throws NullPointerException  if {@code task} is {@code null}.
+     */
+    public final void scheduleSuccessTask(Runnable task)
+    {
+        if (successTasks == null)
+            throw new IllegalStateException();
+        
+        if (task == null)
+            throw new NullPointerException();
+        
+        successTasks.add(task);
+    }
+    
+    /**
+     * Schedules a task to be executed when the action following
+     * this event is fails.
+     * 
+     * @param task the task to be scheduled.
+     * 
+     * @throws IllegalStateException if tasks has already been executed.
+     * @throws NullPointerException  if {@code task} is {@code null}.
+     */
+    public final void scheduleFailureTask(Runnable task)
+    {
+        if (failureTasks == null)
+            throw new IllegalStateException();
+        
+        if (task == null)
+            throw new NullPointerException();
+        
+        failureTasks.add(task);
+    }
+    
+    /* package */ final void executeSuccessTasks()
+    {
+        if (successTasks == null)
+        {
+            invalidateTaskLists();
+            
+            throw new IllegalStateException();
+        }
+        
+        for (Runnable task : successTasks)
+        {
+            task.run();
+        }
+        
+        invalidateTaskLists();
+    }
+    
+    /* package */ final void executeFailureTasks()
+    {
+        if (failureTasks == null)
+        {
+            invalidateTaskLists();
+            
+            throw new IllegalStateException();
+        }
+        
+        for (Runnable task : failureTasks)
+        {
+            task.run();
+        }
+        
+        invalidateTaskLists();
+    }
+    
+    private void invalidateTaskLists()
+    {
+        successTasks = null;
+        failureTasks = null;
+    }
+    
     public static HandlerList getHandlerList()
     {
         return handlers;
@@ -71,4 +155,6 @@ public abstract class AccountEvent extends Event implements Cancellable
     
     private final Account account;
     private boolean cancelled = false;
+    private List<Runnable> successTasks;
+    private List<Runnable> failureTasks;
 }
