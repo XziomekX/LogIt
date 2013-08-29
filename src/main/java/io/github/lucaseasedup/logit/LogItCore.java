@@ -723,10 +723,9 @@ public final class LogItCore
     }
     
     /**
-     * Checks if LogIt is linked to Vault
-     * (e.i.&nbsp;LogItCore has been started and Vault is enabled).
+     * Checks if LogIt is linked to Vault.
      * 
-     * @return {@code true} if LogIt is linked to Vault.
+     * @return {@code true} if LogIt is linked to Vault; {@code false} otherwise.
      */
     public boolean isLinkedToVault()
     {
