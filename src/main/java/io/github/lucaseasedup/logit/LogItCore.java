@@ -557,7 +557,7 @@ public final class LogItCore
         log(Level.INFO, getMessage("GLOBALPASS_REMOVE_SUCCESS"));
     }
     
-    public void sendPasswordRecoveryMail(String username)
+    public void recoverPassword(String username)
     {
         try
         {
