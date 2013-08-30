@@ -212,11 +212,11 @@ public final class LogItConfiguration extends PropertyObserver
     }
     
     private void addProperty(String path,
-                               PropertyType type,
-                               boolean requiresRestart,
-                               Object defaultValue,
-                               PropertyValidator validator,
-                               PropertyObserver obs)
+                             PropertyType type,
+                             boolean requiresRestart,
+                             Object defaultValue,
+                             PropertyValidator validator,
+                             PropertyObserver obs)
     {
         Object existingValue = getPlugin().getConfig().get(path, defaultValue);
         Property property = new Property(path, type, requiresRestart, existingValue, validator);
