@@ -77,7 +77,7 @@ public final class MinecraftUtils
         {
             if (contents[i] != null)
             {
-                HashMap<String, Tag> tagMap = new HashMap<>();
+                Map<String, Tag> tagMap = new HashMap<>();
                 tagMap.put("id", new ShortTag("id", (short) contents[i].getTypeId()));
                 tagMap.put("Damage", new ShortTag("Damage", contents[i].getDurability()));
                 tagMap.put("Count", new ByteTag("Count", (byte) contents[i].getAmount()));
@@ -94,7 +94,7 @@ public final class MinecraftUtils
         {
             if (armor[i] != null)
             {
-                HashMap<String, Tag> tagMap = new HashMap<>();
+                Map<String, Tag> tagMap = new HashMap<>();
                 tagMap.put("id", new ShortTag("id", (short) armor[i].getTypeId()));
                 tagMap.put("Damage", new ShortTag("Damage", armor[i].getDurability()));
                 tagMap.put("Count", new ByteTag("Count", (byte) 1));

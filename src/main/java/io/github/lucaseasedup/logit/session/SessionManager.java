@@ -362,5 +362,5 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         }
     }
     
-    private final ConcurrentHashMap<String, Session> sessions = new ConcurrentHashMap<>();
+    private final Map<String, Session> sessions = new ConcurrentHashMap<>();
 }

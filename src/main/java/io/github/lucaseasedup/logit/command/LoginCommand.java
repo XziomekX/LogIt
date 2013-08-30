@@ -25,6 +25,7 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.sendMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -154,6 +155,6 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
         return true;
     }
     
-    private final HashMap<String, Integer> failedLoginsToKick = new HashMap<>();
-    private final HashMap<String, Integer> failedLoginsToBan = new HashMap<>();
+    private final Map<String, Integer> failedLoginsToKick = new HashMap<>();
+    private final Map<String, Integer> failedLoginsToBan = new HashMap<>();
 }
