@@ -32,43 +32,46 @@ public final class PlayerUtils
     }
     
     /**
-     * Returns a case-correct username.
+     * Returns a case-correct player name.
      * 
-     * @param username Username.
-     * @return Case-correct username.
+     * @param name the name of a player.
+     * 
+     * @return the case-correct player name.
      */
-    public static String getPlayerName(String username)
+    public static String getPlayerName(String name)
     {
-        if (isPlayerOnline(username))
+        if (isPlayerOnline(name))
         {
-            return getPlayer(username).getName();
+            return getPlayer(name).getName();
         }
         else
         {
-            return username;
+            return name;
         }
     }
     
     /**
-     * Checks if a player with the given username is online.
+     * Checks if a player with the given name is online.
      * 
-     * @param username Username.
-     * @return True, if they are online.
+     * @param name the player name.
+     * 
+     * @return {@code true} if online; {@code false} otherwise.
      */
-    public static boolean isPlayerOnline(String username)
+    public static boolean isPlayerOnline(String name)
     {
-        return (getPlayer(username) != null) ? true : false;
+        return (getPlayer(name) != null) ? true : false;
     }
     
     /**
-     * Returns a player with the given username.
+     * Returns an online {@code Player} with the given name.
      * 
-     * @param username Username.
-     * @return Player.
+     * @param name the player name.
+     * 
+     * @return the player object.
      */
-    public static Player getPlayer(String username)
+    public static Player getPlayer(String name)
     {
-        return Bukkit.getPlayerExact(username);
+        return Bukkit.getPlayerExact(name);
     }
     
     public static String getPlayerIp(Player player)
@@ -87,6 +90,7 @@ public final class PlayerUtils
      * @param radiusX  the maximum radius on X-axis.
      * @param radiusY  the maximum radius on Y-axis.
      * @param radiusZ  the maximum radius on Z-axis.
+     * 
      * @return {@code true} if the player is within the radius; {@code false} otherwise.
      */
     public static boolean isPlayerAt(Player player, Location location,
