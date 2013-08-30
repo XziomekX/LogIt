@@ -18,9 +18,11 @@
  */
 package io.github.lucaseasedup.logit.profile.field;
 
+import java.util.Collection;
+
 public final class SetField extends Field
 {
-    public SetField(String name, String[] values)
+    public SetField(String name, Collection<String> values)
     {
         super(name);
         
@@ -43,10 +45,10 @@ public final class SetField extends Field
         return false;
     }
     
-    public String[] getAcceptedValues()
+    public Collection<String> getAcceptedValues()
     {
         return values;
     }
     
-    private final String[] values;
+    private final Collection<String> values;
 }

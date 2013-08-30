@@ -28,6 +28,7 @@ import io.github.lucaseasedup.logit.profile.field.StringField;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -284,7 +285,7 @@ public final class ProfileManager extends LogItCoreObject
                 }
             }
             case "SET":
-                return new SetField(fieldName, arguments.split("(?<!\\\\),"));
+                return new SetField(fieldName, Arrays.asList(arguments.split("(?<!\\\\),")));
                 
             default:
                 throw new RuntimeException("Unknown field type.");
