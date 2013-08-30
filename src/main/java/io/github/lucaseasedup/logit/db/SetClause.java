@@ -22,6 +22,9 @@ public final class SetClause
 {
     public SetClause(String columnId, String value)
     {
+        if (columnId == null)
+            throw new NullPointerException();
+        
         this.columnId = columnId;
         this.value = value;
     }
