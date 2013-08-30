@@ -37,7 +37,12 @@ public final class Account extends Observable
 {
     public Account(Table table, Map<String, String> initialData) throws SQLException
     {
-        this.data = new HashMap<>(initialData);
+        if (table == null)
+            throw new NullPointerException();
+        
+        this.data = (initialData != null) ?
+                    new HashMap<>(initialData) :
+                    new HashMap<String, String>();
         this.table = table;
         
         refreshPersistence();
