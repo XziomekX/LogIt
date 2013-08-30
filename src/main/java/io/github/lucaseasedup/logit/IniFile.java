@@ -45,6 +45,9 @@ public class IniFile
     
     public IniFile(File file) throws IOException
     {
+        if (file == null)
+            throw new NullPointerException();
+        
         try (InputStream is = new FileInputStream(file))
         {
             loadFromStream(is);
@@ -53,11 +56,17 @@ public class IniFile
     
     public IniFile(String string)
     {
+        if (string == null)
+            throw new NullPointerException();
+        
         loadFromString(string);
     }
     
     public IniFile(IniFile ini)
     {
+        if (ini == null)
+            throw new NullPointerException();
+        
         Map<String, Map<String, String>> entries = new HashMap<>();
         
         for (String section : ini.getSections())
