@@ -34,7 +34,7 @@ public final class SetField extends Field
     {
         for (String s : values)
         {
-            if (s.equals(value))
+            if ((s == null && value == null) || (s != null && s.equals(value)))
             {
                 return true;
             }
