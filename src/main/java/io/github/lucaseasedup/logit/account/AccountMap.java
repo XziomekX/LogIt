@@ -34,7 +34,9 @@ public final class AccountMap
         if (table == null)
             throw new NullPointerException();
         
-        this.data = new HashMap<>(initialData);
+        this.data = (initialData != null) ?
+                    new HashMap<>(initialData) :
+                    new HashMap<String, Account>();
         this.table = table;
     }
     
