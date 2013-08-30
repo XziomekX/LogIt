@@ -49,12 +49,16 @@ public final class PersistenceManager extends LogItCoreObject
      * @param player the player whose data will be serialized.
      * @param clazz  serializer class.
      * 
+     * @throws NullPointerException         if {@code player} is null.
      * @throws ReflectiveOperationException if serializer construction failed.
      * @throws SQLException                 if an SQL error occured while updating persistence.
      */
     public void serializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
             throws ReflectiveOperationException, SQLException
     {
+        if (player == null)
+            throw new NullPointerException();
+        
         Account account = getAccountManager().getAccount(player.getName());
         PersistenceSerializer serializer = serializers.get(clazz);
         
@@ -87,9 +91,14 @@ public final class PersistenceManager extends LogItCoreObject
      * using {@link #registerSerializer} method.
      * 
      * @param player the player whose data will be serialized.
+     * 
+     * @throws NullPointerException if {@code player} is null.
      */
     public void serialize(Player player)
     {
+        if (player == null)
+            throw new NullPointerException();
+        
         for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
         {
             try
@@ -113,12 +122,16 @@ public final class PersistenceManager extends LogItCoreObject
      * @param player the player whose data will be unserialized.
      * @param clazz  serializer class.
      * 
+     * @throws NullPointerException         if {@code player} is null.
      * @throws ReflectiveOperationException if serializer construction failed.
      * @throws SQLException                 if an SQL error occured while updating persistence.
      */
     public void unserializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
             throws ReflectiveOperationException, SQLException
     {
+        if (player == null)
+            throw new NullPointerException();
+        
         Account account = getAccountManager().getAccount(player.getName());
         
         if (account == null)
@@ -152,9 +165,14 @@ public final class PersistenceManager extends LogItCoreObject
      * using {@link #registerSerializer} method.
      * 
      * @param player the player whose data will be unserialized.
+     * 
+     * @throws NullPointerException if {@code player} is null.
      */
     public void unserialize(Player player)
     {
+        if (player == null)
+            throw new NullPointerException();
+        
         for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
         {
             try
