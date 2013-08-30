@@ -30,6 +30,11 @@ public class CraftInventoryCustom extends io.github.lucaseasedup.logit.craftrefl
     @Override
     public void setItem(int i, ItemStack itemstack)
     {
-        ((org.bukkit.craftbukkit.v1_6_R2.inventory.CraftInventoryCustom) getHolder().get()).setItem(i, itemstack);
+        getThis().setItem(i, itemstack);
+    }
+    
+    private org.bukkit.craftbukkit.v1_6_R2.inventory.CraftInventoryCustom getThis()
+    {
+        return (org.bukkit.craftbukkit.v1_6_R2.inventory.CraftInventoryCustom) getHolder().get();
     }
 }

@@ -30,12 +30,17 @@ public class NBTTagCompound extends io.github.lucaseasedup.logit.craftreflect.NB
     @Override
     public void write(DataOutput d)
     {
-        net.minecraft.server.v1_6_R2.NBTBase.a((net.minecraft.server.v1_6_R2.NBTBase) getHolder().get(), d);
+        net.minecraft.server.v1_6_R2.NBTBase.a(getThis(), d);
     }
     
     @Override
     public boolean isEmpty()
     {
-        return ((net.minecraft.server.v1_6_R2.NBTTagCompound) getHolder().get()).isEmpty();
+        return getThis().isEmpty();
+    }
+    
+    private net.minecraft.server.v1_6_R2.NBTTagCompound getThis()
+    {
+        return (net.minecraft.server.v1_6_R2.NBTTagCompound) getHolder().get();
     }
 }

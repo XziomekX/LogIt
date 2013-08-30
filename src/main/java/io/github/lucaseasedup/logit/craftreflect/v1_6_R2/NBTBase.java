@@ -35,6 +35,11 @@ public class NBTBase extends io.github.lucaseasedup.logit.craftreflect.NBTBase
     @Override
     public void write(DataOutput d)
     {
-        net.minecraft.server.v1_6_R2.NBTBase.a((net.minecraft.server.v1_6_R2.NBTBase) getHolder().get(), d);
+        net.minecraft.server.v1_6_R2.NBTBase.a(getThis(), d);
+    }
+    
+    private net.minecraft.server.v1_6_R2.NBTBase getThis()
+    {
+        return (net.minecraft.server.v1_6_R2.NBTBase) getHolder().get();
     }
 }

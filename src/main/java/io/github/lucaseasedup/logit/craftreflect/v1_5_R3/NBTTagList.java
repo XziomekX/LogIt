@@ -30,24 +30,29 @@ public class NBTTagList extends io.github.lucaseasedup.logit.craftreflect.NBTTag
     @Override
     public void write(DataOutput d)
     {
-        net.minecraft.server.v1_5_R3.NBTBase.a((net.minecraft.server.v1_5_R3.NBTBase) getHolder().get(), d);
+        net.minecraft.server.v1_5_R3.NBTBase.a(getThis(), d);
     }
     
     @Override
     public void add(io.github.lucaseasedup.logit.craftreflect.NBTBase nbtb)
     {
-        ((net.minecraft.server.v1_5_R3.NBTTagList) getHolder().get()).add((net.minecraft.server.v1_5_R3.NBTBase) nbtb.getHolder().get());
+        getThis().add((net.minecraft.server.v1_5_R3.NBTBase) nbtb.getHolder().get());
     }
     
     @Override
     public int size()
     {
-        return (((net.minecraft.server.v1_5_R3.NBTTagList) getHolder().get())).size();
+        return getThis().size();
     }
     
     @Override
     public NBTBase get(int i)
     {
-        return new NBTBase((((net.minecraft.server.v1_5_R3.NBTTagList) getHolder().get())).get(i));
+        return new NBTBase(getThis().get(i));
+    }
+    
+    private net.minecraft.server.v1_5_R3.NBTTagList getThis()
+    {
+        return (net.minecraft.server.v1_5_R3.NBTTagList) getHolder().get();
     }
 }
