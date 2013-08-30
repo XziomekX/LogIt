@@ -28,13 +28,18 @@ import java.util.logging.Level;
 
 public abstract class LogItCoreObject
 {
+    /**
+     * Constructs a new {@code LogItCoreObject}.
+     * 
+     * @throws IllegalStateException if no LogItCore instance could be found.
+     */
     public LogItCoreObject()
     {
         this.core = LogItCore.getInstance();
         
         if (this.core == null)
         {
-            throw new NullPointerException("No LogItCore instance found.");
+            throw new IllegalStateException("No LogItCore instance found.");
         }
     }
     
