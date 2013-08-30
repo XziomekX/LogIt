@@ -22,7 +22,7 @@ import io.github.lucaseasedup.logit.LogItPlugin;
 
 public abstract class ObjectWrapper
 {
-    public <T extends ObjectWrapper> T cast(Class<T> castTo) throws ReflectiveOperationException
+    public final <T extends ObjectWrapper> T cast(Class<T> castTo) throws ReflectiveOperationException
     {
         String bukkitVersion = LogItPlugin.getCraftBukkitVersion();
         
