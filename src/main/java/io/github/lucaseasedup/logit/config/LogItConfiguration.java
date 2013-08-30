@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.config;
 
+import com.google.common.collect.ImmutableMap;
 import io.github.lucaseasedup.logit.LogItPlugin;
 import io.github.lucaseasedup.logit.util.IniUtils;
 import io.github.lucaseasedup.logit.util.IoUtils;
@@ -98,7 +99,7 @@ public final class LogItConfiguration extends PropertyObserver
     
     public Map<String, Property> getProperties()
     {
-        return properties;
+        return ImmutableMap.copyOf(properties);
     }
     
     public Property getProperty(String path)
