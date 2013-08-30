@@ -323,9 +323,9 @@ public final class LogItConfiguration extends PropertyObserver
             final Map<String, String> defSection = entry.getValue();
             
             String            path = defSection.get("path");
-            PropertyType      type = null;
+            PropertyType      type;
             boolean           requiresRestart = Boolean.valueOf(defSection.get("requires_restart"));
-            Object            defaultValue = null;
+            Object            defaultValue;
             PropertyValidator validator = null;
             PropertyObserver  observer = null;
             
