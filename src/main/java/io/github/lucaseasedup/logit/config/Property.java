@@ -40,11 +40,6 @@ public final class Property extends Observable
         this.validator = validator;
     }
     
-    public Property(String path, PropertyType type, boolean requiresRestart)
-    {
-        this(path, type, requiresRestart, null, null);
-    }
-    
     public String getPath()
     {
         return path;
