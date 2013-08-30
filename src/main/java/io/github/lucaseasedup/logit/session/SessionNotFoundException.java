@@ -20,10 +20,20 @@ package io.github.lucaseasedup.logit.session;
 
 public class SessionNotFoundException extends RuntimeException
 {
+    /**
+     * Creates a new instance of
+     * <code>SessionNotFoundException</code> without detail message.
+     */
     public SessionNotFoundException()
     {
     }
     
+    /**
+     * Constructs an instance of
+     * <code>SessionNotFoundException</code> with the specified detail message.
+     *
+     * @param msg The detail message.
+     */
     public SessionNotFoundException(String msg)
     {
         super(msg);

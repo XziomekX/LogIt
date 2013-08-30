@@ -24,15 +24,31 @@ package io.github.lucaseasedup.logit;
  */
 public class FatalReportedException extends Exception
 {
+    /**
+     * Creates a new instance of
+     * <code>FatalReportedException</code> without detail message.
+     */
     public FatalReportedException()
     {
     }
     
+    /**
+     * Constructs an instance of
+     * <code>FatalReportedException</code> with the specified detail message.
+     *
+     * @param msg The detail message.
+     */
     public FatalReportedException(String msg)
     {
         super(msg);
     }
     
+    /**
+     * Constructs an instance of
+     * <code>FatalReportedException</code> with the specified cause.
+     *
+     * @param cause The cause.
+     */
     public FatalReportedException(Throwable cause)
     {
         super(cause);
