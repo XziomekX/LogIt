@@ -36,6 +36,9 @@ public final class CsvDatabase extends Database
 {
     public CsvDatabase(File dir)
     {
+        if (dir == null)
+            throw new NullPointerException();
+        
         this.dir = dir;
     }
     
