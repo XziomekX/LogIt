@@ -20,6 +20,14 @@ package io.github.lucaseasedup.logit;
 
 public class Timer implements Runnable
 {
+    /**
+     * Constructs a new {@code Timer}.
+     * 
+     * @param interval The timer interval. For example, if {@code interval == 1}
+     *                 each {@link #run} call will advance the timer by 1 unit.
+     * 
+     * @throws IllegalArgumentException if {@code interval} is less than zero.
+     */
     public Timer(long interval)
     {
         if (interval < 0)
