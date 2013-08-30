@@ -28,7 +28,6 @@ import static io.github.lucaseasedup.logit.hash.HashGenerator.getSha256;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getSha384;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getSha512;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getWhirlpool;
-import static org.bukkit.ChatColor.stripColor;
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.account.AccountWatcher;
 import io.github.lucaseasedup.logit.backup.BackupManager;
@@ -88,6 +87,7 @@ import java.util.Random;
 import java.util.logging.Level;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -872,7 +872,7 @@ public final class LogItCore
                 logFileWriter.write(" [");
                 logFileWriter.write(level.getName());
                 logFileWriter.write("] ");
-                logFileWriter.write(stripColor(message));
+                logFileWriter.write(ChatColor.stripColor(message));
                 logFileWriter.write("\n");
             }
             catch (IOException ex)
@@ -881,7 +881,7 @@ public final class LogItCore
             }
         }
         
-        plugin.getLogger().log(level, stripColor(message));
+        plugin.getLogger().log(level, ChatColor.stripColor(message));
     }
     
     /**
