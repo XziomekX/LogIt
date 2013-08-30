@@ -26,6 +26,9 @@ import io.github.lucaseasedup.logit.session.SessionManager;
 import java.io.File;
 import java.util.logging.Level;
 
+/**
+ * Provides a convenient way for LogIt modules to interact with {@code LogItCore}.
+ */
 public abstract class LogItCoreObject
 {
     /**
