@@ -24,30 +24,30 @@ public class NBTTagList extends io.github.lucaseasedup.logit.craftreflect.NBTTag
 {
     public NBTTagList()
     {
-        o = new net.minecraft.server.v1_6_R2.NBTTagList();
+        super(new net.minecraft.server.v1_6_R2.NBTTagList());
     }
     
     @Override
     public void write(DataOutput d)
     {
-        net.minecraft.server.v1_6_R2.NBTBase.a((net.minecraft.server.v1_6_R2.NBTBase) o, d);
+        net.minecraft.server.v1_6_R2.NBTBase.a((net.minecraft.server.v1_6_R2.NBTBase) getHolder().get(), d);
     }
     
     @Override
     public void add(io.github.lucaseasedup.logit.craftreflect.NBTBase nbtb)
     {
-        ((net.minecraft.server.v1_6_R2.NBTTagList) o).add((net.minecraft.server.v1_6_R2.NBTBase) nbtb.o);
+        ((net.minecraft.server.v1_6_R2.NBTTagList) getHolder().get()).add((net.minecraft.server.v1_6_R2.NBTBase) nbtb.getHolder().get());
     }
     
     @Override
     public int size()
     {
-        return (((net.minecraft.server.v1_6_R2.NBTTagList) o)).size();
+        return (((net.minecraft.server.v1_6_R2.NBTTagList) getHolder().get())).size();
     }
     
     @Override
     public NBTBase get(int i)
     {
-        return new NBTBase((((net.minecraft.server.v1_6_R2.NBTTagList) o)).get(i));
+        return new NBTBase((((net.minecraft.server.v1_6_R2.NBTTagList) getHolder().get())).get(i));
     }
 }

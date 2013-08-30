@@ -22,5 +22,10 @@ import java.io.DataOutput;
 
 public abstract class NBTBase extends ObjectWrapper
 {
+    public NBTBase(Object o)
+    {
+        super(o);
+    }
+    
     public abstract void write(DataOutput d);
 }

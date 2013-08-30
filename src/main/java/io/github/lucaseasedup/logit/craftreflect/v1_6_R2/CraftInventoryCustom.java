@@ -24,14 +24,12 @@ public class CraftInventoryCustom extends io.github.lucaseasedup.logit.craftrefl
 {
     public CraftInventoryCustom(int size)
     {
-        super(size);
-        
-        o = new org.bukkit.craftbukkit.v1_6_R2.inventory.CraftInventoryCustom(null, size);
+        super(new org.bukkit.craftbukkit.v1_6_R2.inventory.CraftInventoryCustom(null, size));
     }
     
     @Override
     public void setItem(int i, ItemStack itemstack)
     {
-        ((org.bukkit.craftbukkit.v1_6_R2.inventory.CraftInventoryCustom) o).setItem(i, itemstack);
+        ((org.bukkit.craftbukkit.v1_6_R2.inventory.CraftInventoryCustom) getHolder().get()).setItem(i, itemstack);
     }
 }

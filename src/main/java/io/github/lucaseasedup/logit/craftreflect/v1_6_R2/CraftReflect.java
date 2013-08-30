@@ -56,14 +56,14 @@ public class CraftReflect implements io.github.lucaseasedup.logit.craftreflect.C
         
         net.minecraft.server.v1_6_R2.ItemStack nmsCopy =
             org.bukkit.craftbukkit.v1_6_R2.inventory.CraftItemStack.asNMSCopy(is);
-        nmsCopy.save((net.minecraft.server.v1_6_R2.NBTTagCompound) tagCompound.o);
+        nmsCopy.save((net.minecraft.server.v1_6_R2.NBTTagCompound) tagCompound.getHolder().get());
     }
     
     @Override
     public ItemStack createStack(io.github.lucaseasedup.logit.craftreflect.NBTTagCompound tagCompound)
     {
         net.minecraft.server.v1_6_R2.NBTTagCompound nbtTagCompound =
-                (net.minecraft.server.v1_6_R2.NBTTagCompound) tagCompound.o;
+                (net.minecraft.server.v1_6_R2.NBTTagCompound) tagCompound.getHolder().get();
         net.minecraft.server.v1_6_R2.ItemStack is =
             net.minecraft.server.v1_6_R2.ItemStack.createStack(nbtTagCompound);
         

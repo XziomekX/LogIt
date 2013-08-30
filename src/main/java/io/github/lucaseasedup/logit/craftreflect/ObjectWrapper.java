@@ -22,6 +22,11 @@ import io.github.lucaseasedup.logit.LogItPlugin;
 
 public abstract class ObjectWrapper
 {
+    public ObjectWrapper(Object o)
+    {
+        this.holder = new ObjectHolder(o);
+    }
+    
     public final <T extends ObjectWrapper> T cast(Class<T> castTo) throws ReflectiveOperationException
     {
         String bukkitVersion = LogItPlugin.getCraftBukkitVersion();
@@ -34,12 +39,37 @@ public abstract class ObjectWrapper
         T newWrapper = (T) wrapperCraftClass.getConstructor().newInstance();
         
         String objectCraftClassName =
-                o.getClass().getName().replace(o.getClass().getSimpleName(), castTo.getSimpleName());
+                holder.get().getClass().getName().replace(holder.get().getClass().getSimpleName(), castTo.getSimpleName());
         Class<?> objectCraftClass = Class.forName(objectCraftClassName);
-        newWrapper.o = objectCraftClass.cast(o);
+        newWrapper.getHolder().set(objectCraftClass.cast(holder.get()));
         
         return newWrapper;
     }
     
-    public Object o = null;
+    public final ObjectHolder getHolder()
+    {
+        return holder;
+    }
+    
+    public static final class ObjectHolder
+    {
+        private ObjectHolder(Object o)
+        {
+            this.o = o;
+        }
+        
+        public Object get()
+        {
+            return o;
+        }
+        
+        private void set(Object o)
+        {
+            this.o = o;
+        }
+        
+        private Object o = null;
+    }
+    
+    private final ObjectHolder holder;
 }

@@ -20,5 +20,10 @@ package io.github.lucaseasedup.logit.craftreflect;
 
 public abstract class NBTTagCompound extends NBTBase
 {
+    public NBTTagCompound(Object o)
+    {
+        super(o);
+    }
+    
     public abstract boolean isEmpty();
 }

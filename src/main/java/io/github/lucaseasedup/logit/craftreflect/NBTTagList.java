@@ -20,6 +20,11 @@ package io.github.lucaseasedup.logit.craftreflect;
 
 public abstract class NBTTagList extends NBTBase
 {
+    public NBTTagList(Object o)
+    {
+        super(o);
+    }
+    
     public abstract void add(NBTBase nbtb);
     public abstract int size();
     public abstract NBTBase get(int i);

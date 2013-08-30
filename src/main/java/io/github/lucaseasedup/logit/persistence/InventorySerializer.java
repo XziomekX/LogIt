@@ -133,7 +133,7 @@ public final class InventorySerializer extends LogItCoreObject implements Persis
             }
         }
         
-        return (Inventory) inventory.o;
+        return (Inventory) inventory.getHolder().get();
     }
     
     private Inventory getArmorInventory(PlayerInventory inventory)
@@ -147,7 +147,7 @@ public final class InventorySerializer extends LogItCoreObject implements Persis
             storage.setItem(i, armor[i]);
         }
         
-        return (Inventory) storage.o;
+        return (Inventory) storage.getHolder().get();
     }
     
     private Inventory getContentInventory(PlayerInventory inventory)
@@ -161,7 +161,7 @@ public final class InventorySerializer extends LogItCoreObject implements Persis
             storage.setItem(i, content[i]);
         }
         
-        return (Inventory) storage.o;
+        return (Inventory) storage.getHolder().get();
     }
     
     private org.bukkit.Location getWaitingRoomLocation()

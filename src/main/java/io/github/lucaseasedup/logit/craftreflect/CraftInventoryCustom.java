@@ -22,9 +22,9 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class CraftInventoryCustom extends ObjectWrapper
 {
-    public CraftInventoryCustom(int size)
+    public CraftInventoryCustom(Object o)
     {
-        // This constructor forces child classes to take the above arguments.
+        super(o);
     }
     
     public abstract void setItem(int i, ItemStack itemstack);
