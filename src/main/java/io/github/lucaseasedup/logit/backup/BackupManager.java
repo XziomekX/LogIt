@@ -16,9 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit;
+package io.github.lucaseasedup.logit.backup;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.ReportedException;
+import io.github.lucaseasedup.logit.Timer;
 import io.github.lucaseasedup.logit.db.SqliteDatabase;
 import io.github.lucaseasedup.logit.db.Table;
 import java.io.File;

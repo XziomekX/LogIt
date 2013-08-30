@@ -31,6 +31,7 @@ import static io.github.lucaseasedup.logit.hash.HashGenerator.getWhirlpool;
 import static org.bukkit.ChatColor.stripColor;
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.account.AccountWatcher;
+import io.github.lucaseasedup.logit.backup.BackupManager;
 import io.github.lucaseasedup.logit.command.ChangeEmailCommand;
 import io.github.lucaseasedup.logit.command.ChangePassCommand;
 import io.github.lucaseasedup.logit.command.DisabledCommandExecutor;
