@@ -19,8 +19,8 @@
 package io.github.lucaseasedup.logit.listener;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastJoinMessage;
-import static io.github.lucaseasedup.logit.util.MessageUtils.broadcastQuitMessage;
+import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastJoinMessage;
+import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastQuitMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_FULL;

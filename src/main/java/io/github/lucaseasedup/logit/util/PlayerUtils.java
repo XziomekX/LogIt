@@ -18,6 +18,9 @@
  */
 package io.github.lucaseasedup.logit.util;
 
+import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import java.util.Arrays;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -104,5 +107,79 @@ public final class PlayerUtils
             return false;
         
         return true;
+    }
+    
+    /**
+     * Sends player a message.
+     * 
+     * @param name    the name of the player who will receive the message.
+     * @param message the message to be sent.
+     */
+    public static void sendMessage(String name, String message)
+    {
+        Player player = getPlayer(name);
+        
+        if (player != null)
+        {
+            player.sendMessage(message);
+        }
+    }
+    
+    /**
+     * Sends a message to all online players.
+     * 
+     * @param message the message to be sent.
+     */
+    public static void broadcastMessage(String message)
+    {
+        for (Player p : Bukkit.getOnlinePlayers())
+        {
+            p.sendMessage(message);
+        }
+    }
+    
+    /**
+     * Sends a message to all online players, except
+     * those with names contained in {@code exceptPlayers}.
+     * 
+     * @param message       the message to be sent.
+     * @param exceptPlayers the players to be omitted in broadcasting.
+     */
+    public static void broadcastMessageExcept(String message, List<Player> exceptPlayers)
+    {
+        for (Player p : Bukkit.getOnlinePlayers())
+        {
+            if (!exceptPlayers.contains(p))
+            {
+                p.sendMessage(message);
+            }
+        }
+    }
+    
+    /**
+     * Broadcasts a join message.
+     * 
+     * @param player           the player who joined.
+     * @param revealSpawnWorld whether to show name of the world
+     *                         where the player spawned after joining.
+     */
+    public static void broadcastJoinMessage(Player player, boolean revealSpawnWorld)
+    {
+        String joinMessage = JoinMessageGenerator.generate(player, revealSpawnWorld);
+        
+        broadcastMessageExcept(joinMessage, Arrays.asList(player));
+    }
+    
+    /**
+     * Broadcasts a quit message.
+     * 
+     * @param player the player who quit.
+     */
+    public static void broadcastQuitMessage(Player player)
+    {
+        String quitMessage = getMessage("QUIT")
+                .replace("%player%", player.getName());
+        
+        broadcastMessageExcept(quitMessage, Arrays.asList(player));
     }
 }

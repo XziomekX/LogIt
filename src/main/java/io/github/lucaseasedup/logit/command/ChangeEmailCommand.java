@@ -19,7 +19,7 @@
 package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
+import static io.github.lucaseasedup.logit.util.PlayerUtils.sendMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.util.EmailUtils;

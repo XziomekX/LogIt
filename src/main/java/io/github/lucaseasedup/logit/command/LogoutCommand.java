@@ -19,9 +19,9 @@
 package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import static io.github.lucaseasedup.logit.util.MessageUtils.sendMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
+import static io.github.lucaseasedup.logit.util.PlayerUtils.sendMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
