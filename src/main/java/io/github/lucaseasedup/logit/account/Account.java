@@ -95,6 +95,7 @@ public final class Account extends Observable
         
         data.put(property, value);
         
+        setChanged();
         notifyObservers(property);
         
         return true;
