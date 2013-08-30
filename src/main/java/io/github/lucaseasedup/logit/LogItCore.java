@@ -338,16 +338,16 @@ public final class LogItCore
                 config.getString("mail.smtp-user"), config.getString("mail.smtp-password"));
         }
         
-        pingerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, pinger,
-                0, Pinger.TASK_PERIOD);
-        sessionManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, sessionManager,
-                0, SessionManager.TASK_PERIOD);
-        tickEventCallerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, tickEventCaller,
-                0, TickEventCaller.TASK_PERIOD);
-        accountWatcherTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, accountWatcher,
-                0, AccountWatcher.TASK_PERIOD);
-        backupManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, backupManager,
-                0, BackupManager.TASK_PERIOD);
+        pingerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+                pinger, 0, Pinger.TASK_PERIOD);
+        sessionManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+                sessionManager, 0, SessionManager.TASK_PERIOD);
+        tickEventCallerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+                tickEventCaller, 0, TickEventCaller.TASK_PERIOD);
+        accountWatcherTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+                accountWatcher, 0, AccountWatcher.TASK_PERIOD);
+        backupManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+                backupManager, 0, BackupManager.TASK_PERIOD);
         
         if (Bukkit.getPluginManager().isPluginEnabled("Vault"))
         {
