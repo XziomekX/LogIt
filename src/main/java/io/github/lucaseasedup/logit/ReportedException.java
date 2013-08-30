@@ -27,7 +27,7 @@ public class ReportedException extends RuntimeException
      * Creates a new instance of
      * <code>ReportedException</code> without detail message.
      */
-    public ReportedException()
+    protected ReportedException()
     {
     }
     
@@ -37,7 +37,7 @@ public class ReportedException extends RuntimeException
      *
      * @param msg The detail message.
      */
-    public ReportedException(String msg)
+    protected ReportedException(String msg)
     {
         super(msg);
     }
@@ -48,7 +48,7 @@ public class ReportedException extends RuntimeException
      *
      * @param cause The cause.
      */
-    public ReportedException(Throwable cause)
+    protected ReportedException(Throwable cause)
     {
         super(cause);
     }

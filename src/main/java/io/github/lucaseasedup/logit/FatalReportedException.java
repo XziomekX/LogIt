@@ -28,7 +28,7 @@ public class FatalReportedException extends Exception
      * Creates a new instance of
      * <code>FatalReportedException</code> without detail message.
      */
-    public FatalReportedException()
+    protected FatalReportedException()
     {
     }
     
@@ -38,7 +38,7 @@ public class FatalReportedException extends Exception
      *
      * @param msg The detail message.
      */
-    public FatalReportedException(String msg)
+    protected FatalReportedException(String msg)
     {
         super(msg);
     }
@@ -49,7 +49,7 @@ public class FatalReportedException extends Exception
      *
      * @param cause The cause.
      */
-    public FatalReportedException(Throwable cause)
+    protected FatalReportedException(Throwable cause)
     {
         super(cause);
     }
