@@ -19,7 +19,6 @@
 package io.github.lucaseasedup.logit.account;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.config.Property;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -28,9 +27,9 @@ public abstract class AccountObserver extends LogItCoreObject implements Observe
     @Override
     public final void update(Observable o, Object arg)
     {
-        if (o instanceof Property && arg instanceof String)
+        if (o instanceof Account && arg instanceof String)
         {
-            update(o, arg);
+            update((Account) o, (String) arg);
         }
     }
     
