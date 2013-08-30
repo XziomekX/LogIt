@@ -253,7 +253,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         {
             try
             {
-                getAccountManager().getAccount(username).updateLong(username,
+                getAccountManager().getAccount(username).updateLong("logit.accounts.last_active",
                         System.currentTimeMillis() / 1000L);
             }
             catch (SQLException ex)
@@ -296,7 +296,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         {
             try
             {
-                getAccountManager().getAccount(username).updateLong(username,
+                getAccountManager().getAccount(username).updateLong("logit.accounts.last_active",
                         System.currentTimeMillis() / 1000L);
             }
             catch (SQLException ex)
