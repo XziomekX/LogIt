@@ -24,6 +24,8 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.session.SessionEndEvent;
 import io.github.lucaseasedup.logit.session.SessionStartEvent;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
+import java.sql.SQLException;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,6 +43,8 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
             return;
         
         final Player player = PlayerUtils.getPlayer(username);
+        
+        updateLastActiveDate(player.getName());
         
         Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
         {
@@ -75,6 +79,8 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
         
         final Player player = PlayerUtils.getPlayer(username);
         
+        updateLastActiveDate(player.getName());
+        
         Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
         {
             @Override
@@ -95,6 +101,22 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
         if (getCore().isPlayerForcedToLogIn(player))
         {
             getPersistenceManager().serialize(player);
+        }
+    }
+    
+    private void updateLastActiveDate(String username)
+    {
+        if (getAccountManager().isRegistered(username))
+        {
+            try
+            {
+                getAccountManager().getAccount(username).updateLong("logit.accounts.last_active",
+                        System.currentTimeMillis() / 1000L);
+            }
+            catch (SQLException ex)
+            {
+                log(Level.WARNING, "Could not update last active date for player: " + username + ".", ex);
+            }
         }
     }
 }

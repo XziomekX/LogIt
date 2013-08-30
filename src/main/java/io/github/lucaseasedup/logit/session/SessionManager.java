@@ -249,19 +249,6 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         // Start session.
         session.setStatus(0L);
         
-        if (getAccountManager().isRegistered(username))
-        {
-            try
-            {
-                getAccountManager().getAccount(username).updateLong("logit.accounts.last_active",
-                        System.currentTimeMillis() / 1000L);
-            }
-            catch (SQLException ex)
-            {
-                log(Level.WARNING, "Could not update last active date for player: " + username + ".", ex);
-            }
-        }
-        
         log(Level.FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
         
         return CancelledState.NOT_CANCELLED;
@@ -291,19 +278,6 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         
         // End session.
         session.setStatus(-1L);
-        
-        if (getAccountManager().isRegistered(username))
-        {
-            try
-            {
-                getAccountManager().getAccount(username).updateLong("logit.accounts.last_active",
-                        System.currentTimeMillis() / 1000L);
-            }
-            catch (SQLException ex)
-            {
-                log(Level.WARNING, "Could not update last active date for player: " + username + ".", ex);
-            }
-        }
         
         log(Level.FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
         
