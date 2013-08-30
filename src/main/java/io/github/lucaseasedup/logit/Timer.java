@@ -28,6 +28,14 @@ public class Timer implements Runnable
     @Override
     public void run()
     {
+        advance();
+    }
+    
+    /**
+     * Advances this timer by 1 interval.
+     */
+    public void advance()
+    {
         if (running)
         {
             elapsed += interval;
