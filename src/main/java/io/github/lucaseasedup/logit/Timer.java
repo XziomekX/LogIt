@@ -42,21 +42,6 @@ public class Timer implements Runnable
         }
     }
     
-    public long getInterval()
-    {
-        return interval;
-    }
-    
-    public boolean isRunning()
-    {
-        return running;
-    }
-    
-    public long getElapsed()
-    {
-        return elapsed;
-    }
-    
     public void start()
     {
         if (!running)
@@ -66,14 +51,14 @@ public class Timer implements Runnable
         }
     }
     
-    public void stop()
-    {
-        running = false;
-    }
-    
     public void resume()
     {
         running = true;
+    }
+    
+    public void stop()
+    {
+        running = false;
     }
     
     public void reset()
@@ -81,8 +66,22 @@ public class Timer implements Runnable
         elapsed = 0L;
     }
     
-    private final long interval;
+    public long getElapsed()
+    {
+        return elapsed;
+    }
     
+    public boolean isRunning()
+    {
+        return running;
+    }
+    
+    public long getInterval()
+    {
+        return interval;
+    }
+    
+    private final long interval;
     private boolean running = false;
     private long elapsed = 0L;
 }
