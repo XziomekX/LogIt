@@ -82,6 +82,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 import java.util.logging.Level;
@@ -607,7 +608,7 @@ public final class LogItCore
                 "%password%", newPassword
             });
             
-            mailSender.sendMail(new String[]{to}, from, subject, body,
+            mailSender.sendMail(Arrays.asList(to), from, subject, body,
                     config.getBoolean("password-recovery.html-enabled"));
             
             log(Level.FINE, getMessage("RECOVER_PASSWORD_SUCCESS_LOG", new String[]{

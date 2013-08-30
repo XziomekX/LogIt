@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.mail;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Properties;
 import javax.mail.Authenticator;
@@ -50,7 +51,7 @@ public final class MailSender extends LogItCoreObject
         this.password = password;
     }
     
-    public void sendMail(String[] to, String from, String subject, String body, boolean html)
+    public void sendMail(Collection<String> to, String from, String subject, String body, boolean html)
             throws IOException
     {
         Session session = Session.getDefaultInstance(properties, new Authenticator()
@@ -67,9 +68,9 @@ public final class MailSender extends LogItCoreObject
         {
             message.setFrom(new InternetAddress(from));
             
-            for (int i = 0; i < to.length; i++)
+            for (String address : to)
             {
-                message.addRecipient(Message.RecipientType.TO, new InternetAddress(to[i]));
+                message.addRecipient(Message.RecipientType.TO, new InternetAddress(address));
             }
             
             message.setSentDate(new Date());
