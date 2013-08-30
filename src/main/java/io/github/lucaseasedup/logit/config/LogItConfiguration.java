@@ -18,9 +18,7 @@
  */
 package io.github.lucaseasedup.logit.config;
 
-
 import io.github.lucaseasedup.logit.LogItPlugin;
-import io.github.lucaseasedup.logit.util.FileUtils;
 import io.github.lucaseasedup.logit.util.IniUtils;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import it.sauronsoftware.base64.Base64;
@@ -55,7 +53,7 @@ public final class LogItConfiguration extends PropertyObserver
         
         if (!userDefFile.exists())
         {
-            FileUtils.extractResource(PACKAGE_CONFIG_DEF, userDefFile);
+            IoUtils.extractResource(PACKAGE_CONFIG_DEF, userDefFile);
         }
         
         String userDefBase64String;

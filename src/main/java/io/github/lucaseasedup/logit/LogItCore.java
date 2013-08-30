@@ -72,7 +72,6 @@ import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
 import io.github.lucaseasedup.logit.profile.ProfileManager;
 import io.github.lucaseasedup.logit.session.SessionManager;
-import io.github.lucaseasedup.logit.util.FileUtils;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
 import java.io.FileInputStream;
@@ -159,7 +158,7 @@ public final class LogItCore
             {
                 try
                 {
-                    FileUtils.extractResource("/password-recovery.html",
+                    IoUtils.extractResource("/password-recovery.html",
                             passwordRecoveryTemplateFile);
                 }
                 catch (IOException ex)

@@ -42,7 +42,7 @@ import static org.bukkit.ChatColor.WHITE;
 import static org.bukkit.ChatColor.YELLOW;
 import io.github.lucaseasedup.logit.config.Location;
 import io.github.lucaseasedup.logit.craftreflect.CraftReflect;
-import io.github.lucaseasedup.logit.util.FileUtils;
+import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -293,7 +293,7 @@ public final class LogItPlugin extends JavaPlugin
     {
         try
         {
-            FileUtils.loadLibrary(filename);
+            IoUtils.loadLibrary(filename);
         }
         catch (FileNotFoundException | MalformedURLException ex)
         {

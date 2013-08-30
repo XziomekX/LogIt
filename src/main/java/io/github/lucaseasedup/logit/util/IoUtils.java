@@ -18,10 +18,20 @@
  */
 package io.github.lucaseasedup.logit.util;
 
+import io.github.lucaseasedup.logit.LogItPlugin;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Arrays;
 
 public final class IoUtils
 {
@@ -43,5 +53,60 @@ public final class IoUtils
         }
         
         return sw.toString();
+    }
+    
+    public static void extractResource(String resource, File dest) throws IOException
+    {
+        int readBytes;
+        byte[] buffer = new byte[4096];
+        
+        try (
+            InputStream is = IoUtils.class.getResourceAsStream(resource);
+            OutputStream os = new FileOutputStream(dest);
+        )
+        {
+            while ((readBytes = is.read(buffer)) > 0)
+            {
+                os.write(buffer, 0, readBytes);
+            }
+        }
+    }
+    
+    public static void loadLibrary(String filename) throws ReflectiveOperationException,
+                                                           FileNotFoundException,
+                                                           MalformedURLException
+    {
+        File file = new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename);
+        
+        if (!file.exists())
+            throw new FileNotFoundException();
+        
+        URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        URL url = file.toURI().toURL();
+        
+        if (!Arrays.asList(classLoader.getURLs()).contains(url))
+        {
+            Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
+            addUrlMethod.setAccessible(true);
+            addUrlMethod.invoke(classLoader, new Object[]{url});
+        }
+    }
+    
+    public static boolean libraryLoaded(String filename)
+    {
+        File file = new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename);
+        URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        URL url;
+        
+        try
+        {
+            url = file.toURI().toURL();
+        }
+        catch (MalformedURLException ex)
+        {
+            return false;
+        }
+        
+        return Arrays.asList(classLoader.getURLs()).contains(url);
     }
 }
