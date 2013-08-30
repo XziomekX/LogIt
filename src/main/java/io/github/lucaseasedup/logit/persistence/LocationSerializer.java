@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.persistence;
 
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -33,7 +34,7 @@ import org.bukkit.entity.Player;
     @Key(name = "yaw", constraint = KeyConstraint.NOT_EMPTY),
     @Key(name = "pitch", constraint = KeyConstraint.NOT_EMPTY),
 })
-public final class LocationSerializer extends PersistenceSerializer
+public final class LocationSerializer extends LogItCoreObject implements PersistenceSerializer
 {
     @Override
     public void serialize(Map<String, String> data, final Player player)

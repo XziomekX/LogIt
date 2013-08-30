@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.persistence;
 
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.LogItPlugin;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.craftreflect.CraftInventoryCustom;
@@ -40,7 +41,7 @@ import org.bukkit.inventory.PlayerInventory;
     @Key(name = "inv_armor", constraint = KeyConstraint.NOT_EMPTY),
 })
 @Before(LocationSerializer.class)
-public final class InventorySerializer extends PersistenceSerializer
+public final class InventorySerializer extends LogItCoreObject implements PersistenceSerializer
 {
     @Override
     public void serialize(Map<String, String> data, Player player)

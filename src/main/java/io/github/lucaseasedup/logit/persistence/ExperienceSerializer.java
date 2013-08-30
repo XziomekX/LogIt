@@ -25,7 +25,7 @@ import org.bukkit.entity.Player;
     @Key(name = "exp", constraint = KeyConstraint.NOT_EMPTY),
     @Key(name = "level", constraint = KeyConstraint.NOT_EMPTY),
 })
-public final class ExperienceSerializer extends PersistenceSerializer
+public final class ExperienceSerializer implements PersistenceSerializer
 {
     @Override
     public void serialize(Map<String, String> data, Player player)

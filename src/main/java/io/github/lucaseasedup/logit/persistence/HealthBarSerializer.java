@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
 @Keys({
     @Key(name = "health", constraint = KeyConstraint.NOT_EMPTY),
 })
-public final class HealthBarSerializer extends PersistenceSerializer
+public final class HealthBarSerializer implements PersistenceSerializer
 {
     @Override
     public void serialize(Map<String, String> data, Player player)

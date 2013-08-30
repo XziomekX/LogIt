@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
 @Keys({
     @Key(name = "hunger", constraint = KeyConstraint.NOT_EMPTY),
 })
-public final class HungerBarSerializer extends PersistenceSerializer
+public final class HungerBarSerializer implements PersistenceSerializer
 {
     @Override
     public void serialize(Map<String, String> data, Player player)

@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
 @Keys({
     @Key(name = "air", constraint = KeyConstraint.NOT_EMPTY),
 })
-public final class AirBarSerializer extends PersistenceSerializer
+public final class AirBarSerializer implements PersistenceSerializer
 {
     @Override
     public void serialize(Map<String, String> data, Player player)
