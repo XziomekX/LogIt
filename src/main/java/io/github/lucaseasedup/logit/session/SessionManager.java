@@ -362,5 +362,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         }
     }
     
+    public static final long TASK_PERIOD = 20;
+    
     private final Map<String, Session> sessions = new ConcurrentHashMap<>();
 }

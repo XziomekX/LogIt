@@ -45,5 +45,7 @@ public final class Pinger implements Runnable
         }
     }
     
+    public static final long TASK_PERIOD = 2400;
+    
     private final Database database;
 }

@@ -45,7 +45,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
 {
     public BackupManager()
     {
-        timer = new Timer(40L);
+        timer = new Timer(TASK_PERIOD);
         timer.start();
     }
     
@@ -215,6 +215,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         return backupFile;
     }
     
+    public static final long TASK_PERIOD = 40;
     private static final File[] NO_FILES = new File[0];
     
     private final Timer timer;

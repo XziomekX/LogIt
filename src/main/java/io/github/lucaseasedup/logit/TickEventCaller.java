@@ -27,4 +27,6 @@ public final class TickEventCaller implements Runnable
     {
         Bukkit.getPluginManager().callEvent(new TickEvent());
     }
+    
+    public static final long TASK_PERIOD = 1;
 }
