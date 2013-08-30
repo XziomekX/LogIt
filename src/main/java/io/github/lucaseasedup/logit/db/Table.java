@@ -33,6 +33,9 @@ public final class Table
 {
     public Table(Database database, String tableName, ConfigurationSection columnsSection)
     {
+        if (database == null || tableName == null || columnsSection == null)
+            throw new NullPointerException();
+        
         this.database = database;
         this.table = tableName;
         
