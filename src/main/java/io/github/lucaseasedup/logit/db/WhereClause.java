@@ -22,6 +22,9 @@ public final class WhereClause
 {
     public WhereClause(String columnId, String operator, String value)
     {
+        if (columnId == null || operator == null)
+            throw new NullPointerException();
+        
         this.columnId = columnId;
         this.operator = operator;
         this.value = value;
