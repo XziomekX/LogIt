@@ -22,6 +22,12 @@ public final class Column
 {
     public Column(String name, String type, boolean disabled)
     {
+        if (name == null)
+            throw new NullPointerException();
+        
+        if (name.trim().isEmpty())
+            throw new IllegalArgumentException();
+        
         this.name = name;
         this.type = type;
         this.disabled = disabled;
