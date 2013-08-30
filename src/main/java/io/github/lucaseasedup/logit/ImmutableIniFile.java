@@ -41,24 +41,24 @@ public final class ImmutableIniFile extends IniFile
     @Override
     public void putSection(String section)
     {
-        throw new RuntimeException("Immutable data structure.");
+        throw new UnsupportedOperationException("Immutable data structure.");
     }
     
     @Override
     public void removeSection(String section)
     {
-        throw new RuntimeException("Immutable data structure.");
+        throw new UnsupportedOperationException("Immutable data structure.");
     }
     
     @Override
     public void removeSectionKey(String section, String key)
     {
-        throw new RuntimeException("Immutable data structure.");
+        throw new UnsupportedOperationException("Immutable data structure.");
     }
     
     @Override
     public void putString(String section, String key, String value)
     {
-        throw new RuntimeException("Immutable data structure.");
+        throw new UnsupportedOperationException("Immutable data structure.");
     }
 }
