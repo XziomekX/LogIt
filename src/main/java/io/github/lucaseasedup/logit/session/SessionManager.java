@@ -165,10 +165,14 @@ public final class SessionManager extends LogItCoreObject implements Runnable
     /**
      * Creates a session for a player with the specified username.
      * 
-     * <p> If session already exists, it will be ignored and overridden.
+     * <p> If a session with this username already exists,
+     * no action will be taken.
      * 
-     * @param username username.
-     * @param ip       IP address.
+     * @param username the player username.
+     * @param ip       the player IP address.
+     * 
+     * @return a {@code CancellableState} indicating whether
+     *         the operation was cancelled or not by a Bukkit event.
      */
     public CancelledState createSession(String username, String ip)
     {
@@ -196,7 +200,10 @@ public final class SessionManager extends LogItCoreObject implements Runnable
      * 
      * <p> If session does not exist, no action will be taken.
      * 
-     * @param username username.
+     * @param username the player username.
+     * 
+     * @return a {@code CancellableState} indicating whether
+     *         the operation was cancelled or not by a Bukkit event.
      */
     public CancelledState destroySession(String username)
     {
@@ -225,10 +232,14 @@ public final class SessionManager extends LogItCoreObject implements Runnable
     }
     
     /**
-     * Starts the session of a player with the specified username.
+     * Starts session of a player with the specified username.
      * 
-     * @param username username.
-     * @throws SessionNotFoundException if the session does not exist.
+     * @param username the player username.
+     * 
+     * @return a {@code CancellableState} indicating whether
+     *         the operation was cancelled or not by a Bukkit event.
+     * 
+     * @throws SessionNotFoundException if no such session exists.
      */
     public CancelledState startSession(String username)
     {
@@ -255,10 +266,14 @@ public final class SessionManager extends LogItCoreObject implements Runnable
     }
     
     /**
-     * Ends the session of a player with the specified username.
+     * Ends session of a player with the specified username.
      * 
-     * @param username username.
-     * @throws SessionNotFoundException if the session does not exist.
+     * @param username the player username.
+     * .
+     * @return a {@code CancellableState} indicating whether
+     *         the operation was cancelled or not by a Bukkit event.
+     * 
+     * @throws SessionNotFoundException if no such session exists.
      */
     public CancelledState endSession(String username)
     {
