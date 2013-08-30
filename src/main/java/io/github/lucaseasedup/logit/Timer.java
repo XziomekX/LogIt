@@ -22,6 +22,9 @@ public class Timer implements Runnable
 {
     public Timer(long interval)
     {
+        if (interval < 0)
+            throw new IllegalArgumentException();
+        
         this.interval = interval;
     }
     
