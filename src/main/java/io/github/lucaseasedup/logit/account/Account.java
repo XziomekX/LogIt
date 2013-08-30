@@ -19,23 +19,23 @@
 package io.github.lucaseasedup.logit.account;
 
 import com.google.common.collect.ImmutableSet;
-import io.github.lucaseasedup.logit.IniFile;
 import io.github.lucaseasedup.logit.db.SetClause;
 import io.github.lucaseasedup.logit.db.Table;
 import io.github.lucaseasedup.logit.db.WhereClause;
+import io.github.lucaseasedup.logit.util.IniUtils;
 import it.sauronsoftware.base64.Base64;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Set;
 import org.bukkit.Bukkit;
 
 public final class Account extends Observable
 {
-    public Account(Table table, Map<String, String> initialData) throws SQLException
+    public Account(Table table, Map<String, String> initialData) throws IOException, SQLException
     {
         if (table == null)
             throw new NullPointerException();
@@ -116,69 +116,52 @@ public final class Account extends Observable
         if (table.isColumnDisabled("logit.accounts.persistence"))
             return null;
         
-        return persistence.get(key);
+        return persistence.get("persistence").get(key);
     }
     
-    public void updatePersistence(String key, String value) throws SQLException
+    public void updatePersistence(String key, String value) throws IOException, SQLException
     {
         if (table.isColumnDisabled("logit.accounts.persistence"))
             return;
         
-        persistence.put(key, value);
+        persistence.get("persistence").put(key, value);
         
         savePersistence();
     }
     
-    private void refreshPersistence() throws SQLException
+    private void refreshPersistence() throws IOException, SQLException
     {
         if (table.isColumnDisabled("logit.accounts.persistence"))
             return;
         
-        persistence = new LinkedHashMap<>();
+        String persistenceBase64String = getString("logit.accounts.persistence");
         
-        String persistanceBase64String = getString("logit.accounts.persistence");
-        IniFile iniFile;
-        
-        if (persistanceBase64String != null)
+        if (persistenceBase64String != null)
         {
-            String persistenceString = Base64.decode(persistanceBase64String);
-            iniFile = new IniFile(persistenceString);
+            persistence = IniUtils.unserialize(Base64.decode(persistenceBase64String));
         }
         else
         {
-            iniFile = new IniFile();
+            persistence = new LinkedHashMap<>();
         }
         
-        if (!iniFile.hasSection("persistence"))
+        if (!persistence.containsKey("persistence"))
         {
-            iniFile.putSection("persistence");
-        }
-        
-        for (String key : iniFile.getSectionKeys("persistence"))
-        {
-            persistence.put(key, iniFile.getString("persistence", key));
+            persistence.put("persistence", new LinkedHashMap<String, String>());
         }
         
         savePersistence();
     }
     
-    private void savePersistence() throws SQLException
+    private void savePersistence() throws IOException, SQLException
     {
         if (table.isColumnDisabled("logit.accounts.persistence"))
             return;
         
-        IniFile iniFile = new IniFile();
-        iniFile.putSection("persistence");
-        
-        for (Entry<String, String> kv : persistence.entrySet())
-        {
-            iniFile.putString("persistence", kv.getKey(), kv.getValue());
-        }
-        
-        updateString("logit.accounts.persistence", Base64.encode(iniFile.toString()));
+        updateString("logit.accounts.persistence", Base64.encode(IniUtils.serialize(persistence)));
     }
     
     private final Map<String, String> data;
-    private Map<String, String> persistence = null;
+    private Map<String, Map<String, String>> persistence = null;
     private final Table table;
 }

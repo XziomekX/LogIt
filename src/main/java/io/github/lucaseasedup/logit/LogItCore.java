@@ -1039,7 +1039,7 @@ public final class LogItCore
                 {
                     persistenceManager.unserializeUsing(player, clazz);
                 }
-                catch (ReflectiveOperationException | SQLException ex)
+                catch (ReflectiveOperationException | IOException | SQLException ex)
                 {
                     log(Level.WARNING,
                             "Could not unserialize persistence for player: " + player.getName(), ex);

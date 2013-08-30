@@ -26,6 +26,7 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.db.Table;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
@@ -115,7 +116,7 @@ public final class AccountManager extends LogItCoreObject
             log(Level.FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
             evt.executeSuccessTasks();
         }
-        catch (SQLException ex)
+        catch (IOException | SQLException ex)
         {
             log(Level.WARNING,
                     getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
@@ -440,7 +441,7 @@ public final class AccountManager extends LogItCoreObject
         {
             account.updatePersistence(key, value);
         }
-        catch (SQLException ex)
+        catch (IOException | SQLException ex)
         {
             log(Level.WARNING, "Could not update account persistance: " + key + ".", ex);
             
@@ -521,7 +522,7 @@ public final class AccountManager extends LogItCoreObject
             log(Level.FINE, getMessage("LOAD_ACCOUNTS_SUCCESS")
                     .replace("%num%", String.valueOf(accountMap.size())));
         }
-        catch (SQLException ex)
+        catch (IOException | SQLException ex)
         {
             log(Level.WARNING, getMessage("LOAD_ACCOUNTS_FAIL"), ex);
             

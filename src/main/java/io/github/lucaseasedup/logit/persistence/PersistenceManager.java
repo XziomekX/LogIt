@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.persistence;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -51,10 +52,11 @@ public final class PersistenceManager extends LogItCoreObject
      * 
      * @throws NullPointerException         if {@code player} is null.
      * @throws ReflectiveOperationException if serializer construction failed.
+     * @throws IOException                  if an IO error occured while updating persistence.
      * @throws SQLException                 if an SQL error occured while updating persistence.
      */
     public void serializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
-            throws ReflectiveOperationException, SQLException
+            throws ReflectiveOperationException, IOException, SQLException
     {
         if (player == null)
             throw new NullPointerException();
@@ -105,7 +107,7 @@ public final class PersistenceManager extends LogItCoreObject
             {
                 serializeUsing(player, clazz);
             }
-            catch (ReflectiveOperationException | SQLException ex)
+            catch (ReflectiveOperationException | IOException | SQLException ex)
             {
                 log(Level.WARNING,
                         "Could not serialize persistence for player: " + player.getName(), ex);
@@ -124,10 +126,11 @@ public final class PersistenceManager extends LogItCoreObject
      * 
      * @throws NullPointerException         if {@code player} is null.
      * @throws ReflectiveOperationException if serializer construction failed.
+     * @throws IOException                  if an IO error occured while updating persistence.
      * @throws SQLException                 if an SQL error occured while updating persistence.
      */
     public void unserializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
-            throws ReflectiveOperationException, SQLException
+            throws ReflectiveOperationException, IOException, SQLException
     {
         if (player == null)
             throw new NullPointerException();
@@ -179,7 +182,7 @@ public final class PersistenceManager extends LogItCoreObject
             {
                 unserializeUsing(player, clazz);
             }
-            catch (ReflectiveOperationException | SQLException ex)
+            catch (ReflectiveOperationException | IOException | SQLException ex)
             {
                 log(Level.WARNING,
                         "Could not unserialize persistence for player: " + player.getName(), ex);

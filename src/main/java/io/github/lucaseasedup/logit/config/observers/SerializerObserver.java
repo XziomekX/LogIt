@@ -27,6 +27,7 @@ import io.github.lucaseasedup.logit.persistence.HungerBarSerializer;
 import io.github.lucaseasedup.logit.persistence.InventorySerializer;
 import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
@@ -82,7 +83,7 @@ public final class SerializerObserver extends PropertyObserver
                 {
                     getPersistenceManager().serializeUsing(player, clazz);
                 }
-                catch (ReflectiveOperationException | SQLException ex)
+                catch (ReflectiveOperationException | IOException | SQLException ex)
                 {
                     log(Level.WARNING,
                             "Could not serialize persistence for player: " + player.getName(), ex);
@@ -106,7 +107,7 @@ public final class SerializerObserver extends PropertyObserver
                 {
                     getPersistenceManager().unserializeUsing(player, clazz);
                 }
-                catch (ReflectiveOperationException | SQLException ex)
+                catch (ReflectiveOperationException | IOException | SQLException ex)
                 {
                     log(Level.WARNING,
                             "Could not unserialize persistence for player: " + player.getName(), ex);

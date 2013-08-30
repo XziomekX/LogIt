@@ -18,12 +18,12 @@
  */
 package io.github.lucaseasedup.logit.config;
 
-import io.github.lucaseasedup.logit.IniFile;
+
 import io.github.lucaseasedup.logit.LogItPlugin;
 import io.github.lucaseasedup.logit.util.FileUtils;
+import io.github.lucaseasedup.logit.util.IniUtils;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import it.sauronsoftware.base64.Base64;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import org.bukkit.Color;
 import org.bukkit.configuration.ConfigurationSection;
@@ -65,7 +65,8 @@ public final class LogItConfiguration extends PropertyObserver
             userDefBase64String = IoUtils.toString(userDefInputStream);
         }
         
-        IniFile userDef = new IniFile(decodeConfigDef(userDefBase64String));
+        Map<String, Map<String, String>> userDef =
+                IniUtils.unserialize(decodeConfigDef(userDefBase64String));
         
         try (InputStream packageDefInputStream = getClass().getResourceAsStream(PACKAGE_CONFIG_DEF))
         {
@@ -75,7 +76,8 @@ public final class LogItConfiguration extends PropertyObserver
                 
                 if (!userDefBase64String.equals(packageDefBase64String))
                 {
-                    IniFile packageDef = new IniFile(decodeConfigDef(packageDefBase64String));
+                    Map<String, Map<String, String>> packageDef =
+                            IniUtils.unserialize(decodeConfigDef(packageDefBase64String));
                     
                     try (OutputStream userDefOutputStream = new FileOutputStream(userDefFile))
                     {
@@ -242,89 +244,94 @@ public final class LogItConfiguration extends PropertyObserver
         properties.put(property.getPath(), property);
     }
     
-    private void updateConfigDef(IniFile oldDef, IniFile newDef, OutputStream os) throws IOException
+    private void updateConfigDef(Map<String, Map<String, String>> oldDef,
+                                 Map<String, Map<String, String>> newDef,
+                                 OutputStream os) throws IOException
     {
-        for (String uuid : oldDef.getSections())
+        for (Entry<String, Map<String, String>> entry : oldDef.entrySet())
         {
-            if (!newDef.hasSection(uuid))
+            if (!newDef.containsKey(entry.getKey()))
             {
-                getPlugin().getConfig().set(oldDef.getString(uuid, "path"), null);
+                getPlugin().getConfig().set(entry.getValue().get("path"), null);
                 
-                oldDef.removeSection(uuid);
+                oldDef.remove(entry.getKey());
             }
         }
         
-        for (String uuid : newDef.getSections())
+        for (Entry<String, Map<String, String>> entry : newDef.entrySet())
         {
-            if (!oldDef.hasSection(uuid))
+            final Map<String, String> newDefSection = entry.getValue();
+            final Map<String, String> oldDefSection = oldDef.get(entry.getKey());
+            
+            if (oldDefSection == null)
             {
-                oldDef.putSection(uuid);
-                oldDef.putString(uuid, "path", newDef.getString(uuid, "path"));
-                oldDef.putString(uuid, "type", newDef.getString(uuid, "type"));
-                oldDef.putString(uuid, "requires_restart", newDef.getString(uuid, "requires_restart"));
-                oldDef.putString(uuid, "default_value", newDef.getString(uuid, "default_value"));
-                oldDef.putString(uuid, "validator", newDef.getString(uuid, "validator"));
-                oldDef.putString(uuid, "observer", newDef.getString(uuid, "observer"));
+                oldDef.put(entry.getKey(), new LinkedHashMap<String, String>()
+                {{
+                    put("path",             newDefSection.get("path"));
+                    put("type",             newDefSection.get("type"));
+                    put("requires_restart", newDefSection.get("requires_restart"));
+                    put("default_value",    newDefSection.get("default_value"));
+                    put("validator",        newDefSection.get("validator"));
+                    put("observer",         newDefSection.get("observer"));
+                }});
                 
                 continue;
             }
             
-            if (!oldDef.getString(uuid, "path").equals(newDef.getString(uuid, "path")))
+            if (!oldDefSection.get("path").equals(newDefSection.get("path")))
             {
-                Object val = getPlugin().getConfig().get(oldDef.getString(uuid, "path"));
+                String oldPath = oldDefSection.get("path");
+                Object oldValue = getPlugin().getConfig().get(oldPath);
                 
-                getPlugin().getConfig().set(oldDef.getString(uuid, "path"), null);
-                getPlugin().getConfig().set(newDef.getString(uuid, "path"), val);
+                getPlugin().getConfig().set(oldPath, null);
+                getPlugin().getConfig().set(newDefSection.get("path"), oldValue);
                 
-                oldDef.putString(uuid, "path", newDef.getString(uuid, "path"));
+                oldDefSection.put("path", newDefSection.get("path"));
             }
             
-            if (!oldDef.getString(uuid, "type").equals(newDef.getString(uuid, "type")))
+            if (!oldDefSection.get("type").equals(newDefSection.get("type")))
             {
-                oldDef.putString(uuid, "type", newDef.getString(uuid, "type"));
+                oldDefSection.put("type", newDefSection.get("type"));
             }
             
-            if (!oldDef.getString(uuid, "requires_restart").equals(newDef.getString(uuid, "requires_restart")))
+            if (!oldDefSection.get("requires_restart").equals(newDefSection.get("requires_restart")))
             {
-                oldDef.putString(uuid, "requires_restart", newDef.getString(uuid, "requires_restart"));
+                oldDefSection.put("requires_restart", newDefSection.get("requires_restart"));
             }
             
-            if (!oldDef.getString(uuid, "default_value").equals(newDef.getString(uuid, "default_value")))
+            if (!oldDefSection.get("default_value").equals(newDefSection.get("default_value")))
             {
-                oldDef.putString(uuid, "default_value", newDef.getString(uuid, "default_value"));
+                oldDefSection.put("default_value", newDefSection.get("default_value"));
             }
             
-            if (!oldDef.getString(uuid, "validator").equals(newDef.getString(uuid, "validator")))
+            if (!oldDefSection.get("validator").equals(newDefSection.get("validator")))
             {
-                oldDef.putString(uuid, "validator", newDef.getString(uuid, "validator"));
+                oldDefSection.put("validator", newDefSection.get("validator"));
             }
             
-            if (!oldDef.getString(uuid, "observer").equals(newDef.getString(uuid, "observer")))
+            if (!oldDefSection.get("observer").equals(newDefSection.get("observer")))
             {
-                oldDef.putString(uuid, "observer", newDef.getString(uuid, "observer"));
+                oldDefSection.put("observer", newDefSection.get("observer"));
             }
         }
         
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        
-        oldDef.save(baos);
-        os.write(encodeConfigDef(baos.toString()).getBytes());
+        os.write(encodeConfigDef(IniUtils.serialize(oldDef)).getBytes());
     }
     
-    private void loadConfigDef(IniFile def)
+    private void loadConfigDef(Map<String, Map<String, String>> def)
     {
-        Set<String> properties = def.getSections();
-        
-        for (String uuid : properties)
+        for (Entry<String, Map<String, String>> entry : def.entrySet())
         {
-            String path = def.getString(uuid, "path");
-            PropertyType type = null;
-            boolean requiresRestart = def.getBoolean(uuid, "requires_restart", true);
-            Object defaultValue = null;
-            PropertyValidator validator = null;
-            PropertyObserver observer = null;
+            final Map<String, String> defSection = entry.getValue();
             
-            String typeString = def.getString(uuid, "type");
+            String            path = defSection.get("path");
+            PropertyType      type = null;
+            boolean           requiresRestart = Boolean.valueOf(defSection.get("requires_restart"));
+            Object            defaultValue = null;
+            PropertyValidator validator = null;
+            PropertyObserver  observer = null;
+            
+            String typeString = defSection.get("type");
             
             try
             {
@@ -337,7 +344,7 @@ public final class LogItConfiguration extends PropertyObserver
                 continue;
             }
             
-            String defaultValueString = def.getString(uuid, "default_value");
+            String defaultValueString = defSection.get("default_value");
             
             switch (type)
             {
@@ -425,7 +432,7 @@ public final class LogItConfiguration extends PropertyObserver
                 throw new RuntimeException("Unknown property type: " + type.toString());
             }
             
-            String validatorClassName = def.getString(uuid, "validator");
+            String validatorClassName = defSection.get("validator");
             
             try
             {
@@ -446,7 +453,7 @@ public final class LogItConfiguration extends PropertyObserver
                 continue;
             }
             
-            String observerClassName = def.getString(uuid, "observer");
+            String observerClassName = defSection.get("observer");
             
             try
             {
