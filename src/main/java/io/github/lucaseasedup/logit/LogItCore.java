@@ -505,7 +505,7 @@ public final class LogItCore
      * 
      * @param password         the plain-text password.
      * @param hashedPassword   the hashed password.
-     * @param salt             the salt to be appended to {@code password}.
+     * @param salt             the salt for the passwords.
      * @param hashingAlgorithm the algorithm used when hashing {@code hashedPassword}.
      * 
      * @return {@code true} if passwords match; {@code false} otherwise.
