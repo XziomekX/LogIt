@@ -26,6 +26,9 @@ public final class Pinger implements Runnable
 {
     public Pinger(Database database)
     {
+        if (database == null)
+            throw new NullPointerException();
+        
         this.database = database;
     }
     
