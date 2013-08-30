@@ -194,7 +194,7 @@ public final class PersistenceManager extends LogItCoreObject
      * 
      * @return {@code false} if the serializer class is already registered; {@code true} otherwise.
      * 
-     * @throws IllegalArgumentException     if {@code clazz} is {@code null}.
+     * @throws NullPointerException         if {@code clazz} is null.
      * @throws ReflectiveOperationException if serializer constructor invocation failed.
      * 
      */
@@ -202,7 +202,7 @@ public final class PersistenceManager extends LogItCoreObject
             throws ReflectiveOperationException
     {
         if (clazz == null)
-            throw new IllegalArgumentException("Serializer class must not be null.");
+            throw new NullPointerException();
         
         if (serializers.containsKey(clazz))
             return false;
@@ -219,12 +219,12 @@ public final class PersistenceManager extends LogItCoreObject
      * 
      * @return {@code false} if the serializer class is not registered; {@code true} otherwise.
      * 
-     * @throws IllegalArgumentException if {@code clazz} is {@code null}.
+     * @throws NullPointerException if {@code clazz} is null.
      */
     public boolean unregisterSerializer(Class<? extends PersistenceSerializer> clazz)
     {
         if (clazz == null)
-            throw new IllegalArgumentException("Serializer class must not be null.");
+            throw new NullPointerException();
         
         if (!serializers.containsKey(clazz))
             return false;
