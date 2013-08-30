@@ -22,7 +22,7 @@ public class AccountAlreadyExistsException extends RuntimeException
 {
     /**
      * Creates a new instance of
-     * <code>AccountNotFoundException</code> without detail message.
+     * <code>AccountAlreadyExistsException</code> without detail message.
      */
     public AccountAlreadyExistsException()
     {
@@ -30,7 +30,7 @@ public class AccountAlreadyExistsException extends RuntimeException
     
     /**
      * Constructs an instance of
-     * <code>AccountNotFoundException</code> with the specified detail message.
+     * <code>AccountAlreadyExistsException</code> with the specified detail message.
      *
      * @param msg The detail message.
      */
