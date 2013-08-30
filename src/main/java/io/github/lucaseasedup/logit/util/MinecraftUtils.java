@@ -46,20 +46,20 @@ public final class MinecraftUtils
     {
     }
     
-    public static File getPlayerFile(String world, String username)
+    public static File getPlayerFile(String world, String name)
     {
         File worldFolder = Bukkit.getWorld(world).getWorldFolder();
-        File playerFile = new File(worldFolder, "players/" + username + ".dat");
+        File playerFile = new File(worldFolder, "players/" + name + ".dat");
         
         return playerFile;
     }
     
     public static void saveInventory(String world,
-                                     String username,
+                                     String name,
                                      ItemStack[] contents,
                                      ItemStack[] armor) throws IOException
     {
-        File playerFile = getPlayerFile(world, username);
+        File playerFile = getPlayerFile(world, name);
         
         if (!playerFile.exists())
             throw new FileNotFoundException();
@@ -115,9 +115,9 @@ public final class MinecraftUtils
         }
     }
     
-    public static void saveAir(String world, String username, short air) throws IOException
+    public static void saveAir(String world, String name, short air) throws IOException
     {
-        File playerFile = getPlayerFile(world, username);
+        File playerFile = getPlayerFile(world, name);
         
         if (!playerFile.exists())
             throw new FileNotFoundException();
