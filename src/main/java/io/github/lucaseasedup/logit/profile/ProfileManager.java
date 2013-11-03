@@ -178,6 +178,12 @@ public final class ProfileManager extends LogItCoreObject
         saveProfileConfiguration(playerName);
     }
     
+    public void removeProfileObject(String playerName, String fieldName)
+    {
+        getProfileConfiguration(playerName).set(fieldName, null);
+        saveProfileConfiguration(playerName);
+    }
+    
     public File getPath()
     {
         return path;
