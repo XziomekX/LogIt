@@ -44,7 +44,7 @@ public final class ProfileEditWizard extends Wizard
         
         if (!fields.isEmpty())
         {
-            updateStep(Step.ENTER_FIELD_NUMBER);
+            updateStep(Step.CHOOSE_ACTION);
         }
         else
         {
@@ -56,16 +56,26 @@ public final class ProfileEditWizard extends Wizard
     @Override
     protected void onMessage(String message)
     {
-        if (getCurrentStep() == Step.ENTER_FIELD_NUMBER)
+        if (getCurrentStep() == Step.CHOOSE_ACTION)
         {
             if (message.equalsIgnoreCase("done"))
             {
                 sendMessage(getMessage("ORANGE_HORIZONTAL_LINE"));
                 cancelWizard();
-                
-                return;
             }
-            
+            else if (message.equalsIgnoreCase("edit"))
+            {
+                sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_NUMBER"));
+                updateStep(Step.EDIT_FIELD);
+            }
+            else if (message.equalsIgnoreCase("erase"))
+            {
+                sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_NUMBER"));
+                updateStep(Step.ERASE_FIELD);
+            }
+        }
+        else if (getCurrentStep() == Step.EDIT_FIELD || getCurrentStep() == Step.ERASE_FIELD)
+        {
             int number;
             
             try
@@ -88,48 +98,58 @@ public final class ProfileEditWizard extends Wizard
             
             field = fields.get(number - 1);
             
-            if (field instanceof StringField)
+            if (getCurrentStep() == Step.EDIT_FIELD)
             {
-                sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_STRING")
-                        .replace("%field%", field.getName()));
-            }
-            else if (field instanceof IntegerField)
-            {
-                sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_INTEGER")
-                        .replace("%field%", field.getName()));
-            }
-            else if (field instanceof FloatField)
-            {
-                sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_FLOAT")
-                        .replace("%field%", field.getName()));
-            }
-            else if (field instanceof SetField)
-            {
-                SetField setField = (SetField) field;
-                StringBuilder values = new StringBuilder();
-                
-                for (String value : setField.getAcceptedValues())
+                if (field instanceof StringField)
                 {
-                    if (values.length() > 0)
+                    sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_STRING")
+                            .replace("%field%", field.getName()));
+                }
+                else if (field instanceof IntegerField)
+                {
+                    sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_INTEGER")
+                            .replace("%field%", field.getName()));
+                }
+                else if (field instanceof FloatField)
+                {
+                    sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_FLOAT")
+                            .replace("%field%", field.getName()));
+                }
+                else if (field instanceof SetField)
+                {
+                    SetField setField = (SetField) field;
+                    StringBuilder values = new StringBuilder();
+                    
+                    for (String value : setField.getAcceptedValues())
                     {
-                        values.append(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_SET_SEPARATOR"));
+                        if (values.length() > 0)
+                        {
+                            values.append(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_SET_SEPARATOR"));
+                        }
+                        
+                        values.append(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_SET_VALUE")
+                                .replace("%value%", value));
                     }
                     
-                    values.append(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_SET_VALUE")
-                            .replace("%value%", value));
+                    sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_SET")
+                            .replace("%field%", field.getName())
+                            .replace("%values%", values.toString()));
+                }
+                else
+                {
+                    throw new RuntimeException("Unknown field type: "
+                            + field.getClass().getSimpleName());
                 }
                 
-                sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_SET")
-                        .replace("%field%", field.getName())
-                        .replace("%values%", values.toString()));
+                updateStep(Step.ENTER_FIELD_VALUE);
             }
-            else
+            else if (getCurrentStep() == Step.ERASE_FIELD)
             {
-                throw new RuntimeException("Unknown field type: "
-                        + field.getClass().getSimpleName());
+                getCore().getProfileManager().removeProfileObject(playerName, field.getName());
+                
+                viewProfile(field.getName());
+                updateStep(Step.CHOOSE_ACTION);
             }
-            
-            updateStep(Step.ENTER_FIELD_VALUE);
         }
         else if (getCurrentStep() == Step.ENTER_FIELD_VALUE)
         {
@@ -254,7 +274,7 @@ public final class ProfileEditWizard extends Wizard
             }
             
             viewProfile(field.getName());
-            updateStep(Step.ENTER_FIELD_NUMBER);
+            updateStep(Step.CHOOSE_ACTION);
         }
     }
     
@@ -296,13 +316,17 @@ public final class ProfileEditWizard extends Wizard
             }
             
             sendMessage("");
-            sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_NUMBER"));
+            sendMessage(getMessage("PROFILE_EDIT_CHOOSE_ACTION"));
         }
     }
     
     public static enum Step
     {
-        VIEW, ENTER_FIELD_NUMBER, ENTER_FIELD_VALUE
+        VIEW, CHOOSE_ACTION,
+        
+        EDIT_FIELD, ENTER_FIELD_VALUE,
+        
+        ERASE_FIELD,
     }
     
     private final String playerName;
