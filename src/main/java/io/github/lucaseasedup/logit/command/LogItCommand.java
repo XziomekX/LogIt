@@ -134,6 +134,11 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else
             {
+                if (sender instanceof Player)
+                {
+                    sender.sendMessage("");
+                }
+                
                 sender.sendMessage(getMessage("PLUGIN_ABOUT"));
                 sender.sendMessage(getMessage("PLUGIN_VERSION")
                         .replace("%version%", getPlugin().getDescription().getVersion()));
