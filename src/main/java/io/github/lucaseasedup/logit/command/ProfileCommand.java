@@ -62,7 +62,14 @@ public final class ProfileCommand extends LogItCoreObject implements CommandExec
             }
             else
             {
-                new ProfileViewWizard(sender, args[1]).createWizard();
+                if (!getCore().getProfileManager().containsProfile(args[1]))
+                {
+                    sender.sendMessage(getMessage("PROFILE_VIEW_PROFILE_NOT_FOUND"));
+                }
+                else
+                {
+                    new ProfileViewWizard(sender, args[1]).createWizard();
+                }
             }
         }
         else if (args.length == 1 && args[0].equalsIgnoreCase("edit"))
