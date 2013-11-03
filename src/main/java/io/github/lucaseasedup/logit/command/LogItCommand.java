@@ -136,6 +136,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             {
                 sender.sendMessage(getMessage("PLUGIN_VERSION")
                         .replace("%version%", getPlugin().getDescription().getVersion()));
+                sender.sendMessage(getMessage("PLUGIN_AUTHOR"));
             }
         }
         else if (checkSubcommand("reload", 0))
