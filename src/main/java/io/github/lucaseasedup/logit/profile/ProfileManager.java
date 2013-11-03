@@ -65,6 +65,11 @@ public final class ProfileManager extends LogItCoreObject
         }
     }
     
+    public boolean containsProfile(String playerName)
+    {
+        return new File(path, playerName.toLowerCase() + ".yml").exists();
+    }
+    
     public Field getField(String fieldName)
     {
         for (Field field : definedFields)
