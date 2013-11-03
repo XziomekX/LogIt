@@ -203,11 +203,11 @@ public final class ProfileManager extends LogItCoreObject
     
     private YamlConfiguration getProfileConfiguration(String playerName)
     {
-        File profileFile = profileFiles.get(playerName);
+        File profileFile = fileCache.get(playerName);
         
         if (profileFile == null)
         {
-            profileFiles.put(playerName,
+            fileCache.put(playerName,
                     profileFile = new File(path, playerName.toLowerCase() + ".yml"));
         }
         
@@ -228,7 +228,7 @@ public final class ProfileManager extends LogItCoreObject
         
         try
         {
-            configuration.save(profileFiles.get(playerName));
+            configuration.save(fileCache.get(playerName));
         }
         catch (IOException ex)
         {
@@ -319,6 +319,6 @@ public final class ProfileManager extends LogItCoreObject
     
     private final File path;
     private final List<Field> definedFields = new LinkedList<>();
-    private final Map<String, File> profileFiles = new HashMap<>();
+    private final Map<String, File> fileCache = new HashMap<>();
     private final Map<String, YamlConfiguration> configurationCache = new HashMap<>();
 }
