@@ -134,6 +134,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else
             {
+                sender.sendMessage(getMessage("PLUGIN_ABOUT"));
                 sender.sendMessage(getMessage("PLUGIN_VERSION")
                         .replace("%version%", getPlugin().getDescription().getVersion()));
                 sender.sendMessage(getMessage("PLUGIN_AUTHOR"));
