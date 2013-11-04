@@ -117,6 +117,7 @@ public final class LogItCore
         if (started)
             return;
         
+        dataFolder.mkdir();
         getDataFile("lib").mkdir();
         
         config = new LogItConfiguration();
