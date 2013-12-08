@@ -518,7 +518,7 @@ public final class LogItCore
                                  String salt,
                                  HashingAlgorithm hashingAlgorithm)
     {
-        if (hashedPassword == null)
+        if (hashedPassword == null || hashedPassword.isEmpty())
             return false;
         
         if (hashingAlgorithm == HashingAlgorithm.BCRYPT)
