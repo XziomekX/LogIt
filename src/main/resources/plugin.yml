@@ -16,7 +16,7 @@ commands:
 
   register:
     description: Registers you.
-    usage: /<command> <|<password> <confirmpassword>>
+    usage: /<command> <password> <confirmpassword>>
     aliases: [reg]
 
   unregister:
