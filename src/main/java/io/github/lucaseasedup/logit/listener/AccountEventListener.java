@@ -23,4 +23,5 @@ import org.bukkit.event.Listener;
 
 public final class AccountEventListener extends LogItCoreObject implements Listener
 {
+    // Created for future use.
 }
