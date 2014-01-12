@@ -24,7 +24,6 @@ import io.github.lucaseasedup.logit.persistence.AirBarSerializer;
 import io.github.lucaseasedup.logit.persistence.ExperienceSerializer;
 import io.github.lucaseasedup.logit.persistence.HealthBarSerializer;
 import io.github.lucaseasedup.logit.persistence.HungerBarSerializer;
-import io.github.lucaseasedup.logit.persistence.InventorySerializer;
 import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
 import java.io.IOException;
@@ -60,10 +59,6 @@ public final class SerializerObserver extends PropertyObserver
 
         case "force-login.obfuscate-bars.hunger":
             clazz = HungerBarSerializer.class;
-            break;
-            
-        case "force-login.hide-inventory":
-            clazz = InventorySerializer.class;
             break;
         }
         
