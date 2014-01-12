@@ -16,18 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package io.github.lucaseasedup.logit.craftreflect;
-
-import java.io.InputStream;
-import org.bukkit.inventory.ItemStack;
 
 public interface CraftReflect
 {
-    public NBTTagList newNBTTagList();
-    public NBTTagCompound newNBTTagCompound();
-    public NBTBase readNBTTag(InputStream di);
-    public CraftInventoryCustom newCraftInventoryCustom(int size);
-    public void saveItemStack(ItemStack is, NBTTagCompound tagCompound);
-    public ItemStack createStack(NBTTagCompound tagCompound);
 }
