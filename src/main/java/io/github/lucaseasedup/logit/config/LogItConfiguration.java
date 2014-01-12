@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -247,13 +248,17 @@ public final class LogItConfiguration extends PropertyObserver
                                  Map<String, Map<String, String>> newDef,
                                  OutputStream os) throws IOException
     {
-        for (Entry<String, Map<String, String>> entry : oldDef.entrySet())
+        Iterator<Entry<String, Map<String, String>>> it = oldDef.entrySet().iterator();
+        
+        while (it.hasNext())
         {
+            Entry<String, Map<String, String>> entry = it.next();
+            
             if (!newDef.containsKey(entry.getKey()))
             {
                 getPlugin().getConfig().set(entry.getValue().get("path"), null);
                 
-                oldDef.remove(entry.getKey());
+                it.remove();
             }
         }
         
