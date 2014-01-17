@@ -144,7 +144,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             if (!getConfig().getBoolean("messages.join.hide"))
             {
-            broadcastJoinMessage(player, getConfig().getBoolean("messages.join.show-world"));
+                broadcastJoinMessage(player, getConfig().getBoolean("messages.join.show-world"));
             }
         }
         else
