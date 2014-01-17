@@ -41,7 +41,6 @@ import static org.bukkit.ChatColor.UNDERLINE;
 import static org.bukkit.ChatColor.WHITE;
 import static org.bukkit.ChatColor.YELLOW;
 import io.github.lucaseasedup.logit.config.Location;
-import io.github.lucaseasedup.logit.craftreflect.CraftReflect;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,31 +69,6 @@ public final class LogItPlugin extends JavaPlugin
         
         try
         {
-            String version = getCraftBukkitVersion();
-            String craftClassName =
-                    "io.github.lucaseasedup.logit.craftreflect." + version + ".CraftReflect";
-            Class<?> craftClass = Class.forName(craftClassName);
-            
-            craftReflect = (CraftReflect) craftClass.getConstructor().newInstance();
-        }
-        catch (ClassNotFoundException ex)
-        {
-            logger.log(Level.SEVERE, "LogIt does not support this version of Bukkit.");
-            disable();
-            
-            return;
-        }
-        catch (Exception ex)
-        {
-            logger.log(Level.SEVERE, "Could not set up CraftBukkit reflection.", ex);
-            disable();
-            
-            return;
-        }
-        
-        try
-        {
-            // Load messages from the file.
             loadMessages();
         }
         catch (IOException ex)
@@ -113,7 +87,6 @@ public final class LogItPlugin extends JavaPlugin
         catch (FatalReportedException ex)
         {
             core = null;
-            craftReflect = null;
             messages = null;
             
             disable();
@@ -195,11 +168,6 @@ public final class LogItPlugin extends JavaPlugin
                 messages = new PropertyResourceBundle(messagesReader);
             }
         }
-    }
-    
-    public CraftReflect getCraftReflect()
-    {
-        return craftReflect;
     }
     
     public static String getMessage(String label, String[] variables)
@@ -332,5 +300,4 @@ public final class LogItPlugin extends JavaPlugin
     private static PropertyResourceBundle messages;
     
     private LogItCore core;
-    private CraftReflect craftReflect;
 }
