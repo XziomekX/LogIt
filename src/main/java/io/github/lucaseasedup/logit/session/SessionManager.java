@@ -67,7 +67,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
                 }
                 else
                 {
-                    session.updateStatus(20L);
+                    session.updateStatus(TASK_PERIOD);
                 }
             }
             // Player logged out and online.
@@ -83,7 +83,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
                     }
                     else
                     {
-                        session.updateStatus(-20L);
+                        session.updateStatus(-TASK_PERIOD);
                     }
                 }
             }
@@ -362,7 +362,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         }
     }
     
-    public static final long TASK_PERIOD = 20;
+    public static final long TASK_PERIOD = 1;
     
     private final Map<String, Session> sessions = new ConcurrentHashMap<>();
 }
