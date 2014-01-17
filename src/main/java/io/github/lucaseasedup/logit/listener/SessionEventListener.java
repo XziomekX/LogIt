@@ -56,7 +56,8 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
                     getCore().updatePlayerGroup(player);
                 }
                 
-                if (getCore().isPlayerForcedToLogIn(player))
+                if (getCore().isPlayerForcedToLogIn(player)
+                        && !getConfig().getBoolean("messages.join.hide"))
                 {
                     broadcastJoinMessage(player, getConfig().getBoolean("messages.join.show-world"));
                 }
@@ -91,7 +92,8 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
                     getCore().updatePlayerGroup(player);
                 }
                 
-                if (getCore().isPlayerForcedToLogIn(player))
+                if (getCore().isPlayerForcedToLogIn(player)
+                        && !getConfig().getBoolean("messages.quit.hide"))
                 {
                     broadcastQuitMessage(player);
                 }

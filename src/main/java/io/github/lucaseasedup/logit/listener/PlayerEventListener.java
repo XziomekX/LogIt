@@ -142,7 +142,10 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         if (getSessionManager().isSessionAlive(player) || !getCore().isPlayerForcedToLogIn(player))
         {
+            if (!getConfig().getBoolean("messages.join.hide"))
+            {
             broadcastJoinMessage(player, getConfig().getBoolean("messages.join.show-world"));
+            }
         }
         else
         {
@@ -180,7 +183,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             getCore().getPersistenceManager().unserialize(player);
         }
-        else
+        else if (!getConfig().getBoolean("messages.quit.hide"))
         {
             broadcastQuitMessage(player);
         }
@@ -198,7 +201,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             getCore().getPersistenceManager().unserialize(player);
         }
-        else
+        else if (!getConfig().getBoolean("messages.quit.hide"))
         {
             broadcastQuitMessage(player);
         }
