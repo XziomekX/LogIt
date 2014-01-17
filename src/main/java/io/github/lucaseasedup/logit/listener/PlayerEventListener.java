@@ -25,6 +25,7 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_FULL;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
+import io.github.lucaseasedup.logit.ForcedLoginPrompter;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.util.List;
 import org.bukkit.Bukkit;
@@ -151,18 +152,23 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             getCore().getPersistenceManager().serialize(player);
             
-            Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
+            int promptPeriod = getConfig().getInt("force-login.prompt-period") * 20;
+            int prompterId;
+            
+            ForcedLoginPrompter prompter = new ForcedLoginPrompter(getCore(), username);
+            
+            if (promptPeriod <= 0)
             {
-                @Override
-                public void run()
-                {
-                    if (getCore().isPlayerForcedToLogIn(player)
-                            && !getSessionManager().isSessionAlive(player))
-                    {
-                        getCore().sendForceLoginMessage(player);
-                    }
-                }
-            }, 5L);
+                prompterId = Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(),
+                        prompter, 5L);
+            }
+            else
+            {
+                prompterId = Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(),
+                        prompter, 5L, promptPeriod);
+            }
+            
+            prompter.setTaskId(prompterId);
         }
         
         if (getConfig().getBoolean("groups.enabled"))
