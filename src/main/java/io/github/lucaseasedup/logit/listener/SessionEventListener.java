@@ -58,7 +58,7 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
                 
                 if (getCore().isPlayerForcedToLogIn(player))
                 {
-                    broadcastJoinMessage(player, getConfig().getBoolean("reveal-spawn-world"));
+                    broadcastJoinMessage(player, getConfig().getBoolean("messages.join.show-world"));
                 }
             }
         }, 1L);

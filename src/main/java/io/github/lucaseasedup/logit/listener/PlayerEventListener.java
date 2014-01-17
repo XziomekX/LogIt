@@ -142,7 +142,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         if (getSessionManager().isSessionAlive(player) || !getCore().isPlayerForcedToLogIn(player))
         {
-            broadcastJoinMessage(player, getConfig().getBoolean("reveal-spawn-world"));
+            broadcastJoinMessage(player, getConfig().getBoolean("messages.join.show-world"));
         }
         else
         {
