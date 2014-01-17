@@ -680,7 +680,8 @@ public final class LogItCore
     }
     
     /**
-     * Sends a message to the specified player telling them to either log in or register.
+     * Sends a message to the specified player telling them to either log in or register
+     * if it has been enabled in the config.
      * 
      * @param player the player to whom the message will be sent.
      */
@@ -688,24 +689,30 @@ public final class LogItCore
     {
         if (accountManager.isRegistered(player.getName()))
         {
-            if (!accountManager.getTable().isColumnDisabled("logit.accounts.password"))
+            if (getConfig().getBoolean("force-login.prompt-to-login"))
             {
-                player.sendMessage(getMessage("PLEASE_LOGIN"));
-            }
-            else
-            {
-                player.sendMessage(getMessage("PLEASE_LOGIN_NOPASS"));
+                if (!accountManager.getTable().isColumnDisabled("logit.accounts.password"))
+                {
+                    player.sendMessage(getMessage("PLEASE_LOGIN"));
+                }
+                else
+                {
+                    player.sendMessage(getMessage("PLEASE_LOGIN_NOPASS"));
+                }
             }
         }
         else
         {
-            if (!accountManager.getTable().isColumnDisabled("logit.accounts.password"))
+            if (getConfig().getBoolean("force-login.prompt-to-register"))
             {
-                player.sendMessage(getMessage("PLEASE_REGISTER"));
-            }
-            else
-            {
-                player.sendMessage(getMessage("PLEASE_REGISTER_NOPASS"));
+                if (!accountManager.getTable().isColumnDisabled("logit.accounts.password"))
+                {
+                    player.sendMessage(getMessage("PLEASE_REGISTER"));
+                }
+                else
+                {
+                    player.sendMessage(getMessage("PLEASE_REGISTER_NOPASS"));
+                }
             }
         }
     }
