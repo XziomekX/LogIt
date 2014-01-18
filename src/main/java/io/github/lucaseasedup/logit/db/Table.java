@@ -226,9 +226,22 @@ public final class Table
         return null;
     }
     
+    /**
+     * Checks if a column is disabled.
+     * 
+     * @param id the column ID.
+     * 
+     * @return {@code false} if the column is enabled;
+     *         {@code true} if the column is disabled or does not exist.
+     */
     public boolean isColumnDisabled(String id)
     {
-        return tableColumns.get(id).isDisabled();
+        Column column = tableColumns.get(id);
+        
+        if (column == null)
+            return true;
+        
+        return column.isDisabled();
     }
     
     public String getTableName()
