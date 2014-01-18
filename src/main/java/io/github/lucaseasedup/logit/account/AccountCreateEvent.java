@@ -29,6 +29,8 @@ public final class AccountCreateEvent extends AccountEvent
     
     /**
      * Equal to <code>getProperty("logit.accounts.username")</code>.
+     * 
+     * @return the username.
      */
     public String getUsername()
     {
