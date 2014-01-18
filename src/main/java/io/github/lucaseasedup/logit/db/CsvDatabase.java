@@ -73,7 +73,7 @@ public final class CsvDatabase extends Database
         }
         catch (IOException ex)
         {
-            throw new SQLException(ex.getMessage(), ex.getCause());
+            throw new SQLException(ex);
         }
         
         return columnList;
@@ -122,7 +122,7 @@ public final class CsvDatabase extends Database
         }
         catch (IOException ex)
         {
-            throw new SQLException(ex.getMessage(), ex.getCause());
+            throw new SQLException(ex);
         }
         
         return rs;
@@ -171,7 +171,7 @@ public final class CsvDatabase extends Database
         }
         catch (IOException ex)
         {
-            throw new SQLException(ex.getMessage(), ex.getCause());
+            throw new SQLException(ex);
         }
         
         return true;
@@ -208,7 +208,7 @@ public final class CsvDatabase extends Database
         }
         catch (IOException ex)
         {
-            throw new SQLException(ex.getMessage(), ex.getCause());
+            throw new SQLException(ex);
         }
         
         return true;
@@ -278,7 +278,7 @@ public final class CsvDatabase extends Database
         }
         catch (IOException ex)
         {
-            throw new SQLException(ex.getMessage(), ex.getCause());
+            throw new SQLException(ex);
         }
         
         return true;
@@ -319,7 +319,7 @@ public final class CsvDatabase extends Database
         }
         catch (IOException ex)
         {
-            throw new SQLException(ex.getMessage(), ex.getCause());
+            throw new SQLException(ex);
         }
         
         return true;
