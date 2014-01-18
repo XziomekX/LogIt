@@ -72,6 +72,7 @@ public final class IoUtils
         }
     }
     
+    @SuppressWarnings("resource")
     public static void loadLibrary(String filename) throws ReflectiveOperationException,
                                                            FileNotFoundException,
                                                            MalformedURLException
@@ -92,6 +93,7 @@ public final class IoUtils
         }
     }
     
+    @SuppressWarnings("resource")
     public static boolean libraryLoaded(String filename)
     {
         File file = new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename);
