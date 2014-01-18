@@ -10,3 +10,4 @@ Installation steps:
 Optional libraries for enhanced functionality (already included in the LogIt folder):
 * mail-[version].jar - for sending e-mails (e.g. password recovery)
 * h2small-[version].jar - for H2 database support
+* postgresql-[version].jar - for PostgreSQL database support
