@@ -1,5 +1,5 @@
 name: LogIt
-version: %version-major%.%version-minor%.%version-bugfix%-b%build-number%
+version: 0.5.2-b%build-number%
 author: LucasEasedUp
 main: io.github.lucaseasedup.logit.LogItPlugin
 softdepend: [Multiverse-Core, Vault]
