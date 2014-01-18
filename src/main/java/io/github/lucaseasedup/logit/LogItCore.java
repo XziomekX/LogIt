@@ -49,6 +49,7 @@ import io.github.lucaseasedup.logit.db.Database;
 import io.github.lucaseasedup.logit.db.H2Database;
 import io.github.lucaseasedup.logit.db.MySqlDatabase;
 import io.github.lucaseasedup.logit.db.Pinger;
+import io.github.lucaseasedup.logit.db.PostgreSqlDatabase;
 import io.github.lucaseasedup.logit.db.SqliteDatabase;
 import io.github.lucaseasedup.logit.db.Table;
 import io.github.lucaseasedup.logit.hash.BCrypt;
@@ -191,6 +192,11 @@ public final class LogItCore
                 LogItPlugin.loadLibrary(LIB_H2);
             }
             
+            if (storageType.equals(StorageType.POSTGRESQL))
+            {
+                LogItPlugin.loadLibrary(LIB_POSTGRESQL);
+            }
+            
             if (config.getBoolean("password-recovery.enabled"))
             {
                 LogItPlugin.loadLibrary(LIB_MAIL);
@@ -233,6 +239,16 @@ public final class LogItCore
                     database = new H2Database("jdbc:h2:" + dataFolder
                             + "/" + config.getString("storage.accounts.h2.filename"));
                     database.connect();
+                    
+                    break;
+                }
+                case POSTGRESQL:
+                {
+                    database = new PostgreSqlDatabase(config.getString("storage.accounts.postgresql.host"));
+                    ((PostgreSqlDatabase) database).connect(
+                            config.getString("storage.accounts.postgresql.user"),
+                            config.getString("storage.accounts.postgresql.password")
+                    );
                     
                     break;
                 }
@@ -1091,17 +1107,18 @@ public final class LogItCore
     
     public static enum StorageType
     {
-        UNKNOWN, SQLITE, MYSQL, H2, CSV;
+        UNKNOWN, SQLITE, MYSQL, H2, POSTGRESQL, CSV;
         
         public static StorageType decode(String s)
         {
             switch (s.toLowerCase())
             {
-            case "sqlite": return SQLITE;
-            case "mysql":  return MYSQL;
-            case "h2":     return H2;
-            case "csv":    return CSV;
-            default:       return UNKNOWN;
+            case "sqlite":     return SQLITE;
+            case "mysql":      return MYSQL;
+            case "h2":         return H2;
+            case "postgresql": return POSTGRESQL;
+            case "csv":        return CSV;
+            default:           return UNKNOWN;
             }
         }
     }
@@ -1168,6 +1185,7 @@ public final class LogItCore
     }
     
     public static final String LIB_H2 = "h2small-1.3.171.jar";
+    public static final String LIB_POSTGRESQL = "postgresql-9.3-1100.jdbc4.jar";
     public static final String LIB_MAIL = "mail-1.4.7.jar";
     
     private static LogItCore instance = null;
