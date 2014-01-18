@@ -41,6 +41,7 @@ import io.github.lucaseasedup.logit.command.NopCommandExecutor;
 import io.github.lucaseasedup.logit.command.ProfileCommand;
 import io.github.lucaseasedup.logit.command.RecoverPassCommand;
 import io.github.lucaseasedup.logit.command.RegisterCommand;
+import io.github.lucaseasedup.logit.command.RememberCommand;
 import io.github.lucaseasedup.logit.command.UnregisterCommand;
 import io.github.lucaseasedup.logit.config.LogItConfiguration;
 import io.github.lucaseasedup.logit.db.CsvDatabase;
@@ -1000,6 +1001,8 @@ public final class LogItCore
         setCommandExecutor("logit", new LogItCommand(), true);
         setCommandExecutor("login", new LoginCommand(), true);
         setCommandExecutor("logout", new LogoutCommand(), true);
+        setCommandExecutor("remember", new RememberCommand(),
+                !accountTable.isColumnDisabled("logit.accounts.remember-login"));
         setCommandExecutor("register", new RegisterCommand(), true);
         setCommandExecutor("unregister", new UnregisterCommand(), true);
         setCommandExecutor("changepass", new ChangePassCommand(),

@@ -54,20 +54,13 @@ public final class SessionManager extends LogItCoreObject implements Runnable
             // Player logged in.
             if (session.getStatus() >= 0L)
             {
-                if (session.getStatus() > (getConfig().getInt("session-lifetime") * 20L))
+                if (isPlayerOnline(username))
                 {
-                    if (isPlayerOnline(username))
-                    {
-                        session.setStatus(0L);
-                    }
-                    else
-                    {
-                        destroySession(username);
-                    }
+                    session.setStatus(0L);
                 }
                 else
                 {
-                    session.updateStatus(TASK_PERIOD);
+                    destroySession(username);
                 }
             }
             // Player logged out and online.

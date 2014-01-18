@@ -14,6 +14,14 @@ commands:
     usage: /<command> [password]
     aliases: [l]
 
+  logout:
+    description: Logs you out.
+    usage: /<command>
+
+  remember:
+    description: Remembers your login.
+    usage: /<command>
+
   register:
     description: Registers you.
     usage: /<command> <password> <confirmpassword>>
@@ -22,10 +30,6 @@ commands:
   unregister:
     description: Unregisters you.
     usage: /<command> [password]
-
-  logout:
-    description: Logs you out.
-    usage: /<command>
 
   changepass:
     description: Changes your password.
@@ -60,6 +64,7 @@ permissions:
       logit.version: true
       logit.login.self: true
       logit.logout.self: true
+      logit.remember: true
       logit.register.self: true
       logit.unregister.self: true
       logit.changepass.self: true
@@ -162,6 +167,8 @@ permissions:
   logit.logout.self:
     default: false
   logit.logout.others:
+    default: false
+  logit.remember:
     default: false
   logit.register:
     default: false

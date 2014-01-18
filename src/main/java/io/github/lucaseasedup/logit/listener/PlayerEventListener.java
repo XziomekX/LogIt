@@ -27,6 +27,7 @@ import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_FULL;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
 import io.github.lucaseasedup.logit.ForcedLoginPrompter;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.account.Account;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
@@ -139,6 +140,33 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         if (getSessionManager().getSession(username) == null)
         {
             getSessionManager().createSession(username, ip);
+        }
+        
+        int rememberLoginFor = getConfig().getInt("remember-login-for");
+        
+        if (rememberLoginFor > 0 && getAccountManager().isRegistered(username)
+                && !getAccountManager().getTable().isColumnDisabled("logit.accounts.remember-login"))
+        {
+            Account account = getAccountManager().getAccount(username);
+            String rememberLogin = account.getString("logit.accounts.remember-login");
+            
+            if (rememberLogin != null && !rememberLogin.isEmpty())
+            {
+                String[] loginSplit = rememberLogin.split(";");
+                
+                if (loginSplit.length == 2)
+                {
+                    String loginIp = loginSplit[0];
+                    int loginTime = Integer.parseInt(loginSplit[1]);
+                    int currentTime = (int) (System.currentTimeMillis() / 1000L);
+                    
+                    if (ip.equals(loginIp) && currentTime - loginTime < rememberLoginFor
+                            && !getSessionManager().isSessionAlive(username))
+                    {
+                        getSessionManager().startSession(username);
+                    }
+                }
+            }
         }
         
         if (getSessionManager().isSessionAlive(player) || !getCore().isPlayerForcedToLogIn(player))

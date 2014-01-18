@@ -144,6 +144,11 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     failedLoginsToBan.remove(username);
                     
                     sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
+                    
+                    if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.remember-login"))
+                    {
+                        sender.sendMessage(getMessage("REMEMBER_PROMPT"));
+                    }
                 }
             }
         }
