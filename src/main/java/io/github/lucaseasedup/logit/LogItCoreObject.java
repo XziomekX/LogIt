@@ -119,6 +119,18 @@ public abstract class LogItCoreObject
         }
     }
     
+    protected final void log(Level level, Throwable throwable)
+    {
+        if (core.isConfigLoaded())
+        {
+            core.log(level, throwable);
+        }
+        else
+        {
+            core.getPlugin().getLogger().log(level, "Caught exception: ", throwable);
+        }
+    }
+    
     protected final File getDataFile(String path)
     {
         return core.getDataFile(path);

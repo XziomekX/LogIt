@@ -909,6 +909,26 @@ public final class LogItCore
         log(level, message + " [Exception stack trace:\n" + sw.toString() + "]");
     }
     
+    /**
+     * Logs a {@code Throwable} in the name of LogIt.
+     * 
+     * @param level     the logging level.
+     * @param throwable the throwable to be logged.
+     * 
+     * @see #log(Level, String, Throwable)
+     */
+    public void log(Level level, Throwable throwable)
+    {
+        StringWriter sw = new StringWriter();
+        
+        try (PrintWriter pw = new PrintWriter(sw))
+        {
+            throwable.printStackTrace(pw);
+        }
+        
+        log(level, "Caught exception:\n" + sw.toString());
+    }
+    
     public boolean isConfigLoaded()
     {
         return config.isLoaded();
