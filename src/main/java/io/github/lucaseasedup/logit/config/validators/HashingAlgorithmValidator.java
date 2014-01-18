@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.config.validators;
 
+import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
 import io.github.lucaseasedup.logit.config.PropertyType;
 import io.github.lucaseasedup.logit.config.PropertyValidator;
 
@@ -29,12 +30,6 @@ public final class HashingAlgorithmValidator implements PropertyValidator
         if (value == null)
             return false;
         
-        String string = value.toString();
-        
-        return string.equalsIgnoreCase("plain") || string.equalsIgnoreCase("md2")
-                || string.equalsIgnoreCase("md5") || string.equalsIgnoreCase("sha-1")
-                || string.equalsIgnoreCase("sha-256") || string.equalsIgnoreCase("sha-384")
-                || string.equalsIgnoreCase("sha-512") || string.equalsIgnoreCase("whirlpool")
-                || string.equalsIgnoreCase("bcrypt");
+        return HashingAlgorithm.decode(value.toString()) != HashingAlgorithm.UNKNOWN;
     }
 }
