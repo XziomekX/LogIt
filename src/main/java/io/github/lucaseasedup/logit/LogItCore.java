@@ -28,6 +28,7 @@ import static io.github.lucaseasedup.logit.hash.HashGenerator.getSha256;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getSha384;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getSha512;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getWhirlpool;
+import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.account.AccountWatcher;
 import io.github.lucaseasedup.logit.backup.BackupManager;
@@ -693,7 +694,7 @@ public final class LogItCore
         
         return (config.getBoolean("force-login.global")
              || config.getStringList("force-login.in-worlds").contains(worldName))
-             && !config.getStringList("force-login.exempt-players").contains(player.getName());
+             && !containsIgnoreCase(player.getName(),config.getStringList("force-login.exempt-players"));
     }
     
     /**

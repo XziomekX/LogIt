@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.listener;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastJoinMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastQuitMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
@@ -102,7 +103,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             // Calculate how many players for which slots should be preserved are online.
             for (Player p : Bukkit.getOnlinePlayers())
             {
-                if (preserveForPlayers.contains(p.getName()))
+                if (containsIgnoreCase(p.getName(), preserveForPlayers))
                 {
                     preservedSlots++;
                 }
