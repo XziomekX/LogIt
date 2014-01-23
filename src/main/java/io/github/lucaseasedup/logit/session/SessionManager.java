@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.session;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerName;
@@ -67,7 +68,8 @@ public final class SessionManager extends LogItCoreObject implements Runnable
             else if (isPlayerOnline(username))
             {
                 if (getAccountManager().isRegistered(username)
-                        && !player.hasPermission("logit.force-login.timeout.exempt")
+                        && !containsIgnoreCase(username,
+                                getConfig().getStringList("force-login.disable-timeout-for-players"))
                         && getCore().isPlayerForcedToLogIn(player))
                 {
                     if (session.getStatus() <= forceLoginTimeout)
