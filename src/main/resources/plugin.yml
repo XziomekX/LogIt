@@ -216,7 +216,5 @@ permissions:
     default: false
   logit.profile.edit.others:
     default: false
-  logit.force-login.exempt:
-    default: false
   logit.force-login.timeout.exempt:
     default: false

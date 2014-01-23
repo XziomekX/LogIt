@@ -676,7 +676,7 @@ public final class LogItCore
      * <p> Returns {@code true} if <i>"force-login.global"</i> is set to <i>true</i>,
      * or the player is in a world with forced login; {@code false} otherwise.
      * 
-     * <p> If the player has the <i>"logit.force-login.exempt"</i> permission,
+     * <p> If the player name is contained in <i>"force-login.exempt-players"</i>,
      * it always returns {@code false}.
      * 
      * <p> Note that this method does not check if the player is logged in.
@@ -693,7 +693,7 @@ public final class LogItCore
         
         return (config.getBoolean("force-login.global")
              || config.getStringList("force-login.in-worlds").contains(worldName))
-             && !player.hasPermission("logit.force-login.exempt");
+             && !config.getStringList("force-login.exempt-players").contains(player.getName());
     }
     
     /**
