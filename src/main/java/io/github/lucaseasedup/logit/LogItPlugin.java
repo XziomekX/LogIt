@@ -127,27 +127,6 @@ public final class LogItPlugin extends JavaPlugin
     public void loadMessages() throws IOException
     {
         String suffix = "_" + getConfig().getString("locale", "en");
-        File file;
-        
-        if ((file = new File(getDataFolder(), "lang/messages" + suffix + ".properties")).exists())
-        {
-            try (InputStream is = new FileInputStream(file))
-            {
-                messages = new PropertyResourceBundle(is);
-            }
-            
-            return;
-        }
-        
-        if ((file = new File(getDataFolder(), "lang/messages.properties")).exists())
-        {
-            try (InputStream is = new FileInputStream(file))
-            {
-                messages = new PropertyResourceBundle(is);
-            }
-            
-            return;
-        }
         
         try (JarFile jarFile = new JarFile(getFile()))
         {
@@ -168,6 +147,35 @@ public final class LogItPlugin extends JavaPlugin
                 messages = new PropertyResourceBundle(messagesReader);
             }
         }
+        
+        loadCustomGlobalMessages("lang/messages.properties");
+        loadCustomLocalMessages("lang/messages" + suffix + ".properties");
+    }
+    
+    public void loadCustomGlobalMessages(String path) throws IOException
+    {
+        File file = new File(getDataFolder(), path);
+        
+        if (!file.exists())
+            return;
+        
+        try (InputStream is = new FileInputStream(file))
+        {
+            customGlobalMessages = new PropertyResourceBundle(is);
+        }
+    }
+    
+    public void loadCustomLocalMessages(String path) throws IOException
+    {
+        File file = new File(getDataFolder(), path);
+        
+        if (!file.exists())
+            return;
+        
+        try (InputStream is = new FileInputStream(file))
+        {
+            customLocalMessages = new PropertyResourceBundle(is);
+        }
     }
     
     public static String getMessage(String label, String[] variables)
@@ -176,7 +184,19 @@ public final class LogItPlugin extends JavaPlugin
         
         try
         {
-            message = formatColorCodes(messages.getString(label));
+            String string = messages.getString(label);
+            
+            if (customGlobalMessages != null && customGlobalMessages.containsKey(label))
+            {
+                string = customGlobalMessages.getString(label);
+            }
+            
+            if (customLocalMessages != null && customLocalMessages.containsKey(label))
+            {
+                string = customLocalMessages.getString(label);
+            }
+            
+            message = formatColorCodes(string);
         }
         catch (NullPointerException | MissingResourceException | ClassCastException ex)
         {
@@ -298,6 +318,8 @@ public final class LogItPlugin extends JavaPlugin
     
     private static Logger logger;
     private static PropertyResourceBundle messages;
+    private static PropertyResourceBundle customGlobalMessages;
+    private static PropertyResourceBundle customLocalMessages;
     
     private LogItCore core;
 }
