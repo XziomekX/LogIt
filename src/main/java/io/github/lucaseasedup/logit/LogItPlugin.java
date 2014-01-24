@@ -269,14 +269,6 @@ public final class LogItPlugin extends JavaPlugin
         return s;
     }
     
-    public static String getCraftBukkitVersion()
-    {
-        String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        String[] packageParts = packageName.split("\\.");
-        
-        return packageParts[packageParts.length - 1];
-    }
-    
     public static void loadLibrary(String filename)
     {
         try
