@@ -29,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -36,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.bukkit.Color;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -68,20 +71,28 @@ public final class LogItConfiguration extends PropertyObserver
         Map<String, Map<String, String>> userDef =
                 IniUtils.unserialize(decodeConfigDef(userDefBase64String));
         
-        try (InputStream packageDefInputStream = getClass().getResourceAsStream(PACKAGE_CONFIG_DEF))
+        String jarUrlPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        String jarPath = URLDecoder.decode(jarUrlPath, "UTF-8");
+        
+        try (ZipFile jarZipFile = new ZipFile(jarPath))
         {
-            if (packageDefInputStream != null)
+            ZipEntry packageDefEntry = jarZipFile.getEntry(PACKAGE_CONFIG_DEF);
+            
+            try (InputStream packageDefInputStream = jarZipFile.getInputStream(packageDefEntry))
             {
-                String packageDefBase64String = IoUtils.toString(packageDefInputStream);
-                
-                if (!userDefBase64String.equals(packageDefBase64String))
+                if (packageDefInputStream != null)
                 {
-                    Map<String, Map<String, String>> packageDef =
-                            IniUtils.unserialize(decodeConfigDef(packageDefBase64String));
+                    String packageDefBase64String = IoUtils.toString(packageDefInputStream);
                     
-                    try (OutputStream userDefOutputStream = new FileOutputStream(userDefFile))
+                    if (!userDefBase64String.equals(packageDefBase64String))
                     {
-                        updateConfigDef(userDef, packageDef, userDefOutputStream);
+                        Map<String, Map<String, String>> packageDef =
+                                IniUtils.unserialize(decodeConfigDef(packageDefBase64String));
+                        
+                        try (OutputStream userDefOutputStream = new FileOutputStream(userDefFile))
+                        {
+                            updateConfigDef(userDef, packageDef, userDefOutputStream);
+                        }
                     }
                 }
             }
@@ -493,7 +504,7 @@ public final class LogItConfiguration extends PropertyObserver
     }
     
     public static final String USER_CONFIG_DEF = "config-def.b64";
-    public static final String PACKAGE_CONFIG_DEF = "/config-def.b64";
+    public static final String PACKAGE_CONFIG_DEF = "config-def.b64";
     
     private boolean loaded = false;
     private final Map<String, Property> properties = new LinkedHashMap<>();
