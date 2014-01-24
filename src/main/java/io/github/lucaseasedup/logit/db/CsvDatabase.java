@@ -64,6 +64,10 @@ public final class CsvDatabase extends Database
         try (BufferedReader br = new BufferedReader(new FileReader(new File(dir, table))))
         {
             String line = br.readLine();
+            
+            if (line == null)
+                throw new SQLException("Null line.");
+            
             String[] topValues = line.split(",");
             
             for (int i = 0; i < topValues.length; i++)
@@ -90,6 +94,10 @@ public final class CsvDatabase extends Database
         try (BufferedReader br = new BufferedReader(new FileReader(new File(dir, table))))
         {
             String line = br.readLine();
+            
+            if (line == null)
+                throw new SQLException("Null line.");
+            
             String[] tableColumns = line.split(",");
             
             for (int i = 0; i < tableColumns.length; i++)
