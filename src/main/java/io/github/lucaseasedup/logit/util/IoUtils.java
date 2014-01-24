@@ -31,7 +31,10 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public final class IoUtils
 {
@@ -60,14 +63,25 @@ public final class IoUtils
         int readBytes;
         byte[] buffer = new byte[4096];
         
+        String jarUrlPath = IoUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String jarPath = URLDecoder.decode(jarUrlPath, "UTF-8");
+        
         try (
-            InputStream is = IoUtils.class.getResourceAsStream(resource);
+            ZipFile jarZipFile = new ZipFile(jarPath);
             OutputStream os = new FileOutputStream(dest);
         )
         {
-            while ((readBytes = is.read(buffer)) > 0)
+            ZipEntry entry = jarZipFile.getEntry(resource);
+            
+            if (entry != null)
             {
-                os.write(buffer, 0, readBytes);
+                try (InputStream is = jarZipFile.getInputStream(entry))
+                {
+                    while ((readBytes = is.read(buffer)) > 0)
+                    {
+                        os.write(buffer, 0, readBytes);
+                    }
+                }
             }
         }
     }
