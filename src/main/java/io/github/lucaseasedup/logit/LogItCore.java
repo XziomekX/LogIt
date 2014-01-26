@@ -537,7 +537,14 @@ public final class LogItCore
         
         if (hashingAlgorithm == HashingAlgorithm.BCRYPT)
         {
-            return BCrypt.checkpw(password, hashedPassword);
+            try
+            {
+                return BCrypt.checkpw(password, hashedPassword);
+            }
+            catch (IllegalArgumentException ex)
+            {
+                return false;
+            }
         }
         else
         {
