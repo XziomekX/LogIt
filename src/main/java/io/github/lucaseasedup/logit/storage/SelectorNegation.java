@@ -1,5 +1,5 @@
 /*
- * WhereClause.java
+ * SelectorNegation.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -16,40 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit.db;
+package io.github.lucaseasedup.logit.storage;
 
-public final class WhereClause
+public final class SelectorNegation extends Selector
 {
-    public WhereClause(String columnId, String operator, String value)
+    public SelectorNegation(SelectorCondition operand)
     {
-        if (columnId == null || operator == null)
+        if (operand == null)
             throw new NullPointerException();
         
-        this.columnId = columnId;
-        this.operator = operator;
-        this.value = value;
+        this.operand = operand;
     }
     
-    public String getColumnId()
+    public SelectorCondition getOperand()
     {
-        return columnId;
+        return operand;
     }
     
-    public String getOperator()
-    {
-        return operator;
-    }
-    
-    public String getValue()
-    {
-        return value;
-    }
-
-    public static final String EQUAL = "=";
-    public static final String LESS_THAN = "<";
-    public static final String GREATER_THAN = ">";
-    
-    private final String columnId;
-    private final String operator;
-    private final String value;
+    private final SelectorCondition operand;
 }

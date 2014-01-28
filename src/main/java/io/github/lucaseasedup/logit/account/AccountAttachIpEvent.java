@@ -20,25 +20,15 @@ package io.github.lucaseasedup.logit.account;
 
 public final class AccountAttachIpEvent extends AccountEvent
 {
-    public AccountAttachIpEvent(Account account, String ip)
+    public AccountAttachIpEvent(String username, String ip)
     {
-        this.account = account;
+        this.username = username;
         this.ip = ip;
     }
     
-    public Account getAccount()
-    {
-        return account;
-    }
-    
-    /**
-     * Equal to <code>getAccount().get("logit.accounts.username")</code>.
-     * 
-     * @return Username.
-     */
     public String getUsername()
     {
-        return account.getString("logit.accounts.username");
+        return username;
     }
     
     public String getIp()
@@ -46,6 +36,6 @@ public final class AccountAttachIpEvent extends AccountEvent
         return ip;
     }
     
-    private final Account account;
+    private final String username;
     private final String ip;
 }

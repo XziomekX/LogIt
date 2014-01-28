@@ -26,11 +26,17 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerName;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.db.Database;
-import io.github.lucaseasedup.logit.db.SqliteDatabase;
+import io.github.lucaseasedup.logit.storage.Infix;
+import io.github.lucaseasedup.logit.storage.SelectorCondition;
+import io.github.lucaseasedup.logit.storage.SqliteStorage;
+import io.github.lucaseasedup.logit.storage.Storage;
+import io.github.lucaseasedup.logit.storage.Storage.Type;
+import io.github.lucaseasedup.logit.util.HashtableBuilder;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.io.File;
-import java.sql.SQLException;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -294,39 +300,35 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         return CancelledState.NOT_CANCELLED;
     }
     
-    public void exportSessions(File sessionsDatabaseFile) throws SQLException
+    public void exportSessions(File sessionsDatabaseFile) throws IOException
     {
         sessionsDatabaseFile.delete();
         
-        try (Database sessionsDatabase = new SqliteDatabase("jdbc:sqlite:" + sessionsDatabaseFile))
+        try (Storage sessionsDatabase = new SqliteStorage("jdbc:sqlite:" + sessionsDatabaseFile))
         {
             sessionsDatabase.connect();
-            sessionsDatabase.createTableIfNotExists("sessions", new String[]{
-                "username", "VARCHAR(16)",
-                "status",   "INTEGER",
-                "ip",       "VARCHAR(64)"
-            });
+            sessionsDatabase.createUnit("sessions", new HashtableBuilder<String, Type>()
+                .add("username", Type.TINYTEXT)
+                .add("status", Type.INTEGER)
+                .add("ip", Type.TINYTEXT)
+                .build());
             
             Player[] players = Bukkit.getOnlinePlayers();
             
             for (Player player : players)
             {
-                sessionsDatabase.insert("sessions", new String[]{
-                    "username",
-                    "status",
-                    "ip"
-                }, new String[]{
-                    player.getName().toLowerCase(),
-                    String.valueOf(getSession(player.getName()).getStatus()),
-                    getPlayerIp(player)
-                });
+                sessionsDatabase.addEntry("sessions", new HashtableBuilder<String, String>()
+                        .add("username", player.getName().toLowerCase())
+                        .add("status", String.valueOf(getSession(player.getName()).getStatus()))
+                        .add("ip", getPlayerIp(player))
+                        .build());
             }
         }
     }
     
-    public void importSessions(File file) throws SQLException
+    public void importSessions(File file) throws IOException
     {
-        try (SqliteDatabase sessionsDatabase = new SqliteDatabase("jdbc:sqlite:" + file))
+        try (Storage sessionsDatabase = new SqliteStorage("jdbc:sqlite:" + file))
         {
             sessionsDatabase.connect();
             
@@ -334,21 +336,20 @@ public final class SessionManager extends LogItCoreObject implements Runnable
             
             for (Player player : players)
             {
-                if (getSession(player.getName()) == null)
+                String username = player.getName().toLowerCase();
+                
+                if (getSession(username) == null)
                 {
-                    createSession(player.getName(), "");
+                    createSession(username, "");
                 }
                 
-                List<Map<String, String>> rs = sessionsDatabase.select("sessions", new String[]{
-                    "status",
-                    "ip"
-                }, new String[]{
-                    "username", "=", player.getName().toLowerCase()
-                });
+                List<Hashtable<String, String>> rs =
+                        sessionsDatabase.selectEntries("sessions", Arrays.asList("status", "ip"),
+                                new SelectorCondition("username", Infix.EQUALS, username));
                 
                 if (!rs.isEmpty())
                 {
-                    Session session = getSession(player.getName());
+                    Session session = getSession(username);
                     
                     session.setStatus(Integer.parseInt(rs.get(0).get("status")));
                     session.setIp(rs.get(0).get("ip"));

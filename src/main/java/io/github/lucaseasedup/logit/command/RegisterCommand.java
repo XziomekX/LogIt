@@ -58,7 +58,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
             }
-            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
+            else if (!getConfig().getBoolean("password.disable-passwords")
                     && args.length < 3)
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
@@ -68,13 +68,13 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 sender.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_OTHERS")
                         .replace("%player%", args[1]));
             }
-            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
+            else if (!getConfig().getBoolean("password.disable-passwords")
                     && args[2].length() < minPasswordLength)
             {
                 sender.sendMessage(getMessage("PASSWORD_TOO_SHORT")
                         .replace("%min-length%", String.valueOf(minPasswordLength)));
             }
-            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
+            else if (!getConfig().getBoolean("password.disable-passwords")
                     && args[2].length() > maxPasswordLength)
             {
                 sender.sendMessage(getMessage("PASSWORD_TOO_LONG")
@@ -84,7 +84,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             {
                 String password = "";
                 
-                if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password"))
+                if (!getConfig().getBoolean("password.disable-passwords"))
                 {
                     password = args[2];
                 }
@@ -146,12 +146,12 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             {
                 p.sendMessage(getMessage("NO_PERMS"));
             }
-            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
+            else if (!getConfig().getBoolean("password.disable-passwords")
                     && args.length < 1)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
-            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
+            else if (!getConfig().getBoolean("password.disable-passwords")
                     && args.length < 2)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
@@ -160,19 +160,19 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_SELF"));
             }
-            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
+            else if (!getConfig().getBoolean("password.disable-passwords")
                     && args[0].length() < minPasswordLength)
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_SHORT")
                         .replace("%min-length%", String.valueOf(minPasswordLength)));
             }
-            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
+            else if (!getConfig().getBoolean("password.disable-passwords")
                     && args[0].length() > maxPasswordLength)
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_LONG")
                         .replace("%max-length%", String.valueOf(maxPasswordLength)));
             }
-            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
+            else if (!getConfig().getBoolean("password.disable-passwords")
                     && !args[0].equals(args[1]))
             {
                 p.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
@@ -186,7 +186,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             {
                 String password = "";
                 
-                if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password"))
+                if (!getConfig().getBoolean("password.disable-passwords"))
                 {
                     password = args[0];
                 }

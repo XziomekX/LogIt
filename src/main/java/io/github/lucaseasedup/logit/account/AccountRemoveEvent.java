@@ -20,25 +20,15 @@ package io.github.lucaseasedup.logit.account;
 
 public final class AccountRemoveEvent extends AccountEvent
 {
-    public AccountRemoveEvent(Account account)
+    public AccountRemoveEvent(String username)
     {
-        this.account = account;
+        this.username = username;
     }
     
-    public Account getAccount()
-    {
-        return account;
-    }
-    
-    /**
-     * Equal to <code>getAccount().get("logit.accounts.username")</code>.
-     * 
-     * @return Username.
-     */
     public String getUsername()
     {
-        return account.getString("logit.accounts.username");
+        return username;
     }
     
-    private final Account account;
+    private final String username;
 }

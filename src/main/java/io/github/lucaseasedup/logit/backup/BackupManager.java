@@ -22,19 +22,16 @@ import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.Timer;
-import io.github.lucaseasedup.logit.db.SqliteDatabase;
-import io.github.lucaseasedup.logit.db.Table;
+import io.github.lucaseasedup.logit.storage.SqliteStorage;
+import io.github.lucaseasedup.logit.storage.Storage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -80,28 +77,21 @@ public final class BackupManager extends LogItCoreObject implements Runnable
             if (!backupFile.createNewFile())
                 throw new IOException("Backup already exists.");
             
-            try (SqliteDatabase backupDatabase = new SqliteDatabase("jdbc:sqlite:" + backupFile))
+            try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
             {
-                backupDatabase.connect();
+                backupStorage.connect();
                 
-                Table sourceTable = getAccountManager().getTable();
-                Table backupTable = new Table(backupDatabase, sourceTable.getTableName(),
-                        getConfig().getConfigurationSection("storage.accounts.columns"));
-                backupTable.open();
+                List<Hashtable<String, String>> rs =
+                        getAccountManager().getStorage().selectEntries(getAccountManager().getUnit());
+                backupStorage.createUnit(getAccountManager().getUnit(), getAccountManager().getKeys());
                 
-                List<Map<String, String>> rs = sourceTable.select();
-                
-                for (Map<String, String> row : rs)
+                for (Hashtable<String, String> entry : rs)
                 {
-                    Set<String> columns = row.keySet();
-                    Collection<String> values = row.values();
-                    
-                    backupTable.insert(columns.toArray(new String[columns.size()]),
-                            values.toArray(new String[values.size()]));
+                    backupStorage.addEntry(getAccountManager().getUnit(), entry);
                 }
             }
         }
-        catch (IOException | SQLException ex)
+        catch (IOException ex)
         {
             log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"), ex);
             
@@ -124,33 +114,23 @@ public final class BackupManager extends LogItCoreObject implements Runnable
             
             File backupFile = getBackup(filename);
             
-            try (SqliteDatabase backupDatabase = new SqliteDatabase("jdbc:sqlite:" + backupFile))
+            try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
             {
-                backupDatabase.connect();
-                
-                Table sourceTable = getAccountManager().getTable();
-                Table backupTable = new Table(backupDatabase, sourceTable.getTableName(),
-                        getConfig().getConfigurationSection("storage.accounts.columns"));
-                backupTable.open();
+                backupStorage.connect();
                 
                 // Clear the table before restoring.
-                sourceTable.truncate();
+                getAccountManager().getStorage().eraseUnit(getAccountManager().getUnit());
                 
-                List<Map<String, String>> rs = backupTable.select();
+                List<Hashtable<String, String>> rs =
+                        backupStorage.selectEntries(getAccountManager().getUnit());
                 
-                for (Map<String, String> row : rs)
+                for (Hashtable<String, String> entry : rs)
                 {
-                    Set<String> columns = row.keySet();
-                    Collection<String> values = row.values();
-                    
-                    sourceTable.insert(columns.toArray(new String[columns.size()]),
-                            values.toArray(new String[values.size()]));
+                    getAccountManager().getStorage().addEntry(getAccountManager().getUnit(), entry);
                 }
             }
-            
-            getAccountManager().loadAccounts();
         }
-        catch (FileNotFoundException | SQLException ex)
+        catch (IOException ex)
         {
             log(Level.WARNING, getMessage("RESTORE_BACKUP_FAIL"), ex);
             

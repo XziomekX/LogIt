@@ -1,5 +1,5 @@
 /*
- * SetClause.java
+ * SelectorCondition.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -16,22 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit.db;
+package io.github.lucaseasedup.logit.storage;
 
-public final class SetClause
+public final class SelectorCondition extends Selector
 {
-    public SetClause(String columnId, String value)
+    public SelectorCondition(String key, Relation relation, String value)
     {
-        if (columnId == null)
+        if (key == null || relation == null)
             throw new NullPointerException();
         
-        this.columnId = columnId;
+        this.key = key;
+        this.relation = relation;
         this.value = value;
     }
     
-    public String getColumnId()
+    public String getKey()
     {
-        return columnId;
+        return key;
+    }
+    
+    public Relation getRelation()
+    {
+        return relation;
     }
     
     public String getValue()
@@ -39,6 +45,12 @@ public final class SetClause
         return value;
     }
     
-    private final String columnId;
+    public enum Relation
+    {
+        EQUALS, LESS_THAN, GREATER_THAN, STARTS_WITH, ENDS_WITH, CONTAINS;
+    }
+    
+    private final String key;
+    private final Relation relation;
     private final String value;
 }

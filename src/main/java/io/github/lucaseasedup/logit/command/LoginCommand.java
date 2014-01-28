@@ -94,8 +94,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             {
                 p.sendMessage(getMessage("NO_PERMS"));
             }
-            else if (args.length < 1
-                    && !getAccountManager().getTable().isColumnDisabled("logit.accounts.password"))
+            else if (args.length < 1 && !getConfig().getBoolean("password.disable-passwords"))
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
@@ -107,7 +106,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             {
                 p.sendMessage(getMessage("START_SESSION_ALREADY_SELF"));
             }
-            else if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.password")
+            else if (!getConfig().getBoolean("password.disable-passwords")
                     && !getAccountManager().checkAccountPassword(username, args[0])
                     && !getCore().checkGlobalPassword(args[0]))
             {
@@ -145,7 +144,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     
                     sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
                     
-                    if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.remember-login"))
+                    if (getConfig().getBoolean("login-sessions.enabled"))
                     {
                         sender.sendMessage(getMessage("REMEMBER_PROMPT"));
                     }

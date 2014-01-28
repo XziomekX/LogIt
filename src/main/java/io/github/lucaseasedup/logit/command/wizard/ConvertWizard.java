@@ -22,12 +22,9 @@ import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.FatalReportedException;
 import io.github.lucaseasedup.logit.config.PropertyType;
 import io.github.lucaseasedup.logit.config.validators.DbTypeValidator;
-import io.github.lucaseasedup.logit.db.Table;
-import java.sql.SQLException;
-import java.util.Collection;
+import java.io.IOException;
+import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -221,29 +218,23 @@ public final class ConvertWizard extends Wizard
                 
                 try
                 {
-                    List<Map<String, String>> rs = null;
+                    List<Hashtable<String, String>> rs = null;
                     
                     if (copyAccounts)
                     {
-                        rs = getAccountManager().getTable().select();
+                        rs = getAccountManager().getStorage()
+                                .selectEntries(getAccountManager().getUnit());
                     }
                     
                     getCore().restart();
                     
                     if (copyAccounts)
                     {
-                        Table table = getAccountManager().getTable();
-                        
-                        for (Map<String, String> row : rs)
+                        for (Hashtable<String, String> entry : rs)
                         {
-                            Set<String> columns = row.keySet();
-                            Collection<String> values = row.values();
-                            
-                            table.insert(columns.toArray(new String[columns.size()]),
-                                    values.toArray(new String[values.size()]));
+                            getAccountManager().getStorage()
+                                    .addEntry(getAccountManager().getUnit(), entry);
                         }
-                        
-                        getAccountManager().loadAccounts();
                     }
                     
                     if (getSender() instanceof Player)
@@ -257,7 +248,7 @@ public final class ConvertWizard extends Wizard
                     
                     updateStep(Step.SUCCESS);
                 }
-                catch (FatalReportedException | SQLException ex)
+                catch (FatalReportedException | IOException ex)
                 {
                     if (getSender() instanceof Player)
                     {

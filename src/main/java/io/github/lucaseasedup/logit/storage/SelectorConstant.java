@@ -1,5 +1,5 @@
 /*
- * Column.java
+ * SelectorConstant.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -16,39 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit.db;
+package io.github.lucaseasedup.logit.storage;
 
-public final class Column
+public final class SelectorConstant extends Selector
 {
-    public Column(String name, String type, boolean disabled)
+    public SelectorConstant(boolean value)
     {
-        if (name == null)
-            throw new NullPointerException();
-        
-        if (name.trim().isEmpty())
-            throw new IllegalArgumentException();
-        
-        this.name = name;
-        this.type = type;
-        this.disabled = disabled;
+        this.value = value;
     }
     
-    public String getName()
+    public boolean getValue()
     {
-        return name;
+        return value;
     }
     
-    public String getType()
-    {
-        return type;
-    }
-    
-    public boolean isDisabled()
-    {
-        return disabled;
-    }
-    
-    private final String name;
-    private final String type;
-    private final boolean disabled;
+    private final boolean value;
 }

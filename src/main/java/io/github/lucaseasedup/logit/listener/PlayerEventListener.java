@@ -28,8 +28,9 @@ import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_FULL;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
 import io.github.lucaseasedup.logit.ForcedLoginPrompter;
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.account.Account;
+import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -143,30 +144,36 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             getSessionManager().createSession(username, ip);
         }
         
-        int rememberLoginFor = getConfig().getInt("remember-login-for");
+        int rememberLoginFor = getConfig().getInt("login-sessions.valid-for");
         
         if (rememberLoginFor > 0 && getAccountManager().isRegistered(username)
-                && !getAccountManager().getTable().isColumnDisabled("logit.accounts.remember-login"))
+                && getConfig().getBoolean("login-sessions.enabled"))
         {
-            Account account = getAccountManager().getAccount(username);
-            String rememberLogin = account.getString("logit.accounts.remember-login");
-            
-            if (rememberLogin != null && !rememberLogin.isEmpty())
+            try
             {
-                String[] loginSplit = rememberLogin.split(";");
+                String rememberLogin = getAccountManager().getLoginSession(username);
                 
-                if (loginSplit.length == 2)
+                if (rememberLogin != null && !rememberLogin.isEmpty())
                 {
-                    String loginIp = loginSplit[0];
-                    int loginTime = Integer.parseInt(loginSplit[1]);
-                    int currentTime = (int) (System.currentTimeMillis() / 1000L);
+                    String[] loginSplit = rememberLogin.split(";");
                     
-                    if (ip.equals(loginIp) && currentTime - loginTime < rememberLoginFor
-                            && !getSessionManager().isSessionAlive(username))
+                    if (loginSplit.length == 2)
                     {
-                        getSessionManager().startSession(username);
+                        String loginIp = loginSplit[0];
+                        int loginTime = Integer.parseInt(loginSplit[1]);
+                        int currentTime = (int) (System.currentTimeMillis() / 1000L);
+                        
+                        if (ip.equals(loginIp) && currentTime - loginTime < rememberLoginFor
+                                && !getSessionManager().isSessionAlive(username))
+                        {
+                            getSessionManager().startSession(username);
+                        }
                     }
                 }
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, ex);
             }
         }
         

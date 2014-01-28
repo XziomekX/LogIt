@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit.command;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
+import java.io.IOException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -56,21 +57,24 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
             {
                 p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
             }
-            else if (!args[0].equals(getAccountManager().getEmail(p.getName())))
-            {
-                p.sendMessage(getMessage("INCORRECT_EMAIL_ADDRESS"));
-            }
             else
             {
                 try
                 {
                     ReportedException.incrementRequestCount();
                     
-                    getCore().recoverPassword(p.getName());
-                    sender.sendMessage(getMessage("RECOVER_PASSWORD_SUCCESS_SELF")
-                            .replace("%email%", args[0]));
+                    if (!args[0].equals(getAccountManager().getEmail(p.getName())))
+                    {
+                        p.sendMessage(getMessage("INCORRECT_EMAIL_ADDRESS"));
+                    }
+                    else
+                    {
+                        getCore().recoverPassword(p.getName());
+                        sender.sendMessage(getMessage("RECOVER_PASSWORD_SUCCESS_SELF")
+                                .replace("%email%", args[0]));
+                    }
                 }
-                catch (ReportedException ex)
+                catch (ReportedException | IOException ex)
                 {
                     sender.sendMessage(getMessage("RECOVER_PASSWORD_FAIL_SELF"));
                 }

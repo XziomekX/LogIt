@@ -20,7 +20,7 @@ package io.github.lucaseasedup.logit.listener;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.io.File;
-import java.sql.SQLException;
+import java.io.IOException;
 import java.util.logging.Level;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -42,7 +42,7 @@ public final class ServerEventListener extends LogItCoreObject implements Listen
         {
             getSessionManager().importSessions(sessions);
         }
-        catch (SQLException ex)
+        catch (IOException ex)
         {
             log(Level.WARNING, "Could not import sessions.", ex);
         }
@@ -62,7 +62,7 @@ public final class ServerEventListener extends LogItCoreObject implements Listen
         {
             getSessionManager().exportSessions(sessions);
         }
-        catch (SQLException ex)
+        catch (IOException ex)
         {
             log(Level.WARNING, "Could not export sessions.", ex);
         }

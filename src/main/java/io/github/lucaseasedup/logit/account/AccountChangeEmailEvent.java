@@ -20,25 +20,15 @@ package io.github.lucaseasedup.logit.account;
 
 public final class AccountChangeEmailEvent extends AccountEvent
 {
-    public AccountChangeEmailEvent(Account account, String email)
+    public AccountChangeEmailEvent(String username, String email)
     {
-        this.account = account;
+        this.username = username;
         this.email = email;
     }
     
-    public Account getAccount()
-    {
-        return account;
-    }
-    
-    /**
-     * Equal to <code>getAccount().get("logit.accounts.username")</code>.
-     * 
-     * @return Username.
-     */
     public String getUsername()
     {
-        return account.getString("logit.accounts.username");
+        return username;
     }
     
     public String getEmail()
@@ -46,6 +36,6 @@ public final class AccountChangeEmailEvent extends AccountEvent
         return email;
     }
     
-    private final Account account;
+    private final String username;
     private final String email;
 }

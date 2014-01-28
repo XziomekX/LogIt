@@ -18,6 +18,21 @@
  */
 package io.github.lucaseasedup.logit.util;
 
+import com.google.common.collect.ImmutableList;
+import io.github.lucaseasedup.logit.storage.Infix;
+import io.github.lucaseasedup.logit.storage.Selector;
+import io.github.lucaseasedup.logit.storage.SelectorBinary;
+import io.github.lucaseasedup.logit.storage.SelectorCondition;
+import io.github.lucaseasedup.logit.storage.SelectorConstant;
+import io.github.lucaseasedup.logit.storage.SelectorNegation;
+import io.github.lucaseasedup.logit.storage.Storage.Type;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map.Entry;
+import org.apache.tools.ant.util.LinkedHashtable;
+
 public final class SqlUtils
 {
     private SqlUtils()
@@ -35,149 +50,295 @@ public final class SqlUtils
         
         return string;
     }
-
-    public static String buildColumnDefinition(String[] columns, String quote, boolean escapeBackslashes)
+    
+    public static List<Hashtable<String, String>> copyResultSet(ResultSet rs) throws SQLException
     {
-        if ((columns.length % 2) != 0)
-            throw new IllegalArgumentException("Length of columns must be multiple of 2.");
+        ImmutableList.Builder<Hashtable<String, String>> result = new ImmutableList.Builder<>();
         
-        StringBuilder output = new StringBuilder();
-        
-        for (int i = 0; i < columns.length; i += 2)
+        if (rs != null && rs.isBeforeFirst())
         {
-            if (output.length() != 0)
+            while (rs.next())
             {
-                output.append(", ");
+                Hashtable<String, String> row = new LinkedHashtable<>();
+                
+                for (int i = 1, n = rs.getMetaData().getColumnCount(); i <= n; i++)
+                {
+                    String value = rs.getString(i);
+                    
+                    if (value == null)
+                    {
+                        value = "";
+                    }
+                    
+                    row.put(rs.getMetaData().getColumnLabel(i), value);
+                }
+                
+                result.add(row);
             }
             
-            // Column name
-            output.append(quote);
-            output.append(escapeQuotes(columns[i], quote, escapeBackslashes));
-            output.append(quote);
-            
-            // Column type
-            output.append(" ");
-            output.append(columns[i + 1]);
+            rs.close();
         }
         
-        return output.toString();
+        return result.build();
     }
     
-    public static String implodeColumns(String[] columns, String quote, boolean escapeBackslashes)
+    public static String translateSelector(Selector selector, String columnQuote, String valueQuote)
     {
-        StringBuilder output = new StringBuilder();
+        if (selector == null)
+            throw new NullPointerException();
         
-        if (columns.length == 1 && columns[0].equals("*"))
-            return "*";
-        
-        for (int i = 0; i < columns.length; i++)
+        if (selector instanceof SelectorConstant)
         {
-            if (output.length() != 0)
+            SelectorConstant selectorConstant = (SelectorConstant) selector;
+            
+            return (selectorConstant.getValue()) ? "1 = 1" : "1 = 0";
+        }
+        else if (selector instanceof SelectorNegation)
+        {
+            SelectorNegation selectorNegation = (SelectorNegation) selector;
+            
+            return "NOT (" + translateSelector(selectorNegation.getOperand(), columnQuote, valueQuote) + ")";
+        }
+        else if (selector instanceof SelectorBinary)
+        {
+            SelectorBinary selectorBinary = (SelectorBinary) selector;
+            StringBuilder sb = new StringBuilder();
+            
+            sb.append("(");
+            sb.append(translateSelector(selectorBinary.getLeftOperand(), columnQuote, valueQuote));
+            sb.append(") ");
+            
+            switch (selectorBinary.getRelation())
             {
-                output.append(", ");
+            case AND:
+                sb.append("AND");
+                break;
+                
+            case OR:
+                sb.append("OR");
+                break;
+                
+            default:
+                throw new RuntimeException("Unsupported relation: " + selectorBinary.getRelation());
             }
             
-            output.append(quote);
-            output.append(escapeQuotes(columns[i], quote, escapeBackslashes));
-            output.append(quote);
+            sb.append(" (");
+            sb.append(translateSelector(selectorBinary.getRightOperand(), columnQuote, valueQuote));
+            sb.append(")");
+            
+            return sb.toString();
         }
-        
-        return output.toString();
+        else if (selector instanceof SelectorCondition)
+        {
+            SelectorCondition selectorCondition = (SelectorCondition) selector;
+            StringBuilder sb = new StringBuilder();
+            
+            sb.append("(");
+            sb.append(columnQuote);
+            sb.append(escapeQuotes(selectorCondition.getKey(), columnQuote, true));
+            sb.append(columnQuote);
+            sb.append(") ");
+            
+            switch (selectorCondition.getRelation())
+            {
+            case EQUALS:
+                sb.append("=");
+                break;
+                
+            case LESS_THAN:
+                sb.append("<");
+                break;
+                
+            case GREATER_THAN:
+            case STARTS_WITH:
+            case CONTAINS:
+                sb.append("LIKE");
+                break;
+                
+            default:
+                throw new RuntimeException("Unsupported relation: " + selectorCondition.getRelation());
+            }
+            
+            sb.append(" (");
+            sb.append(valueQuote);
+            
+            if (selectorCondition.equals(Infix.ENDS_WITH)
+                    || selectorCondition.equals(Infix.CONTAINS))
+            {
+                sb.append("%");
+            }
+            
+            sb.append(escapeQuotes(selectorCondition.getValue(), valueQuote, true));
+            
+            if (selectorCondition.equals(Infix.STARTS_WITH)
+                    || selectorCondition.equals(Infix.CONTAINS))
+            {
+                sb.append("%");
+            }
+            
+            sb.append(valueQuote);
+            sb.append(")");
+            
+            return sb.toString();
+        }
+        else
+        {
+            throw new RuntimeException("Unsupported selector: " + selector.getClass().getName());
+        }
     }
     
-    public static String implodeValues(String[] values, String valueQuote, boolean escapeBackslashes)
+    public static String encodeType(Type type)
     {
-        StringBuilder output = new StringBuilder();
-        
-        for (int i = 0; i < values.length; i++)
+        switch (type)
         {
-            if (output.length() != 0)
-            {
-                output.append(", ");
-            }
-            
-            if (values[i] == null)
-            {
-                output.append("NULL");
-            }
-            else
-            {
-                output.append(valueQuote);
-                output.append(escapeQuotes(values[i], valueQuote, escapeBackslashes));
-                output.append(valueQuote);
-            }
-        }
+        case INTEGER:
+            return "INTEGER";
+        case REAL:
+            return "REAL";
         
-        return output.toString();
+        case TINYTEXT:
+            return "VARCHAR(255)";
+        case MEDIUMTEXT:
+            return "VARCHAR(1023)";
+        case LONGTEXT:
+            return "VARCHAR(10119)";
+        case TEXT:
+            return "TEXT";
+            
+        default:
+            throw new RuntimeException("Unknown type: " + type);
+        }
     }
     
-    public static String implodeSet(String[] set,
-                                         String columnQuote,
-                                         String valueQuote,
-                                         boolean escapeBackslashes)
+    public static Type decodeType(String type)
     {
-        if ((set.length % 2) != 0)
-            throw new IllegalArgumentException("Length of set must be multiple of 2.");
+        type = type.toUpperCase();
         
-        StringBuilder output = new StringBuilder();
-        
-        for (int i = 0; i < set.length; i += 2)
+        if (type.startsWith("INT") || type.startsWith("TINYINT") || type.startsWith("SMALLINT")
+                || type.startsWith("MEDIUMINT") || type.startsWith("BIGINT"))
         {
-            if (output.length() != 0)
-            {
-                output.append(", ");
-            }
-            
-            // Column name
-            output.append(columnQuote);
-            output.append(escapeQuotes(set[i], columnQuote, escapeBackslashes));
-            output.append(columnQuote);
-            
-            // Assignment operator
-            output.append(" = ");
-            
-            // Value
-            output.append(valueQuote);
-            output.append(escapeQuotes(set[i + 1], valueQuote, escapeBackslashes));
-            output.append(valueQuote);
+            return Type.INTEGER;
         }
-        
-        return output.toString();
+        else if (type.startsWith("REAL") || type.startsWith("DOUBLE") || type.startsWith("FLOAT"))
+        {
+            return Type.REAL;
+        }
+        else if (type.startsWith("VARCHAR") || type.startsWith("TEXT")
+                || type.startsWith("CLOB") || type.startsWith("CHAR")
+                || type.startsWith("VARYING CHARACTER")  || type.startsWith("NVARCHAR")
+                || type.startsWith("LONGVARCHAR") || type.startsWith("NCHAR")
+                || type.startsWith("NTEXT") || type.startsWith("LONGTEXT")
+                || type.startsWith("MEDIUMTEXT") || type.startsWith("NCLOB")
+                || type.startsWith("TINYTEXT"))
+        {
+            return Type.TEXT;
+        }
+        else
+        {
+            throw new RuntimeException("Unknown type: " + type);
+        }
     }
     
-    public static String implodeWhere(String[] conditions,
-                                           String columnQuote,
-                                           String valueQuote,
-                                           boolean escapeBackslashes)
+    public static String translateKeyList(List<String> keys, String columnQuote)
     {
-        if ((conditions.length % 3) != 0)
-            throw new IllegalArgumentException("Length of conditions must be multiple of 3.");
+        StringBuilder sb = new StringBuilder();
         
-        StringBuilder output = new StringBuilder();
-        
-        for (int i = 0; i < conditions.length; i += 3)
+        for (String key : keys)
         {
-            if (output.length() != 0)
+            if (sb.length() > 0)
             {
-                output.append(" AND ");
+                sb.append(", ");
             }
             
-            // Column name
-            output.append(columnQuote);
-            output.append(escapeQuotes(conditions[i], columnQuote, escapeBackslashes));
-            output.append(columnQuote);
-            
-            // Operator
-            output.append(" ");
-            output.append(conditions[i + 1]);
-            output.append(" ");
-            
-            // Value
-            output.append(valueQuote);
-            output.append(escapeQuotes(conditions[i + 2], valueQuote, escapeBackslashes));
-            output.append(valueQuote);
+            sb.append(columnQuote);
+            sb.append(escapeQuotes(key, columnQuote, true));
+            sb.append(columnQuote);
         }
         
-        return output.toString();
+        return sb.toString();
+    }
+    
+    public static String translateKeyTypeList(Hashtable<String, Type> keys, String columnQuote)
+    {
+        StringBuilder sb = new StringBuilder();
+        
+        for (Entry<String, Type> e : keys.entrySet())
+        {
+            if (sb.length() > 0)
+            {
+                sb.append(", ");
+            }
+            
+            sb.append(columnQuote);
+            sb.append(escapeQuotes(e.getKey(), columnQuote, true));
+            sb.append(columnQuote);
+            sb.append(" ");
+            sb.append(encodeType(e.getValue()));
+        }
+        
+        return sb.toString();
+    }
+    
+    public static String translatePairNames(Hashtable<String, String> pairs, String columnQuote)
+    {
+        StringBuilder sb = new StringBuilder();
+        
+        for (Entry<String, String> e : pairs.entrySet())
+        {
+            if (sb.length() > 0)
+            {
+                sb.append(", ");
+            }
+            
+            sb.append(columnQuote);
+            sb.append(escapeQuotes(e.getKey(), columnQuote, true));
+            sb.append(columnQuote);
+        }
+        
+        return sb.toString();
+    }
+    
+    public static String translatePairValues(Hashtable<String, String> pairs, String valueQuote)
+    {
+        StringBuilder sb = new StringBuilder();
+        
+        for (Entry<String, String> e : pairs.entrySet())
+        {
+            if (sb.length() > 0)
+            {
+                sb.append(", ");
+            }
+            
+            sb.append(valueQuote);
+            sb.append(escapeQuotes(e.getValue(), valueQuote, true));
+            sb.append(valueQuote);
+        }
+        
+        return sb.toString();
+    }
+    
+    public static String translatePairs(Hashtable<String, String> pairs,
+                                        String columnQuote,
+                                        String valueQuote)
+    {
+        StringBuilder sb = new StringBuilder();
+        
+        for (Entry<String, String> e : pairs.entrySet())
+        {
+            if (sb.length() > 0)
+            {
+                sb.append(", ");
+            }
+            
+            sb.append(columnQuote);
+            sb.append(escapeQuotes(e.getKey(), columnQuote, true));
+            sb.append(columnQuote);
+            sb.append(" = ");
+            sb.append(valueQuote);
+            sb.append(escapeQuotes(e.getValue(), valueQuote, true));
+            sb.append(valueQuote);
+        }
+        
+        return sb.toString();
     }
 }

@@ -19,9 +19,7 @@
 package io.github.lucaseasedup.logit.persistence;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.account.Account;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -53,15 +51,13 @@ public final class PersistenceManager extends LogItCoreObject
      * @throws NullPointerException         if {@code player} is null.
      * @throws ReflectiveOperationException if serializer construction failed.
      * @throws IOException                  if an IO error occured while updating persistence.
-     * @throws SQLException                 if an SQL error occured while updating persistence.
      */
     public void serializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
-            throws ReflectiveOperationException, IOException, SQLException
+            throws ReflectiveOperationException, IOException
     {
         if (player == null)
             throw new NullPointerException();
         
-        Account account = getAccountManager().getAccount(player.getName());
         PersistenceSerializer serializer = serializers.get(clazz);
         
         if (isSerializedUsing(player, clazz))
@@ -76,14 +72,12 @@ public final class PersistenceManager extends LogItCoreObject
         
         serializer.serialize(data, player);
         
-        if (account != null)
+        for (Entry<String, String> entry : data.entrySet())
         {
-            for (Entry<String, String> entry : data.entrySet())
+            if (containsKey(serializer.getClass(), entry.getKey()))
             {
-                if (containsKey(serializer.getClass(), entry.getKey()))
-                {
-                    account.updatePersistence(entry.getKey(), entry.getValue());
-                }
+                getAccountManager().updateAccountPersistence(player.getName(),
+                        entry.getKey(), entry.getValue());
             }
         }
     }
@@ -107,7 +101,7 @@ public final class PersistenceManager extends LogItCoreObject
             {
                 serializeUsing(player, clazz);
             }
-            catch (ReflectiveOperationException | IOException | SQLException ex)
+            catch (ReflectiveOperationException | IOException ex)
             {
                 log(Level.WARNING,
                         "Could not serialize persistence for player: " + player.getName(), ex);
@@ -127,18 +121,12 @@ public final class PersistenceManager extends LogItCoreObject
      * @throws NullPointerException         if {@code player} is null.
      * @throws ReflectiveOperationException if serializer construction failed.
      * @throws IOException                  if an IO error occured while updating persistence.
-     * @throws SQLException                 if an SQL error occured while updating persistence.
      */
     public void unserializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
-            throws ReflectiveOperationException, IOException, SQLException
+            throws ReflectiveOperationException, IOException
     {
         if (player == null)
             throw new NullPointerException();
-        
-        Account account = getAccountManager().getAccount(player.getName());
-        
-        if (account == null)
-            return;
         
         PersistenceSerializer serializer = serializers.get(clazz);
         
@@ -154,10 +142,12 @@ public final class PersistenceManager extends LogItCoreObject
         
         for (Key key : getSerializerKeys(serializer.getClass()))
         {
-            data.put(key.name(), account.getPersistence(key.name()));
+            data.put(key.name(),
+                    getAccountManager().getAccountPersistence(player.getName(), key.name()));
             
             // Erase persistence.
-            account.updatePersistence(key.name(), key.defaultValue());
+            getAccountManager().updateAccountPersistence(player.getName(),
+                    key.name(), key.defaultValue());
         }
         
         serializer.unserialize(data, player);
@@ -182,7 +172,7 @@ public final class PersistenceManager extends LogItCoreObject
             {
                 unserializeUsing(player, clazz);
             }
-            catch (ReflectiveOperationException | IOException | SQLException ex)
+            catch (ReflectiveOperationException | IOException ex)
             {
                 log(Level.WARNING,
                         "Could not unserialize persistence for player: " + player.getName(), ex);
@@ -239,15 +229,11 @@ public final class PersistenceManager extends LogItCoreObject
     
     @SuppressWarnings("incomplete-switch")
     private boolean isSerializedUsing(Player player, Class<? extends PersistenceSerializer> clazz)
+            throws IOException
     {
         PersistenceSerializer serializer = serializers.get(clazz);
         
         if (player == null)
-            return false;
-        
-        Account account = getAccountManager().getAccount(player.getName());
-        
-        if (account == null)
             return false;
         
         if (serializer == null)
@@ -264,7 +250,7 @@ public final class PersistenceManager extends LogItCoreObject
         
         for (Key key : getSerializerKeys(serializer.getClass()))
         {
-            String value = account.getPersistence(key.name());
+            String value = getAccountManager().getAccountPersistence(player.getName(), key.name());
             
             switch (key.constraint())
             {

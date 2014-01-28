@@ -18,29 +18,22 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import java.util.Map;
+import java.util.Hashtable;
 
 public final class AccountCreateEvent extends AccountEvent
 {
-    public AccountCreateEvent(Map<String, String> properties)
+    public AccountCreateEvent(Hashtable<String, String> pairs)
     {
-        this.properties = properties;
+        if (pairs == null)
+            throw new NullPointerException();
+        
+        this.pairs = pairs;
     }
     
-    /**
-     * Equal to <code>getProperty("logit.accounts.username")</code>.
-     * 
-     * @return the username.
-     */
-    public String getUsername()
+    public String getPairValue(String key)
     {
-        return properties.get("logit.accounts.username");
+        return pairs.get(key);
     }
     
-    public String getProperty(String name)
-    {
-        return properties.get(name);
-    }
-    
-    private final Map<String, String> properties;
+    private final Hashtable<String, String> pairs;
 }

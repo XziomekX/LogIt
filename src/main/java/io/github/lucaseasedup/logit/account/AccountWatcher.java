@@ -19,38 +19,43 @@
 package io.github.lucaseasedup.logit.account;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
+import java.util.logging.Level;
 
 public final class AccountWatcher extends LogItCoreObject implements Runnable
 {
     @Override
     public void run()
     {
-        int daysOfAbsenceToUnregister =
-                getConfig().getInt("crowd-control.days-of-absence-to-unregister");
+        int daysOfAbsenceToUnregister = getConfig().getInt("crowd-control.days-of-absence-to-unregister");
         
         if (daysOfAbsenceToUnregister < 0)
             return;
-        
-        Set<String> usernames =
-                Collections.synchronizedSet(getAccountManager().getRegisteredUsernames());
-        long now = System.currentTimeMillis() / 1000L;
-        
-        for (String username : usernames)
+        try
         {
-            long lastActiveDate =
-                    getAccountManager().getAccount(username).getLong("logit.accounts.last_active");
+            Set<String> usernames = Collections.synchronizedSet(getAccountManager().getRegisteredUsernames());
+            long now = System.currentTimeMillis() / 1000L;
             
-            if (lastActiveDate == 0)
-                continue;
-            
-            long absenceTime = (now - lastActiveDate);
-            
-            if (absenceTime >= (daysOfAbsenceToUnregister * 86400))
+            for (String username : usernames)
             {
-                getAccountManager().removeAccount(username);
+                long lastActiveDate = getAccountManager().getLastActiveDate(username);
+                
+                if (lastActiveDate == 0)
+                    continue;
+                
+                long absenceTime = (now - lastActiveDate);
+                
+                if (absenceTime >= (daysOfAbsenceToUnregister * 86400))
+                {
+                    getAccountManager().removeAccount(username);
+                }
             }
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, ex);
         }
     }
     

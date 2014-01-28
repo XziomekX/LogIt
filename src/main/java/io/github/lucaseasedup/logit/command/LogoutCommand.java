@@ -23,7 +23,7 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.sendMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import java.sql.SQLException;
+import java.io.IOException;
 import java.util.logging.Level;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -91,14 +91,13 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
                 {
                     sender.sendMessage(getMessage("END_SESSION_SUCCESS_SELF"));
                     
-                    if (!getAccountManager().getTable().isColumnDisabled("logit.accounts.remember-login"))
+                    if (getConfig().getBoolean("login-sessions.enabled"))
                     {
                         try
                         {
-                            getAccountManager().getAccount(p.getName())
-                                    .updateString("logit.accounts.remember-login","");
+                            getAccountManager().eraseLoginSession(p.getName());
                         }
-                        catch (SQLException ex)
+                        catch (IOException ex)
                         {
                             log(Level.WARNING, ex);
                         }

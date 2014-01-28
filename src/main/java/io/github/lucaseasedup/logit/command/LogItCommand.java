@@ -28,6 +28,7 @@ import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyType;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -352,8 +353,15 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else
             {
-                sender.sendMessage(getMessage("ACCOUNT_COUNT")
-                        .replace("%num%", String.valueOf(getAccountManager().getAccountCount())));
+                try
+                {
+                    sender.sendMessage(getMessage("ACCOUNT_COUNT")
+                            .replace("%num%", String.valueOf(getAccountManager().getAccountCount())));
+                }
+                catch (IOException ex)
+                {
+                    log(Level.WARNING, ex);
+                }
             }
         }
         else if (checkSubcommand("account status", 1))

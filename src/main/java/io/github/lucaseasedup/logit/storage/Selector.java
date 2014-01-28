@@ -1,5 +1,5 @@
 /*
- * AccountsLoadEvent.java
+ * Selector.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit.account;
+package io.github.lucaseasedup.logit.storage;
 
-public final class AccountsLoadEvent extends AccountEvent
+public abstract class Selector
 {
 }

@@ -29,6 +29,7 @@ import static io.github.lucaseasedup.logit.hash.HashGenerator.getSha384;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getSha512;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getWhirlpool;
 import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
+import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.account.AccountWatcher;
 import io.github.lucaseasedup.logit.backup.BackupManager;
@@ -45,14 +46,6 @@ import io.github.lucaseasedup.logit.command.RegisterCommand;
 import io.github.lucaseasedup.logit.command.RememberCommand;
 import io.github.lucaseasedup.logit.command.UnregisterCommand;
 import io.github.lucaseasedup.logit.config.LogItConfiguration;
-import io.github.lucaseasedup.logit.db.CsvDatabase;
-import io.github.lucaseasedup.logit.db.Database;
-import io.github.lucaseasedup.logit.db.H2Database;
-import io.github.lucaseasedup.logit.db.MySqlDatabase;
-import io.github.lucaseasedup.logit.db.Pinger;
-import io.github.lucaseasedup.logit.db.PostgreSqlDatabase;
-import io.github.lucaseasedup.logit.db.SqliteDatabase;
-import io.github.lucaseasedup.logit.db.Table;
 import io.github.lucaseasedup.logit.hash.BCrypt;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
 import io.github.lucaseasedup.logit.listener.AccountEventListener;
@@ -73,6 +66,13 @@ import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
 import io.github.lucaseasedup.logit.profile.ProfileManager;
 import io.github.lucaseasedup.logit.session.SessionManager;
+import io.github.lucaseasedup.logit.storage.CsvStorage;
+import io.github.lucaseasedup.logit.storage.H2Storage;
+import io.github.lucaseasedup.logit.storage.MySqlStorage;
+import io.github.lucaseasedup.logit.storage.PostgreSqlStorage;
+import io.github.lucaseasedup.logit.storage.SqliteStorage;
+import io.github.lucaseasedup.logit.storage.Storage;
+import io.github.lucaseasedup.logit.storage.Storage.Type;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
 import java.io.FileInputStream;
@@ -81,10 +81,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Hashtable;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.logging.Level;
 import net.milkbowl.vault.permission.Permission;
@@ -212,22 +213,25 @@ public final class LogItCore
             ReportedException.decrementRequestCount();
         }
         
+        Storage accountStorage = null;
+        
         try
         {
             switch (storageType)
             {
                 case SQLITE:
                 {
-                    database = new SqliteDatabase("jdbc:sqlite:" + dataFolder
+                    accountStorage = new SqliteStorage("jdbc:sqlite:" + dataFolder
                             + "/" + config.getString("storage.accounts.sqlite.filename"));
-                    database.connect();
+                    accountStorage.connect();
                     
                     break;
                 }
                 case MYSQL:
                 {
-                    database = new MySqlDatabase(config.getString("storage.accounts.mysql.host"));
-                    ((MySqlDatabase) database).connect(
+                    accountStorage = new MySqlStorage(
+                            config.getString("storage.accounts.mysql.host"));
+                    ((MySqlStorage) accountStorage).connect(
                         config.getString("storage.accounts.mysql.user"),
                         config.getString("storage.accounts.mysql.password"),
                         config.getString("storage.accounts.mysql.database")
@@ -237,16 +241,17 @@ public final class LogItCore
                 }
                 case H2:
                 {
-                    database = new H2Database("jdbc:h2:" + dataFolder
+                    accountStorage = new H2Storage("jdbc:h2:" + dataFolder
                             + "/" + config.getString("storage.accounts.h2.filename"));
-                    database.connect();
+                    accountStorage.connect();
                     
                     break;
                 }
                 case POSTGRESQL:
                 {
-                    database = new PostgreSqlDatabase(config.getString("storage.accounts.postgresql.host"));
-                    ((PostgreSqlDatabase) database).connect(
+                    accountStorage = new PostgreSqlStorage(
+                            config.getString("storage.accounts.postgresql.host"));
+                    ((PostgreSqlStorage) accountStorage).connect(
                             config.getString("storage.accounts.postgresql.user"),
                             config.getString("storage.accounts.postgresql.password")
                     );
@@ -255,8 +260,8 @@ public final class LogItCore
                 }
                 case CSV:
                 {
-                    database = new CsvDatabase(dataFolder);
-                    database.connect();
+                    accountStorage = new CsvStorage(dataFolder);
+                    accountStorage.connect();
                     
                     break;
                 }
@@ -269,51 +274,55 @@ public final class LogItCore
                 }
             }
         }
-        catch (SQLException ex)
+        catch (IOException ex)
         {
             log(Level.SEVERE, "Could not open database connection.", ex);
             
             FatalReportedException.throwNew(ex);
         }
         
-        pinger = new Pinger(database);
-        accountTable = new Table(database, config.getString("storage.accounts.table"),
-                config.getConfigurationSection("storage.accounts.columns"));
+        String accountsUnit = config.getString("storage.accounts.table");
         
-        if (accountTable.isColumnDisabled("logit.accounts.username"))
-        {
-            log(Level.SEVERE, "Username column must not be disabled.");
-            
-            FatalReportedException.throwNew();
-        }
+        AccountKeys accountKeys = new AccountKeys(
+            config.getString("storage.accounts.columns.username.name"),
+            config.getString("storage.accounts.columns.salt.name"),
+            config.getString("storage.accounts.columns.password.name"),
+            config.getString("storage.accounts.columns.hashing_algorithm.name"),
+            config.getString("storage.accounts.columns.ip.name"),
+            config.getString("storage.accounts.columns.login_session.name"),
+            config.getString("storage.accounts.columns.email.name"),
+            config.getString("storage.accounts.columns.last_active_date.name"),
+            config.getString("storage.accounts.columns.reg_date.name"),
+            config.getString("storage.accounts.columns.persistence.name")
+        );
         
         try
         {
-            accountTable.open();
+            accountStorage.createUnit(accountsUnit, accountKeys);
+            accountStorage.setAutobatchEnabled(true);
+            
+            Hashtable<String, Type> existingKeys = accountStorage.getKeys(accountsUnit);
+            
+            for (Entry<String, Type> e : accountKeys.entrySet())
+            {
+                if (!existingKeys.containsKey(e.getKey()))
+                {
+                    accountStorage.addKey(accountsUnit, e.getKey(), e.getValue());
+                }
+            }
+            
+            accountStorage.executeBatch();
+            accountStorage.clearBatch();
+            accountStorage.setAutobatchEnabled(false);
         }
-        catch (SQLException ex)
+        catch (IOException ex)
         {
-            log(Level.SEVERE, "Could not open account table.", ex);
+            log(Level.SEVERE, "Could not prepare accounts table.", ex);
             
             FatalReportedException.throwNew(ex);
         }
         
-        accountManager = new AccountManager(accountTable);
-        
-        try
-        {
-            ReportedException.incrementRequestCount();
-            
-            accountManager.loadAccounts();
-        }
-        catch (ReportedException ex)
-        {
-            ex.rethrowAsFatal();
-        }
-        finally
-        {
-            ReportedException.decrementRequestCount();
-        }
+        accountManager = new AccountManager(accountStorage, accountsUnit, accountKeys);
         
         if (getConfig().getBoolean("profiles.enabled"))
         {
@@ -346,16 +355,15 @@ public final class LogItCore
         sessionManager = new SessionManager();
         tickEventCaller = new TickEventCaller();
         
-        if (config.getBoolean("password-recovery.enabled")
-                && !accountTable.isColumnDisabled("logit.accounts.email"))
+        if (config.getBoolean("password-recovery.enabled"))
         {
             mailSender = new MailSender();
             mailSender.configure(config.getString("mail.smtp-host"), config.getInt("mail.smtp-port"),
                 config.getString("mail.smtp-user"), config.getString("mail.smtp-password"));
         }
         
-        pingerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
-                pinger, 0, Pinger.TASK_PERIOD);
+        accountManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+                accountManager, 0, AccountManager.TASK_PERIOD);
         sessionManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
                 sessionManager, 0, SessionManager.TASK_PERIOD);
         tickEventCallerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
@@ -404,14 +412,14 @@ public final class LogItCore
         
         try
         {
-            database.close();
+            getAccountManager().getStorage().close();
         }
-        catch (SQLException ex)
+        catch (IOException ex)
         {
             log(Level.WARNING, "Could not close database connection.", ex);
         }
         
-        Bukkit.getScheduler().cancelTask(pingerTaskId);
+        Bukkit.getScheduler().cancelTask(accountManagerTaskId);
         Bukkit.getScheduler().cancelTask(sessionManagerTaskId);
         Bukkit.getScheduler().cancelTask(tickEventCallerTaskId);
         Bukkit.getScheduler().cancelTask(accountWatcherTaskId);
@@ -458,7 +466,7 @@ public final class LogItCore
         {
             sessionManager.exportSessions(sessionFile);
         }
-        catch (SQLException ex)
+        catch (IOException ex)
         {
             log(Level.WARNING, "Could not export sessions.", ex);
         }
@@ -480,7 +488,7 @@ public final class LogItCore
         {
             sessionManager.importSessions(sessionFile);
         }
-        catch (SQLException ex)
+        catch (IOException ex)
         {
             log(Level.WARNING, "Could not import sessions.", ex);
         }
@@ -716,7 +724,7 @@ public final class LogItCore
         {
             if (getConfig().getBoolean("force-login.prompt-to-login"))
             {
-                if (!accountManager.getTable().isColumnDisabled("logit.accounts.password"))
+                if (!config.getBoolean("password.disable-passwords"))
                 {
                     player.sendMessage(getMessage("PLEASE_LOGIN"));
                 }
@@ -730,7 +738,7 @@ public final class LogItCore
         {
             if (getConfig().getBoolean("force-login.prompt-to-register"))
             {
-                if (!accountManager.getTable().isColumnDisabled("logit.accounts.password"))
+                if (!config.getBoolean("password.disable-passwords"))
                 {
                     player.sendMessage(getMessage("PLEASE_REGISTER"));
                 }
@@ -1026,16 +1034,14 @@ public final class LogItCore
         setCommandExecutor("login", new LoginCommand(), true);
         setCommandExecutor("logout", new LogoutCommand(), true);
         setCommandExecutor("remember", new RememberCommand(),
-                !accountTable.isColumnDisabled("logit.accounts.remember-login"));
+                config.getBoolean("login-sessions.enabled"));
         setCommandExecutor("register", new RegisterCommand(), true);
         setCommandExecutor("unregister", new UnregisterCommand(), true);
         setCommandExecutor("changepass", new ChangePassCommand(),
-                !accountTable.isColumnDisabled("logit.accounts.password"));
-        setCommandExecutor("changeemail", new ChangeEmailCommand(),
-                !accountTable.isColumnDisabled("logit.accounts.email"));
+                !config.getBoolean("password.disable-passwords"));
+        setCommandExecutor("changeemail", new ChangeEmailCommand(), true);
         setCommandExecutor("recoverpass", new RecoverPassCommand(),
-                !accountTable.isColumnDisabled("logit.accounts.email")
-                && config.getBoolean("password-recovery.enabled"));
+                config.getBoolean("password-recovery.enabled"));
         setCommandExecutor("profile", new ProfileCommand(), config.getBoolean("profiles.enabled"));
         setCommandExecutor("$logit-nop-command", new NopCommandExecutor(), true);
     }
@@ -1089,7 +1095,7 @@ public final class LogItCore
                 {
                     persistenceManager.unserializeUsing(player, clazz);
                 }
-                catch (ReflectiveOperationException | IOException | SQLException ex)
+                catch (ReflectiveOperationException | IOException ex)
                 {
                     log(Level.WARNING,
                             "Could not unserialize persistence for player: " + player.getName(), ex);
@@ -1208,9 +1214,6 @@ public final class LogItCore
     private final SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
     private LogItConfiguration  config;
-    private Database            database;
-    private Table               accountTable;
-    private Pinger              pinger;
     private Permission          vaultPermissions;
     private SessionManager      sessionManager;
     private AccountManager      accountManager;
@@ -1221,7 +1224,7 @@ public final class LogItCore
     private MailSender          mailSender;
     private TickEventCaller     tickEventCaller;
     
-    private int pingerTaskId;
+    private int accountManagerTaskId;
     private int sessionManagerTaskId;
     private int tickEventCallerTaskId;
     private int accountWatcherTaskId;

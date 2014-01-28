@@ -21,7 +21,7 @@ package io.github.lucaseasedup.logit.command;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
-import java.sql.SQLException;
+import java.io.IOException;
 import java.util.logging.Level;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -60,18 +60,18 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
             }
             else
             {
-                int rememberLoginFor = getConfig().getInt("remember-login-for");
+                int rememberLoginFor = getConfig().getInt("login-sessions.valid-for");
                 int currentTime = (int) (System.currentTimeMillis() / 1000L);
                 
                 try
                 {
-                    getAccountManager().getAccount(p.getName()).updateString("logit.accounts.remember-login",
-                            PlayerUtils.getPlayerIp(p) + ";" + currentTime);
+                    getAccountManager().saveLoginSession(p.getName(),
+                            PlayerUtils.getPlayerIp(p), currentTime);
                     
                     sender.sendMessage(getMessage("REMEMBER_SUCCESS").replace("%sec%",
                             String.valueOf(rememberLoginFor)));
                 }
-                catch (SQLException ex)
+                catch (IOException ex)
                 {
                     log(Level.WARNING, ex);
                     sender.sendMessage(getMessage("REMEMBER_FAIL"));
