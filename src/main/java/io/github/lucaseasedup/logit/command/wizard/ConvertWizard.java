@@ -66,7 +66,7 @@ public final class ConvertWizard extends Wizard
         else if (getCurrentStep() == Step.ENTER_DBTYPE)
         {
             if (!new DbTypeValidator()
-                    .validate("storage.accounts.db-type", PropertyType.STRING, message))
+                    .validate("storage.accounts.storage-type", PropertyType.STRING, message))
             {
                 sendMessage(getMessage("CONVERT_INVALID_DBTYPE")
                         .replace("%dbtype%", message));
@@ -194,7 +194,7 @@ public final class ConvertWizard extends Wizard
         {
             if (message.equals("proceed"))
             {
-                getConfig().set("storage.accounts.db-type", dbtype);
+                getConfig().set("storage.accounts.storage-type", dbtype);
                 
                 switch (dbtype)
                 {

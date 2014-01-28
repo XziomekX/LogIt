@@ -183,7 +183,7 @@ public final class LogItCore
         }
         
         StorageType storageType =
-                StorageType.decode(plugin.getConfig().getString("storage.accounts.db-type"));
+                StorageType.decode(plugin.getConfig().getString("storage.accounts.storage-type"));
         
         try
         {
