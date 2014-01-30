@@ -214,6 +214,11 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                             
                             p.teleport(newbieTeleportLocation);
                         }
+                        
+                        if (getConfig().getBoolean("login-sessions.enabled"))
+                        {
+                            sender.sendMessage(getMessage("REMEMBER_PROMPT"));
+                        }
                     }
                 }
                 catch (ReportedException ex)
