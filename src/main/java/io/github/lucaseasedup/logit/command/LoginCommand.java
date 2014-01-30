@@ -23,9 +23,18 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.sendMessage;
+import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.account.AccountKeys;
+import io.github.lucaseasedup.logit.storage.Infix;
+import io.github.lucaseasedup.logit.storage.SelectorCondition;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -89,54 +98,98 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             if (p == null)
             {
                 sender.sendMessage(getMessage("ONLY_PLAYERS"));
+                
+                return true;
             }
-            else if (!p.hasPermission("logit.login.self"))
+            
+            if (!p.hasPermission("logit.login.self"))
             {
                 p.sendMessage(getMessage("NO_PERMS"));
+                
+                return true;
             }
-            else if (args.length < 1 && !getConfig().getBoolean("password.disable-passwords"))
+            
+            if (args.length < 1 && !getConfig().getBoolean("password.disable-passwords"))
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+                
+                return true;
             }
-            else if (getSessionManager().isSessionAlive(p))
+            
+            if (getSessionManager().isSessionAlive(p))
             {
                 p.sendMessage(getMessage("ALREADY_LOGGED_IN_SELF"));
+                
+                return true;
             }
-            else if (!getAccountManager().isRegistered(username))
+            
+            AccountKeys keys = getAccountManager().getKeys();
+            List<Hashtable<String, String>> rs;
+            
+            try
             {
-                p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
+                rs = getAccountManager().getStorage().selectEntries(getAccountManager().getUnit(),
+                        Arrays.asList(
+                            keys.username(),
+                            keys.password(),
+                            keys.salt(),
+                            keys.hashing_algorithm()
+                        ), new SelectorCondition(keys.username(), Infix.EQUALS, username));
             }
-            else if (!getConfig().getBoolean("password.disable-passwords")
-                    && !getAccountManager().checkAccountPassword(username, args[0])
+            catch (IOException ex)
+            {
+                log(Level.WARNING, ex);
+                
+                sender.sendMessage(getMessage("START_SESSION_FAIL_SELF"));
+                
+                return true;
+            }
+            
+            if (rs.isEmpty())
+            {
+                p.sendMessage(getMessage("NOT_REGISTERED_SELF"));
+                
+                return true;
+            }
+            
+            if (!getConfig().getBoolean("password.disable-passwords")
                     && !getCore().checkGlobalPassword(args[0]))
             {
-                p.sendMessage(getMessage("INCORRECT_PASSWORD"));
+                String userAlgorithm = rs.get(0).get(keys.hashing_algorithm());
+                String hashedPassword = rs.get(0).get(keys.password());
+                HashingAlgorithm algorithm = HashingAlgorithm.decode(userAlgorithm);
+                String actualSalt = rs.get(0).get(keys.salt());
                 
-                Integer currentFailedLoginsToKick = failedLoginsToKick.get(username);
-                Integer currentFailedLoginsToBan = failedLoginsToBan.get(username);
-                
-                failedLoginsToKick.put(username,
-                        (currentFailedLoginsToKick != null) ? currentFailedLoginsToKick + 1 : 1);
-                failedLoginsToBan.put(username,
-                        (currentFailedLoginsToBan != null) ? currentFailedLoginsToBan + 1 : 1);
-                
-                if (failedLoginsToBan.get(username) >= failsToBan && failsToBan > 0)
+                if (!getCore().checkPassword(args[0], hashedPassword, actualSalt, algorithm))
                 {
-                    Bukkit.banIP(getPlayerIp(p));
-                    p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS_BAN"));
+                    p.sendMessage(getMessage("INCORRECT_PASSWORD"));
                     
-                    failedLoginsToKick.remove(username);
-                    failedLoginsToBan.remove(username);
-                }
-                else if (failedLoginsToKick.get(username) >= failsToKick && failsToKick > 0)
-                {
-                    p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS_KICK"));
+                    Integer currentFailedLoginsToKick = failedLoginsToKick.get(username);
+                    Integer currentFailedLoginsToBan = failedLoginsToBan.get(username);
                     
-                    failedLoginsToKick.remove(username);
+                    failedLoginsToKick.put(username,
+                            (currentFailedLoginsToKick != null) ? currentFailedLoginsToKick + 1 : 1);
+                    failedLoginsToBan.put(username,
+                            (currentFailedLoginsToBan != null) ? currentFailedLoginsToBan + 1 : 1);
+                    
+                    if (failedLoginsToBan.get(username) >= failsToBan && failsToBan > 0)
+                    {
+                        Bukkit.banIP(getPlayerIp(p));
+                        p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS_BAN"));
+                        
+                        failedLoginsToKick.remove(username);
+                        failedLoginsToBan.remove(username);
+                    }
+                    else if (failedLoginsToKick.get(username) >= failsToKick && failsToKick > 0)
+                    {
+                        p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS_KICK"));
+                        
+                        failedLoginsToKick.remove(username);
+                    }
+                    
+                    return true;
                 }
-            }
-            else
-            {
+                
                 if (!getSessionManager().startSession(username).isCancelled())
                 {
                     failedLoginsToKick.remove(username);
