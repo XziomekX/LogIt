@@ -18,24 +18,17 @@
  */
 package io.github.lucaseasedup.logit.config;
 
-public class InvalidPropertyValueException extends RuntimeException
+public final class InvalidPropertyValueException extends RuntimeException
 {
-    /**
-     * Creates a new instance of
-     * <code>InvalidPropertyValueException</code> without detail message.
-     */
-    public InvalidPropertyValueException()
+    public InvalidPropertyValueException(String propertyName)
     {
+        this.propertyName = propertyName;
     }
     
-    /**
-     * Constructs an instance of
-     * <code>InvalidPropertyValueException</code> with the specified detail message.
-     *
-     * @param msg The detail message.
-     */
-    public InvalidPropertyValueException(String msg)
+    public String getPropertyName()
     {
-        super(msg);
+        return propertyName;
     }
+    
+    private final String propertyName;
 }

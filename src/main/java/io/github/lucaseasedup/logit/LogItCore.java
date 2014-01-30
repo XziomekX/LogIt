@@ -45,6 +45,7 @@ import io.github.lucaseasedup.logit.command.RecoverPassCommand;
 import io.github.lucaseasedup.logit.command.RegisterCommand;
 import io.github.lucaseasedup.logit.command.RememberCommand;
 import io.github.lucaseasedup.logit.command.UnregisterCommand;
+import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
 import io.github.lucaseasedup.logit.config.LogItConfiguration;
 import io.github.lucaseasedup.logit.hash.BCrypt;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
@@ -132,6 +133,13 @@ public final class LogItCore
         catch (IOException ex)
         {
             plugin.getLogger().log(Level.SEVERE, "Could not load the configuration file.", ex);
+            
+            FatalReportedException.throwNew(ex);
+        }
+        catch (InvalidPropertyValueException ex)
+        {
+            plugin.getLogger().log(Level.SEVERE,
+                    "Invalid configuration property value: " + ex.getPropertyName(), ex);
             
             FatalReportedException.throwNew(ex);
         }

@@ -46,7 +46,7 @@ import org.bukkit.util.Vector;
 
 public final class LogItConfiguration extends PropertyObserver
 {
-    public void load() throws IOException
+    public void load() throws IOException, InvalidPropertyValueException
     {
         getPlugin().reloadConfig();
         getPlugin().getConfig().options().header(
@@ -228,7 +228,7 @@ public final class LogItConfiguration extends PropertyObserver
                              boolean requiresRestart,
                              Object defaultValue,
                              PropertyValidator validator,
-                             PropertyObserver obs)
+                             PropertyObserver obs) throws InvalidPropertyValueException
     {
         Object existingValue = getPlugin().getConfig().get(path, defaultValue);
         Property property = new Property(path, type, requiresRestart, existingValue, validator);
@@ -249,6 +249,11 @@ public final class LogItConfiguration extends PropertyObserver
         else
         {
             value = defaultValue;
+        }
+        
+        if (validator != null && !validator.validate(path, type, value))
+        {
+            throw new InvalidPropertyValueException(path);
         }
         
         getPlugin().getConfig().set(property.getPath(), value);
@@ -334,6 +339,7 @@ public final class LogItConfiguration extends PropertyObserver
     }
     
     private void loadConfigDef(Map<String, Map<String, String>> def)
+            throws InvalidPropertyValueException
     {
         for (Entry<String, Map<String, String>> entry : def.entrySet())
         {
