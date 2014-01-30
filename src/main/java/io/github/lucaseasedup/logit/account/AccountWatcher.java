@@ -18,6 +18,12 @@
  */
 package io.github.lucaseasedup.logit.account;
 
+import io.github.lucaseasedup.logit.storage.Infix;
+import io.github.lucaseasedup.logit.storage.SelectorCondition;
+import java.util.Arrays;
+import io.github.lucaseasedup.logit.util.HashtableBuilder;
+import java.util.Hashtable;
+import java.util.List;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.io.IOException;
 import java.util.Collections;
@@ -29,27 +35,33 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
     @Override
     public void run()
     {
-        int daysOfAbsenceToUnregister = getConfig().getInt("crowd-control.days-of-absence-to-unregister");
+        int daysOfAbsenceToUnregister =
+                getConfig().getInt("crowd-control.days-of-absence-to-unregister");
         
         if (daysOfAbsenceToUnregister < 0)
             return;
+        
         try
         {
-            Set<String> usernames = Collections.synchronizedSet(getAccountManager().getRegisteredUsernames());
+            AccountKeys keys = getAccountManager().getKeys();
+            List<Hashtable<String, String>> rs =
+                    getAccountManager().getStorage().selectEntries(getAccountManager().getUnit(),
+                            Arrays.asList(keys.username(), keys.last_active_date()));
             long now = System.currentTimeMillis() / 1000L;
             
-            for (String username : usernames)
+            for (Hashtable<String, String> entry : rs)
             {
-                long lastActiveDate = getAccountManager().getLastActiveDate(username);
+                String lastActiveDateString = entry.get(keys.last_active_date());
                 
-                if (lastActiveDate == 0)
+                if (lastActiveDateString.isEmpty())
                     continue;
                 
+                long lastActiveDate = Long.parseLong(lastActiveDateString);
                 long absenceTime = (now - lastActiveDate);
                 
                 if (absenceTime >= (daysOfAbsenceToUnregister * 86400))
                 {
-                    getAccountManager().removeAccount(username);
+                    getAccountManager().removeAccount(entry.get(keys.username()));
                 }
             }
         }
