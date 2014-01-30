@@ -51,6 +51,9 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
             
             for (Hashtable<String, String> entry : rs)
             {
+                if (getSessionManager().isSessionAlive(entry.get(keys.username())))
+                    continue;
+                
                 String lastActiveDateString = entry.get(keys.last_active_date());
                 
                 if (lastActiveDateString.isEmpty())
