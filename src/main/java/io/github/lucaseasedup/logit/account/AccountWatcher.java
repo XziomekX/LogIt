@@ -18,16 +18,11 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import io.github.lucaseasedup.logit.storage.Infix;
-import io.github.lucaseasedup.logit.storage.SelectorCondition;
-import java.util.Arrays;
-import io.github.lucaseasedup.logit.util.HashtableBuilder;
-import java.util.Hashtable;
-import java.util.List;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.logging.Level;
 
 public final class AccountWatcher extends LogItCoreObject implements Runnable
