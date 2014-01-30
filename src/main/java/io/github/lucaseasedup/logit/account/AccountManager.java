@@ -541,11 +541,20 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     private Map<String, String> getAccountPersistence(String username) throws IOException
     {
         String persistenceBase64String = getKey(username, keys.persistence());
+        Map<String, String> persistence = new LinkedHashMap<>();
         
-        if (persistenceBase64String == null)
-            return new LinkedHashMap<>();
-        else
-            return IniUtils.unserialize(Base64.decode(persistenceBase64String)).get("persistence");
+        if (persistenceBase64String != null)
+        {
+            String persistenceString = Base64.decode(persistenceBase64String);
+            persistence = IniUtils.unserialize(persistenceString).get("persistence");
+            
+            if (persistence == null)
+            {
+                return new LinkedHashMap<>();
+            }
+        }
+        
+        return persistence;
     }
     
     public String getAccountPersistence(String username, String key) throws IOException
