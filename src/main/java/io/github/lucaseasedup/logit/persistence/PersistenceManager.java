@@ -58,15 +58,10 @@ public final class PersistenceManager extends LogItCoreObject
         if (player == null)
             throw new NullPointerException();
         
-        PersistenceSerializer serializer = serializers.get(clazz);
+        PersistenceSerializer serializer = getSerializer(clazz);
         
         if (isSerializedUsing(player, clazz))
             return;
-
-        if (serializer == null)
-        {
-            serializer = constructSerializer(clazz);
-        }
         
         Map<String, String> data = new HashMap<>();
         
@@ -128,15 +123,10 @@ public final class PersistenceManager extends LogItCoreObject
         if (player == null)
             throw new NullPointerException();
         
-        PersistenceSerializer serializer = serializers.get(clazz);
+        PersistenceSerializer serializer = getSerializer(clazz);
         
         if (!isSerializedUsing(player, clazz))
             return;
-
-        if (serializer == null)
-        {
-            serializer = constructSerializer(clazz);
-        }
         
         Map<String, String> data = new HashMap<>();
         
@@ -225,6 +215,19 @@ public final class PersistenceManager extends LogItCoreObject
         serializers.remove(clazz);
         
         return true;
+    }
+    
+    public PersistenceSerializer getSerializer(Class<? extends PersistenceSerializer> clazz)
+            throws ReflectiveOperationException
+    {
+        PersistenceSerializer serializer = serializers.get(clazz);
+        
+        if (serializer == null)
+        {
+            return constructSerializer(clazz);
+        }
+        
+        return serializer;
     }
     
     @SuppressWarnings("incomplete-switch")
