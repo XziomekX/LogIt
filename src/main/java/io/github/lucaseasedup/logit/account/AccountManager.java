@@ -611,7 +611,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
                 new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
     }
     
-    public static final long TASK_PERIOD = 6000;
+    public static final long TASK_PERIOD = (5 * 60) * 20;
     
     private final Storage storage;
     private final String unit;

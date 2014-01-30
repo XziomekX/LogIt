@@ -59,5 +59,5 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
         }
     }
     
-    public static final long TASK_PERIOD = 12000;
+    public static final long TASK_PERIOD = (10 * 60) * 20;
 }

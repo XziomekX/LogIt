@@ -195,7 +195,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         return backupFile;
     }
     
-    public static final long TASK_PERIOD = 40;
+    public static final long TASK_PERIOD = 2 * 20;
     private static final File[] NO_FILES = new File[0];
     
     private final Timer timer;
