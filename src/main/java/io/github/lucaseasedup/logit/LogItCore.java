@@ -572,7 +572,14 @@ public final class LogItCore
         }
         else
         {
-            return hashedPassword.equals(hash(password, salt, hashingAlgorithm));
+            if (getConfig().getBoolean("password.use-salt"))
+            {
+                return hashedPassword.equals(hash(password, salt, hashingAlgorithm));
+            }
+            else
+            {
+                return hashedPassword.equals(hash(password, hashingAlgorithm));
+            }
         }
     }
     
