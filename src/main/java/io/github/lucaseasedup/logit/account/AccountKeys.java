@@ -41,7 +41,7 @@ public final class AccountKeys extends LinkedHashtable<String, Type>
         put(ip,                Type.TINYTEXT);
         put(login_session,     Type.TINYTEXT);
         put(email,             Type.TINYTEXT);
-        put(last_active_date,  Type.REAL);
+        put(last_active_date,  Type.INTEGER);
         put(reg_date,          Type.INTEGER);
         put(persistence,       Type.TEXT);
         
