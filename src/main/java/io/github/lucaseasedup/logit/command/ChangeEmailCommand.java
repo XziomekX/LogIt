@@ -56,7 +56,7 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
             }
             else if (!getAccountManager().isRegistered(args[1]))
             {
-                sender.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS")
+                sender.sendMessage(getMessage("NOT_REGISTERED_OTHERS")
                         .replace("%player%", args[1]));
             }
             else if (!EmailUtils.validateEmail(args[2]))
@@ -104,7 +104,7 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
             }
             else if (!getAccountManager().isRegistered(p.getName()))
             {
-                p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
+                p.sendMessage(getMessage("NOT_REGISTERED_SELF"));
             }
             else if (!EmailUtils.validateEmail(args[0]))
             {

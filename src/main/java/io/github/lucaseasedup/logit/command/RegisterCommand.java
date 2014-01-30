@@ -65,7 +65,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             }
             else if (getAccountManager().isRegistered(args[1]))
             {
-                sender.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_OTHERS")
+                sender.sendMessage(getMessage("ALREADY_REGISTERED_OTHERS")
                         .replace("%player%", args[1]));
             }
             else if (!getConfig().getBoolean("password.disable-passwords")
@@ -158,7 +158,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             }
             else if (getAccountManager().isRegistered(p.getName()))
             {
-                p.sendMessage(getMessage("CREATE_ACCOUNT_ALREADY_SELF"));
+                p.sendMessage(getMessage("ALREADY_REGISTERED_SELF"));
             }
             else if (!getConfig().getBoolean("password.disable-passwords")
                     && args[0].length() < minPasswordLength)

@@ -61,7 +61,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             }
             else if (getSessionManager().isSessionAlive(getPlayer(args[1])))
             {
-                sender.sendMessage(getMessage("START_SESSION_ALREADY_OTHERS")
+                sender.sendMessage(getMessage("ALREADY_LOGGED_IN_OTHERS")
                         .replace("%player%", args[1]));
             }
             else
@@ -100,7 +100,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             }
             else if (getSessionManager().isSessionAlive(p))
             {
-                p.sendMessage(getMessage("START_SESSION_ALREADY_SELF"));
+                p.sendMessage(getMessage("ALREADY_LOGGED_IN_SELF"));
             }
             else if (!getAccountManager().isRegistered(username))
             {

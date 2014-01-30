@@ -58,7 +58,7 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
             }
             else if (!getSessionManager().isSessionAlive(getPlayer(args[1])))
             {
-                sender.sendMessage(getMessage("START_SESSION_NOT_OTHERS")
+                sender.sendMessage(getMessage("NOT_LOGGED_IN_OTHERS")
                         .replace("%player%", args[1]));
             }
             else
@@ -83,7 +83,7 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
             }
             else if (!getSessionManager().isSessionAlive(p))
             {
-                p.sendMessage(getMessage("START_SESSION_NOT_SELF"));
+                p.sendMessage(getMessage("NOT_LOGGED_IN_SELF"));
             }
             else
             {

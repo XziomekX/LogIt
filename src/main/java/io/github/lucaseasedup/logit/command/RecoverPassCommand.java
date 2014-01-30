@@ -55,7 +55,7 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
             }
             else if (!getAccountManager().isRegistered(p.getName()))
             {
-                p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
+                p.sendMessage(getMessage("NOT_REGISTERED_SELF"));
             }
             else
             {

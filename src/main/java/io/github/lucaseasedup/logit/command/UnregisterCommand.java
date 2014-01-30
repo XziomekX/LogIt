@@ -52,12 +52,12 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             }
             else if (!getAccountManager().isRegistered(args[1]))
             {
-                sender.sendMessage(getMessage("CREATE_ACCOUNT_NOT_OTHERS")
+                sender.sendMessage(getMessage("NOT_REGISTERED_OTHERS")
                         .replace("%player%", args[1]));
             }
             else if (p != null && p.getName().equalsIgnoreCase(args[1]))
             {
-                sender.sendMessage(getMessage("REMOVE_ACCOUNT_INDIRECT_SELF"));
+                sender.sendMessage(getMessage("INDIRECT_ACCOUNT_REMOVAL"));
             }
             else
             {
@@ -110,7 +110,7 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             }
             else if (!getAccountManager().isRegistered(p.getName()))
             {
-                p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
+                p.sendMessage(getMessage("NOT_REGISTERED_SELF"));
             }
             else if (!getConfig().getBoolean("password.disable-passwords")
                     && !getAccountManager().checkAccountPassword(p.getName(), args[0]))
