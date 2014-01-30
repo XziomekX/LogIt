@@ -43,7 +43,7 @@ public class Timer implements Runnable
     }
     
     /**
-     * Advances this timer by 1 interval.
+     * Advances this timer by an interval.
      */
     public void advance()
     {
