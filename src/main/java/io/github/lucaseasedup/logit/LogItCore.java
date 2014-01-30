@@ -499,6 +499,9 @@ public final class LogItCore
     /**
      * Checks if a plain-text password is equal, after hashing, to {@code hashedPassword}.
      * 
+     * If "password.use-global-hashing-algorithm" is set to true,
+     * the global hashing algorithm will be used instead of {@code hashingAlgorithm}.
+     * 
      * @param password         the plain-text password.
      * @param hashedPassword   the hashed password.
      * @param hashingAlgorithm the algorithm used when hashing {@code hashedPassword}.
@@ -510,6 +513,12 @@ public final class LogItCore
     public boolean checkPassword(String password, String hashedPassword,
                                  HashingAlgorithm hashingAlgorithm)
     {
+        if (hashingAlgorithm == null
+                || getConfig().getBoolean("password.use-global-hashing-algorithm"))
+        {
+            hashingAlgorithm = getDefaultHashingAlgorithm();
+        }
+        
         if (hashingAlgorithm == HashingAlgorithm.BCRYPT)
         {
             return BCrypt.checkpw(password, hashedPassword);
@@ -523,6 +532,9 @@ public final class LogItCore
     /**
      * Checks if a plain-text password with a salt appended
      * is equal, after hashing, to {@code hashedPassword}.
+     * 
+     * If "password.use-global-hashing-algorithm" is set to true,
+     * the global hashing algorithm will be used instead of {@code hashingAlgorithm}.
      * 
      * @param password         the plain-text password.
      * @param hashedPassword   the hashed password.
@@ -540,6 +552,12 @@ public final class LogItCore
     {
         if (hashedPassword == null || hashedPassword.isEmpty())
             return false;
+        
+        if (hashingAlgorithm == null
+                || getConfig().getBoolean("password.use-global-hashing-algorithm"))
+        {
+            hashingAlgorithm = getDefaultHashingAlgorithm();
+        }
         
         if (hashingAlgorithm == HashingAlgorithm.BCRYPT)
         {
