@@ -180,16 +180,6 @@ public final class LogItCore
             }
         }
         
-        HashingAlgorithm defaultHashingAlgorithm = getDefaultHashingAlgorithm();
-        
-        if (defaultHashingAlgorithm.equals(HashingAlgorithm.UNKNOWN))
-        {
-            log(Level.SEVERE, getMessage("UNKNOWN_HASHING_ALGORITHM")
-                    .replace("%ha%", defaultHashingAlgorithm.name()));
-            
-            FatalReportedException.throwNew();
-        }
-        
         StorageType storageType =
                 StorageType.decode(plugin.getConfig().getString("storage.accounts.storage-type"));
         
