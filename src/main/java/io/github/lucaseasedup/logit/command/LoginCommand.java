@@ -98,13 +98,13 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
-            else if (!getAccountManager().isRegistered(username))
-            {
-                p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
-            }
             else if (getSessionManager().isSessionAlive(p))
             {
                 p.sendMessage(getMessage("START_SESSION_ALREADY_SELF"));
+            }
+            else if (!getAccountManager().isRegistered(username))
+            {
+                p.sendMessage(getMessage("CREATE_ACCOUNT_NOT_SELF"));
             }
             else if (!getConfig().getBoolean("password.disable-passwords")
                     && !getAccountManager().checkAccountPassword(username, args[0])
