@@ -538,7 +538,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
                 .build());
     }
     
-    private Map<String, String> getAccountPersistence(String username) throws IOException
+    public Map<String, String> getAccountPersistence(String username) throws IOException
     {
         String persistenceBase64String = getKey(username, keys.persistence());
         Map<String, String> persistence = new LinkedHashMap<>();
