@@ -133,7 +133,7 @@ public final class PostgreSqlStorage extends Storage
         
         try
         {
-            return SqlUtils.copyResultSet(statement.executeQuery(sql));
+            return SqlUtils.copyResultSet(executeQuery(sql));
         }
         catch (SQLException ex)
         {
@@ -149,7 +149,7 @@ public final class PostgreSqlStorage extends Storage
         
         try
         {
-            return SqlUtils.copyResultSet(statement.executeQuery(sql));
+            return SqlUtils.copyResultSet(executeQuery(sql));
         }
         catch (SQLException ex)
         {
@@ -167,7 +167,7 @@ public final class PostgreSqlStorage extends Storage
         
         try
         {
-            return SqlUtils.copyResultSet(statement.executeQuery(sql));
+            return SqlUtils.copyResultSet(executeQuery(sql));
         }
         catch (SQLException ex)
         {

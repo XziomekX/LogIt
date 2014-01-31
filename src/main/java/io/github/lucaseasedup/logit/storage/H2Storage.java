@@ -127,7 +127,7 @@ public final class H2Storage extends Storage
         
         try
         {
-            return SqlUtils.copyResultSet(statement.executeQuery(sql));
+            return SqlUtils.copyResultSet(executeQuery(sql));
         }
         catch (SQLException ex)
         {
@@ -143,7 +143,7 @@ public final class H2Storage extends Storage
         
         try
         {
-            return SqlUtils.copyResultSet(statement.executeQuery(sql));
+            return SqlUtils.copyResultSet(executeQuery(sql));
         }
         catch (SQLException ex)
         {
@@ -161,7 +161,7 @@ public final class H2Storage extends Storage
         
         try
         {
-            return SqlUtils.copyResultSet(statement.executeQuery(sql));
+            return SqlUtils.copyResultSet(executeQuery(sql));
         }
         catch (SQLException ex)
         {
