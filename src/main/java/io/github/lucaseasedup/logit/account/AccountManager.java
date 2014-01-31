@@ -187,14 +187,10 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @return a {@code CancellableState} indicating whether
      *         the operation was cancelled or not by a Bukkit event.
      * 
-     * @throws AccountNotFoundException if an account with this username does not exist.
      * @throws ReportedException        if account removal failed.
      */
     public CancelledState removeAccount(String username)
     {
-        if (!isRegistered(username))
-            throw new AccountNotFoundException();
-        
         AccountEvent evt = new AccountRemoveEvent(username);
         Bukkit.getPluginManager().callEvent(evt);
         
@@ -299,16 +295,12 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @return a {@code CancellableState} indicating whether
      *         the operation was cancelled or not by a Bukkit event.
      * 
-     * @throws AccountNotFoundException if an account with this username does not exist.
      * @throws ReportedException        if this operation failed.
      */
     public CancelledState changeAccountPassword(String username, String newPassword)
     {
         if (getConfig().getBoolean("password.disable-passwords"))
             return CancelledState.NOT_CANCELLED;
-        
-        if (!isRegistered(username))
-            throw new AccountNotFoundException();
         
         AccountEvent evt = new AccountChangePasswordEvent(username, newPassword);
         Bukkit.getPluginManager().callEvent(evt);
@@ -364,14 +356,10 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @return a {@code CancellableState} indicating whether
      *         the operation was cancelled or not by a Bukkit event.
      * 
-     * @throws AccountNotFoundException if an account with this username does not exist.
      * @throws ReportedException        if this operation failed.
      */
     public CancelledState attachIp(String username, String ip)
     {
-        if (!isRegistered(username))
-            throw new AccountNotFoundException();
-        
         AccountEvent evt = new AccountAttachIpEvent(username, ip);
         Bukkit.getPluginManager().callEvent(evt);
         
@@ -487,14 +475,10 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @return a {@code CancellableState} indicating whether
      *         the operation was cancelled or not by a Bukkit event.
      * 
-     * @throws AccountNotFoundException if an account with this username does not exist.
      * @throws ReportedException        if this operation failed.
      */
     public CancelledState changeEmail(String username, String newEmail)
     {
-        if (!isRegistered(username))
-            throw new AccountNotFoundException();
-        
         AccountEvent evt = new AccountChangeEmailEvent(username, newEmail);
         Bukkit.getPluginManager().callEvent(evt);
         

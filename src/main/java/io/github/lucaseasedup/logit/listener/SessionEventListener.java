@@ -108,17 +108,14 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
     
     private void updateLastActiveDate(String username)
     {
-        if (getAccountManager().isRegistered(username))
+        try
         {
-            try
-            {
-                getAccountManager().updateLastActiveDate(username);
-            }
-            catch (IOException ex)
-            {
-                log(Level.WARNING,
-                        "Could not update last active date for player: "+ username + ".", ex);
-            }
+            getAccountManager().updateLastActiveDate(username);
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING,
+                    "Could not update last active date for player: "+ username + ".", ex);
         }
     }
 }

@@ -92,8 +92,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_ALREADY_USED"));
         }
-        else if (!getAccountManager().isRegistered(username)
-                && getConfig().getBoolean("crowd-control.kick-unregistered"))
+        else if (getConfig().getBoolean("crowd-control.kick-unregistered")
+                && !getAccountManager().isRegistered(username))
         {
             event.disallow(KICK_OTHER, getMessage("KICK_UNREGISTERED"));
         }
