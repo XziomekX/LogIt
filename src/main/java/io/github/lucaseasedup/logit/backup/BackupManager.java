@@ -66,7 +66,8 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     
     public void createBackup()
     {
-        SimpleDateFormat sdf = new SimpleDateFormat(getConfig().getString("backup.filename-format"));
+        String backupFilenameFormat = getConfig().getString("backup.filename-format");
+        SimpleDateFormat sdf = new SimpleDateFormat(backupFilenameFormat);
         File backupDir = getDataFile(getConfig().getString("backup.path"));
         File backupFile = new File(backupDir, sdf.format(new Date()));
         
@@ -77,18 +78,24 @@ public final class BackupManager extends LogItCoreObject implements Runnable
             if (!backupFile.createNewFile())
                 throw new IOException("Backup already exists.");
             
+            List<Hashtable<String, String>> rs =
+                    getAccountManager().getStorage().selectEntries(getAccountManager().getUnit());
+            
             try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
             {
                 backupStorage.connect();
-                
-                List<Hashtable<String, String>> rs =
-                        getAccountManager().getStorage().selectEntries(getAccountManager().getUnit());
-                backupStorage.createUnit(getAccountManager().getUnit(), getAccountManager().getKeys());
+                backupStorage.createUnit(getAccountManager().getUnit(),
+                        getAccountManager().getStorage().getKeys(getAccountManager().getUnit()));
+                backupStorage.setAutobatchEnabled(true);
                 
                 for (Hashtable<String, String> entry : rs)
                 {
                     backupStorage.addEntry(getAccountManager().getUnit(), entry);
                 }
+                
+                backupStorage.executeBatch();
+                backupStorage.clearBatch();
+                backupStorage.setAutobatchEnabled(false);
             }
         }
         catch (IOException ex)
@@ -118,16 +125,20 @@ public final class BackupManager extends LogItCoreObject implements Runnable
             {
                 backupStorage.connect();
                 
-                // Clear the table before restoring.
-                getAccountManager().getStorage().eraseUnit(getAccountManager().getUnit());
-                
                 List<Hashtable<String, String>> rs =
                         backupStorage.selectEntries(getAccountManager().getUnit());
+                
+                getAccountManager().getStorage().eraseUnit(getAccountManager().getUnit());
+                getAccountManager().getStorage().setAutobatchEnabled(true);
                 
                 for (Hashtable<String, String> entry : rs)
                 {
                     getAccountManager().getStorage().addEntry(getAccountManager().getUnit(), entry);
                 }
+                
+                getAccountManager().getStorage().executeBatch();
+                getAccountManager().getStorage().clearBatch();
+                getAccountManager().getStorage().setAutobatchEnabled(false);
             }
         }
         catch (IOException ex)
