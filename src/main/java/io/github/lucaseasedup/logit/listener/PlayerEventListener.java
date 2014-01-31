@@ -28,7 +28,12 @@ import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_FULL;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
 import io.github.lucaseasedup.logit.ForcedLoginPrompter;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.account.AccountKeys;
+import io.github.lucaseasedup.logit.storage.Infix;
+import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
@@ -134,7 +139,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     private void onJoin(PlayerJoinEvent event)
     {
         final Player player   = event.getPlayer();
-        final String username = player.getName();
+        final String username = player.getName().toLowerCase();
         final String ip       = getPlayerIp(player);
         
         event.setJoinMessage(null);
@@ -146,16 +151,24 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         int rememberLoginFor = getConfig().getInt("login-sessions.valid-for");
         
-        if (rememberLoginFor > 0 && getAccountManager().isRegistered(username)
-                && getConfig().getBoolean("login-sessions.enabled"))
+        try
         {
-            try
+            AccountKeys keys = getAccountManager().getKeys();
+            List<Hashtable<String, String>> rs =
+                    getAccountManager().getStorage().selectEntries(getAccountManager().getUnit(),
+                            Arrays.asList(
+                                keys.username(),
+                                keys.login_session()
+                            ), new SelectorCondition(keys.username(), Infix.EQUALS, username));
+            
+            if (rememberLoginFor > 0 && !rs.isEmpty()
+                    && getConfig().getBoolean("login-sessions.enabled"))
             {
-                String rememberLogin = getAccountManager().getLoginSession(username);
+                String loginSession = rs.get(0).get(keys.login_session());
                 
-                if (rememberLogin != null && !rememberLogin.isEmpty())
+                if (loginSession != null && !loginSession.isEmpty())
                 {
-                    String[] loginSplit = rememberLogin.split(";");
+                    String[] loginSplit = loginSession.split(";");
                     
                     if (loginSplit.length == 2)
                     {
@@ -171,10 +184,10 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                     }
                 }
             }
-            catch (IOException ex)
-            {
-                log(Level.WARNING, ex);
-            }
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, ex);
         }
         
         if (getSessionManager().isSessionAlive(player) || !getCore().isPlayerForcedToLogIn(player))
