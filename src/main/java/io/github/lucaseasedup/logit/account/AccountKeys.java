@@ -18,7 +18,9 @@
  */
 package io.github.lucaseasedup.logit.account;
 
+import com.google.common.collect.ImmutableList;
 import io.github.lucaseasedup.logit.storage.Storage.Type;
+import java.util.List;
 import org.apache.tools.ant.util.LinkedHashtable;
 
 public final class AccountKeys extends LinkedHashtable<String, Type>
@@ -44,6 +46,18 @@ public final class AccountKeys extends LinkedHashtable<String, Type>
         put(last_active_date,  Type.INTEGER);
         put(reg_date,          Type.INTEGER);
         put(persistence,       Type.TEXT);
+        
+        this.names = new ImmutableList.Builder<String>().add(
+            username,
+            salt,
+            password,
+            hashing_algorithm,
+            ip,
+            login_session,
+            email,
+            last_active_date,
+            reg_date,
+            persistence).build();
         
         this.username = username;
         this.salt = salt;
@@ -107,6 +121,12 @@ public final class AccountKeys extends LinkedHashtable<String, Type>
         return persistence;
     }
     
+    public List<String> getNames()
+    {
+        return names;
+    }
+    
+    private final List<String> names;
     private final String username;
     private final String salt;
     private final String password;
