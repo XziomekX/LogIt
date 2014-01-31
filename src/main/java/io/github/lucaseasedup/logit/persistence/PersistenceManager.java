@@ -70,6 +70,9 @@ public final class PersistenceManager extends LogItCoreObject
         Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
         Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
         
+        if (persistence == null)
+            return;
+        
         if (!isSerializedUsing(persistence, serializer))
         {
             serializer.serialize(persistence, player);
@@ -103,6 +106,9 @@ public final class PersistenceManager extends LogItCoreObject
         {
             Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
             Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
+            
+            if (persistence == null)
+                return;
             
             for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
             {
@@ -152,7 +158,10 @@ public final class PersistenceManager extends LogItCoreObject
         PersistenceSerializer serializer = getSerializer(clazz);
         Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
         Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
-
+        
+        if (persistence == null)
+            return;
+        
         if (isSerializedUsing(persistence, serializer))
         {
             serializer.unserialize(persistence, player);
@@ -186,12 +195,15 @@ public final class PersistenceManager extends LogItCoreObject
         
         AccountKeys keys = getAccountManager().getKeys();
         String username = player.getName().toLowerCase();
+        Set<Key> keysToErase = new HashSet<>();
         
         try
         {
             Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
             Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
-            Set<Key> keysToErase = new HashSet<>();
+            
+            if (persistence == null)
+                return;
             
             for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
             {
