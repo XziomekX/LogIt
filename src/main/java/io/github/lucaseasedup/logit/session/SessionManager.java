@@ -52,6 +52,9 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         long forceLoginTimeout = (getConfig().getInt("force-login.timeout") > 0L)
                 ? (-getConfig().getInt("force-login.timeout") * 20L) : Long.MIN_VALUE;
         
+        List<String> disableTimeoutForPlayers =
+                getConfig().getStringList("force-login.disable-timeout-for-players");
+        
         for (Map.Entry<String, Session> entry : sessions.entrySet())
         {
             String  username = entry.getKey();
@@ -73,9 +76,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
             // Player logged out and online.
             else if (isPlayerOnline(username))
             {
-                if (getAccountManager().isRegistered(username)
-                        && !containsIgnoreCase(username,
-                                getConfig().getStringList("force-login.disable-timeout-for-players"))
+                if (!containsIgnoreCase(username, disableTimeoutForPlayers)
                         && getCore().isPlayerForcedToLogIn(player))
                 {
                     if (session.getStatus() <= forceLoginTimeout)
