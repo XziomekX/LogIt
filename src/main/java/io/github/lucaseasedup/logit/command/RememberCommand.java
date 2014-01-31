@@ -50,13 +50,13 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
             }
-            else if (!getAccountManager().isRegistered(p.getName()))
-            {
-                sender.sendMessage(getMessage("NOT_REGISTERED_SELF"));
-            }
             else if (!getSessionManager().isSessionAlive(p))
             {
                 sender.sendMessage(getMessage("NOT_LOGGED_IN_SELF"));
+            }
+            else if (!getAccountManager().isRegistered(p.getName()))
+            {
+                sender.sendMessage(getMessage("NOT_REGISTERED_SELF"));
             }
             else
             {
