@@ -19,12 +19,18 @@
 package io.github.lucaseasedup.logit.persistence;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.account.AccountKeys;
+import io.github.lucaseasedup.logit.storage.Infix;
+import io.github.lucaseasedup.logit.storage.SelectorCondition;
+import io.github.lucaseasedup.logit.util.HashtableBuilder;
+import io.github.lucaseasedup.logit.util.IniUtils;
+import it.sauronsoftware.base64.Base64;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import org.bukkit.entity.Player;
@@ -58,22 +64,22 @@ public final class PersistenceManager extends LogItCoreObject
         if (player == null)
             throw new NullPointerException();
         
+        String username = player.getName().toLowerCase();
+        AccountKeys keys = getAccountManager().getKeys();
         PersistenceSerializer serializer = getSerializer(clazz);
+        Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
+        Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
         
-        if (isSerializedUsing(player, clazz))
-            return;
-        
-        Map<String, String> data = new HashMap<>();
-        
-        serializer.serialize(data, player);
-        
-        for (Entry<String, String> entry : data.entrySet())
+        if (!isSerializedUsing(persistence, serializer))
         {
-            if (containsKey(serializer.getClass(), entry.getKey()))
-            {
-                getAccountManager().updateAccountPersistence(player.getName(),
-                        entry.getKey(), entry.getValue());
-            }
+            serializer.serialize(persistence, player);
+            
+            persistenceIni.put("persistence", persistence);
+            getAccountManager().getStorage().updateEntries(getAccountManager().getUnit(),
+                    new HashtableBuilder<String, String>()
+                        .add(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
+                        .build(),
+                    new SelectorCondition(keys.username(), Infix.EQUALS, username));
         }
     }
     
@@ -90,17 +96,35 @@ public final class PersistenceManager extends LogItCoreObject
         if (player == null)
             throw new NullPointerException();
         
-        for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
+        AccountKeys keys = getAccountManager().getKeys();
+        String username = player.getName().toLowerCase();
+        
+        try
         {
-            try
+            Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
+            Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
+            
+            for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
             {
-                serializeUsing(player, clazz);
+                PersistenceSerializer serializer = getSerializer(clazz);
+                
+                if (!isSerializedUsing(persistence, serializer))
+                {
+                    serializer.serialize(persistence, player);
+                }
             }
-            catch (ReflectiveOperationException | IOException ex)
-            {
-                log(Level.WARNING,
-                        "Could not serialize persistence for player: " + player.getName(), ex);
-            }
+            
+            persistenceIni.put("persistence", persistence);
+            getAccountManager().getStorage().updateEntries(getAccountManager().getUnit(),
+                    new HashtableBuilder<String, String>()
+                        .add(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
+                        .build(),
+                    new SelectorCondition(keys.username(), Infix.EQUALS, username));
+        }
+        catch (IOException | ReflectiveOperationException ex)
+        {
+            log(Level.WARNING,
+                    "Could not serialize persistence for player: " + player.getName(), ex);
         }
     }
 
@@ -123,24 +147,28 @@ public final class PersistenceManager extends LogItCoreObject
         if (player == null)
             throw new NullPointerException();
         
+        String username = player.getName().toLowerCase();
+        AccountKeys keys = getAccountManager().getKeys();
         PersistenceSerializer serializer = getSerializer(clazz);
-        
-        if (!isSerializedUsing(player, clazz))
-            return;
-        
-        Map<String, String> data = new HashMap<>();
-        
-        for (Key key : getSerializerKeys(serializer.getClass()))
+        Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
+        Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
+
+        if (isSerializedUsing(persistence, serializer))
         {
-            data.put(key.name(),
-                    getAccountManager().getAccountPersistence(player.getName(), key.name()));
+            serializer.unserialize(persistence, player);
             
-            // Erase persistence.
-            getAccountManager().updateAccountPersistence(player.getName(),
-                    key.name(), key.defaultValue());
+            for (Key key : getSerializerKeys(serializer.getClass()))
+            {
+                persistence.put(key.name(), key.defaultValue());
+            }
+            
+            persistenceIni.put("persistence", persistence);
+            getAccountManager().getStorage().updateEntries(getAccountManager().getUnit(),
+                    new HashtableBuilder<String, String>()
+                        .add(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
+                        .build(),
+                    new SelectorCondition(keys.username(), Infix.EQUALS, username));
         }
-        
-        serializer.unserialize(data, player);
     }
 
     /**
@@ -156,17 +184,46 @@ public final class PersistenceManager extends LogItCoreObject
         if (player == null)
             throw new NullPointerException();
         
-        for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
+        AccountKeys keys = getAccountManager().getKeys();
+        String username = player.getName().toLowerCase();
+        
+        try
         {
-            try
+            Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
+            Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
+            Set<Key> keysToErase = new HashSet<>();
+            
+            for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
             {
-                unserializeUsing(player, clazz);
+                PersistenceSerializer serializer = getSerializer(clazz);
+                
+                if (isSerializedUsing(persistence, serializer))
+                {
+                    for (Key key : getSerializerKeys(serializer.getClass()))
+                    {
+                        keysToErase.add(key);
+                    }
+                    
+                    serializer.unserialize(persistence, player);
+                }
             }
-            catch (ReflectiveOperationException | IOException ex)
+            
+            for (Key key : keysToErase)
             {
-                log(Level.WARNING,
-                        "Could not unserialize persistence for player: " + player.getName(), ex);
+                persistence.put(key.name(), key.defaultValue());
             }
+            
+            persistenceIni.put("persistence", persistence);
+            getAccountManager().getStorage().updateEntries(getAccountManager().getUnit(),
+                    new HashtableBuilder<String, String>()
+                        .add(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
+                        .build(),
+                    new SelectorCondition(keys.username(), Infix.EQUALS, username));
+        }
+        catch (IOException | ReflectiveOperationException ex)
+        {
+            log(Level.WARNING,
+                    "Could not unserialize persistence for player: " + player.getName(), ex);
         }
     }
     
@@ -231,29 +288,11 @@ public final class PersistenceManager extends LogItCoreObject
     }
     
     @SuppressWarnings("incomplete-switch")
-    private boolean isSerializedUsing(Player player, Class<? extends PersistenceSerializer> clazz)
-            throws IOException
+    private boolean isSerializedUsing(Map<String, String> persistence, PersistenceSerializer serializer)
     {
-        PersistenceSerializer serializer = serializers.get(clazz);
-        
-        if (player == null)
-            return false;
-        
-        if (serializer == null)
-        {
-            try
-            {
-                serializer = constructSerializer(clazz);
-            }
-            catch (ReflectiveOperationException ex)
-            {
-                return false;
-            }
-        }
-        
         for (Key key : getSerializerKeys(serializer.getClass()))
         {
-            String value = getAccountManager().getAccountPersistence(player.getName(), key.name());
+            String value = persistence.get(key.name());
             
             switch (key.constraint())
             {
