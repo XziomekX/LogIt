@@ -351,17 +351,14 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
             }
-            else
+            else try
             {
-                try
-                {
-                    sender.sendMessage(getMessage("ACCOUNT_COUNT")
-                            .replace("%num%", String.valueOf(getAccountManager().getAccountCount())));
-                }
-                catch (IOException ex)
-                {
-                    log(Level.WARNING, ex);
-                }
+                sender.sendMessage(getMessage("ACCOUNT_COUNT")
+                        .replace("%num%", String.valueOf(getAccountManager().getAccountCount())));
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, ex);
             }
         }
         else if (checkSubcommand("account status", 1))
@@ -407,7 +404,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             {
                 sender.sendMessage(getMessage("IP_COUNT_ACCOUNTS")
                     .replace("%ip%", args[1])
-                    .replace("%num%", String.valueOf(getAccountManager().countAccountsWithIp(args[1]))));
+                    .replace("%num%",
+                            String.valueOf(getAccountManager().countAccountsWithIp(args[1]))));
             }
         }
         else if (checkSubcommand("config set"))
@@ -743,7 +741,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             line = line.replace("%cmd%", "logit " + subcommand);
         }
         
-        return line.replace("%desc%", getMessage("DESC_" + subcommand.replace(" ", "_").toUpperCase()));
+        return line.replace("%desc%",
+                getMessage("DESC_" + subcommand.replace(" ", "_").toUpperCase()));
     }
     
     private String[] args = null;

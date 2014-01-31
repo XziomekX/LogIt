@@ -436,7 +436,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         
         try
         {
-            List<Hashtable<String, String>> result = storage.selectEntries(unit, Arrays.asList(keys.ip()),
+            List<Hashtable<String, String>> result = storage.selectEntries(unit,
+                    Arrays.asList(keys.ip()),
                     new SelectorNegation(new SelectorCondition(keys.ip(), Infix.EQUALS, "")));
             
             for (Map<String, String> entry : result)

@@ -170,8 +170,7 @@ public final class LogItCore
             {
                 try
                 {
-                    IoUtils.extractResource("password-recovery.html",
-                            passwordRecoveryTemplateFile);
+                    IoUtils.extractResource("password-recovery.html", passwordRecoveryTemplateFile);
                 }
                 catch (IOException ex)
                 {
@@ -353,8 +352,12 @@ public final class LogItCore
         if (config.getBoolean("password-recovery.enabled"))
         {
             mailSender = new MailSender();
-            mailSender.configure(config.getString("mail.smtp-host"), config.getInt("mail.smtp-port"),
-                config.getString("mail.smtp-user"), config.getString("mail.smtp-password"));
+            mailSender.configure(
+                config.getString("mail.smtp-host"),
+                config.getInt("mail.smtp-port"),
+                config.getString("mail.smtp-user"),
+                config.getString("mail.smtp-password")
+            );
         }
         
         accountManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
@@ -637,15 +640,16 @@ public final class LogItCore
             
             String to = accountManager.getEmail(username);
             String from = config.getString("mail.email-address");
-            String subject = parseMessage(config.getString("password-recovery.subject"), new String[]{
-                "%player%", username,
-            });
+            String subject = parseMessage(config.getString("password-recovery.subject"),
+                    new String[]{"%player%", username});
             
-            String newPassword = generatePassword(config.getInt("password-recovery.password-length"),
-                config.getString("password-recovery.password-combination"));
+            int passwordLength = config.getInt("password-recovery.password-length");
+            String newPassword = generatePassword(passwordLength,
+                    config.getString("password-recovery.password-combination"));
             accountManager.changeAccountPassword(username, newPassword);
             
-            File bodyTemplateFile = getDataFile(config.getString("password-recovery.body-template"));
+            File bodyTemplateFile =
+                    getDataFile(config.getString("password-recovery.body-template"));
             String bodyTemplate;
             
             try (InputStream bodyTemplateInputStream = new FileInputStream(bodyTemplateFile))
@@ -728,8 +732,9 @@ public final class LogItCore
         String worldName = player.getWorld().getName();
         
         return (config.getBoolean("force-login.global")
-             || config.getStringList("force-login.in-worlds").contains(worldName))
-             && !containsIgnoreCase(player.getName(),config.getStringList("force-login.exempt-players"));
+                || config.getStringList("force-login.in-worlds").contains(worldName))
+             && !containsIgnoreCase(player.getName(),
+                     config.getStringList("force-login.exempt-players"));
     }
     
     /**
@@ -866,7 +871,7 @@ public final class LogItCore
                 return getBCrypt(string, "");
                 
             default:
-                throw new IllegalArgumentException("Unknown algorithm: " + hashingAlgorithm.toString());
+                throw new IllegalArgumentException("Unknown algorithm: " + hashingAlgorithm);
         }
     }
     
@@ -1107,19 +1112,16 @@ public final class LogItCore
                 FatalReportedException.throwNew(ex);
             }
         }
-        else
+        else for (Player player : Bukkit.getOnlinePlayers())
         {
-            for (Player player : Bukkit.getOnlinePlayers())
+            try
             {
-                try
-                {
-                    persistenceManager.unserializeUsing(player, clazz);
-                }
-                catch (ReflectiveOperationException | IOException ex)
-                {
-                    log(Level.WARNING,
-                            "Could not unserialize persistence for player: " + player.getName(), ex);
-                }
+                persistenceManager.unserializeUsing(player, clazz);
+            }
+            catch (ReflectiveOperationException | IOException ex)
+            {
+                log(Level.WARNING,
+                        "Could not unserialize persistence for player: " + player.getName(), ex);
             }
         }
     }

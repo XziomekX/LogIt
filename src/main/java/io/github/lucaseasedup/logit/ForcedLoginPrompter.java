@@ -38,27 +38,24 @@ public class ForcedLoginPrompter implements Runnable
     @Override
     public void run()
     {
-        if (!PlayerUtils.isPlayerOnline(username))
+        Player player = PlayerUtils.getPlayer(username);
+        
+        if (player == null)
         {
             if (taskId != -1)
             {
                 Bukkit.getScheduler().cancelTask(taskId);
             }
         }
-        else
+        else if (core.isPlayerForcedToLogIn(player))
         {
-            Player player = PlayerUtils.getPlayer(username);
-            
-            if (core.isPlayerForcedToLogIn(player))
+            if (!core.getSessionManager().isSessionAlive(player))
             {
-                if (!core.getSessionManager().isSessionAlive(player))
-                {
-                    core.sendForceLoginMessage(player);
-                }
-                else if (taskId != -1)
-                {
-                    Bukkit.getScheduler().cancelTask(taskId);
-                }
+                core.sendForceLoginMessage(player);
+            }
+            else if (taskId != -1)
+            {
+                Bukkit.getScheduler().cancelTask(taskId);
             }
         }
     }

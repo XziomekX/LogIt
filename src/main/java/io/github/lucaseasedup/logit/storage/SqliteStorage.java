@@ -133,7 +133,8 @@ public final class SqliteStorage extends Storage
     }
     
     @Override
-    public List<Hashtable<String, String>> selectEntries(String unit, List<String> keys) throws IOException
+    public List<Hashtable<String, String>> selectEntries(String unit, List<String> keys)
+            throws IOException
     {
         String sql = "SELECT " + SqlUtils.translateKeyList(keys, "`")
                 + " FROM `" + SqlUtils.escapeQuotes(unit, "`", true) + "`;";
@@ -149,8 +150,9 @@ public final class SqliteStorage extends Storage
     }
     
     @Override
-    public List<Hashtable<String, String>> selectEntries(String unit, List<String> keys, Selector selector)
-            throws IOException
+    public List<Hashtable<String, String>> selectEntries(String unit,
+                                                         List<String> keys,
+                                                         Selector selector) throws IOException
     {
         String sql = "SELECT " + SqlUtils.translateKeyList(keys, "`")
                 + " FROM `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
@@ -232,7 +234,8 @@ public final class SqliteStorage extends Storage
     public void addKey(String unit, String key, Type type) throws IOException
     {
         String sql = "ALTER TABLE `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
-                + " ADD COLUMN `" + SqlUtils.escapeQuotes(key, "`", true) + "` " + SqlUtils.encodeType(type) + ";";
+                + " ADD COLUMN `" + SqlUtils.escapeQuotes(key, "`", true) + "` "
+                + SqlUtils.encodeType(type) + ";";
         
         try
         {
@@ -262,7 +265,8 @@ public final class SqliteStorage extends Storage
     }
     
     @Override
-    public void updateEntries(String unit, Hashtable<String, String> pairs, Selector selector) throws IOException
+    public void updateEntries(String unit, Hashtable<String, String> pairs, Selector selector)
+            throws IOException
     {
         String sql = "UPDATE `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
                 + " SET " + SqlUtils.translatePairs(pairs, "`", "'")

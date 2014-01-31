@@ -49,8 +49,9 @@ public abstract class Storage implements AutoCloseable
     
     public abstract void addKey(String unit, String key, Type type) throws IOException;
     public abstract void addEntry(String unit, Hashtable<String, String> pairs) throws IOException;
-    public abstract void updateEntries(String unit, Hashtable<String, String> pairs, Selector selector)
-            throws IOException;
+    public abstract void updateEntries(String unit,
+                                       Hashtable<String, String> pairs,
+                                       Selector selector) throws IOException;
     public abstract void removeEntries(String unit, Selector selector) throws IOException;
     
     public abstract void executeBatch() throws IOException;

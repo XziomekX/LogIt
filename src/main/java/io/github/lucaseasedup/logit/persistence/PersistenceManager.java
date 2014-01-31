@@ -300,7 +300,8 @@ public final class PersistenceManager extends LogItCoreObject
     }
     
     @SuppressWarnings("incomplete-switch")
-    private boolean isSerializedUsing(Map<String, String> persistence, PersistenceSerializer serializer)
+    private boolean isSerializedUsing(Map<String, String> persistence,
+                                      PersistenceSerializer serializer)
     {
         for (Key key : getSerializerKeys(serializer.getClass()))
         {

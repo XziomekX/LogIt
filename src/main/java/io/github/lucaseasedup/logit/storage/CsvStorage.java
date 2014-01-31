@@ -96,14 +96,16 @@ public final class CsvStorage extends Storage
     }
     
     @Override
-    public List<Hashtable<String, String>> selectEntries(String unit, List<String> keys) throws IOException
+    public List<Hashtable<String, String>> selectEntries(String unit, List<String> keys)
+            throws IOException
     {
         return selectEntries(unit, keys, new SelectorConstant(true));
     }
     
     @Override
-    public List<Hashtable<String, String>> selectEntries(String unit, List<String> keys, Selector selector)
-            throws IOException
+    public List<Hashtable<String, String>> selectEntries(String unit,
+                                                         List<String> keys,
+                                                         Selector selector) throws IOException
     {
         List<Hashtable<String, String>> rs = new ArrayList<>();
         
@@ -284,7 +286,8 @@ public final class CsvStorage extends Storage
     }
     
     @Override
-    public void updateEntries(String unit, Hashtable<String, String> pairs, Selector selector) throws IOException
+    public void updateEntries(String unit, Hashtable<String, String> pairs, Selector selector)
+            throws IOException
     {
         if (!connected)
             throw new IOException("Database closed.");
