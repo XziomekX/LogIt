@@ -522,11 +522,6 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         return CancelledState.NOT_CANCELLED;
     }
     
-    public String getLoginSession(String username) throws IOException
-    {
-        return getKey(username, keys.login_session());
-    }
-    
     public void saveLoginSession(String username, String ip, long time) throws IOException
     {
         updateKeys(username, new HashtableBuilder<String, String>()
@@ -539,11 +534,6 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         updateKeys(username, new HashtableBuilder<String, String>()
                 .add(keys.login_session(), "")
                 .build());
-    }
-    
-    public long getLastActiveDate(String username) throws IOException
-    {
-        return Long.parseLong(getKey(username, keys.last_active_date()));
     }
     
     public void updateLastActiveDate(String username) throws IOException
