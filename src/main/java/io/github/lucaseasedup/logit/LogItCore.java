@@ -265,9 +265,6 @@ public final class LogItCore
                 }
                 default:
                 {
-                    log(Level.SEVERE, getMessage("UNKNOWN_STORAGE_TYPE")
-                            .replace("%st%", storageType.name()));
-                    
                     FatalReportedException.throwNew();
                 }
             }
