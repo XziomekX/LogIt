@@ -344,9 +344,9 @@ public final class SessionManager extends LogItCoreObject implements Runnable
                     createSession(username, "");
                 }
                 
-                List<Hashtable<String, String>> rs =
-                        sessionsDatabase.selectEntries("sessions", Arrays.asList("status", "ip"),
-                                new SelectorCondition("username", Infix.EQUALS, username));
+                List<Hashtable<String, String>> rs = sessionsDatabase.selectEntries("sessions",
+                        Arrays.asList("username", "status", "ip"),
+                        new SelectorCondition("username", Infix.EQUALS, username));
                 
                 if (!rs.isEmpty())
                 {

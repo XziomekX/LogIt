@@ -76,7 +76,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     {
         try
         {
-            return getKey(username, keys.username()) != null;
+            List<Hashtable<String, String>> rs =
+                    storage.selectEntries(unit, Arrays.asList(keys.username()),
+                    new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
+            
+            return !rs.isEmpty();
         }
         catch (IOException ex)
         {
@@ -240,8 +244,12 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         try
         {
             List<Hashtable<String, String>> result = storage.selectEntries(unit,
-                    Arrays.asList(keys.salt(), keys.password(), keys.hashing_algorithm()),
-                    new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
+                    Arrays.asList(
+                        keys.username(),
+                        keys.salt(),
+                        keys.password(),
+                        keys.hashing_algorithm()
+                    ), new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
             
             if (result.isEmpty())
                 throw new AccountNotFoundException();
@@ -460,7 +468,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     
     public String getEmail(String username) throws IOException
     {
-        return getKey(username, keys.email());
+        List<Hashtable<String, String>> rs =
+                storage.selectEntries(unit, Arrays.asList(keys.username(), keys.email()),
+                new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
+        
+        if (rs.isEmpty())
+            return null;
+        
+        return rs.get(0).get(keys.email());
     }
     
     /**
@@ -540,7 +555,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     
     public Map<String, String> getAccountPersistence(String username) throws IOException
     {
-        String persistenceBase64String = getKey(username, keys.persistence());
+        List<Hashtable<String, String>> rs =
+                storage.selectEntries(unit, Arrays.asList(keys.username(), keys.persistence()),
+                new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
+        
+        if (rs.isEmpty())
+            return null;
+        
+        String persistenceBase64String = rs.get(0).get(keys.persistence());
         Map<String, String> persistence = new LinkedHashMap<>();
         
         if (persistenceBase64String != null)
@@ -601,17 +623,6 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     public AccountKeys getKeys()
     {
         return keys;
-    }
-    
-    private String getKey(String username, String key) throws IOException
-    {
-        List<Hashtable<String, String>> result = storage.selectEntries(unit, Arrays.asList(key),
-                new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
-        
-        if (result.isEmpty())
-            return null;
-        
-        return result.get(0).get(key);
     }
     
     private void updateKeys(String username, Hashtable<String, String> pairs) throws IOException
