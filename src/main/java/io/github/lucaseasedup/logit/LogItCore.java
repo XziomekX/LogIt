@@ -170,7 +170,7 @@ public final class LogItCore
             {
                 try
                 {
-                    IoUtils.extractResource("/password-recovery.html",
+                    IoUtils.extractResource("password-recovery.html",
                             passwordRecoveryTemplateFile);
                 }
                 catch (IOException ex)
