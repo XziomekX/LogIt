@@ -31,6 +31,7 @@ public abstract class Storage implements AutoCloseable
     @Override
     public abstract void close() throws IOException;
     
+    public abstract List<String> getUnitNames() throws IOException;
     public abstract Hashtable<String, Type> getKeys(String unit) throws IOException;
     
     public abstract List<Hashtable<String, String>> selectEntries(String unit)

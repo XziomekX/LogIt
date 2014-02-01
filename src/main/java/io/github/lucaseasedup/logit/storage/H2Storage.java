@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import org.apache.tools.ant.util.LinkedHashtable;
 
@@ -93,6 +94,27 @@ public final class H2Storage extends Storage
         {
             throw new IOException(ex);
         }
+    }
+    
+    @Override
+    public List<String> getUnitNames() throws IOException
+    {
+        List<String> units = new LinkedList<>();
+        String sql = "SHOW TABLES;";
+        
+        try (ResultSet rs = executeQuery(sql))
+        {
+            while (rs.next())
+            {
+                units.add(rs.getString(1));
+            }
+        }
+        catch (SQLException ex)
+        {
+            throw new IOException(ex);
+        }
+        
+        return units;
     }
     
     @Override

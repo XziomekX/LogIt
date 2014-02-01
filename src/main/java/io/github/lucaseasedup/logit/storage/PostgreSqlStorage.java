@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import org.apache.tools.ant.util.LinkedHashtable;
 
@@ -99,6 +100,29 @@ public final class PostgreSqlStorage extends Storage
         {
             throw new IOException(ex);
         }
+    }
+    
+    @Override
+    public List<String> getUnitNames() throws IOException
+    {
+        List<String> units = new LinkedList<>();
+        String sql = "SELECT table_schema, table_name FROM information_schema.tables"
+                + " WHERE table_type = 'BASE TABLE'"
+                    + " AND table_schema NOT IN ('pg_catalog', 'information_schema');";
+        
+        try (ResultSet rs = executeQuery(sql))
+        {
+            while (rs.next())
+            {
+                units.add(rs.getString("table_name"));
+            }
+        }
+        catch (SQLException ex)
+        {
+            throw new IOException(ex);
+        }
+        
+        return units;
     }
     
     @Override

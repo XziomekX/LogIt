@@ -21,11 +21,13 @@ package io.github.lucaseasedup.logit.storage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.apache.tools.ant.util.LinkedHashtable;
@@ -61,6 +63,28 @@ public final class CsvStorage extends Storage
     public void close() throws IOException
     {
         connected = false;
+    }
+    
+    @Override
+    public List<String> getUnitNames() throws IOException
+    {
+        File[] files = dir.listFiles(new FileFilter()
+        {
+            @Override
+            public boolean accept(File pathname)
+            {
+                return pathname.isFile();
+            }
+        });
+        
+        List<String> units = new LinkedList<>();
+        
+        for (File file : files)
+        {
+            units.add(file.getName());
+        }
+        
+        return units;
     }
     
     @Override
