@@ -40,7 +40,11 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
-            getCore().sendForceLoginMessage(player);
+            
+            if (getConfig().getBoolean("force-login.prompt-on.block-place"))
+            {
+                getCore().sendForceLoginMessage(player);
+            }
         }
     }
     
@@ -55,7 +59,11 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
-            getCore().sendForceLoginMessage(player);
+            
+            if (getConfig().getBoolean("force-login.prompt-on.block-break"))
+            {
+                getCore().sendForceLoginMessage(player);
+            }
         }
     }
     
@@ -71,7 +79,11 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
-            getCore().sendForceLoginMessage(player);
+            
+            if (getConfig().getBoolean("force-login.prompt-on.block-break"))
+            {
+                getCore().sendForceLoginMessage(player);
+            }
         }
     }
 }

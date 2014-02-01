@@ -379,7 +379,10 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             if (clickedBlock == null
                     || (clickedBlock.getTypeId() != 70 && clickedBlock.getTypeId() != 72))
             {
-                getCore().sendForceLoginMessage(player);
+                if (getConfig().getBoolean("force-login.prompt-on.interact"))
+                {
+                    getCore().sendForceLoginMessage(player);
+                }
             }
         }
     }
@@ -395,7 +398,11 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
-            getCore().sendForceLoginMessage(player);
+            
+            if (getConfig().getBoolean("force-login.prompt-on.interact-entity"))
+            {
+                getCore().sendForceLoginMessage(player);
+            }
         }
     }
     
@@ -424,7 +431,11 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
-            getCore().sendForceLoginMessage(player);
+            
+            if (getConfig().getBoolean("force-login.prompt-on.drop-item"))
+            {
+                getCore().sendForceLoginMessage(player);
+            }
         }
     }
 }
