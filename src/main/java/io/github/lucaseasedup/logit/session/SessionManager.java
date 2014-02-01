@@ -334,9 +334,9 @@ public final class SessionManager extends LogItCoreObject implements Runnable
     
     public void importSessions(File file) throws IOException
     {
-        try (Storage sessionsDatabase = new SqliteStorage("jdbc:sqlite:" + file))
+        try (Storage sessionsStorage = new SqliteStorage("jdbc:sqlite:" + file))
         {
-            sessionsDatabase.connect();
+            sessionsStorage.connect();
             
             Player[] players = Bukkit.getOnlinePlayers();
             
@@ -349,7 +349,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
                     createSession(username, "");
                 }
                 
-                List<Hashtable<String, String>> rs = sessionsDatabase.selectEntries("sessions",
+                List<Hashtable<String, String>> rs = sessionsStorage.selectEntries("sessions",
                         Arrays.asList("username", "status", "ip"),
                         new SelectorCondition("username", Infix.EQUALS, username));
                 
