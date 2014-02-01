@@ -747,7 +747,7 @@ public final class LogItCore
     {
         if (accountManager.isRegistered(player.getName()))
         {
-            if (getConfig().getBoolean("force-login.prompt-to-login"))
+            if (getConfig().getBoolean("force-login.periodical-prompt.login"))
             {
                 if (!config.getBoolean("password.disable-passwords"))
                 {
@@ -761,7 +761,7 @@ public final class LogItCore
         }
         else
         {
-            if (getConfig().getBoolean("force-login.prompt-to-register"))
+            if (getConfig().getBoolean("force-login.periodical-prompt.register"))
             {
                 if (!config.getBoolean("password.disable-passwords"))
                 {

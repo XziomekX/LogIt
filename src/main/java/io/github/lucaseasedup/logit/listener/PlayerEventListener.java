@@ -201,7 +201,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             getCore().getPersistenceManager().serialize(player);
             
-            int promptPeriod = getConfig().getInt("force-login.prompt-period") * 20;
+            int promptPeriod = getConfig().getInt("force-login.periodical-prompt.period") * 20;
             int prompterId;
             
             ForcedLoginPrompter prompter = new ForcedLoginPrompter(getCore(), username);
