@@ -305,25 +305,30 @@ public final class SessionManager extends LogItCoreObject implements Runnable
     {
         sessionsDatabaseFile.delete();
         
-        try (Storage sessionsDatabase = new SqliteStorage("jdbc:sqlite:" + sessionsDatabaseFile))
+        try (Storage sessionsStorage = new SqliteStorage("jdbc:sqlite:" + sessionsDatabaseFile))
         {
-            sessionsDatabase.connect();
-            sessionsDatabase.createUnit("sessions", new HashtableBuilder<String, Type>()
+            sessionsStorage.connect();
+            sessionsStorage.createUnit("sessions", new HashtableBuilder<String, Type>()
                 .add("username", Type.TINYTEXT)
                 .add("status", Type.INTEGER)
                 .add("ip", Type.TINYTEXT)
                 .build());
+            sessionsStorage.setAutobatchEnabled(true);
             
-            Player[] players = Bukkit.getOnlinePlayers();
-            
-            for (Player player : players)
+            for (Player player : Bukkit.getOnlinePlayers())
             {
-                sessionsDatabase.addEntry("sessions", new HashtableBuilder<String, String>()
-                        .add("username", player.getName().toLowerCase())
-                        .add("status", String.valueOf(getSession(player.getName()).getStatus()))
+                String username = player.getName().toLowerCase();
+                
+                sessionsStorage.addEntry("sessions", new HashtableBuilder<String, String>()
+                        .add("username", username)
+                        .add("status", String.valueOf(getSession(username).getStatus()))
                         .add("ip", getPlayerIp(player))
                         .build());
             }
+            
+            sessionsStorage.executeBatch();
+            sessionsStorage.clearBatch();
+            sessionsStorage.setAutobatchEnabled(false);
         }
     }
     
