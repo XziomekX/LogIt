@@ -338,9 +338,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         {
             sessionsStorage.connect();
             
-            Player[] players = Bukkit.getOnlinePlayers();
-            
-            for (Player player : players)
+            for (Player player : Bukkit.getOnlinePlayers())
             {
                 String username = player.getName().toLowerCase();
                 
