@@ -229,8 +229,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * 
      * @return {@code true} if they match; {@code false} otherwise.
      * 
-     * @throws AccountNotFoundException if no such account exists.
-     * @throws ReportedException        if an error occurs.
+     * @throws ReportedException if an error occurs.
      */
     public boolean checkAccountPassword(String username, String password)
     {
@@ -248,7 +247,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
                     ), new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
             
             if (result.isEmpty())
-                throw new AccountNotFoundException();
+                return false;
             
             String actualHashedPassword = result.get(0).get(keys.password());
             HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
