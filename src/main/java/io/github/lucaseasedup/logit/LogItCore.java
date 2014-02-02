@@ -421,8 +421,7 @@ public final class LogItCore
         
         started = true;
         
-        log(Level.FINE, getMessage("PLUGIN_START_SUCCESS")
-                .replace("%st%", storageType.name()));
+        log(Level.FINE, getMessage("PLUGIN_START_SUCCESS"));
         
         if (firstRun)
         {
