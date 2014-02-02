@@ -356,16 +356,10 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @return a {@code CancellableState} indicating whether
      *         the operation was cancelled or not by a Bukkit event.
      * 
-     * @throws ReportedException        if this operation failed.
+     * @throws ReportedException if this operation failed.
      */
     public CancelledState attachIp(String username, String ip)
     {
-        AccountEvent evt = new AccountAttachIpEvent(username, ip);
-        Bukkit.getPluginManager().callEvent(evt);
-        
-        if (evt.isCancelled())
-            return CancelledState.CANCELLED;
-        
         try
         {
             if (getCore().getIntegration() == IntegrationType.PHPBB2)
@@ -380,13 +374,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             
             log(Level.FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username)
                     .replace("%ip%", ip));
-            evt.executeSuccessTasks();
         }
         catch (IOException ex)
         {
             log(Level.WARNING, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username)
                     .replace("%ip%", ip), ex);
-            evt.executeFailureTasks();
             
             ReportedException.throwNew(ex);
         }
