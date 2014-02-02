@@ -24,6 +24,7 @@ import io.github.lucaseasedup.logit.config.LogItConfiguration;
 import io.github.lucaseasedup.logit.mail.MailSender;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.session.SessionManager;
+import io.github.lucaseasedup.logit.storage.Storage;
 import java.io.File;
 import java.util.logging.Level;
 
@@ -73,6 +74,11 @@ public abstract class LogItCoreObject
     protected final AccountManager getAccountManager()
     {
         return core.getAccountManager();
+    }
+    
+    protected final Storage getAccountStorage()
+    {
+        return core.getAccountManager().getStorage();
     }
     
     protected final BackupManager getBackupManager()
