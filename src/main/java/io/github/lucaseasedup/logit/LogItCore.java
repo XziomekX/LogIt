@@ -181,20 +181,26 @@ public final class LogItCore
             }
         }
         
-        StorageType storageType = StorageType.decode(
+        StorageType leadingStorageType = StorageType.decode(
             plugin.getConfig().getString("storage.accounts.leading.storage-type")
+        );
+        
+        StorageType mirrorStorageType = StorageType.decode(
+            plugin.getConfig().getString("storage.accounts.mirror.storage-type")
         );
         
         try
         {
             ReportedException.incrementRequestCount();
             
-            if (storageType.equals(StorageType.H2))
+            if (leadingStorageType.equals(StorageType.H2)
+                    || mirrorStorageType.equals(StorageType.H2))
             {
                 LogItPlugin.loadLibrary(LIB_H2);
             }
             
-            if (storageType.equals(StorageType.POSTGRESQL))
+            if (leadingStorageType.equals(StorageType.POSTGRESQL)
+                    || mirrorStorageType.equals(StorageType.POSTGRESQL))
             {
                 LogItPlugin.loadLibrary(LIB_POSTGRESQL);
             }
@@ -215,7 +221,7 @@ public final class LogItCore
         
         Storage leadingAccountStorage = null;
         
-        switch (storageType)
+        switch (leadingStorageType)
         {
         case NONE:
             leadingAccountStorage = new NullStorage();
@@ -256,7 +262,7 @@ public final class LogItCore
         
         Storage mirrorAccountStorage = null;
         
-        switch (storageType)
+        switch (mirrorStorageType)
         {
         case NONE:
             mirrorAccountStorage = new NullStorage();
