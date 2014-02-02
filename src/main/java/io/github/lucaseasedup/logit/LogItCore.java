@@ -68,11 +68,14 @@ import io.github.lucaseasedup.logit.profile.ProfileManager;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.storage.CsvStorage;
 import io.github.lucaseasedup.logit.storage.H2Storage;
+import io.github.lucaseasedup.logit.storage.MirroredStorage;
 import io.github.lucaseasedup.logit.storage.MySqlStorage;
+import io.github.lucaseasedup.logit.storage.NullStorage;
 import io.github.lucaseasedup.logit.storage.PostgreSqlStorage;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.storage.Storage.Type;
+import io.github.lucaseasedup.logit.util.HashtableBuilder;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
 import java.io.FileInputStream;
@@ -178,8 +181,9 @@ public final class LogItCore
             }
         }
         
-        StorageType storageType =
-                StorageType.decode(plugin.getConfig().getString("storage.accounts.storage-type"));
+        StorageType storageType = StorageType.decode(
+            plugin.getConfig().getString("storage.accounts.leading.storage-type")
+        );
         
         try
         {
@@ -209,61 +213,99 @@ public final class LogItCore
             ReportedException.decrementRequestCount();
         }
         
-        Storage accountStorage = null;
+        Storage leadingAccountStorage = null;
+        
+        switch (storageType)
+        {
+        case NONE:
+            leadingAccountStorage = new NullStorage();
+            break;
+        
+        case SQLITE:
+            leadingAccountStorage = new SqliteStorage("jdbc:sqlite:" + dataFolder + "/"
+                    + config.getString("storage.accounts.leading.sqlite.filename"));
+            break;
+            
+        case MYSQL:
+            leadingAccountStorage = new MySqlStorage(
+                    config.getString("storage.accounts.leading.mysql.host"),
+                    config.getString("storage.accounts.leading.mysql.user"),
+                    config.getString("storage.accounts.leading.mysql.password"),
+                    config.getString("storage.accounts.leading.mysql.database"));
+            break;
+            
+        case H2:
+            leadingAccountStorage = new H2Storage("jdbc:h2:" + dataFolder
+                    + "/" + config.getString("storage.accounts.leading.h2.filename"));
+            break;
+            
+        case POSTGRESQL:
+            leadingAccountStorage = new PostgreSqlStorage(
+                    config.getString("storage.accounts.leading.postgresql.host"),
+                    config.getString("storage.accounts.leading.postgresql.user"),
+                    config.getString("storage.accounts.leading.postgresql.password"));
+            break;
+            
+        case CSV:
+            leadingAccountStorage = new CsvStorage(dataFolder);
+            break;
+            
+        default:
+            FatalReportedException.throwNew();
+        }
+        
+        Storage mirrorAccountStorage = null;
+        
+        switch (storageType)
+        {
+        case NONE:
+            mirrorAccountStorage = new NullStorage();
+            break;
+        
+        case SQLITE:
+            mirrorAccountStorage = new SqliteStorage("jdbc:sqlite:" + dataFolder + "/"
+                    + config.getString("storage.accounts.mirror.sqlite.filename"));
+            break;
+            
+        case MYSQL:
+            mirrorAccountStorage = new MySqlStorage(
+                    config.getString("storage.accounts.mirror.mysql.host"),
+                    config.getString("storage.accounts.mirror.mysql.user"),
+                    config.getString("storage.accounts.mirror.mysql.password"),
+                    config.getString("storage.accounts.mirror.mysql.database"));
+            break;
+            
+        case H2:
+            mirrorAccountStorage = new H2Storage("jdbc:h2:" + dataFolder
+                    + "/" + config.getString("storage.accounts.mirror.h2.filename"));
+            break;
+            
+        case POSTGRESQL:
+            mirrorAccountStorage = new PostgreSqlStorage(
+                    config.getString("storage.accounts.mirror.postgresql.host"),
+                    config.getString("storage.accounts.mirror.postgresql.user"),
+                    config.getString("storage.accounts.mirror.postgresql.password"));
+            break;
+            
+        case CSV:
+            mirrorAccountStorage = new CsvStorage(dataFolder);
+            break;
+            
+        default:
+            FatalReportedException.throwNew();
+        }
+        
+        MirroredStorage accountStorage = new MirroredStorage(leadingAccountStorage);
+        accountStorage.mirrorStorage(mirrorAccountStorage,
+                new HashtableBuilder<String, String>()
+                .add(
+                    getConfig().getString("storage.accounts.leading.table"),
+                    getConfig().getString("storage.accounts.mirror.table")
+                ).build());
         
         try
         {
-            switch (storageType)
-            {
-                case SQLITE:
-                {
-                    accountStorage = new SqliteStorage("jdbc:sqlite:" + dataFolder
-                            + "/" + config.getString("storage.accounts.sqlite.filename"));
-                    accountStorage.connect();
-                    
-                    break;
-                }
-                case MYSQL:
-                {
-                    accountStorage = new MySqlStorage(
-                            config.getString("storage.accounts.mysql.host"),
-                            config.getString("storage.accounts.mysql.user"),
-                            config.getString("storage.accounts.mysql.password"),
-                            config.getString("storage.accounts.mysql.database"));
-                    accountStorage.connect();
-                    
-                    break;
-                }
-                case H2:
-                {
-                    accountStorage = new H2Storage("jdbc:h2:" + dataFolder
-                            + "/" + config.getString("storage.accounts.h2.filename"));
-                    accountStorage.connect();
-                    
-                    break;
-                }
-                case POSTGRESQL:
-                {
-                    accountStorage = new PostgreSqlStorage(
-                            config.getString("storage.accounts.postgresql.host"),
-                            config.getString("storage.accounts.postgresql.user"),
-                            config.getString("storage.accounts.postgresql.password"));
-                    accountStorage.connect();
-                    
-                    break;
-                }
-                case CSV:
-                {
-                    accountStorage = new CsvStorage(dataFolder);
-                    accountStorage.connect();
-                    
-                    break;
-                }
-                default:
-                {
-                    FatalReportedException.throwNew();
-                }
-            }
+            accountStorage.connect();
         }
         catch (IOException ex)
         {
@@ -272,7 +314,7 @@ public final class LogItCore
             FatalReportedException.throwNew(ex);
         }
         
-        String accountsUnit = config.getString("storage.accounts.table");
+        String accountsUnit = config.getString("storage.accounts.leading.table");
         
         AccountKeys accountKeys = new AccountKeys(
             config.getString("storage.accounts.columns.username.name"),
@@ -1139,12 +1181,13 @@ public final class LogItCore
     
     public static enum StorageType
     {
-        UNKNOWN, SQLITE, MYSQL, H2, POSTGRESQL, CSV;
+        UNKNOWN, NONE, SQLITE, MYSQL, H2, POSTGRESQL, CSV;
         
         public static StorageType decode(String s)
         {
             switch (s.toLowerCase())
             {
+            case "none":       return NONE;
             case "sqlite":     return SQLITE;
             case "mysql":      return MYSQL;
             case "h2":         return H2;

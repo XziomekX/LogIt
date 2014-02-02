@@ -66,7 +66,7 @@ public final class ConvertWizard extends Wizard
         else if (getCurrentStep() == Step.ENTER_DBTYPE)
         {
             if (!new DbTypeValidator()
-                    .validate("storage.accounts.storage-type", PropertyType.STRING, message))
+                    .validate("storage.accounts.leading.storage-type", PropertyType.STRING, message))
             {
                 sendMessage(getMessage("CONVERT_INVALID_DBTYPE")
                         .replace("%dbtype%", message));
@@ -194,27 +194,27 @@ public final class ConvertWizard extends Wizard
         {
             if (message.equals("proceed"))
             {
-                getConfig().set("storage.accounts.storage-type", dbtype);
+                getConfig().set("storage.accounts.leading.storage-type", dbtype);
                 
                 switch (dbtype)
                 {
                 case "sqlite":
-                    getConfig().set("storage.accounts.sqlite.filename", filename);
+                    getConfig().set("storage.accounts.leading.sqlite.filename", filename);
                     break;
                     
                 case "h2":
-                    getConfig().set("storage.accounts.h2.filename", filename);
+                    getConfig().set("storage.accounts.leading.h2.filename", filename);
                     break;
                     
                 case "mysql":
-                    getConfig().set("storage.accounts.mysql.host", host);
-                    getConfig().set("storage.accounts.mysql.user", user);
-                    getConfig().set("storage.accounts.mysql.password", password);
-                    getConfig().set("storage.accounts.mysql.database", database);
+                    getConfig().set("storage.accounts.leading.mysql.host", host);
+                    getConfig().set("storage.accounts.leading.mysql.user", user);
+                    getConfig().set("storage.accounts.leading.mysql.password", password);
+                    getConfig().set("storage.accounts.leading.mysql.database", database);
                     break;
                 }
                 
-                getConfig().set("storage.accounts.table", table);
+                getConfig().set("storage.accounts.leading.table", table);
                 
                 try
                 {
