@@ -116,6 +116,11 @@ public final class MirroredStorage extends Storage
             
             e.getKey().createUnit(unitMapping, keys);
         }
+        
+        for (StorageObserver o : obs)
+        {
+            o.createUnit(unit, keys);
+        }
     }
     
     @Override
@@ -130,6 +135,11 @@ public final class MirroredStorage extends Storage
             e.getValue().remove(unit);
             e.getValue().put(newName, unitMapping);
         }
+        
+        for (StorageObserver o : obs)
+        {
+            o.renameUnit(unit, newName);
+        }
     }
     
     @Override
@@ -142,6 +152,11 @@ public final class MirroredStorage extends Storage
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
             e.getKey().eraseUnit(unitMapping);
+        }
+        
+        for (StorageObserver o : obs)
+        {
+            o.eraseUnit(unit);
         }
     }
     
@@ -156,6 +171,11 @@ public final class MirroredStorage extends Storage
             
             e.getKey().removeUnit(unitMapping);
         }
+        
+        for (StorageObserver o : obs)
+        {
+            o.removeUnit(unit);
+        }
     }
     
     @Override
@@ -169,6 +189,11 @@ public final class MirroredStorage extends Storage
             
             e.getKey().addKey(unitMapping, key, type);
         }
+        
+        for (StorageObserver o : obs)
+        {
+            o.addKey(unit, key, type);
+        }
     }
     
     @Override
@@ -181,6 +206,11 @@ public final class MirroredStorage extends Storage
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
             e.getKey().addEntry(unitMapping, pairs);
+        }
+        
+        for (StorageObserver o : obs)
+        {
+            o.addEntry(unit, pairs);
         }
     }
     
@@ -196,6 +226,11 @@ public final class MirroredStorage extends Storage
             
             e.getKey().updateEntries(unitMapping, pairs, selector);
         }
+        
+        for (StorageObserver o : obs)
+        {
+            o.updateEntries(unit, pairs, selector);
+        }
     }
     
     @Override
@@ -208,6 +243,11 @@ public final class MirroredStorage extends Storage
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
             e.getKey().removeEntries(unitMapping, selector);
+        }
+        
+        for (StorageObserver o : obs)
+        {
+            o.removeEntries(unit, selector);
         }
     }
     
