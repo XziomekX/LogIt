@@ -295,18 +295,12 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @return a {@code CancellableState} indicating whether
      *         the operation was cancelled or not by a Bukkit event.
      * 
-     * @throws ReportedException        if this operation failed.
+     * @throws ReportedException if this operation failed.
      */
     public CancelledState changeAccountPassword(String username, String newPassword)
     {
         if (getConfig().getBoolean("password.disable-passwords"))
             return CancelledState.NOT_CANCELLED;
-        
-        AccountEvent evt = new AccountChangePasswordEvent(username, newPassword);
-        Bukkit.getPluginManager().callEvent(evt);
-        
-        if (evt.isCancelled())
-            return CancelledState.CANCELLED;
         
         Hashtable<String, String> pairs = new Hashtable<>();
         HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
@@ -333,13 +327,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             
             log(Level.FINE,
                     getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
-            evt.executeSuccessTasks();
         }
         catch (IOException ex)
         {
             log(Level.WARNING,
                     getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username), ex);
-            evt.executeFailureTasks();
             
             ReportedException.throwNew(ex);
         }
@@ -468,16 +460,10 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @return a {@code CancellableState} indicating whether
      *         the operation was cancelled or not by a Bukkit event.
      * 
-     * @throws ReportedException        if this operation failed.
+     * @throws ReportedException if this operation failed.
      */
     public CancelledState changeEmail(String username, String newEmail)
     {
-        AccountEvent evt = new AccountChangeEmailEvent(username, newEmail);
-        Bukkit.getPluginManager().callEvent(evt);
-        
-        if (evt.isCancelled())
-            return CancelledState.CANCELLED;
-        
         try
         {
             updateKeys(username, new HashtableBuilder<String, String>()
@@ -485,13 +471,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable
                     .build());
             
             log(Level.FINE, getMessage("CHANGE_EMAIL_SUCCESS_LOG").replace("%player%", username));
-            evt.executeSuccessTasks();
         }
         catch (IOException ex)
         {
             log(Level.WARNING,
                     getMessage("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username), ex);
-            evt.executeFailureTasks();
             
             ReportedException.throwNew(ex);
         }
