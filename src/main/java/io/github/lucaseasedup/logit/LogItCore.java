@@ -49,7 +49,6 @@ import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
 import io.github.lucaseasedup.logit.config.LogItConfiguration;
 import io.github.lucaseasedup.logit.hash.BCrypt;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
-import io.github.lucaseasedup.logit.listener.AccountEventListener;
 import io.github.lucaseasedup.logit.listener.BlockEventListener;
 import io.github.lucaseasedup.logit.listener.EntityEventListener;
 import io.github.lucaseasedup.logit.listener.InventoryEventListener;
@@ -1091,7 +1090,6 @@ public final class LogItCore
         plugin.getServer().getPluginManager().registerEvents(new EntityEventListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new PlayerEventListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new InventoryEventListener(), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new AccountEventListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new SessionEventListener(), plugin);
     }
     
