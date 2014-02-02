@@ -226,12 +226,11 @@ public final class LogItCore
                 case MYSQL:
                 {
                     accountStorage = new MySqlStorage(
-                            config.getString("storage.accounts.mysql.host"));
-                    ((MySqlStorage) accountStorage).connect(
-                        config.getString("storage.accounts.mysql.user"),
-                        config.getString("storage.accounts.mysql.password"),
-                        config.getString("storage.accounts.mysql.database")
-                    );
+                            config.getString("storage.accounts.mysql.host"),
+                            config.getString("storage.accounts.mysql.user"),
+                            config.getString("storage.accounts.mysql.password"),
+                            config.getString("storage.accounts.mysql.database"));
+                    accountStorage.connect();
                     
                     break;
                 }
@@ -246,11 +245,10 @@ public final class LogItCore
                 case POSTGRESQL:
                 {
                     accountStorage = new PostgreSqlStorage(
-                            config.getString("storage.accounts.postgresql.host"));
-                    ((PostgreSqlStorage) accountStorage).connect(
+                            config.getString("storage.accounts.postgresql.host"),
                             config.getString("storage.accounts.postgresql.user"),
-                            config.getString("storage.accounts.postgresql.password")
-                    );
+                            config.getString("storage.accounts.postgresql.password"));
+                    accountStorage.connect();
                     
                     break;
                 }

@@ -32,19 +32,15 @@ import org.apache.tools.ant.util.LinkedHashtable;
 
 public final class PostgreSqlStorage extends Storage
 {
-    public PostgreSqlStorage(String host)
+    public PostgreSqlStorage(String host, String user, String password)
     {
         this.host = host;
+        this.user = user;
+        this.password = password;
     }
     
     @Override
     public void connect() throws IOException
-    {
-        throw new UnsupportedOperationException("Cannot connect to a PostgreSQL database"
-                + " without specifying user and password.");
-    }
-    
-    public void connect(String user, String password) throws IOException
     {
         try
         {
@@ -379,6 +375,9 @@ public final class PostgreSqlStorage extends Storage
     }
     
     private final String host;
+    private final String user;
+    private final String password;
+    
     private Connection connection;
     private Statement statement;
 }

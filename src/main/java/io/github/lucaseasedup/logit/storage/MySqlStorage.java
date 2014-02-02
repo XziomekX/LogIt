@@ -32,19 +32,16 @@ import org.apache.tools.ant.util.LinkedHashtable;
 
 public final class MySqlStorage extends Storage
 {
-    public MySqlStorage(String host)
+    public MySqlStorage(String host, String user, String password, String database)
     {
         this.host = host;
+        this.user = user;
+        this.password = password;
+        this.database = database;
     }
     
     @Override
     public void connect() throws IOException
-    {
-        throw new UnsupportedOperationException("Cannot connect to a MySQL database"
-                + " without specifying database name.");
-    }
-    
-    public void connect(String user, String password, String database) throws IOException
     {
         try
         {
@@ -375,6 +372,10 @@ public final class MySqlStorage extends Storage
     }
     
     private final String host;
+    private final String user;
+    private final String password;
+    private final String database;
+    
     private Connection connection;
     private Statement statement;
 }
