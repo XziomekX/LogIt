@@ -12,6 +12,8 @@ public interface StorageObserver
     
     public abstract void addKey(String unit, String key, Type type);
     public abstract void addEntry(String unit, Hashtable<String, String> pairs);
-    public abstract void updateEntries(String unit, Hashtable<String, String> pairs, Selector selector);
+    public abstract void updateEntries(String unit,
+                                       Hashtable<String, String> pairs,
+                                       Selector selector);
     public abstract void removeEntries(String unit, Selector selector);
 }
