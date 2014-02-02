@@ -317,16 +317,16 @@ public final class LogItCore
         String accountsUnit = config.getString("storage.accounts.leading.table");
         
         AccountKeys accountKeys = new AccountKeys(
-            config.getString("storage.accounts.columns.username.name"),
-            config.getString("storage.accounts.columns.salt.name"),
-            config.getString("storage.accounts.columns.password.name"),
-            config.getString("storage.accounts.columns.hashing_algorithm.name"),
-            config.getString("storage.accounts.columns.ip.name"),
-            config.getString("storage.accounts.columns.login_session.name"),
-            config.getString("storage.accounts.columns.email.name"),
-            config.getString("storage.accounts.columns.last_active_date.name"),
-            config.getString("storage.accounts.columns.reg_date.name"),
-            config.getString("storage.accounts.columns.persistence.name")
+            config.getString("storage.accounts.columns.username"),
+            config.getString("storage.accounts.columns.salt"),
+            config.getString("storage.accounts.columns.password"),
+            config.getString("storage.accounts.columns.hashing_algorithm"),
+            config.getString("storage.accounts.columns.ip"),
+            config.getString("storage.accounts.columns.login_session"),
+            config.getString("storage.accounts.columns.email"),
+            config.getString("storage.accounts.columns.last_active_date"),
+            config.getString("storage.accounts.columns.reg_date"),
+            config.getString("storage.accounts.columns.persistence")
         );
         
         try
