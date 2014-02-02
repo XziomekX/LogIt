@@ -58,12 +58,12 @@ public abstract class Storage implements AutoCloseable
     public abstract void executeBatch() throws IOException;
     public abstract void clearBatch() throws IOException;
     
-    public final boolean isAutobatchEnabled()
+    public boolean isAutobatchEnabled()
     {
         return autobatch;
     }
     
-    public final void setAutobatchEnabled(boolean status)
+    public void setAutobatchEnabled(boolean status)
     {
         autobatch = status;
     }
