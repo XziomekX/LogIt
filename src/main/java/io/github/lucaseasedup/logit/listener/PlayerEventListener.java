@@ -201,23 +201,26 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             getCore().getPersistenceManager().serialize(player);
             
-            int promptPeriod = getConfig().getInt("force-login.periodical-prompt.period") * 20;
-            int prompterId;
-            
-            ForcedLoginPrompter prompter = new ForcedLoginPrompter(getCore(), username);
-            
-            if (promptPeriod <= 0)
+            if (getConfig().getBoolean("force-login.prompt-on.join"))
             {
-                prompterId = Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(),
-                        prompter, 5L);
+                int promptPeriod = getConfig().getInt("force-login.periodical-prompt.period") * 20;
+                int prompterId;
+                
+                ForcedLoginPrompter prompter = new ForcedLoginPrompter(getCore(), username);
+                
+                if (promptPeriod <= 0)
+                {
+                    prompterId = Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(),
+                            prompter, 5L);
+                }
+                else
+                {
+                    prompterId = Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(),
+                            prompter, 5L, promptPeriod);
+                }
+                
+                prompter.setTaskId(prompterId);
             }
-            else
-            {
-                prompterId = Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(),
-                        prompter, 5L, promptPeriod);
-            }
-            
-            prompter.setTaskId(prompterId);
         }
         
         if (getConfig().getBoolean("groups.enabled"))
