@@ -1,5 +1,5 @@
 /*
- * MirroredStorage.java
+ * WrapperStorage.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Vector;
 
-public final class MirroredStorage extends Storage
+public final class WrapperStorage extends Storage
 {
-    public MirroredStorage(Storage leading)
+    public WrapperStorage(Storage leading)
     {
         this.leading = leading;
         this.mirrors = new Hashtable<>(5);

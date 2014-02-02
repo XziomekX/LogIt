@@ -68,13 +68,13 @@ import io.github.lucaseasedup.logit.profile.ProfileManager;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.storage.CsvStorage;
 import io.github.lucaseasedup.logit.storage.H2Storage;
-import io.github.lucaseasedup.logit.storage.MirroredStorage;
 import io.github.lucaseasedup.logit.storage.MySqlStorage;
 import io.github.lucaseasedup.logit.storage.NullStorage;
 import io.github.lucaseasedup.logit.storage.PostgreSqlStorage;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.storage.Storage.Type;
+import io.github.lucaseasedup.logit.storage.WrapperStorage;
 import io.github.lucaseasedup.logit.util.HashtableBuilder;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
@@ -301,7 +301,7 @@ public final class LogItCore
             FatalReportedException.throwNew();
         }
         
-        MirroredStorage accountStorage = new MirroredStorage(leadingAccountStorage);
+        WrapperStorage accountStorage = new WrapperStorage(leadingAccountStorage);
         accountStorage.mirrorStorage(mirrorAccountStorage,
                 new HashtableBuilder<String, String>()
                 .add(
