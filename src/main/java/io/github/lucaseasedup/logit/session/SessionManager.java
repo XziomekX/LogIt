@@ -49,8 +49,9 @@ public final class SessionManager extends LogItCoreObject implements Runnable
     @Override
     public void run()
     {
-        long forceLoginTimeout = (getConfig().getInt("force-login.timeout") > 0L)
-                ? (-getConfig().getInt("force-login.timeout") * 20L) : Long.MIN_VALUE;
+        int forceLoginTimeoutInSecs = getConfig().getInt("force-login.timeout_inSecs");
+        long forceLoginTimeout =
+                (forceLoginTimeoutInSecs > 0L) ? (-forceLoginTimeoutInSecs * 20L) : Long.MIN_VALUE;
         
         List<String> disableTimeoutForPlayers =
                 getConfig().getStringList("force-login.disable-timeout-for-players");

@@ -54,7 +54,9 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         
         timer.run();
         
-        if (timer.getElapsed() >= (getConfig().getInt("backup.schedule.interval") * 60L * 20L))
+        int intervalInSecs = getConfig().getInt("backup.schedule.interval_inMins") * 60;
+        
+        if (timer.getElapsed() >= (intervalInSecs * 20L))
         {
             createBackup();
             

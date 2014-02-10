@@ -149,11 +149,11 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             getSessionManager().createSession(username, ip);
         }
         
-        int rememberLoginFor = getConfig().getInt("login-sessions.valid-for");
+        int validnessTime = getConfig().getInt("login-sessions.validness-time_inSecs");
         
         try
         {
-            if (getConfig().getBoolean("login-sessions.enabled") && rememberLoginFor > 0)
+            if (getConfig().getBoolean("login-sessions.enabled") && validnessTime > 0)
             {
                 AccountKeys keys = getAccountManager().getKeys();
                 List<Hashtable<String, String>> rs =
@@ -177,7 +177,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                             int loginTime = Integer.parseInt(loginSplit[1]);
                             int currentTime = (int) (System.currentTimeMillis() / 1000L);
                             
-                            if (ip.equals(loginIp) && currentTime - loginTime < rememberLoginFor
+                            if (ip.equals(loginIp) && currentTime - loginTime < validnessTime
                                     && !getSessionManager().isSessionAlive(username))
                             {
                                 getSessionManager().startSession(username);
@@ -205,7 +205,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             
             if (getConfig().getBoolean("force-login.prompt-on.join"))
             {
-                int promptPeriod = getConfig().getInt("force-login.periodical-prompt.period") * 20;
+                int promptPeriod =
+                        getConfig().getInt("force-login.periodical-prompt.period_inSecs") * 20;
                 int prompterId;
                 
                 ForcedLoginPrompter prompter = new ForcedLoginPrompter(getCore(), username);

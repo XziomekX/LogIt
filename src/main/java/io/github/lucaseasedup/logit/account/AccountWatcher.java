@@ -30,10 +30,10 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
     @Override
     public void run()
     {
-        int daysOfAbsenceToUnregister =
-                getConfig().getInt("crowd-control.days-of-absence-to-unregister");
+        int inactivityTimeInSecs =
+                getConfig().getInt("crowd-control.automatic-account-deletion.inactivity-time_inHrs") * 3600;
         
-        if (daysOfAbsenceToUnregister < 0)
+        if (inactivityTimeInSecs < 0)
             return;
         
         try
@@ -55,9 +55,9 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
                     continue;
                 
                 long lastActiveDate = Long.parseLong(lastActiveDateString);
-                long absenceTime = (now - lastActiveDate);
+                long absenceTime = now - lastActiveDate;
                 
-                if (absenceTime >= (daysOfAbsenceToUnregister * 86400))
+                if (absenceTime >= inactivityTimeInSecs)
                 {
                     getAccountManager().removeAccount(entry.get(keys.username()));
                 }

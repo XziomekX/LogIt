@@ -60,7 +60,7 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
             }
             else
             {
-                int rememberLoginFor = getConfig().getInt("login-sessions.valid-for");
+                int validnessTime = getConfig().getInt("login-sessions.validness-time_inSecs");
                 int currentTime = (int) (System.currentTimeMillis() / 1000L);
                 
                 try
@@ -69,7 +69,7 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
                             PlayerUtils.getPlayerIp(p), currentTime);
                     
                     sender.sendMessage(getMessage("REMEMBER_SUCCESS").replace("%sec%",
-                            String.valueOf(rememberLoginFor)));
+                            String.valueOf(validnessTime)));
                 }
                 catch (IOException ex)
                 {
