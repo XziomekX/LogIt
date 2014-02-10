@@ -153,33 +153,35 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         try
         {
-            AccountKeys keys = getAccountManager().getKeys();
-            List<Hashtable<String, String>> rs =
+            if (getConfig().getBoolean("login-sessions.enabled") && rememberLoginFor > 0)
+            {
+                AccountKeys keys = getAccountManager().getKeys();
+                List<Hashtable<String, String>> rs =
                     getAccountManager().getStorage().selectEntries(getAccountManager().getUnit(),
                             Arrays.asList(
                                 keys.username(),
                                 keys.login_session()
                             ), new SelectorCondition(keys.username(), Infix.EQUALS, username));
-            
-            if (rememberLoginFor > 0 && !rs.isEmpty()
-                    && getConfig().getBoolean("login-sessions.enabled"))
-            {
-                String loginSession = rs.get(0).get(keys.login_session());
                 
-                if (loginSession != null && !loginSession.isEmpty())
+                if (!rs.isEmpty())
                 {
-                    String[] loginSplit = loginSession.split(";");
+                    String loginSession = rs.get(0).get(keys.login_session());
                     
-                    if (loginSplit.length == 2)
+                    if (loginSession != null && !loginSession.isEmpty())
                     {
-                        String loginIp = loginSplit[0];
-                        int loginTime = Integer.parseInt(loginSplit[1]);
-                        int currentTime = (int) (System.currentTimeMillis() / 1000L);
+                        String[] loginSplit = loginSession.split(";");
                         
-                        if (ip.equals(loginIp) && currentTime - loginTime < rememberLoginFor
-                                && !getSessionManager().isSessionAlive(username))
+                        if (loginSplit.length == 2)
                         {
-                            getSessionManager().startSession(username);
+                            String loginIp = loginSplit[0];
+                            int loginTime = Integer.parseInt(loginSplit[1]);
+                            int currentTime = (int) (System.currentTimeMillis() / 1000L);
+                            
+                            if (ip.equals(loginIp) && currentTime - loginTime < rememberLoginFor
+                                    && !getSessionManager().isSessionAlive(username))
+                            {
+                                getSessionManager().startSession(username);
+                            }
                         }
                     }
                 }
