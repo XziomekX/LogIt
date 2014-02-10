@@ -789,6 +789,19 @@ public final class LogItCore
      */
     public void sendForceLoginMessage(Player player)
     {
+        int minInterval = getConfig().getInt("force-login.prompt.min-interval");
+        
+        if (minInterval > 0)
+        {
+            long currentTimeMillis = System.currentTimeMillis();
+            Long playerInterval = forceLoginPromptIntervals.get(player);
+            
+            if (playerInterval != null && currentTimeMillis - playerInterval < minInterval)
+                return;
+            
+            forceLoginPromptIntervals.put(player, currentTimeMillis);
+        }
+        
         if (accountManager.isRegistered(player.getName()))
         {
             if (getConfig().getBoolean("force-login.prompt.login"))
@@ -1295,4 +1308,6 @@ public final class LogItCore
     private int tickEventCallerTaskId;
     private int accountWatcherTaskId;
     private int backupManagerTaskId;
+    
+    private final Hashtable<Player, Long> forceLoginPromptIntervals = new Hashtable<>();
 }
