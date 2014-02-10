@@ -101,7 +101,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             int freeSlots = Bukkit.getMaxPlayers() - Bukkit.getOnlinePlayers().length;
             List<String> preserveForPlayers =
-                    getConfig().getStringList("crowd-control.preserve-slots.players");
+                    getConfig().getStringList("crowd-control.reserve-slots.players");
             
             int preservedSlots = 0;
             boolean preservedForThisPlayer = false;
@@ -124,7 +124,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 }
             }
             
-            int maxPreservedSlots = getConfig().getInt("crowd-control.preserve-slots.amount");
+            int maxPreservedSlots = getConfig().getInt("crowd-control.reserve-slots.amount");
             int unusedPreservedSlots = maxPreservedSlots - preservedSlots;
             int actualFreeSlots = freeSlots - unusedPreservedSlots;
             
