@@ -196,9 +196,9 @@ public final class LogItConfiguration extends PropertyObserver
         return (List<String>) properties.get(path).getValue();
     }
     
-    public Location getLocation(String path)
+    public LocationSerializable getLocation(String path)
     {
-        return (Location) properties.get(path).getValue();
+        return (LocationSerializable) properties.get(path).getValue();
     }
     
     public void set(String path, Object value) throws InvalidPropertyValueException
@@ -448,7 +448,7 @@ public final class LogItConfiguration extends PropertyObserver
             case STRING_LIST:
                 defaultValue = new ArrayList<>(0); break;
             case LOCATION:
-                defaultValue = new Location("world", 0, 0, 0, 0, 0); break;
+                defaultValue = new LocationSerializable("world", 0, 0, 0, 0, 0); break;
             default:
                 throw new RuntimeException("Unknown property type: " + type.toString());
             }

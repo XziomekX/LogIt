@@ -1,5 +1,5 @@
 /*
- * Location.java
+ * LocationSerializable.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -25,9 +25,9 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
 @SerializableAs("Location")
-public final class Location implements Cloneable, ConfigurationSerializable
+public final class LocationSerializable implements Cloneable, ConfigurationSerializable
 {
-    public Location(String world, double x, double y, double z, float yaw, float pitch)
+    public LocationSerializable(String world, double x, double y, double z, float yaw, float pitch)
     {
         this.world = world;
         this.x = x;
@@ -37,17 +37,17 @@ public final class Location implements Cloneable, ConfigurationSerializable
         this.pitch = pitch;
     }
     
-    public Location(String world, double x, double y, double z)
+    public LocationSerializable(String world, double x, double y, double z)
     {
         this(world, x, y, z, 0, 0);
     }
     
     @Override
-    public Location clone()
+    public LocationSerializable clone()
     {
         try
         {
-            return (Location) super.clone();
+            return (LocationSerializable) super.clone();
         }
         catch (CloneNotSupportedException ex)
         {
@@ -86,7 +86,7 @@ public final class Location implements Cloneable, ConfigurationSerializable
         return result;
     }
     
-    public static Location deserialize(Map<String, Object> args)
+    public static LocationSerializable deserialize(Map<String, Object> args)
     {
         String world = null;
         double x = 0;
@@ -125,7 +125,7 @@ public final class Location implements Cloneable, ConfigurationSerializable
             pitch = ((Double) args.get("pitch")).floatValue();
         }
         
-        return new Location(world, x, y, z, yaw, pitch);
+        return new LocationSerializable(world, x, y, z, yaw, pitch);
     }
     
     public String getWorld()
@@ -188,9 +188,9 @@ public final class Location implements Cloneable, ConfigurationSerializable
         this.pitch = pitch;
     }
     
-    public static Location fromBukkitLocation(org.bukkit.Location location)
+    public static LocationSerializable fromBukkitLocation(org.bukkit.Location location)
     {
-        return new Location(location.getWorld().getName(),
+        return new LocationSerializable(location.getWorld().getName(),
                             location.getX(),
                             location.getY(),
                             location.getZ(),

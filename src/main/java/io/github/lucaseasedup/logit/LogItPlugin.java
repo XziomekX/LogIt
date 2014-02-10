@@ -40,7 +40,7 @@ import static org.bukkit.ChatColor.STRIKETHROUGH;
 import static org.bukkit.ChatColor.UNDERLINE;
 import static org.bukkit.ChatColor.WHITE;
 import static org.bukkit.ChatColor.YELLOW;
-import io.github.lucaseasedup.logit.config.Location;
+import io.github.lucaseasedup.logit.config.LocationSerializable;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
 import java.io.FileInputStream;
@@ -303,7 +303,7 @@ public final class LogItPlugin extends JavaPlugin
     
     static
     {
-        ConfigurationSerialization.registerClass(Location.class);
+        ConfigurationSerialization.registerClass(LocationSerializable.class);
     }
     
     private static final String[] NO_STRINGS = new String[0];

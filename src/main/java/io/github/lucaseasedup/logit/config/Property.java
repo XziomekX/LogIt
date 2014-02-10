@@ -159,9 +159,9 @@ public final class Property extends Observable
         return (List<String>) value;
     }
     
-    public Location getLocation()
+    public LocationSerializable getLocation()
     {
-        return (Location) value;
+        return (LocationSerializable) value;
     }
     
     public void set(Object value) throws InvalidPropertyValueException

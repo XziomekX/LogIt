@@ -23,7 +23,7 @@ import io.github.lucaseasedup.logit.FatalReportedException;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.command.wizard.ConvertWizard;
-import io.github.lucaseasedup.logit.config.Location;
+import io.github.lucaseasedup.logit.config.LocationSerializable;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyType;
 import java.io.File;
@@ -541,7 +541,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                         {
                             if (p != null)
                             {
-                                outputValue = new Location(p.getLocation().getWorld().getName(),
+                                outputValue = new LocationSerializable(p.getLocation().getWorld().getName(),
                                                            p.getLocation().getX(),
                                                            p.getLocation().getY(),
                                                            p.getLocation().getZ(),
