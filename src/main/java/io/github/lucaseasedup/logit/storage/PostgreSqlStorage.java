@@ -126,7 +126,7 @@ public final class PostgreSqlStorage extends Storage
     {
         Hashtable<String, Type> keys = new LinkedHashtable<>();
         String sql = "SELECT COLUMN_NAME, UDT_NAME FROM INFORMATION_SCHEMA.COLUMNS"
-                + " WHERE TABLE_NAME = '" + SqlUtils.escapeQuotes(unit, "'", false) + "';";
+                + " WHERE TABLE_NAME = '" + SqlUtils.escapeQuotes(unit, "'", true) + "';";
         
         try (ResultSet tableInfo = executeQuery(sql))
         {
