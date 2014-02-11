@@ -39,12 +39,12 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
     {
         String username = event.getUsername();
         
+        updateLastActiveDate(username);
+        
         if (!PlayerUtils.isPlayerOnline(username))
             return;
         
         final Player player = PlayerUtils.getPlayer(username);
-        
-        updateLastActiveDate(player.getName());
         
         Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
         {
@@ -75,12 +75,12 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
     {
         String username = event.getUsername();
         
+        updateLastActiveDate(username);
+        
         if (!PlayerUtils.isPlayerOnline(username))
             return;
         
         final Player player = PlayerUtils.getPlayer(username);
-        
-        updateLastActiveDate(player.getName());
         
         Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
         {
