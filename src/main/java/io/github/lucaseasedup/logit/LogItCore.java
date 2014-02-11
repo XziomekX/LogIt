@@ -253,8 +253,16 @@ public final class LogItCore
             break;
             
         case CSV:
-            leadingAccountStorage = new CsvStorage(dataFolder);
+        {
+            File dir = new File(dataFolder, config.getString("storage.accounts.leading.csv.dir"));
+            
+            if (!dir.exists())
+                dir.mkdir();
+            
+            leadingAccountStorage = new CsvStorage(dir);
+            
             break;
+        }
             
         default:
             FatalReportedException.throwNew();
@@ -294,9 +302,17 @@ public final class LogItCore
             break;
             
         case CSV:
-            mirrorAccountStorage = new CsvStorage(dataFolder);
-            break;
+        {
+            File dir = new File(dataFolder, config.getString("storage.accounts.mirror.csv.dir"));
             
+            if (!dir.exists())
+                dir.mkdir();
+            
+            mirrorAccountStorage = new CsvStorage(dir);
+            
+            break;
+        }
+        
         default:
             FatalReportedException.throwNew();
         }
