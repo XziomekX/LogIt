@@ -33,6 +33,8 @@ import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.account.AccountWatcher;
 import io.github.lucaseasedup.logit.backup.BackupManager;
+import io.github.lucaseasedup.logit.command.AcclockCommand;
+import io.github.lucaseasedup.logit.command.AccunlockCommand;
 import io.github.lucaseasedup.logit.command.ChangeEmailCommand;
 import io.github.lucaseasedup.logit.command.ChangePassCommand;
 import io.github.lucaseasedup.logit.command.DisabledCommandExecutor;
@@ -348,6 +350,7 @@ public final class LogItCore
             config.getString("storage.accounts.columns.email"),
             config.getString("storage.accounts.columns.last_active_date"),
             config.getString("storage.accounts.columns.reg_date"),
+            config.getString("storage.accounts.columns.is_locked"),
             config.getString("storage.accounts.columns.persistence")
         );
         
@@ -1141,6 +1144,8 @@ public final class LogItCore
         setCommandExecutor("recoverpass", new RecoverPassCommand(),
                 config.getBoolean("password-recovery.enabled"));
         setCommandExecutor("profile", new ProfileCommand(), config.getBoolean("profiles.enabled"));
+        setCommandExecutor("acclock", new AcclockCommand(), true);
+        setCommandExecutor("accunlock", new AccunlockCommand(), true);
         setCommandExecutor("$logit-nop-command", new NopCommandExecutor(), true);
     }
     

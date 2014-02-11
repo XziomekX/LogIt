@@ -50,6 +50,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -62,6 +63,34 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     {
         Player player = event.getPlayer();
         String username = player.getName().toLowerCase();
+        boolean isRegistered = false;
+        
+        try
+        {
+            AccountKeys keys = getAccountManager().getKeys();
+            List<Hashtable<String, String>> rs =
+                    getAccountStorage().selectEntries(getAccountManager().getUnit(),
+                            Arrays.asList(
+                                    keys.username(),
+                                    keys.is_locked()
+                            ), new SelectorCondition(keys.username(), Infix.EQUALS, username));
+            
+            if (!rs.isEmpty())
+            {
+                isRegistered = true;
+                
+                if (rs.get(0).get(keys.is_locked()).equals("1"))
+                {
+                    event.disallow(Result.KICK_OTHER, getMessage("ACCLOCK_SUCCESS_SELF"));
+                    
+                    return;
+                }
+            }
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, ex);
+        }
         
         int minUsernameLength = getConfig().getInt("username.min-length");
         int maxUsernameLength = getConfig().getInt("username.max-length");
@@ -92,8 +121,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_ALREADY_USED"));
         }
-        else if (getConfig().getBoolean("crowd-control.kick-unregistered")
-                && !getAccountManager().isRegistered(username))
+        else if (getConfig().getBoolean("crowd-control.kick-unregistered") && !isRegistered)
         {
             event.disallow(KICK_OTHER, getMessage("KICK_UNREGISTERED"));
         }

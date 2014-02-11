@@ -47,6 +47,14 @@ commands:
     description: Allows to view and edit player profiles.
     usage: /<command> <view [player]|edit [player]>
   
+  acclock:
+    description: Locks an account so that no one can log into it until it's unlocked.
+    usage: /<command> <username>
+  
+  accunlock:
+    description: Unlocks an account.
+    usage: /<command> <username>
+  
   $logit-nop-command:
     description: Reserved for internal use.
     usage: /<command>
@@ -96,6 +104,8 @@ permissions:
       logit.ipcount: true
       logit.config.*: true
       logit.convert: true
+      logit.acclock: true
+      logit.accunlock: true
   logit:
     default: true
   logit.help:
@@ -215,4 +225,8 @@ permissions:
   logit.profile.edit.self:
     default: false
   logit.profile.edit.others:
+    default: false
+  logit.acclock:
+    default: false
+  logit.accunlock:
     default: false
