@@ -305,8 +305,8 @@ public final class LogItCore
         accountStorage.mirrorStorage(mirrorAccountStorage,
                 new HashtableBuilder<String, String>()
                 .add(
-                    getConfig().getString("storage.accounts.leading.table"),
-                    getConfig().getString("storage.accounts.mirror.table")
+                    getConfig().getString("storage.accounts.leading.unit"),
+                    getConfig().getString("storage.accounts.mirror.unit")
                 ).build());
         
         try
@@ -320,7 +320,7 @@ public final class LogItCore
             FatalReportedException.throwNew(ex);
         }
         
-        String accountsUnit = config.getString("storage.accounts.leading.table");
+        String accountsUnit = config.getString("storage.accounts.leading.unit");
         
         AccountKeys accountKeys = new AccountKeys(
             config.getString("storage.accounts.columns.username"),

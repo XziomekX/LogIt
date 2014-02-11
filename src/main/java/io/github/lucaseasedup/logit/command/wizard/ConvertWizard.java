@@ -214,7 +214,7 @@ public final class ConvertWizard extends Wizard
                     break;
                 }
                 
-                getConfig().set("storage.accounts.leading.table", table);
+                getConfig().set("storage.accounts.leading.unit", table);
                 
                 try
                 {
