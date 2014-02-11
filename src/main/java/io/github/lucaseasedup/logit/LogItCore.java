@@ -341,17 +341,17 @@ public final class LogItCore
         String accountsUnit = config.getString("storage.accounts.leading.unit");
         
         AccountKeys accountKeys = new AccountKeys(
-            config.getString("storage.accounts.columns.username"),
-            config.getString("storage.accounts.columns.salt"),
-            config.getString("storage.accounts.columns.password"),
-            config.getString("storage.accounts.columns.hashing_algorithm"),
-            config.getString("storage.accounts.columns.ip"),
-            config.getString("storage.accounts.columns.login_session"),
-            config.getString("storage.accounts.columns.email"),
-            config.getString("storage.accounts.columns.last_active_date"),
-            config.getString("storage.accounts.columns.reg_date"),
-            config.getString("storage.accounts.columns.is_locked"),
-            config.getString("storage.accounts.columns.persistence")
+            config.getString("storage.accounts.keys.username"),
+            config.getString("storage.accounts.keys.salt"),
+            config.getString("storage.accounts.keys.password"),
+            config.getString("storage.accounts.keys.hashing_algorithm"),
+            config.getString("storage.accounts.keys.ip"),
+            config.getString("storage.accounts.keys.login_session"),
+            config.getString("storage.accounts.keys.email"),
+            config.getString("storage.accounts.keys.last_active_date"),
+            config.getString("storage.accounts.keys.reg_date"),
+            config.getString("storage.accounts.keys.is_locked"),
+            config.getString("storage.accounts.keys.persistence")
         );
         
         try
