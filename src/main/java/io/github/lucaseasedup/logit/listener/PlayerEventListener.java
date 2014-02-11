@@ -151,9 +151,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         int validnessTime = getConfig().getInt("login-sessions.validness-time_inSecs");
         
-        try
+        if (getConfig().getBoolean("login-sessions.enabled") && validnessTime > 0)
         {
-            if (getConfig().getBoolean("login-sessions.enabled") && validnessTime > 0)
+            try
             {
                 AccountKeys keys = getAccountManager().getKeys();
                 List<Hashtable<String, String>> rs =
@@ -186,10 +186,10 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                     }
                 }
             }
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, ex);
+            catch (IOException ex)
+            {
+                log(Level.WARNING, ex);
+            }
         }
         
         if (getSessionManager().isSessionAlive(player) || !getCore().isPlayerForcedToLogIn(player))
