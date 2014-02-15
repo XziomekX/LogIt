@@ -1180,6 +1180,21 @@ public final class LogItCore
     {
         File logFile = getDataFile(filename);
         
+        if (logFile.length() > 300000)
+        {
+            int suffix = 0;
+            File nextLogFile;
+            
+            do
+            {
+                suffix++;
+                nextLogFile = getDataFile(filename + "." + suffix);
+            }
+            while (nextLogFile.exists());
+            
+            logFile.renameTo(nextLogFile);
+        }
+        
         try
         {
             logFileWriter = new FileWriter(logFile, true);
