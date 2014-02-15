@@ -1298,6 +1298,8 @@ public final class LogItCore
         }
     }
     
+    public static final Level INTERNAL = new CustomLevel("INTERNAL", -1000);
+    
     public static final String LIB_H2 = "h2small-1.3.171.jar";
     public static final String LIB_POSTGRESQL = "postgresql-9.3-1100.jdbc4.jar";
     public static final String LIB_MAIL = "mail-1.4.7.jar";
