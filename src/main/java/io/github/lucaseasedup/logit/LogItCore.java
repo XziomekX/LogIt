@@ -1016,7 +1016,14 @@ public final class LogItCore
             }
         }
         
-        plugin.getLogger().log(level, ChatColor.stripColor(message));
+        if (getConfig().getBoolean("logging.verbose-console"))
+        {
+            System.out.println("[" + level + "] " + ChatColor.stripColor(message));
+        }
+        else
+        {
+            plugin.getLogger().log(level, ChatColor.stripColor(message));
+        }
     }
     
     /**
