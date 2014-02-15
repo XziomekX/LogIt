@@ -85,6 +85,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 {
                     sender.sendMessage(getLogItSubcommandHelp("backup remove", "<amount>"));
                 }
+                if (p == null || p.hasPermission("logit.backup.count"))
+                {
+                    sender.sendMessage(getLogItSubcommandHelp("backup count", null));
+                }
                 if (p != null && p.hasPermission("logit.gotowr"))
                 {
                     sender.sendMessage(getLogItSubcommandHelp("gotowr", null));
@@ -279,6 +283,20 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                     sender.sendMessage(getMessage("INVALID_PARAMETER")
                             .replace("%param%", "amount"));
                 }
+            }
+        }
+        else if (checkSubcommand("backup count", 0))
+        {
+            if (p != null && !p.hasPermission("logit.backup.count"))
+            {
+                sender.sendMessage(getMessage("NO_PERMS"));
+            }
+            else
+            {
+                int backupCount = getBackupManager().getBackups(false).length;
+                
+                sender.sendMessage(getMessage("BACKUP_COUNT")
+                        .replace("%count%", String.valueOf(backupCount)));
             }
         }
         else if (checkSubcommand("gotowr", 0))
