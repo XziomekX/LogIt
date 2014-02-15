@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.storage;
 
+import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.io.IOException;
 import java.sql.Connection;
@@ -353,13 +354,19 @@ public final class MySqlStorage extends Storage
     
     private ResultSet executeQuery(String sql) throws SQLException
     {
+        LogItCore.getInstance().log(LogItCore.INTERNAL, "(Q) " + sql);
+        
         return statement.executeQuery(sql);
     }
     
     private boolean executeStatement(String sql) throws SQLException
     {
         if (!isAutobatchEnabled())
+        {
+            LogItCore.getInstance().log(LogItCore.INTERNAL, "(S) " + sql);
+            
             return statement.execute(sql);
+        }
         
         addBatch(sql);
         
@@ -368,6 +375,8 @@ public final class MySqlStorage extends Storage
     
     private void addBatch(String sql) throws SQLException
     {
+        LogItCore.getInstance().log(LogItCore.INTERNAL, "(BS) " + sql);
+        
         statement.addBatch(sql);
     }
     
