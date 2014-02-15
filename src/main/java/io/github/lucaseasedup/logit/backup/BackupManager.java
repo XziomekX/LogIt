@@ -66,7 +66,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         }
     }
     
-    public void createBackup()
+    public File createBackup()
     {
         String backupFilenameFormat = getConfig().getString("backup.filename-format");
         SimpleDateFormat sdf = new SimpleDateFormat(backupFilenameFormat);
@@ -106,6 +106,8 @@ public final class BackupManager extends LogItCoreObject implements Runnable
             
             ReportedException.throwNew(ex);
         }
+        
+        return backupFile;
     }
     
     /**
