@@ -150,16 +150,7 @@ public final class LogItCore
         
         if (config.getBoolean("log-to-file.enabled"))
         {
-            File logFile = getDataFile(config.getString("log-to-file.filename"));
-            
-            try
-            {
-                logFileWriter = new FileWriter(logFile, true);
-            }
-            catch (IOException ex)
-            {
-                plugin.getLogger().log(Level.WARNING, "Could not open log file for writing.", ex);
-            }
+            openLogFile(config.getString("log-to-file.filename"));
         }
         
         if (firstRun)
@@ -1002,8 +993,13 @@ public final class LogItCore
      */
     public void log(Level level, String message)
     {
-        if (config.getBoolean("log-to-file.enabled") && logFileWriter != null)
+        if (config.getBoolean("log-to-file.enabled"))
         {
+            if (logFileWriter == null)
+            {
+                openLogFile(config.getString("log-to-file.filename"));
+            }
+            
             try
             {
                 logFileWriter.write(logDateFormat.format(new Date()));
@@ -1170,6 +1166,20 @@ public final class LogItCore
         plugin.getServer().getPluginManager().registerEvents(new PlayerEventListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new InventoryEventListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new SessionEventListener(), plugin);
+    }
+    
+    private void openLogFile(String filename)
+    {
+        File logFile = getDataFile(filename);
+        
+        try
+        {
+            logFileWriter = new FileWriter(logFile, true);
+        }
+        catch (IOException ex)
+        {
+            plugin.getLogger().log(Level.WARNING, "Could not open log file for writing.", ex);
+        }
     }
     
     private void setSerializerEnabled(Class<? extends PersistenceSerializer> clazz, boolean status)
