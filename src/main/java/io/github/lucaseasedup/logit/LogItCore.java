@@ -148,9 +148,9 @@ public final class LogItCore
             FatalReportedException.throwNew(ex);
         }
         
-        if (config.getBoolean("log-to-file.enabled"))
+        if (config.getBoolean("logging.file.enabled"))
         {
-            openLogFile(config.getString("log-to-file.filename"));
+            openLogFile(config.getString("logging.file.filename"));
         }
         
         if (firstRun)
@@ -993,12 +993,12 @@ public final class LogItCore
      */
     public void log(Level level, String message)
     {
-        if (config.getBoolean("log-to-file.enabled")
-                && level.intValue() >= config.getInt("log-to-file.level"))
+        if (config.getBoolean("logging.file.enabled")
+                && level.intValue() >= config.getInt("logging.file.level"))
         {
             if (logFileWriter == null)
             {
-                openLogFile(config.getString("log-to-file.filename"));
+                openLogFile(config.getString("logging.file.filename"));
             }
             
             try
