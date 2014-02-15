@@ -993,7 +993,8 @@ public final class LogItCore
      */
     public void log(Level level, String message)
     {
-        if (config.getBoolean("log-to-file.enabled"))
+        if (config.getBoolean("log-to-file.enabled")
+                && level.intValue() >= config.getInt("log-to-file.level"))
         {
             if (logFileWriter == null)
             {
