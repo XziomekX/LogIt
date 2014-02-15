@@ -58,9 +58,10 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         
         if (timer.getElapsed() >= (intervalInSecs * 20L))
         {
-            createBackup();
+            File backupFile = createBackup();
             
-            log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS"));
+            log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS")
+                    .replace("%filename%", backupFile.getName()));
             
             timer.reset();
         }
