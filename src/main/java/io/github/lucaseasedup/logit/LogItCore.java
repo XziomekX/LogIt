@@ -1015,7 +1015,7 @@ public final class LogItCore
             }
             catch (IOException ex)
             {
-                plugin.getLogger().log(Level.WARNING, "Could not log to a file.", ex);
+                plugin.getLogger().log(Level.WARNING, "Could not log to file.", ex);
             }
         }
         
