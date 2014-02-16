@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.config;
 
+import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import com.google.common.collect.ImmutableMap;
-import io.github.lucaseasedup.logit.LogItPlugin;
 import io.github.lucaseasedup.logit.util.IniUtils;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import it.sauronsoftware.base64.Base64;
@@ -212,7 +212,7 @@ public final class LogItConfiguration extends PropertyObserver
         getPlugin().getConfig().set(p.getPath(), p.getValue());
         getPlugin().saveConfig();
         
-        log(Level.INFO, LogItPlugin.getMessage("CONFIG_PROPERTY_SET_LOG", new String[]{
+        log(Level.INFO, getMessage("CONFIG_PROPERTY_SET_LOG", new String[]{
             "%path%", p.getPath(),
             "%value%", p.toString(),
         }));
