@@ -183,8 +183,6 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             {
                 try
                 {
-                    ReportedException.incrementRequestCount();
-                    
                     File backupFile = getBackupManager().createBackup();
                     
                     if (p != null)
@@ -196,16 +194,9 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                     log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS")
                             .replace("%filename%", backupFile.getName()));
                 }
-                catch (ReportedException ex)
+                catch (IOException ex)
                 {
-                    if (p != null)
-                    {
-                        sender.sendMessage(getMessage("CREATE_BACKUP_FAIL"));
-                    }
-                }
-                finally
-                {
-                    ReportedException.decrementRequestCount();
+                    log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"), ex);
                 }
             }
         }

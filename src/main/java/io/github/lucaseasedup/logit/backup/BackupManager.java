@@ -58,16 +58,23 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         
         if (timer.getElapsed() >= (intervalInSecs * 20L))
         {
-            File backupFile = createBackup();
-            
-            log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS")
-                    .replace("%filename%", backupFile.getName()));
+            try
+            {
+                File backupFile = createBackup();
+                
+                log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS")
+                        .replace("%filename%", backupFile.getName()));
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"), ex);
+            }
             
             timer.reset();
         }
     }
     
-    public File createBackup()
+    public File createBackup() throws IOException
     {
         String backupFilenameFormat = getConfig().getString("backup.filename-format");
         SimpleDateFormat sdf = new SimpleDateFormat(backupFilenameFormat);
@@ -76,36 +83,27 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         
         backupDir.mkdir();
         
-        try
+        if (!backupFile.createNewFile())
+            throw new IOException("Backup already exists.");
+        
+        List<Hashtable<String, String>> rs =
+                getAccountManager().getStorage().selectEntries(getAccountManager().getUnit());
+        
+        try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
         {
-            if (!backupFile.createNewFile())
-                throw new IOException("Backup already exists.");
+            backupStorage.connect();
+            backupStorage.createUnit(getAccountManager().getUnit(),
+                    getAccountManager().getStorage().getKeys(getAccountManager().getUnit()));
+            backupStorage.setAutobatchEnabled(true);
             
-            List<Hashtable<String, String>> rs =
-                    getAccountManager().getStorage().selectEntries(getAccountManager().getUnit());
-            
-            try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
+            for (Hashtable<String, String> entry : rs)
             {
-                backupStorage.connect();
-                backupStorage.createUnit(getAccountManager().getUnit(),
-                        getAccountManager().getStorage().getKeys(getAccountManager().getUnit()));
-                backupStorage.setAutobatchEnabled(true);
-                
-                for (Hashtable<String, String> entry : rs)
-                {
-                    backupStorage.addEntry(getAccountManager().getUnit(), entry);
-                }
-                
-                backupStorage.executeBatch();
-                backupStorage.clearBatch();
-                backupStorage.setAutobatchEnabled(false);
+                backupStorage.addEntry(getAccountManager().getUnit(), entry);
             }
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"), ex);
             
-            ReportedException.throwNew(ex);
+            backupStorage.executeBatch();
+            backupStorage.clearBatch();
+            backupStorage.setAutobatchEnabled(false);
         }
         
         return backupFile;
