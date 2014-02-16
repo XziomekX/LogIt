@@ -143,6 +143,8 @@ public final class BackupManager extends LogItCoreObject implements Runnable
                 getAccountManager().getStorage().clearBatch();
                 getAccountManager().getStorage().setAutobatchEnabled(false);
             }
+            
+            log(Level.INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
         }
         catch (IOException ex)
         {

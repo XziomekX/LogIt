@@ -232,8 +232,6 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                     {
                         sender.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS"));
                     }
-                    
-                    log(Level.INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
                 }
                 catch (ReportedException | FileNotFoundException ex)
                 {
