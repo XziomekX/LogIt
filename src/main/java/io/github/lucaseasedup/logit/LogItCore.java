@@ -310,6 +310,7 @@ public final class LogItCore
             FatalReportedException.throwNew();
         }
         
+        @SuppressWarnings("resource")
         WrapperStorage accountStorage = new WrapperStorage(leadingAccountStorage);
         accountStorage.mirrorStorage(mirrorAccountStorage,
                 new HashtableBuilder<String, String>()
