@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.storage;
 
+import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import org.apache.tools.ant.util.LinkedHashtable;
 
 public final class CsvStorage extends Storage
@@ -177,7 +177,7 @@ public final class CsvStorage extends Storage
                     }
                 }
                 
-                if (resolveSelector(selector, row))
+                if (SqlUtils.resolveSelector(selector, row))
                 {
                     rs.add(row);
                 }
@@ -324,7 +324,7 @@ public final class CsvStorage extends Storage
         
         for (Hashtable<String, String> entry : rs)
         {
-            if (resolveSelector(selector, entry))
+            if (SqlUtils.resolveSelector(selector, entry))
             {
                 entry.putAll(pairs);
             }
@@ -347,7 +347,7 @@ public final class CsvStorage extends Storage
         
         for (Hashtable<String, String> entry : rs)
         {
-            if (!resolveSelector(selector, entry))
+            if (!SqlUtils.resolveSelector(selector, entry))
             {
                 addEntry(unit, entry);
             }
@@ -392,88 +392,6 @@ public final class CsvStorage extends Storage
         }
         
         return s;
-    }
-    
-    private boolean resolveSelector(Selector selector, Map<String, String> entry)
-    {
-        if (selector instanceof SelectorConstant)
-        {
-            return ((SelectorConstant) selector).getValue();
-        }
-        else if (selector instanceof SelectorNegation)
-        {
-            return resolveSelector(((SelectorNegation) selector).getOperand(), entry);
-        }
-        else if (selector instanceof SelectorBinary)
-        {
-            SelectorBinary selectorBinary = (SelectorBinary) selector;
-            
-            switch (selectorBinary.getRelation())
-            {
-            case AND:
-                return resolveSelector(selectorBinary.getLeftOperand(), entry)
-                        && resolveSelector(selectorBinary.getRightOperand(), entry);
-                
-            case OR:
-                return resolveSelector(selectorBinary.getLeftOperand(), entry)
-                        || resolveSelector(selectorBinary.getRightOperand(), entry);
-                
-            default:
-                throw new RuntimeException("Unsupported relation: " + selectorBinary.getRelation());
-            }
-        }
-        else if (selector instanceof SelectorCondition)
-        {
-            SelectorCondition selectorCondition = (SelectorCondition) selector;
-            String key = selectorCondition.getKey();
-            String operandValue = selectorCondition.getValue();
-            String actualValue = entry.get(key);
-            
-            switch (selectorCondition.getRelation())
-            {
-            case EQUALS:
-                if (actualValue == null)
-                    return operandValue == null;
-                else
-                    return actualValue.equals(operandValue);
-                
-            case LESS_THAN:
-                try
-                {
-                    return Long.parseLong(actualValue) < Long.parseLong(operandValue);
-                }
-                catch (NumberFormatException ex)
-                {
-                    return false;
-                }
-                
-            case GREATER_THAN:
-                try
-                {
-                    return Long.parseLong(actualValue) > Long.parseLong(operandValue);
-                }
-                catch (NumberFormatException ex)
-                {
-                    return false;
-                }
-                
-            case STARTS_WITH:
-                return actualValue.startsWith(operandValue);
-                
-            case ENDS_WITH:
-                return actualValue.endsWith(operandValue);
-                
-            case CONTAINS:
-                return actualValue.contains(operandValue);
-                
-            default:
-                throw new RuntimeException("Unsupported relation: " + selectorCondition.getRelation());
-            }
-        }
-        else
-        {
-            throw new RuntimeException("Unsupported selector: " + selector.getClass().getName());
-        }
     }
     
     private final File dir;

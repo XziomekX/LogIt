@@ -30,6 +30,7 @@ import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.tools.ant.util.LinkedHashtable;
 
@@ -49,6 +50,88 @@ public final class SqlUtils
         }
         
         return string;
+    }
+    
+    public static boolean resolveSelector(Selector selector, Map<String, String> entry)
+    {
+        if (selector instanceof SelectorConstant)
+        {
+            return ((SelectorConstant) selector).getValue();
+        }
+        else if (selector instanceof SelectorNegation)
+        {
+            return resolveSelector(((SelectorNegation) selector).getOperand(), entry);
+        }
+        else if (selector instanceof SelectorBinary)
+        {
+            SelectorBinary selectorBinary = (SelectorBinary) selector;
+            
+            switch (selectorBinary.getRelation())
+            {
+            case AND:
+                return resolveSelector(selectorBinary.getLeftOperand(), entry)
+                        && resolveSelector(selectorBinary.getRightOperand(), entry);
+                
+            case OR:
+                return resolveSelector(selectorBinary.getLeftOperand(), entry)
+                        || resolveSelector(selectorBinary.getRightOperand(), entry);
+                
+            default:
+                throw new RuntimeException("Unsupported relation: " + selectorBinary.getRelation());
+            }
+        }
+        else if (selector instanceof SelectorCondition)
+        {
+            SelectorCondition selectorCondition = (SelectorCondition) selector;
+            String key = selectorCondition.getKey();
+            String operandValue = selectorCondition.getValue();
+            String actualValue = entry.get(key);
+            
+            switch (selectorCondition.getRelation())
+            {
+            case EQUALS:
+                if (actualValue == null)
+                    return operandValue == null;
+                else
+                    return actualValue.equals(operandValue);
+                
+            case LESS_THAN:
+                try
+                {
+                    return Long.parseLong(actualValue) < Long.parseLong(operandValue);
+                }
+                catch (NumberFormatException ex)
+                {
+                    return false;
+                }
+                
+            case GREATER_THAN:
+                try
+                {
+                    return Long.parseLong(actualValue) > Long.parseLong(operandValue);
+                }
+                catch (NumberFormatException ex)
+                {
+                    return false;
+                }
+                
+            case STARTS_WITH:
+                return actualValue.startsWith(operandValue);
+                
+            case ENDS_WITH:
+                return actualValue.endsWith(operandValue);
+                
+            case CONTAINS:
+                return actualValue.contains(operandValue);
+                
+            default:
+                throw new RuntimeException("Unsupported relation: " + selectorCondition.getRelation());
+            }
+        }
+        else
+        {
+            throw new RuntimeException("Unsupported selector: " + selector.getClass().getName());
+        }
     }
     
     public static List<Hashtable<String, String>> copyResultSet(ResultSet rs) throws SQLException
