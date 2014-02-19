@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.util;
 
-import com.google.common.collect.ImmutableList;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.Selector;
 import io.github.lucaseasedup.logit.storage.SelectorBinary;
@@ -29,6 +28,7 @@ import io.github.lucaseasedup.logit.storage.Storage.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import org.apache.tools.ant.util.LinkedHashtable;
@@ -53,7 +53,7 @@ public final class SqlUtils
     
     public static List<Hashtable<String, String>> copyResultSet(ResultSet rs) throws SQLException
     {
-        ImmutableList.Builder<Hashtable<String, String>> result = new ImmutableList.Builder<>();
+        List<Hashtable<String, String>> result = new LinkedList<>();
         
         if (rs != null && rs.isBeforeFirst())
         {
@@ -79,7 +79,7 @@ public final class SqlUtils
             rs.close();
         }
         
-        return result.build();
+        return result;
     }
     
     public static String translateSelector(Selector selector, String columnQuote, String valueQuote)
