@@ -130,6 +130,9 @@ public final class WrapperStorage extends Storage
     @Override
     public void renameUnit(String unit, String newName) throws IOException
     {
+        if (unit.equals(newName))
+            throw new IllegalArgumentException();
+        
         leading.renameUnit(unit, newName);
         
         for (Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
