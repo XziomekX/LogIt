@@ -19,7 +19,6 @@
 package io.github.lucaseasedup.logit.listener;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastJoinMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastQuitMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
@@ -31,6 +30,7 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
+import io.github.lucaseasedup.logit.util.CollectionUtils;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -130,25 +130,14 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             int freeSlots = Bukkit.getMaxPlayers() - Bukkit.getOnlinePlayers().length;
             List<String> preserveForPlayers =
                     getConfig().getStringList("crowd-control.reserve-slots.for-players");
-            
             int preservedSlots = 0;
-            boolean preservedForThisPlayer = false;
             
             // Calculate how many players for which slots should be preserved are online.
             for (Player p : Bukkit.getOnlinePlayers())
             {
-                if (containsIgnoreCase(p.getName(), preserveForPlayers))
+                if (CollectionUtils.containsIgnoreCase(p.getName(), preserveForPlayers))
                 {
                     preservedSlots++;
-                }
-            }
-            
-            // Determine if the player currently trying to log in can occupy preserved slots.
-            for (String name : preserveForPlayers)
-            {
-                if (name.equalsIgnoreCase(username))
-                {
-                    preservedForThisPlayer = true;
                 }
             }
             
@@ -156,7 +145,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             int unusedPreservedSlots = maxPreservedSlots - preservedSlots;
             int actualFreeSlots = freeSlots - unusedPreservedSlots;
             
-            if (actualFreeSlots <= 0 && !preservedForThisPlayer)
+            if (actualFreeSlots <= 0
+                    && !CollectionUtils.containsIgnoreCase(username, preserveForPlayers))
             {
                 event.disallow(KICK_FULL, getMessage("NO_SLOTS_FREE"));
             }
