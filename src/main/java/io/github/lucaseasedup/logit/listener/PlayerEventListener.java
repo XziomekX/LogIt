@@ -128,25 +128,25 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         else
         {
             int freeSlots = Bukkit.getMaxPlayers() - Bukkit.getOnlinePlayers().length;
-            List<String> preserveForPlayers =
+            List<String> reserveForPlayers =
                     getConfig().getStringList("crowd-control.reserve-slots.for-players");
-            int preservedSlots = 0;
+            int reservedSlots = 0;
             
-            // Calculate how many players for which slots should be preserved are online.
+            // Calculate how many players for which slots should be reserved are online.
             for (Player p : Bukkit.getOnlinePlayers())
             {
-                if (CollectionUtils.containsIgnoreCase(p.getName(), preserveForPlayers))
+                if (CollectionUtils.containsIgnoreCase(p.getName(), reserveForPlayers))
                 {
-                    preservedSlots++;
+                    reservedSlots++;
                 }
             }
             
-            int maxPreservedSlots = getConfig().getInt("crowd-control.reserve-slots.amount");
-            int unusedPreservedSlots = maxPreservedSlots - preservedSlots;
-            int actualFreeSlots = freeSlots - unusedPreservedSlots;
+            int maxReservedSlots = getConfig().getInt("crowd-control.reserve-slots.amount");
+            int unusedReservedSlots = maxReservedSlots - reservedSlots;
+            int actualFreeSlots = freeSlots - unusedReservedSlots;
             
             if (actualFreeSlots <= 0
-                    && !CollectionUtils.containsIgnoreCase(username, preserveForPlayers))
+                    && !CollectionUtils.containsIgnoreCase(username, reserveForPlayers))
             {
                 event.disallow(KICK_FULL, getMessage("NO_SLOTS_FREE"));
             }
