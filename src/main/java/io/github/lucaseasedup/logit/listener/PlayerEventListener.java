@@ -23,7 +23,6 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastJoinMessage
 import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastQuitMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
-import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_FULL;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
 import io.github.lucaseasedup.logit.ForcedLoginPrompter;
 import io.github.lucaseasedup.logit.LogItCoreObject;
@@ -148,7 +147,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             if (actualFreeSlots <= 0
                     && !CollectionUtils.containsIgnoreCase(username, reserveForPlayers))
             {
-                event.disallow(KICK_FULL, getMessage("NO_SLOTS_FREE"));
+                event.disallow(KICK_OTHER, getMessage("NO_SLOTS_FREE"));
             }
         }
     }
