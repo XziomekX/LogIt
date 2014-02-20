@@ -82,7 +82,7 @@ public final class AcclockCommand extends LogItCoreObject implements CommandExec
                         playerName = PlayerUtils.getPlayerName(args[0]);
                         
                         PlayerUtils.getPlayer(args[0])
-                                .kickPlayer(getMessage("ACCLOCK_SUCCESS_SELF"));;
+                                .kickPlayer(getMessage("ACCLOCK_SUCCESS_SELF"));
                     }
                     
                     sender.sendMessage(getMessage("ACCLOCK_SUCCESS_OTHERS")
