@@ -18,28 +18,6 @@
  */
 package io.github.lucaseasedup.logit;
 
-import static org.bukkit.ChatColor.AQUA;
-import static org.bukkit.ChatColor.BLACK;
-import static org.bukkit.ChatColor.BLUE;
-import static org.bukkit.ChatColor.BOLD;
-import static org.bukkit.ChatColor.DARK_AQUA;
-import static org.bukkit.ChatColor.DARK_BLUE;
-import static org.bukkit.ChatColor.DARK_GRAY;
-import static org.bukkit.ChatColor.DARK_GREEN;
-import static org.bukkit.ChatColor.DARK_PURPLE;
-import static org.bukkit.ChatColor.DARK_RED;
-import static org.bukkit.ChatColor.GOLD;
-import static org.bukkit.ChatColor.GRAY;
-import static org.bukkit.ChatColor.GREEN;
-import static org.bukkit.ChatColor.ITALIC;
-import static org.bukkit.ChatColor.LIGHT_PURPLE;
-import static org.bukkit.ChatColor.MAGIC;
-import static org.bukkit.ChatColor.RED;
-import static org.bukkit.ChatColor.RESET;
-import static org.bukkit.ChatColor.STRIKETHROUGH;
-import static org.bukkit.ChatColor.UNDERLINE;
-import static org.bukkit.ChatColor.WHITE;
-import static org.bukkit.ChatColor.YELLOW;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
@@ -57,6 +35,7 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -196,7 +175,7 @@ public final class LogItPlugin extends JavaPlugin
                 string = customLocalMessages.getString(label);
             }
             
-            message = formatColorCodes(string);
+            message = ChatColor.translateAlternateColorCodes('&', string);
         }
         catch (NullPointerException | MissingResourceException | ClassCastException ex)
         {
@@ -232,41 +211,6 @@ public final class LogItPlugin extends JavaPlugin
     public static String parseMessage(String message)
     {
         return parseMessage(message, NO_STRINGS);
-    }
-    
-    /**
-     * Replaces macros with their ChatColor equivalents.
-     * 
-     * @param s the string to be formatted.
-     * @return formatted string.
-     */
-    public static String formatColorCodes(String s)
-    {
-        s = s.replace("&0", BLACK.toString());
-        s = s.replace("&1", DARK_BLUE.toString());
-        s = s.replace("&2", DARK_GREEN.toString());
-        s = s.replace("&3", DARK_AQUA.toString());
-        s = s.replace("&4", DARK_RED.toString());
-        s = s.replace("&5", DARK_PURPLE.toString());
-        s = s.replace("&6", GOLD.toString());
-        s = s.replace("&7", GRAY.toString());
-        s = s.replace("&8", DARK_GRAY.toString());
-        s = s.replace("&9", BLUE.toString());
-        s = s.replace("&a", GREEN.toString());
-        s = s.replace("&b", AQUA.toString());
-        s = s.replace("&c", RED.toString());
-        s = s.replace("&d", LIGHT_PURPLE.toString());
-        s = s.replace("&e", YELLOW.toString());
-        s = s.replace("&f", WHITE.toString());
-        
-        s = s.replace("&l", BOLD.toString());
-        s = s.replace("&o", ITALIC.toString());
-        s = s.replace("&n", UNDERLINE.toString());
-        s = s.replace("&m", STRIKETHROUGH.toString());
-        s = s.replace("&k", MAGIC.toString());
-        s = s.replace("&r", RESET.toString());
-        
-        return s;
     }
     
     public static void loadLibrary(String filename)
