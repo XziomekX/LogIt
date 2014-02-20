@@ -19,7 +19,6 @@
 package io.github.lucaseasedup.logit;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import static io.github.lucaseasedup.logit.LogItPlugin.parseMessage;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getBCrypt;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getMd2;
 import static io.github.lucaseasedup.logit.hash.HashGenerator.getMd5;
@@ -695,8 +694,8 @@ public final class LogItCore
             
             String to = accountManager.getEmail(username);
             String from = config.getString("mail.email-address");
-            String subject = parseMessage(config.getString("password-recovery.subject"),
-                    new String[]{"%player%", username});
+            String subject = config.getString("password-recovery.subject")
+                    .replace("%player%", username);
             
             int passwordLength = config.getInt("password-recovery.password-length");
             String newPassword = generatePassword(passwordLength,
@@ -712,24 +711,21 @@ public final class LogItCore
                 bodyTemplate = IoUtils.toString(bodyTemplateInputStream);
             }
             
-            String body = parseMessage(bodyTemplate, new String[]{
-                "%player%", username,
-                "%password%", newPassword
-            });
+            String body = bodyTemplate
+                    .replace("%player%", username)
+                    .replace("%password%", newPassword);
             
             mailSender.sendMail(Arrays.asList(to), from, subject, body,
                     config.getBoolean("password-recovery.html-enabled"));
             
-            log(Level.FINE, getMessage("RECOVER_PASSWORD_SUCCESS_LOG", new String[]{
-                "%player%", username,
-                "%email%", to,
-            }));
+            log(Level.FINE, getMessage("RECOVER_PASSWORD_SUCCESS_LOG")
+                    .replace("%player%", username)
+                    .replace("%email%", to));
         }
         catch (ReportedException | IOException ex)
         {
-            log(Level.WARNING, getMessage("RECOVER_PASSWORD_FAIL_LOG", new String[]{
-                "%player%", username,
-            }), ex);
+            log(Level.WARNING, getMessage("RECOVER_PASSWORD_FAIL_LOG")
+                    .replace("%player%", username), ex);
             
             ReportedException.throwNew(ex);
         }

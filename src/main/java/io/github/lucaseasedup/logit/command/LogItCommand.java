@@ -577,10 +577,9 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                     
                     if (p != null)
                     {
-                        sender.sendMessage(getMessage("CONFIG_PROPERTY_SET_SUCCESS", new String[]{
-                            "%path%", args[2],
-                            "%value%", getConfig().toString(args[2]),
-                        }));
+                        sender.sendMessage(getMessage("CONFIG_PROPERTY_SET_SUCCESS")
+                                .replace("%path%", args[2])
+                                .replace("%value%", getConfig().toString(args[2])));
                     }
                     
                     if (getConfig().getProperty(args[2]).requiresRestart())
@@ -590,9 +589,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 }
                 catch (Exception ex)
                 {
-                    sender.sendMessage(getMessage("CONFIG_PROPERTY_SET_FAIL", new String[]{
-                        "%cause%", ex.getMessage()
-                    }));
+                    sender.sendMessage(getMessage("CONFIG_PROPERTY_SET_FAIL")
+                            .replace("%cause%", ex.getMessage()));
                 }
             }
         }
@@ -613,10 +611,9 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else
             {
-                sender.sendMessage(getMessage("CONFIG_PROPERTY_GET", new String[]{
-                    "%path%", args[2],
-                    "%value%", getConfig().toString(args[2]),
-                }));
+                sender.sendMessage(getMessage("CONFIG_PROPERTY_GET")
+                        .replace("%path%", args[2])
+                        .replace("%value%", getConfig().toString(args[2])));
             }
         }
         else if (checkSubcommand("config list", 1))
@@ -644,19 +641,17 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                     page = 1;
                 }
                 
-                sender.sendMessage(getMessage("CONFIG_PROPERTY_LIST_HEADER", new String[]{
-                    "%page%", String.valueOf(page),
-                    "%pages%", String.valueOf(pages),
-                }));
+                sender.sendMessage(getMessage("CONFIG_PROPERTY_LIST_HEADER")
+                        .replace("%page%", String.valueOf(page))
+                        .replace("%pages%", String.valueOf(pages)));
                 
                 for (Entry<String, Property> e : properties.entrySet())
                 {
                     if ((i > ((PROPERTIES_PER_PAGE * (page - 1)) - 1)) && (j < PROPERTIES_PER_PAGE))
                     {
-                        sender.sendMessage(getMessage("CONFIG_PROPERTY_GET", new String[]{
-                            "%path%", e.getValue().getPath(),
-                            "%value%", e.getValue().toString(),
-                        }));
+                        sender.sendMessage(getMessage("CONFIG_PROPERTY_GET")
+                                .replace("%path%", e.getValue().getPath())
+                                .replace("%value%", e.getValue().toString()));
                         
                         j++;
                     }

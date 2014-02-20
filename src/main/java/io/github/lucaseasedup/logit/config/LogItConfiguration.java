@@ -212,10 +212,9 @@ public final class LogItConfiguration extends PropertyObserver
         getPlugin().getConfig().set(p.getPath(), p.getValue());
         getPlugin().saveConfig();
         
-        log(Level.INFO, getMessage("CONFIG_PROPERTY_SET_LOG", new String[]{
-            "%path%", p.getPath(),
-            "%value%", p.toString(),
-        }));
+        log(Level.INFO, getMessage("CONFIG_PROPERTY_SET_LOG")
+                .replace("%path%", p.getPath())
+                .replace("%value%", p.toString()));
     }
     
     public boolean isLoaded()

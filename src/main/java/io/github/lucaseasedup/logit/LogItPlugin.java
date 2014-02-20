@@ -157,7 +157,7 @@ public final class LogItPlugin extends JavaPlugin
         }
     }
     
-    public static String getMessage(String label, String[] variables)
+    public static String getMessage(String label)
     {
         String message;
         
@@ -182,21 +182,11 @@ public final class LogItPlugin extends JavaPlugin
             return label;
         }
         
-        return parseMessage(message, variables);
+        return parseMessage(message);
     }
     
-    public static String getMessage(String label)
+    public static String parseMessage(String message)
     {
-        return getMessage(label, NO_STRINGS);
-    }
-    
-    public static String parseMessage(String message, String[] variables)
-    {
-        for (int i = 0; i < variables.length; i += 2)
-        {
-            message = message.replace(variables[i], variables[i + 1]);
-        }
-        
         message = message.replace("%bukkit_version%", Bukkit.getBukkitVersion());
         message = message.replace("%logit_version%",
                 LogItPlugin.getInstance().getDescription().getVersion());
@@ -206,11 +196,6 @@ public final class LogItPlugin extends JavaPlugin
         message = message.replace("%server_name%", Bukkit.getServerName());
         
         return message;
-    }
-    
-    public static String parseMessage(String message)
-    {
-        return parseMessage(message, NO_STRINGS);
     }
     
     public static void loadLibrary(String filename)
@@ -249,8 +234,6 @@ public final class LogItPlugin extends JavaPlugin
     {
         ConfigurationSerialization.registerClass(LocationSerializable.class);
     }
-    
-    private static final String[] NO_STRINGS = new String[0];
     
     private static Logger logger;
     private static PropertyResourceBundle messages;
