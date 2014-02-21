@@ -40,9 +40,9 @@ public abstract class LogItCoreObject
      */
     public LogItCoreObject()
     {
-        this.core = LogItCore.getInstance();
+        core = LogItCore.getInstance();
         
-        if (this.core == null)
+        if (core == null)
         {
             throw new IllegalStateException("No LogItCore instance found.");
         }
