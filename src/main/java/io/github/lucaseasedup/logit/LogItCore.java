@@ -494,6 +494,16 @@ public final class LogItCore
             logFileWriter = null;
         }
         
+        vaultPermissions = null;
+        sessionManager = null;
+        accountManager = null;
+        accountWatcher = null;
+        backupManager = null;
+        persistenceManager = null;
+        profileManager = null;
+        mailSender = null;
+        tickEventCaller = null;
+        
         started = false;
         
         log(Level.FINE, getMessage("PLUGIN_STOP_SUCCESS"));
