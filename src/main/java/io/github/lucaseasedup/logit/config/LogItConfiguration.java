@@ -488,8 +488,7 @@ public final class LogItConfiguration extends PropertyObserver
             }
             catch (ReflectiveOperationException ex)
             {
-                getPlugin().getLogger().log(Level.WARNING,
-                        "Invalid property observer: " + observerClassName + ".", ex);
+                log(Level.WARNING, "Invalid property observer: " + observerClassName + ".", ex);
                 
                 continue;
             }
