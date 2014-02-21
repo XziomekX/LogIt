@@ -117,7 +117,7 @@ public final class LogItPlugin extends JavaPlugin
             }
             
             if (jarEntry == null)
-                throw new FileNotFoundException("No message files found.");
+                throw new FileNotFoundException("No message file found.");
             
             InputStream messagesInputStream = jarFile.getInputStream(jarEntry);
             
