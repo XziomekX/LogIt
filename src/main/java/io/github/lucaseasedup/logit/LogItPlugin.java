@@ -65,9 +65,6 @@ public final class LogItPlugin extends JavaPlugin
         }
         catch (FatalReportedException ex)
         {
-            core = null;
-            messages = null;
-            
             disable();
         }
     }
@@ -79,6 +76,11 @@ public final class LogItPlugin extends JavaPlugin
         {
             core.stop();
         }
+        
+        core = null;
+        messages = null;
+        customGlobalMessages = null;
+        customLocalMessages = null;
     }
     
     public void enable()
