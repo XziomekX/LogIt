@@ -1001,37 +1001,40 @@ public final class LogItCore
         if (level == null)
             throw new NullPointerException();
         
-        if (config.getBoolean("logging.file.enabled")
-                && level.intValue() >= config.getInt("logging.file.level"))
+        if (config != null && config.isLoaded())
         {
-            if (logFileWriter == null)
+            if (config.getBoolean("logging.file.enabled")
+                    && level.intValue() >= config.getInt("logging.file.level"))
             {
-                openLogFile(config.getString("logging.file.filename"));
+                if (logFileWriter == null)
+                {
+                    openLogFile(config.getString("logging.file.filename"));
+                }
+                
+                try
+                {
+                    logFileWriter.write(logDateFormat.format(new Date()));
+                    logFileWriter.write(" [");
+                    logFileWriter.write(level.getName());
+                    logFileWriter.write("] ");
+                    logFileWriter.write(ChatColor.stripColor(message));
+                    logFileWriter.write("\n");
+                }
+                catch (IOException ex)
+                {
+                    plugin.getLogger().log(Level.WARNING, "Could not log to file.", ex);
+                }
             }
             
-            try
+            if (config.getBoolean("logging.verbose-console"))
             {
-                logFileWriter.write(logDateFormat.format(new Date()));
-                logFileWriter.write(" [");
-                logFileWriter.write(level.getName());
-                logFileWriter.write("] ");
-                logFileWriter.write(ChatColor.stripColor(message));
-                logFileWriter.write("\n");
-            }
-            catch (IOException ex)
-            {
-                plugin.getLogger().log(Level.WARNING, "Could not log to file.", ex);
+                System.out.println("[" + level + "] " + ChatColor.stripColor(message));
+                
+                return;
             }
         }
         
-        if (config.getBoolean("logging.verbose-console"))
-        {
-            System.out.println("[" + level + "] " + ChatColor.stripColor(message));
-        }
-        else
-        {
-            plugin.getLogger().log(level, ChatColor.stripColor(message));
-        }
+        plugin.getLogger().log(level, ChatColor.stripColor(message));
     }
     
     /**

@@ -103,38 +103,17 @@ public abstract class LogItCoreObject
     
     protected final void log(Level level, String msg)
     {
-        if (core.isConfigLoaded())
-        {
-            core.log(level, msg);
-        }
-        else
-        {
-            core.getPlugin().getLogger().log(level, msg);
-        }
+        core.log(level, msg);
     }
     
     protected final void log(Level level, String msg, Throwable throwable)
     {
-        if (core.isConfigLoaded())
-        {
-            core.log(level, msg, throwable);
-        }
-        else
-        {
-            core.getPlugin().getLogger().log(level, msg, throwable);
-        }
+        core.log(level, msg, throwable);
     }
     
     protected final void log(Level level, Throwable throwable)
     {
-        if (core.isConfigLoaded())
-        {
-            core.log(level, throwable);
-        }
-        else
-        {
-            core.getPlugin().getLogger().log(level, "Caught exception: ", throwable);
-        }
+        core.log(level, throwable);
     }
     
     protected final File getDataFile(String path)
