@@ -998,6 +998,9 @@ public final class LogItCore
      */
     public void log(Level level, String message)
     {
+        if (level == null)
+            throw new NullPointerException();
+        
         if (config.getBoolean("logging.file.enabled")
                 && level.intValue() >= config.getInt("logging.file.level"))
         {
