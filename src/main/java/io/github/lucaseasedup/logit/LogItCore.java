@@ -1074,7 +1074,7 @@ public final class LogItCore
     
     public boolean isConfigLoaded()
     {
-        return config.isLoaded();
+        return config != null && config.isLoaded();
     }
     
     public PersistenceManager getPersistenceManager()
