@@ -314,8 +314,8 @@ public final class LogItCore
         accountStorage.mirrorStorage(mirrorAccountStorage,
                 new HashtableBuilder<String, String>()
                 .add(
-                    getConfig().getString("storage.accounts.leading.unit"),
-                    getConfig().getString("storage.accounts.mirror.unit")
+                    config.getString("storage.accounts.leading.unit"),
+                    config.getString("storage.accounts.mirror.unit")
                 ).build());
         
         try
@@ -373,9 +373,9 @@ public final class LogItCore
         
         accountManager = new AccountManager(accountStorage, accountsUnit, accountKeys);
         
-        if (getConfig().getBoolean("profiles.enabled"))
+        if (config.getBoolean("profiles.enabled"))
         {
-            File profilesPath = getDataFile(getConfig().getString("profiles.path"));
+            File profilesPath = getDataFile(config.getString("profiles.path"));
             
             if (!profilesPath.exists())
             {
@@ -389,15 +389,15 @@ public final class LogItCore
         persistenceManager = new PersistenceManager();
         
         setSerializerEnabled(LocationSerializer.class,
-                getConfig().getBoolean("waiting-room.enabled"));
+                config.getBoolean("waiting-room.enabled"));
         setSerializerEnabled(AirBarSerializer.class,
-                getConfig().getBoolean("force-login.obfuscate-bars.air"));
+                config.getBoolean("force-login.obfuscate-bars.air"));
         setSerializerEnabled(HealthBarSerializer.class,
-                getConfig().getBoolean("force-login.obfuscate-bars.health"));
+                config.getBoolean("force-login.obfuscate-bars.health"));
         setSerializerEnabled(ExperienceSerializer.class,
-                getConfig().getBoolean("force-login.obfuscate-bars.experience"));
+                config.getBoolean("force-login.obfuscate-bars.experience"));
         setSerializerEnabled(HungerBarSerializer.class,
-                getConfig().getBoolean("force-login.obfuscate-bars.hunger"));
+                config.getBoolean("force-login.obfuscate-bars.hunger"));
         
         accountWatcher = new AccountWatcher();
         backupManager  = new BackupManager();
@@ -464,7 +464,7 @@ public final class LogItCore
         
         try
         {
-            getAccountManager().getStorage().close();
+            accountManager.getStorage().close();
         }
         catch (IOException ex)
         {
@@ -478,7 +478,7 @@ public final class LogItCore
         Bukkit.getScheduler().cancelTask(backupManagerTaskId);
         
         // Unregister all event listeners.
-        HandlerList.unregisterAll(getPlugin());
+        HandlerList.unregisterAll(plugin);
         
         if (logFileWriter != null)
         {
@@ -567,8 +567,7 @@ public final class LogItCore
     public boolean checkPassword(String password, String hashedPassword,
                                  HashingAlgorithm hashingAlgorithm)
     {
-        if (hashingAlgorithm == null
-                || getConfig().getBoolean("password.use-global-hashing-algorithm"))
+        if (hashingAlgorithm == null || config.getBoolean("password.use-global-hashing-algorithm"))
         {
             hashingAlgorithm = getDefaultHashingAlgorithm();
         }
@@ -607,8 +606,7 @@ public final class LogItCore
         if (hashedPassword == null || hashedPassword.isEmpty())
             return false;
         
-        if (hashingAlgorithm == null
-                || getConfig().getBoolean("password.use-global-hashing-algorithm"))
+        if (hashingAlgorithm == null || config.getBoolean("password.use-global-hashing-algorithm"))
         {
             hashingAlgorithm = getDefaultHashingAlgorithm();
         }
@@ -626,7 +624,7 @@ public final class LogItCore
         }
         else
         {
-            if (getConfig().getBoolean("password.use-salt"))
+            if (config.getBoolean("password.use-salt"))
             {
                 return hashedPassword.equals(hash(password, salt, hashingAlgorithm));
             }
@@ -796,7 +794,7 @@ public final class LogItCore
      */
     public void sendForceLoginMessage(Player player)
     {
-        int minInterval = getConfig().getInt("force-login.prompt.min-interval_inMillisecs");
+        int minInterval = config.getInt("force-login.prompt.min-interval_inMillisecs");
         
         if (minInterval > 0)
         {
@@ -811,7 +809,7 @@ public final class LogItCore
         
         if (accountManager.isRegistered(player.getName()))
         {
-            if (getConfig().getBoolean("force-login.prompt.login"))
+            if (config.getBoolean("force-login.prompt.login"))
             {
                 if (!config.getBoolean("password.disable-passwords"))
                 {
@@ -825,7 +823,7 @@ public final class LogItCore
         }
         else
         {
-            if (getConfig().getBoolean("force-login.prompt.register"))
+            if (config.getBoolean("force-login.prompt.register"))
             {
                 if (!config.getBoolean("password.disable-passwords"))
                 {
@@ -1013,7 +1011,7 @@ public final class LogItCore
             }
         }
         
-        if (getConfig().getBoolean("logging.verbose-console"))
+        if (config.getBoolean("logging.verbose-console"))
         {
             System.out.println("[" + level + "] " + ChatColor.stripColor(message));
         }
