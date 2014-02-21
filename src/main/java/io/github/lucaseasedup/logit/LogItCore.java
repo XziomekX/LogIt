@@ -141,7 +141,7 @@ public final class LogItCore
         }
         catch (InvalidPropertyValueException ex)
         {
-            log(Level.SEVERE, "Invalid configuration property value: " + ex.getPropertyName(), ex);
+            log(Level.SEVERE, "Invalid configuration property value: " + ex.getPropertyName());
             
             FatalReportedException.throwNew(ex);
         }
