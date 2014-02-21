@@ -324,7 +324,7 @@ public final class LogItCore
         }
         catch (IOException ex)
         {
-            log(Level.SEVERE, "Could not open database connection.", ex);
+            log(Level.SEVERE, "Could not establish database connection.", ex);
             
             FatalReportedException.throwNew(ex);
         }
