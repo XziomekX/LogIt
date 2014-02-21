@@ -87,13 +87,13 @@ public final class BackupManager extends LogItCoreObject implements Runnable
             throw new IOException("Backup already exists.");
         
         List<Hashtable<String, String>> rs =
-                getAccountManager().getStorage().selectEntries(getAccountManager().getUnit());
+                getAccountStorage().selectEntries(getAccountManager().getUnit());
         
         try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
         {
             backupStorage.connect();
             backupStorage.createUnit(getAccountManager().getUnit(),
-                    getAccountManager().getStorage().getKeys(getAccountManager().getUnit()));
+                    getAccountStorage().getKeys(getAccountManager().getUnit()));
             backupStorage.setAutobatchEnabled(true);
             
             for (Hashtable<String, String> entry : rs)
@@ -131,17 +131,17 @@ public final class BackupManager extends LogItCoreObject implements Runnable
                 List<Hashtable<String, String>> rs =
                         backupStorage.selectEntries(getAccountManager().getUnit());
                 
-                getAccountManager().getStorage().eraseUnit(getAccountManager().getUnit());
-                getAccountManager().getStorage().setAutobatchEnabled(true);
+                getAccountStorage().eraseUnit(getAccountManager().getUnit());
+                getAccountStorage().setAutobatchEnabled(true);
                 
                 for (Hashtable<String, String> entry : rs)
                 {
-                    getAccountManager().getStorage().addEntry(getAccountManager().getUnit(), entry);
+                    getAccountStorage().addEntry(getAccountManager().getUnit(), entry);
                 }
                 
-                getAccountManager().getStorage().executeBatch();
-                getAccountManager().getStorage().clearBatch();
-                getAccountManager().getStorage().setAutobatchEnabled(false);
+                getAccountStorage().executeBatch();
+                getAccountStorage().clearBatch();
+                getAccountStorage().setAutobatchEnabled(false);
             }
             
             log(Level.INFO, getMessage("RESTORE_BACKUP_SUCCESS"));

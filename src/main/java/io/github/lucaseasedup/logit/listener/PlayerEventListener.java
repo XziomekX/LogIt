@@ -174,7 +174,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             {
                 AccountKeys keys = getAccountManager().getKeys();
                 List<Hashtable<String, String>> rs =
-                    getAccountManager().getStorage().selectEntries(getAccountManager().getUnit(),
+                    getAccountStorage().selectEntries(getAccountManager().getUnit(),
                             Arrays.asList(
                                 keys.username(),
                                 keys.login_session()

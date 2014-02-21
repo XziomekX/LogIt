@@ -78,7 +78,7 @@ public final class PersistenceManager extends LogItCoreObject
             serializer.serialize(persistence, player);
             
             persistenceIni.put("persistence", persistence);
-            getAccountManager().getStorage().updateEntries(getAccountManager().getUnit(),
+            getAccountStorage().updateEntries(getAccountManager().getUnit(),
                     new HashtableBuilder<String, String>()
                         .add(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
                         .build(),
@@ -121,7 +121,7 @@ public final class PersistenceManager extends LogItCoreObject
             }
             
             persistenceIni.put("persistence", persistence);
-            getAccountManager().getStorage().updateEntries(getAccountManager().getUnit(),
+            getAccountStorage().updateEntries(getAccountManager().getUnit(),
                     new HashtableBuilder<String, String>()
                         .add(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
                         .build(),
@@ -172,7 +172,7 @@ public final class PersistenceManager extends LogItCoreObject
             }
             
             persistenceIni.put("persistence", persistence);
-            getAccountManager().getStorage().updateEntries(getAccountManager().getUnit(),
+            getAccountStorage().updateEntries(getAccountManager().getUnit(),
                     new HashtableBuilder<String, String>()
                         .add(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
                         .build(),
@@ -226,7 +226,7 @@ public final class PersistenceManager extends LogItCoreObject
             }
             
             persistenceIni.put("persistence", persistence);
-            getAccountManager().getStorage().updateEntries(getAccountManager().getUnit(),
+            getAccountStorage().updateEntries(getAccountManager().getUnit(),
                     new HashtableBuilder<String, String>()
                         .add(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
                         .build(),

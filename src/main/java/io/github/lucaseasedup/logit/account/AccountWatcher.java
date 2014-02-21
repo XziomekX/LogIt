@@ -40,7 +40,7 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
         {
             AccountKeys keys = getAccountManager().getKeys();
             List<Hashtable<String, String>> rs =
-                    getAccountManager().getStorage().selectEntries(getAccountManager().getUnit(),
+                    getAccountStorage().selectEntries(getAccountManager().getUnit(),
                             Arrays.asList(keys.username(), keys.last_active_date()));
             long now = System.currentTimeMillis() / 1000L;
             

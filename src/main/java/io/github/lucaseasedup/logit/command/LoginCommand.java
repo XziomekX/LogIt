@@ -128,7 +128,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             try
             {
-                rs = getAccountManager().getStorage().selectEntries(getAccountManager().getUnit(),
+                rs = getAccountStorage().selectEntries(getAccountManager().getUnit(),
                         Arrays.asList(
                             keys.username(),
                             keys.password(),

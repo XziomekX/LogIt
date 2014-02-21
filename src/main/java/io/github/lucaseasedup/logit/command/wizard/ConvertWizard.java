@@ -222,26 +222,24 @@ public final class ConvertWizard extends Wizard
                     
                     if (copyAccounts)
                     {
-                        rs = getAccountManager().getStorage()
-                                .selectEntries(getAccountManager().getUnit(),
-                                        getAccountManager().getKeys().getNames());
+                        rs = getAccountStorage().selectEntries(getAccountManager().getUnit(),
+                                getAccountManager().getKeys().getNames());
                     }
                     
                     getCore().restart();
                     
                     if (copyAccounts)
                     {
-                        getAccountManager().getStorage().setAutobatchEnabled(true);
+                        getAccountStorage().setAutobatchEnabled(true);
                         
                         for (Hashtable<String, String> entry : rs)
                         {
-                            getAccountManager().getStorage()
-                                    .addEntry(getAccountManager().getUnit(), entry);
+                            getAccountStorage().addEntry(getAccountManager().getUnit(), entry);
                         }
                         
-                        getAccountManager().getStorage().executeBatch();
-                        getAccountManager().getStorage().clearBatch();
-                        getAccountManager().getStorage().setAutobatchEnabled(false);
+                        getAccountStorage().executeBatch();
+                        getAccountStorage().clearBatch();
+                        getAccountStorage().setAutobatchEnabled(false);
                     }
                     
                     if (getSender() instanceof Player)
