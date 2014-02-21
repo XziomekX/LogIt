@@ -163,24 +163,24 @@ public final class LogItPlugin extends JavaPlugin
         
         try
         {
-            String string = messages.getString(label);
+            message = messages.getString(label);
             
             if (customGlobalMessages != null && customGlobalMessages.containsKey(label))
             {
-                string = customGlobalMessages.getString(label);
+                message = customGlobalMessages.getString(label);
             }
             
             if (customLocalMessages != null && customLocalMessages.containsKey(label))
             {
-                string = customLocalMessages.getString(label);
+                message = customLocalMessages.getString(label);
             }
-            
-            message = ChatColor.translateAlternateColorCodes('&', string);
         }
         catch (NullPointerException | MissingResourceException | ClassCastException ex)
         {
             return label;
         }
+        
+        message = ChatColor.translateAlternateColorCodes('&', message);
         
         return parseMessage(message);
     }
