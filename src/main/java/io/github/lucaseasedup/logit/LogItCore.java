@@ -1133,7 +1133,7 @@ public final class LogItCore
         return started;
     }
     
-    protected File getDataFile(String path)
+    public File getDataFile(String path)
     {
         return new File(dataFolder, path);
     }
