@@ -40,6 +40,8 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             p = (Player) sender;
         }
         
+        boolean disablePasswords = getConfig().getBoolean("password.disable-passwords");
+        
         if (args.length > 0 && args[0].equals("-x") && args.length <= 2)
         {
             if (p != null && !p.hasPermission("logit.unregister.others"))
@@ -93,8 +95,7 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
                 }
             }
         }
-        else if ((args.length == 0 && getConfig().getBoolean("password.disable-passwords"))
-                || (args.length <= 1 && !getConfig().getBoolean("password.disable-passwords")))
+        else if ((args.length == 0 && disablePasswords) || (args.length <= 1 && !disablePasswords))
         {
             if (p == null)
             {
@@ -104,7 +105,7 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             {
                 p.sendMessage(getMessage("NO_PERMS"));
             }
-            else if (!getConfig().getBoolean("password.disable-passwords") && args.length < 1)
+            else if (args.length < 1 && !disablePasswords)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
@@ -112,8 +113,7 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             {
                 p.sendMessage(getMessage("NOT_REGISTERED_SELF"));
             }
-            else if (!getConfig().getBoolean("password.disable-passwords")
-                    && !getAccountManager().checkAccountPassword(p.getName(), args[0]))
+            else if (!disablePasswords && !getAccountManager().checkAccountPassword(p.getName(), args[0]))
             {
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
             }

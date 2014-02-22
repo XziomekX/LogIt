@@ -53,6 +53,8 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             p = (Player) sender;
         }
         
+        boolean disablePasswords = getConfig().getBoolean("password.disable-passwords");
+        
         if (args.length > 0 && args[0].equals("-x") && args.length <= 2)
         {
             if (p != null && ((getCore().isPlayerForcedToLogIn(p) && !getSessionManager().isSessionAlive(p))
@@ -83,8 +85,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 }
             }
         }
-        else if ((args.length == 0 && getConfig().getBoolean("password.disable-passwords"))
-                || (args.length <= 1 && !getConfig().getBoolean("password.disable-passwords")))
+        else if ((args.length == 0 && disablePasswords) || (args.length <= 1 && !disablePasswords))
         {
             String username = null;
             
@@ -110,7 +111,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 return true;
             }
             
-            if (args.length < 1 && !getConfig().getBoolean("password.disable-passwords"))
+            if (args.length < 1 && !disablePasswords)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
                 
@@ -153,8 +154,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 return true;
             }
             
-            if (!getConfig().getBoolean("password.disable-passwords")
-                    && !getCore().checkGlobalPassword(args[0]))
+            if (!disablePasswords && !getCore().checkGlobalPassword(args[0]))
             {
                 String userAlgorithm = rs.get(0).get(keys.hashing_algorithm());
                 String hashedPassword = rs.get(0).get(keys.password());
