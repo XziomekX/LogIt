@@ -23,6 +23,7 @@ import io.github.lucaseasedup.logit.FatalReportedException;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.command.wizard.ConvertWizard;
+import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyType;
@@ -124,6 +125,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 if (p == null || p.hasPermission("logit.config.list"))
                 {
                     sender.sendMessage(getLogItSubcommandHelp("config list", "[page]"));
+                }
+                if (p == null || p.hasPermission("logit.config.reload"))
+                {
+                    sender.sendMessage(getLogItSubcommandHelp("config reload", null));
                 }
                 if (p == null || p.hasPermission("logit.convert"))
                 {
@@ -661,6 +666,33 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 if (page > pages)
                 {
                     sender.sendMessage(getMessage("CONFIG_PROPERTY_LIST_NO_PROPERTIES"));
+                }
+            }
+        }
+        else if (checkSubcommand("config reload", 0))
+        {
+            if (p != null && !p.hasPermission("logit.config.reload"))
+            {
+                sender.sendMessage(getMessage("NO_PERMS"));
+            }
+            else
+            {
+                try
+                {
+                    getConfig().load();
+                    
+                    log(Level.INFO, getMessage("CONFIG_RELOAD_SUCCESS"));
+                    
+                    if (p != null)
+                    {
+                        p.sendMessage(getMessage("CONFIG_RELOAD_SUCCESS"));
+                    }
+                }
+                catch (IOException | InvalidPropertyValueException ex)
+                {
+                    ex.printStackTrace();
+                    
+                    sender.sendMessage(getMessage("CONFIG_RELOAD_FAIL"));
                 }
             }
         }
