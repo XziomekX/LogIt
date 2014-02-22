@@ -24,6 +24,7 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastQuitMessage
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
+import org.bukkit.Material;
 import io.github.lucaseasedup.logit.ForcedLoginPrompter;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.AccountKeys;
@@ -393,8 +394,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             Block clickedBlock = event.getClickedBlock();
             
             // Check if not on a pressure plate to prevent spamming.
-            if (clickedBlock == null
-                    || (clickedBlock.getTypeId() != 70 && clickedBlock.getTypeId() != 72))
+            if (clickedBlock == null || (clickedBlock.getType() != Material.WOOD_PLATE
+                    && clickedBlock.getType() != Material.STONE_PLATE))
             {
                 if (getConfig().getBoolean("force-login.prompt-on.interact"))
                 {
