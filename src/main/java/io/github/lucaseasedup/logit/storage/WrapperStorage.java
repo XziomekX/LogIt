@@ -18,9 +18,12 @@
  */
 package io.github.lucaseasedup.logit.storage;
 
+import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -28,13 +31,19 @@ import java.util.Vector;
 
 public final class WrapperStorage extends Storage
 {
-    public WrapperStorage(Storage leading)
+    public WrapperStorage(Storage leading, CacheType cacheType)
     {
         this.leading = leading;
-        this.obs = new Vector<>();
+        this.cacheType = cacheType;
         
         mirrors = new HashSet<>(5);
         unitMappings = new Hashtable<>(5);
+        obs = new Vector<>();
+        
+        if (cacheType == CacheType.PRELOADED)
+        {
+            preloadedCache = new Hashtable<>();
+        }
     }
     
     @Override
@@ -91,14 +100,58 @@ public final class WrapperStorage extends Storage
     @Override
     public List<Hashtable<String, String>> selectEntries(String unit) throws IOException
     {
-        return leading.selectEntries(unit);
+        if (cacheType == CacheType.DISABLED)
+        {
+            return leading.selectEntries(unit);
+        }
+        else if (cacheType == CacheType.PRELOADED)
+        {
+            List<Hashtable<String, String>> preloadedUnit = preloadedCache.get(unit);
+            
+            if (preloadedUnit == null || preloadedUnit.isEmpty())
+            {
+                preloadedCache.put(unit, leading.selectEntries(unit));
+            }
+            
+            List<Hashtable<String, String>> result = new LinkedList<>();
+            
+            for (Hashtable<String, String> entry : preloadedCache.get(unit))
+            {
+                result.add(new Hashtable<>(entry));
+            }
+            
+            return result;
+        }
+        else
+        {
+            throw new RuntimeException("Unknown cache type: " + cacheType);
+        }
     }
     
     @Override
     public List<Hashtable<String, String>> selectEntries(String unit, List<String> keys)
             throws IOException
     {
-        return leading.selectEntries(unit, keys);
+        if (cacheType == CacheType.DISABLED)
+        {
+            return leading.selectEntries(unit, keys);
+        }
+        else if (cacheType == CacheType.PRELOADED)
+        {
+            if (preloadedCache.containsKey(unit))
+            {
+                return copyCacheResultList(preloadedCache.get(unit), keys,
+                        new SelectorConstant(true));
+            }
+            else
+            {
+                return leading.selectEntries(unit, keys);
+            }
+        }
+        else
+        {
+            throw new RuntimeException("Unknown cache type: " + cacheType);
+        }
     }
     
     @Override
@@ -106,7 +159,25 @@ public final class WrapperStorage extends Storage
                                                          List<String> keys,
                                                          Selector selector) throws IOException
     {
-        return leading.selectEntries(unit, keys, selector);
+        if (cacheType == CacheType.DISABLED)
+        {
+            return leading.selectEntries(unit, keys, selector);
+        }
+        else if (cacheType == CacheType.PRELOADED)
+        {
+            if (preloadedCache.containsKey(unit))
+            {
+                return copyCacheResultList(preloadedCache.get(unit), keys, selector);
+            }
+            else
+            {
+                return leading.selectEntries(unit, keys, selector);
+            }
+        }
+        else
+        {
+            throw new RuntimeException("Unknown cache type: " + cacheType);
+        }
     }
     
     @Override
@@ -119,6 +190,14 @@ public final class WrapperStorage extends Storage
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
             e.getKey().createUnit(unitMapping, keys);
+        }
+        
+        if (cacheType == CacheType.PRELOADED)
+        {
+            if (!preloadedCache.containsKey(unit))
+            {
+                preloadedCache.put(unit, new LinkedList<Hashtable<String, String>>());
+            }
         }
         
         for (StorageObserver o : obs)
@@ -143,6 +222,14 @@ public final class WrapperStorage extends Storage
             e.getValue().put(newName, unitMapping);
         }
         
+        if (cacheType == CacheType.PRELOADED)
+        {
+            if (preloadedCache.containsKey(unit))
+            {
+                preloadedCache.put(newName, preloadedCache.remove(unit));
+            }
+        }
+        
         for (StorageObserver o : obs)
         {
             o.renameUnit(unit, newName);
@@ -159,6 +246,14 @@ public final class WrapperStorage extends Storage
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
             e.getKey().eraseUnit(unitMapping);
+        }
+        
+        if (cacheType == CacheType.PRELOADED)
+        {
+            if (preloadedCache.containsKey(unit))
+            {
+                preloadedCache.get(unit).clear();
+            }
         }
         
         for (StorageObserver o : obs)
@@ -179,6 +274,14 @@ public final class WrapperStorage extends Storage
             e.getKey().removeUnit(unitMapping);
         }
         
+        if (cacheType == CacheType.PRELOADED)
+        {
+            if (preloadedCache.containsKey(unit))
+            {
+                preloadedCache.remove(unit);
+            }
+        }
+        
         for (StorageObserver o : obs)
         {
             o.removeUnit(unit);
@@ -197,6 +300,17 @@ public final class WrapperStorage extends Storage
             e.getKey().addKey(unitMapping, key, type);
         }
         
+        if (cacheType == CacheType.PRELOADED)
+        {
+            if (preloadedCache.containsKey(unit))
+            {
+                for (Hashtable<String, String> entry : preloadedCache.get(unit))
+                {
+                    entry.put(key, "");
+                }
+            }
+        }
+        
         for (StorageObserver o : obs)
         {
             o.addKey(unit, key, type);
@@ -213,6 +327,21 @@ public final class WrapperStorage extends Storage
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
             e.getKey().addEntry(unitMapping, pairs);
+        }
+        
+        if (cacheType == CacheType.PRELOADED)
+        {
+            if (preloadedCache.containsKey(unit))
+            {
+                Hashtable<String, String> newEntry = new Hashtable<>();
+                
+                for (Entry<String, String> pair : pairs.entrySet())
+                {
+                    newEntry.put(pair.getKey(), pair.getValue());
+                }
+                
+                preloadedCache.get(unit).add(newEntry);
+            }
         }
         
         for (StorageObserver o : obs)
@@ -234,6 +363,23 @@ public final class WrapperStorage extends Storage
             e.getKey().updateEntries(unitMapping, pairs, selector);
         }
         
+        if (cacheType == CacheType.PRELOADED)
+        {
+            if (preloadedCache.containsKey(unit))
+            {
+                for (Hashtable<String, String> entry : preloadedCache.get(unit))
+                {
+                    if (SqlUtils.resolveSelector(selector, entry))
+                    {
+                        for (Entry<String, String> pair : pairs.entrySet())
+                        {
+                            entry.put(pair.getKey(), pair.getValue());
+                        }
+                    }
+                }
+            }
+        }
+        
         for (StorageObserver o : obs)
         {
             o.updateEntries(unit, pairs, selector);
@@ -250,6 +396,24 @@ public final class WrapperStorage extends Storage
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
             e.getKey().removeEntries(unitMapping, selector);
+        }
+        
+        if (cacheType == CacheType.PRELOADED)
+        {
+            if (preloadedCache.containsKey(unit))
+            {
+                Iterator<Hashtable<String, String>> it = preloadedCache.get(unit).iterator();
+                
+                while (it.hasNext())
+                {
+                    Hashtable<String, String> entry = it.next();
+                    
+                    if (SqlUtils.resolveSelector(selector, entry))
+                    {
+                        it.remove();
+                    }
+                }
+            }
         }
         
         for (StorageObserver o : obs)
@@ -358,8 +522,47 @@ public final class WrapperStorage extends Storage
         return unitMapping;
     }
     
+    private List<Hashtable<String, String>> copyCacheResultList(List<Hashtable<String, String>> result,
+                                                                List<String> keys,
+                                                                Selector selector)
+    {
+        List<Hashtable<String, String>> resultCopy = new LinkedList<>();
+        
+        for (Hashtable<String, String> entry : result)
+        {
+            if (SqlUtils.resolveSelector(selector, entry))
+            {
+                Hashtable<String, String> resultEntry = new Hashtable<>();
+                
+                for (Entry<String, String> e : entry.entrySet())
+                {
+                    if (keys.contains(e.getKey()))
+                    {
+                        resultEntry.put(e.getKey(), e.getValue());
+                    }
+                }
+                
+                for (String key : keys)
+                {
+                    if (!resultEntry.containsKey(key))
+                    {
+                        resultEntry.put(key, "");
+                    }
+                }
+                
+                resultCopy.add(resultEntry);
+            }
+        }
+        
+        return resultCopy;
+    }
+    
     private final Storage leading;
+    private final CacheType cacheType;
+    
     private final Set<Storage> mirrors;
     private final Hashtable<Storage, Hashtable<String, String>> unitMappings;
     private final Vector<StorageObserver> obs;
+    
+    private Hashtable<String, List<Hashtable<String, String>>> preloadedCache;
 }

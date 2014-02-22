@@ -67,6 +67,7 @@ import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
 import io.github.lucaseasedup.logit.profile.ProfileManager;
 import io.github.lucaseasedup.logit.session.SessionManager;
+import io.github.lucaseasedup.logit.storage.CacheType;
 import io.github.lucaseasedup.logit.storage.CsvStorage;
 import io.github.lucaseasedup.logit.storage.H2Storage;
 import io.github.lucaseasedup.logit.storage.MySqlStorage;
@@ -308,8 +309,11 @@ public final class LogItCore
             FatalReportedException.throwNew();
         }
         
+        CacheType accountCacheType =
+                CacheType.decode(config.getString("storage.accounts.leading.cache"));
+        
         @SuppressWarnings("resource")
-        WrapperStorage accountStorage = new WrapperStorage(leadingAccountStorage);
+        WrapperStorage accountStorage = new WrapperStorage(leadingAccountStorage, accountCacheType);
         accountStorage.mirrorStorage(mirrorAccountStorage,
                 new HashtableBuilder<String, String>()
                 .add(
@@ -368,6 +372,18 @@ public final class LogItCore
             log(Level.SEVERE, "Could not prepare accounts table.", ex);
             
             FatalReportedException.throwNew(ex);
+        }
+        
+        if (accountCacheType == CacheType.PRELOADED)
+        {
+            try
+            {
+                accountStorage.selectEntries(config.getString("storage.accounts.leading.unit"));
+            }
+            catch (IOException ex)
+            {
+                log(Level.SEVERE, "Could not preload accounts.", ex);
+            }
         }
         
         accountManager = new AccountManager(accountStorage, accountsUnit, accountKeys);
