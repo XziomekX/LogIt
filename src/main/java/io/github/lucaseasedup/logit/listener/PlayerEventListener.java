@@ -113,7 +113,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_LONG")
                     .replace("%max-length%", String.valueOf(maxUsernameLength)));
         }
-        else if (getConfig().getStringList("username.prohibited-usernames").contains(username))
+        else if (CollectionUtils.containsIgnoreCase(username,
+                getConfig().getStringList("username.prohibited-usernames")))
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_PROHIBITED"));
         }
