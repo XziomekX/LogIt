@@ -58,8 +58,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
             }
-            else if (!getConfig().getBoolean("password.disable-passwords")
-                    && args.length < 3)
+            else if (!getConfig().getBoolean("password.disable-passwords") && args.length < 3)
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
@@ -147,13 +146,11 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             {
                 p.sendMessage(getMessage("NO_PERMS"));
             }
-            else if (!getConfig().getBoolean("password.disable-passwords")
-                    && args.length < 1)
+            else if (!getConfig().getBoolean("password.disable-passwords") && args.length < 1)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
-            else if (!getConfig().getBoolean("password.disable-passwords")
-                    && args.length < 2)
+            else if (!getConfig().getBoolean("password.disable-passwords") && args.length < 2)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
             }

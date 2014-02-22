@@ -104,8 +104,7 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             {
                 p.sendMessage(getMessage("NO_PERMS"));
             }
-            else if (!getConfig().getBoolean("password.disable-passwords")
-                    && args.length < 1)
+            else if (!getConfig().getBoolean("password.disable-passwords") && args.length < 1)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
