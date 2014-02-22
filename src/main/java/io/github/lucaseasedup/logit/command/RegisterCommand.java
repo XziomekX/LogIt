@@ -46,8 +46,11 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
         
         int minPasswordLength = getConfig().getInt("password.min-length");
         int maxPasswordLength = getConfig().getInt("password.max-length");
+        boolean disablePasswords = getConfig().getBoolean("password.disable-passwords");
         
-        if (args.length > 0 && args[0].equals("-x") && args.length <= 3)
+        if (args.length > 0 && args[0].equals("-x")
+                && ((args.length <= 2 && disablePasswords)
+                        || (args.length <= 3 && !disablePasswords)))
         {
             if (p != null && ((getCore().isPlayerForcedToLogIn(p) && !getSessionManager().isSessionAlive(p))
                     || !p.hasPermission("logit.register.others")))
@@ -58,7 +61,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
             }
-            else if (!getConfig().getBoolean("password.disable-passwords") && args.length < 3)
+            else if (!disablePasswords && args.length < 3)
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
@@ -67,14 +70,12 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 sender.sendMessage(getMessage("ALREADY_REGISTERED_OTHERS")
                         .replace("%player%", args[1]));
             }
-            else if (!getConfig().getBoolean("password.disable-passwords")
-                    && args[2].length() < minPasswordLength)
+            else if (!disablePasswords && args[2].length() < minPasswordLength)
             {
                 sender.sendMessage(getMessage("PASSWORD_TOO_SHORT")
                         .replace("%min-length%", String.valueOf(minPasswordLength)));
             }
-            else if (!getConfig().getBoolean("password.disable-passwords")
-                    && args[2].length() > maxPasswordLength)
+            else if (!disablePasswords && args[2].length() > maxPasswordLength)
             {
                 sender.sendMessage(getMessage("PASSWORD_TOO_LONG")
                         .replace("%max-length%", String.valueOf(maxPasswordLength)));
@@ -83,7 +84,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             {
                 String password = "";
                 
-                if (!getConfig().getBoolean("password.disable-passwords"))
+                if (!disablePasswords)
                 {
                     password = args[2];
                 }
@@ -131,8 +132,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 }
             }
         }
-        else if ((args.length == 0 && getConfig().getBoolean("password.disable-passwords"))
-                || (args.length <= 2 && !getConfig().getBoolean("password.disable-passwords")))
+        else if ((args.length == 0 && disablePasswords) || (args.length <= 2 && !disablePasswords))
         {
             final int accountsPerIp = getConfig().getInt("crowd-control.accounts-per-ip.amount");
             final List<String> unrestrictedIps =
@@ -146,11 +146,11 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             {
                 p.sendMessage(getMessage("NO_PERMS"));
             }
-            else if (!getConfig().getBoolean("password.disable-passwords") && args.length < 1)
+            else if (!disablePasswords && args.length < 1)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
             }
-            else if (!getConfig().getBoolean("password.disable-passwords") && args.length < 2)
+            else if (!disablePasswords && args.length < 2)
             {
                 p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
             }
@@ -158,20 +158,17 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             {
                 p.sendMessage(getMessage("ALREADY_REGISTERED_SELF"));
             }
-            else if (!getConfig().getBoolean("password.disable-passwords")
-                    && args[0].length() < minPasswordLength)
+            else if (!disablePasswords && args[0].length() < minPasswordLength)
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_SHORT")
                         .replace("%min-length%", String.valueOf(minPasswordLength)));
             }
-            else if (!getConfig().getBoolean("password.disable-passwords")
-                    && args[0].length() > maxPasswordLength)
+            else if (!disablePasswords && args[0].length() > maxPasswordLength)
             {
                 p.sendMessage(getMessage("PASSWORD_TOO_LONG")
                         .replace("%max-length%", String.valueOf(maxPasswordLength)));
             }
-            else if (!getConfig().getBoolean("password.disable-passwords")
-                    && !args[0].equals(args[1]))
+            else if (!disablePasswords && !args[0].equals(args[1]))
             {
                 p.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
             }
@@ -184,7 +181,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             {
                 String password = "";
                 
-                if (!getConfig().getBoolean("password.disable-passwords"))
+                if (!disablePasswords)
                 {
                     password = args[0];
                 }
