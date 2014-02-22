@@ -260,7 +260,7 @@ public final class CsvStorage extends Storage
         
         Hashtable<String, Type> keys = getKeys(unit);
         
-        if (keys.contains(key))
+        if (keys.containsKey(key))
             throw new IOException("Key with this name already exists: " + key);
         
         List<Hashtable<String, String>> rs = selectEntries(unit);
