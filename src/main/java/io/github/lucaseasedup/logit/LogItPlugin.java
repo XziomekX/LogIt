@@ -227,11 +227,6 @@ public final class LogItPlugin extends JavaPlugin
         return (LogItPlugin) Bukkit.getPluginManager().getPlugin("LogIt");
     }
     
-    public static Logger getInstanceLogger()
-    {
-        return logger;
-    }
-    
     static
     {
         ConfigurationSerialization.registerClass(LocationSerializable.class);
