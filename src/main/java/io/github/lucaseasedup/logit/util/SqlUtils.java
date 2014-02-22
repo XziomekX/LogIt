@@ -245,16 +245,16 @@ public final class SqlUtils
             sb.append(" (");
             sb.append(valueQuote);
             
-            if (selectorCondition.equals(Infix.ENDS_WITH)
-                    || selectorCondition.equals(Infix.CONTAINS))
+            if (selectorCondition.getRelation().equals(Infix.ENDS_WITH)
+                    || selectorCondition.getRelation().equals(Infix.CONTAINS))
             {
                 sb.append("%");
             }
             
             sb.append(escapeQuotes(selectorCondition.getValue(), valueQuote, true));
             
-            if (selectorCondition.equals(Infix.STARTS_WITH)
-                    || selectorCondition.equals(Infix.CONTAINS))
+            if (selectorCondition.getRelation().equals(Infix.STARTS_WITH)
+                    || selectorCondition.getRelation().equals(Infix.CONTAINS))
             {
                 sb.append("%");
             }
