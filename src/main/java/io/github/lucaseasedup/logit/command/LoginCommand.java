@@ -83,7 +83,8 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 }
             }
         }
-        else if (args.length <= 1)
+        else if ((args.length == 0 && getConfig().getBoolean("password.disable-passwords"))
+                || (args.length <= 1 && !getConfig().getBoolean("password.disable-passwords")))
         {
             String username = null;
             

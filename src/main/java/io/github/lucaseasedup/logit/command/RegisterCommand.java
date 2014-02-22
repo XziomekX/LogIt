@@ -132,7 +132,8 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 }
             }
         }
-        else if (args.length <= 2)
+        else if ((args.length == 0 && getConfig().getBoolean("password.disable-passwords"))
+                || (args.length <= 2 && !getConfig().getBoolean("password.disable-passwords")))
         {
             final int accountsPerIp = getConfig().getInt("crowd-control.accounts-per-ip.amount");
             final List<String> unrestrictedIps =
