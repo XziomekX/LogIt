@@ -43,6 +43,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -455,6 +456,17 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             {
                 getCore().sendForceLoginMessage(player);
             }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL)
+    private void onChangedWorld(PlayerChangedWorldEvent event)
+    {
+        Player player = event.getPlayer();
+        
+        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
+        {
+            getCore().sendForceLoginMessage(player);
         }
     }
 }
