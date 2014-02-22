@@ -471,7 +471,7 @@ public final class WrapperStorage extends Storage
         }
     }
     
-    public void unmirrorStorage(StorageObserver o)
+    public void unmirrorStorage(Storage o)
     {
         mirrors.remove(o);
     }
