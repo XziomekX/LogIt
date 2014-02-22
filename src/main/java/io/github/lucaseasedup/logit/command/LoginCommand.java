@@ -189,18 +189,18 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     
                     return true;
                 }
+            }
+            
+            if (!getSessionManager().startSession(username).isCancelled())
+            {
+                failedLoginsToKick.remove(username);
+                failedLoginsToBan.remove(username);
                 
-                if (!getSessionManager().startSession(username).isCancelled())
+                sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
+                
+                if (getConfig().getBoolean("login-sessions.enabled"))
                 {
-                    failedLoginsToKick.remove(username);
-                    failedLoginsToBan.remove(username);
-                    
-                    sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
-                    
-                    if (getConfig().getBoolean("login-sessions.enabled"))
-                    {
-                        sender.sendMessage(getMessage("REMEMBER_PROMPT"));
-                    }
+                    sender.sendMessage(getMessage("REMEMBER_PROMPT"));
                 }
             }
         }
