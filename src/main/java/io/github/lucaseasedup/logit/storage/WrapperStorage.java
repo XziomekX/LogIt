@@ -465,7 +465,7 @@ public final class WrapperStorage extends Storage
             mirrors.add(storage);
         }
         
-        if (!unitMappings.containsKey(storage))
+        if (!this.unitMappings.containsKey(storage))
         {
             this.unitMappings.put(storage, unitMappings);
         }
