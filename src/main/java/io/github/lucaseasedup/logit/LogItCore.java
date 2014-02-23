@@ -57,6 +57,11 @@ import io.github.lucaseasedup.logit.listener.PlayerEventListener;
 import io.github.lucaseasedup.logit.listener.ServerEventListener;
 import io.github.lucaseasedup.logit.listener.SessionEventListener;
 import io.github.lucaseasedup.logit.listener.TickEventListener;
+import io.github.lucaseasedup.logit.locale.EnglishLocale;
+import io.github.lucaseasedup.logit.locale.GermanLocale;
+import io.github.lucaseasedup.logit.locale.Locale;
+import io.github.lucaseasedup.logit.locale.LocaleManager;
+import io.github.lucaseasedup.logit.locale.PolishLocale;
 import io.github.lucaseasedup.logit.mail.MailSender;
 import io.github.lucaseasedup.logit.persistence.AirBarSerializer;
 import io.github.lucaseasedup.logit.persistence.ExperienceSerializer;
@@ -419,6 +424,21 @@ public final class LogItCore
         sessionManager = new SessionManager();
         tickEventCaller = new TickEventCaller();
         
+        localeManager = new LocaleManager();
+        localeManager.registerLocale(EnglishLocale.getInstance());
+        localeManager.registerLocale(PolishLocale.getInstance());
+        localeManager.registerLocale(GermanLocale.getInstance());
+        localeManager.setFallbackLocale(EnglishLocale.getInstance());
+        
+        Locale locale = localeManager.getLocale(getConfig().getString("locale"));
+        
+        if (locale == null)
+        {
+            locale = localeManager.getFallbackLocale();
+        }
+        
+        localeManager.switchActiveLocale(locale);
+        
         if (config.getBoolean("password-recovery.enabled"))
         {
             mailSender = new MailSender();
@@ -517,6 +537,7 @@ public final class LogItCore
         persistenceManager = null;
         profileManager = null;
         mailSender = null;
+        localeManager = null;
         tickEventCaller = null;
         
         started = false;
@@ -1128,6 +1149,11 @@ public final class LogItCore
         return sessionManager;
     }
     
+    public LocaleManager getLocaleManager()
+    {
+        return localeManager;
+    }
+    
     public LogItPlugin getPlugin()
     {
         return plugin;
@@ -1383,6 +1409,7 @@ public final class LogItCore
     private PersistenceManager  persistenceManager;
     private ProfileManager      profileManager;
     private MailSender          mailSender;
+    private LocaleManager       localeManager;
     private TickEventCaller     tickEventCaller;
     
     private int accountManagerTaskId;

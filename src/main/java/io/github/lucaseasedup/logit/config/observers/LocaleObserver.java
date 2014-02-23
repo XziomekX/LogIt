@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.config.observers;
 
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyObserver;
+import io.github.lucaseasedup.logit.locale.Locale;
 import java.io.IOException;
 import java.util.logging.Level;
 
@@ -30,7 +31,15 @@ public final class LocaleObserver extends PropertyObserver
     {
         try
         {
+            Locale locale = getLocaleManager().getLocale(p.getString());
+            
+            if (locale == null)
+            {
+                locale = getLocaleManager().getFallbackLocale();
+            }
+            
             getPlugin().loadMessages();
+            getLocaleManager().switchActiveLocale(locale);
         }
         catch (IOException ex)
         {
