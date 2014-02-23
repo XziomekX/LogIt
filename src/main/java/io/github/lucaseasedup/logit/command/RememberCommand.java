@@ -68,8 +68,8 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
                     getAccountManager().saveLoginSession(p.getName(),
                             PlayerUtils.getPlayerIp(p), currentTime);
                     
-                    sender.sendMessage(getMessage("REMEMBER_SUCCESS").replace("%sec%",
-                            String.valueOf(validnessTime)));
+                    sender.sendMessage(getMessage("REMEMBER_SUCCESS").replace("%time%",
+                            getLocaleManager().getActiveLocale().stringifySeconds(validnessTime)));
                 }
                 catch (IOException ex)
                 {
