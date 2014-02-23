@@ -217,7 +217,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         
                         if (getConfig().getBoolean("password-recovery.enabled"))
                         {
-                            sender.sendMessage(getMessage("CHANGE_EMAIL_REMINDER"));
+                            sender.sendMessage(getMessage("NO_EMAIL_SET_REMINDER"));
                         }
                     }
                 }
