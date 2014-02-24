@@ -474,11 +474,13 @@ public final class WrapperStorage extends Storage
     public void unmirrorStorage(Storage o)
     {
         mirrors.remove(o);
+        unitMappings.remove(o);
     }
     
     public void unmirrorAll()
     {
         mirrors.clear();
+        unitMappings.clear();
     }
     
     public void addObserver(StorageObserver o)
