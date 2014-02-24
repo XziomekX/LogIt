@@ -169,13 +169,9 @@ public final class Property extends Observable
         if (validator != null && !validator.validate(path, type, value))
             throw new InvalidPropertyValueException("Invalid value: " + value.toString());
         
-        if (!this.value.equals(value))
-        {
-            setChanged();
-        }
-        
         this.value = value;
         
+        setChanged();
         notifyObservers();
     }
     
