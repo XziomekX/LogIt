@@ -231,7 +231,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             
             if (getConfig().getBoolean("force-login.prompt-on.join"))
             {
-                if (promptPeriod > 0)
+                if (getConfig().getBoolean("force-login.periodical-prompt.enabled"))
                 {
                     prompterId = Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(),
                             prompter, 5L, promptPeriod);
@@ -244,7 +244,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 
                 prompter.setTaskId(prompterId);
             }
-            else if (promptPeriod > 0)
+            else if (getConfig().getBoolean("force-login.periodical-prompt.enabled"))
             {
                 prompterId = Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(),
                         prompter, 5L + promptPeriod, promptPeriod);
