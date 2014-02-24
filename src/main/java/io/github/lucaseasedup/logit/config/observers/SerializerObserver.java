@@ -73,6 +73,9 @@ public final class SerializerObserver extends PropertyObserver
         {
             for (Player player : Bukkit.getOnlinePlayers())
             {
+                if (getSessionManager().isSessionAlive(player))
+                    continue;
+                
                 try
                 {
                     getPersistenceManager().serializeUsing(player, clazz);
