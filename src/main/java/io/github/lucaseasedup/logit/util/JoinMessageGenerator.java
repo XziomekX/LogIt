@@ -62,9 +62,6 @@ public final class JoinMessageGenerator
         if (!(plugin instanceof MultiverseCore))
             return world.getName();
         
-        MultiverseCore multiverseCore =
-                (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");
-        
-        return multiverseCore.getMVWorldManager().getMVWorld(world).getAlias();
+        return ((MultiverseCore) plugin).getMVWorldManager().getMVWorld(world).getAlias();
     }
 }
