@@ -205,6 +205,10 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                         }
                     }
                 }
+                else if (getConfig().getBoolean("waiting-room.enabled"))
+                {
+                    player.teleport(getConfig().getLocation("waiting-room.location").toBukkitLocation());
+                }
             }
             catch (IOException ex)
             {
