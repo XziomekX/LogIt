@@ -25,8 +25,10 @@ public final class TickEventCaller implements Runnable
     @Override
     public void run()
     {
-        Bukkit.getPluginManager().callEvent(new TickEvent());
+        Bukkit.getPluginManager().callEvent(tickEvent);
     }
     
     public static final long TASK_PERIOD = 1;
+    
+    private final TickEvent tickEvent = new TickEvent();
 }
