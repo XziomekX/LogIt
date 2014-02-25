@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.util;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import com.onarandombox.MultiverseCore.MultiverseCore;
+import io.github.lucaseasedup.logit.LogItCore;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -50,8 +51,11 @@ public final class JoinMessageGenerator
     
     public static String getWorldAlias(World world)
     {
-        if (!Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core"))
+        if (!LogItCore.getInstance().getConfig().getBoolean("messages.multiverse-hook")
+                || !Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core"))
+        {
             return world.getName();
+        }
         
         Plugin plugin = Bukkit.getPluginManager().getPlugin("Multiverse-Core");
         
