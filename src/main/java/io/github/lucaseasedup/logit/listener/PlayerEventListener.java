@@ -272,7 +272,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         getCore().getPersistenceManager().unserialize(player);
         
-        if (!getConfig().getBoolean("messages.quit.hide"))
+        if (!getConfig().getBoolean("messages.quit.hide")
+                && (!getCore().isPlayerForcedToLogIn(player) || getSessionManager().isSessionAlive(player)))
         {
             broadcastQuitMessage(player);
         }
@@ -287,7 +288,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         getCore().getPersistenceManager().unserialize(player);
         
-        if (!getConfig().getBoolean("messages.quit.hide"))
+        if (!getConfig().getBoolean("messages.quit.hide")
+                && (!getCore().isPlayerForcedToLogIn(player) || getSessionManager().isSessionAlive(player)))
         {
             broadcastQuitMessage(player);
         }
