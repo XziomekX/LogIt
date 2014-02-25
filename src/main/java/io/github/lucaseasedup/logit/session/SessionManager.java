@@ -210,15 +210,16 @@ public final class SessionManager extends LogItCoreObject implements Runnable
      */
     public CancelledState destroySession(String username)
     {
-        if (getSession(username) == null)
+        Session session = getSession(username);
+        
+        if (session == null)
             return CancelledState.NOT_CANCELLED;
         
-        if (isSessionAlive(username))
+        if (session.isAlive())
         {
             endSession(username);
         }
         
-        Session session = sessions.get(username.toLowerCase());
         SessionEvent evt = new SessionDestroyEvent(username, session);
         
         Bukkit.getPluginManager().callEvent(evt);
@@ -246,13 +247,14 @@ public final class SessionManager extends LogItCoreObject implements Runnable
      */
     public CancelledState startSession(String username)
     {
-        if (getSession(username) == null)
+        Session session = getSession(username);
+        
+        if (session == null)
             throw new SessionNotFoundException();
         
-        if (isSessionAlive(username))
+        if (session.isAlive())
             return CancelledState.NOT_CANCELLED;
         
-        Session session = getSession(username);
         SessionEvent evt = new SessionStartEvent(username, session);
         
         Bukkit.getPluginManager().callEvent(evt);
@@ -280,13 +282,14 @@ public final class SessionManager extends LogItCoreObject implements Runnable
      */
     public CancelledState endSession(String username)
     {
-        if (getSession(username) == null)
+        Session session = getSession(username);
+        
+        if (session == null)
             throw new SessionNotFoundException();
         
-        if (!isSessionAlive(username))
+        if (!session.isAlive())
             return CancelledState.NOT_CANCELLED;
         
-        Session session = getSession(username);
         SessionEvent evt = new SessionEndEvent(username, session);
         
         Bukkit.getPluginManager().callEvent(evt);
