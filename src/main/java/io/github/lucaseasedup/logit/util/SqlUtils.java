@@ -233,7 +233,11 @@ public final class SqlUtils
                 break;
                 
             case GREATER_THAN:
+                sb.append(">");
+                break;
+                
             case STARTS_WITH:
+            case ENDS_WITH:
             case CONTAINS:
                 sb.append("LIKE");
                 break;
