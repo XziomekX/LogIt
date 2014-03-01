@@ -54,7 +54,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         long timeoutValue = getConfig().getTime("force-login.timeout.value", TimeUnit.TICKS);
         
         List<String> disableTimeoutForPlayers =
-                getConfig().getStringList("force-login.disable-timeout-for-players");
+                getConfig().getStringList("force-login.timeout.disable-for-players");
         
         for (Map.Entry<String, Session> entry : sessions.entrySet())
         {
