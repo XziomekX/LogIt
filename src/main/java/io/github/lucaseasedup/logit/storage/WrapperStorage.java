@@ -448,6 +448,7 @@ public final class WrapperStorage extends Storage
     public void setAutobatchEnabled(boolean status)
     {
         super.setAutobatchEnabled(status);
+        leading.setAutobatchEnabled(status);
         
         for (Storage storage : mirrors)
         {
