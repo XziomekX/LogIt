@@ -93,6 +93,7 @@ public enum TimeUnit
             return DAYS;
             
         case "w":
+        case "wk":
         case "week":
         case "weeks":
             return WEEKS;
