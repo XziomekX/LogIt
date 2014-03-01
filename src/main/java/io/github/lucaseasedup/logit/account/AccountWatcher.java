@@ -20,6 +20,9 @@ package io.github.lucaseasedup.logit.account;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.storage.Infix;
+import io.github.lucaseasedup.logit.storage.SelectorCondition;
+import io.github.lucaseasedup.logit.storage.SelectorNegation;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -37,6 +40,7 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
         if (!accountDeletionEnabled)
             return;
         
+        long now = System.currentTimeMillis() / 1000L;
         long inactivityTime =
                 getConfig().getTime("crowd-control.automatic-account-deletion.inactivity-time",
                         TimeUnit.SECONDS);
@@ -46,26 +50,32 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
             AccountKeys keys = getAccountManager().getKeys();
             List<Hashtable<String, String>> rs =
                     getAccountStorage().selectEntries(getAccountManager().getUnit(),
-                            Arrays.asList(keys.username(), keys.last_active_date()));
-            long now = System.currentTimeMillis() / 1000L;
+                            Arrays.asList(keys.username(), keys.last_active_date()),
+                            new SelectorNegation(
+                                new SelectorCondition(
+                                    keys.last_active_date(),
+                                    Infix.GREATER_THAN,
+                                    String.valueOf(now - inactivityTime)
+                                )
+                            ));
             
-            for (Hashtable<String, String> entry : rs)
+            if (!rs.isEmpty())
             {
-                if (getSessionManager().isSessionAlive(entry.get(keys.username())))
-                    continue;
+                getAccountStorage().setAutobatchEnabled(true);
                 
-                String lastActiveDateString = entry.get(keys.last_active_date());
-                
-                if (lastActiveDateString.isEmpty())
-                    continue;
-                
-                long lastActiveDate = Long.parseLong(lastActiveDateString);
-                long absenceTime = now - lastActiveDate;
-                
-                if (absenceTime >= inactivityTime)
+                for (Hashtable<String, String> entry : rs)
                 {
-                    getAccountManager().removeAccount(entry.get(keys.username()));
+                    String username = entry.get(keys.username());
+                    
+                    if (!getSessionManager().isSessionAlive(username))
+                    {
+                        getAccountManager().removeAccount(username);
+                    }
                 }
+                
+                getAccountStorage().executeBatch();
+                getAccountStorage().clearBatch();
+                getAccountStorage().setAutobatchEnabled(false);
             }
         }
         catch (IOException ex)
