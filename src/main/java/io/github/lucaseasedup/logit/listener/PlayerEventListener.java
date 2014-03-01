@@ -26,6 +26,7 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
 import io.github.lucaseasedup.logit.ForcedLoginPrompter;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
@@ -227,8 +228,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             getCore().getPersistenceManager().serialize(player);
             
-            int promptPeriod =
-                    getConfig().getInt("force-login.periodical-prompt.period_inSecs") * 20;
+            long promptPeriod =
+                    getConfig().getTime("force-login.periodical-prompt.period", TimeUnit.TICKS);
             int prompterId;
             
             ForcedLoginPrompter prompter = new ForcedLoginPrompter(getCore(), username);
