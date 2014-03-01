@@ -60,7 +60,7 @@ public final class SqlUtils
         }
         else if (selector instanceof SelectorNegation)
         {
-            return resolveSelector(((SelectorNegation) selector).getOperand(), entry);
+            return !resolveSelector(((SelectorNegation) selector).getOperand(), entry);
         }
         else if (selector instanceof SelectorBinary)
         {
