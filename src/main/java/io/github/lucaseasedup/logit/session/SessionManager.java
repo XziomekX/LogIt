@@ -80,7 +80,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
                 if (!containsIgnoreCase(username, disableTimeoutForPlayers)
                         && getCore().isPlayerForcedToLogIn(player))
                 {
-                    if (timeoutEnabled && session.getStatus() <= timeoutValue)
+                    if (timeoutEnabled && session.getStatus() <= -timeoutValue)
                     {
                         player.kickPlayer(getMessage("FORCE_LOGIN_TIMEOUT"));
                     }
