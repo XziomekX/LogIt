@@ -26,6 +26,7 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerName;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
@@ -49,9 +50,8 @@ public final class SessionManager extends LogItCoreObject implements Runnable
     @Override
     public void run()
     {
-        int forceLoginTimeoutInSecs = getConfig().getInt("force-login.timeout_inSecs");
-        long forceLoginTimeout =
-                (forceLoginTimeoutInSecs > 0L) ? (-forceLoginTimeoutInSecs * 20L) : Long.MIN_VALUE;
+        boolean timeoutEnabled = getConfig().getBoolean("force-login.timeout.enabled");
+        long timeoutValue = getConfig().getTime("force-login.timeout.value", TimeUnit.TICKS);
         
         List<String> disableTimeoutForPlayers =
                 getConfig().getStringList("force-login.disable-timeout-for-players");
@@ -80,7 +80,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
                 if (!containsIgnoreCase(username, disableTimeoutForPlayers)
                         && getCore().isPlayerForcedToLogIn(player))
                 {
-                    if (session.getStatus() <= forceLoginTimeout)
+                    if (timeoutEnabled && session.getStatus() <= timeoutValue)
                     {
                         player.kickPlayer(getMessage("FORCE_LOGIN_TIMEOUT"));
                     }
