@@ -20,6 +20,8 @@ package io.github.lucaseasedup.logit.config;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import com.google.common.collect.ImmutableMap;
+import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.config.validators.TimeStringValidator;
 import io.github.lucaseasedup.logit.util.IniUtils;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import it.sauronsoftware.base64.Base64;
@@ -37,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.bukkit.Color;
@@ -199,6 +202,28 @@ public final class LogItConfiguration extends PropertyObserver
     public LocationSerializable getLocation(String path)
     {
         return (LocationSerializable) properties.get(path).getValue();
+    }
+    
+    public long getTime(String path, TimeUnit resultingUnit)
+    {
+        if (path == null || resultingUnit == null)
+            throw new NullPointerException();
+        
+        Matcher matcher = TimeStringValidator.PATTERN.matcher(getString(path));
+        long time = 0;
+        
+        while (matcher.find())
+        {
+            String longValue = matcher.group(1);
+            TimeUnit unit = TimeUnit.decode(matcher.group(2));
+            
+            if (unit == null)
+                throw new InvalidPropertyValueException(path);
+            
+            time += unit.convertTo(Long.parseLong(longValue), resultingUnit);
+        }
+        
+        return time;
     }
     
     public void set(String path, Object value) throws InvalidPropertyValueException
