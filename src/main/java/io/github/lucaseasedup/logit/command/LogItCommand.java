@@ -168,6 +168,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 }
                 catch (FatalReportedException ex)
                 {
+                    getPlugin().disable();
+                    
                     return true;
                 }
                 
