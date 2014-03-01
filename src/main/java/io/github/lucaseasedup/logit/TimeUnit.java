@@ -20,7 +20,7 @@ package io.github.lucaseasedup.logit;
 
 public enum TimeUnit
 {
-    MILLISECONDS(1), SECONDS(1000), MINUTES(60000),
+    MILLISECONDS(1), TICKS(50), SECONDS(1000), MINUTES(60000),
     HOURS(3600000), DAYS(86400000), WEEKS(604800000);
     
     private TimeUnit(long milliseconds)
@@ -62,6 +62,10 @@ public enum TimeUnit
         case "millisecond":
         case "milliseconds":
             return MILLISECONDS;
+            
+        case "tick":
+        case "ticks":
+            return TICKS;
             
         case "s":
         case "sec":
