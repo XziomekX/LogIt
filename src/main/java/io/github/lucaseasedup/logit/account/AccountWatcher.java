@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.account;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.TimeUnit;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -30,11 +31,15 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
     @Override
     public void run()
     {
-        int inactivityTimeInSecs =
-                getConfig().getInt("crowd-control.automatic-account-deletion.inactivity-time_inHrs") * 3600;
+        boolean accountDeletionEnabled =
+                getConfig().getBoolean("crowd-control.automatic-account-deletion.enabled");
         
-        if (inactivityTimeInSecs < 0)
+        if (!accountDeletionEnabled)
             return;
+        
+        long inactivityTime =
+                getConfig().getTime("crowd-control.automatic-account-deletion.inactivity-time",
+                        TimeUnit.SECONDS);
         
         try
         {
@@ -57,7 +62,7 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
                 long lastActiveDate = Long.parseLong(lastActiveDateString);
                 long absenceTime = now - lastActiveDate;
                 
-                if (absenceTime >= inactivityTimeInSecs)
+                if (absenceTime >= inactivityTime)
                 {
                     getAccountManager().removeAccount(entry.get(keys.username()));
                 }
