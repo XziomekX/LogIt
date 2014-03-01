@@ -170,7 +170,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             getSessionManager().createSession(username, ip);
         }
         
-        int validnessTime = getConfig().getInt("login-sessions.validness-time_inSecs");
+        long validnessTime = getConfig().getTime("login-sessions.validness-time", TimeUnit.SECONDS);
         
         if (getConfig().getBoolean("login-sessions.enabled") && validnessTime > 0)
         {

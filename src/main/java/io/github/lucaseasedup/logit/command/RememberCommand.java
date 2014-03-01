@@ -20,6 +20,8 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.locale.Locale;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -60,7 +62,8 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
             }
             else
             {
-                int validnessTime = getConfig().getInt("login-sessions.validness-time_inSecs");
+                long validnessTime =
+                        getConfig().getTime("login-sessions.validness-time", TimeUnit.SECONDS);
                 int currentTime = (int) (System.currentTimeMillis() / 1000L);
                 
                 try
@@ -68,8 +71,10 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
                     getAccountManager().saveLoginSession(p.getName(),
                             PlayerUtils.getPlayerIp(p), currentTime);
                     
+                    Locale activeLocale = getLocaleManager().getActiveLocale();
+                    
                     sender.sendMessage(getMessage("REMEMBER_SUCCESS").replace("%time%",
-                            getLocaleManager().getActiveLocale().stringifySeconds(validnessTime)));
+                            activeLocale.stringifySeconds((int) validnessTime)));
                 }
                 catch (IOException ex)
                 {
