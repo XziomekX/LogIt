@@ -840,7 +840,8 @@ public final class LogItCore
      */
     public void sendForceLoginMessage(Player player)
     {
-        int minInterval = config.getInt("force-login.prompt.min-interval_inMillisecs");
+        long minInterval =
+                config.getTime("force-login.prompt.min-interval", TimeUnit.MILLISECONDS);
         
         if (minInterval > 0)
         {
