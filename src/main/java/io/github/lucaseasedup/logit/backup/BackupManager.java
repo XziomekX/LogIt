@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit.backup;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
+import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.Timer;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
@@ -54,9 +55,9 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         
         timer.run();
         
-        int intervalInSecs = getConfig().getInt("backup.schedule.interval_inMins") * 60;
+        long interval = getConfig().getTime("backup.schedule.interval", TimeUnit.TICKS);
         
-        if (timer.getElapsed() >= (intervalInSecs * 20L))
+        if (timer.getElapsed() >= interval)
         {
             try
             {
