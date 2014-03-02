@@ -34,7 +34,10 @@ public final class TimeStringValidator implements PropertyValidator
         
         Matcher matcher = PATTERN.matcher((String) value);
         
-        while (matcher.find())
+        if (!matcher.find())
+            return false;
+        
+        do
         {
             String longValue = matcher.group(1);
             TimeUnit unit = TimeUnit.decode(matcher.group(2));
@@ -51,6 +54,7 @@ public final class TimeStringValidator implements PropertyValidator
                 return false;
             }
         }
+        while (matcher.find());
         
         return true;
     }
