@@ -55,5 +55,7 @@ public final class TimeStringValidator implements PropertyValidator
         return true;
     }
     
-    public static final Pattern PATTERN = Pattern.compile("([0-9]+)\\s*([A-Za-z]+)");
+    public static final Pattern PATTERN =
+            Pattern.compile("(?<=^|[A-Za-z]\\s)\\s*([0-9]+)\\s*([A-Za-z]+)\\s*(?=\\s|$)",
+                    Pattern.MULTILINE);
 }
