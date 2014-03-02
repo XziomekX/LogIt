@@ -217,9 +217,10 @@ public final class LogItConfiguration extends PropertyObserver
             String longValue = matcher.group(1);
             TimeUnit unit = TimeUnit.decode(matcher.group(2));
             
-            assert unit != null;
-            
-            time += unit.convertTo(Long.parseLong(longValue), resultingUnit);
+            if (unit != null)
+            {
+                time += unit.convertTo(Long.parseLong(longValue), resultingUnit);
+            }
         }
         
         return time;
