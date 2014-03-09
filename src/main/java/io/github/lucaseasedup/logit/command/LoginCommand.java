@@ -26,13 +26,9 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.sendMessage;
 import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.AccountKeys;
-import io.github.lucaseasedup.logit.storage.Infix;
-import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
@@ -126,17 +122,11 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             }
             
             AccountKeys keys = getAccountManager().getKeys();
-            List<Hashtable<String, String>> rs;
+            Hashtable<String, String> result;
             
             try
             {
-                rs = getAccountStorage().selectEntries(getAccountManager().getUnit(),
-                        Arrays.asList(
-                            keys.username(),
-                            keys.password(),
-                            keys.salt(),
-                            keys.hashing_algorithm()
-                        ), new SelectorCondition(keys.username(), Infix.EQUALS, username));
+                result = getAccountManager().queryAccount(username);
             }
             catch (IOException ex)
             {
@@ -147,7 +137,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 return true;
             }
             
-            if (rs.isEmpty())
+            if (result == null)
             {
                 p.sendMessage(getMessage("NOT_REGISTERED_SELF"));
                 
@@ -156,10 +146,10 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             if (!disablePasswords && !getCore().checkGlobalPassword(args[0]))
             {
-                String userAlgorithm = rs.get(0).get(keys.hashing_algorithm());
-                String hashedPassword = rs.get(0).get(keys.password());
+                String userAlgorithm = result.get(keys.hashing_algorithm());
+                String hashedPassword = result.get(keys.password());
                 HashingAlgorithm algorithm = HashingAlgorithm.decode(userAlgorithm);
-                String actualSalt = rs.get(0).get(keys.salt());
+                String actualSalt = result.get(keys.salt());
                 
                 if (!getCore().checkPassword(args[0], hashedPassword, actualSalt, algorithm))
                 {

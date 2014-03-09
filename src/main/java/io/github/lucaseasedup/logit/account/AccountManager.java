@@ -104,11 +104,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     {
         try
         {
-            List<Hashtable<String, String>> rs =
-                    storage.selectEntries(unit, Arrays.asList(keys.username()),
-                    new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
-            
-            return !rs.isEmpty();
+            return queryAccount(username) != null;
         }
         catch (IOException ex)
         {
@@ -266,23 +262,17 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         
         try
         {
-            List<Hashtable<String, String>> result = storage.selectEntries(unit,
-                    Arrays.asList(
-                        keys.username(),
-                        keys.salt(),
-                        keys.password(),
-                        keys.hashing_algorithm()
-                    ), new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
+            Hashtable<String, String> result = queryAccount(username);
             
-            if (result.isEmpty())
+            if (result == null)
                 return false;
             
-            String actualHashedPassword = result.get(0).get(keys.password());
+            String actualHashedPassword = result.get(keys.password());
             HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
             
             if (!getConfig().getBoolean("password.use-global-hashing-algorithm"))
             {
-                String userAlgorithm = result.get(0).get(keys.hashing_algorithm());
+                String userAlgorithm = result.get(keys.hashing_algorithm());
                 
                 if (userAlgorithm != null)
                 {
@@ -292,7 +282,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             
             if (getConfig().getBoolean("password.use-salt"))
             {
-                String actualSalt = result.get(0).get(keys.salt());
+                String actualSalt = result.get(keys.salt());
                 
                 return getCore().checkPassword(password, actualHashedPassword, actualSalt, algorithm);
             }
@@ -468,14 +458,12 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     
     public String getEmail(String username) throws IOException
     {
-        List<Hashtable<String, String>> rs =
-                storage.selectEntries(unit, Arrays.asList(keys.username(), keys.email()),
-                new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
+        Hashtable<String, String> result = queryAccount(username);
         
-        if (rs.isEmpty())
+        if (result == null)
             return null;
         
-        return rs.get(0).get(keys.email());
+        return result.get(keys.email());
     }
     
     /**
@@ -533,14 +521,12 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     
     public Map<String, String> getAccountPersistence(String username) throws IOException
     {
-        List<Hashtable<String, String>> rs =
-                storage.selectEntries(unit, Arrays.asList(keys.username(), keys.persistence()),
-                new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
+        Hashtable<String, String> result = queryAccount(username);
         
-        if (rs.isEmpty())
+        if (result == null)
             return null;
         
-        String persistenceBase64String = rs.get(0).get(keys.persistence());
+        String persistenceBase64String = result.get(keys.persistence());
         Map<String, String> persistence = new LinkedHashMap<>();
         
         if (persistenceBase64String != null)

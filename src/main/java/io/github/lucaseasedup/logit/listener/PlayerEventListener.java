@@ -28,11 +28,8 @@ import io.github.lucaseasedup.logit.ForcedLoginPrompter;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.account.AccountKeys;
-import io.github.lucaseasedup.logit.storage.Infix;
-import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
@@ -70,14 +67,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         try
         {
             AccountKeys keys = getAccountManager().getKeys();
-            List<Hashtable<String, String>> rs =
-                    getAccountStorage().selectEntries(getAccountManager().getUnit(),
-                            Arrays.asList(
-                                    keys.username(),
-                                    keys.is_locked()
-                            ), new SelectorCondition(keys.username(), Infix.EQUALS, username));
+            Hashtable<String, String> result = getAccountManager().queryAccount(username);
             
-            if (!rs.isEmpty())
+            if (result != null)
             {
                 isRegistered = true;
                 
@@ -177,16 +169,11 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             try
             {
                 AccountKeys keys = getAccountManager().getKeys();
-                List<Hashtable<String, String>> rs =
-                    getAccountStorage().selectEntries(getAccountManager().getUnit(),
-                            Arrays.asList(
-                                keys.username(),
-                                keys.login_session()
-                            ), new SelectorCondition(keys.username(), Infix.EQUALS, username));
+                Hashtable<String, String> result = getAccountManager().queryAccount(username);
                 
-                if (!rs.isEmpty())
+                if (result != null)
                 {
-                    String loginSession = rs.get(0).get(keys.login_session());
+                    String loginSession = result.get(keys.login_session());
                     
                     if (loginSession != null && !loginSession.isEmpty())
                     {
