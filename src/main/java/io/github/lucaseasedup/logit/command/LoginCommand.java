@@ -122,11 +122,11 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             }
             
             AccountKeys keys = getAccountManager().getKeys();
-            Hashtable<String, String> result;
+            Hashtable<String, String> accountData;
             
             try
             {
-                result = getAccountManager().queryAccount(username);
+                accountData = getAccountManager().queryAccount(username);
             }
             catch (IOException ex)
             {
@@ -137,7 +137,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 return true;
             }
             
-            if (result == null)
+            if (accountData == null)
             {
                 p.sendMessage(getMessage("NOT_REGISTERED_SELF"));
                 
@@ -146,10 +146,10 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             if (!disablePasswords && !getCore().checkGlobalPassword(args[0]))
             {
-                String userAlgorithm = result.get(keys.hashing_algorithm());
-                String hashedPassword = result.get(keys.password());
+                String userAlgorithm = accountData.get(keys.hashing_algorithm());
+                String hashedPassword = accountData.get(keys.password());
                 HashingAlgorithm algorithm = HashingAlgorithm.decode(userAlgorithm);
-                String actualSalt = result.get(keys.salt());
+                String actualSalt = accountData.get(keys.salt());
                 
                 if (!getCore().checkPassword(args[0], hashedPassword, actualSalt, algorithm))
                 {

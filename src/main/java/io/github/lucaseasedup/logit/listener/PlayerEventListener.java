@@ -62,18 +62,18 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     {
         Player player = event.getPlayer();
         String username = player.getName().toLowerCase();
-        boolean isRegistered = false;
+        
+        AccountKeys keys = getAccountManager().getKeys();
+        Hashtable<String, String> accountData = null;
         
         try
         {
-            AccountKeys keys = getAccountManager().getKeys();
-            Hashtable<String, String> result = getAccountManager().queryAccount(username);
             
-            if (result != null)
+            accountData = getAccountManager().queryAccount(username);
+            
+            if (accountData != null)
             {
-                isRegistered = true;
-                
-                if ("1".equals(result.get(keys.is_locked())))
+                if ("1".equals(accountData.get(keys.is_locked())))
                 {
                     event.disallow(Result.KICK_OTHER, getMessage("ACCLOCK_SUCCESS_SELF"));
                     
@@ -116,7 +116,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             event.disallow(KICK_OTHER, getMessage("USERNAME_ALREADY_USED"));
         }
-        else if (getConfig().getBoolean("crowd-control.kick-unregistered") && !isRegistered)
+        else if (getConfig().getBoolean("crowd-control.kick-unregistered") && accountData == null)
         {
             event.disallow(KICK_OTHER, getMessage("KICK_UNREGISTERED"));
         }
@@ -164,16 +164,18 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         long validnessTime = getConfig().getTime("login-sessions.validness-time", TimeUnit.SECONDS);
         
+        AccountKeys keys = getAccountManager().getKeys();
+        Hashtable<String, String> accountData = null;
+        
         if (getConfig().getBoolean("login-sessions.enabled") && validnessTime > 0)
         {
             try
             {
-                AccountKeys keys = getAccountManager().getKeys();
-                Hashtable<String, String> result = getAccountManager().queryAccount(username);
+                accountData = getAccountManager().queryAccount(username);
                 
-                if (result != null)
+                if (accountData != null)
                 {
-                    String loginSession = result.get(keys.login_session());
+                    String loginSession = accountData.get(keys.login_session());
                     
                     if (loginSession != null && !loginSession.isEmpty())
                     {
