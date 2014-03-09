@@ -135,6 +135,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * 
      * <p> The password will be hashed using the default algorithm.
      * 
+     * <p> Also note that the username may not preserve its original letter case
+     * when stored in the database.
+     * 
      * @param username the username.
      * @param password the password.
      * 
