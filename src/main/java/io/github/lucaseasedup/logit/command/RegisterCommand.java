@@ -114,7 +114,8 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                                     && getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
                             {
                                 Location newbieTeleportLocation =
-                                        getConfig().getLocation("waiting-room.newbie-teleport.location").toBukkitLocation();
+                                        getConfig().getLocation("waiting-room.newbie-teleport.location")
+                                                .toBukkitLocation();
                                 
                                 getPlayer(args[1]).teleport(newbieTeleportLocation);
                             }
@@ -205,7 +206,8 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                                 && getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
                         {
                             Location newbieTeleportLocation =
-                                    getConfig().getLocation("waiting-room.newbie-teleport.location").toBukkitLocation();
+                                    getConfig().getLocation("waiting-room.newbie-teleport.location")
+                                            .toBukkitLocation();
                             
                             p.teleport(newbieTeleportLocation);
                         }
