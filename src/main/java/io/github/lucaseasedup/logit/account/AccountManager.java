@@ -72,6 +72,34 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         }
     }
     
+    /**
+     * Returns account data of a specific account.
+     * 
+     * <p> Take caution that this method may imply quering the storage every time it's called,
+     * therefore consider storing the result for future use when applicable.
+     * 
+     * @param username the username that the account holds.
+     * 
+     * @return a {@code Hashtable} with account data,
+     *         or {@code null} if there is no account with the specified username.
+     * 
+     * @throws NullPointerException if {@code username} is null.
+     * @throws IOException          if an I/O error occurred.
+     */
+    public Hashtable<String, String> queryAccount(String username) throws IOException
+    {
+        if (username == null)
+            throw new NullPointerException();
+        
+        List<Hashtable<String, String>> result = storage.selectEntries(unit, keys.getNames(),
+                new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
+        
+        if (result.isEmpty())
+            return null;
+        
+        return result.get(0);
+    }
+    
     public boolean isRegistered(String username)
     {
         try
