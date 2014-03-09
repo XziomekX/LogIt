@@ -52,7 +52,7 @@ public final class ConvertWizard extends Wizard
     {
         if (getCurrentStep() == Step.WELCOME_CHOICE)
         {
-            if (message.equals("proceed"))
+            if ("proceed".equals(message))
             {
                 sendMessage(getMessage("CONVERT_ENTER_DBTYPE"));
                 updateStep(Step.ENTER_DBTYPE);
@@ -192,7 +192,7 @@ public final class ConvertWizard extends Wizard
         }
         else if (getCurrentStep() == Step.FINISH_CHOICE)
         {
-            if (message.equals("proceed"))
+            if ("proceed".equals(message))
             {
                 getConfig().set("storage.accounts.leading.storage-type", dbtype);
                 

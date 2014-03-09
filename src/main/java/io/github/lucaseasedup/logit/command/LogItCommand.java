@@ -511,7 +511,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                     case STRING: outputValue = inputValue;                  break;
                     case VECTOR:
                     {
-                        if (inputValue.equals("$"))
+                        if ("$".equals(inputValue))
                         {
                             if (p != null)
                             {
@@ -552,7 +552,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                         throw new Exception("Unsupported property type conversion.");
                     case LOCATION:
                     {
-                        if (inputValue.equals("$"))
+                        if ("$".equals(inputValue))
                         {
                             if (p != null)
                             {

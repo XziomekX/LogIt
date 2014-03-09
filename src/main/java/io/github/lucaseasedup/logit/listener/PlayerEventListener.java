@@ -73,7 +73,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             {
                 isRegistered = true;
                 
-                if (rs.get(0).get(keys.is_locked()).equals("1"))
+                if ("1".equals(result.get(keys.is_locked())))
                 {
                     event.disallow(Result.KICK_OTHER, getMessage("ACCLOCK_SUCCESS_SELF"));
                     
