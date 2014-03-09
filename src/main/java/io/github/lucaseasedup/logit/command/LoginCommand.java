@@ -193,6 +193,11 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 {
                     sender.sendMessage(getMessage("REMEMBER_PROMPT"));
                 }
+                
+                if (accountData.get(keys.ip()).trim().isEmpty())
+                {
+                    getAccountManager().attachIp(username, getPlayerIp(p));
+                }
             }
         }
         else
