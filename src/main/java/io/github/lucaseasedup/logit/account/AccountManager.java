@@ -91,7 +91,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         if (username == null)
             throw new NullPointerException();
         
-        List<Hashtable<String, String>> result = storage.selectEntries(unit, keys.getNames(),
+        List<Hashtable<String, String>> result = storage.selectEntries(unit,
                 new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
         
         if (result.isEmpty())
