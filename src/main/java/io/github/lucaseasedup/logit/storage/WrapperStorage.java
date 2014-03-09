@@ -156,6 +156,31 @@ public final class WrapperStorage extends Storage
     
     @Override
     public List<Hashtable<String, String>> selectEntries(String unit,
+                                                         Selector selector) throws IOException
+    {
+        if (cacheType == CacheType.DISABLED)
+        {
+            return leading.selectEntries(unit, selector);
+        }
+        else if (cacheType == CacheType.PRELOADED)
+        {
+            if (preloadedCache.containsKey(unit))
+            {
+                return copyCacheResultList(preloadedCache.get(unit), null, selector);
+            }
+            else
+            {
+                return leading.selectEntries(unit, selector);
+            }
+        }
+        else
+        {
+            throw new RuntimeException("Unknown cache type: " + cacheType);
+        }
+    }
+    
+    @Override
+    public List<Hashtable<String, String>> selectEntries(String unit,
                                                          List<String> keys,
                                                          Selector selector) throws IOException
     {
@@ -539,17 +564,20 @@ public final class WrapperStorage extends Storage
                 
                 for (Entry<String, String> e : entry.entrySet())
                 {
-                    if (keys.contains(e.getKey()))
+                    if (keys == null || keys.contains(e.getKey()))
                     {
                         resultEntry.put(e.getKey(), e.getValue());
                     }
                 }
                 
-                for (String key : keys)
+                if (keys != null)
                 {
-                    if (!resultEntry.containsKey(key))
+                    for (String key : keys)
                     {
-                        resultEntry.put(key, "");
+                        if (!resultEntry.containsKey(key))
+                        {
+                            resultEntry.put(key, "");
+                        }
                     }
                 }
                 

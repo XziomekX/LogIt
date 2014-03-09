@@ -39,6 +39,8 @@ public abstract class Storage implements AutoCloseable
     public abstract List<Hashtable<String, String>> selectEntries(String unit,
                                                             List<String> keys) throws IOException;
     public abstract List<Hashtable<String, String>> selectEntries(String unit,
+                                                            Selector selector) throws IOException;
+    public abstract List<Hashtable<String, String>> selectEntries(String unit,
                                                             List<String> keys,
                                                             Selector selector) throws IOException;
     

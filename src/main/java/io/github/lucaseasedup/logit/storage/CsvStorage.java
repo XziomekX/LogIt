@@ -116,7 +116,7 @@ public final class CsvStorage extends Storage
     @Override
     public List<Hashtable<String, String>> selectEntries(String unit) throws IOException
     {
-        return selectEntries(unit, null);
+        return selectEntries(unit, null, new SelectorConstant(true));
     }
     
     @Override
@@ -124,6 +124,13 @@ public final class CsvStorage extends Storage
             throws IOException
     {
         return selectEntries(unit, keys, new SelectorConstant(true));
+    }
+    
+    @Override
+    public List<Hashtable<String, String>> selectEntries(String unit,
+                                                         Selector selector) throws IOException
+    {
+        return selectEntries(unit, null, selector);
     }
     
     @Override

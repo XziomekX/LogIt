@@ -73,6 +73,13 @@ public final class NullStorage extends Storage
     
     @Override
     public List<Hashtable<String, String>> selectEntries(String unit,
+                                                         Selector selector) throws IOException
+    {
+        return new ArrayList<>();
+    }
+    
+    @Override
+    public List<Hashtable<String, String>> selectEntries(String unit,
                                                          List<String> keys,
                                                          Selector selector) throws IOException
     {

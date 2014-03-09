@@ -177,6 +177,23 @@ public final class H2Storage extends Storage
     
     @Override
     public List<Hashtable<String, String>> selectEntries(String unit,
+                                                         Selector selector) throws IOException
+    {
+        String sql = "SELECT * FROM \"" + SqlUtils.escapeQuotes(unit, "\"", true) + "\""
+                + " WHERE " + SqlUtils.translateSelector(selector, "\"", "'") + ";";
+        
+        try
+        {
+            return SqlUtils.copyResultSet(executeQuery(sql));
+        }
+        catch (SQLException ex)
+        {
+            throw new IOException(ex);
+        }
+    }
+    
+    @Override
+    public List<Hashtable<String, String>> selectEntries(String unit,
                                                          List<String> keys,
                                                          Selector selector) throws IOException
     {
