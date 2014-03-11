@@ -28,9 +28,9 @@ import io.github.lucaseasedup.logit.ForcedLoginPrompter;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.account.AccountKeys;
+import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
@@ -64,7 +64,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         String username = player.getName().toLowerCase();
         
         AccountKeys keys = getAccountManager().getKeys();
-        Hashtable<String, String> accountData = null;
+        Storage.Entry accountData = null;
         
         try
         {
@@ -165,7 +165,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         long validnessTime = getConfig().getTime("login-sessions.validness-time", TimeUnit.SECONDS);
         
         AccountKeys keys = getAccountManager().getKeys();
-        Hashtable<String, String> accountData = null;
+        Storage.Entry accountData = null;
         
         if (getConfig().getBoolean("login-sessions.enabled") && validnessTime > 0)
         {

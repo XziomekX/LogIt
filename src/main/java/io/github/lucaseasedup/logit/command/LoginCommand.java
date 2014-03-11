@@ -26,9 +26,9 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.sendMessage;
 import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.AccountKeys;
+import io.github.lucaseasedup.logit.storage.Storage;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
@@ -122,7 +122,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             }
             
             AccountKeys keys = getAccountManager().getKeys();
-            Hashtable<String, String> accountData;
+            Storage.Entry accountData;
             
             try
             {

@@ -23,9 +23,9 @@ import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.SelectorNegation;
+import io.github.lucaseasedup.logit.storage.Storage;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -48,7 +48,7 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
         try
         {
             AccountKeys keys = getAccountManager().getKeys();
-            List<Hashtable<String, String>> rs =
+            List<Storage.Entry> entries =
                     getAccountStorage().selectEntries(getAccountManager().getUnit(),
                             Arrays.asList(keys.username(), keys.last_active_date()),
                             new SelectorNegation(
@@ -59,11 +59,11 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
                                 )
                             ));
             
-            if (!rs.isEmpty())
+            if (!entries.isEmpty())
             {
                 getAccountStorage().setAutobatchEnabled(true);
                 
-                for (Hashtable<String, String> entry : rs)
+                for (Storage.Entry entry : entries)
                 {
                     String username = entry.get(keys.username());
                     

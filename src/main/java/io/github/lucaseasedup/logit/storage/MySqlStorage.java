@@ -145,7 +145,7 @@ public final class MySqlStorage extends Storage
     }
     
     @Override
-    public List<Hashtable<String, String>> selectEntries(String unit) throws IOException
+    public List<Storage.Entry> selectEntries(String unit) throws IOException
     {
         String sql = "SELECT * FROM `" + SqlUtils.escapeQuotes(unit, "`", true) + "`;";
         
@@ -160,7 +160,7 @@ public final class MySqlStorage extends Storage
     }
     
     @Override
-    public List<Hashtable<String, String>> selectEntries(String unit, List<String> keys)
+    public List<Storage.Entry> selectEntries(String unit, List<String> keys)
             throws IOException
     {
         String sql = "SELECT " + SqlUtils.translateKeyList(keys, "`")
@@ -177,8 +177,7 @@ public final class MySqlStorage extends Storage
     }
     
     @Override
-    public List<Hashtable<String, String>> selectEntries(String unit,
-                                                         Selector selector) throws IOException
+    public List<Storage.Entry> selectEntries(String unit, Selector selector) throws IOException
     {
         String sql = "SELECT * FROM `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
                 + " WHERE " + SqlUtils.translateSelector(selector, "`", "'") + ";";
@@ -194,9 +193,8 @@ public final class MySqlStorage extends Storage
     }
     
     @Override
-    public List<Hashtable<String, String>> selectEntries(String unit,
-                                                         List<String> keys,
-                                                         Selector selector) throws IOException
+    public List<Storage.Entry> selectEntries(String unit, List<String> keys, Selector selector)
+            throws IOException
     {
         String sql = "SELECT " + SqlUtils.translateKeyList(keys, "`")
                 + " FROM `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
@@ -292,11 +290,11 @@ public final class MySqlStorage extends Storage
     }
     
     @Override
-    public void addEntry(String unit, Hashtable<String, String> pairs) throws IOException
+    public void addEntry(String unit, Storage.Entry entry) throws IOException
     {
         String sql = "INSERT INTO `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
-                + " (" + SqlUtils.translatePairNames(pairs, "`") + ")"
-                + " VALUES (" + SqlUtils.translatePairValues(pairs, "'") + ");";
+                + " (" + SqlUtils.translateEntryNames(entry, "`") + ")"
+                + " VALUES (" + SqlUtils.translateEntryValues(entry, "'") + ");";
         
         try
         {
@@ -309,11 +307,11 @@ public final class MySqlStorage extends Storage
     }
     
     @Override
-    public void updateEntries(String unit, Hashtable<String, String> pairs, Selector selector)
+    public void updateEntries(String unit, Storage.Entry entrySubset, Selector selector)
             throws IOException
     {
         String sql = "UPDATE `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
-                + " SET " + SqlUtils.translatePairs(pairs, "`", "'")
+                + " SET " + SqlUtils.translateEntrySubset(entrySubset, "`", "'")
                 + " WHERE " + SqlUtils.translateSelector(selector, "`", "'") + ";";
         
         try

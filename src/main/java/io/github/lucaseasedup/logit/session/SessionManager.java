@@ -37,7 +37,6 @@ import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -323,10 +322,10 @@ public final class SessionManager extends LogItCoreObject implements Runnable
             {
                 String username = player.getName().toLowerCase();
                 
-                sessionsStorage.addEntry("sessions", new HashtableBuilder<String, String>()
-                        .add("username", username)
-                        .add("status", String.valueOf(getSession(username).getStatus()))
-                        .add("ip", getPlayerIp(player))
+                sessionsStorage.addEntry("sessions", new Storage.Entry.Builder()
+                        .put("username", username)
+                        .put("status", String.valueOf(getSession(username).getStatus()))
+                        .put("ip", getPlayerIp(player))
                         .build());
             }
             
@@ -351,16 +350,16 @@ public final class SessionManager extends LogItCoreObject implements Runnable
                     createSession(username, "");
                 }
                 
-                List<Hashtable<String, String>> rs = sessionsStorage.selectEntries("sessions",
+                List<Storage.Entry> entries = sessionsStorage.selectEntries("sessions",
                         Arrays.asList("username", "status", "ip"),
                         new SelectorCondition("username", Infix.EQUALS, username));
                 
-                if (!rs.isEmpty())
+                if (!entries.isEmpty())
                 {
                     Session session = getSession(username);
                     
-                    session.setStatus(Integer.parseInt(rs.get(0).get("status")));
-                    session.setIp(rs.get(0).get("ip"));
+                    session.setStatus(Integer.parseInt(entries.get(0).get("status")));
+                    session.setIp(entries.get(0).get("ip"));
                 }
             }
         }

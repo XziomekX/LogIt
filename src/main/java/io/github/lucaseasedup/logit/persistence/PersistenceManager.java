@@ -22,7 +22,7 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
-import io.github.lucaseasedup.logit.util.HashtableBuilder;
+import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.IniUtils;
 import it.sauronsoftware.base64.Base64;
 import java.io.IOException;
@@ -79,8 +79,8 @@ public final class PersistenceManager extends LogItCoreObject
             
             persistenceIni.put("persistence", persistence);
             getAccountStorage().updateEntries(getAccountManager().getUnit(),
-                    new HashtableBuilder<String, String>()
-                        .add(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
+                    new Storage.Entry.Builder()
+                        .put(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
                         .build(),
                     new SelectorCondition(keys.username(), Infix.EQUALS, username));
         }
@@ -122,8 +122,8 @@ public final class PersistenceManager extends LogItCoreObject
             
             persistenceIni.put("persistence", persistence);
             getAccountStorage().updateEntries(getAccountManager().getUnit(),
-                    new HashtableBuilder<String, String>()
-                        .add(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
+                    new Storage.Entry.Builder()
+                        .put(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
                         .build(),
                     new SelectorCondition(keys.username(), Infix.EQUALS, username));
         }
@@ -173,8 +173,8 @@ public final class PersistenceManager extends LogItCoreObject
             
             persistenceIni.put("persistence", persistence);
             getAccountStorage().updateEntries(getAccountManager().getUnit(),
-                    new HashtableBuilder<String, String>()
-                        .add(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
+                    new Storage.Entry.Builder()
+                        .put(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
                         .build(),
                     new SelectorCondition(keys.username(), Infix.EQUALS, username));
         }
@@ -227,8 +227,8 @@ public final class PersistenceManager extends LogItCoreObject
             
             persistenceIni.put("persistence", persistence);
             getAccountStorage().updateEntries(getAccountManager().getUnit(),
-                    new HashtableBuilder<String, String>()
-                        .add(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
+                    new Storage.Entry.Builder()
+                        .put(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
                         .build(),
                     new SelectorCondition(keys.username(), Infix.EQUALS, username));
         }

@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -87,7 +86,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         if (!backupFile.createNewFile())
             throw new IOException("Backup already exists.");
         
-        List<Hashtable<String, String>> rs =
+        List<Storage.Entry> entries =
                 getAccountStorage().selectEntries(getAccountManager().getUnit());
         
         try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
@@ -97,7 +96,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
                     getAccountStorage().getKeys(getAccountManager().getUnit()));
             backupStorage.setAutobatchEnabled(true);
             
-            for (Hashtable<String, String> entry : rs)
+            for (Storage.Entry entry : entries)
             {
                 backupStorage.addEntry(getAccountManager().getUnit(), entry);
             }
@@ -129,13 +128,13 @@ public final class BackupManager extends LogItCoreObject implements Runnable
             {
                 backupStorage.connect();
                 
-                List<Hashtable<String, String>> rs =
+                List<Storage.Entry> entries =
                         backupStorage.selectEntries(getAccountManager().getUnit());
                 
                 getAccountStorage().eraseUnit(getAccountManager().getUnit());
                 getAccountStorage().setAutobatchEnabled(true);
                 
-                for (Hashtable<String, String> entry : rs)
+                for (Storage.Entry entry : entries)
                 {
                     getAccountStorage().addEntry(getAccountManager().getUnit(), entry);
                 }

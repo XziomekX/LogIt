@@ -23,7 +23,7 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
-import io.github.lucaseasedup.logit.util.HashtableBuilder;
+import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -68,8 +68,8 @@ public final class AcclockCommand extends LogItCoreObject implements CommandExec
                 {
                     AccountKeys keys = getAccountManager().getKeys();
                     getAccountStorage().updateEntries(getAccountManager().getUnit(),
-                            new HashtableBuilder<String, String>()
-                                .add(keys.is_locked(), "1")
+                            new Storage.Entry.Builder()
+                                .put(keys.is_locked(), "1")
                                 .build(),
                             new SelectorCondition(
                                 keys.username(), Infix.EQUALS, args[0].toLowerCase()

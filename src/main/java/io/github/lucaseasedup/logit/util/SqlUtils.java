@@ -24,6 +24,7 @@ import io.github.lucaseasedup.logit.storage.SelectorBinary;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.SelectorConstant;
 import io.github.lucaseasedup.logit.storage.SelectorNegation;
+import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.storage.Storage.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,8 +32,6 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import org.apache.tools.ant.util.LinkedHashtable;
 
 public final class SqlUtils
 {
@@ -52,7 +51,7 @@ public final class SqlUtils
         return string;
     }
     
-    public static boolean resolveSelector(Selector selector, Map<String, String> entry)
+    public static boolean resolveSelector(Selector selector, Storage.Entry entry)
     {
         if (selector instanceof SelectorConstant)
         {
@@ -134,35 +133,28 @@ public final class SqlUtils
         }
     }
     
-    public static List<Hashtable<String, String>> copyResultSet(ResultSet rs) throws SQLException
+    public static List<Storage.Entry> copyResultSet(ResultSet rs) throws SQLException
     {
-        List<Hashtable<String, String>> result = new LinkedList<>();
+        List<Storage.Entry> entries = new LinkedList<>();
         
         if (rs != null && rs.isBeforeFirst())
         {
             while (rs.next())
             {
-                Hashtable<String, String> row = new LinkedHashtable<>();
+                Storage.Entry entry = new Storage.Entry();
                 
                 for (int i = 1, n = rs.getMetaData().getColumnCount(); i <= n; i++)
                 {
-                    String value = rs.getString(i);
-                    
-                    if (value == null)
-                    {
-                        value = "";
-                    }
-                    
-                    row.put(rs.getMetaData().getColumnLabel(i), value);
+                    entry.put(rs.getMetaData().getColumnLabel(i), rs.getString(i));
                 }
                 
-                result.add(row);
+                entries.add(entry);
             }
             
             rs.close();
         }
         
-        return result;
+        return entries;
     }
     
     public static String translateSelector(Selector selector, String columnQuote, String valueQuote)
@@ -349,7 +341,7 @@ public final class SqlUtils
     {
         StringBuilder sb = new StringBuilder();
         
-        for (Entry<String, Type> e : keys.entrySet())
+        for (Map.Entry<String, Type> e : keys.entrySet())
         {
             if (sb.length() > 0)
             {
@@ -366,11 +358,11 @@ public final class SqlUtils
         return sb.toString();
     }
     
-    public static String translatePairNames(Hashtable<String, String> pairs, String columnQuote)
+    public static String translateEntryNames(Storage.Entry entry, String columnQuote)
     {
         StringBuilder sb = new StringBuilder();
         
-        for (Entry<String, String> e : pairs.entrySet())
+        for (Storage.Entry.Datum datum : entry)
         {
             if (sb.length() > 0)
             {
@@ -378,18 +370,18 @@ public final class SqlUtils
             }
             
             sb.append(columnQuote);
-            sb.append(escapeQuotes(e.getKey(), columnQuote, true));
+            sb.append(escapeQuotes(datum.getKey(), columnQuote, true));
             sb.append(columnQuote);
         }
         
         return sb.toString();
     }
     
-    public static String translatePairValues(Hashtable<String, String> pairs, String valueQuote)
+    public static String translateEntryValues(Storage.Entry entry, String valueQuote)
     {
         StringBuilder sb = new StringBuilder();
         
-        for (Entry<String, String> e : pairs.entrySet())
+        for (Storage.Entry.Datum datum : entry)
         {
             if (sb.length() > 0)
             {
@@ -397,20 +389,20 @@ public final class SqlUtils
             }
             
             sb.append(valueQuote);
-            sb.append(escapeQuotes(e.getValue(), valueQuote, true));
+            sb.append(escapeQuotes(datum.getValue(), valueQuote, true));
             sb.append(valueQuote);
         }
         
         return sb.toString();
     }
     
-    public static String translatePairs(Hashtable<String, String> pairs,
-                                        String columnQuote,
-                                        String valueQuote)
+    public static String translateEntrySubset(Storage.Entry entrySubset,
+                                              String columnQuote,
+                                              String valueQuote)
     {
         StringBuilder sb = new StringBuilder();
         
-        for (Entry<String, String> e : pairs.entrySet())
+        for (Storage.Entry.Datum datum : entrySubset)
         {
             if (sb.length() > 0)
             {
@@ -418,11 +410,11 @@ public final class SqlUtils
             }
             
             sb.append(columnQuote);
-            sb.append(escapeQuotes(e.getKey(), columnQuote, true));
+            sb.append(escapeQuotes(datum.getKey(), columnQuote, true));
             sb.append(columnQuote);
             sb.append(" = ");
             sb.append(valueQuote);
-            sb.append(escapeQuotes(e.getValue(), valueQuote, true));
+            sb.append(escapeQuotes(datum.getValue(), valueQuote, true));
             sb.append(valueQuote);
         }
         

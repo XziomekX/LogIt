@@ -22,8 +22,8 @@ import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.FatalReportedException;
 import io.github.lucaseasedup.logit.config.PropertyType;
 import io.github.lucaseasedup.logit.config.validators.DbTypeValidator;
+import io.github.lucaseasedup.logit.storage.Storage;
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.command.CommandSender;
@@ -218,11 +218,11 @@ public final class ConvertWizard extends Wizard
                 
                 try
                 {
-                    List<Hashtable<String, String>> rs = null;
+                    List<Storage.Entry> entries = null;
                     
                     if (copyAccounts)
                     {
-                        rs = getAccountStorage().selectEntries(getAccountManager().getUnit(),
+                        entries = getAccountStorage().selectEntries(getAccountManager().getUnit(),
                                 getAccountManager().getKeys().getNames());
                     }
                     
@@ -232,7 +232,7 @@ public final class ConvertWizard extends Wizard
                     {
                         getAccountStorage().setAutobatchEnabled(true);
                         
-                        for (Hashtable<String, String> entry : rs)
+                        for (Storage.Entry entry : entries)
                         {
                             getAccountStorage().addEntry(getAccountManager().getUnit(), entry);
                         }

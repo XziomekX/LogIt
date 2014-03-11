@@ -29,7 +29,6 @@ import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.SelectorNegation;
 import io.github.lucaseasedup.logit.storage.Storage;
-import io.github.lucaseasedup.logit.util.HashtableBuilder;
 import io.github.lucaseasedup.logit.util.IniUtils;
 import it.sauronsoftware.base64.Base64;
 import java.io.IOException;
@@ -38,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,18 +84,18 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @throws NullPointerException if {@code username} is null.
      * @throws IOException          if an I/O error occurred.
      */
-    public Hashtable<String, String> queryAccount(String username) throws IOException
+    public Storage.Entry queryAccount(String username) throws IOException
     {
         if (username == null)
             throw new NullPointerException();
         
-        List<Hashtable<String, String>> result = storage.selectEntries(unit,
+        List<Storage.Entry> entries = storage.selectEntries(unit,
                 new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
         
-        if (result.isEmpty())
+        if (entries.isEmpty())
             return null;
         
-        return result.get(0);
+        return entries.get(0);
     }
     
     public boolean isRegistered(String username)
@@ -119,10 +117,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     public Set<String> getRegisteredUsernames() throws IOException
     {
         Set<String> usernames = new HashSet<>();
-        List<Hashtable<String, String>> result =
-                storage.selectEntries(unit, Arrays.asList(keys.username()));
+        List<Storage.Entry> entries = storage.selectEntries(unit, Arrays.asList(keys.username()));
         
-        for (Hashtable<String, String> entry : result)
+        for (Storage.Entry entry : entries)
         {
             usernames.add(entry.get(keys.username()));
         }
@@ -152,7 +149,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         if (isRegistered(username))
             throw new AccountAlreadyExistsException();
         
-        Hashtable<String, String> pairs = new Hashtable<>();
+        Storage.Entry entry = new Storage.Entry();
         String now = String.valueOf(System.currentTimeMillis() / 1000L);
         HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
         
@@ -164,22 +161,22 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             {
                 String salt = HashGenerator.generateSalt(algorithm);
                 hash = getCore().hash(password, salt, algorithm);
-                pairs.put(keys.salt(), salt);
+                entry.put(keys.salt(), salt);
             }
             else
             {
                 hash = getCore().hash(password, algorithm);
             }
             
-            pairs.put(keys.password(), hash);
-            pairs.put(keys.hashing_algorithm(), algorithm.encode());
+            entry.put(keys.password(), hash);
+            entry.put(keys.hashing_algorithm(), algorithm.encode());
         }
         
-        pairs.put(keys.username(), username.toLowerCase());
-        pairs.put(keys.last_active_date(), now);
-        pairs.put(keys.reg_date(), now);
+        entry.put(keys.username(), username.toLowerCase());
+        entry.put(keys.last_active_date(), now);
+        entry.put(keys.reg_date(), now);
         
-        AccountEvent evt = new AccountCreateEvent(pairs);
+        AccountEvent evt = new AccountCreateEvent(entry);
         Bukkit.getPluginManager().callEvent(evt);
         
         if (evt.isCancelled())
@@ -187,7 +184,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         
         try
         {
-            storage.addEntry(unit, pairs);
+            storage.addEntry(unit, entry);
             
             log(Level.FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
             evt.executeSuccessTasks();
@@ -265,17 +262,17 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         
         try
         {
-            Hashtable<String, String> result = queryAccount(username);
+            Storage.Entry entry = queryAccount(username);
             
-            if (result == null)
+            if (entry == null)
                 return false;
             
-            String actualHashedPassword = result.get(keys.password());
+            String actualHashedPassword = entry.get(keys.password());
             HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
             
             if (!getConfig().getBoolean("password.use-global-hashing-algorithm"))
             {
-                String userAlgorithm = result.get(keys.hashing_algorithm());
+                String userAlgorithm = entry.get(keys.hashing_algorithm());
                 
                 if (userAlgorithm != null)
                 {
@@ -285,7 +282,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             
             if (getConfig().getBoolean("password.use-salt"))
             {
-                String actualSalt = result.get(keys.salt());
+                String actualSalt = entry.get(keys.salt());
                 
                 return getCore().checkPassword(password, actualHashedPassword, actualSalt, algorithm);
             }
@@ -322,7 +319,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         if (getConfig().getBoolean("password.disable-passwords"))
             return CancelledState.NOT_CANCELLED;
         
-        Hashtable<String, String> pairs = new Hashtable<>();
+        Storage.Entry entry = new Storage.Entry();
         HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
         String newHash;
         
@@ -330,19 +327,19 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         {
             String newSalt = HashGenerator.generateSalt(algorithm);
             newHash = getCore().hash(newPassword, newSalt, algorithm);
-            pairs.put(keys.salt(), newSalt);
+            entry.put(keys.salt(), newSalt);
         }
         else
         {
             newHash = getCore().hash(newPassword, algorithm);
         }
         
-        pairs.put(keys.hashing_algorithm(), algorithm.encode());
-        pairs.put(keys.password(), newHash);
+        entry.put(keys.hashing_algorithm(), algorithm.encode());
+        entry.put(keys.password(), newHash);
         
         try
         {
-            storage.updateEntries(unit, pairs,
+            storage.updateEntries(unit, entry,
                     new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
             
             log(Level.FINE,
@@ -380,8 +377,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable
                         .toLowerCase();
             }
             
-            updateKeys(username, new HashtableBuilder<String, String>()
-                    .add(keys.ip(), ip)
+            updateEntry(username, new Storage.Entry.Builder()
+                    .put(keys.ip(), ip)
                     .build());
             
             log(Level.FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username)
@@ -414,10 +411,10 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         
         try
         {
-            List<Hashtable<String, String>> result = storage.selectEntries(unit,
+            List<Storage.Entry> entries = storage.selectEntries(unit,
                     Arrays.asList(keys.ip()), new SelectorCondition(keys.ip(), Infix.EQUALS, ip));
             
-            return result.size();
+            return entries.size();
         }
         catch (IOException ex)
         {
@@ -440,11 +437,10 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         
         try
         {
-            List<Hashtable<String, String>> result = storage.selectEntries(unit,
-                    Arrays.asList(keys.ip()),
+            List<Storage.Entry> entries = storage.selectEntries(unit, Arrays.asList(keys.ip()),
                     new SelectorNegation(new SelectorCondition(keys.ip(), Infix.EQUALS, "")));
             
-            for (Map<String, String> entry : result)
+            for (Storage.Entry entry : entries)
             {
                 ips.add(entry.get(keys.ip()));
             }
@@ -461,12 +457,12 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     
     public String getEmail(String username) throws IOException
     {
-        Hashtable<String, String> result = queryAccount(username);
+        Storage.Entry entry = queryAccount(username);
         
-        if (result == null)
+        if (entry == null)
             return null;
         
-        return result.get(keys.email());
+        return entry.get(keys.email());
     }
     
     /**
@@ -484,8 +480,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     {
         try
         {
-            updateKeys(username, new HashtableBuilder<String, String>()
-                    .add(keys.email(), newEmail)
+            updateEntry(username, new Storage.Entry.Builder()
+                    .put(keys.email(), newEmail)
                     .build());
             
             log(Level.FINE, getMessage("CHANGE_EMAIL_SUCCESS_LOG").replace("%player%", username));
@@ -503,33 +499,33 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     
     public void saveLoginSession(String username, String ip, long time) throws IOException
     {
-        updateKeys(username, new HashtableBuilder<String, String>()
-                .add(keys.login_session(), ip + ";" + time)
+        updateEntry(username, new Storage.Entry.Builder()
+                .put(keys.login_session(), ip + ";" + time)
                 .build());
     }
     
     public void eraseLoginSession(String username) throws IOException
     {
-        updateKeys(username, new HashtableBuilder<String, String>()
-                .add(keys.login_session(), "")
+        updateEntry(username, new Storage.Entry.Builder()
+                .put(keys.login_session(), "")
                 .build());
     }
     
     public void updateLastActiveDate(String username) throws IOException
     {
-        updateKeys(username, new HashtableBuilder<String, String>()
-                .add(keys.last_active_date(), String.valueOf(System.currentTimeMillis() / 1000L))
+        updateEntry(username, new Storage.Entry.Builder()
+                .put(keys.last_active_date(), String.valueOf(System.currentTimeMillis() / 1000L))
                 .build());
     }
     
     public Map<String, String> getAccountPersistence(String username) throws IOException
     {
-        Hashtable<String, String> result = queryAccount(username);
+        Storage.Entry entry = queryAccount(username);
         
-        if (result == null)
+        if (entry == null)
             return null;
         
-        String persistenceBase64String = result.get(keys.persistence());
+        String persistenceBase64String = entry.get(keys.persistence());
         Map<String, String> persistence = new LinkedHashMap<>();
         
         if (persistenceBase64String != null)
@@ -560,8 +556,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             persistence.put("persistence", getAccountPersistence(username));
             persistence.get("persistence").put(key, value);
             
-            updateKeys(username, new HashtableBuilder<String, String>()
-                    .add(keys.persistence(), Base64.encode(IniUtils.serialize(persistence)))
+            updateEntry(username, new Storage.Entry.Builder()
+                    .put(keys.persistence(), Base64.encode(IniUtils.serialize(persistence)))
                     .build());
         }
         catch (IOException ex)
@@ -592,9 +588,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         return keys;
     }
     
-    private void updateKeys(String username, Hashtable<String, String> pairs) throws IOException
+    private void updateEntry(String username, Storage.Entry entry) throws IOException
     {
-        storage.updateEntries(unit, pairs,
+        storage.updateEntries(unit, entry,
                 new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
     }
     

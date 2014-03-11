@@ -59,29 +59,26 @@ public final class NullStorage extends Storage
     }
     
     @Override
-    public List<Hashtable<String, String>> selectEntries(String unit) throws IOException
+    public List<Storage.Entry> selectEntries(String unit) throws IOException
     {
         return new ArrayList<>();
     }
     
     @Override
-    public List<Hashtable<String, String>> selectEntries(String unit, List<String> keys)
+    public List<Storage.Entry> selectEntries(String unit, List<String> keys) throws IOException
+    {
+        return new ArrayList<>();
+    }
+    
+    @Override
+    public List<Storage.Entry> selectEntries(String unit, Selector selector) throws IOException
+    {
+        return new ArrayList<>();
+    }
+    
+    @Override
+    public List<Storage.Entry> selectEntries(String unit, List<String> keys, Selector selector)
             throws IOException
-    {
-        return new ArrayList<>();
-    }
-    
-    @Override
-    public List<Hashtable<String, String>> selectEntries(String unit,
-                                                         Selector selector) throws IOException
-    {
-        return new ArrayList<>();
-    }
-    
-    @Override
-    public List<Hashtable<String, String>> selectEntries(String unit,
-                                                         List<String> keys,
-                                                         Selector selector) throws IOException
     {
         return new ArrayList<>();
     }
@@ -112,12 +109,12 @@ public final class NullStorage extends Storage
     }
     
     @Override
-    public void addEntry(String unit, Hashtable<String, String> pairs) throws IOException
+    public void addEntry(String unit, Storage.Entry entry) throws IOException
     {
     }
     
     @Override
-    public void updateEntries(String unit, Hashtable<String, String> pairs, Selector selector)
+    public void updateEntries(String unit, Storage.Entry entrySubset, Selector selector)
             throws IOException
     {
     }

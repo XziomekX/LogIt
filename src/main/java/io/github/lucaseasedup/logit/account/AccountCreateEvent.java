@@ -18,22 +18,22 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import java.util.Hashtable;
+import io.github.lucaseasedup.logit.storage.Storage;
 
 public final class AccountCreateEvent extends AccountEvent
 {
-    public AccountCreateEvent(Hashtable<String, String> pairs)
+    public AccountCreateEvent(Storage.Entry entry)
     {
-        if (pairs == null)
+        if (entry == null)
             throw new NullPointerException();
         
-        this.pairs = pairs;
+        this.entry = entry;
     }
     
-    public String getPairValue(String key)
+    public String getDatumValue(String key)
     {
-        return pairs.get(key);
+        return entry.get(key);
     }
     
-    private final Hashtable<String, String> pairs;
+    private final Storage.Entry entry;
 }

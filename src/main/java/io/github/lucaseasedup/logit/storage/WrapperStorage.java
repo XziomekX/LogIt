@@ -25,7 +25,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -98,7 +98,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public List<Hashtable<String, String>> selectEntries(String unit) throws IOException
+    public List<Storage.Entry> selectEntries(String unit) throws IOException
     {
         if (cacheType == CacheType.DISABLED)
         {
@@ -106,21 +106,21 @@ public final class WrapperStorage extends Storage
         }
         else if (cacheType == CacheType.PRELOADED)
         {
-            List<Hashtable<String, String>> preloadedUnit = preloadedCache.get(unit);
+            List<Storage.Entry> preloadedEntries = preloadedCache.get(unit);
             
-            if (preloadedUnit == null || preloadedUnit.isEmpty())
+            if (preloadedEntries == null || preloadedEntries.isEmpty())
             {
                 preloadedCache.put(unit, leading.selectEntries(unit));
             }
             
-            List<Hashtable<String, String>> result = new LinkedList<>();
+            List<Storage.Entry> entries = new LinkedList<>();
             
-            for (Hashtable<String, String> entry : preloadedCache.get(unit))
+            for (Storage.Entry entry : preloadedCache.get(unit))
             {
-                result.add(new Hashtable<>(entry));
+                entries.add(entry.copy());
             }
             
-            return result;
+            return entries;
         }
         else
         {
@@ -129,7 +129,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public List<Hashtable<String, String>> selectEntries(String unit, List<String> keys)
+    public List<Storage.Entry> selectEntries(String unit, List<String> keys)
             throws IOException
     {
         if (cacheType == CacheType.DISABLED)
@@ -140,8 +140,7 @@ public final class WrapperStorage extends Storage
         {
             if (preloadedCache.containsKey(unit))
             {
-                return copyCacheResultList(preloadedCache.get(unit), keys,
-                        new SelectorConstant(true));
+                return copyEntries(preloadedCache.get(unit), keys, new SelectorConstant(true));
             }
             else
             {
@@ -155,8 +154,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public List<Hashtable<String, String>> selectEntries(String unit,
-                                                         Selector selector) throws IOException
+    public List<Storage.Entry> selectEntries(String unit, Selector selector) throws IOException
     {
         if (cacheType == CacheType.DISABLED)
         {
@@ -166,7 +164,7 @@ public final class WrapperStorage extends Storage
         {
             if (preloadedCache.containsKey(unit))
             {
-                return copyCacheResultList(preloadedCache.get(unit), null, selector);
+                return copyEntries(preloadedCache.get(unit), null, selector);
             }
             else
             {
@@ -180,9 +178,8 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public List<Hashtable<String, String>> selectEntries(String unit,
-                                                         List<String> keys,
-                                                         Selector selector) throws IOException
+    public List<Storage.Entry> selectEntries(String unit, List<String> keys, Selector selector)
+            throws IOException
     {
         if (cacheType == CacheType.DISABLED)
         {
@@ -192,7 +189,7 @@ public final class WrapperStorage extends Storage
         {
             if (preloadedCache.containsKey(unit))
             {
-                return copyCacheResultList(preloadedCache.get(unit), keys, selector);
+                return copyEntries(preloadedCache.get(unit), keys, selector);
             }
             else
             {
@@ -210,7 +207,7 @@ public final class WrapperStorage extends Storage
     {
         leading.createUnit(unit, keys);
         
-        for (Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
+        for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
@@ -221,7 +218,7 @@ public final class WrapperStorage extends Storage
         {
             if (!preloadedCache.containsKey(unit))
             {
-                preloadedCache.put(unit, new LinkedList<Hashtable<String, String>>());
+                preloadedCache.put(unit, new LinkedList<Storage.Entry>());
             }
         }
         
@@ -239,7 +236,7 @@ public final class WrapperStorage extends Storage
         
         leading.renameUnit(unit, newName);
         
-        for (Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
+        for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
@@ -266,7 +263,7 @@ public final class WrapperStorage extends Storage
     {
         leading.eraseUnit(unit);
         
-        for (Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
+        for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
@@ -292,7 +289,7 @@ public final class WrapperStorage extends Storage
     {
         leading.removeUnit(unit);
         
-        for (Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
+        for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
@@ -318,7 +315,7 @@ public final class WrapperStorage extends Storage
     {
         leading.addKey(unit, key, type);
         
-        for (Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
+        for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
@@ -329,7 +326,7 @@ public final class WrapperStorage extends Storage
         {
             if (preloadedCache.containsKey(unit))
             {
-                for (Hashtable<String, String> entry : preloadedCache.get(unit))
+                for (Storage.Entry entry : preloadedCache.get(unit))
                 {
                     entry.put(key, "");
                 }
@@ -343,62 +340,55 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void addEntry(String unit, Hashtable<String, String> pairs) throws IOException
+    public void addEntry(String unit, Storage.Entry entry) throws IOException
     {
-        leading.addEntry(unit, pairs);
+        leading.addEntry(unit, entry);
         
-        for (Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
+        for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
-            e.getKey().addEntry(unitMapping, pairs);
+            e.getKey().addEntry(unitMapping, entry);
         }
         
         if (cacheType == CacheType.PRELOADED)
         {
             if (preloadedCache.containsKey(unit))
             {
-                Hashtable<String, String> newEntry = new Hashtable<>();
-                
-                for (Entry<String, String> pair : pairs.entrySet())
-                {
-                    newEntry.put(pair.getKey(), pair.getValue());
-                }
-                
-                preloadedCache.get(unit).add(newEntry);
+                preloadedCache.get(unit).add(entry.copy());
             }
         }
         
         for (StorageObserver o : obs)
         {
-            o.addEntry(unit, pairs);
+            o.addEntry(unit, entry);
         }
     }
     
     @Override
-    public void updateEntries(String unit, Hashtable<String, String> pairs, Selector selector)
+    public void updateEntries(String unit, Storage.Entry entrySubset, Selector selector)
             throws IOException
     {
-        leading.updateEntries(unit, pairs, selector);
+        leading.updateEntries(unit, entrySubset, selector);
         
-        for (Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
+        for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
-            e.getKey().updateEntries(unitMapping, pairs, selector);
+            e.getKey().updateEntries(unitMapping, entrySubset, selector);
         }
         
         if (cacheType == CacheType.PRELOADED)
         {
             if (preloadedCache.containsKey(unit))
             {
-                for (Hashtable<String, String> entry : preloadedCache.get(unit))
+                for (Storage.Entry entry : preloadedCache.get(unit))
                 {
                     if (SqlUtils.resolveSelector(selector, entry))
                     {
-                        for (Entry<String, String> pair : pairs.entrySet())
+                        for (Storage.Entry.Datum datum : entrySubset)
                         {
-                            entry.put(pair.getKey(), pair.getValue());
+                            entry.put(datum.getKey(), datum.getValue());
                         }
                     }
                 }
@@ -407,7 +397,7 @@ public final class WrapperStorage extends Storage
         
         for (StorageObserver o : obs)
         {
-            o.updateEntries(unit, pairs, selector);
+            o.updateEntries(unit, entrySubset, selector);
         }
     }
     
@@ -416,7 +406,7 @@ public final class WrapperStorage extends Storage
     {
         leading.removeEntries(unit, selector);
         
-        for (Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
+        for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
@@ -427,11 +417,11 @@ public final class WrapperStorage extends Storage
         {
             if (preloadedCache.containsKey(unit))
             {
-                Iterator<Hashtable<String, String>> it = preloadedCache.get(unit).iterator();
+                Iterator<Storage.Entry> it = preloadedCache.get(unit).iterator();
                 
                 while (it.hasNext())
                 {
-                    Hashtable<String, String> entry = it.next();
+                    Storage.Entry entry = it.next();
                     
                     if (SqlUtils.resolveSelector(selector, entry))
                     {
@@ -550,42 +540,31 @@ public final class WrapperStorage extends Storage
         return unitMapping;
     }
     
-    private List<Hashtable<String, String>> copyCacheResultList(List<Hashtable<String, String>> result,
-                                                                List<String> keys,
-                                                                Selector selector)
+    private List<Storage.Entry> copyEntries(List<Storage.Entry> entries,
+                                            List<String> keys,
+                                            Selector selector)
     {
-        List<Hashtable<String, String>> resultCopy = new LinkedList<>();
+        List<Storage.Entry> copiedEntries = new LinkedList<>();
         
-        for (Hashtable<String, String> entry : result)
+        for (Storage.Entry entry : entries)
         {
             if (SqlUtils.resolveSelector(selector, entry))
             {
-                Hashtable<String, String> resultEntry = new Hashtable<>();
+                Storage.Entry copiedEntry = new Storage.Entry();
                 
-                for (Entry<String, String> e : entry.entrySet())
+                for (Storage.Entry.Datum datum : entry)
                 {
-                    if (keys == null || keys.contains(e.getKey()))
+                    if (keys == null || keys.contains(datum.getKey()))
                     {
-                        resultEntry.put(e.getKey(), e.getValue());
+                        copiedEntry.put(datum.getKey(), datum.getValue());
                     }
                 }
                 
-                if (keys != null)
-                {
-                    for (String key : keys)
-                    {
-                        if (!resultEntry.containsKey(key))
-                        {
-                            resultEntry.put(key, "");
-                        }
-                    }
-                }
-                
-                resultCopy.add(resultEntry);
+                copiedEntries.add(copiedEntry);
             }
         }
         
-        return resultCopy;
+        return copiedEntries;
     }
     
     private final Storage leading;
@@ -595,5 +574,5 @@ public final class WrapperStorage extends Storage
     private final Hashtable<Storage, Hashtable<String, String>> unitMappings;
     private final Vector<StorageObserver> obs;
     
-    private Hashtable<String, List<Hashtable<String, String>>> preloadedCache;
+    private Hashtable<String, List<Storage.Entry>> preloadedCache;
 }
