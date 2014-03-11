@@ -207,7 +207,7 @@ public final class LogItConfiguration extends PropertyObserver
     public long getTime(String path, TimeUnit resultingUnit)
     {
         if (path == null || resultingUnit == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         Matcher matcher = TimeStringValidator.PATTERN.matcher(getString(path));
         long time = 0;

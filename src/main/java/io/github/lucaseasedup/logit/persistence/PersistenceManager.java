@@ -54,7 +54,7 @@ public final class PersistenceManager extends LogItCoreObject
      * @param player the player whose data will be serialized.
      * @param clazz  serializer class.
      * 
-     * @throws NullPointerException         if {@code player} is null.
+     * @throws IllegalArgumentException     if {@code player} is null.
      * @throws ReflectiveOperationException if serializer construction failed.
      * @throws IOException                  if an IO error occured while updating persistence.
      */
@@ -62,7 +62,7 @@ public final class PersistenceManager extends LogItCoreObject
             throws ReflectiveOperationException, IOException
     {
         if (player == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         String username = player.getName().toLowerCase();
         AccountKeys keys = getAccountManager().getKeys();
@@ -92,12 +92,12 @@ public final class PersistenceManager extends LogItCoreObject
      * 
      * @param player the player whose data will be serialized.
      * 
-     * @throws NullPointerException if {@code player} is null.
+     * @throws IllegalArgumentException if {@code player} is null.
      */
     public void serialize(Player player)
     {
         if (player == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         AccountKeys keys = getAccountManager().getKeys();
         String username = player.getName().toLowerCase();
@@ -143,7 +143,7 @@ public final class PersistenceManager extends LogItCoreObject
      * @param player the player whose data will be unserialized.
      * @param clazz  serializer class.
      * 
-     * @throws NullPointerException         if {@code player} is null.
+     * @throws IllegalArgumentException     if {@code player} is null.
      * @throws ReflectiveOperationException if serializer construction failed.
      * @throws IOException                  if an IO error occured while updating persistence.
      */
@@ -151,7 +151,7 @@ public final class PersistenceManager extends LogItCoreObject
             throws ReflectiveOperationException, IOException
     {
         if (player == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         String username = player.getName().toLowerCase();
         AccountKeys keys = getAccountManager().getKeys();
@@ -186,12 +186,12 @@ public final class PersistenceManager extends LogItCoreObject
      * 
      * @param player the player whose data will be unserialized.
      * 
-     * @throws NullPointerException if {@code player} is null.
+     * @throws IllegalArgumentException if {@code player} is null.
      */
     public void unserialize(Player player)
     {
         if (player == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         AccountKeys keys = getAccountManager().getKeys();
         String username = player.getName().toLowerCase();
@@ -246,7 +246,7 @@ public final class PersistenceManager extends LogItCoreObject
      * 
      * @return {@code false} if the serializer class is already registered; {@code true} otherwise.
      * 
-     * @throws NullPointerException         if {@code clazz} is null.
+     * @throws IllegalArgumentException     if {@code clazz} is null.
      * @throws ReflectiveOperationException if serializer constructor invocation failed.
      * 
      */
@@ -254,7 +254,7 @@ public final class PersistenceManager extends LogItCoreObject
             throws ReflectiveOperationException
     {
         if (clazz == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         if (serializers.containsKey(clazz))
             return false;
@@ -271,12 +271,12 @@ public final class PersistenceManager extends LogItCoreObject
      * 
      * @return {@code false} if the serializer class is not registered; {@code true} otherwise.
      * 
-     * @throws NullPointerException if {@code clazz} is null.
+     * @throws IllegalArgumentException if {@code clazz} is null.
      */
     public boolean unregisterSerializer(Class<? extends PersistenceSerializer> clazz)
     {
         if (clazz == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         if (!serializers.containsKey(clazz))
             return false;

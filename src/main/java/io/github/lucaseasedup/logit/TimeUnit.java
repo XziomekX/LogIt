@@ -38,10 +38,7 @@ public enum TimeUnit
     
     public long convertTo(long value, TimeUnit to)
     {
-        if (to == null)
-            throw new NullPointerException();
-        
-        if (value < 0)
+        if (to == null || value < 0)
             throw new IllegalArgumentException();
         
         if (value == 0)
@@ -53,7 +50,7 @@ public enum TimeUnit
     public static TimeUnit decode(String s)
     {
         if (s == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         switch (s.toLowerCase())
         {

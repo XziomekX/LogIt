@@ -50,7 +50,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     public AccountManager(Storage storage, String unit, AccountKeys keys)
     {
         if (storage == null || unit == null || keys == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         this.storage = storage;
         this.unit = unit;
@@ -81,13 +81,13 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @return a {@code Hashtable} with account data,
      *         or {@code null} if there is no account with the specified username.
      * 
-     * @throws NullPointerException if {@code username} is null.
-     * @throws IOException          if an I/O error occurred.
+     * @throws IllegalArgumentException if {@code username} is null.
+     * @throws IOException              if an I/O error occurred.
      */
     public Storage.Entry queryAccount(String username) throws IOException
     {
         if (username == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         List<Storage.Entry> entries = storage.selectEntries(unit,
                 new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));

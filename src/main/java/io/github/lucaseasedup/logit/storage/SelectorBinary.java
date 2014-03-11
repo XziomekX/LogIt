@@ -25,7 +25,7 @@ public final class SelectorBinary extends Selector
                           SelectorCondition rightOperand)
     {
         if (leftOperand == null || relation == null || rightOperand == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         this.leftOperand = leftOperand;
         this.relation = relation;

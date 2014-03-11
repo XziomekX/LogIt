@@ -23,7 +23,7 @@ public final class SelectorNegation extends Selector
     public SelectorNegation(SelectorCondition operand)
     {
         if (operand == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         this.operand = operand;
     }

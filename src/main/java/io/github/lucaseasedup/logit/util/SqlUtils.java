@@ -160,7 +160,7 @@ public final class SqlUtils
     public static String translateSelector(Selector selector, String columnQuote, String valueQuote)
     {
         if (selector == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         if (selector instanceof SelectorConstant)
         {

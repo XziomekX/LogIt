@@ -60,7 +60,7 @@ public final class LocaleManager extends LogItCoreObject
     public String getLocalePrefix(Locale locale)
     {
         if (!locales.contains(locale))
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         return locale.getClass().getAnnotation(LocalePrefix.class).value();
     }

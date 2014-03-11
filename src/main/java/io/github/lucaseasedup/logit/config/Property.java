@@ -34,7 +34,7 @@ public final class Property extends Observable
                     PropertyValidator validator)
     {
         if (path == null || type == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         this.path = path;
         this.type = type;

@@ -44,7 +44,7 @@ public final class ProfileManager extends LogItCoreObject
     public ProfileManager(File path, ConfigurationSection fieldsSection)
     {
         if (path == null || fieldsSection == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         this.path = path;
         

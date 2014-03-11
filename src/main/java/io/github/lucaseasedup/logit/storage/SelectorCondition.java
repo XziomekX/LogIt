@@ -23,7 +23,7 @@ public final class SelectorCondition extends Selector
     public SelectorCondition(String key, Relation relation, String value)
     {
         if (key == null || relation == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         this.key = key;
         this.relation = relation;

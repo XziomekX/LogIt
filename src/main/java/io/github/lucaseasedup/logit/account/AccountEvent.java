@@ -43,16 +43,16 @@ public abstract class AccountEvent extends CancellableEvent
      * 
      * @param task the task to be scheduled.
      * 
-     * @throws IllegalStateException if tasks has already been executed.
-     * @throws NullPointerException  if {@code task} is {@code null}.
+     * @throws IllegalArgumentException if {@code task} is {@code null}.
+     * @throws IllegalStateException    if tasks has already been executed.
      */
     public final void scheduleSuccessTask(Runnable task)
     {
+        if (task == null)
+            throw new IllegalArgumentException();
+        
         if (successTasks == null)
             throw new IllegalStateException();
-        
-        if (task == null)
-            throw new NullPointerException();
         
         successTasks.add(task);
     }
@@ -63,16 +63,16 @@ public abstract class AccountEvent extends CancellableEvent
      * 
      * @param task the task to be scheduled.
      * 
-     * @throws IllegalStateException if tasks has already been executed.
-     * @throws NullPointerException  if {@code task} is {@code null}.
+     * @throws IllegalArgumentException if {@code task} is {@code null}.
+     * @throws IllegalStateException    if tasks has already been executed.
      */
     public final void scheduleFailureTask(Runnable task)
     {
+        if (task == null)
+            throw new IllegalArgumentException();
+        
         if (failureTasks == null)
             throw new IllegalStateException();
-        
-        if (task == null)
-            throw new NullPointerException();
         
         failureTasks.add(task);
     }

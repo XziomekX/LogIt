@@ -23,7 +23,7 @@ public abstract class Field
     public Field(String name)
     {
         if (name == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         this.name = name;
     }

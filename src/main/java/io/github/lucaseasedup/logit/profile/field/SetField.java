@@ -27,7 +27,7 @@ public final class SetField extends Field
         super(name);
         
         if (values == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         this.values = values;
     }

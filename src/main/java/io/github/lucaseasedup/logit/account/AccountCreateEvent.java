@@ -25,7 +25,7 @@ public final class AccountCreateEvent extends AccountEvent
     public AccountCreateEvent(Storage.Entry entry)
     {
         if (entry == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         this.entry = entry;
     }

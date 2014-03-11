@@ -37,7 +37,7 @@ public final class CsvStorage extends Storage
     public CsvStorage(File dir)
     {
         if (dir == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         this.dir = dir;
     }
@@ -384,7 +384,7 @@ public final class CsvStorage extends Storage
     private String unescapeValue(String s)
     {
         if (s == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         s = s.trim();
         s = s.replace("\\,", ",");

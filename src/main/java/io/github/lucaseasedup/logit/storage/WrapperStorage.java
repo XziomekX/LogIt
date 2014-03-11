@@ -474,7 +474,7 @@ public final class WrapperStorage extends Storage
     public void mirrorStorage(Storage storage, Hashtable<String, String> unitMappings)
     {
         if (storage == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         if (!mirrors.contains(storage))
         {
@@ -502,7 +502,7 @@ public final class WrapperStorage extends Storage
     public void addObserver(StorageObserver o)
     {
         if (o == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         if (!obs.contains(o))
         {

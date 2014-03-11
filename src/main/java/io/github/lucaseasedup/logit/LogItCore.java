@@ -1036,7 +1036,7 @@ public final class LogItCore
     public void log(Level level, String message)
     {
         if (level == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         
         if (config != null && config.isLoaded())
         {
