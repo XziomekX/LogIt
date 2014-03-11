@@ -73,12 +73,35 @@ public abstract class Storage implements AutoCloseable
     
     public enum Type
     {
-        INTEGER, REAL,
+        /**
+         * Integer-number value.
+         */
+        INTEGER,
         
-        TINYTEXT,   // <= 255
-        MEDIUMTEXT, // <= 1023
-        LONGTEXT,   // <= 10119
-        TEXT;       // Unlimited
+        /**
+         * Real-number value.
+         */
+        REAL,
+        
+        /**
+         * Text of maximum length of 255 characters.
+         */
+        TINYTEXT,
+        
+        /**
+         * Text of maximum length of 1023 characters.
+         */
+        MEDIUMTEXT,
+        
+        /**
+         * Text of maximum length of 10119 characters.
+         */
+        LONGTEXT,
+        
+        /**
+         * Text of unlimited length.
+         */
+        TEXT;
     }
     
     public static final class Entry implements Iterable<Storage.Entry.Datum>
