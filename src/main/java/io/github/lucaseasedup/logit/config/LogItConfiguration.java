@@ -393,6 +393,17 @@ public final class LogItConfiguration extends PropertyObserver
             
             switch (type)
             {
+            case CONFIGURATION_SECTION:
+            {
+                defaultValue = getPlugin().getConfig().getConfigurationSection(path);
+                
+                if (defaultValue == null)
+                {
+                    defaultValue = getPlugin().getConfig().createSection(path);
+                }
+                
+                break;
+            }
             case OBJECT:  defaultValue = null;                                break;
             case BOOLEAN: defaultValue = Boolean.valueOf(defaultValueString); break;
             case COLOR:

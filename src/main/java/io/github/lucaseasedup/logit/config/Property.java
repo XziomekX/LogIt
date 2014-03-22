@@ -68,6 +68,7 @@ public final class Property extends Observable
         
         switch (type)
         {
+        case CONFIGURATION_SECTION:
         case OBJECT:
         case BOOLEAN:
         case COLOR:

@@ -462,6 +462,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 {
                     switch (type)
                     {
+                    case CONFIGURATION_SECTION:
                     case OBJECT:
                         throw new Exception("Unsupported property type conversion.");
                     case BOOLEAN: outputValue = Boolean.valueOf(inputValue); break;

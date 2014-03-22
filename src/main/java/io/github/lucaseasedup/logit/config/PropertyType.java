@@ -20,6 +20,8 @@ package io.github.lucaseasedup.logit.config;
 
 public enum PropertyType
 {
+    CONFIGURATION_SECTION,
+    
     OBJECT, BOOLEAN, COLOR, DOUBLE, INT, ITEM_STACK, LONG, STRING, VECTOR,
     
     LIST, BOOLEAN_LIST, BYTE_LIST, CHARACTER_LIST, DOUBLE_LIST, FLOAT_LIST,
