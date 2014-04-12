@@ -112,11 +112,19 @@ public final class PersistenceManager extends LogItCoreObject
             
             for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
             {
-                PersistenceSerializer serializer = getSerializer(clazz);
-                
-                if (!isSerializedUsing(persistence, serializer))
+                try
                 {
-                    serializer.serialize(persistence, player);
+                    PersistenceSerializer serializer = getSerializer(clazz);
+                    
+                    if (!isSerializedUsing(persistence, serializer))
+                    {
+                        serializer.serialize(persistence, player);
+                    }
+                }
+                catch (ReflectiveOperationException ex)
+                {
+                    log(Level.WARNING,
+                            "Could not obtain persistence serializer: " + clazz.getName(), ex);
                 }
             }
             
@@ -127,7 +135,7 @@ public final class PersistenceManager extends LogItCoreObject
                         .build(),
                     new SelectorCondition(keys.username(), Infix.EQUALS, username));
         }
-        catch (IOException | ReflectiveOperationException ex)
+        catch (IOException ex)
         {
             log(Level.WARNING,
                     "Could not serialize persistence for player: " + player.getName(), ex);
@@ -207,16 +215,26 @@ public final class PersistenceManager extends LogItCoreObject
             
             for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
             {
-                PersistenceSerializer serializer = getSerializer(clazz);
+                PersistenceSerializer serializer;
                 
-                if (isSerializedUsing(persistence, serializer))
+                try
                 {
-                    for (Key key : getSerializerKeys(serializer.getClass()))
-                    {
-                        keysToErase.add(key);
-                    }
+                    serializer = getSerializer(clazz);
                     
-                    serializer.unserialize(persistence, player);
+                    if (isSerializedUsing(persistence, serializer))
+                    {
+                        for (Key key : getSerializerKeys(serializer.getClass()))
+                        {
+                            keysToErase.add(key);
+                        }
+                        
+                        serializer.unserialize(persistence, player);
+                    }
+                }
+                catch (ReflectiveOperationException ex)
+                {
+                    log(Level.WARNING,
+                            "Could not obtain persistence serializer: " + clazz.getName(), ex);
                 }
             }
             
@@ -232,7 +250,7 @@ public final class PersistenceManager extends LogItCoreObject
                         .build(),
                     new SelectorCondition(keys.username(), Infix.EQUALS, username));
         }
-        catch (IOException | ReflectiveOperationException ex)
+        catch (IOException ex)
         {
             log(Level.WARNING,
                     "Could not unserialize persistence for player: " + player.getName(), ex);
