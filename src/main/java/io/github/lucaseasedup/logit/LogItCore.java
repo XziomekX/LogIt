@@ -356,6 +356,16 @@ public final class LogItCore
         try
         {
             accountStorage.createUnit(accountsUnit, accountKeys);
+        }
+        catch (IOException ex)
+        {
+            log(Level.SEVERE, "Could not create accounts table.", ex);
+            
+            FatalReportedException.throwNew(ex);
+        }
+        
+        try
+        {
             accountStorage.setAutobatchEnabled(true);
             
             Hashtable<String, Type> existingKeys = accountStorage.getKeys(accountsUnit);
@@ -374,7 +384,7 @@ public final class LogItCore
         }
         catch (IOException ex)
         {
-            log(Level.SEVERE, "Could not prepare accounts table.", ex);
+            log(Level.SEVERE, "Could not update accounts table columns.", ex);
             
             FatalReportedException.throwNew(ex);
         }
