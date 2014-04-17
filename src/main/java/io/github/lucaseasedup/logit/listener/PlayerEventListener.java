@@ -68,7 +68,6 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         try
         {
-            
             accountData = getAccountManager().queryAccount(username);
             
             if (accountData != null)

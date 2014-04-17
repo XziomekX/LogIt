@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -465,7 +466,11 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                     case CONFIGURATION_SECTION:
                     case OBJECT:
                         throw new Exception("Unsupported property type conversion.");
-                    case BOOLEAN: outputValue = Boolean.valueOf(inputValue); break;
+                        
+                    case BOOLEAN:
+                        outputValue = Boolean.valueOf(inputValue);
+                        break;
+                        
                     case COLOR:
                     {
                         switch (inputValue.toLowerCase())
@@ -488,42 +493,50 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                         case "white":   outputValue = Color.WHITE;   break;
                         case "yellow":  outputValue = Color.YELLOW;  break;
                         default:
-                            {
-                                String[] rgb = inputValue.split(" ");
-                                
-                                if (rgb.length != 3)
-                                    throw new Exception("Malformed color representation.");
-                                
-                                outputValue = Color.fromRGB(Integer.valueOf(rgb[0]),
-                                                            Integer.valueOf(rgb[1]),
-                                                            Integer.valueOf(rgb[2]));
-                                
-                                break;
-                            }
+                        {
+                            String[] rgb = inputValue.split(" ");
+                            
+                            if (rgb.length != 3)
+                                throw new Exception("Malformed color representation.");
+                            
+                            outputValue = Color.fromRGB(Integer.valueOf(rgb[0]),
+                                                        Integer.valueOf(rgb[1]),
+                                                        Integer.valueOf(rgb[2]));
+                        }
                         }
                         
                         break;
                     }
-                    case DOUBLE: outputValue = Double.valueOf(inputValue);  break;
-                    case INT:    outputValue = Integer.valueOf(inputValue); break;
+                    
+                    case DOUBLE:
+                        outputValue = Double.valueOf(inputValue);
+                        break;
+                        
+                    case INT:
+                        outputValue = Integer.valueOf(inputValue);
+                        break;
+                        
                     case ITEM_STACK:
                         throw new Exception("Unsupported property type conversion.");
-                    case LONG:   outputValue = Long.valueOf(inputValue);    break;
-                    case STRING: outputValue = inputValue;                  break;
+                        
+                    case LONG:
+                        outputValue = Long.valueOf(inputValue);
+                        break;
+                        
+                    case STRING:
+                        outputValue = inputValue;
+                        break;
+                        
                     case VECTOR:
                     {
                         if ("$".equals(inputValue))
                         {
-                            if (p != null)
-                            {
-                                outputValue = new Vector(p.getLocation().getX(),
-                                                         p.getLocation().getY(),
-                                                         p.getLocation().getZ());
-                            }
-                            else
-                            {
+                            if (p == null)
                                 throw new Exception(getMessage("ONLY_PLAYERS"));
-                            }
+                            
+                            outputValue = new Vector(p.getLocation().getX(),
+                                                     p.getLocation().getY(),
+                                                     p.getLocation().getZ());
                         }
                         else
                         {
@@ -539,6 +552,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                         
                         break;
                     }
+                    
                     case LIST:
                     case BOOLEAN_LIST:
                     case BYTE_LIST:
@@ -551,23 +565,19 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                     case SHORT_LIST:
                     case STRING_LIST:
                         throw new Exception("Unsupported property type conversion.");
+                        
                     case LOCATION:
                     {
                         if ("$".equals(inputValue))
                         {
-                            if (p != null)
-                            {
-                                outputValue = new LocationSerializable(p.getLocation().getWorld().getName(),
-                                                           p.getLocation().getX(),
-                                                           p.getLocation().getY(),
-                                                           p.getLocation().getZ(),
-                                                           p.getLocation().getYaw(),
-                                                           p.getLocation().getPitch());
-                            }
-                            else
-                            {
+                            if (p == null)
                                 throw new Exception(getMessage("ONLY_PLAYERS"));
-                            }
+                            
+                            Location loc = p.getLocation();
+                            
+                            outputValue = new LocationSerializable(loc.getWorld().getName(),
+                                    loc.getX(), loc.getY(), loc.getZ(),
+                                    loc.getYaw(), loc.getPitch());
                         }
                         else
                         {
@@ -576,6 +586,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                         
                         break;
                     }
+                    
                     default:
                         throw new Exception("Unknown property type.");
                     }
