@@ -160,12 +160,12 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             if (getConfig().getBoolean("password.use-salt"))
             {
                 String salt = HashGenerator.generateSalt(algorithm);
-                hash = getCore().hash(password, salt, algorithm);
+                hash = HashGenerator.hash(password, salt, algorithm);
                 entry.put(keys.salt(), salt);
             }
             else
             {
-                hash = getCore().hash(password, algorithm);
+                hash = HashGenerator.hash(password, algorithm);
             }
             
             entry.put(keys.password(), hash);
@@ -326,12 +326,12 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         if (getConfig().getBoolean("password.use-salt"))
         {
             String newSalt = HashGenerator.generateSalt(algorithm);
-            newHash = getCore().hash(newPassword, newSalt, algorithm);
+            newHash = HashGenerator.hash(newPassword, newSalt, algorithm);
             entry.put(keys.salt(), newSalt);
         }
         else
         {
-            newHash = getCore().hash(newPassword, algorithm);
+            newHash = HashGenerator.hash(newPassword, algorithm);
         }
         
         entry.put(keys.hashing_algorithm(), algorithm.encode());

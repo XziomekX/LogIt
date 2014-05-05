@@ -120,6 +120,85 @@ public final class HashGenerator
         return BCrypt.hashpw(string, salt);
     }
     
+    /**
+     * Hashes a string using the specified algorithm.
+     * 
+     * @param string           the string to be hashed.
+     * @param hashingAlgorithm the hashing algorithm to be used.
+     * 
+     * @return the resulting hash.
+     * 
+     * @throws IllegalArgumentException if this method does not support the given algorithm.
+     * 
+     * @see #hash(String, String, HashingAlgorithm)
+     */
+    public static String hash(String string, HashingAlgorithm hashingAlgorithm)
+    {
+        switch (hashingAlgorithm)
+        {
+            case PLAIN:
+                return string;
+                
+            case MD2:
+                return getMd2(string);
+                
+            case MD5:
+                return getMd5(string);
+                
+            case SHA1:
+                return getSha1(string);
+                
+            case SHA256:
+                return getSha256(string);
+                
+            case SHA384:
+                return getSha384(string);
+                
+            case SHA512:
+                return getSha512(string);
+                
+            case WHIRLPOOL:
+                return getWhirlpool(string);
+                
+            case BCRYPT:
+                return getBCrypt(string, "");
+                
+            default:
+                throw new IllegalArgumentException("Unknown algorithm: " + hashingAlgorithm);
+        }
+    }
+    
+    /**
+     * Hashes a string with a salt using the specified algorithm.
+     * 
+     * @param string           the string to be hashed.
+     * @param salt             the salt to be appended to {@code string}.
+     * @param hashingAlgorithm the hashing algorithm to be used.
+     * 
+     * @return resulting hash.
+     * 
+     * @see #hash(String, HashingAlgorithm)
+     */
+    public static String hash(String string, String salt, HashingAlgorithm hashingAlgorithm)
+    {
+        String hash;
+        
+        if (hashingAlgorithm == HashingAlgorithm.BCRYPT)
+        {
+            hash = getBCrypt(string, salt);
+        }
+        else if (hashingAlgorithm == HashingAlgorithm.PLAIN)
+        {
+            hash = hash(string, hashingAlgorithm);
+        }
+        else
+        {
+            hash = hash(string + salt, hashingAlgorithm);
+        }
+        
+        return hash;
+    }
+    
     private static String hash(String string, String algorithm)
     {
         StringBuilder sb = new StringBuilder();
@@ -171,5 +250,31 @@ public final class HashGenerator
             
             return sb.toString();
         }
+    }
+    
+    /**
+     * Generates a random password of length equal to {@code length},
+     * consisting only of the characters contained in {@code combination}.
+     * 
+     * <p> If {@code combination} contains more than one occurence of a character,
+     * the overall probability of using it in password generation will be higher.
+     * 
+     * @param length      the desired password length.
+     * @param combination the letterset used in the generation process.
+     * 
+     * @return the generated password.
+     */
+    public static String generatePassword(int length, String combination)
+    {
+        char[] charArray = combination.toCharArray();
+        StringBuilder sb = new StringBuilder(length);
+        Random random = new Random();
+        
+        for (int i = 0, n = charArray.length; i < length; i++)
+        {
+            sb.append(charArray[random.nextInt(n)]);
+        }
+        
+        return sb.toString();
     }
 }
