@@ -354,14 +354,14 @@ public final class LogItCore
         
         accountManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
                 accountManager, 0, AccountManager.TASK_PERIOD);
-        sessionManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
-                sessionManager, 0, SessionManager.TASK_PERIOD);
-        tickEventCallerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
-                tickEventCaller, 0, TickEventCaller.TASK_PERIOD);
-        accountWatcherTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
-                accountWatcher, 0, AccountWatcher.TASK_PERIOD);
         backupManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
                 backupManager, 0, BackupManager.TASK_PERIOD);
+        sessionManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+                sessionManager, 0, SessionManager.TASK_PERIOD);
+        accountWatcherTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+                accountWatcher, 0, AccountWatcher.TASK_PERIOD);
+        tickEventCallerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+                tickEventCaller, 0, TickEventCaller.TASK_PERIOD);
         
         if (Bukkit.getPluginManager().isPluginEnabled("Vault"))
         {
@@ -430,16 +430,17 @@ public final class LogItCore
             logFileWriter = null;
         }
         
-        vaultPermissions = null;
-        sessionManager = null;
-        accountManager = null;
-        accountWatcher = null;
-        backupManager = null;
-        persistenceManager = null;
-        profileManager = null;
-        mailSender = null;
         localeManager = null;
+        accountManager = null;
+        persistenceManager = null;
+        backupManager = null;
+        sessionManager = null;
+        mailSender = null;
+        profileManager = null;
+        
         tickEventCaller = null;
+        accountWatcher = null;
+        vaultPermissions = null;
         
         started = false;
         
@@ -1014,79 +1015,33 @@ public final class LogItCore
         log(level, "Caught exception:\n" + sw.toString());
     }
     
-    public boolean isConfigLoaded()
+    private void openLogFile(String filename)
     {
-        return config != null && config.isLoaded();
-    }
-    
-    public PersistenceManager getPersistenceManager()
-    {
-        return persistenceManager;
-    }
-    
-    public ProfileManager getProfileManager()
-    {
-        return profileManager;
-    }
-    
-    public MailSender getMailSender()
-    {
-        return mailSender;
-    }
-    
-    public BackupManager getBackupManager()
-    {
-        return backupManager;
-    }
-    
-    public AccountManager getAccountManager()
-    {
-        return accountManager;
-    }
-    
-    public SessionManager getSessionManager()
-    {
-        return sessionManager;
-    }
-    
-    public LocaleManager getLocaleManager()
-    {
-        return localeManager;
-    }
-    
-    public LogItPlugin getPlugin()
-    {
-        return plugin;
-    }
-    
-    public LogItConfiguration getConfig()
-    {
-        return config;
-    }
-    
-    public boolean isFirstRun()
-    {
-        return firstRun;
-    }
-    
-    public boolean isStarted()
-    {
-        return started;
-    }
-    
-    public File getDataFolder()
-    {
-        return plugin.getDataFolder();
-    }
-    
-    public File getDataFile(String path)
-    {
-        return new File(getDataFolder(), path);
-    }
-    
-    private Permission getVaultPermissions()
-    {
-        return vaultPermissions;
+        File logFile = getDataFile(filename);
+        
+        if (logFile.length() > 300000)
+        {
+            int suffix = 0;
+            File nextLogFile;
+            
+            do
+            {
+                suffix++;
+                nextLogFile = getDataFile(filename + "." + suffix);
+            }
+            while (nextLogFile.exists());
+            
+            logFile.renameTo(nextLogFile);
+        }
+        
+        try
+        {
+            logFileWriter = new FileWriter(logFile, true);
+        }
+        catch (IOException ex)
+        {
+            plugin.getLogger().log(Level.WARNING, "Could not open log file for writing.", ex);
+        }
     }
     
     private void setCommandExecutors()
@@ -1133,35 +1088,6 @@ public final class LogItCore
         plugin.getServer().getPluginManager().registerEvents(new SessionEventListener(), plugin);
     }
     
-    private void openLogFile(String filename)
-    {
-        File logFile = getDataFile(filename);
-        
-        if (logFile.length() > 300000)
-        {
-            int suffix = 0;
-            File nextLogFile;
-            
-            do
-            {
-                suffix++;
-                nextLogFile = getDataFile(filename + "." + suffix);
-            }
-            while (nextLogFile.exists());
-            
-            logFile.renameTo(nextLogFile);
-        }
-        
-        try
-        {
-            logFileWriter = new FileWriter(logFile, true);
-        }
-        catch (IOException ex)
-        {
-            plugin.getLogger().log(Level.WARNING, "Could not open log file for writing.", ex);
-        }
-    }
-    
     private void setSerializerEnabled(Class<? extends PersistenceSerializer> clazz, boolean status)
             throws FatalReportedException
     {
@@ -1193,6 +1119,76 @@ public final class LogItCore
         }
     }
     
+    public LogItPlugin getPlugin()
+    {
+        return plugin;
+    }
+    
+    public File getDataFolder()
+    {
+        return plugin.getDataFolder();
+    }
+    
+    public File getDataFile(String path)
+    {
+        return new File(getDataFolder(), path);
+    }
+    
+    public boolean isFirstRun()
+    {
+        return firstRun;
+    }
+    
+    public boolean isStarted()
+    {
+        return started;
+    }
+    
+    public LogItConfiguration getConfig()
+    {
+        return config;
+    }
+    
+    public boolean isConfigLoaded()
+    {
+        return config != null && config.isLoaded();
+    }
+    
+    public LocaleManager getLocaleManager()
+    {
+        return localeManager;
+    }
+    
+    public AccountManager getAccountManager()
+    {
+        return accountManager;
+    }
+    
+    public PersistenceManager getPersistenceManager()
+    {
+        return persistenceManager;
+    }
+    
+    public BackupManager getBackupManager()
+    {
+        return backupManager;
+    }
+    
+    public SessionManager getSessionManager()
+    {
+        return sessionManager;
+    }
+
+    public MailSender getMailSender()
+    {
+        return mailSender;
+    }
+
+    public ProfileManager getProfileManager()
+    {
+        return profileManager;
+    }
+    
     /**
      * The preferred way to obtain the instance of {@code LogItCore}.
      * 
@@ -1220,26 +1216,26 @@ public final class LogItCore
     private boolean firstRun;
     private boolean started = false;
     
-    private FileWriter logFileWriter;
-    private final SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    
     private LogItConfiguration  config;
-    private Permission          vaultPermissions;
-    private SessionManager      sessionManager;
-    private AccountManager      accountManager;
-    private AccountWatcher      accountWatcher;
-    private BackupManager       backupManager;
-    private PersistenceManager  persistenceManager;
-    private ProfileManager      profileManager;
-    private MailSender          mailSender;
     private LocaleManager       localeManager;
-    private TickEventCaller     tickEventCaller;
+    private AccountManager      accountManager;
+    private PersistenceManager  persistenceManager;
+    private BackupManager       backupManager;
+    private SessionManager      sessionManager;
+    private MailSender          mailSender;
+    private ProfileManager      profileManager;
+    
+    private TickEventCaller tickEventCaller;
+    private AccountWatcher  accountWatcher;
+    private Permission      vaultPermissions;
     
     private int accountManagerTaskId;
-    private int sessionManagerTaskId;
-    private int tickEventCallerTaskId;
-    private int accountWatcherTaskId;
     private int backupManagerTaskId;
+    private int sessionManagerTaskId;
+    private int accountWatcherTaskId;
+    private int tickEventCallerTaskId;
     
+    private FileWriter logFileWriter;
+    private final SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final Hashtable<Player, Long> forceLoginPromptIntervals = new Hashtable<>();
 }
