@@ -39,7 +39,7 @@ public final class HashGenerator
      */
     public static String getMd2(String string)
     {
-        return getHash(string, "MD2");
+        return hash(string, "MD2");
     }
     
     /**
@@ -50,7 +50,7 @@ public final class HashGenerator
      */
     public static String getMd5(String string)
     {
-        return getHash(string, "MD5");
+        return hash(string, "MD5");
     }
     
     /**
@@ -61,7 +61,7 @@ public final class HashGenerator
      */
     public static String getSha1(String string)
     {
-        return getHash(string, "SHA-1");
+        return hash(string, "SHA-1");
     }
     
     /**
@@ -72,7 +72,7 @@ public final class HashGenerator
      */
     public static String getSha256(String string)
     {
-        return getHash(string, "SHA-256");
+        return hash(string, "SHA-256");
     }
     
     /**
@@ -83,7 +83,7 @@ public final class HashGenerator
      */
     public static String getSha384(String string)
     {
-        return getHash(string, "SHA-384");
+        return hash(string, "SHA-384");
     }
     
     /**
@@ -94,7 +94,7 @@ public final class HashGenerator
      */
     public static String getSha512(String string)
     {
-        return getHash(string, "SHA-512");
+        return hash(string, "SHA-512");
     }
     
     /**
@@ -120,7 +120,7 @@ public final class HashGenerator
         return BCrypt.hashpw(string, salt);
     }
     
-    private static String getHash(String string, String algorithm)
+    private static String hash(String string, String algorithm)
     {
         StringBuilder sb = new StringBuilder();
         MessageDigest messageDigest;
