@@ -60,7 +60,6 @@ import io.github.lucaseasedup.logit.listener.SessionEventListener;
 import io.github.lucaseasedup.logit.listener.TickEventListener;
 import io.github.lucaseasedup.logit.locale.EnglishLocale;
 import io.github.lucaseasedup.logit.locale.GermanLocale;
-import io.github.lucaseasedup.logit.locale.Locale;
 import io.github.lucaseasedup.logit.locale.LocaleManager;
 import io.github.lucaseasedup.logit.locale.PolishLocale;
 import io.github.lucaseasedup.logit.mail.MailSender;
@@ -339,16 +338,8 @@ public final class LogItCore
         localeManager.registerLocale(EnglishLocale.getInstance());
         localeManager.registerLocale(PolishLocale.getInstance());
         localeManager.registerLocale(GermanLocale.getInstance());
-        localeManager.setFallbackLocale(EnglishLocale.getInstance());
-        
-        Locale locale = localeManager.getLocale(getConfig().getString("locale"));
-        
-        if (locale == null)
-        {
-            locale = localeManager.getFallbackLocale();
-        }
-        
-        localeManager.switchActiveLocale(locale);
+        localeManager.setFallbackLocale(EnglishLocale.class);
+        localeManager.switchActiveLocale(getConfig().getString("locale"));
         
         if (config.getBoolean("password-recovery.enabled"))
         {

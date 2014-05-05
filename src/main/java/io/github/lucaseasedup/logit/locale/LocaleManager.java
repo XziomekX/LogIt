@@ -19,66 +19,100 @@
 package io.github.lucaseasedup.logit.locale;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public final class LocaleManager extends LogItCoreObject
 {
     public Locale getActiveLocale()
     {
-        return activeLocale;
+        return activeLocaleObj;
     }
     
-    public void switchActiveLocale(Locale locale)
+    public void switchActiveLocale(Class<? extends Locale> locale)
     {
-        activeLocale = locale;
+        Locale localeObj = locales.get(locale);
+        
+        if (localeObj == null)
+        {
+            if (fallbackLocaleObj == null)
+                throw new RuntimeException("No fallback locale set.");
+            
+            localeObj = fallbackLocaleObj;
+        }
+        
+        activeLocaleObj = localeObj;
+    }
+    
+    public void switchActiveLocale(String prefix)
+    {
+        Locale localeObj = getLocaleByPrefix(prefix);
+        
+        if (localeObj == null)
+        {
+            if (fallbackLocaleObj == null)
+                throw new RuntimeException("No fallback locale set.");
+            
+            localeObj = fallbackLocaleObj;
+        }
+        
+        activeLocaleObj = localeObj;
     }
     
     public Locale getFallbackLocale()
     {
-        return fallbackLocale;
+        return fallbackLocaleObj;
     }
     
-    public void setFallbackLocale(Locale fallbackLocale)
+    public void setFallbackLocale(Class<? extends Locale> fallbackLocale)
     {
-        this.fallbackLocale = fallbackLocale;
-    }
-    
-    public void registerLocale(Locale locale)
-    {
-        if (locale.getClass().getAnnotation(LocalePrefix.class) == null)
-            throw new IllegalArgumentException();
+        Locale fallbackLocaleObj = locales.get(fallbackLocale);
         
-        locales.add(locale);
+        if (fallbackLocaleObj == null)
+            throw new RuntimeException("Locale not registered.");
+        
+        this.fallbackLocaleObj = fallbackLocaleObj;
     }
     
-    public void unregisterLocale(Locale locale)
+    public void registerLocale(Locale localeObj)
     {
+        if (localeObj.getClass().getAnnotation(LocalePrefix.class) == null)
+            throw new RuntimeException("LocalePrefix not found.");
+        
+        if (locales.containsKey(localeObj.getClass()))
+            throw new RuntimeException("Locale already registered.");
+        
+        locales.put(localeObj.getClass(), localeObj);
+    }
+    
+    public void unregisterLocale(Class<? extends Locale> locale)
+    {
+        if (!locales.containsKey(locale))
+            throw new RuntimeException("Locale not registered.");
+        
         locales.remove(locale);
     }
     
-    public String getLocalePrefix(Locale locale)
+    public Locale getLocaleByPrefix(String prefix)
     {
-        if (!locales.contains(locale))
-            throw new IllegalArgumentException();
-        
-        return locale.getClass().getAnnotation(LocalePrefix.class).value();
-    }
-    
-    public Locale getLocale(String prefix)
-    {
-        for (Locale locale : locales)
+        for (Entry<Class<? extends Locale>, Locale> e : locales.entrySet())
         {
-            if (locale.getClass().getAnnotation(LocalePrefix.class).value().equals(prefix))
+            if (getLocalePrefix(e.getKey()).equals(prefix))
             {
-                return locale;
+                return e.getValue();
             }
         }
         
         return null;
     }
     
-    private final Set<Locale> locales = new HashSet<>();
-    private Locale activeLocale = null;
-    private Locale fallbackLocale = null;
+    public static String getLocalePrefix(Class<? extends Locale> locale)
+    {
+        return locale.getAnnotation(LocalePrefix.class).value();
+    }
+    
+    private final Map<Class<? extends Locale>, Locale> locales = new HashMap<>();
+    private Locale activeLocaleObj;
+    private Locale fallbackLocaleObj;
 }
