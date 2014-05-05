@@ -1308,7 +1308,7 @@ public final class LogItCore
     /**
      * The preferred way to obtain the instance of {@code LogItCore}.
      * 
-     * @return the instance of LogItCore.
+     * @return the instance of {@code LogItCore}.
      */
     public static LogItCore getInstance()
     {
