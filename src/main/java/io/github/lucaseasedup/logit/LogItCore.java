@@ -216,8 +216,7 @@ public final class LogItCore
                 config.getConfigurationSection("storage.accounts.leading"));
         Storage mirrorAccountStorage = StorageFactory.produceStorage(mirrorStorageType,
                 config.getConfigurationSection("storage.accounts.mirror"));
-        CacheType accountCacheType =
-                CacheType.decode(config.getString("storage.accounts.leading.cache"));
+        CacheType accountCacheType = CacheType.decode(config.getString("storage.accounts.leading.cache"));
         
         @SuppressWarnings("resource")
         WrapperStorage accountStorage = new WrapperStorage(leadingAccountStorage, accountCacheType);
@@ -375,8 +374,7 @@ public final class LogItCore
         
         if (Bukkit.getPluginManager().isPluginEnabled("Vault"))
         {
-            vaultPermissions =
-                    Bukkit.getServicesManager().getRegistration(Permission.class).getProvider();
+            vaultPermissions = Bukkit.getServicesManager().getRegistration(Permission.class).getProvider();
         }
         
         registerEvents();
@@ -658,8 +656,7 @@ public final class LogItCore
                     config.getString("password-recovery.password-combination"));
             accountManager.changeAccountPassword(username, newPassword);
             
-            File bodyTemplateFile =
-                    getDataFile(config.getString("password-recovery.body-template"));
+            File bodyTemplateFile = getDataFile(config.getString("password-recovery.body-template"));
             String bodyTemplate;
             
             try (InputStream bodyTemplateInputStream = new FileInputStream(bodyTemplateFile))
@@ -752,8 +749,7 @@ public final class LogItCore
      */
     public void sendForceLoginMessage(Player player)
     {
-        long minInterval =
-                config.getTime("force-login.prompt.min-interval", TimeUnit.MILLISECONDS);
+        long minInterval = config.getTime("force-login.prompt.min-interval", TimeUnit.MILLISECONDS);
         
         if (minInterval > 0)
         {
