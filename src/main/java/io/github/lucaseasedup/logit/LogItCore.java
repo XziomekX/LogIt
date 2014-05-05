@@ -73,14 +73,11 @@ import io.github.lucaseasedup.logit.storage.WrapperStorage;
 import io.github.lucaseasedup.logit.util.HashtableBuilder;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Map;
@@ -614,63 +611,6 @@ public final class LogItCore
         config.set("password.global-password.salt", "");
         
         log(Level.INFO, getMessage("GLOBALPASS_REMOVE_SUCCESS"));
-    }
-    
-    /**
-     * Changes a player's password to a randomly generated one,
-     * and sends it to the player's e-mail address.
-     * 
-     * @param username a username of the player whom the mail will be sent.
-     */
-    public void recoverPassword(String username)
-    {
-        try
-        {
-            ReportedException.incrementRequestCount();
-            
-            if (mailSender == null)
-                throw new RuntimeException("MailSender not initialized.");
-            
-            String to = accountManager.getEmail(username);
-            String from = config.getString("mail.email-address");
-            String subject = config.getString("password-recovery.subject")
-                    .replace("%player%", username);
-            
-            int passwordLength = config.getInt("password-recovery.password-length");
-            String newPassword = HashGenerator.generatePassword(passwordLength,
-                    config.getString("password-recovery.password-combination"));
-            accountManager.changeAccountPassword(username, newPassword);
-            
-            File bodyTemplateFile = getDataFile(config.getString("password-recovery.body-template"));
-            String bodyTemplate;
-            
-            try (InputStream bodyTemplateInputStream = new FileInputStream(bodyTemplateFile))
-            {
-                bodyTemplate = IoUtils.toString(bodyTemplateInputStream);
-            }
-            
-            String body = bodyTemplate
-                    .replace("%player%", username)
-                    .replace("%password%", newPassword);
-            
-            mailSender.sendMail(Arrays.asList(to), from, subject, body,
-                    config.getBoolean("password-recovery.html-enabled"));
-            
-            log(Level.FINE, getMessage("RECOVER_PASSWORD_SUCCESS_LOG")
-                    .replace("%player%", username)
-                    .replace("%email%", to));
-        }
-        catch (ReportedException | IOException ex)
-        {
-            log(Level.WARNING, getMessage("RECOVER_PASSWORD_FAIL_LOG")
-                    .replace("%player%", username), ex);
-            
-            ReportedException.throwNew(ex);
-        }
-        finally
-        {
-            ReportedException.decrementRequestCount();
-        }
     }
     
     /**

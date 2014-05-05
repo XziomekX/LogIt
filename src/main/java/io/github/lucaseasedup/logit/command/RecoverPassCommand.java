@@ -21,7 +21,12 @@ package io.github.lucaseasedup.logit.command;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
+import io.github.lucaseasedup.logit.hash.HashGenerator;
+import io.github.lucaseasedup.logit.util.IoUtils;
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.logging.Level;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -69,14 +74,38 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                     }
                     else
                     {
-                        getCore().recoverPassword(p.getName());
+                        String to = getAccountManager().getEmail(p.getName());
+                        String from = getConfig().getString("mail.email-address");
+                        String subject = getConfig().getString("password-recovery.subject")
+                                .replace("%player%", p.getName());
+                        
+                        int passwordLength = getConfig().getInt("password-recovery.password-length");
+                        String newPassword = HashGenerator.generatePassword(passwordLength,
+                                getConfig().getString("password-recovery.password-combination"));
+                        getAccountManager().changeAccountPassword(p.getName(), newPassword);
+                        
+                        File bodyTemplateFile =
+                                getDataFile(getConfig().getString("password-recovery.body-template"));
+                        String bodyTemplate = IoUtils.toString(bodyTemplateFile);
+                        String body = bodyTemplate
+                                .replace("%player%", p.getName())
+                                .replace("%password%", newPassword);
+                        
+                        getMailSender().sendMail(Arrays.asList(to), from, subject, body,
+                                getConfig().getBoolean("password-recovery.html-enabled"));
+                        
                         sender.sendMessage(getMessage("RECOVER_PASSWORD_SUCCESS_SELF")
                                 .replace("%email%", args[0]));
+                        log(Level.FINE, getMessage("RECOVER_PASSWORD_SUCCESS_LOG")
+                                .replace("%player%", p.getName())
+                                .replace("%email%", to));
                     }
                 }
                 catch (ReportedException | IOException ex)
                 {
                     sender.sendMessage(getMessage("RECOVER_PASSWORD_FAIL_SELF"));
+                    log(Level.WARNING, getMessage("RECOVER_PASSWORD_FAIL_LOG")
+                            .replace("%player%", p.getName()), ex);
                 }
                 finally
                 {
