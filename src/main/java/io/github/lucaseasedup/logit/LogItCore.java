@@ -1185,6 +1185,11 @@ public final class LogItCore
         return started;
     }
     
+    public File getDataFolder()
+    {
+        return plugin.getDataFolder();
+    }
+    
     public File getDataFile(String path)
     {
         return new File(dataFolder, path);
