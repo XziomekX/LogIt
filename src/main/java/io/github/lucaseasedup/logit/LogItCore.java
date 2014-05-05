@@ -115,7 +115,6 @@ public final class LogItCore
     private LogItCore(LogItPlugin plugin)
     {
         this.plugin = plugin;
-        this.firstRun = !getDataFile("config.yml").exists();
     }
     
     /**
@@ -134,6 +133,7 @@ public final class LogItCore
         getDataFolder().mkdir();
         getDataFile("lib").mkdir();
         
+        firstRun = !getDataFile("config.yml").exists();
         config = new LogItConfiguration();
         
         try
@@ -1329,8 +1329,7 @@ public final class LogItCore
     private static LogItCore instance = null;
     
     private final LogItPlugin plugin;
-    
-    private final boolean firstRun;
+    private boolean firstRun;
     private boolean started = false;
     
     private FileWriter logFileWriter;
