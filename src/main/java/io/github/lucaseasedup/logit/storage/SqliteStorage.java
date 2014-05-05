@@ -117,9 +117,9 @@ public final class SqliteStorage extends Storage
     }
     
     @Override
-    public Hashtable<String, Type> getKeys(String unit) throws IOException
+    public Hashtable<String, DataType> getKeys(String unit) throws IOException
     {
-        Hashtable<String, Type> keys = new LinkedHashtable<>();
+        Hashtable<String, DataType> keys = new LinkedHashtable<>();
         String sql = "PRAGMA table_info('" + SqlUtils.escapeQuotes(unit, "'", true) + "');";
         
         try (ResultSet tableInfo = executeQuery(sql))
@@ -127,7 +127,7 @@ public final class SqliteStorage extends Storage
             while (tableInfo.next())
             {
                 String name = tableInfo.getString("name");
-                Type type = SqlUtils.decodeType(tableInfo.getString("type"));
+                DataType type = SqlUtils.decodeType(tableInfo.getString("type"));
                 
                 keys.put(name, type);
             }
@@ -207,7 +207,7 @@ public final class SqliteStorage extends Storage
     }
     
     @Override
-    public void createUnit(String unit, Hashtable<String, Type> keys) throws IOException
+    public void createUnit(String unit, Hashtable<String, DataType> keys) throws IOException
     {
         String sql = "CREATE TABLE IF NOT EXISTS `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
                 + " (" + SqlUtils.translateKeyTypeList(keys, "`") + ");";
@@ -269,7 +269,7 @@ public final class SqliteStorage extends Storage
     }
     
     @Override
-    public void addKey(String unit, String key, Type type) throws IOException
+    public void addKey(String unit, String key, DataType type) throws IOException
     {
         String sql = "ALTER TABLE `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
                 + " ADD COLUMN `" + SqlUtils.escapeQuotes(key, "`", true) + "` "

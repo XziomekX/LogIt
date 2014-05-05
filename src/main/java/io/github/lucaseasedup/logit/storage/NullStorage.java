@@ -53,7 +53,7 @@ public final class NullStorage extends Storage
     }
     
     @Override
-    public Hashtable<String, Type> getKeys(String unit) throws IOException
+    public Hashtable<String, DataType> getKeys(String unit) throws IOException
     {
         return new Hashtable<>();
     }
@@ -84,7 +84,7 @@ public final class NullStorage extends Storage
     }
     
     @Override
-    public void createUnit(String unit, Hashtable<String, Type> keys) throws IOException
+    public void createUnit(String unit, Hashtable<String, DataType> keys) throws IOException
     {
     }
     
@@ -104,7 +104,7 @@ public final class NullStorage extends Storage
     }
     
     @Override
-    public void addKey(String unit, String key, Type type) throws IOException
+    public void addKey(String unit, String key, DataType type) throws IOException
     {
     }
     

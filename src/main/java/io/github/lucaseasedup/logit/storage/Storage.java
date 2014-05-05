@@ -35,7 +35,7 @@ public abstract class Storage implements AutoCloseable
     public abstract void close() throws IOException;
     
     public abstract List<String> getUnitNames() throws IOException;
-    public abstract Hashtable<String, Type> getKeys(String unit) throws IOException;
+    public abstract Hashtable<String, DataType> getKeys(String unit) throws IOException;
     
     public abstract List<Storage.Entry> selectEntries(String unit) throws IOException;
     public abstract List<Storage.Entry> selectEntries(String unit,
@@ -46,12 +46,12 @@ public abstract class Storage implements AutoCloseable
                                                       List<String> keys,
                                                       Selector selector) throws IOException;
     
-    public abstract void createUnit(String unit, Hashtable<String, Type> keys) throws IOException;
+    public abstract void createUnit(String unit, Hashtable<String, DataType> keys) throws IOException;
     public abstract void renameUnit(String unit, String newName) throws IOException;
     public abstract void eraseUnit(String unit) throws IOException;
     public abstract void removeUnit(String unit) throws IOException;
     
-    public abstract void addKey(String unit, String key, Type type) throws IOException;
+    public abstract void addKey(String unit, String key, DataType type) throws IOException;
     public abstract void addEntry(String unit, Storage.Entry entry) throws IOException;
     public abstract void updateEntries(String unit,
                                        Storage.Entry entrySubset,
@@ -71,7 +71,7 @@ public abstract class Storage implements AutoCloseable
         autobatch = status;
     }
     
-    public enum Type
+    public enum DataType
     {
         /**
          * Integer-number value.

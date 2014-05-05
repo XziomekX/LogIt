@@ -81,7 +81,7 @@ import io.github.lucaseasedup.logit.storage.NullStorage;
 import io.github.lucaseasedup.logit.storage.PostgreSqlStorage;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
-import io.github.lucaseasedup.logit.storage.Storage.Type;
+import io.github.lucaseasedup.logit.storage.Storage.DataType;
 import io.github.lucaseasedup.logit.storage.StorageType;
 import io.github.lucaseasedup.logit.storage.WrapperStorage;
 import io.github.lucaseasedup.logit.util.HashtableBuilder;
@@ -369,9 +369,9 @@ public final class LogItCore
         {
             accountStorage.setAutobatchEnabled(true);
             
-            Hashtable<String, Type> existingKeys = accountStorage.getKeys(accountsUnit);
+            Hashtable<String, DataType> existingKeys = accountStorage.getKeys(accountsUnit);
             
-            for (Map.Entry<String, Type> e : accountKeys.entrySet())
+            for (Map.Entry<String, DataType> e : accountKeys.entrySet())
             {
                 if (!existingKeys.containsKey(e.getKey()))
                 {

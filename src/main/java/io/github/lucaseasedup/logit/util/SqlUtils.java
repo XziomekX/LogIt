@@ -25,7 +25,7 @@ import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.SelectorConstant;
 import io.github.lucaseasedup.logit.storage.SelectorNegation;
 import io.github.lucaseasedup.logit.storage.Storage;
-import io.github.lucaseasedup.logit.storage.Storage.Type;
+import io.github.lucaseasedup.logit.storage.Storage.DataType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Hashtable;
@@ -266,7 +266,7 @@ public final class SqlUtils
         }
     }
     
-    public static String encodeType(Type type)
+    public static String encodeType(DataType type)
     {
         switch (type)
         {
@@ -289,18 +289,18 @@ public final class SqlUtils
         }
     }
     
-    public static Type decodeType(String type)
+    public static DataType decodeType(String type)
     {
         type = type.toUpperCase();
         
         if (type.startsWith("INT") || type.startsWith("TINYINT") || type.startsWith("SMALLINT")
                 || type.startsWith("MEDIUMINT") || type.startsWith("BIGINT"))
         {
-            return Type.INTEGER;
+            return DataType.INTEGER;
         }
         else if (type.startsWith("REAL") || type.startsWith("DOUBLE") || type.startsWith("FLOAT"))
         {
-            return Type.REAL;
+            return DataType.REAL;
         }
         else if (type.startsWith("VARCHAR") || type.startsWith("TEXT")
                 || type.startsWith("CLOB") || type.startsWith("CHAR")
@@ -310,7 +310,7 @@ public final class SqlUtils
                 || type.startsWith("MEDIUMTEXT") || type.startsWith("NCLOB")
                 || type.startsWith("TINYTEXT"))
         {
-            return Type.TEXT;
+            return DataType.TEXT;
         }
         else
         {
@@ -337,11 +337,11 @@ public final class SqlUtils
         return sb.toString();
     }
     
-    public static String translateKeyTypeList(Hashtable<String, Type> keys, String columnQuote)
+    public static String translateKeyTypeList(Hashtable<String, DataType> keys, String columnQuote)
     {
         StringBuilder sb = new StringBuilder();
         
-        for (Map.Entry<String, Type> e : keys.entrySet())
+        for (Map.Entry<String, DataType> e : keys.entrySet())
         {
             if (sb.length() > 0)
             {

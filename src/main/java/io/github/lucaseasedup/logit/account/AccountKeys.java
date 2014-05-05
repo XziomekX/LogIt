@@ -19,11 +19,11 @@
 package io.github.lucaseasedup.logit.account;
 
 import com.google.common.collect.ImmutableList;
-import io.github.lucaseasedup.logit.storage.Storage.Type;
+import io.github.lucaseasedup.logit.storage.Storage.DataType;
 import java.util.List;
 import org.apache.tools.ant.util.LinkedHashtable;
 
-public final class AccountKeys extends LinkedHashtable<String, Type>
+public final class AccountKeys extends LinkedHashtable<String, DataType>
 {
     public AccountKeys(String username,
                        String salt,             
@@ -37,17 +37,17 @@ public final class AccountKeys extends LinkedHashtable<String, Type>
                        String is_locked,
                        String persistence)
     {
-        put(username,          Type.TINYTEXT);
-        put(salt,              Type.TINYTEXT);
-        put(password,          Type.MEDIUMTEXT);
-        put(hashing_algorithm, Type.TINYTEXT);
-        put(ip,                Type.TINYTEXT);
-        put(login_session,     Type.TINYTEXT);
-        put(email,             Type.TINYTEXT);
-        put(last_active_date,  Type.INTEGER);
-        put(reg_date,          Type.INTEGER);
-        put(is_locked,         Type.INTEGER);
-        put(persistence,       Type.TEXT);
+        put(username,          DataType.TINYTEXT);
+        put(salt,              DataType.TINYTEXT);
+        put(password,          DataType.MEDIUMTEXT);
+        put(hashing_algorithm, DataType.TINYTEXT);
+        put(ip,                DataType.TINYTEXT);
+        put(login_session,     DataType.TINYTEXT);
+        put(email,             DataType.TINYTEXT);
+        put(last_active_date,  DataType.INTEGER);
+        put(reg_date,          DataType.INTEGER);
+        put(is_locked,         DataType.INTEGER);
+        put(persistence,       DataType.TEXT);
         
         this.names = new ImmutableList.Builder<String>().add(
             username,

@@ -123,9 +123,9 @@ public final class PostgreSqlStorage extends Storage
     }
     
     @Override
-    public Hashtable<String, Type> getKeys(String unit) throws IOException
+    public Hashtable<String, DataType> getKeys(String unit) throws IOException
     {
-        Hashtable<String, Type> keys = new LinkedHashtable<>();
+        Hashtable<String, DataType> keys = new LinkedHashtable<>();
         String sql = "SELECT COLUMN_NAME, UDT_NAME FROM INFORMATION_SCHEMA.COLUMNS"
                 + " WHERE TABLE_NAME = '" + SqlUtils.escapeQuotes(unit, "'", true) + "';";
         
@@ -134,7 +134,7 @@ public final class PostgreSqlStorage extends Storage
             while (tableInfo.next())
             {
                 String name = tableInfo.getString("COLUMN_NAME");
-                Type type = SqlUtils.decodeType(tableInfo.getString("UDT_NAME"));
+                DataType type = SqlUtils.decodeType(tableInfo.getString("UDT_NAME"));
                 
                 keys.put(name, type);
             }
@@ -214,7 +214,7 @@ public final class PostgreSqlStorage extends Storage
     }
     
     @Override
-    public void createUnit(String unit, Hashtable<String, Type> keys) throws IOException
+    public void createUnit(String unit, Hashtable<String, DataType> keys) throws IOException
     {
         String sql = "CREATE TABLE IF NOT EXISTS \"" + SqlUtils.escapeQuotes(unit, "\"", true) + "\""
                 + " (" + SqlUtils.translateKeyTypeList(keys, "\"") + ");";
@@ -276,7 +276,7 @@ public final class PostgreSqlStorage extends Storage
     }
     
     @Override
-    public void addKey(String unit, String key, Type type) throws IOException
+    public void addKey(String unit, String key, DataType type) throws IOException
     {
         String sql = "ALTER TABLE \"" + SqlUtils.escapeQuotes(unit, "\"", true) + "\""
                 + " ADD COLUMN \"" + SqlUtils.escapeQuotes(key, "\"", true) + "\" "

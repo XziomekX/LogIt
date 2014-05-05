@@ -88,12 +88,12 @@ public final class CsvStorage extends Storage
     }
     
     @Override
-    public Hashtable<String, Type> getKeys(String unit) throws IOException
+    public Hashtable<String, DataType> getKeys(String unit) throws IOException
     {
         if (!connected)
             throw new IOException("Database closed.");
         
-        Hashtable<String, Type> keys = new LinkedHashtable<>();
+        Hashtable<String, DataType> keys = new LinkedHashtable<>();
         
         try (BufferedReader br = new BufferedReader(new FileReader(new File(dir, unit))))
         {
@@ -106,7 +106,7 @@ public final class CsvStorage extends Storage
             
             for (int i = 0; i < topValues.length; i++)
             {
-                keys.put(unescapeValue(topValues[i]), Type.TEXT);
+                keys.put(unescapeValue(topValues[i]), DataType.TEXT);
             }
         }
         
@@ -193,7 +193,7 @@ public final class CsvStorage extends Storage
     }
     
     @Override
-    public void createUnit(String unit, Hashtable<String, Type> keys) throws IOException
+    public void createUnit(String unit, Hashtable<String, DataType> keys) throws IOException
     {
         if (!connected)
             throw new IOException("Database closed.");
@@ -258,12 +258,12 @@ public final class CsvStorage extends Storage
     }
     
     @Override
-    public void addKey(String unit, String key, Type type) throws IOException
+    public void addKey(String unit, String key, DataType type) throws IOException
     {
         if (!connected)
             throw new IOException("Database closed.");
         
-        Hashtable<String, Type> keys = getKeys(unit);
+        Hashtable<String, DataType> keys = getKeys(unit);
         
         if (keys.containsKey(key))
             throw new IOException("Key with this name already exists: " + key);
@@ -286,7 +286,7 @@ public final class CsvStorage extends Storage
         if (!connected)
             throw new IOException("Database closed.");
         
-        Hashtable<String, Type> keys = getKeys(unit);
+        Hashtable<String, DataType> keys = getKeys(unit);
         
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(new File(dir, unit), true)))
         {
@@ -321,7 +321,7 @@ public final class CsvStorage extends Storage
         if (!connected)
             throw new IOException("Database closed.");
         
-        Hashtable<String, Type> keys = getKeys(unit);
+        Hashtable<String, DataType> keys = getKeys(unit);
         List<Storage.Entry> entries = selectEntries(unit);
         
         removeUnit(unit);
@@ -347,7 +347,7 @@ public final class CsvStorage extends Storage
         if (!connected)
             throw new IOException("Database closed.");
         
-        Hashtable<String, Type> keys = getKeys(unit);
+        Hashtable<String, DataType> keys = getKeys(unit);
         List<Storage.Entry> entries = selectEntries(unit);
         
         removeUnit(unit);

@@ -31,7 +31,7 @@ import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
-import io.github.lucaseasedup.logit.storage.Storage.Type;
+import io.github.lucaseasedup.logit.storage.Storage.DataType;
 import io.github.lucaseasedup.logit.util.HashtableBuilder;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.io.File;
@@ -311,10 +311,10 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         try (Storage sessionsStorage = new SqliteStorage("jdbc:sqlite:" + sessionsDatabaseFile))
         {
             sessionsStorage.connect();
-            sessionsStorage.createUnit("sessions", new HashtableBuilder<String, Type>()
-                .add("username", Type.TINYTEXT)
-                .add("status", Type.INTEGER)
-                .add("ip", Type.TINYTEXT)
+            sessionsStorage.createUnit("sessions", new HashtableBuilder<String, DataType>()
+                .add("username", DataType.TINYTEXT)
+                .add("status", DataType.INTEGER)
+                .add("ip", DataType.TINYTEXT)
                 .build());
             sessionsStorage.setAutobatchEnabled(true);
             
