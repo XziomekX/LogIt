@@ -743,26 +743,6 @@ public final class LogItCore
     }
     
     /**
-     * Checks if LogIt is linked to Vault.
-     * 
-     * @return {@code true} if LogIt is linked to Vault; {@code false} otherwise.
-     */
-    public boolean isLinkedToVault()
-    {
-        return vaultPermissions != null;
-    }
-    
-    public HashingAlgorithm getDefaultHashingAlgorithm()
-    {
-        return HashingAlgorithm.decode(plugin.getConfig().getString("password.hashing-algorithm"));
-    }
-    
-    public IntegrationType getIntegration()
-    {
-        return IntegrationType.decode(plugin.getConfig().getString("integration"));
-    }
-    
-    /**
      * Logs a message in the name of LogIt.
      * 
      * @param level   the message level.
@@ -991,6 +971,16 @@ public final class LogItCore
         return config != null && config.isLoaded();
     }
     
+    public HashingAlgorithm getDefaultHashingAlgorithm()
+    {
+        return HashingAlgorithm.decode(plugin.getConfig().getString("password.hashing-algorithm"));
+    }
+    
+    public IntegrationType getIntegration()
+    {
+        return IntegrationType.decode(plugin.getConfig().getString("integration"));
+    }
+    
     public LocaleManager getLocaleManager()
     {
         return localeManager;
@@ -1029,6 +1019,16 @@ public final class LogItCore
     public ProfileManager getProfileManager()
     {
         return profileManager;
+    }
+    
+    /**
+     * Checks if LogIt is linked to Vault.
+     * 
+     * @return {@code true} if LogIt is linked to Vault; {@code false} otherwise.
+     */
+    public boolean isLinkedToVault()
+    {
+        return vaultPermissions != null;
     }
     
     /**
