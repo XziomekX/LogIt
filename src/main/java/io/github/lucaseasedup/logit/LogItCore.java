@@ -1331,6 +1331,27 @@ public final class LogItCore
             default:           return UNKNOWN;
             }
         }
+        
+        /**
+         * Converts this {@code StorageType} to a string representation.
+         * 
+         * @return the string representation of this {@code StorageType},
+         *         or {@code null} if no representation for this
+         *         {@code StorageType} was implemented.
+         */
+        public String encode()
+        {
+            switch (this)
+            {
+            case NONE:       return "none";
+            case SQLITE:     return "sqlite";
+            case MYSQL:      return "mysql";
+            case H2:         return "h2";
+            case POSTGRESQL: return "postgresql";
+            case CSV:        return "csv";
+            default:         return null;
+            }
+        }
     }
     
     public static enum HashingAlgorithm
@@ -1390,6 +1411,23 @@ public final class LogItCore
             case "none":   return NONE;
             case "phpbb2": return PHPBB2;
             default:       return UNKNOWN;
+            }
+        }
+        
+        /**
+         * Converts this {@code IntegrationType} to a string representation.
+         * 
+         * @return the string representation of this {@code IntegrationType},
+         *         or {@code null} if no representation for this
+         *         {@code IntegrationType} was implemented.
+         */
+        public String encode()
+        {
+            switch (this)
+            {
+            case NONE:   return "plain";
+            case PHPBB2: return "phpbb2";
+            default:     return null;
             }
         }
     }
