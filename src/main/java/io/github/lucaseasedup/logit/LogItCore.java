@@ -74,14 +74,9 @@ import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
 import io.github.lucaseasedup.logit.profile.ProfileManager;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.storage.CacheType;
-import io.github.lucaseasedup.logit.storage.CsvStorage;
-import io.github.lucaseasedup.logit.storage.H2Storage;
-import io.github.lucaseasedup.logit.storage.MySqlStorage;
-import io.github.lucaseasedup.logit.storage.NullStorage;
-import io.github.lucaseasedup.logit.storage.PostgreSqlStorage;
-import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.storage.Storage.DataType;
+import io.github.lucaseasedup.logit.storage.StorageFactory;
 import io.github.lucaseasedup.logit.storage.StorageType;
 import io.github.lucaseasedup.logit.storage.WrapperStorage;
 import io.github.lucaseasedup.logit.util.HashtableBuilder;
@@ -217,104 +212,10 @@ public final class LogItCore
             ReportedException.decrementRequestCount();
         }
         
-        Storage leadingAccountStorage = null;
-        
-        switch (leadingStorageType)
-        {
-        case NONE:
-            leadingAccountStorage = new NullStorage();
-            break;
-        
-        case SQLITE:
-            leadingAccountStorage = new SqliteStorage("jdbc:sqlite:" + getDataFolder() + "/"
-                    + config.getString("storage.accounts.leading.sqlite.filename"));
-            break;
-            
-        case MYSQL:
-            leadingAccountStorage = new MySqlStorage(
-                    config.getString("storage.accounts.leading.mysql.host"),
-                    config.getString("storage.accounts.leading.mysql.user"),
-                    config.getString("storage.accounts.leading.mysql.password"),
-                    config.getString("storage.accounts.leading.mysql.database"));
-            break;
-            
-        case H2:
-            leadingAccountStorage = new H2Storage("jdbc:h2:" + getDataFolder()
-                    + "/" + config.getString("storage.accounts.leading.h2.filename"));
-            break;
-            
-        case POSTGRESQL:
-            leadingAccountStorage = new PostgreSqlStorage(
-                    config.getString("storage.accounts.leading.postgresql.host"),
-                    config.getString("storage.accounts.leading.postgresql.user"),
-                    config.getString("storage.accounts.leading.postgresql.password"));
-            break;
-            
-        case CSV:
-        {
-            File dir = getDataFile(config.getString("storage.accounts.leading.csv.dir"));
-            
-            if (!dir.exists())
-                dir.mkdir();
-            
-            leadingAccountStorage = new CsvStorage(dir);
-            
-            break;
-        }
-            
-        default:
-            FatalReportedException.throwNew();
-        }
-        
-        Storage mirrorAccountStorage = null;
-        
-        switch (mirrorStorageType)
-        {
-        case NONE:
-            mirrorAccountStorage = new NullStorage();
-            break;
-        
-        case SQLITE:
-            mirrorAccountStorage = new SqliteStorage("jdbc:sqlite:" + getDataFolder() + "/"
-                    + config.getString("storage.accounts.mirror.sqlite.filename"));
-            break;
-            
-        case MYSQL:
-            mirrorAccountStorage = new MySqlStorage(
-                    config.getString("storage.accounts.mirror.mysql.host"),
-                    config.getString("storage.accounts.mirror.mysql.user"),
-                    config.getString("storage.accounts.mirror.mysql.password"),
-                    config.getString("storage.accounts.mirror.mysql.database"));
-            break;
-            
-        case H2:
-            mirrorAccountStorage = new H2Storage("jdbc:h2:" + getDataFolder()
-                    + "/" + config.getString("storage.accounts.mirror.h2.filename"));
-            break;
-            
-        case POSTGRESQL:
-            mirrorAccountStorage = new PostgreSqlStorage(
-                    config.getString("storage.accounts.mirror.postgresql.host"),
-                    config.getString("storage.accounts.mirror.postgresql.user"),
-                    config.getString("storage.accounts.mirror.postgresql.password"));
-            break;
-            
-        case CSV:
-        {
-            File dir = getDataFile(config.getString("storage.accounts.mirror.csv.dir"));
-            
-            if (!dir.exists())
-                dir.mkdir();
-            
-            mirrorAccountStorage = new CsvStorage(dir);
-            
-            break;
-        }
-        
-        default:
-            FatalReportedException.throwNew();
-        }
-        
+        Storage leadingAccountStorage = StorageFactory.produceStorage(leadingStorageType,
+                config.getConfigurationSection("storage.accounts.leading"));
+        Storage mirrorAccountStorage = StorageFactory.produceStorage(mirrorStorageType,
+                config.getConfigurationSection("storage.accounts.mirror"));
         CacheType accountCacheType =
                 CacheType.decode(config.getString("storage.accounts.leading.cache"));
         
