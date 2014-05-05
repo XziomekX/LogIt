@@ -161,6 +161,13 @@ public final class LogItCore
             }
         }
         
+        localeManager = new LocaleManager();
+        localeManager.registerLocale(EnglishLocale.getInstance());
+        localeManager.registerLocale(PolishLocale.getInstance());
+        localeManager.registerLocale(GermanLocale.getInstance());
+        localeManager.setFallbackLocale(EnglishLocale.class);
+        localeManager.switchActiveLocale(getConfig().getString("locale"));
+        
         StorageType leadingStorageType = StorageType.decode(
             plugin.getConfig().getString("storage.accounts.leading.storage-type")
         );
@@ -226,7 +233,6 @@ public final class LogItCore
         }
         
         String accountsUnit = config.getString("storage.accounts.leading.unit");
-        
         AccountKeys accountKeys = new AccountKeys(
             config.getString("storage.accounts.keys.username"),
             config.getString("storage.accounts.keys.salt"),
@@ -290,6 +296,34 @@ public final class LogItCore
         }
         
         accountManager = new AccountManager(accountStorage, accountsUnit, accountKeys);
+        persistenceManager = new PersistenceManager();
+        
+        setSerializerEnabled(LocationSerializer.class,
+                config.getBoolean("waiting-room.enabled"));
+        setSerializerEnabled(AirBarSerializer.class,
+                config.getBoolean("force-login.obfuscate-bars.air"));
+        setSerializerEnabled(HealthBarSerializer.class,
+                config.getBoolean("force-login.obfuscate-bars.health"));
+        setSerializerEnabled(ExperienceSerializer.class,
+                config.getBoolean("force-login.obfuscate-bars.experience"));
+        setSerializerEnabled(HungerBarSerializer.class,
+                config.getBoolean("force-login.obfuscate-bars.hunger"));
+        
+        backupManager = new BackupManager();
+        sessionManager = new SessionManager();
+        
+        if (config.getBoolean("password-recovery.enabled"))
+        {
+            mailSender = new MailSender();
+            mailSender.configure(
+                config.getString("mail.smtp-host"),
+                config.getInt("mail.smtp-port"),
+                config.getString("mail.smtp-user"),
+                config.getString("mail.smtp-password")
+            );
+        }
+        
+        messageDispatcher = new LogItMessageDispatcher();
         
         if (config.getBoolean("profiles.enabled"))
         {
@@ -304,41 +338,12 @@ public final class LogItCore
                     config.getConfigurationSection("profiles.fields"));
         }
         
-        persistenceManager = new PersistenceManager();
-        messageDispatcher = new LogItMessageDispatcher();
-        
-        setSerializerEnabled(LocationSerializer.class,
-                config.getBoolean("waiting-room.enabled"));
-        setSerializerEnabled(AirBarSerializer.class,
-                config.getBoolean("force-login.obfuscate-bars.air"));
-        setSerializerEnabled(HealthBarSerializer.class,
-                config.getBoolean("force-login.obfuscate-bars.health"));
-        setSerializerEnabled(ExperienceSerializer.class,
-                config.getBoolean("force-login.obfuscate-bars.experience"));
-        setSerializerEnabled(HungerBarSerializer.class,
-                config.getBoolean("force-login.obfuscate-bars.hunger"));
-        
         accountWatcher = new AccountWatcher();
-        backupManager  = new BackupManager();
-        sessionManager = new SessionManager();
         tickEventCaller = new TickEventCaller();
         
-        localeManager = new LocaleManager();
-        localeManager.registerLocale(EnglishLocale.getInstance());
-        localeManager.registerLocale(PolishLocale.getInstance());
-        localeManager.registerLocale(GermanLocale.getInstance());
-        localeManager.setFallbackLocale(EnglishLocale.class);
-        localeManager.switchActiveLocale(getConfig().getString("locale"));
-        
-        if (config.getBoolean("password-recovery.enabled"))
+        if (Bukkit.getPluginManager().isPluginEnabled("Vault"))
         {
-            mailSender = new MailSender();
-            mailSender.configure(
-                config.getString("mail.smtp-host"),
-                config.getInt("mail.smtp-port"),
-                config.getString("mail.smtp-user"),
-                config.getString("mail.smtp-password")
-            );
+            vaultPermissions = Bukkit.getServicesManager().getRegistration(Permission.class).getProvider();
         }
         
         accountManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
@@ -347,18 +352,13 @@ public final class LogItCore
                 backupManager, 0, BackupManager.TASK_PERIOD);
         sessionManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
                 sessionManager, 0, SessionManager.TASK_PERIOD);
-        accountWatcherTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
-                accountWatcher, 0, AccountWatcher.TASK_PERIOD);
         tickEventCallerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
                 tickEventCaller, 0, TickEventCaller.TASK_PERIOD);
+        accountWatcherTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+                accountWatcher, 0, AccountWatcher.TASK_PERIOD);
         
-        if (Bukkit.getPluginManager().isPluginEnabled("Vault"))
-        {
-            vaultPermissions = Bukkit.getServicesManager().getRegistration(Permission.class).getProvider();
-        }
-        
-        registerEvents();
         setCommandExecutors();
+        registerEvents();
         
         started = true;
         
@@ -428,8 +428,8 @@ public final class LogItCore
         messageDispatcher = null;
         profileManager = null;
         
-        tickEventCaller = null;
         accountWatcher = null;
+        tickEventCaller = null;
         vaultPermissions = null;
         
         started = false;
@@ -801,6 +801,37 @@ public final class LogItCore
         }
     }
     
+    private void setSerializerEnabled(Class<? extends PersistenceSerializer> clazz, boolean status)
+            throws FatalReportedException
+    {
+        if (status)
+        {
+            try
+            {
+                persistenceManager.registerSerializer(clazz);
+            }
+            catch (ReflectiveOperationException ex)
+            {
+                log(Level.SEVERE,
+                        "Could not register persistence serializer: " + clazz.getSimpleName(), ex);
+                
+                FatalReportedException.throwNew(ex);
+            }
+        }
+        else for (Player player : Bukkit.getOnlinePlayers())
+        {
+            try
+            {
+                persistenceManager.unserializeUsing(player, clazz);
+            }
+            catch (ReflectiveOperationException | IOException ex)
+            {
+                log(Level.WARNING,
+                        "Could not unserialize persistence for player: " + player.getName(), ex);
+            }
+        }
+    }
+    
     private void setCommandExecutors()
     {
         setCommandExecutor("logit", new LogItCommand(), true);
@@ -843,37 +874,6 @@ public final class LogItCore
         plugin.getServer().getPluginManager().registerEvents(new PlayerEventListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new InventoryEventListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new SessionEventListener(), plugin);
-    }
-    
-    private void setSerializerEnabled(Class<? extends PersistenceSerializer> clazz, boolean status)
-            throws FatalReportedException
-    {
-        if (status)
-        {
-            try
-            {
-                persistenceManager.registerSerializer(clazz);
-            }
-            catch (ReflectiveOperationException ex)
-            {
-                log(Level.SEVERE,
-                        "Could not register persistence serializer: " + clazz.getSimpleName(), ex);
-                
-                FatalReportedException.throwNew(ex);
-            }
-        }
-        else for (Player player : Bukkit.getOnlinePlayers())
-        {
-            try
-            {
-                persistenceManager.unserializeUsing(player, clazz);
-            }
-            catch (ReflectiveOperationException | IOException ex)
-            {
-                log(Level.WARNING,
-                        "Could not unserialize persistence for player: " + player.getName(), ex);
-            }
-        }
     }
     
     public LogItPlugin getPlugin()
@@ -1008,8 +1008,8 @@ public final class LogItCore
     private LogItMessageDispatcher messageDispatcher;
     private ProfileManager         profileManager;
     
-    private TickEventCaller tickEventCaller;
     private AccountWatcher  accountWatcher;
+    private TickEventCaller tickEventCaller;
     private Permission      vaultPermissions;
     
     private int accountManagerTaskId;
