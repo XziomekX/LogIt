@@ -113,7 +113,6 @@ public final class LogItCore
     private LogItCore(LogItPlugin plugin)
     {
         this.plugin = plugin;
-        this.dataFolder = plugin.getDataFolder();
         this.firstRun = !getDataFile("config.yml").exists();
     }
     
@@ -130,7 +129,7 @@ public final class LogItCore
         if (started)
             return;
         
-        dataFolder.mkdir();
+        getDataFolder().mkdir();
         getDataFile("lib").mkdir();
         
         config = new LogItConfiguration();
@@ -225,7 +224,7 @@ public final class LogItCore
             break;
         
         case SQLITE:
-            leadingAccountStorage = new SqliteStorage("jdbc:sqlite:" + dataFolder + "/"
+            leadingAccountStorage = new SqliteStorage("jdbc:sqlite:" + getDataFolder() + "/"
                     + config.getString("storage.accounts.leading.sqlite.filename"));
             break;
             
@@ -238,7 +237,7 @@ public final class LogItCore
             break;
             
         case H2:
-            leadingAccountStorage = new H2Storage("jdbc:h2:" + dataFolder
+            leadingAccountStorage = new H2Storage("jdbc:h2:" + getDataFolder()
                     + "/" + config.getString("storage.accounts.leading.h2.filename"));
             break;
             
@@ -251,7 +250,7 @@ public final class LogItCore
             
         case CSV:
         {
-            File dir = new File(dataFolder, config.getString("storage.accounts.leading.csv.dir"));
+            File dir = getDataFile(config.getString("storage.accounts.leading.csv.dir"));
             
             if (!dir.exists())
                 dir.mkdir();
@@ -274,7 +273,7 @@ public final class LogItCore
             break;
         
         case SQLITE:
-            mirrorAccountStorage = new SqliteStorage("jdbc:sqlite:" + dataFolder + "/"
+            mirrorAccountStorage = new SqliteStorage("jdbc:sqlite:" + getDataFolder() + "/"
                     + config.getString("storage.accounts.mirror.sqlite.filename"));
             break;
             
@@ -287,7 +286,7 @@ public final class LogItCore
             break;
             
         case H2:
-            mirrorAccountStorage = new H2Storage("jdbc:h2:" + dataFolder
+            mirrorAccountStorage = new H2Storage("jdbc:h2:" + getDataFolder()
                     + "/" + config.getString("storage.accounts.mirror.h2.filename"));
             break;
             
@@ -300,7 +299,7 @@ public final class LogItCore
             
         case CSV:
         {
-            File dir = new File(dataFolder, config.getString("storage.accounts.mirror.csv.dir"));
+            File dir = getDataFile(config.getString("storage.accounts.mirror.csv.dir"));
             
             if (!dir.exists())
                 dir.mkdir();
@@ -1192,7 +1191,7 @@ public final class LogItCore
     
     public File getDataFile(String path)
     {
-        return new File(dataFolder, path);
+        return new File(getDataFolder(), path);
     }
     
     protected Permission getVaultPermissions()
@@ -1446,7 +1445,6 @@ public final class LogItCore
     private static LogItCore instance = null;
     
     private final LogItPlugin plugin;
-    private final File dataFolder;
     
     private final boolean firstRun;
     private boolean started = false;
