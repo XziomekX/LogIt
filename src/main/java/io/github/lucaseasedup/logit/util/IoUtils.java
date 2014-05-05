@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.util;
 
 import io.github.lucaseasedup.logit.LogItPlugin;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -56,6 +57,14 @@ public final class IoUtils
         }
         
         return sw.toString();
+    }
+    
+    public static String toString(File file) throws IOException
+    {
+        try (InputStream is = new FileInputStream(file))
+        {
+            return IoUtils.toString(is);
+        }
     }
     
     public static void extractResource(String resource, File dest) throws IOException
