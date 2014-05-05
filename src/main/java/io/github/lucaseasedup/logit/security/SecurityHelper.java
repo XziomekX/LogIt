@@ -1,5 +1,5 @@
 /*
- * HashGenerator.java
+ * SecurityHelper.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -16,18 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit.hash;
+package io.github.lucaseasedup.logit.security;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
-/**
- * Provides a hashing tool for different algorithms.
- */
-public final class HashGenerator
+public final class SecurityHelper
 {
-    private HashGenerator()
+    private SecurityHelper()
     {
     }
     

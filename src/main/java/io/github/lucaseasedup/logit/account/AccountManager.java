@@ -23,8 +23,8 @@ import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.IntegrationType;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
-import io.github.lucaseasedup.logit.hash.HashGenerator;
-import io.github.lucaseasedup.logit.hash.HashingAlgorithm;
+import io.github.lucaseasedup.logit.security.HashingAlgorithm;
+import io.github.lucaseasedup.logit.security.SecurityHelper;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.SelectorNegation;
@@ -159,13 +159,13 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             
             if (getConfig().getBoolean("password.use-salt"))
             {
-                String salt = HashGenerator.generateSalt(algorithm);
-                hash = HashGenerator.hash(password, salt, algorithm);
+                String salt = SecurityHelper.generateSalt(algorithm);
+                hash = SecurityHelper.hash(password, salt, algorithm);
                 entry.put(keys.salt(), salt);
             }
             else
             {
-                hash = HashGenerator.hash(password, algorithm);
+                hash = SecurityHelper.hash(password, algorithm);
             }
             
             entry.put(keys.password(), hash);
@@ -325,13 +325,13 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         
         if (getConfig().getBoolean("password.use-salt"))
         {
-            String newSalt = HashGenerator.generateSalt(algorithm);
-            newHash = HashGenerator.hash(newPassword, newSalt, algorithm);
+            String newSalt = SecurityHelper.generateSalt(algorithm);
+            newHash = SecurityHelper.hash(newPassword, newSalt, algorithm);
             entry.put(keys.salt(), newSalt);
         }
         else
         {
-            newHash = HashGenerator.hash(newPassword, algorithm);
+            newHash = SecurityHelper.hash(newPassword, algorithm);
         }
         
         entry.put(keys.hashing_algorithm(), algorithm.encode());

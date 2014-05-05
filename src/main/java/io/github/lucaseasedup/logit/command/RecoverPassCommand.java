@@ -21,7 +21,7 @@ package io.github.lucaseasedup.logit.command;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
-import io.github.lucaseasedup.logit.hash.HashGenerator;
+import io.github.lucaseasedup.logit.security.SecurityHelper;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
 import java.io.IOException;
@@ -80,7 +80,7 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                                 .replace("%player%", p.getName());
                         
                         int passwordLength = getConfig().getInt("password-recovery.password-length");
-                        String newPassword = HashGenerator.generatePassword(passwordLength,
+                        String newPassword = SecurityHelper.generatePassword(passwordLength,
                                 getConfig().getString("password-recovery.password-combination"));
                         getAccountManager().changeAccountPassword(p.getName(), newPassword);
                         

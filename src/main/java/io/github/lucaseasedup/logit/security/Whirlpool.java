@@ -1,4 +1,4 @@
-package io.github.lucaseasedup.logit.hash;
+package io.github.lucaseasedup.logit.security;
 
 import java.util.Arrays;
 

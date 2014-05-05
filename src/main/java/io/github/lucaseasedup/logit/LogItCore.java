@@ -40,9 +40,6 @@ import io.github.lucaseasedup.logit.command.RememberCommand;
 import io.github.lucaseasedup.logit.command.UnregisterCommand;
 import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
 import io.github.lucaseasedup.logit.config.LogItConfiguration;
-import io.github.lucaseasedup.logit.hash.BCrypt;
-import io.github.lucaseasedup.logit.hash.HashGenerator;
-import io.github.lucaseasedup.logit.hash.HashingAlgorithm;
 import io.github.lucaseasedup.logit.listener.BlockEventListener;
 import io.github.lucaseasedup.logit.listener.EntityEventListener;
 import io.github.lucaseasedup.logit.listener.InventoryEventListener;
@@ -63,6 +60,9 @@ import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
 import io.github.lucaseasedup.logit.profile.ProfileManager;
+import io.github.lucaseasedup.logit.security.BCrypt;
+import io.github.lucaseasedup.logit.security.HashingAlgorithm;
+import io.github.lucaseasedup.logit.security.SecurityHelper;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.storage.CacheType;
 import io.github.lucaseasedup.logit.storage.Storage;
@@ -516,7 +516,7 @@ public final class LogItCore
         }
         else
         {
-            return hashedPassword.equals(HashGenerator.hash(password, hashingAlgorithm));
+            return hashedPassword.equals(SecurityHelper.hash(password, hashingAlgorithm));
         }
     }
     
@@ -564,11 +564,11 @@ public final class LogItCore
         {
             if (config.getBoolean("password.use-salt"))
             {
-                return hashedPassword.equals(HashGenerator.hash(password, salt, hashingAlgorithm));
+                return hashedPassword.equals(SecurityHelper.hash(password, salt, hashingAlgorithm));
             }
             else
             {
-                return hashedPassword.equals(HashGenerator.hash(password, hashingAlgorithm));
+                return hashedPassword.equals(SecurityHelper.hash(password, hashingAlgorithm));
             }
         }
     }
@@ -596,8 +596,8 @@ public final class LogItCore
      */
     public void changeGlobalPassword(String password)
     {
-        String salt = HashGenerator.generateSalt(getDefaultHashingAlgorithm());
-        String hash = HashGenerator.hash(password, salt, getDefaultHashingAlgorithm());
+        String salt = SecurityHelper.generateSalt(getDefaultHashingAlgorithm());
+        String hash = SecurityHelper.hash(password, salt, getDefaultHashingAlgorithm());
         
         config.set("password.global-password.salt", salt);
         config.set("password.global-password.hash", hash);
