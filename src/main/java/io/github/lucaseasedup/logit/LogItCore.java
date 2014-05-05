@@ -317,6 +317,7 @@ public final class LogItCore
         }
         
         persistenceManager = new PersistenceManager();
+        messageDispatcher = new LogItMessageDispatcher();
         
         setSerializerEnabled(LocationSerializer.class,
                 config.getBoolean("waiting-room.enabled"));
@@ -436,6 +437,7 @@ public final class LogItCore
         backupManager = null;
         sessionManager = null;
         mailSender = null;
+        messageDispatcher = null;
         profileManager = null;
         
         tickEventCaller = null;
@@ -731,57 +733,6 @@ public final class LogItCore
                 || config.getStringList("force-login.in-worlds").contains(worldName))
              && !containsIgnoreCase(player.getName(),
                      config.getStringList("force-login.exempt-players"));
-    }
-    
-    /**
-     * Sends a message to the specified player telling them to either log in or register
-     * if it has been enabled in the config.
-     * 
-     * @param player the player to whom the message will be sent.
-     */
-    public void sendForceLoginMessage(Player player)
-    {
-        long minInterval = config.getTime("force-login.prompt.min-interval", TimeUnit.MILLISECONDS);
-        
-        if (minInterval > 0)
-        {
-            long currentTimeMillis = System.currentTimeMillis();
-            Long playerInterval = forceLoginPromptIntervals.get(player);
-            
-            if (playerInterval != null && currentTimeMillis - playerInterval < minInterval)
-                return;
-            
-            forceLoginPromptIntervals.put(player, currentTimeMillis);
-        }
-        
-        if (accountManager.isRegistered(player.getName()))
-        {
-            if (config.getBoolean("force-login.prompt.login"))
-            {
-                if (!config.getBoolean("password.disable-passwords"))
-                {
-                    player.sendMessage(getMessage("PLEASE_LOGIN"));
-                }
-                else
-                {
-                    player.sendMessage(getMessage("PLEASE_LOGIN_NOPASS"));
-                }
-            }
-        }
-        else
-        {
-            if (config.getBoolean("force-login.prompt.register"))
-            {
-                if (!config.getBoolean("password.disable-passwords"))
-                {
-                    player.sendMessage(getMessage("PLEASE_REGISTER"));
-                }
-                else
-                {
-                    player.sendMessage(getMessage("PLEASE_REGISTER_NOPASS"));
-                }
-            }
-        }
     }
     
     /**
@@ -1183,7 +1134,12 @@ public final class LogItCore
     {
         return mailSender;
     }
-
+    
+    public LogItMessageDispatcher getMessageDispatcher()
+    {
+        return messageDispatcher;
+    }
+    
     public ProfileManager getProfileManager()
     {
         return profileManager;
@@ -1216,14 +1172,15 @@ public final class LogItCore
     private boolean firstRun;
     private boolean started = false;
     
-    private LogItConfiguration  config;
-    private LocaleManager       localeManager;
-    private AccountManager      accountManager;
-    private PersistenceManager  persistenceManager;
-    private BackupManager       backupManager;
-    private SessionManager      sessionManager;
-    private MailSender          mailSender;
-    private ProfileManager      profileManager;
+    private LogItConfiguration     config;
+    private LocaleManager          localeManager;
+    private AccountManager         accountManager;
+    private PersistenceManager     persistenceManager;
+    private BackupManager          backupManager;
+    private SessionManager         sessionManager;
+    private MailSender             mailSender;
+    private LogItMessageDispatcher messageDispatcher;
+    private ProfileManager         profileManager;
     
     private TickEventCaller tickEventCaller;
     private AccountWatcher  accountWatcher;
@@ -1237,5 +1194,4 @@ public final class LogItCore
     
     private FileWriter logFileWriter;
     private final SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private final Hashtable<Player, Long> forceLoginPromptIntervals = new Hashtable<>();
 }

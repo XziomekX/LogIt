@@ -20,7 +20,6 @@ package io.github.lucaseasedup.logit.listener;
 
 import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastJoinMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastQuitMessage;
-import io.github.lucaseasedup.logit.ForcedLoginPrompter;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.session.SessionEndEvent;
@@ -108,13 +107,11 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
             
             if (getConfig().getBoolean("force-login.periodical-prompt.enabled"))
             {
-                ForcedLoginPrompter prompter = new ForcedLoginPrompter(getCore(), username);
                 long promptPeriod =
                         getConfig().getTime("force-login.periodical-prompt.period", TimeUnit.TICKS);
-                int prompterId = Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(),
-                        prompter, promptPeriod, promptPeriod);
                 
-                prompter.setTaskId(prompterId);
+                getCore().getMessageDispatcher()
+                        .dispatchRepeatingForceLoginPrompter(username, promptPeriod, promptPeriod);
             }
         }
     }

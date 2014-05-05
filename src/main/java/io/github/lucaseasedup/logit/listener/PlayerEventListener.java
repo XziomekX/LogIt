@@ -24,7 +24,6 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastQuitMessage
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
-import io.github.lucaseasedup.logit.ForcedLoginPrompter;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.account.AccountKeys;
@@ -216,33 +215,24 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             getCore().getPersistenceManager().serialize(player);
             
-            long promptPeriod =
-                    getConfig().getTime("force-login.periodical-prompt.period", TimeUnit.TICKS);
-            int prompterId;
-            
-            ForcedLoginPrompter prompter = new ForcedLoginPrompter(getCore(), username);
+            long promptPeriod = getConfig().getTime("force-login.periodical-prompt.period", TimeUnit.TICKS);
             
             if (getConfig().getBoolean("force-login.prompt-on.join"))
             {
                 if (getConfig().getBoolean("force-login.periodical-prompt.enabled"))
                 {
-                    prompterId = Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(),
-                            prompter, 5L, promptPeriod);
+                    getCore().getMessageDispatcher()
+                            .dispatchRepeatingForceLoginPrompter(username, 5L, promptPeriod);
                 }
                 else
                 {
-                    prompterId = Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(),
-                            prompter, 5L);
+                    getCore().getMessageDispatcher().dispatchForceLoginPrompter(username, 5L);
                 }
-                
-                prompter.setTaskId(prompterId);
             }
             else if (getConfig().getBoolean("force-login.periodical-prompt.enabled"))
             {
-                prompterId = Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(),
-                        prompter, 5L + promptPeriod, promptPeriod);
-                
-                prompter.setTaskId(prompterId);
+                getCore().getMessageDispatcher()
+                        .dispatchRepeatingForceLoginPrompter(username, 5L + promptPeriod, promptPeriod);
             }
         }
         
@@ -325,7 +315,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
-            getCore().sendForceLoginMessage(player);
+            getCore().getMessageDispatcher().sendForceLoginMessage(player);
         }
     }
     
@@ -381,7 +371,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
-            getCore().sendForceLoginMessage(player);
+            getCore().getMessageDispatcher().sendForceLoginMessage(player);
         }
     }
     
@@ -405,7 +395,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             {
                 if (getConfig().getBoolean("force-login.prompt-on.interact"))
                 {
-                    getCore().sendForceLoginMessage(player);
+                    getCore().getMessageDispatcher().sendForceLoginMessage(player);
                 }
             }
         }
@@ -425,7 +415,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             
             if (getConfig().getBoolean("force-login.prompt-on.interact-entity"))
             {
-                getCore().sendForceLoginMessage(player);
+                getCore().getMessageDispatcher().sendForceLoginMessage(player);
             }
         }
     }
@@ -458,7 +448,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             
             if (getConfig().getBoolean("force-login.prompt-on.drop-item"))
             {
-                getCore().sendForceLoginMessage(player);
+                getCore().getMessageDispatcher().sendForceLoginMessage(player);
             }
         }
     }
@@ -470,7 +460,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
-            getCore().sendForceLoginMessage(player);
+            getCore().getMessageDispatcher().sendForceLoginMessage(player);
         }
     }
 }
