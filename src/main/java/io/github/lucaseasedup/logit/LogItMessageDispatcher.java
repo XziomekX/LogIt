@@ -27,8 +27,9 @@ import org.bukkit.entity.Player;
 public final class LogItMessageDispatcher extends LogItCoreObject
 {
     /**
-     * Sends a message to the specified player telling them to either log in or register
-     * if it has been enabled in the config.
+     * Sends a message to the given player telling them either to log in or to register.
+     * 
+     * <p> This method's behavior may be altered by the configuration file.
      * 
      * @param player the player to whom the message will be sent.
      */
