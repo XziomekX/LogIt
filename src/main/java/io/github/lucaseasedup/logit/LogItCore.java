@@ -1196,7 +1196,7 @@ public final class LogItCore
         return new File(getDataFolder(), path);
     }
     
-    protected Permission getVaultPermissions()
+    private Permission getVaultPermissions()
     {
         return vaultPermissions;
     }
