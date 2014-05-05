@@ -18,9 +18,9 @@
  */
 package io.github.lucaseasedup.logit.config.validators;
 
-import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
 import io.github.lucaseasedup.logit.config.PropertyType;
 import io.github.lucaseasedup.logit.config.PropertyValidator;
+import io.github.lucaseasedup.logit.hash.HashingAlgorithm;
 
 public final class HashingAlgorithmValidator implements PropertyValidator
 {

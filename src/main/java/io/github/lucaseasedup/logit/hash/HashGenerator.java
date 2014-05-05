@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.hash;
 
-import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;

@@ -20,11 +20,11 @@ package io.github.lucaseasedup.logit.account;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.CancelledState;
-import io.github.lucaseasedup.logit.LogItCore.HashingAlgorithm;
-import io.github.lucaseasedup.logit.LogItCore.IntegrationType;
+import io.github.lucaseasedup.logit.IntegrationType;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
+import io.github.lucaseasedup.logit.hash.HashingAlgorithm;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.SelectorNegation;

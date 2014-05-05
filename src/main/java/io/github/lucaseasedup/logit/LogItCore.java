@@ -50,6 +50,7 @@ import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
 import io.github.lucaseasedup.logit.config.LogItConfiguration;
 import io.github.lucaseasedup.logit.hash.BCrypt;
 import io.github.lucaseasedup.logit.hash.HashGenerator;
+import io.github.lucaseasedup.logit.hash.HashingAlgorithm;
 import io.github.lucaseasedup.logit.listener.BlockEventListener;
 import io.github.lucaseasedup.logit.listener.EntityEventListener;
 import io.github.lucaseasedup.logit.listener.InventoryEventListener;
@@ -81,6 +82,7 @@ import io.github.lucaseasedup.logit.storage.PostgreSqlStorage;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.storage.Storage.Type;
+import io.github.lucaseasedup.logit.storage.StorageType;
 import io.github.lucaseasedup.logit.storage.WrapperStorage;
 import io.github.lucaseasedup.logit.util.HashtableBuilder;
 import io.github.lucaseasedup.logit.util.IoUtils;
@@ -1316,124 +1318,6 @@ public final class LogItCore
         }
         
         return instance;
-    }
-    
-    public static enum StorageType
-    {
-        UNKNOWN, NONE, SQLITE, MYSQL, H2, POSTGRESQL, CSV;
-        
-        public static StorageType decode(String s)
-        {
-            switch (s.toLowerCase())
-            {
-            case "none":       return NONE;
-            case "sqlite":     return SQLITE;
-            case "mysql":      return MYSQL;
-            case "h2":         return H2;
-            case "postgresql": return POSTGRESQL;
-            case "csv":        return CSV;
-            default:           return UNKNOWN;
-            }
-        }
-        
-        /**
-         * Converts this {@code StorageType} to a string representation.
-         * 
-         * @return the string representation of this {@code StorageType},
-         *         or {@code null} if no representation for this
-         *         {@code StorageType} was implemented.
-         */
-        public String encode()
-        {
-            switch (this)
-            {
-            case NONE:       return "none";
-            case SQLITE:     return "sqlite";
-            case MYSQL:      return "mysql";
-            case H2:         return "h2";
-            case POSTGRESQL: return "postgresql";
-            case CSV:        return "csv";
-            default:         return null;
-            }
-        }
-    }
-    
-    public static enum HashingAlgorithm
-    {
-        UNKNOWN, PLAIN, MD2, MD5, SHA1, SHA256, SHA384, SHA512, WHIRLPOOL, BCRYPT;
-        
-        public static HashingAlgorithm decode(String s)
-        {
-            switch (s.toLowerCase())
-            {
-            case "plain":     return PLAIN;
-            case "md2":       return MD2;
-            case "md5":       return MD5;
-            case "sha-1":     return SHA1;
-            case "sha-256":   return SHA256;
-            case "sha-384":   return SHA384;
-            case "sha-512":   return SHA512;
-            case "whirlpool": return WHIRLPOOL;
-            case "bcrypt":    return BCRYPT;
-            default:          return UNKNOWN;
-            }
-        }
-        
-        /**
-         * Converts this {@code HashingAlgorithm} to a string representation.
-         * 
-         * @return the string representation of this {@code HashingAlgorithm},
-         *         or {@code null} if no representation for this
-         *         {@code HashingAlgorithm} was implemented.
-         */
-        public String encode()
-        {
-            switch (this)
-            {
-            case PLAIN:     return "plain";
-            case MD2:       return "md2";
-            case MD5:       return "md5";
-            case SHA1:      return "sha-1";
-            case SHA256:    return "sha-256";
-            case SHA384:    return "sha-384";
-            case SHA512:    return "sha-512";
-            case WHIRLPOOL: return "whirlpool";
-            case BCRYPT:    return "bcrypt";
-            default:        return null;
-            }
-        }
-    }
-    
-    public static enum IntegrationType
-    {
-        UNKNOWN, NONE, PHPBB2;
-        
-        public static IntegrationType decode(String s)
-        {
-            switch (s.toLowerCase())
-            {
-            case "none":   return NONE;
-            case "phpbb2": return PHPBB2;
-            default:       return UNKNOWN;
-            }
-        }
-        
-        /**
-         * Converts this {@code IntegrationType} to a string representation.
-         * 
-         * @return the string representation of this {@code IntegrationType},
-         *         or {@code null} if no representation for this
-         *         {@code IntegrationType} was implemented.
-         */
-        public String encode()
-        {
-            switch (this)
-            {
-            case NONE:   return "plain";
-            case PHPBB2: return "phpbb2";
-            default:     return null;
-            }
-        }
     }
     
     public static final Level INTERNAL = new CustomLevel("INTERNAL", -1000);
