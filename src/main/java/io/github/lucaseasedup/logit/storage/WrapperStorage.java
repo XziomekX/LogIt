@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.storage;
 
+import io.github.lucaseasedup.logit.util.CollectionUtils;
 import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.io.IOException;
 import java.util.HashSet;
@@ -586,6 +587,9 @@ public final class WrapperStorage extends Storage
         {
             if (keys == null)
                 throw new IllegalArgumentException();
+            
+            if (CollectionUtils.containsDuplicates(keys))
+                throw new IllegalArgumentException("All keys must be unique.");
             
             this.keys = keys;
             
