@@ -98,6 +98,20 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         return entries.get(0);
     }
     
+    public Storage.Entry queryAccount(String username, List<String> queryKeys) throws IOException
+    {
+        if (username == null)
+            throw new IllegalArgumentException();
+        
+        List<Storage.Entry> entries = storage.selectEntries(unit, queryKeys,
+                new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
+        
+        if (entries.isEmpty())
+            return null;
+        
+        return entries.get(0);
+    }
+    
     public boolean isRegistered(String username)
     {
         try
