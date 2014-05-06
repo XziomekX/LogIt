@@ -46,7 +46,6 @@ import io.github.lucaseasedup.logit.listener.InventoryEventListener;
 import io.github.lucaseasedup.logit.listener.PlayerEventListener;
 import io.github.lucaseasedup.logit.listener.ServerEventListener;
 import io.github.lucaseasedup.logit.listener.SessionEventListener;
-import io.github.lucaseasedup.logit.listener.TickEventListener;
 import io.github.lucaseasedup.logit.locale.EnglishLocale;
 import io.github.lucaseasedup.logit.locale.GermanLocale;
 import io.github.lucaseasedup.logit.locale.LocaleManager;
@@ -341,7 +340,6 @@ public final class LogItCore
         }
         
         accountWatcher = new AccountWatcher();
-        tickEventCaller = new TickEventCaller();
         
         if (Bukkit.getPluginManager().isPluginEnabled("Vault"))
         {
@@ -354,8 +352,6 @@ public final class LogItCore
                 backupManager, 0, BackupManager.TASK_PERIOD);
         sessionManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
                 sessionManager, 0, SessionManager.TASK_PERIOD);
-        tickEventCallerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
-                tickEventCaller, 0, TickEventCaller.TASK_PERIOD);
         accountWatcherTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
                 accountWatcher, 0, AccountWatcher.TASK_PERIOD);
         
@@ -431,7 +427,6 @@ public final class LogItCore
         profileManager = null;
         
         accountWatcher = null;
-        tickEventCaller = null;
         vaultPermissions = null;
         
         started = false;
@@ -870,7 +865,6 @@ public final class LogItCore
     private void registerEvents()
     {
         plugin.getServer().getPluginManager().registerEvents(messageDispatcher, plugin);
-        plugin.getServer().getPluginManager().registerEvents(new TickEventListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new ServerEventListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new BlockEventListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new EntityEventListener(), plugin);
@@ -1012,7 +1006,6 @@ public final class LogItCore
     private ProfileManager         profileManager;
     
     private AccountWatcher  accountWatcher;
-    private TickEventCaller tickEventCaller;
     private Permission      vaultPermissions;
     
     private int accountManagerTaskId;
