@@ -273,8 +273,8 @@ public final class ProfileManager extends LogItCoreObject
                 
                 if (rangeMatcher.find())
                 {
-                    return new IntegerField(fieldName, Integer.valueOf(rangeMatcher.group(1)),
-                            Integer.valueOf(rangeMatcher.group(2)));
+                    return new IntegerField(fieldName, Integer.parseInt(rangeMatcher.group(1)),
+                            Integer.parseInt(rangeMatcher.group(2)));
                 }
                 else
                 {
