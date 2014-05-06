@@ -165,16 +165,18 @@ public final class LogItPlugin extends JavaPlugin
         
         try
         {
-            message = messages.getString(label);
+            message = getInstance().messages.getString(label);
             
-            if (customGlobalMessages != null && customGlobalMessages.containsKey(label))
+            if (getInstance().customGlobalMessages != null
+                    && getInstance().customGlobalMessages.containsKey(label))
             {
-                message = customGlobalMessages.getString(label);
+                message = getInstance().customGlobalMessages.getString(label);
             }
             
-            if (customLocalMessages != null && customLocalMessages.containsKey(label))
+            if (getInstance().customLocalMessages != null
+                    && getInstance().customLocalMessages.containsKey(label))
             {
-                message = customLocalMessages.getString(label);
+                message = getInstance().customLocalMessages.getString(label);
             }
         }
         catch (NullPointerException | MissingResourceException | ClassCastException ex)
@@ -208,14 +210,14 @@ public final class LogItPlugin extends JavaPlugin
         }
         catch (FileNotFoundException | MalformedURLException ex)
         {
-            logger.log(Level.SEVERE, "Library {0} was not found.", filename);
+            getInstance().logger.log(Level.SEVERE, "Library {0} was not found.", filename);
             getInstance().disable();
             
             ReportedException.throwNew(ex);
         }
         catch (ReflectiveOperationException ex)
         {
-            logger.log(Level.SEVERE, "Could not load library " + filename + ".", ex);
+            getInstance().logger.log(Level.SEVERE, "Could not load library " + filename + ".", ex);
             getInstance().disable();
             
             ReportedException.throwNew(ex);
@@ -232,10 +234,9 @@ public final class LogItPlugin extends JavaPlugin
         ConfigurationSerialization.registerClass(LocationSerializable.class);
     }
     
-    private static Logger logger;
-    private static PropertyResourceBundle messages;
-    private static PropertyResourceBundle customGlobalMessages;
-    private static PropertyResourceBundle customLocalMessages;
-    
+    private Logger logger;
+    private PropertyResourceBundle messages;
+    private PropertyResourceBundle customGlobalMessages;
+    private PropertyResourceBundle customLocalMessages;
     private LogItCore core;
 }
