@@ -78,8 +78,10 @@ public final class Property extends Observable
         case LONG:
         case STRING:
         case VECTOR:
+        case LOCATION:
             sb.append(value.toString());
             break;
+            
         case LIST:
         case BOOLEAN_LIST:
         case BYTE_LIST:
@@ -93,11 +95,9 @@ public final class Property extends Observable
         case STRING_LIST:
             sb.append(StringUtils.join((List) value, ", "));
             break;
-        case LOCATION:
-            sb.append(value.toString());
-            break;
+            
         default:
-            throw new RuntimeException("Unknown property type.");
+            throw new RuntimeException("Unknown property type: " + type);
         }
         
         return sb.toString();
