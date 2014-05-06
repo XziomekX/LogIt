@@ -135,6 +135,8 @@ public final class AccountKeys extends LinkedHashtable<String, DataType>
         return names;
     }
     
+    private static final long serialVersionUID = 1L;
+    
     private final List<String> names;
     private final String username;
     private final String salt;

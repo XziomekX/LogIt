@@ -26,4 +26,6 @@ public final class CustomLevel extends Level
     {
         super(name, value);
     }
+    
+    private static final long serialVersionUID = 1L;
 }
