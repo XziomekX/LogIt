@@ -175,6 +175,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         entry.put(keys.username(), username.toLowerCase());
         entry.put(keys.last_active_date(), now);
         entry.put(keys.reg_date(), now);
+        entry.put(keys.is_locked(), "0");
         
         AccountEvent evt = new AccountCreateEvent(entry);
         Bukkit.getPluginManager().callEvent(evt);
