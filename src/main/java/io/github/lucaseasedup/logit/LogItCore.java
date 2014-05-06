@@ -70,7 +70,6 @@ import io.github.lucaseasedup.logit.storage.Storage.DataType;
 import io.github.lucaseasedup.logit.storage.StorageFactory;
 import io.github.lucaseasedup.logit.storage.StorageType;
 import io.github.lucaseasedup.logit.storage.WrapperStorage;
-import io.github.lucaseasedup.logit.util.HashtableBuilder;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
 import java.io.FileWriter;
@@ -233,12 +232,11 @@ public final class LogItCore
                 .indexKey(accountKeys.username())
                 .cacheType(accountCacheType)
                 .build();
-        accountStorage.mirrorStorage(mirrorAccountStorage,
-                new HashtableBuilder<String, String>()
-                .add(
-                    config.getString("storage.accounts.leading.unit"),
-                    config.getString("storage.accounts.mirror.unit")
-                ).build());
+        accountStorage.mirrorStorage(mirrorAccountStorage, new Hashtable<String, String>()
+            {{
+                put(config.getString("storage.accounts.leading.unit"),
+                    config.getString("storage.accounts.mirror.unit"));
+            }});
         
         try
         {

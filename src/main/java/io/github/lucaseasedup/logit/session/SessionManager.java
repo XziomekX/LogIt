@@ -32,11 +32,11 @@ import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.storage.Storage.DataType;
-import io.github.lucaseasedup.logit.util.HashtableBuilder;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -311,11 +311,12 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         try (Storage sessionsStorage = new SqliteStorage("jdbc:sqlite:" + sessionsDatabaseFile))
         {
             sessionsStorage.connect();
-            sessionsStorage.createUnit("sessions", new HashtableBuilder<String, DataType>()
-                .add("username", DataType.TINYTEXT)
-                .add("status", DataType.INTEGER)
-                .add("ip", DataType.TINYTEXT)
-                .build());
+            sessionsStorage.createUnit("sessions", new Hashtable<String, DataType>()
+                {{
+                    put("username", DataType.TINYTEXT);
+                    put("status", DataType.INTEGER);
+                    put("ip", DataType.TINYTEXT);
+                }});
             sessionsStorage.setAutobatchEnabled(true);
             
             for (Player player : Bukkit.getOnlinePlayers())
