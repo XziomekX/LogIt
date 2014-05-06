@@ -49,7 +49,7 @@ public final class HungerBarSerializer implements PersistenceSerializer
         
         if (hunger != null)
         {
-            player.setFoodLevel(Integer.valueOf(hunger));
+            player.setFoodLevel(Integer.parseInt(hunger));
         }
     }
 }

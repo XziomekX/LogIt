@@ -48,7 +48,7 @@ public final class AirBarSerializer implements PersistenceSerializer
         {       
             if (player.isOnline())
             {
-                player.setRemainingAir(Integer.valueOf(air));
+                player.setRemainingAir(Integer.parseInt(air));
             }
         }
     }

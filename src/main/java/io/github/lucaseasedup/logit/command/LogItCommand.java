@@ -499,9 +499,9 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                             if (rgb.length != 3)
                                 throw new Exception("Malformed color representation.");
                             
-                            outputValue = Color.fromRGB(Integer.valueOf(rgb[0]),
-                                                        Integer.valueOf(rgb[1]),
-                                                        Integer.valueOf(rgb[2]));
+                            outputValue = Color.fromRGB(Integer.parseInt(rgb[0]),
+                                                        Integer.parseInt(rgb[1]),
+                                                        Integer.parseInt(rgb[2]));
                         }
                         }
                         
@@ -651,7 +651,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 
                 if (args.length >= 3)
                 {
-                    page = Integer.valueOf(args[2]);
+                    page = Integer.parseInt(args[2]);
                 }
                 
                 if (page <= 0)
