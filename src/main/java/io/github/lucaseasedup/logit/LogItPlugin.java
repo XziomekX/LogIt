@@ -33,7 +33,6 @@ import java.util.PropertyResourceBundle;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -44,8 +43,6 @@ public final class LogItPlugin extends JavaPlugin
     @Override
     public void onEnable()
     {
-        logger = getLogger();
-        
         try
         {
             loadMessages();
@@ -210,14 +207,14 @@ public final class LogItPlugin extends JavaPlugin
         }
         catch (FileNotFoundException | MalformedURLException ex)
         {
-            getInstance().logger.log(Level.SEVERE, "Library {0} was not found.", filename);
+            getInstance().getLogger().log(Level.SEVERE, "Library {0} was not found.", filename);
             getInstance().disable();
             
             ReportedException.throwNew(ex);
         }
         catch (ReflectiveOperationException ex)
         {
-            getInstance().logger.log(Level.SEVERE, "Could not load library " + filename + ".", ex);
+            getInstance().getLogger().log(Level.SEVERE, "Could not load library " + filename + ".", ex);
             getInstance().disable();
             
             ReportedException.throwNew(ex);
@@ -234,7 +231,6 @@ public final class LogItPlugin extends JavaPlugin
         ConfigurationSerialization.registerClass(LocationSerializable.class);
     }
     
-    private Logger logger;
     private PropertyResourceBundle messages;
     private PropertyResourceBundle customGlobalMessages;
     private PropertyResourceBundle customLocalMessages;
