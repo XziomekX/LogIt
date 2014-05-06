@@ -154,17 +154,20 @@ public final class CsvStorage extends Storage
             
             while ((line = br.readLine()) != null)
             {
+                StringBuilder lineBuilder = new StringBuilder(line);
+                
                 while (!line.endsWith("\""))
                 {
-                    String nextLine = br.readLine();
+                    line = br.readLine();
                     
-                    if (nextLine == null)
+                    if (line == null)
                         throw new IOException("Corrupted CSV file.");
                     
-                    line += "\r\n" + nextLine;
+                    lineBuilder.append("\r\n");
+                    lineBuilder.append(line);
                 }
                 
-                String[] lineValues = line.split("(?<=\"),(?=\")");
+                String[] lineValues = lineBuilder.toString().split("(?<=\"),(?=\")");
                 Storage.Entry entry = new Storage.Entry();
                 
                 for (int i = 0; i < lineValues.length; i++)
