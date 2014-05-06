@@ -171,14 +171,7 @@ public final class CsvStorage extends Storage
                 {
                     if (keys == null || keys.contains(tableKeys[i]))
                     {
-                        String value = unescapeValue(lineValues[i]);
-                        
-                        if (value == null)
-                        {
-                            value = "";
-                        }
-                        
-                        entry.put(tableKeys[i], value);
+                        entry.put(tableKeys[i], unescapeValue(lineValues[i]));
                     }
                 }
                 
