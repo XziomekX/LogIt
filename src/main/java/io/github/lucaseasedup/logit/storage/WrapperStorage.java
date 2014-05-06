@@ -36,9 +36,6 @@ public final class WrapperStorage extends Storage
         this.leading = leading;
         this.cacheType = cacheType;
         
-        mirrors = new HashSet<>(5);
-        unitMappings = new Hashtable<>(5);
-        obs = new Vector<>();
         
         if (cacheType == CacheType.PRELOADED)
         {
@@ -570,9 +567,9 @@ public final class WrapperStorage extends Storage
     private final Storage leading;
     private final CacheType cacheType;
     
-    private final Set<Storage> mirrors;
-    private final Hashtable<Storage, Hashtable<String, String>> unitMappings;
-    private final Vector<StorageObserver> obs;
+    private final Set<Storage> mirrors = new HashSet<>(5);
+    private final Hashtable<Storage, Hashtable<String, String>> unitMappings = new Hashtable<>(5);
+    private final Vector<StorageObserver> obs = new Vector<>();
     
     private Hashtable<String, List<Storage.Entry>> preloadedCache;
 }
