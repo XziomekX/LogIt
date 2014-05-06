@@ -20,32 +20,45 @@ package io.github.lucaseasedup.logit;
 
 public enum IntegrationType
 {
-    UNKNOWN, NONE, PHPBB2;
+    NONE("none"), PHPBB2("phpbb2");
     
-    public static IntegrationType decode(String s)
+    private IntegrationType(String name)
     {
-        switch (s.toLowerCase())
-        {
-        case "none":   return NONE;
-        case "phpbb2": return PHPBB2;
-        default:       return UNKNOWN;
-        }
+        assert name != null;
+        
+        this.name = name;
     }
     
     /**
-     * Converts this {@code IntegrationType} to a string representation.
+     * Returns a string representation of this {@code IntegrationType}.
      * 
-     * @return the string representation of this {@code IntegrationType},
-     *         or {@code null} if no representation for this
-     *         {@code IntegrationType} was implemented.
+     * @return the string representation of this {@code IntegrationType}.
      */
     public String encode()
     {
-        switch (this)
-        {
-        case NONE:   return "plain";
-        case PHPBB2: return "phpbb2";
-        default:     return null;
-        }
+        return name;
     }
+    
+    /**
+     * Decodes a string into an {@code IntegrationType}.
+     * 
+     * @param name string representation of an {@code IntegrationType}.
+     * 
+     * @return the corresponding {@code IntegrationType},
+     *         or {@code null} if no {@code IntegrationType} was found for the given string.
+     */
+    public static IntegrationType decode(String name)
+    {
+        for (IntegrationType value : values())
+        {
+            if (value.encode().equals(name))
+            {
+                return value;
+            }
+        }
+        
+        return null;
+    }
+    
+    private final String name;
 }

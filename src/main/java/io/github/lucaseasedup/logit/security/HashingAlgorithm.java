@@ -20,46 +20,48 @@ package io.github.lucaseasedup.logit.security;
 
 public enum HashingAlgorithm
 {
-    UNKNOWN, PLAIN, MD2, MD5, SHA1, SHA256, SHA384, SHA512, WHIRLPOOL, BCRYPT;
+    PLAIN("plain"),
+    MD2("md2"), MD5("md5"),
+    SHA1("sha-1"), SHA256("sha-256"), SHA384("sha-384"), SHA512("sha-512"),
+    WHIRLPOOL("whirlpool"), BCRYPT("bcrypt");
     
-    public static HashingAlgorithm decode(String s)
+    private HashingAlgorithm(String name)
     {
-        switch (s.toLowerCase())
-        {
-        case "plain":     return PLAIN;
-        case "md2":       return MD2;
-        case "md5":       return MD5;
-        case "sha-1":     return SHA1;
-        case "sha-256":   return SHA256;
-        case "sha-384":   return SHA384;
-        case "sha-512":   return SHA512;
-        case "whirlpool": return WHIRLPOOL;
-        case "bcrypt":    return BCRYPT;
-        default:          return UNKNOWN;
-        }
+        assert name != null;
+        
+        this.name = name;
     }
     
     /**
-     * Converts this {@code HashingAlgorithm} to a string representation.
+     * Returns a string representation of this {@code HashingAlgorithm}.
      * 
-     * @return the string representation of this {@code HashingAlgorithm},
-     *         or {@code null} if no representation for this
-     *         {@code HashingAlgorithm} was implemented.
+     * @return the string representation of this {@code HashingAlgorithm}.
      */
     public String encode()
     {
-        switch (this)
-        {
-        case PLAIN:     return "plain";
-        case MD2:       return "md2";
-        case MD5:       return "md5";
-        case SHA1:      return "sha-1";
-        case SHA256:    return "sha-256";
-        case SHA384:    return "sha-384";
-        case SHA512:    return "sha-512";
-        case WHIRLPOOL: return "whirlpool";
-        case BCRYPT:    return "bcrypt";
-        default:        return null;
-        }
+        return name;
     }
+    
+    /**
+     * Decodes a string into a {@code HashingAlgorithm}.
+     * 
+     * @param name string representation of a {@code HashingAlgorithm}.
+     * 
+     * @return the corresponding {@code HashingAlgorithm},
+     *         or {@code null} if no {@code HashingAlgorithm} was found for the given string.
+     */
+    public static HashingAlgorithm decode(String name)
+    {
+        for (HashingAlgorithm value : values())
+        {
+            if (value.encode().equals(name))
+            {
+                return value;
+            }
+        }
+        
+        return null;
+    }
+    
+    private final String name;
 }

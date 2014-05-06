@@ -30,6 +30,6 @@ public final class IntegrationValidator implements PropertyValidator
         if (value == null)
             return false;
         
-        return IntegrationType.decode(value.toString()) != IntegrationType.UNKNOWN;
+        return IntegrationType.decode(value.toString()) != null;
     }
 }

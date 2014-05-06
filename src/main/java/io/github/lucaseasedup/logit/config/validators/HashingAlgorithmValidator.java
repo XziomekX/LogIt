@@ -30,6 +30,6 @@ public final class HashingAlgorithmValidator implements PropertyValidator
         if (value == null)
             return false;
         
-        return HashingAlgorithm.decode(value.toString()) != HashingAlgorithm.UNKNOWN;
+        return HashingAlgorithm.decode(value.toString()) != null;
     }
 }
