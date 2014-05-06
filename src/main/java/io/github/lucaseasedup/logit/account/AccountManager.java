@@ -116,7 +116,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     {
         try
         {
-            return queryAccount(username) != null;
+            return queryAccount(username, Arrays.asList(keys.username())) != null;
         }
         catch (IOException ex)
         {
@@ -277,7 +277,12 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         
         try
         {
-            Storage.Entry entry = queryAccount(username);
+            Storage.Entry entry = queryAccount(username, Arrays.asList(
+                    keys.username(),
+                    keys.salt(),
+                    keys.password(),
+                    keys.hashing_algorithm()
+                ));
             
             if (entry == null)
                 return false;
@@ -472,7 +477,10 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     
     public String getEmail(String username) throws IOException
     {
-        Storage.Entry entry = queryAccount(username);
+        Storage.Entry entry = queryAccount(username, Arrays.asList(
+                keys.username(),
+                keys.email()
+            ));
         
         if (entry == null)
             return null;
@@ -535,7 +543,10 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     
     public Map<String, String> getAccountPersistence(String username) throws IOException
     {
-        Storage.Entry entry = queryAccount(username);
+        Storage.Entry entry = queryAccount(username, Arrays.asList(
+                keys.username(),
+                keys.persistence()
+            ));
         
         if (entry == null)
             return null;

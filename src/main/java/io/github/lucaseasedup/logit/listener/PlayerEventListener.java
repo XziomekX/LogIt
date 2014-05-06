@@ -30,6 +30,7 @@ import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
@@ -67,7 +68,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         try
         {
-            accountData = getAccountManager().queryAccount(username);
+            accountData = getAccountManager().queryAccount(username,
+                    Arrays.asList(keys.username(), keys.is_locked()));
             
             if (accountData != null)
             {
@@ -169,7 +171,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             try
             {
-                accountData = getAccountManager().queryAccount(username);
+                accountData = getAccountManager().queryAccount(username,
+                        Arrays.asList(keys.username(), keys.login_session()));
                 
                 if (accountData != null)
                 {

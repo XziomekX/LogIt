@@ -28,6 +28,7 @@ import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.security.HashingAlgorithm;
 import io.github.lucaseasedup.logit.storage.Storage;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -126,7 +127,13 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             try
             {
-                accountData = getAccountManager().queryAccount(username);
+                accountData = getAccountManager().queryAccount(username, Arrays.asList(
+                        keys.username(),
+                        keys.salt(),
+                        keys.password(),
+                        keys.hashing_algorithm(),
+                        keys.ip()
+                    ));
             }
             catch (IOException ex)
             {
