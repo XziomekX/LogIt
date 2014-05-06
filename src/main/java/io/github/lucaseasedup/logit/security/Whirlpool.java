@@ -355,7 +355,7 @@ public class Whirlpool
                 data[i] = (byte)source.charAt(i);
             }
             
-            NESSIEadd(data, 8 * data.length);
+            NESSIEadd(data, 8L * data.length);
         }
     }
 
