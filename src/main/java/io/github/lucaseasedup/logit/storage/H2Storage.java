@@ -59,7 +59,7 @@ public final class H2Storage extends Storage
     {
         try
         {
-            return !connection.isClosed();
+            return connection != null && !connection.isClosed();
         }
         catch (SQLException ex)
         {

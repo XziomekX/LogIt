@@ -61,7 +61,7 @@ public final class PostgreSqlStorage extends Storage
     {
         try
         {
-            return !connection.isClosed();
+            return connection != null && !connection.isClosed();
         }
         catch (SQLException ex)
         {
