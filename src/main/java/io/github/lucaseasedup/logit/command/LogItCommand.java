@@ -646,7 +646,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 
                 final int PROPERTIES_PER_PAGE = 16;
                 int page = 1;
-                int pages = (int) Math.floor(properties.size() / PROPERTIES_PER_PAGE) + 1;
+                int pages = (properties.size() / PROPERTIES_PER_PAGE) + 1;
                 int i = 0, j = 0;
                 
                 if (args.length >= 3)
