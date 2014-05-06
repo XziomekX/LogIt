@@ -41,6 +41,40 @@ public final class CollectionUtils
         return false;
     }
     
+    /**
+     * Adds an element to a collection only if the latter does not contain it
+     * and the element is not null.
+     * 
+     * @param collection the collection to be populated with the given element.
+     * @param element the element to be added to the given collection.
+     */
+    public static <T> void addNonnullIfMissing(Collection<T> collection, T element)
+    {
+        if (collection == null)
+            throw new IllegalArgumentException();
+        
+        if (element != null && !collection.contains(element))
+        {
+            collection.add(element);
+        }
+    }
+    
+    public static boolean collectionsMatch(Collection<?> coll1, Collection<?> coll2)
+    {
+        if (coll1 == null && coll2 == null)
+        {
+            return true;
+        }
+        else if (coll1 != null && coll2 != null)
+        {
+            return new HashSet<>(coll1).equals(new HashSet<>(coll2));
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
     public static boolean containsDuplicates(Collection<?> coll)
     {
         if (coll == null)
