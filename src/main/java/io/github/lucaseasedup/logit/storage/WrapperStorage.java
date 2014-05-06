@@ -594,6 +594,9 @@ public final class WrapperStorage extends Storage
         
         public Builder indexKey(String indexKey)
         {
+            if (indexKey != null && !keys.contains(indexKey))
+                throw new IllegalArgumentException("Index key not found.");
+            
             this.indexKey = indexKey;
             
             return this;
