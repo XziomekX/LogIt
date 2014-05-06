@@ -158,6 +158,9 @@ public final class LogItPlugin extends JavaPlugin
     
     public static String getMessage(String label)
     {
+        if (getInstance().messages == null)
+            throw new IllegalStateException("No messages have been loaded.");
+        
         String message;
         
         try
