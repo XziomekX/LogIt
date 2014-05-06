@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.util;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import java.util.Arrays;
 import java.util.Collection;
 import org.bukkit.Bukkit;
@@ -181,8 +180,7 @@ public final class PlayerUtils
      */
     public static void broadcastQuitMessage(Player player)
     {
-        String quitMessage = getMessage("QUIT")
-                .replace("%player%", player.getName());
+        String quitMessage = QuitMessageGenerator.generate(player);
         
         broadcastMessageExcept(quitMessage, Arrays.asList(player));
     }

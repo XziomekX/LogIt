@@ -34,19 +34,44 @@ public final class JoinMessageGenerator
     
     public static String generate(Player player, boolean revealSpawnWorld)
     {
-        String message = getMessage("JOIN").replace("%player%", player.getName());
+        LogItCore core = LogItCore.getInstance();
+        
+        assert core != null;
+        
+        String message = getMessage("JOIN");
+        
+        if (core.getConfig().getBoolean("messages.beautify"))
+        {
+            message = getMessage("JOIN");
+        }
+        else
+        {
+            message = "\u00A7e%player% joined the game%in_world%.";
+        }
+        
+        String inWorld;
+        
+        if (core.getConfig().getBoolean("messages.beautify"))
+        {
+            inWorld = getMessage("IN_WORLD");
+        }
+        else
+        {
+            inWorld = " (in \"\u00A76%world%\u00A7e\")";
+        }
         
         if (revealSpawnWorld)
         {
-            message = message.replace("%in_world%",
-                    getMessage("IN_WORLD").replace("%world%", getWorldAlias(player.getWorld())));
+            String worldAlias = getWorldAlias(player.getWorld());
+            
+            message = message.replace("%in_world%", inWorld.replace("%world%", worldAlias));
         }
         else
         {
             message = message.replace("%in_world%", "");
         }
         
-        return message;
+        return message.replace("%player%", player.getName());
     }
     
     public static String getWorldAlias(World world)
