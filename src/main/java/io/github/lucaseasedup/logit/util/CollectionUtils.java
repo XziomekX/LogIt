@@ -28,7 +28,7 @@ public final class CollectionUtils
     {
     }
     
-    public static boolean containsIgnoreCase(String needle, Collection<? extends String> collection)
+    public static boolean containsIgnoreCase(String needle, Collection<String> collection)
     {
         for (String s : collection)
         {
