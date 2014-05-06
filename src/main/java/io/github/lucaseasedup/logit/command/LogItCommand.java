@@ -451,23 +451,22 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             ReportedException.incrementRequestCount();
             
-            if (filename != null)
-            {
-                getBackupManager().restoreBackup(filename);
-            }
-            else
+            if (filename == null)
             {
                 File[] backups = getBackupManager().getBackups(true);
                 
                 if (backups.length == 0)
                     throw new FileNotFoundException();
                 
-                getBackupManager().restoreBackup(backups[backups.length - 1].getName());
+                filename = backups[backups.length - 1].getName();
             }
+            
+            getBackupManager().restoreBackup(filename);
             
             if (player != null)
             {
-                player.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS"));
+                player.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS")
+                        .replace("%filename%", filename));
             }
         }
         catch (ReportedException | FileNotFoundException ex)
