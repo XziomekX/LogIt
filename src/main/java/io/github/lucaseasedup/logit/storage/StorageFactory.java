@@ -63,7 +63,9 @@ public final class StorageFactory
             File dir = core.getDataFile(config.getString("csv.dir"));
             
             if (!dir.exists())
+            {
                 dir.mkdir();
+            }
             
             return new CsvStorage(dir);
         }
