@@ -230,6 +230,7 @@ public final class LogItCore
         WrapperStorage accountStorage = new WrapperStorage.Builder()
                 .leading(leadingAccountStorage)
                 .keys(accountKeys.getNames())
+                .indexKey(accountKeys.username())
                 .cacheType(accountCacheType)
                 .build();
         accountStorage.mirrorStorage(mirrorAccountStorage,

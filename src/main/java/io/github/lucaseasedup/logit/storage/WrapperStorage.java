@@ -31,10 +31,11 @@ import java.util.Vector;
 
 public final class WrapperStorage extends Storage
 {
-    private WrapperStorage(Storage leading, List<String> keys, CacheType cacheType)
+    private WrapperStorage(Storage leading, List<String> keys, String indexKey, CacheType cacheType)
     {
         this.leading = leading;
         this.keys = keys;
+        this.indexKey = indexKey;
         this.cacheType = cacheType;
         
         if (cacheType == CacheType.PRELOADED)
@@ -568,7 +569,7 @@ public final class WrapperStorage extends Storage
     {
         public WrapperStorage build()
         {
-            return new WrapperStorage(leading, keys, cacheType);
+            return new WrapperStorage(leading, keys, indexKey, cacheType);
         }
         
         public Builder leading(Storage leading)
@@ -591,6 +592,13 @@ public final class WrapperStorage extends Storage
             return this;
         }
         
+        public Builder indexKey(String indexKey)
+        {
+            this.indexKey = indexKey;
+            
+            return this;
+        }
+        
         public Builder cacheType(CacheType cacheType)
         {
             if (cacheType == null)
@@ -603,11 +611,13 @@ public final class WrapperStorage extends Storage
         
         private Storage leading;
         private List<String> keys;
+        private String indexKey;
         private CacheType cacheType;
     }
     
     private final Storage leading;
     private final List<String> keys;
+    private final String indexKey;
     private final CacheType cacheType;
     
     private final Set<Storage> mirrors = new HashSet<>(5);
