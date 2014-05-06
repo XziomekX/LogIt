@@ -39,7 +39,11 @@ public final class ConvertWizard extends Wizard
     @Override
     protected void onCreate()
     {
-        sendMessage("");
+        if (getSender() instanceof Player)
+        {
+            sendMessage("");
+        }
+        
         sendMessage(getMessage("CONVERT_WELCOME"));
         sendMessage(getMessage("ORANGE_HORIZONTAL_LINE"));
         sendMessage(getMessage("CONVERT_WELCOME_CHOICE"));

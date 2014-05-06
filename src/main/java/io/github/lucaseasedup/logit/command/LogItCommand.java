@@ -778,7 +778,11 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             page = 1;
         }
         
-        sender.sendMessage("");
+        if (sender instanceof Player)
+        {
+            sender.sendMessage("");
+        }
+        
         sender.sendMessage(getMessage("CONFIG_PROPERTY_LIST_HEADER")
                 .replace("%page%", String.valueOf(page))
                 .replace("%pages%", String.valueOf(pages)));
