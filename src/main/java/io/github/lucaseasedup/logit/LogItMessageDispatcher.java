@@ -23,8 +23,12 @@ import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Hashtable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
-public final class LogItMessageDispatcher extends LogItCoreObject
+public final class LogItMessageDispatcher extends LogItCoreObject implements Listener
 {
     /**
      * Sends a message to the given player telling them either to log in or to register.
@@ -100,6 +104,18 @@ public final class LogItMessageDispatcher extends LogItCoreObject
         int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(), prompter, delay, period);
         
         prompter.setTaskId(taskId);
+    }
+    
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event)
+    {
+        forceLoginPromptIntervals.remove(event.getPlayer());
+    }
+    
+    @EventHandler
+    public void onPlayerKick(PlayerKickEvent event)
+    {
+        forceLoginPromptIntervals.remove(event.getPlayer());
     }
     
     private final class ForceLoginPrompter implements Runnable

@@ -869,6 +869,7 @@ public final class LogItCore
     
     private void registerEvents()
     {
+        plugin.getServer().getPluginManager().registerEvents(messageDispatcher, plugin);
         plugin.getServer().getPluginManager().registerEvents(new TickEventListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new ServerEventListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new BlockEventListener(), plugin);
