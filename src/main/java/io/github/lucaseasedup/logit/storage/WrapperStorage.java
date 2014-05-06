@@ -598,6 +598,9 @@ public final class WrapperStorage extends Storage
         
         public Builder indexKey(String indexKey)
         {
+            if (keys == null)
+                throw new IllegalStateException("No keys defined.");
+            
             if (indexKey != null && !keys.contains(indexKey))
                 throw new IllegalArgumentException("Index key not found.");
             
