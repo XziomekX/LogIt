@@ -763,7 +763,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
     {
         Map<String, Property> properties = getConfig().getProperties();
         
-        final int PROPERTIES_PER_PAGE = 16;
+        final int PROPERTIES_PER_PAGE = 15;
         int page = 1;
         int pages = (properties.size() / PROPERTIES_PER_PAGE) + 1;
         int i = 0, j = 0;
@@ -778,9 +778,12 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             page = 1;
         }
         
+        sender.sendMessage("");
         sender.sendMessage(getMessage("CONFIG_PROPERTY_LIST_HEADER")
                 .replace("%page%", String.valueOf(page))
                 .replace("%pages%", String.valueOf(pages)));
+        sender.sendMessage(getMessage("CONFIG_PROPERTY_LIST_HEADER2"));
+        sender.sendMessage(getMessage("CONFIG_PROPERTY_LIST_HEADER3"));
         
         for (Entry<String, Property> e : properties.entrySet())
         {
