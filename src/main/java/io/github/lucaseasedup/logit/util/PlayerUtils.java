@@ -20,7 +20,7 @@ package io.github.lucaseasedup.logit.util;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -149,7 +149,7 @@ public final class PlayerUtils
      * @param message       the message to be sent.
      * @param exceptPlayers the players to be omitted in broadcasting.
      */
-    public static void broadcastMessageExcept(String message, List<Player> exceptPlayers)
+    public static void broadcastMessageExcept(String message, Collection<Player> exceptPlayers)
     {
         for (Player p : Bukkit.getOnlinePlayers())
         {
