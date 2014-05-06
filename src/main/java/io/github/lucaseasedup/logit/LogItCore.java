@@ -994,7 +994,7 @@ public final class LogItCore
     public static final String LIB_POSTGRESQL = "postgresql-9.3-1100.jdbc4.jar";
     public static final String LIB_MAIL = "mail-1.4.7.jar";
     
-    private static LogItCore instance = null;
+    private static volatile LogItCore instance = null;
     
     private final LogItPlugin plugin;
     private boolean firstRun;
