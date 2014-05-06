@@ -81,10 +81,11 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         File backupDir = getDataFile(getConfig().getString("backup.path"));
         File backupFile = new File(backupDir, sdf.format(new Date()));
         
-        backupDir.mkdir();
+        if (!backupDir.mkdir())
+            throw new IOException("Could not create backup directory.");
         
         if (!backupFile.createNewFile())
-            throw new IOException("Backup already exists.");
+            throw new IOException("Backup file could not be created.");
         
         List<Storage.Entry> entries =
                 getAccountStorage().selectEntries(getAccountManager().getUnit());
