@@ -97,7 +97,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 subcommandBackupForce(p);
             }
         }
-        else if (checkSubcommand(args, "backup restore", 0))
+        else if (checkSubcommand(args, "backup restore", 1))
         {
             if (!checkPermission(p, "logit.backup.restore"))
             {
