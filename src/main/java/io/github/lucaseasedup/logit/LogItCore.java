@@ -206,6 +206,20 @@ public final class LogItCore
             ReportedException.decrementRequestCount();
         }
         
+        String accountsUnit = config.getString("storage.accounts.leading.unit");
+        AccountKeys accountKeys = new AccountKeys(
+            config.getString("storage.accounts.keys.username"),
+            config.getString("storage.accounts.keys.salt"),
+            config.getString("storage.accounts.keys.password"),
+            config.getString("storage.accounts.keys.hashing_algorithm"),
+            config.getString("storage.accounts.keys.ip"),
+            config.getString("storage.accounts.keys.login_session"),
+            config.getString("storage.accounts.keys.email"),
+            config.getString("storage.accounts.keys.last_active_date"),
+            config.getString("storage.accounts.keys.reg_date"),
+            config.getString("storage.accounts.keys.is_locked"),
+            config.getString("storage.accounts.keys.persistence")
+        );
         Storage leadingAccountStorage = StorageFactory.produceStorage(leadingStorageType,
                 config.getConfigurationSection("storage.accounts.leading"));
         Storage mirrorAccountStorage = StorageFactory.produceStorage(mirrorStorageType,
@@ -213,7 +227,11 @@ public final class LogItCore
         CacheType accountCacheType = CacheType.decode(config.getString("storage.accounts.leading.cache"));
         
         @SuppressWarnings("resource")
-        WrapperStorage accountStorage = new WrapperStorage(leadingAccountStorage, accountCacheType);
+        WrapperStorage accountStorage = new WrapperStorage.Builder()
+                .leading(leadingAccountStorage)
+                .keys(accountKeys.getNames())
+                .cacheType(accountCacheType)
+                .build();
         accountStorage.mirrorStorage(mirrorAccountStorage,
                 new HashtableBuilder<String, String>()
                 .add(
@@ -231,21 +249,6 @@ public final class LogItCore
             
             FatalReportedException.throwNew(ex);
         }
-        
-        String accountsUnit = config.getString("storage.accounts.leading.unit");
-        AccountKeys accountKeys = new AccountKeys(
-            config.getString("storage.accounts.keys.username"),
-            config.getString("storage.accounts.keys.salt"),
-            config.getString("storage.accounts.keys.password"),
-            config.getString("storage.accounts.keys.hashing_algorithm"),
-            config.getString("storage.accounts.keys.ip"),
-            config.getString("storage.accounts.keys.login_session"),
-            config.getString("storage.accounts.keys.email"),
-            config.getString("storage.accounts.keys.last_active_date"),
-            config.getString("storage.accounts.keys.reg_date"),
-            config.getString("storage.accounts.keys.is_locked"),
-            config.getString("storage.accounts.keys.persistence")
-        );
         
         try
         {
