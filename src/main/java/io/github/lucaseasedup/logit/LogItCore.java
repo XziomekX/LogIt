@@ -173,34 +173,21 @@ public final class LogItCore
             plugin.getConfig().getString("storage.accounts.mirror.storage-type")
         );
         
-        try
+        if (leadingStorageType.equals(StorageType.H2)
+                || mirrorStorageType.equals(StorageType.H2))
         {
-            ReportedException.incrementRequestCount();
-            
-            if (leadingStorageType.equals(StorageType.H2)
-                    || mirrorStorageType.equals(StorageType.H2))
-            {
-                LogItPlugin.loadLibrary(LIB_H2);
-            }
-            
-            if (leadingStorageType.equals(StorageType.POSTGRESQL)
-                    || mirrorStorageType.equals(StorageType.POSTGRESQL))
-            {
-                LogItPlugin.loadLibrary(LIB_POSTGRESQL);
-            }
-            
-            if (config.getBoolean("password-recovery.enabled"))
-            {
-                LogItPlugin.loadLibrary(LIB_MAIL);
-            }
+            LogItPlugin.loadLibrary(LIB_H2);
         }
-        catch (ReportedException ex)
+        
+        if (leadingStorageType.equals(StorageType.POSTGRESQL)
+                || mirrorStorageType.equals(StorageType.POSTGRESQL))
         {
-            ex.rethrowAsFatal();
+            LogItPlugin.loadLibrary(LIB_POSTGRESQL);
         }
-        finally
+        
+        if (config.getBoolean("password-recovery.enabled"))
         {
-            ReportedException.decrementRequestCount();
+            LogItPlugin.loadLibrary(LIB_MAIL);
         }
         
         String accountsUnit = config.getString("storage.accounts.leading.unit");
