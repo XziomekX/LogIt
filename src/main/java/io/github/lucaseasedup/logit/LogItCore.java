@@ -29,7 +29,6 @@ import io.github.lucaseasedup.logit.command.AccunlockCommand;
 import io.github.lucaseasedup.logit.command.ChangeEmailCommand;
 import io.github.lucaseasedup.logit.command.ChangePassCommand;
 import io.github.lucaseasedup.logit.command.DisabledCommandExecutor;
-import io.github.lucaseasedup.logit.command.LogItCommand;
 import io.github.lucaseasedup.logit.command.LoginCommand;
 import io.github.lucaseasedup.logit.command.LogoutCommand;
 import io.github.lucaseasedup.logit.command.NopCommandExecutor;
@@ -355,7 +354,7 @@ public final class LogItCore
         accountWatcherTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
                 accountWatcher, 0, AccountWatcher.TASK_PERIOD);
         
-        setCommandExecutors();
+        enableCommands();
         registerEvents();
         
         started = true;
@@ -378,6 +377,8 @@ public final class LogItCore
     {
         if (!started)
             return;
+        
+        disableCommands();
         
         persistenceManager.unregisterSerializer(LocationSerializer.class);
         persistenceManager.unregisterSerializer(AirBarSerializer.class);
@@ -829,28 +830,47 @@ public final class LogItCore
         }
     }
     
-    private void setCommandExecutors()
+    private void enableCommands()
     {
-        setCommandExecutor("logit", new LogItCommand(), true);
-        setCommandExecutor("logit", new LogItCommand(), true);
-        setCommandExecutor("login", new LoginCommand(), true);
-        setCommandExecutor("logout", new LogoutCommand(), true);
-        setCommandExecutor("remember", new RememberCommand(),
+        enableCommand("login", new LoginCommand());
+        enableCommand("logout", new LogoutCommand());
+        enableCommand("remember", new RememberCommand(),
                 config.getBoolean("login-sessions.enabled"));
-        setCommandExecutor("register", new RegisterCommand(), true);
-        setCommandExecutor("unregister", new UnregisterCommand(), true);
-        setCommandExecutor("changepass", new ChangePassCommand(),
+        enableCommand("register", new RegisterCommand());
+        enableCommand("unregister", new UnregisterCommand());
+        enableCommand("changepass", new ChangePassCommand(),
                 !config.getBoolean("password.disable-passwords"));
-        setCommandExecutor("changeemail", new ChangeEmailCommand(), true);
-        setCommandExecutor("recoverpass", new RecoverPassCommand(),
+        enableCommand("changeemail", new ChangeEmailCommand());
+        enableCommand("recoverpass", new RecoverPassCommand(),
                 config.getBoolean("password-recovery.enabled"));
-        setCommandExecutor("profile", new ProfileCommand(), config.getBoolean("profiles.enabled"));
-        setCommandExecutor("acclock", new AcclockCommand(), true);
-        setCommandExecutor("accunlock", new AccunlockCommand(), true);
-        setCommandExecutor("$logit-nop-command", new NopCommandExecutor(), true);
+        enableCommand("profile", new ProfileCommand(), config.getBoolean("profiles.enabled"));
+        enableCommand("acclock", new AcclockCommand());
+        enableCommand("accunlock", new AccunlockCommand());
+        enableCommand("$logit-nop-command", new NopCommandExecutor());
     }
     
-    private void setCommandExecutor(String command, CommandExecutor executor, boolean enabled)
+    private void disableCommands()
+    {
+        disableCommand("login");
+        disableCommand("logout");
+        disableCommand("remember");
+        disableCommand("register");
+        disableCommand("unregister");
+        disableCommand("changepass");
+        disableCommand("changeemail");
+        disableCommand("recoverpass");
+        disableCommand("profile");
+        disableCommand("acclock");
+        disableCommand("accunlock");
+        disableCommand("$logit-nop-command");
+    }
+    
+    private void disableCommand(String command)
+    {
+        plugin.getCommand(command).setExecutor(new DisabledCommandExecutor());
+    }
+    
+    private void enableCommand(String command, CommandExecutor executor, boolean enabled)
     {
         if (enabled)
         {
@@ -858,8 +878,13 @@ public final class LogItCore
         }
         else
         {
-            plugin.getCommand(command).setExecutor(new DisabledCommandExecutor());
+            disableCommand(command);
         }
+    }
+    
+    private void enableCommand(String command, CommandExecutor executor)
+    {
+        enableCommand(command, executor, true);
     }
     
     private void registerEvents()

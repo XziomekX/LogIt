@@ -23,6 +23,7 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.sendMessage;
+import io.github.lucaseasedup.logit.util.PlayerUtils;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.security.HashingAlgorithm;
@@ -74,6 +75,15 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             }
             else
             {
+                Player argPlayer = PlayerUtils.getPlayer(args[1]);
+                
+                assert argPlayer != null;
+                
+                if (getSessionManager().getSession(args[1]) == null)
+                {
+                    getSessionManager().createSession(args[1], getPlayerIp(argPlayer));
+                }
+                
                 if (!getSessionManager().startSession(args[1]).isCancelled())
                 {
                     sendMessage(args[1], getMessage("START_SESSION_SUCCESS_SELF"));
@@ -84,13 +94,6 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
         }
         else if ((args.length == 0 && disablePasswords) || (args.length <= 1 && !disablePasswords))
         {
-            String username = null;
-            
-            if (p != null)
-            {
-                username = p.getName().toLowerCase();
-            }
-            
             int failsToKick = getConfig().getInt("crowd-control.login-fails-to-kick");
             int failsToBan = getConfig().getInt("crowd-control.login-fails-to-ban");
             
@@ -122,6 +125,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 return true;
             }
             
+            String username = p.getName().toLowerCase();
             AccountKeys keys = getAccountManager().getKeys();
             Storage.Entry accountData;
             
@@ -187,6 +191,11 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     
                     return true;
                 }
+            }
+            
+            if (getSessionManager().getSession(username) == null)
+            {
+                getSessionManager().createSession(username, getPlayerIp(p));
             }
             
             if (!getSessionManager().startSession(username).isCancelled())

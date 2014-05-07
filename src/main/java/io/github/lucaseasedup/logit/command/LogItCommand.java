@@ -75,11 +75,45 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 subcommandVersion(sender);
             }
         }
+        else if (checkSubcommand(args, "start", 0))
+        {
+            if (!checkPermission(p, "logit.start"))
+            {
+                sender.sendMessage(getMessage("NO_PERMS"));
+            }
+            else if (isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_ALREADY_STARTED"));
+            }
+            else
+            {
+                subcommandStart(sender);
+            }
+        }
+        else if (checkSubcommand(args, "stop", 0))
+        {
+            if (!checkPermission(p, "logit.stop"))
+            {
+                sender.sendMessage(getMessage("NO_PERMS"));
+            }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+            }
+            else
+            {
+                subcommandStop(sender);
+            }
+        }
         else if (checkSubcommand(args, "reload", 0))
         {
             if (!checkPermission(p, "logit.reload"))
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
+            }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
             }
             else
             {
@@ -92,6 +126,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
             }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+            }
             else
             {
                 subcommandBackupForce(p);
@@ -103,6 +141,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
             }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+            }
             else
             {
                 subcommandBackupRestore(p, (args.length >= 3) ? args[2] : null);
@@ -113,6 +155,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             if (!checkPermission(p, "logit.backup.remove"))
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
+            }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
             }
             else if (args.length < 3)
             {
@@ -129,6 +175,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
             }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+            }
             else
             {
                 subcommandBackupCount(sender);
@@ -143,6 +193,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             else if (!p.hasPermission("logit.gotowr"))
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
+            }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
             }
             else
             {
@@ -161,6 +215,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             else if (args.length < 3)
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+            }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
             }
             else if (args[2].length() < minPasswordLength)
             {
@@ -183,6 +241,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
             }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+            }
             else
             {
                 subcommandGlobalpassRemove(p);
@@ -193,6 +255,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             if (!checkPermission(p, "logit.account.count"))
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
+            }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
             }
             else
             {
@@ -209,6 +275,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "username"));
             }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+            }
             else
             {
                 subcommandAccountStatus(sender, args[2]);
@@ -219,6 +289,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             if (!checkPermission(p, "logit.ipcount"))
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
+            }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
             }
             else
             {
@@ -238,6 +312,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             else if (args.length < 4)
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "value"));
+            }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
             }
             else if (!getConfig().contains(args[2]))
             {
@@ -259,6 +337,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             {
                 sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "path"));
             }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+            }
             else if (!getConfig().contains(args[2]))
             {
                 sender.sendMessage(getMessage("CONFIG_PROPERTY_NOT_FOUND")
@@ -275,6 +357,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
             }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+            }
             else
             {
                 subcommandConfigList(sender, (args.length >= 3) ? args[2] : null);
@@ -286,6 +372,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
             }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+            }
             else
             {
                 subcommandConfigReload(sender);
@@ -296,6 +386,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             if (!checkPermission(p, "logit.convert"))
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
+            }
+            else if (!isCoreStarted())
+            {
+                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
             }
             else
             {
@@ -405,22 +499,40 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         sender.sendMessage(getMessage("PLUGIN_AUTHOR"));
     }
     
+    private void subcommandStart(CommandSender sender)
+    {
+        try
+        {
+            getCore().start();
+            
+            sender.sendMessage(getMessage("CORE_STARTED"));
+        }
+        catch (FatalReportedException ex)
+        {
+            sender.sendMessage(getMessage("COULD_NOT_START_CORE"));
+        }
+    }
+    
+    private void subcommandStop(CommandSender sender)
+    {
+        getCore().stop();
+        
+        sender.sendMessage(getMessage("CORE_STOPPED"));
+    }
+    
     private void subcommandReload(Player player)
     {
         try
         {
             getCore().restart();
+            
+            if (player != null)
+            {
+                player.sendMessage(getMessage("RELOADED"));
+            }
         }
         catch (FatalReportedException ex)
         {
-            getPlugin().disable();
-            
-            return;
-        }
-        
-        if (player != null && getPlugin().isEnabled())
-        {
-            player.sendMessage(getMessage("RELOADED"));
         }
     }
     

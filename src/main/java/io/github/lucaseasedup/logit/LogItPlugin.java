@@ -18,6 +18,8 @@
  */
 package io.github.lucaseasedup.logit;
 
+import io.github.lucaseasedup.logit.command.DisabledCommandExecutor;
+import io.github.lucaseasedup.logit.command.LogItCommand;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
@@ -54,6 +56,8 @@ public final class LogItPlugin extends JavaPlugin
             getLogger().log(Level.WARNING, "Could not load messages.", ex);
         }
         
+        getCommand("logit").setExecutor(new LogItCommand());
+        
         core = LogItCore.getInstance();
         
         try
@@ -73,6 +77,8 @@ public final class LogItPlugin extends JavaPlugin
         {
             core.stop();
         }
+        
+        getCommand("logit").setExecutor(new DisabledCommandExecutor());
         
         core = null;
         messages = null;

@@ -135,7 +135,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         {
             Player player = PlayerUtils.getPlayer(username);
             
-            if (player == null)
+            if (player == null || !isCoreStarted())
             {
                 if (taskId != -1)
                 {
