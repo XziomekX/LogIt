@@ -50,8 +50,11 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     @Override
     public void dispose()
     {
-        sessions.clear();
-        sessions = null;
+        if (sessions != null)
+        {
+            sessions.clear();
+            sessions = null;
+        }
     }
     
     @Override

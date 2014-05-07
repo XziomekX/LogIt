@@ -49,8 +49,11 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
     @Override
     public void dispose()
     {
-        serializers.clear();
-        serializers = null;
+        if (serializers != null)
+        {
+            serializers.clear();
+            serializers = null;
+        }
     }
     
     /**

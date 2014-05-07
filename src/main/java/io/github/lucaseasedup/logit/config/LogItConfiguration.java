@@ -53,13 +53,16 @@ public final class LogItConfiguration extends PropertyObserver implements Dispos
     @Override
     public void dispose()
     {
-        for (Property property : properties.values())
+        if (properties != null)
         {
-            property.dispose();
+            for (Property property : properties.values())
+            {
+                property.dispose();
+            }
+            
+            properties.clear();
+            properties = null;
         }
-        
-        properties.clear();
-        properties = null;
     }
     
     public void load() throws IOException, InvalidPropertyValueException

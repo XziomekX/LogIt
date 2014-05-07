@@ -38,8 +38,12 @@ public final class MailSender extends LogItCoreObject implements Disposable
     @Override
     public void dispose()
     {
-        properties.clear();
-        properties = null;
+        if (properties != null)
+        {
+            properties.clear();
+            properties = null;
+        }
+        
         user = null;
         password = null;
     }

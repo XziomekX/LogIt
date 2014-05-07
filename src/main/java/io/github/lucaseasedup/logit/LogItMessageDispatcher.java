@@ -33,8 +33,11 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
     @Override
     public void dispose()
     {
-        forceLoginPromptIntervals.clear();
-        forceLoginPromptIntervals = null;
+        if (forceLoginPromptIntervals != null)
+        {
+            forceLoginPromptIntervals.clear();
+            forceLoginPromptIntervals = null;
+        }
     }
     
     /**

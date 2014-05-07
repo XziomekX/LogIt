@@ -70,12 +70,24 @@ public final class ProfileManager extends LogItCoreObject implements Disposable
     public void dispose()
     {
         path = null;
-        definedFields.clear();
-        definedFields = null;
-        fileCache.clear();
-        fileCache = null;
-        configurationCache.clear();
-        configurationCache = null;
+        
+        if (definedFields != null)
+        {
+            definedFields.clear();
+            definedFields = null;
+        }
+        
+        if (fileCache != null)
+        {
+            fileCache.clear();
+            fileCache = null;
+        }
+        
+        if (configurationCache != null)
+        {
+            configurationCache.clear();
+            configurationCache = null;
+        }
     }
     
     public boolean containsProfile(String playerName)

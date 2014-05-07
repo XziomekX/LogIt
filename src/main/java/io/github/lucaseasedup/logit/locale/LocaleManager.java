@@ -32,8 +32,11 @@ public final class LocaleManager extends LogItCoreObject implements Disposable
         activeLocaleObj = null;
         fallbackLocaleObj = null;
         
-        locales.clear();
-        locales = null;
+        if (locales != null)
+        {
+            locales.clear();
+            locales = null;
+        }
     }
     
     public Locale getActiveLocale()
