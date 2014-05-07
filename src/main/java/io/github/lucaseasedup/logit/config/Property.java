@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.config;
 
+import io.github.lucaseasedup.logit.Disposable;
 import java.util.List;
 import java.util.Observable;
 import org.apache.commons.lang.StringUtils;
@@ -25,7 +26,7 @@ import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-public final class Property extends Observable
+public final class Property extends Observable implements Disposable
 {
     public Property(String path,
                     PropertyType type,
@@ -41,6 +42,17 @@ public final class Property extends Observable
         this.requiresRestart = requiresRestart;
         this.value = value;
         this.validator = validator;
+    }
+    
+    @Override
+    public void dispose()
+    {
+        deleteObservers();
+        
+        path = null;
+        type = null;
+        value = null;
+        validator = null;
     }
     
     public String getPath()
@@ -176,9 +188,9 @@ public final class Property extends Observable
         notifyObservers();
     }
     
-    private final String path;
-    private final PropertyType type;
+    private String path;
+    private PropertyType type;
     private final boolean requiresRestart;
-    private Object value = null;
-    private final PropertyValidator validator;
+    private Object value;
+    private PropertyValidator validator;
 }

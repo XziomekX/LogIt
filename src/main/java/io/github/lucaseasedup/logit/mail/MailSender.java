@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.mail;
 
+import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.io.IOException;
 import java.util.Collection;
@@ -32,11 +33,15 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public final class MailSender extends LogItCoreObject
+public final class MailSender extends LogItCoreObject implements Disposable
 {
-    public MailSender()
+    @Override
+    public void dispose()
     {
-        this.properties = new Properties();
+        properties.clear();
+        properties = null;
+        user = null;
+        password = null;
     }
     
     public void configure(String host, int port, String user, String password)
@@ -95,7 +100,7 @@ public final class MailSender extends LogItCoreObject
         }
     }
     
-    private final Properties properties;
+    private Properties properties = new Properties();
     private String user;
     private String password;
 }

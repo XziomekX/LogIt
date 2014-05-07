@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.persistence;
 
+import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.storage.Infix;
@@ -38,11 +39,18 @@ import org.bukkit.entity.Player;
 /**
  * Provides a centred persistence serialization interface.
  */
-public final class PersistenceManager extends LogItCoreObject
+public final class PersistenceManager extends LogItCoreObject implements Disposable
 {
     public PersistenceManager()
     {
         serializers = new HashMap<>();
+    }
+    
+    @Override
+    public void dispose()
+    {
+        serializers.clear();
+        serializers = null;
     }
     
     /**
@@ -449,5 +457,5 @@ public final class PersistenceManager extends LogItCoreObject
     
     private static final Key[] NO_KEYS = new Key[0];
     
-    private final Map<Class<? extends PersistenceSerializer>, PersistenceSerializer> serializers;
+    private Map<Class<? extends PersistenceSerializer>, PersistenceSerializer> serializers;
 }

@@ -25,6 +25,7 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerName;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.CancelledState;
+import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.storage.Infix;
@@ -44,8 +45,15 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public final class SessionManager extends LogItCoreObject implements Runnable
+public final class SessionManager extends LogItCoreObject implements Runnable, Disposable
 {
+    @Override
+    public void dispose()
+    {
+        sessions.clear();
+        sessions = null;
+    }
+    
     @Override
     public void run()
     {
@@ -368,5 +376,5 @@ public final class SessionManager extends LogItCoreObject implements Runnable
     
     public static final long TASK_PERIOD = 1;
     
-    private final Map<String, Session> sessions = new ConcurrentHashMap<>();
+    private Map<String, Session> sessions = new ConcurrentHashMap<>();
 }

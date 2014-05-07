@@ -18,13 +18,24 @@
  */
 package io.github.lucaseasedup.logit.locale;
 
+import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public final class LocaleManager extends LogItCoreObject
+public final class LocaleManager extends LogItCoreObject implements Disposable
 {
+    @Override
+    public void dispose()
+    {
+        activeLocaleObj = null;
+        fallbackLocaleObj = null;
+        
+        locales.clear();
+        locales = null;
+    }
+    
     public Locale getActiveLocale()
     {
         return activeLocaleObj;
@@ -112,7 +123,7 @@ public final class LocaleManager extends LogItCoreObject
         return locale.getAnnotation(LocalePrefix.class).value();
     }
     
-    private final Map<Class<? extends Locale>, Locale> locales = new HashMap<>();
+    private Map<Class<? extends Locale>, Locale> locales = new HashMap<>();
     private Locale activeLocaleObj;
     private Locale fallbackLocaleObj;
 }

@@ -413,25 +413,71 @@ public final class LogItCore
             {
                 log(Level.WARNING, "Could not close log file.", ex);
             }
-            
-            logFileWriter = null;
         }
         
-        localeManager = null;
-        accountManager = null;
-        persistenceManager = null;
-        backupManager = null;
-        sessionManager = null;
-        mailSender = null;
-        messageDispatcher = null;
-        profileManager = null;
-        
-        accountWatcher = null;
-        vaultPermissions = null;
+        dispose();
         
         started = false;
         
         log(Level.FINE, getMessage("PLUGIN_STOP_SUCCESS"));
+    }
+    
+    private void dispose()
+    {
+        if (config != null)
+        {
+            config.dispose();
+            config = null;
+        }
+        
+        if (localeManager != null)
+        {
+            localeManager.dispose();
+            localeManager = null;
+        }
+        
+        if (accountManager != null)
+        {
+            accountManager.dispose();
+            accountManager = null;
+        }
+        
+        if (persistenceManager != null)
+        {
+            persistenceManager.dispose();
+            persistenceManager = null;
+        }
+        
+        backupManager = null;
+        
+        if (sessionManager != null)
+        {
+            sessionManager.dispose();
+            sessionManager = null;
+        }
+        
+        if (mailSender != null)
+        {
+            mailSender.dispose();
+            mailSender = null;
+        }
+        
+        if (messageDispatcher != null)
+        {
+            messageDispatcher.dispose();
+            messageDispatcher = null;
+        }
+        
+        if (profileManager != null)
+        {
+            profileManager.dispose();
+            profileManager = null;
+        }
+        
+        accountWatcher = null;
+        vaultPermissions = null;
+        
+        logFileWriter = null;
     }
     
     /**

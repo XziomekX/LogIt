@@ -28,8 +28,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public final class LogItMessageDispatcher extends LogItCoreObject implements Listener
+public final class LogItMessageDispatcher extends LogItCoreObject implements Listener, Disposable
 {
+    @Override
+    public void dispose()
+    {
+        forceLoginPromptIntervals.clear();
+        forceLoginPromptIntervals = null;
+    }
+    
     /**
      * Sends a message to the given player telling them either to log in or to register.
      * 
@@ -159,5 +166,5 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         private int taskId = -1;
     }
     
-    private final Hashtable<Player, Long> forceLoginPromptIntervals = new Hashtable<>();
+    private Hashtable<Player, Long> forceLoginPromptIntervals = new Hashtable<>();
 }

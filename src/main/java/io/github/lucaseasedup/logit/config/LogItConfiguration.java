@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.config;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import com.google.common.collect.ImmutableMap;
+import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.config.validators.TimeStringValidator;
 import io.github.lucaseasedup.logit.util.IniUtils;
@@ -47,8 +48,20 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-public final class LogItConfiguration extends PropertyObserver
+public final class LogItConfiguration extends PropertyObserver implements Disposable
 {
+    @Override
+    public void dispose()
+    {
+        for (Property property : properties.values())
+        {
+            property.dispose();
+        }
+        
+        properties.clear();
+        properties = null;
+    }
+    
     public void load() throws IOException, InvalidPropertyValueException
     {
         getPlugin().reloadConfig();
@@ -547,5 +560,5 @@ public final class LogItConfiguration extends PropertyObserver
     public static final String PACKAGE_CONFIG_DEF = "config-def.b64";
     
     private boolean loaded = false;
-    private final Map<String, Property> properties = new LinkedHashMap<>();
+    private Map<String, Property> properties = new LinkedHashMap<>();
 }

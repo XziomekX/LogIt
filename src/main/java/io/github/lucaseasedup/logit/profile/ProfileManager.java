@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.profile;
 
 import com.google.common.collect.ImmutableList;
+import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.profile.field.Field;
 import io.github.lucaseasedup.logit.profile.field.FloatField;
@@ -39,7 +40,7 @@ import java.util.regex.Pattern;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public final class ProfileManager extends LogItCoreObject
+public final class ProfileManager extends LogItCoreObject implements Disposable
 {
     public ProfileManager(File path, ConfigurationSection fieldsSection)
     {
@@ -63,6 +64,18 @@ public final class ProfileManager extends LogItCoreObject
                         + " Cause: " + ex.getMessage());
             }
         }
+    }
+    
+    @Override
+    public void dispose()
+    {
+        path = null;
+        definedFields.clear();
+        definedFields = null;
+        fileCache.clear();
+        fileCache = null;
+        configurationCache.clear();
+        configurationCache = null;
     }
     
     public boolean containsProfile(String playerName)
@@ -322,8 +335,8 @@ public final class ProfileManager extends LogItCoreObject
                            + "\\s*\\.\\.\\."                  // Range operator
                            + "\\s*(-?[0-9]+\\.[0-9]+)\\s*$"); // Max
     
-    private final File path;
-    private final List<Field> definedFields = new LinkedList<>();
-    private final Map<String, File> fileCache = new HashMap<>();
-    private final Map<String, YamlConfiguration> configurationCache = new HashMap<>();
+    private File path;
+    private List<Field> definedFields = new LinkedList<>();
+    private Map<String, File> fileCache = new HashMap<>();
+    private Map<String, YamlConfiguration> configurationCache = new HashMap<>();
 }

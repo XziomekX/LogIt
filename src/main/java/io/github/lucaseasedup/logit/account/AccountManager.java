@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.account;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.CancelledState;
+import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.IntegrationType;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
@@ -45,7 +46,7 @@ import java.util.logging.Level;
 import javax.xml.bind.DatatypeConverter;
 import org.bukkit.Bukkit;
 
-public final class AccountManager extends LogItCoreObject implements Runnable
+public final class AccountManager extends LogItCoreObject implements Runnable, Disposable
 {
     public AccountManager(Storage storage, String unit, AccountKeys keys)
     {
@@ -55,6 +56,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         this.storage = storage;
         this.unit = unit;
         this.keys = keys;
+    }
+    
+    @Override
+    public void dispose()
+    {
+        storage = null;
+        unit = null;
+        keys = null;
     }
     
     @Override
@@ -622,7 +631,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     
     public static final long TASK_PERIOD = (5 * 60) * 20;
     
-    private final Storage storage;
-    private final String unit;
-    private final AccountKeys keys;
+    private Storage storage;
+    private String unit;
+    private AccountKeys keys;
 }
