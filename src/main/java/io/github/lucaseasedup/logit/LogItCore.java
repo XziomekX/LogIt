@@ -397,7 +397,6 @@ public final class LogItCore
         
         Bukkit.getScheduler().cancelTask(accountManagerTaskId);
         Bukkit.getScheduler().cancelTask(sessionManagerTaskId);
-        Bukkit.getScheduler().cancelTask(tickEventCallerTaskId);
         Bukkit.getScheduler().cancelTask(accountWatcherTaskId);
         Bukkit.getScheduler().cancelTask(backupManagerTaskId);
         
@@ -1037,7 +1036,6 @@ public final class LogItCore
     private int backupManagerTaskId;
     private int sessionManagerTaskId;
     private int accountWatcherTaskId;
-    private int tickEventCallerTaskId;
     
     private FileWriter logFileWriter;
     private final SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
