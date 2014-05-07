@@ -402,15 +402,18 @@ public final class LogItCore
             }
         }
         
-        dispose();
-        
         started = false;
+        
+        dispose();
         
         log(Level.FINE, getMessage("PLUGIN_STOP_SUCCESS"));
     }
     
     private void dispose()
     {
+        if (isStarted())
+            throw new IllegalStateException();
+        
         if (config != null)
         {
             config.dispose();
