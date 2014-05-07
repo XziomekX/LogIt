@@ -76,11 +76,11 @@ public final class LogItPlugin extends JavaPlugin
         if (core != null)
         {
             core.stop();
+            core = null;
         }
         
         getCommand("logit").setExecutor(new DisabledCommandExecutor());
         
-        core = null;
         messages = null;
         customGlobalMessages = null;
         customLocalMessages = null;
