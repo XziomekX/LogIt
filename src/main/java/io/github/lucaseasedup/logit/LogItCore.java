@@ -153,7 +153,7 @@ public final class LogItCore
                 }
                 catch (IOException ex)
                 {
-                    log(Level.WARNING, "Could not copy resource password-recovery.html.", ex);
+                    log(Level.WARNING, "Could not copy resource: password-recovery.html", ex);
                 }
             }
         }
@@ -168,7 +168,6 @@ public final class LogItCore
         StorageType leadingStorageType = StorageType.decode(
             plugin.getConfig().getString("storage.accounts.leading.storage-type")
         );
-        
         StorageType mirrorStorageType = StorageType.decode(
             plugin.getConfig().getString("storage.accounts.mirror.storage-type")
         );
@@ -348,7 +347,7 @@ public final class LogItCore
         
         log(Level.FINE, getMessage("PLUGIN_START_SUCCESS"));
         
-        if (firstRun)
+        if (isFirstRun())
         {
             log(Level.INFO, getMessage("PLUGIN_FIRST_RUN"));
         }
@@ -362,7 +361,7 @@ public final class LogItCore
      */
     public void stop()
     {
-        if (!started)
+        if (!isStarted())
             return;
         
         disableCommands();
@@ -480,7 +479,7 @@ public final class LogItCore
      */
     public void restart() throws FatalReportedException
     {
-        if (!started)
+        if (!isStarted())
             return;
         
         File sessionFile = getDataFile(config.getString("storage.sessions.filename"));
