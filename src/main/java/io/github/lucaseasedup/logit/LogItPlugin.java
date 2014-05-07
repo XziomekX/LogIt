@@ -75,7 +75,11 @@ public final class LogItPlugin extends JavaPlugin
     {
         if (core != null)
         {
-            core.stop();
+            if (core.isStarted())
+            {
+                core.stop();
+            }
+            
             core = null;
         }
         
