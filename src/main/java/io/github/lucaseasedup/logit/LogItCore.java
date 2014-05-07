@@ -480,7 +480,7 @@ public final class LogItCore
     public void restart() throws FatalReportedException
     {
         if (!isStarted())
-            return;
+            throw new IllegalStateException("The LogIt core is not started.");
         
         File sessionFile = getDataFile(config.getString("storage.sessions.filename"));
         
