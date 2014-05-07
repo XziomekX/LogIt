@@ -59,6 +59,11 @@ public abstract class LogItCoreObject
         return core.getPlugin();
     }
     
+    protected final boolean isCoreStarted()
+    {
+        return core.isStarted();
+    }
+    
     protected final File getDataFolder()
     {
         return core.getPlugin().getDataFolder();
