@@ -749,9 +749,19 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                     if (rgb.length != 3)
                         throw new Exception("Malformed color representation.");
                     
-                    outputValue = Color.fromRGB(Integer.parseInt(rgb[0]),
-                                                Integer.parseInt(rgb[1]),
-                                                Integer.parseInt(rgb[2]));
+                    try
+                    {
+                        outputValue = Color.fromRGB(Integer.parseInt(rgb[0]),
+                                                    Integer.parseInt(rgb[1]),
+                                                    Integer.parseInt(rgb[2]));
+                    }
+                    catch (NumberFormatException ex)
+                    {
+                        sender.sendMessage(getMessage("INVALID_PARAMETER")
+                                .replace("%param%", "value"));
+                        
+                        return;
+                    }
                 }
                 }
                 
@@ -797,9 +807,19 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                     if (axes.length != 3)
                         throw new Exception("Malformed vector representation.");
                     
-                    outputValue = new Vector(Double.valueOf(axes[0]),
-                                             Double.valueOf(axes[1]),
-                                             Double.valueOf(axes[2]));
+                    try
+                    {
+                        outputValue = new Vector(Double.parseDouble(axes[0]),
+                                                 Double.parseDouble(axes[1]),
+                                                 Double.parseDouble(axes[2]));
+                    }
+                    catch (NumberFormatException ex)
+                    {
+                        sender.sendMessage(getMessage("INVALID_PARAMETER")
+                                .replace("%param%", "value"));
+                        
+                        return;
+                    }
                 }
                 
                 break;
@@ -882,7 +902,17 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         
         if (pageString != null)
         {
-            page = Integer.parseInt(pageString);
+            try
+            {
+                page = Integer.parseInt(pageString);
+            }
+            catch (NumberFormatException ex)
+            {
+                sender.sendMessage(getMessage("INVALID_PARAMETER")
+                        .replace("%param%", "page"));
+                
+                return;
+            }
         }
         
         if (page <= 0)
