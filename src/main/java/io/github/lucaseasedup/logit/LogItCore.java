@@ -106,8 +106,8 @@ public final class LogItCore
      */
     public void start() throws FatalReportedException
     {
-        if (started)
-            return;
+        if (isStarted())
+            throw new IllegalStateException("The LogIt core has already been started.");
         
         getDataFolder().mkdir();
         getDataFile("lib").mkdir();
@@ -362,7 +362,7 @@ public final class LogItCore
     public void stop()
     {
         if (!isStarted())
-            return;
+            throw new IllegalStateException("The LogIt core is not started.");
         
         disableCommands();
         
