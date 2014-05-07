@@ -26,6 +26,7 @@ import io.github.lucaseasedup.logit.storage.Storage;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -198,6 +199,11 @@ public final class ConvertWizard extends Wizard
         {
             if ("proceed".equals(message))
             {
+                for (Player player : Bukkit.getOnlinePlayers())
+                {
+                    player.kickPlayer(getMessage("SERVER_MAINTENANCE"));
+                }
+                
                 getConfig().set("storage.accounts.leading.storage-type", dbtype);
                 
                 switch (dbtype)
