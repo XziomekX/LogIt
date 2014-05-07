@@ -33,10 +33,9 @@ import org.bukkit.event.server.ServerCommandEvent;
 
 public abstract class Wizard extends LogItCoreObject implements Listener 
 {
-    public Wizard(CommandSender sender, String[] args, Object initStep)
+    public Wizard(CommandSender sender, Object initStep)
     {
         this.sender = sender;
-        this.args = args;
         this.initStep = initStep;
     }
     
@@ -118,18 +117,12 @@ public abstract class Wizard extends LogItCoreObject implements Listener
         return sender;
     }
     
-    protected final String[] getArgs()
-    {
-        return args;
-    }
-    
     protected final void updateStep(Object step)
     {
         this.step = step;
     }
     
     private final CommandSender sender;
-    private final String[] args;
     private final Object initStep;
     private Object step = null;
 }

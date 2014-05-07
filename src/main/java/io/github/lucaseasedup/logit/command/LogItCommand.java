@@ -944,7 +944,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
     
     private void subcommandConvert(CommandSender sender, String[] args)
     {
-        new ConvertWizard(sender, args).createWizard();
+        new ConvertWizard(sender).createWizard();
     }
     
     private boolean checkPermission(Player player, String permission)

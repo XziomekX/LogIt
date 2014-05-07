@@ -31,7 +31,7 @@ public final class ProfileEditWizard extends Wizard
 {
     public ProfileEditWizard(CommandSender sender, String playerName)
     {
-        super(sender, new String[0], Step.VIEW);
+        super(sender, Step.VIEW);
         
         this.playerName = playerName;
         this.fields = getCore().getProfileManager().getDefinedFields();

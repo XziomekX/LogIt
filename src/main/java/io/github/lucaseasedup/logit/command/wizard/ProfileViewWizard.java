@@ -27,7 +27,7 @@ public final class ProfileViewWizard extends Wizard
 {
     public ProfileViewWizard(CommandSender sender, String playerName)
     {
-        super(sender, new String[0], Step.VIEW);
+        super(sender, Step.VIEW);
         
         this.playerName = playerName;
     }

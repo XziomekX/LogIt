@@ -32,9 +32,9 @@ import org.bukkit.entity.Player;
 
 public final class ConvertWizard extends Wizard
 {
-    public ConvertWizard(CommandSender sender, String[] args)
+    public ConvertWizard(CommandSender sender)
     {
-        super(sender, args, Step.WELCOME);
+        super(sender, Step.WELCOME);
     }
     
     @Override
