@@ -97,8 +97,9 @@ public final class LogItCore
     }
     
     /**
-     * Starts up the {@code LogItCore} if stopped.
+     * Starts up the LogIt core.
      * 
+     * @throws IllegalStateException  if the core has already been started.
      * @throws FatalReportedException if critical error occured and LogIt could not start.
      * 
      * @see #isStarted()
@@ -354,7 +355,9 @@ public final class LogItCore
     }
     
     /**
-     * Stops the {@code LogItCore} if started.
+     * Stops the LogIt core.
+     * 
+     * @throws IllegalStateException if the core has not been started.
      * 
      * @see #isStarted()
      * @see #start()
@@ -470,10 +473,10 @@ public final class LogItCore
     }
     
     /**
-     * Restarts the {@code LogItCore}, if started,
-     * by invoking {@link #stop} and {@link #start}.
+     * Restarts the LogIt core.
      * 
-     * @throws FatalReportedException if LogItCore could not be started again.
+     * @throws IllegalStateException  if the LogIt core is not started.
+     * @throws FatalReportedException if the LogIt core could not be started again.
      * 
      * @see #isStarted()
      */
@@ -523,7 +526,7 @@ public final class LogItCore
     /**
      * Checks if a plain-text password is equal, after hashing, to {@code hashedPassword}.
      * 
-     * If "password.use-global-hashing-algorithm" is set to true,
+     * <p> If "password.use-global-hashing-algorithm" is set to true,
      * the global hashing algorithm will be used instead of {@code hashingAlgorithm}.
      * 
      * @param password         the plain-text password.
@@ -556,7 +559,7 @@ public final class LogItCore
      * Checks if a plain-text password with a salt appended
      * is equal, after hashing, to {@code hashedPassword}.
      * 
-     * If "password.use-global-hashing-algorithm" is set to true,
+     * <p> If "password.use-global-hashing-algorithm" is set to true,
      * the global hashing algorithm will be used instead of {@code hashingAlgorithm}.
      * 
      * @param password         the plain-text password.

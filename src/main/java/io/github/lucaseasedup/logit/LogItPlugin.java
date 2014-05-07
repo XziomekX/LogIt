@@ -106,7 +106,7 @@ public final class LogItPlugin extends JavaPlugin
      * it throws FileNotFoundException.
      * 
      * @throws FileNotFoundException if no message file has been found.
-     * @throws IOException if there was an error while reading.
+     * @throws IOException           if there was an error while reading.
      */
     public void loadMessages() throws IOException
     {
