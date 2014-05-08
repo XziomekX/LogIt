@@ -117,13 +117,13 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
     }
     
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event)
+    private void onPlayerQuit(PlayerQuitEvent event)
     {
         forceLoginPromptIntervals.remove(event.getPlayer());
     }
     
     @EventHandler
-    public void onPlayerKick(PlayerKickEvent event)
+    private void onPlayerKick(PlayerKickEvent event)
     {
         forceLoginPromptIntervals.remove(event.getPlayer());
     }
