@@ -18,6 +18,10 @@
  */
 package io.github.lucaseasedup.logit;
 
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Arrays;
 import io.github.lucaseasedup.logit.command.DisabledCommandExecutor;
 import io.github.lucaseasedup.logit.command.LogItCommand;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
@@ -212,11 +216,25 @@ public final class LogItPlugin extends JavaPlugin
         return message;
     }
     
+    @SuppressWarnings("resource")
     public static void loadLibrary(String filename) throws FatalReportedException
     {
         try
         {
-            IoUtils.loadLibrary(filename);
+            File file = new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename);
+            
+            if (!file.exists())
+                throw new FileNotFoundException();
+            
+            URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+            URL url = file.toURI().toURL();
+            
+            if (!Arrays.asList(classLoader.getURLs()).contains(url))
+            {
+                Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
+                addUrlMethod.setAccessible(true);
+                addUrlMethod.invoke(classLoader, new Object[]{url});
+            }
         }
         catch (FileNotFoundException | MalformedURLException ex)
         {
@@ -234,7 +252,26 @@ public final class LogItPlugin extends JavaPlugin
         }
     }
     
-    public static LogItPlugin getInstance()
+    @SuppressWarnings("resource")
+    public static boolean libraryLoaded(String filename)
+    {
+        File file = new File(getInstance().getDataFolder(), "lib/" + filename);
+        URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        URL url;
+        
+        try
+        {
+            url = file.toURI().toURL();
+        }
+        catch (MalformedURLException ex)
+        {
+            return false;
+        }
+        
+        return Arrays.asList(classLoader.getURLs()).contains(url);
+    }
+    
+    /* package */ static LogItPlugin getInstance()
     {
         return (LogItPlugin) Bukkit.getPluginManager().getPlugin("LogIt");
     }

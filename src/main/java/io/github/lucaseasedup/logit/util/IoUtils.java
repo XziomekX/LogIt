@@ -94,44 +94,4 @@ public final class IoUtils
             }
         }
     }
-    
-    @SuppressWarnings("resource")
-    public static void loadLibrary(String filename) throws ReflectiveOperationException,
-                                                           FileNotFoundException,
-                                                           MalformedURLException
-    {
-        File file = new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename);
-        
-        if (!file.exists())
-            throw new FileNotFoundException();
-        
-        URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        URL url = file.toURI().toURL();
-        
-        if (!Arrays.asList(classLoader.getURLs()).contains(url))
-        {
-            Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
-            addUrlMethod.setAccessible(true);
-            addUrlMethod.invoke(classLoader, new Object[]{url});
-        }
-    }
-    
-    @SuppressWarnings("resource")
-    public static boolean libraryLoaded(String filename)
-    {
-        File file = new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename);
-        URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        URL url;
-        
-        try
-        {
-            url = file.toURI().toURL();
-        }
-        catch (MalformedURLException ex)
-        {
-            return false;
-        }
-        
-        return Arrays.asList(classLoader.getURLs()).contains(url);
-    }
 }
