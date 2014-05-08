@@ -603,7 +603,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         }
     }
     
-    public int getAccountCount() throws IOException
+    public int countAccounts() throws IOException
     {
         return storage.selectEntries(unit, Arrays.asList(keys.username())).size();
     }

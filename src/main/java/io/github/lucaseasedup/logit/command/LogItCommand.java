@@ -652,7 +652,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         try
         {
             sender.sendMessage(getMessage("ACCOUNT_COUNT")
-                    .replace("%num%", String.valueOf(getAccountManager().getAccountCount())));
+                    .replace("%num%", String.valueOf(getAccountManager().countAccounts())));
         }
         catch (IOException ex)
         {
