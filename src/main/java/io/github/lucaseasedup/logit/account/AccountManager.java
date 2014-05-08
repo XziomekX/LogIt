@@ -19,7 +19,6 @@
 package io.github.lucaseasedup.logit.account;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.IntegrationType;
@@ -27,6 +26,7 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.security.HashingAlgorithm;
 import io.github.lucaseasedup.logit.security.SecurityHelper;
+import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.SelectorNegation;

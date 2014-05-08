@@ -18,14 +18,9 @@
  */
 package io.github.lucaseasedup.logit;
 
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Arrays;
 import io.github.lucaseasedup.logit.command.DisabledCommandExecutor;
 import io.github.lucaseasedup.logit.command.LogItCommand;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
-import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,7 +28,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.jar.JarEntry;
