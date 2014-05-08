@@ -577,11 +577,6 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         return persistence;
     }
     
-    public String getAccountPersistence(String username, String key) throws IOException
-    {
-        return getAccountPersistence(username).get(key);
-    }
-    
     public void updateAccountPersistence(String username, String key, String value)
     {
         Map<String, Map<String, String>> persistence = new HashMap<>(1);
