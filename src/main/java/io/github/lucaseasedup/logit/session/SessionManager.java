@@ -212,6 +212,22 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
+     * Creates a session for a player.
+     * 
+     * <p> If a session for this player already exists,
+     * no action will be taken.
+     * 
+     * @param player the player object.
+     * 
+     * @return a {@code CancellableState} indicating whether
+     *         the operation was cancelled or not by a Bukkit event.
+     */
+    public CancelledState createSession(Player player)
+    {
+        return createSession(player.getName(), getPlayerIp(player));
+    }
+    
+    /**
      * Destroys session belonging to a player with the specified username.
      * 
      * <p> If session does not exist, no action will be taken.

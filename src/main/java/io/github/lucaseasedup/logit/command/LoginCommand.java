@@ -81,7 +81,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 
                 if (getSessionManager().getSession(args[1]) == null)
                 {
-                    getSessionManager().createSession(args[1], getPlayerIp(argPlayer));
+                    getSessionManager().createSession(argPlayer);
                 }
                 
                 if (!getSessionManager().startSession(args[1]).isCancelled())
@@ -195,7 +195,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             if (getSessionManager().getSession(username) == null)
             {
-                getSessionManager().createSession(username, getPlayerIp(p));
+                getSessionManager().createSession(p);
             }
             
             if (!getSessionManager().startSession(username).isCancelled())
