@@ -218,7 +218,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
         File backupFile = new File(backupDir, filename);
         
         if (!backupFile.exists())
-            throw new FileNotFoundException();
+            return null;
         
         return backupFile;
     }
