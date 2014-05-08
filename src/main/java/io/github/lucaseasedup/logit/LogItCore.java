@@ -357,7 +357,7 @@ public final class LogItCore
     /**
      * Stops the LogIt core.
      * 
-     * @throws IllegalStateException if the core has not been started.
+     * @throws IllegalStateException if the core has already been stopped.
      * 
      * @see #isStarted()
      * @see #start()
@@ -479,10 +479,12 @@ public final class LogItCore
     /**
      * Restarts the LogIt core.
      * 
-     * @throws IllegalStateException  if the LogIt core is not started.
+     * @throws IllegalStateException  if the LogIt core has not been started yet
+     *                                in order to be restarted obviously.
      * @throws FatalReportedException if the LogIt core could not be started again.
      * 
      * @see #isStarted()
+     * @see #start()
      */
     public void restart() throws FatalReportedException
     {
@@ -528,12 +530,14 @@ public final class LogItCore
     }
     
     /**
-     * Checks if a plain-text password is equal, after hashing, to {@code hashedPassword}.
+     * Checks if a password is equal, after hashing, to {@code hashedPassword}.
      * 
-     * <p> If "password.use-global-hashing-algorithm" is set to true,
-     * the global hashing algorithm will be used instead of {@code hashingAlgorithm}.
+     * <p> If the <i>password.use-global-hashing-algorithm</i>
+     * config setting is set to <i>true</i>,
+     * the global hashing algorithm (specified in the config file)
+     * will be used instead of the provided {@code hashingAlgorithm}.
      * 
-     * @param password         the plain-text password.
+     * @param password         the password to be checked.
      * @param hashedPassword   the hashed password.
      * @param hashingAlgorithm the algorithm used when hashing {@code hashedPassword}.
      * 
@@ -560,13 +564,15 @@ public final class LogItCore
     }
     
     /**
-     * Checks if a plain-text password with a salt appended
-     * is equal, after hashing, to {@code hashedPassword}.
+     * Checks if a password (with a salt appended) is equal,
+     * after hashing, to {@code hashedPassword}.
      * 
-     * <p> If "password.use-global-hashing-algorithm" is set to true,
-     * the global hashing algorithm will be used instead of {@code hashingAlgorithm}.
+     * <p> If the <i>password.use-global-hashing-algorithm</i>
+     * config setting is set to <i>true</i>,
+     * the global hashing algorithm (specified in the config file)
+     * will be used instead of the provided {@code hashingAlgorithm}.
      * 
-     * @param password         the plain-text password.
+     * @param password         the password to be checked.
      * @param hashedPassword   the hashed password.
      * @param salt             the salt for the passwords.
      * @param hashingAlgorithm the algorithm used when hashing {@code hashedPassword}.
@@ -629,7 +635,8 @@ public final class LogItCore
     /**
      * Changes the global password.
      * 
-     * <p> Hashes {@code password} with a random salt using the default algorithm.
+     * <p> This method hashes {@code password} with a random salt
+     * using the default algorithm specified in the config file.
      * 
      * @param password the new global password.
      */
@@ -644,6 +651,10 @@ public final class LogItCore
         log(Level.INFO, getMessage("GLOBALPASS_SET_SUCCESS"));
     }
     
+    /**
+     * Removes the global password, making it unusable
+     * in the login processes following this method call.
+     */
     public void removeGlobalPassword()
     {
         config.set("password.global-password.hash", "");
@@ -655,11 +666,11 @@ public final class LogItCore
     /**
      * Checks if a player is forced to log in.
      * 
-     * <p> Returns {@code true} if <i>"force-login.global"</i> is set to <i>true</i>,
-     * or the player is in a world with forced login; {@code false} otherwise.
+     * <p> Returns {@code true} if the <i>force-login.global</i> config setting
+     * is set to <i>true</i>, or the player is in a world with forced login.
      * 
-     * <p> If the player name is contained in <i>"force-login.exempt-players"</i>,
-     * it always returns {@code false}.
+     * <p> If the player name is contained in the <i>force-login.exempt-players</i>
+     * config property, it always returns {@code false} regardless of the above conditions.
      * 
      * <p> Note that this method does not check if the player is logged in.
      * For that purpose, use {@link SessionManager#isSessionAlive(Player)}
@@ -680,7 +691,7 @@ public final class LogItCore
     }
     
     /**
-     * Updates permission groups for a player if LogIt is linked to Vault.
+     * Updates permission groups for a player only if LogIt is linked to Vault.
      * 
      * <p> Permission groups currently supported: <ul>
      *  <li>Registered</li>
@@ -689,7 +700,7 @@ public final class LogItCore
      *  <li>Logged out</li>
      * </ul>
      * 
-     * <p> Exact group names are taken from the LogIt configuration file.
+     * <p> Exact group names will be read from the configuration file.
      * 
      * @param player the player whose permission groups should be updated.
      */
@@ -723,6 +734,9 @@ public final class LogItCore
     
     /**
      * Logs a message in the name of LogIt.
+     * 
+     * <p> The logger message will be saved in a log file if doing so is permitted
+     * by the appropriate configuration setting.
      * 
      * @param level   the message level.
      * @param message the message to be logged.
@@ -773,6 +787,9 @@ public final class LogItCore
     /**
      * Logs a message with a {@code Throwable} in the name of LogIt.
      * 
+     * <p> The logger message will be saved in a log file if doing so is permitted
+     * by the appropriate configuration setting.
+     * 
      * @param level     the message level.
      * @param message   the message to be logged.
      * @param throwable the throwable whose stack trace should be appended to the log.
@@ -793,6 +810,9 @@ public final class LogItCore
     
     /**
      * Logs a {@code Throwable} in the name of LogIt.
+     * 
+     * <p> The logger message will be saved in a log file if doing so is permitted
+     * by the appropriate configuration setting.
      * 
      * @param level     the logging level.
      * @param throwable the throwable to be logged.
@@ -939,26 +959,59 @@ public final class LogItCore
         plugin.getServer().getPluginManager().registerEvents(new SessionEventListener(), plugin);
     }
     
+    /**
+     * Returns the LogIt plugin object.
+     * 
+     * <p> Most of times, all the work will be done with the LogIt core,
+     * but the {@code LogItPlugin} may come useful if you want to,
+     * for example, reload the message files or load external libraries.
+     * 
+     * @return the LogIt plugin object.
+     */
     public LogItPlugin getPlugin()
     {
         return plugin;
     }
     
+    /**
+     * Returns the LogIt data folder as a {@code File} object (<i>/plugins/LogIt/</i>).
+     * 
+     * @return the data folder.
+     */
     public File getDataFolder()
     {
         return plugin.getDataFolder();
     }
     
+    /**
+     * Returns a file, as a {@code File} object,
+     * relative to the LogIt data folder (<i>/plugins/LogIt/</i>).
+     * 
+     * @param path the relative path.
+     * 
+     * @return the data file.
+     */
     public File getDataFile(String path)
     {
         return new File(getDataFolder(), path);
     }
     
+    /**
+     * Checks if this is the first time LogIt is running on this server.
+     * 
+     * @return {@code true} if LogIt is running for the first time;
+     *         {@code false} otherwise.
+     */
     public boolean isFirstRun()
     {
         return firstRun;
     }
     
+    /**
+     * Checks if the LogIt core has been successfully started and is running.
+     * 
+     * @return {@code true} if the LogIt core is started; {@code false} otherwise.
+     */
     public boolean isStarted()
     {
         return started;
@@ -969,11 +1022,22 @@ public final class LogItCore
         return config;
     }
     
+    /**
+     * Checks if the LogIt configuration file has been successfully loaded.
+     * 
+     * @return {@code true} if the configuration file has been loaded;
+     *         {@code false} otherwise.
+     */
     public boolean isConfigLoaded()
     {
         return config != null && config.isLoaded();
     }
     
+    /**
+     * Returns the default hashing algorithm specified in the config file.
+     * 
+     * @return the default hashing algorithm.
+     */
     public HashingAlgorithm getDefaultHashingAlgorithm()
     {
         return HashingAlgorithm.decode(plugin.getConfig().getString("password.hashing-algorithm"));
@@ -1025,7 +1089,9 @@ public final class LogItCore
     }
     
     /**
-     * Checks if LogIt is linked to Vault.
+     * Checks if LogIt is linked to the Vault plugin
+     * (e.i. Vault is enabled on this server and LogIt has successfully
+     * obtained the Vault permission provider when it was starting up).
      * 
      * @return {@code true} if LogIt is linked to Vault; {@code false} otherwise.
      */
@@ -1049,10 +1115,24 @@ public final class LogItCore
         return instance;
     }
     
+    /**
+     * INTERNAL is a message level providing internal information typically used for debugging.
+     */
     public static final Level INTERNAL = new CustomLevel("INTERNAL", -1000);
     
+    /**
+     * The filename of H2 library found in the /lib directory.
+     */
     public static final String LIB_H2 = "h2small-1.3.171.jar";
+    
+    /**
+     * The filename of PostgreSQL library found in the /lib directory.
+     */
     public static final String LIB_POSTGRESQL = "postgresql-9.3-1100.jdbc4.jar";
+    
+    /**
+     * The filename of JavaMail library found in the /lib directory.
+     */
     public static final String LIB_MAIL = "mail-1.4.7.jar";
     
     private static volatile LogItCore instance = null;

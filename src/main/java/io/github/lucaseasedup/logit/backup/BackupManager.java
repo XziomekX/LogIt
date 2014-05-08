@@ -36,13 +36,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
-/**
- * This class runs a scheduled backup and provides
- * methods for manual backup.
- */
 public final class BackupManager extends LogItCoreObject implements Runnable, Disposable
 {
-    public BackupManager()
+    /**
+     * Creates a new backup manager.
+     * 
+     * @param accountManager the account manager whose accounts will be backed up.
+     */
     public BackupManager(AccountManager accountManager)
     {
         timer = new Timer(TASK_PERIOD);
@@ -58,6 +58,9 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
         accountManager = null;
     }
     
+    /**
+     * Internal method. Do not call directly.
+     */
     @Override
     public void run()
     {
@@ -86,6 +89,13 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
         }
     }
     
+    /**
+     * Creates a new backup of all the accounts stored in the underlying {@code AccountManager}.
+     * 
+     * @return the created backup file.
+     * 
+     * @throws IOException if an I/O error occured.
+     */
     public File createBackup() throws IOException
     {
         String backupFilenameFormat = getConfig().getString("backup.filename-format");
@@ -122,11 +132,9 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
     }
     
     /**
-     * Restores a backup.
+     * Restores a backup, loading all the accounts into the underlying {@code AccountManager}.
      * 
-     * <p> Automatically reloads the {@code AccountManager} tied to {@code LogItCore}.
-     * 
-     * @param filename backup filename.
+     * @param filename the backup filename.
      */
     public void restoreBackup(String filename)
     {
@@ -196,6 +204,14 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
         log(Level.INFO, getMessage("REMOVE_BACKUPS_SUCCESS"));
     }
     
+    /**
+     * Returns all the backups from the backup directory as an array of {@code File} objects.
+     * 
+     * @param sortAlphabetically whether to alphabetically sort the backups
+     *                           according to their filenames.
+     * 
+     * @return an array of {@code File} objects, each representing a backup.
+     */
     public File[] getBackups(boolean sortAlphabetically)
     {
         File backupDir = getDataFile(getConfig().getString("backup.path"));
@@ -212,7 +228,16 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
         return backupFiles;
     }
     
-    public File getBackup(String filename) throws FileNotFoundException
+    /**
+     * Returns a backup {@code File} object with the specified name
+     * relative to the backup directory.
+     * 
+     * @param filename the backup filename.
+     * 
+     * @return the backup file, or {@code null} if a backup
+     *         with the given filename does not exist.
+     */
+    public File getBackup(String filename)
     {
         File backupDir = getDataFile(getConfig().getString("backup.path"));
         File backupFile = new File(backupDir, filename);
@@ -223,7 +248,11 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
         return backupFile;
     }
     
+    /**
+     * Recommended task period of {@code BackupManager} running as a Bukkit task.
+     */
     public static final long TASK_PERIOD = 2 * 20;
+    
     private static final File[] NO_FILES = new File[0];
     
     private Timer timer;

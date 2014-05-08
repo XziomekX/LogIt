@@ -57,6 +57,9 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
         }
     }
     
+    /**
+     * Internal method. Do not call directly.
+     */
     @Override
     public void run()
     {
@@ -123,10 +126,11 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     /**
      * Checks if a session is alive.
      * 
-     * <p> Returns {@code true} if {@code player} is not {@code null}, the session is alive
-     * and player IP matches session IP; {@code false} otherwise.
+     * <p> Returns {@code true} if {@code player} is not {@code null},
+     * the session exists, is alive and player IP matches session IP;
+     * {@code false} otherwise.
      * 
-     * @param player a player which the session is tied to.
+     * @param player a player with the username representing a session.
      * 
      * @return {@code true} if the session is alive; {@code false} otherwise.
      */
@@ -148,10 +152,11 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     /**
      * Checks if a session is alive.
      * 
-     * <p> Returns {@code true} if {@code name} is not {@code null}, the session is alive
-     * and, if the player is online, player IP matches session IP; {@code false} otherwise.
+     * <p> Returns {@code true} if {@code name} is not {@code null},
+     * the session exists, is alive and, if the player is online,
+     * player IP matches session IP; {@code false} otherwise.
      * 
-     * @param name player name.
+     * @param name the player username.
      * 
      * @return {@code true} if the session is alive; {@code false} otherwise.
      */
@@ -334,11 +339,18 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
         return CancelledState.NOT_CANCELLED;
     }
     
-    public void exportSessions(File sessionsDatabaseFile) throws IOException
+    /**
+     * Exports all sessions in this session manager to a file.
+     * 
+     * @param file the file to which sessions will be exported.
+     * 
+     * @throws IOException if an I/O error occured.
+     */
+    public void exportSessions(File file) throws IOException
     {
-        sessionsDatabaseFile.delete();
+        file.delete();
         
-        try (Storage sessionsStorage = new SqliteStorage("jdbc:sqlite:" + sessionsDatabaseFile))
+        try (Storage sessionsStorage = new SqliteStorage("jdbc:sqlite:" + file))
         {
             sessionsStorage.connect();
             sessionsStorage.createUnit("sessions", new Hashtable<String, DataType>()
@@ -366,6 +378,13 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
         }
     }
     
+    /**
+     * Imports all the sessions from a file to this session manager.
+     * 
+     * @param file the file from which sessions will be imported.
+     * 
+     * @throws IOException if an I/O error occured.
+     */
     public void importSessions(File file) throws IOException
     {
         try (Storage sessionsStorage = new SqliteStorage("jdbc:sqlite:" + file))
@@ -396,6 +415,9 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
         }
     }
     
+    /**
+     * Recommended task period of {@code SessionManager} running as a Bukkit task.
+     */
     public static final long TASK_PERIOD = 1;
     
     private Map<String, Session> sessions = new ConcurrentHashMap<>();

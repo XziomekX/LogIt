@@ -48,6 +48,14 @@ public final class MailSender extends LogItCoreObject implements Disposable
         password = null;
     }
     
+    /**
+     * Configures this mail sender for a SMTP server.
+     * 
+     * @param host     the host.
+     * @param port     the port number.
+     * @param user     the user.
+     * @param password the password.
+     */
     public void configure(String host, int port, String user, String password)
     {
         properties.setProperty("mail.smtp.host", host);
@@ -60,8 +68,25 @@ public final class MailSender extends LogItCoreObject implements Disposable
         this.password = password;
     }
     
-    public void sendMail(Collection<String> to, String from, String subject, String body, boolean html)
-            throws IOException
+    /**
+     * Sends a mail through a SMTP server.
+     * 
+     * <p> Configure this {@code MailSender} using
+     * {@link #configure(String, int, String, String)} before calling this method.
+     * 
+     * @param to      a collection of recipient addresses to which the mail will be sent.
+     * @param from    the sender address.
+     * @param subject the mail subject.
+     * @param body    the mail body.
+     * @param html    whether HTML should be enabled in this mail.
+     * 
+     * @throws IOException if an I/O error occured.
+     */
+    public void sendMail(Collection<String> to,
+                         String from,
+                         String subject,
+                         String body,
+                         boolean html) throws IOException
     {
         Session session = Session.getDefaultInstance(properties, new Authenticator()
         {

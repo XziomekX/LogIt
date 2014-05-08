@@ -79,6 +79,12 @@ public final class LocaleManager extends LogItCoreObject implements Disposable
         return fallbackLocaleObj;
     }
     
+    /**
+     * Sets the fallback locale, that will be activated
+     * when trying to switch to a locale that has not been registered.
+     * 
+     * @param fallbackLocale the fallback locale.
+     */
     public void setFallbackLocale(Class<? extends Locale> fallbackLocale)
     {
         Locale fallbackLocaleObj = locales.get(fallbackLocale);

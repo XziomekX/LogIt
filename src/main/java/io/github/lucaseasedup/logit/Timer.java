@@ -23,8 +23,8 @@ public class Timer implements Runnable
     /**
      * Constructs a new {@code Timer}.
      * 
-     * @param interval The timer interval. For example, if {@code interval == 1}
-     *                 each {@link #run} call will advance the timer by 1 unit.
+     * @param interval the timer interval (if {@code interval == 1}
+     *                 each {@link #run()} call will advance the timer by exactly 1 unit).
      * 
      * @throws IllegalArgumentException if {@code interval} is less than zero.
      */

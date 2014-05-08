@@ -57,22 +57,22 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
     }
     
     /**
-     * Serializes player data using the specified serializer
+     * Serializes player data using the specified persistence serializer
      * 
-     * <p> It does nothing if {@code clazz} is {@code null}, or the player has already
-     * been serialized using this serializer.
+     * <p> No action will be taken if the player's data
+     * has already been serialized using this serializer.
      * 
      * @param player the player whose data will be serialized.
      * @param clazz  serializer class.
      * 
-     * @throws IllegalArgumentException     if {@code player} is null.
+     * @throws IllegalArgumentException     if {@code player} or {@code clazz} is {@code null}.
      * @throws ReflectiveOperationException if serializer construction failed.
-     * @throws IOException                  if an IO error occured while updating persistence.
+     * @throws IOException                  if an I/O error occured while updating the persistence.
      */
     public void serializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
             throws ReflectiveOperationException, IOException
     {
-        if (player == null)
+        if (player == null || clazz == null)
             throw new IllegalArgumentException();
         
         String username = player.getName().toLowerCase();
@@ -96,7 +96,7 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      * 
      * @param player the player whose data will be serialized.
      * 
-     * @throws IllegalArgumentException if {@code player} is null.
+     * @throws IllegalArgumentException if {@code player} is {@code null}.
      */
     public void serialize(Player player)
     {
@@ -140,22 +140,22 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
     }
 
     /**
-     * Unserializes player data using the specified serializer
+     * Unserializes player data using the specified persistence serializer
      * 
-     * <p> It does nothing if {@code clazz} is {@code null}, or the player has not
-     * been serialized using this serializer.
+     * <p> No action will be taken if the player's data
+     * has not been serialized using this serializer.
      * 
      * @param player the player whose data will be unserialized.
      * @param clazz  serializer class.
      * 
-     * @throws IllegalArgumentException     if {@code player} is null.
+     * @throws IllegalArgumentException     if {@code player} or {@code clazz} is {@code null}.
      * @throws ReflectiveOperationException if serializer construction failed.
-     * @throws IOException                  if an IO error occured while updating persistence.
+     * @throws IOException                  if an I/O error occured while updating the persistence.
      */
     public void unserializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
             throws ReflectiveOperationException, IOException
     {
-        if (player == null)
+        if (player == null || clazz == null)
             throw new IllegalArgumentException();
         
         String username = player.getName().toLowerCase();
@@ -184,7 +184,7 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      * 
      * @param player the player whose data will be unserialized.
      * 
-     * @throws IllegalArgumentException if {@code player} is null.
+     * @throws IllegalArgumentException if {@code player} is {@code null}.
      */
     public void unserialize(Player player)
     {
@@ -243,11 +243,11 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
     /**
      * Registers a serializer class.
      * 
-     * @param clazz serializer class.
+     * @param clazz the serializer class to be registered.
      * 
-     * @return {@code false} if the serializer class is already registered; {@code true} otherwise.
+     * @return {@code false} if the serializer class was already registered; {@code true} otherwise.
      * 
-     * @throws IllegalArgumentException     if {@code clazz} is null.
+     * @throws IllegalArgumentException     if {@code clazz} is {@code null}.
      * @throws ReflectiveOperationException if serializer constructor invocation failed.
      * 
      */
@@ -268,11 +268,11 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
     /**
      * Unregisters a serializer class.
      * 
-     * @param clazz serializer class to be unregistered.
+     * @param clazz the serializer class to be unregistered.
      * 
-     * @return {@code false} if the serializer class is not registered; {@code true} otherwise.
+     * @return {@code false} if the serializer class was not registered; {@code true} otherwise.
      * 
-     * @throws IllegalArgumentException if {@code clazz} is null.
+     * @throws IllegalArgumentException if {@code clazz} is {@code null}.
      */
     public boolean unregisterSerializer(Class<? extends PersistenceSerializer> clazz)
     {

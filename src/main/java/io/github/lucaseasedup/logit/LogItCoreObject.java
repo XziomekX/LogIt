@@ -30,7 +30,7 @@ import java.io.File;
 import java.util.logging.Level;
 
 /**
- * Provides a convenient way for LogIt modules to interact with {@code LogItCore}.
+ * Provides a convenient way for objects to interact with {@code LogItCore}.
  */
 public abstract class LogItCoreObject
 {

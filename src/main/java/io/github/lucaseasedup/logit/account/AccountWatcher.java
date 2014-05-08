@@ -31,6 +31,9 @@ import java.util.logging.Level;
 
 public final class AccountWatcher extends LogItCoreObject implements Runnable
 {
+    /**
+     * Internal method. Do not call directly.
+     */
     @Override
     public void run()
     {
@@ -84,5 +87,8 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
         }
     }
     
+    /**
+     * Recommended task period of {@code AccountWatcher} running as a Bukkit task.
+     */
     public static final long TASK_PERIOD = (10 * 60) * 20;
 }

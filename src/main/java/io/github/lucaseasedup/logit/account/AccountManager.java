@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.account;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.IntegrationType;
@@ -48,6 +49,13 @@ import org.bukkit.Bukkit;
 
 public final class AccountManager extends LogItCoreObject implements Runnable, Disposable
 {
+    /**
+     * Creates a new account manager.
+     * 
+     * @param storage the storage.
+     * @param unit name of the unit.
+     * @param keys the storage keys.
+     */
     public AccountManager(Storage storage, String unit, AccountKeys keys)
     {
         if (storage == null || unit == null || keys == null)
@@ -66,6 +74,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         keys = null;
     }
     
+    /**
+     * Internal method. Do not call directly.
+     */
     @Override
     public void run()
     {
@@ -80,14 +91,15 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Returns account data of a specific account.
+     * Returns account data belonging to an account with the specified username.
      * 
-     * <p> Take caution that this method may imply quering the storage every time it's called,
-     * therefore consider storing the result for future use when applicable.
+     * <p> Take caution that this method may imply quering the storage
+     * every time it's called, therefore consider storing the result
+     * for future use when possible.
      * 
-     * @param username the username that the account holds.
+     * @param username the username.
      * 
-     * @return a {@code Hashtable} with account data,
+     * @return a storage entry with account data,
      *         or {@code null} if there is no account with the specified username.
      * 
      * @throws IllegalArgumentException if {@code username} is null.
@@ -107,6 +119,23 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         return entries.get(0);
     }
     
+    /**
+     * Returns specific keys of account data
+     * belonging to an account with the specified username.
+     * 
+     * <p> Take caution that this method may imply quering the storage
+     * every time it's called, therefore consider storing the result
+     * for future use when possible.
+     * 
+     * @param username  the username.
+     * @param queryKeys the keys to be returned.
+     * 
+     * @return a storage entry with account data,
+     *         or {@code null} if there is no account with the specified username.
+     * 
+     * @throws IllegalArgumentException if {@code username} is null.
+     * @throws IOException              if an I/O error occurred.
+     */
     public Storage.Entry queryAccount(String username, List<String> queryKeys) throws IOException
     {
         if (username == null)
@@ -158,10 +187,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     /**
      * Creates a new account with the given username and password.
      * 
-     * <p> The password will be hashed using the default algorithm.
+     * <p> The password will be hashed using
+     * the default algorithm specified in the config file.
      * 
-     * <p> Also note that the username may not preserve its original letter case
-     * when stored in the database.
+     * <p> Also, note that the username may not preserve its original letter case
+     * when stored in the storage.
      * 
      * @param username the username.
      * @param password the password.
@@ -170,7 +200,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      *         the operation was cancelled or not by a Bukkit event.
      * 
      * @throws AccountAlreadyExistsException if an account with the given username already exists.
-     * @throws ReportedException             if account creation failed. 
+     * @throws ReportedException             if account creation failed
+     *                                       and was reported to the logger.
      */
     public CancelledState createAccount(String username, String password)
     {
@@ -233,14 +264,16 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     /**
      * Removes an account with the specified username.
      * 
-     * <p> Removing an account does not entail logging out.
+     * <p> Removing an account does not entail logging out the underlying player.
+     * To log out a player, see {@link SessionManager#endSession(String)}.
      * 
      * @param username a username representing the account to be removed.
      * 
      * @return a {@code CancellableState} indicating whether
      *         the operation was cancelled or not by a Bukkit event.
      * 
-     * @throws ReportedException if account removal failed.
+     * @throws ReportedException if account removal failed
+     *                           and was reported to the logger.
      */
     public CancelledState removeAccount(String username)
     {
@@ -271,18 +304,22 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Checks if a plain-text password is equal, after hashing,
+     * Checks if a password is equal, after hashing,
      * to the password of an account represented by the specified username.
      * 
-     * <p> The plain-text password will be hashed using the algorithm stored
-     * in the account entry, or the one in the configuration file if the key was null.
+     * <p> The password will be hashed using the algorithm specified
+     * in the appropriate key of the account entry in the current fstorage.
+     * 
+     * <p> If no hashing algorithm was specified in the account entry,
+     * the global one stored in the config file will be used instead.
      * 
      * @param username a username representing the account whose password will be checked.
-     * @param password the plain-text password.
+     * @param password the password to be checked.
      * 
      * @return {@code true} if they match; {@code false} otherwise.
      * 
-     * @throws ReportedException if an error occurs.
+     * @throws ReportedException if an error occured
+     *                           and was reported to the logger.
      */
     public boolean checkAccountPassword(String username, String password)
     {
@@ -338,15 +375,18 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     /**
      * Changes password of an account with the specified username.
      * 
-     * <p> The password will be hashed using the default algorithm.
+     * <p> The password will be hashed
+     * using the default algorithm specified in the config file.
      * 
-     * @param username    a username representing the account to be subject to password change.
+     * @param username    a username representing the account
+     *                    to be subject to password change.
      * @param newPassword the new password.
      * 
      * @return a {@code CancellableState} indicating whether
      *         the operation was cancelled or not by a Bukkit event.
      * 
      * @throws ReportedException if this operation failed.
+     *                           and was reported to the logger.
      */
     public CancelledState changeAccountPassword(String username, String newPassword)
     {
@@ -391,7 +431,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Attaches IP address to an account with the specified username.
+     * Attaches an IP address to an account with the specified username.
      * 
      * @param username a username representing the account to be subject of IP attachment.
      * @param ip       the new IP address.
@@ -399,7 +439,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @return a {@code CancellableState} indicating whether
      *         the operation was cancelled or not by a Bukkit event.
      * 
-     * @throws ReportedException if this operation failed.
+     * @throws ReportedException if this operation failed
+     *                           and was reported to the logger.
      */
     public CancelledState attachIp(String username, String ip)
     {
@@ -461,7 +502,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Counts how many unique, non-null, IP addresses are in the database.
+     * Counts how many unique, non-null, IP addresses are in the current storage.
      * 
      * @return number of unique IP addresses.
      */
@@ -505,13 +546,15 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     /**
      * Changes e-mail address of an account with the specified username.
      * 
-     * @param username a username representing the account to be subject to e-mail address change.
+     * @param username a username representing the account
+     *                 to be subject to e-mail address change.
      * @param newEmail the new e-mail address.
      * 
      * @return a {@code CancellableState} indicating whether
      *         the operation was cancelled or not by a Bukkit event.
      * 
-     * @throws ReportedException if this operation failed.
+     * @throws ReportedException if this operation failed
+     *                           and was reported to the logger.
      */
     public CancelledState changeEmail(String username, String newEmail)
     {
@@ -534,6 +577,15 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         return CancelledState.NOT_CANCELLED;
     }
     
+    /**
+     * Saves login session for an account with the specified username.
+     * 
+     * @param username the username.
+     * @param ip       the player IP address.
+     * @param time     the UNIX time of when the login session was created.
+     * 
+     * @throws IOException if an I/O error occured.
+     */
     public void saveLoginSession(String username, String ip, long time) throws IOException
     {
         updateEntry(username, new Storage.Entry.Builder()
@@ -541,6 +593,13 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
                 .build());
     }
     
+    /**
+     * Erases login session of an account with the specified username.
+     * 
+     * @param username the username.
+     * 
+     * @throws IOException if an I/O error occured.
+     */
     public void eraseLoginSession(String username) throws IOException
     {
         updateEntry(username, new Storage.Entry.Builder()
@@ -548,6 +607,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
                 .build());
     }
     
+    /**
+     * Updates last-active date of an account with the specified username
+     * overwriting it with the current time.
+     * 
+     * @param username the username.
+     * 
+     * @throws IOException if an I/O error occured.
+     */
     public void updateLastActiveDate(String username) throws IOException
     {
         updateEntry(username, new Storage.Entry.Builder()
@@ -555,6 +622,15 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
                 .build());
     }
     
+    /**
+     * Reads persistence data from an account with the specified username.
+     * 
+     * @param username the username.
+     * 
+     * @return the persistence data.
+     * 
+     * @throws IOException if an I/O error occured.
+     */
     public Map<String, String> getAccountPersistence(String username) throws IOException
     {
         Storage.Entry entry = queryAccount(username, Arrays.asList(
@@ -582,7 +658,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         return persistence;
     }
     
-    public void updateAccountPersistence(String username, String key, String value)
+    /**
+     * Overwrites persistence data of an account with the specified username.
+     * 
+     * @param username the username.
+     * @param persistence the persistence data.
+     * 
+     * @throws IOException if an I/O error occured.
+     */
     public void updateAccountPersistence(String username, Map<String, String> persistence)
             throws IOException
     {
@@ -595,21 +678,44 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
                 .build());
     }
     
+    /**
+     * Queries the current storage and returns the number of accounts registered.
+     * 
+     * @return the number of accounts registered.
+     * 
+     * @throws IOException if an I/O error occured.
+     */
     public int countAccounts() throws IOException
     {
         return storage.selectEntries(unit, Arrays.asList(keys.username())).size();
     }
     
+    /**
+     * Returns the storage this account manager operates on.
+     * 
+     * @return the storage.
+     */
     public Storage getStorage()
     {
         return storage;
     }
     
+    /**
+     * Returns name of the unit this account manager operates on.
+     * 
+     * @return the unit name.
+     */
     public String getUnit()
     {
         return unit;
     }
     
+    /**
+     * Returns a hashtable of the current storage keys
+     * as pairs of <i>name</i> and <i>data type</i>.
+     * 
+     * @return the account keys.
+     */
     public AccountKeys getKeys()
     {
         return keys;
@@ -621,6 +727,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
                 new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
     }
     
+    /**
+     * Recommended task period of {@code AccountManager} running as a Bukkit task.
+     */
     public static final long TASK_PERIOD = (5 * 60) * 20;
     
     private Storage storage;

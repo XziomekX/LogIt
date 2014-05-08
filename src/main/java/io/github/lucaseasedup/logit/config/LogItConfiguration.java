@@ -123,6 +123,9 @@ public final class LogItConfiguration extends PropertyObserver implements Dispos
         loaded = true;
     }
     
+    /**
+     * Saves the config to a predefined file.
+     */
     public void save()
     {
         getPlugin().saveConfig();
@@ -133,11 +136,25 @@ public final class LogItConfiguration extends PropertyObserver implements Dispos
         return ImmutableMap.copyOf(properties);
     }
     
+    /**
+     * Returns a property object at the given path.
+     * 
+     * @param path the path.
+     * 
+     * @return the property object.
+     */
     public Property getProperty(String path)
     {
         return properties.get(path);
     }
     
+    /**
+     * Checks if the config contains a property at the given path.
+     * 
+     * @param path the path.
+     * 
+     * @return {@code true} if such property exists; {@code false} otherwise.
+     */
     public boolean contains(String path)
     {
         return properties.containsKey(path);
@@ -242,11 +259,23 @@ public final class LogItConfiguration extends PropertyObserver implements Dispos
         return time;
     }
     
+    /**
+     * Sets a new value for a property at the given path.
+     * 
+     * @param path  the property path.
+     * @param value the new value.
+     * 
+     * @throws InvalidPropertyValueException if the value provided
+     *                                       is not valid for this property.
+     */
     public void set(String path, Object value) throws InvalidPropertyValueException
     {
         properties.get(path).set(value);
     }
     
+    /**
+     * Internal method. Do not call directly.
+     */
     @Override
     public void update(Property p)
     {
@@ -258,6 +287,11 @@ public final class LogItConfiguration extends PropertyObserver implements Dispos
                 .replace("%value%", p.toString()));
     }
     
+    /**
+     * Checks if the config has been successfully loaded.
+     * 
+     * @return {@code true} if the config has been loaded; {@code false} otherwise.
+     */
     public boolean isLoaded()
     {
         return loaded;
@@ -559,7 +593,15 @@ public final class LogItConfiguration extends PropertyObserver implements Dispos
         return Base64.decode(input);
     }
     
+    /**
+     * The config definition file
+     * found in the LogIt data folder (<i>/plugins/LogIt/</i>).
+     */
     public static final String USER_CONFIG_DEF = "config-def.b64";
+    
+    /**
+     * The config definition file found in the plugin JAR.
+     */
     public static final String PACKAGE_CONFIG_DEF = "config-def.b64";
     
     private boolean loaded = false;
