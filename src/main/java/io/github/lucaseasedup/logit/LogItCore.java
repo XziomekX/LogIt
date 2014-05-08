@@ -532,7 +532,7 @@ public final class LogItCore
     /**
      * Checks if a password is equal, after hashing, to {@code hashedPassword}.
      * 
-     * <p> If the <i>password.use-global-hashing-algorithm</i>
+     * <p> If the <i>password.global-hashing-algorithm</i>
      * config setting is set to <i>true</i>,
      * the global hashing algorithm (specified in the config file)
      * will be used instead of the provided {@code hashingAlgorithm}.
@@ -548,7 +548,7 @@ public final class LogItCore
     public boolean checkPassword(String password, String hashedPassword,
                                  HashingAlgorithm hashingAlgorithm)
     {
-        if (hashingAlgorithm == null || config.getBoolean("password.use-global-hashing-algorithm"))
+        if (hashingAlgorithm == null || config.getBoolean("password.global-hashing-algorithm"))
         {
             hashingAlgorithm = getDefaultHashingAlgorithm();
         }
@@ -567,7 +567,7 @@ public final class LogItCore
      * Checks if a password (with a salt appended) is equal,
      * after hashing, to {@code hashedPassword}.
      * 
-     * <p> If the <i>password.use-global-hashing-algorithm</i>
+     * <p> If the <i>password.global-hashing-algorithm</i>
      * config setting is set to <i>true</i>,
      * the global hashing algorithm (specified in the config file)
      * will be used instead of the provided {@code hashingAlgorithm}.
@@ -589,7 +589,7 @@ public final class LogItCore
         if (hashedPassword == null || hashedPassword.isEmpty())
             return false;
         
-        if (hashingAlgorithm == null || config.getBoolean("password.use-global-hashing-algorithm"))
+        if (hashingAlgorithm == null || config.getBoolean("password.global-hashing-algorithm"))
         {
             hashingAlgorithm = getDefaultHashingAlgorithm();
         }
