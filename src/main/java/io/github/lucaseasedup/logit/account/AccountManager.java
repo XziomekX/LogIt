@@ -578,24 +578,16 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     public void updateAccountPersistence(String username, String key, String value)
+    public void updateAccountPersistence(String username, Map<String, String> persistence)
+            throws IOException
     {
-        Map<String, Map<String, String>> persistence = new HashMap<>(1);
+        Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
         
-        try
-        {
-            persistence.put("persistence", getAccountPersistence(username));
-            persistence.get("persistence").put(key, value);
-            
-            updateEntry(username, new Storage.Entry.Builder()
-                    .put(keys.persistence(), Base64.encode(IniUtils.serialize(persistence)))
-                    .build());
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, "Could not update account persistance: " + key + ".", ex);
-            
-            ReportedException.throwNew(ex);
-        }
+        persistenceIni.put("persistence", persistence);
+        
+        updateEntry(username, new Storage.Entry.Builder()
+                .put(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
+                .build());
     }
     
     public int countAccounts() throws IOException

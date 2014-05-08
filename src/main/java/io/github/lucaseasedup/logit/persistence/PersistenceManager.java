@@ -76,9 +76,7 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
             throw new IllegalArgumentException();
         
         String username = player.getName().toLowerCase();
-        AccountKeys keys = getAccountManager().getKeys();
         PersistenceSerializer serializer = getSerializer(clazz);
-        Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
         Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
         
         if (persistence == null)
@@ -88,12 +86,7 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
         {
             serializer.serialize(persistence, player);
             
-            persistenceIni.put("persistence", persistence);
-            getAccountStorage().updateEntries(getAccountManager().getUnit(),
-                    new Storage.Entry.Builder()
-                        .put(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
-                        .build(),
-                    new SelectorCondition(keys.username(), Infix.EQUALS, username));
+            getAccountManager().updateAccountPersistence(username, persistence);
         }
     }
     
@@ -110,12 +103,10 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
         if (player == null)
             throw new IllegalArgumentException();
         
-        AccountKeys keys = getAccountManager().getKeys();
         String username = player.getName().toLowerCase();
         
         try
         {
-            Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
             Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
             
             if (persistence == null)
@@ -139,12 +130,7 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
                 }
             }
             
-            persistenceIni.put("persistence", persistence);
-            getAccountStorage().updateEntries(getAccountManager().getUnit(),
-                    new Storage.Entry.Builder()
-                        .put(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
-                        .build(),
-                    new SelectorCondition(keys.username(), Infix.EQUALS, username));
+            getAccountManager().updateAccountPersistence(username, persistence);
         }
         catch (IOException ex)
         {
@@ -173,9 +159,7 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
             throw new IllegalArgumentException();
         
         String username = player.getName().toLowerCase();
-        AccountKeys keys = getAccountManager().getKeys();
         PersistenceSerializer serializer = getSerializer(clazz);
-        Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
         Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
         
         if (persistence == null)
@@ -190,12 +174,7 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
                 persistence.put(key.name(), key.defaultValue());
             }
             
-            persistenceIni.put("persistence", persistence);
-            getAccountStorage().updateEntries(getAccountManager().getUnit(),
-                    new Storage.Entry.Builder()
-                        .put(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
-                        .build(),
-                    new SelectorCondition(keys.username(), Infix.EQUALS, username));
+            getAccountManager().updateAccountPersistence(username, persistence);
         }
     }
 
@@ -212,13 +191,11 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
         if (player == null)
             throw new IllegalArgumentException();
         
-        AccountKeys keys = getAccountManager().getKeys();
         String username = player.getName().toLowerCase();
         Set<Key> keysToErase = new HashSet<>();
         
         try
         {
-            Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
             Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
             
             if (persistence == null)
@@ -254,12 +231,7 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
                 persistence.put(key.name(), key.defaultValue());
             }
             
-            persistenceIni.put("persistence", persistence);
-            getAccountStorage().updateEntries(getAccountManager().getUnit(),
-                    new Storage.Entry.Builder()
-                        .put(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
-                        .build(),
-                    new SelectorCondition(keys.username(), Infix.EQUALS, username));
+            getAccountManager().updateAccountPersistence(username, persistence);
         }
         catch (IOException ex)
         {
