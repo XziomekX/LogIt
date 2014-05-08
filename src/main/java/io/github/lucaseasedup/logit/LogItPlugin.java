@@ -90,12 +90,12 @@ public final class LogItPlugin extends JavaPlugin
         customLocalMessages = null;
     }
     
-    public void enable()
+    private void enable()
     {
         getServer().getPluginManager().enablePlugin(this);
     }
     
-    public void disable()
+    private void disable()
     {
         getServer().getPluginManager().disablePlugin(this);
     }
