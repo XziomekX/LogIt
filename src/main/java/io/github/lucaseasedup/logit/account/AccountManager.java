@@ -235,7 +235,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @return a {@code CancellableState} indicating whether
      *         the operation was cancelled or not by a Bukkit event.
      * 
-     * @throws ReportedException        if account removal failed.
+     * @throws ReportedException if account removal failed.
      */
     public CancelledState removeAccount(String username)
     {

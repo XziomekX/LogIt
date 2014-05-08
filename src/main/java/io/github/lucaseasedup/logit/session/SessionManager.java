@@ -112,7 +112,8 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
      * Returns a session attached to the specified username.
      * 
      * @param username username.
-     * @return session object.
+     * 
+     * @return the session object.
      */
     public Session getSession(String username)
     {
@@ -126,6 +127,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
      * and player IP matches session IP; {@code false} otherwise.
      * 
      * @param player a player which the session is tied to.
+     * 
      * @return {@code true} if the session is alive; {@code false} otherwise.
      */
     public boolean isSessionAlive(Player player)
@@ -150,6 +152,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
      * and, if the player is online, player IP matches session IP; {@code false} otherwise.
      * 
      * @param name player name.
+     * 
      * @return {@code true} if the session is alive; {@code false} otherwise.
      */
     public boolean isSessionAlive(String name)
