@@ -112,6 +112,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         if (username == null)
             throw new IllegalArgumentException();
         
+        if (!queryKeys.contains(keys.username()))
+        {
+            queryKeys.add(keys.username());
+        }
+        
         List<Storage.Entry> entries = storage.selectEntries(unit, queryKeys,
                 new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
         
