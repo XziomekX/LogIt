@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.backup;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.TimeUnit;
@@ -41,9 +42,13 @@ import java.util.logging.Level;
 public final class BackupManager extends LogItCoreObject implements Runnable
 {
     public BackupManager()
+    public BackupManager(AccountManager accountManager)
     {
         timer = new Timer(TASK_PERIOD);
         timer.start();
+        
+        this.accountManager = accountManager;
+    }
     }
     
     @Override
@@ -87,18 +92,18 @@ public final class BackupManager extends LogItCoreObject implements Runnable
             throw new IOException("Backup file could not be created.");
         
         List<Storage.Entry> entries =
-                getAccountStorage().selectEntries(getAccountManager().getUnit());
+                accountManager.getStorage().selectEntries(accountManager.getUnit());
         
         try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
         {
             backupStorage.connect();
-            backupStorage.createUnit(getAccountManager().getUnit(),
-                    getAccountStorage().getKeys(getAccountManager().getUnit()));
+            backupStorage.createUnit(accountManager.getUnit(),
+                    accountManager.getStorage().getKeys(accountManager.getUnit()));
             backupStorage.setAutobatchEnabled(true);
             
             for (Storage.Entry entry : entries)
             {
-                backupStorage.addEntry(getAccountManager().getUnit(), entry);
+                backupStorage.addEntry(accountManager.getUnit(), entry);
             }
             
             backupStorage.executeBatch();
@@ -129,19 +134,19 @@ public final class BackupManager extends LogItCoreObject implements Runnable
                 backupStorage.connect();
                 
                 List<Storage.Entry> entries =
-                        backupStorage.selectEntries(getAccountManager().getUnit());
+                        backupStorage.selectEntries(accountManager.getUnit());
                 
-                getAccountStorage().eraseUnit(getAccountManager().getUnit());
-                getAccountStorage().setAutobatchEnabled(true);
+                accountManager.getStorage().eraseUnit(accountManager.getUnit());
+                accountManager.getStorage().setAutobatchEnabled(true);
                 
                 for (Storage.Entry entry : entries)
                 {
-                    getAccountStorage().addEntry(getAccountManager().getUnit(), entry);
+                    accountManager.getStorage().addEntry(accountManager.getUnit(), entry);
                 }
                 
-                getAccountStorage().executeBatch();
-                getAccountStorage().clearBatch();
-                getAccountStorage().setAutobatchEnabled(false);
+                accountManager.getStorage().executeBatch();
+                accountManager.getStorage().clearBatch();
+                accountManager.getStorage().setAutobatchEnabled(false);
             }
             
             log(Level.INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
@@ -215,4 +220,5 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     private static final File[] NO_FILES = new File[0];
     
     private final Timer timer;
+    private AccountManager accountManager;
 }

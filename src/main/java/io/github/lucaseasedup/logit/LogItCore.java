@@ -296,7 +296,7 @@ public final class LogItCore
         setSerializerEnabled(HungerBarSerializer.class,
                 config.getBoolean("force-login.obfuscate-bars.hunger"));
         
-        backupManager = new BackupManager();
+        backupManager = new BackupManager(accountManager);
         sessionManager = new SessionManager();
         
         if (config.getBoolean("password-recovery.enabled"))
