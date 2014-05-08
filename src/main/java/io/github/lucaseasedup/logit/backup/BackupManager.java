@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.backup;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.account.AccountManager;
+import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.TimeUnit;
@@ -39,7 +40,7 @@ import java.util.logging.Level;
  * This class runs a scheduled backup and provides
  * methods for manual backup.
  */
-public final class BackupManager extends LogItCoreObject implements Runnable
+public final class BackupManager extends LogItCoreObject implements Runnable, Disposable
 {
     public BackupManager()
     public BackupManager(AccountManager accountManager)
@@ -49,6 +50,12 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         
         this.accountManager = accountManager;
     }
+    
+    @Override
+    public void dispose()
+    {
+        timer = null;
+        accountManager = null;
     }
     
     @Override
@@ -219,6 +226,6 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     public static final long TASK_PERIOD = 2 * 20;
     private static final File[] NO_FILES = new File[0];
     
-    private final Timer timer;
+    private Timer timer;
     private AccountManager accountManager;
 }

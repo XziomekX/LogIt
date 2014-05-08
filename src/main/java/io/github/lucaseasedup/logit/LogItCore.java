@@ -440,7 +440,11 @@ public final class LogItCore
             persistenceManager = null;
         }
         
-        backupManager = null;
+        if (backupManager != null)
+        {
+            backupManager.dispose();
+            backupManager = null;
+        }
         
         if (sessionManager != null)
         {
