@@ -163,32 +163,6 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     /**
      * Checks if a session is alive.
      * 
-     * <p> Returns {@code true} if {@code player} is not {@code null},
-     * the session exists, is alive and player IP matches session IP;
-     * {@code false} otherwise.
-     * 
-     * @param player a player with the username representing a session.
-     * 
-     * @return {@code true} if the session is alive; {@code false} otherwise.
-     */
-    public boolean isSessionAlive(Player player)
-    {
-        if (player == null)
-            return false;
-        
-        Session session = getSession(player.getName());
-        
-        if (session == null)
-            return false;
-        
-        String ip = getPlayerIp(player);
-        
-        return session.isAlive() && ip.equals(session.getIp());
-    }
-    
-    /**
-     * Checks if a session is alive.
-     * 
      * <p> Returns {@code true} if {@code username} is not {@code null},
      * the session exists, is alive and, if the player is online,
      * player IP matches session IP; {@code false} otherwise.
@@ -218,6 +192,32 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
         {
             return session.isAlive();
         }
+    }
+    
+    /**
+     * Checks if a session is alive.
+     * 
+     * <p> Returns {@code true} if {@code player} is not {@code null},
+     * the session exists, is alive and player IP matches session IP;
+     * {@code false} otherwise.
+     * 
+     * @param player a player with the username representing a session.
+     * 
+     * @return {@code true} if the session is alive; {@code false} otherwise.
+     */
+    public boolean isSessionAlive(Player player)
+    {
+        if (player == null)
+            return false;
+        
+        Session session = getSession(player.getName());
+        
+        if (session == null)
+            return false;
+        
+        String ip = getPlayerIp(player);
+        
+        return session.isAlive() && ip.equals(session.getIp());
     }
     
     /**
@@ -306,6 +306,11 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
         return CancelledState.NOT_CANCELLED;
     }
     
+    public CancelledState destroySession(Player player)
+    {
+        return destroySession(player.getName());
+    }
+    
     /**
      * Starts session of a player with the specified username.
      * 
@@ -341,6 +346,11 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
         return CancelledState.NOT_CANCELLED;
     }
     
+    public CancelledState startSession(Player player)
+    {
+        return startSession(player.getName());
+    }
+    
     /**
      * Ends session of a player with the specified username.
      * 
@@ -374,6 +384,11 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
         log(Level.FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
         
         return CancelledState.NOT_CANCELLED;
+    }
+    
+    public CancelledState endSession(Player player)
+    {
+        return endSession(player.getName());
     }
     
     /**
