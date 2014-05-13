@@ -28,11 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Arrays;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.jar.JarEntry;
@@ -223,61 +218,6 @@ public final class LogItPlugin extends JavaPlugin
         message = message.replace("%server_name%", Bukkit.getServerName());
         
         return message;
-    }
-    
-    @SuppressWarnings("resource")
-    public static void loadLibrary(String filename) throws FatalReportedException
-    {
-        try
-        {
-            File file = new File(LogItPlugin.getInstance().getDataFolder(), "lib/" + filename);
-            
-            if (!file.exists())
-                throw new FileNotFoundException();
-            
-            URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-            URL url = file.toURI().toURL();
-            
-            if (!Arrays.asList(classLoader.getURLs()).contains(url))
-            {
-                Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
-                addUrlMethod.setAccessible(true);
-                addUrlMethod.invoke(classLoader, new Object[]{url});
-            }
-        }
-        catch (FileNotFoundException | MalformedURLException ex)
-        {
-            getInstance().getLogger().log(Level.SEVERE, "Library {0} was not found.", filename);
-            getInstance().disable();
-            
-            FatalReportedException.throwNew(ex);
-        }
-        catch (ReflectiveOperationException ex)
-        {
-            getInstance().getLogger().log(Level.SEVERE, "Could not load library " + filename + ".", ex);
-            getInstance().disable();
-            
-            FatalReportedException.throwNew(ex);
-        }
-    }
-    
-    @SuppressWarnings("resource")
-    public static boolean libraryLoaded(String filename)
-    {
-        File file = new File(getInstance().getDataFolder(), "lib/" + filename);
-        URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        URL url;
-        
-        try
-        {
-            url = file.toURI().toURL();
-        }
-        catch (MalformedURLException ex)
-        {
-            return false;
-        }
-        
-        return Arrays.asList(classLoader.getURLs()).contains(url);
     }
     
     /* package */ static LogItPlugin getInstance()

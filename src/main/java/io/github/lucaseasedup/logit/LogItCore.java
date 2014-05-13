@@ -111,7 +111,6 @@ public final class LogItCore
             throw new IllegalStateException("The LogIt core has already been started.");
         
         getDataFolder().mkdir();
-        getDataFile("lib").mkdir();
         
         firstRun = !getDataFile("config.yml").exists();
         config = new LogItConfiguration();
@@ -172,23 +171,6 @@ public final class LogItCore
         StorageType mirrorStorageType = StorageType.decode(
             plugin.getConfig().getString("storage.accounts.mirror.storage-type")
         );
-        
-        if (leadingStorageType.equals(StorageType.H2)
-                || mirrorStorageType.equals(StorageType.H2))
-        {
-            LogItPlugin.loadLibrary(LIB_H2);
-        }
-        
-        if (leadingStorageType.equals(StorageType.POSTGRESQL)
-                || mirrorStorageType.equals(StorageType.POSTGRESQL))
-        {
-            LogItPlugin.loadLibrary(LIB_POSTGRESQL);
-        }
-        
-        if (config.getBoolean("password-recovery.enabled"))
-        {
-            LogItPlugin.loadLibrary(LIB_MAIL);
-        }
         
         String accountsUnit = config.getString("storage.accounts.leading.unit");
         AccountKeys accountKeys = new AccountKeys(
@@ -964,7 +946,7 @@ public final class LogItCore
      * 
      * <p> Most of times, all the work will be done with the LogIt core,
      * but the {@code LogItPlugin} may come useful if you want to,
-     * for example, reload the message files or load external libraries.
+     * for example, reload the message files.
      * 
      * @return the LogIt plugin object.
      */
@@ -1119,21 +1101,6 @@ public final class LogItCore
      * INTERNAL is a message level providing internal information typically used for debugging.
      */
     public static final Level INTERNAL = new CustomLevel("INTERNAL", -1000);
-    
-    /**
-     * The filename of H2 library found in the /lib directory.
-     */
-    public static final String LIB_H2 = "h2small-1.3.171.jar";
-    
-    /**
-     * The filename of PostgreSQL library found in the /lib directory.
-     */
-    public static final String LIB_POSTGRESQL = "postgresql-9.3-1100.jdbc4.jar";
-    
-    /**
-     * The filename of JavaMail library found in the /lib directory.
-     */
-    public static final String LIB_MAIL = "mail-1.4.7.jar";
     
     private static volatile LogItCore instance = null;
     
