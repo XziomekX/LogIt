@@ -27,6 +27,7 @@ import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.account.AccountKeys;
+import io.github.lucaseasedup.logit.session.Session;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
 import java.io.IOException;
@@ -282,12 +283,17 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL)
     private void onMove(PlayerMoveEvent event)
     {
-        if (!getConfig().getBoolean("force-login.prevent.move"))
-            return;
-        
         Player player = event.getPlayer();
-
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
+        Session session = getSessionManager().getSession(player.getName());
+        
+        if (session != null)
+        {
+            session.resetInactivityTime();
+        }
+        
+        if (getConfig().getBoolean("force-login.prevent.move")
+                && !getSessionManager().isSessionAlive(player)
+                && getCore().isPlayerForcedToLogIn(player))
         {
             event.setTo(event.getFrom());
         }
@@ -296,12 +302,17 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL)
     private void onToggleSneak(PlayerToggleSneakEvent event)
     {
-        if (!getConfig().getBoolean("force-login.prevent.toggle-sneak"))
-            return;
-        
         Player player = event.getPlayer();
+        Session session = getSessionManager().getSession(player.getName());
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
+        if (session != null)
+        {
+            session.resetInactivityTime();
+        }
+        
+        if (getConfig().getBoolean("force-login.prevent.toggle-sneak")
+                && !getSessionManager().isSessionAlive(player)
+                && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
         }
@@ -310,12 +321,17 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL)
     private void onChat(AsyncPlayerChatEvent event)
     {
-        if (!getConfig().getBoolean("force-login.prevent.chat"))
-            return;
-        
         Player player = event.getPlayer();
+        Session session = getSessionManager().getSession(player.getName());
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
+        if (session != null)
+        {
+            session.resetInactivityTime();
+        }
+        
+        if (getConfig().getBoolean("force-login.prevent.chat")
+                && !getSessionManager().isSessionAlive(player)
+                && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
             getCore().getMessageDispatcher().sendForceLoginMessage(player);
@@ -325,6 +341,14 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL)
     private void onCommandPreprocess(PlayerCommandPreprocessEvent event)
     {
+        Player player = event.getPlayer();
+        Session session = getSessionManager().getSession(player.getName());
+        
+        if (session != null)
+        {
+            session.resetInactivityTime();
+        }
+        
         if (!getConfig().getBoolean("force-login.prevent.command-preprocess"))
             return;
         
@@ -369,8 +393,6 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             }
         }
         
-        Player player = event.getPlayer();
-        
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
@@ -381,12 +403,17 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL)
     private void onInteract(PlayerInteractEvent event)
     {
-        if (!getConfig().getBoolean("force-login.prevent.interact"))
-            return;
-        
         Player player = event.getPlayer();
+        Session session = getSessionManager().getSession(player.getName());
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
+        if (session != null)
+        {
+            session.resetInactivityTime();
+        }
+        
+        if (getConfig().getBoolean("force-login.prevent.interact")
+                && !getSessionManager().isSessionAlive(player)
+                && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
             
@@ -407,12 +434,17 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL)
     private void onInteractEntity(PlayerInteractEntityEvent event)
     {
-        if (!getConfig().getBoolean("force-login.prevent.interact-entity"))
-            return;
-        
         Player player = event.getPlayer();
+        Session session = getSessionManager().getSession(player.getName());
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
+        if (session != null)
+        {
+            session.resetInactivityTime();
+        }
+        
+        if (getConfig().getBoolean("force-login.prevent.interact-entity")
+                && !getSessionManager().isSessionAlive(player)
+                && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
             
@@ -440,12 +472,17 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL)
     private void onDropItem(PlayerDropItemEvent event)
     {
-        if (!getConfig().getBoolean("force-login.prevent.drop-item"))
-            return;
-        
         Player player = event.getPlayer();
+        Session session = getSessionManager().getSession(player.getName());
         
-        if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
+        if (session != null)
+        {
+            session.resetInactivityTime();
+        }
+        
+        if (getConfig().getBoolean("force-login.prevent.drop-item")
+                && !getSessionManager().isSessionAlive(player)
+                && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
             

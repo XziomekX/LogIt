@@ -68,6 +68,8 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
         
         List<String> disableTimeoutForPlayers =
                 getConfig().getStringList("force-login.timeout.disable-for-players");
+        long inactivityTimeToLogOut =
+                20L * getConfig().getTime("crowd-control.automatic-logout.inactivity-time", TimeUnit.SECONDS);
         
         for (Map.Entry<String, Session> entry : sessions.entrySet())
         {
@@ -81,6 +83,27 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
                 if (isPlayerOnline(username))
                 {
                     session.setStatus(0L);
+                    
+                    if (getConfig().getBoolean("crowd-control.automatic-logout.enabled"))
+                    {
+                        if (session.getInactivityTime() >= inactivityTimeToLogOut)
+                        {
+                            endSession(username);
+                            
+                            player.sendMessage(getMessage("END_SESSION_AUTOMATIC_SELF"));
+                            
+                            if (getCore().isPlayerForcedToLogIn(player))
+                            {
+                                getCore().getMessageDispatcher().sendForceLoginMessage(player);
+                            }
+                            
+                            session.resetInactivityTime();
+                        }
+                        else
+                        {
+                            session.updateInactivityTime(TASK_PERIOD);
+                        }
+                    }
                 }
                 else
                 {

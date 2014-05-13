@@ -85,6 +85,35 @@ public final class Session
         return status >= 0L;
     }
     
+    /**
+     * Returns player's inactivity time in server ticks.
+     * 
+     * @return player's inactivity time in server ticks.
+     */
+    public long getInactivityTime()
+    {
+        return inactivityTime;
+    }
+    
+    /**
+     * Adds a delta to player's inactivity time.
+     * 
+     * @param delta the delta time in server ticks.
+     */
+    public void updateInactivityTime(long delta)
+    {
+        inactivityTime += delta;
+    }
+    
+    /**
+     * Resets player's inactivity time so that it's equal to {@code 0L}.
+     */
+    public void resetInactivityTime()
+    {
+        inactivityTime = 0L;
+    }
+    
     private String ip;
     private long status = -1L;
+    private long inactivityTime = 0L;
 }
