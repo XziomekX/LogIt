@@ -69,6 +69,12 @@ public abstract class LogItCoreObject
         return core.getPlugin().getDataFolder();
     }
     
+    /**
+     * Returns the {@code LogItConfiguration} instance.
+     * 
+     * @return the {@code LogItConfiguration} instance,
+     *         or {@code null} if the config has not been loaded yet.
+     */
     protected final LogItConfiguration getConfig()
     {
         if (!core.isConfigLoaded())

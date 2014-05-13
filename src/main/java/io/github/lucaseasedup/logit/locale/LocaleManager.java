@@ -114,6 +114,13 @@ public final class LocaleManager extends LogItCoreObject implements Disposable
         locales.remove(locale);
     }
     
+    /**
+     * Returns locale from this {@code LocaleManager} that has the given prefix.
+     * 
+     * @param prefix the locale prefix.
+     * 
+     * @return the locale object or {@code null} if no locale with this prefix was found.
+     */
     public Locale getLocaleByPrefix(String prefix)
     {
         for (Entry<Class<? extends Locale>, Locale> e : locales.entrySet())

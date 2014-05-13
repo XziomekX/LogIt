@@ -530,6 +530,15 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         return new HashSet<>(ips).size();
     }
     
+    /**
+     * Returns e-mail address of an account with the specified username.
+     * 
+     * @param username the username.
+     * 
+     * @return the e-mail address or {@code null} if no account with this username was found.
+     * 
+     * @throws IOException if an I/O error occured.
+     */
     public String getEmail(String username) throws IOException
     {
         Storage.Entry entry = queryAccount(username, Arrays.asList(
@@ -627,7 +636,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * 
      * @param username the username.
      * 
-     * @return the persistence data.
+     * @return the persistence data or {@code null} if no account with this username was found.
      * 
      * @throws IOException if an I/O error occured.
      */

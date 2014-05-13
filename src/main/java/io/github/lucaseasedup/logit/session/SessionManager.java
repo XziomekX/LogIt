@@ -139,7 +139,8 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
      * 
      * @param username username.
      * 
-     * @return the session object.
+     * @return the session object or {@code null} if no session
+     *         has been created for a player with this username.
      */
     public Session getSession(String username)
     {
@@ -188,27 +189,27 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     /**
      * Checks if a session is alive.
      * 
-     * <p> Returns {@code true} if {@code name} is not {@code null},
+     * <p> Returns {@code true} if {@code username} is not {@code null},
      * the session exists, is alive and, if the player is online,
      * player IP matches session IP; {@code false} otherwise.
      * 
-     * @param name the player username.
+     * @param username the player username.
      * 
      * @return {@code true} if the session is alive; {@code false} otherwise.
      */
-    public boolean isSessionAlive(String name)
+    public boolean isSessionAlive(String username)
     {
-        if (name == null)
+        if (username == null)
             return false;
         
-        Session session = getSession(name);
+        Session session = getSession(username);
         
         if (session == null)
             return false;
         
-        if (PlayerUtils.isPlayerOnline(name))
+        if (PlayerUtils.isPlayerOnline(username))
         {
-            Player player = getPlayer(name);
+            Player player = getPlayer(username);
             String ip     = getPlayerIp(player);
             
             return session.isAlive() && ip.equals(session.getIp());

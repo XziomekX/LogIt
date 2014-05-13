@@ -47,6 +47,13 @@ public enum TimeUnit
         return value * milliseconds / to.milliseconds;
     }
     
+    /**
+     * Decodes a string into {@code TimeUnit}.
+     * 
+     * @param s the string to be decoded.
+     * 
+     * @return the decoded {@code TimeUnit} or {@code null} if the string could not be decoded.
+     */
     public static TimeUnit decode(String s)
     {
         if (s == null)

@@ -95,6 +95,13 @@ public final class ProfileManager extends LogItCoreObject implements Disposable
         return new File(path, playerName.toLowerCase() + ".yml").exists();
     }
     
+    /**
+     * Returns a field with the specified name.
+     * 
+     * @param fieldName the field name.
+     * 
+     * @return the field object or {@code null} if no field with this name was found.
+     */
     public Field getField(String fieldName)
     {
         for (Field field : definedFields)
