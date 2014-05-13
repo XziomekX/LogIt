@@ -77,7 +77,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
             Session session  = entry.getValue();
             Player  player   = getPlayer(username);
             
-            // Player logged in.
+            // Player is logged in, either online or offline.
             if (session.getStatus() >= 0L)
             {
                 if (isPlayerOnline(username))
@@ -110,7 +110,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
                     destroySession(username);
                 }
             }
-            // Player logged out and online.
+            // Player is logged out but online.
             else if (isPlayerOnline(username))
             {
                 if (!containsIgnoreCase(username, disableTimeoutForPlayers)
@@ -126,7 +126,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
                     }
                 }
             }
-            // Player logged out and offline.
+            // Player is logged out and offline.
             else
             {
                 destroySession(username);
