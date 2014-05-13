@@ -147,6 +147,19 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
+     * Returns a session attached to the given player.
+     * 
+     * @param player the player object.
+     * 
+     * @return the session object or {@code null} if no session
+     *         has been created for this player.
+     */
+    public Session getSession(Player player)
+    {
+        return getSession(player.getName());
+    }
+    
+    /**
      * Checks if a session is alive.
      * 
      * <p> Returns {@code true} if {@code player} is not {@code null},
