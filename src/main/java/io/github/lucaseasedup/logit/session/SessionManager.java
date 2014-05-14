@@ -135,12 +135,12 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Returns a session attached to the specified username.
+     * Returns a session associated with the given username.
      * 
-     * @param username username.
+     * @param username the username.
      * 
-     * @return the session object or {@code null} if no session
-     *         has been created for a player with this username.
+     * @return the {@code Session} object, or {@code null} if no session
+     *         has been associated with this username.
      */
     public Session getSession(String username)
     {
@@ -148,12 +148,12 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Returns a session attached to the given player.
+     * Returns a session associated with a player's name.
      * 
-     * @param player the player object.
+     * @param player the player.
      * 
-     * @return the session object or {@code null} if no session
-     *         has been created for this player.
+     * @return the {@code Session} object, or {@code null} if no session
+     *         has been associated with this player's name.
      */
     public Session getSession(Player player)
     {
@@ -161,15 +161,17 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Checks if a session is alive.
+     * Checks whether a session associated with the given username is alive.
      * 
-     * <p> Returns {@code true} if {@code username} is not {@code null},
-     * the session exists, is alive and, if the player is online,
-     * player IP matches session IP; {@code false} otherwise.
+     * <p> Returns {@code true} if such session exists, is alive and,
+     * if a player with this username is online, player IP matches session IP;
+     * {@code false} otherwise.
      * 
-     * @param username the player username.
+     * @param username the username.
      * 
      * @return {@code true} if the session is alive; {@code false} otherwise.
+     * 
+     * @throws IllegalArgumentException if {@code username} is {@code null}.
      */
     public boolean isSessionAlive(String username)
     {
@@ -195,15 +197,16 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Checks if a session is alive.
+     * Checks if a session associated with a player's name is alive.
      * 
-     * <p> Returns {@code true} if {@code player} is not {@code null},
-     * the session exists, is alive and player IP matches session IP;
-     * {@code false} otherwise.
+     * <p> Returns {@code true} if such session exists, is alive
+     * and player IP matches session IP; {@code false} otherwise.
      * 
-     * @param player a player with the username representing a session.
+     * @param player the player.
      * 
      * @return {@code true} if the session is alive; {@code false} otherwise.
+     * 
+     * @throws IllegalArgumentException if {@code player} is {@code null}.
      */
     public boolean isSessionAlive(Player player)
     {
@@ -221,16 +224,20 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Creates a session for a player with the specified username.
+     * Creates a new session and associates it with the given username.
      * 
      * <p> If a session with this username already exists,
      * no action will be taken.
      * 
-     * @param username the player username.
+     * <p> This method emits the {@code SessionCreateEvent} event.
+     * 
+     * @param username the username.
      * @param ip       the player IP address.
      * 
      * @return a {@code CancellableState} indicating whether
-     *         the operation was cancelled or not by a Bukkit event.
+     *         this operation was cancelled or not by a Bukkit event.
+     * 
+     * @throws IllegalArgumentException if {@code username} or {@code ip} is {@code null}.
      */
     public CancelledState createSession(String username, String ip)
     {
@@ -257,15 +264,17 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Creates a session for a player.
+     * Creates a new session and associates it with a player's name.
      * 
-     * <p> If a session for this player already exists,
-     * no action will be taken.
+     * <p> If a session with a username equal to the player's name
+     * already exists, no action will be taken.
      * 
-     * @param player the player object.
+     * <p> This method emits the {@code SessionCreateEvent} event.
+     * 
+     * @param player the player.
      * 
      * @return a {@code CancellableState} indicating whether
-     *         the operation was cancelled or not by a Bukkit event.
+     *         this operation was cancelled or not by a Bukkit event.
      */
     public CancelledState createSession(Player player)
     {
@@ -273,14 +282,17 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Destroys session belonging to a player with the specified username.
+     * Destroys a session associated with the given username.
      * 
-     * <p> If session does not exist, no action will be taken.
+     * <p> If a session with this username does not exist, no action will be taken.
+     * If the session exists and is alive, this method will try to end it before proceeding.
      * 
-     * @param username the player username.
+     * <p> This method emits the {@code SessionDestroyEvent} event.
      * 
-     * @return a {@code CancellableState} indicating whether
-     *         the operation was cancelled or not by a Bukkit event.
+     * @param username the username.
+     * 
+     * @return a {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code SessionDestroyEvent} handlers.
      */
     public CancelledState destroySession(String username)
     {
@@ -309,18 +321,35 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
         return CancelledState.NOT_CANCELLED;
     }
     
+    /**
+     * Destroys a session associated with a player's name,
+     * 
+     * <p> If a session with this player's name does not exist, no action will be taken.
+     * If the session exists and is alive, this method will try to end it before proceeding.
+     * 
+     * <p> This method emits the {@code SessionDestroyEvent} event.
+     * 
+     * @param player the player.
+     * 
+     * @return a {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code SessionDestroyEvent} handlers.
+     */
     public CancelledState destroySession(Player player)
     {
         return destroySession(player.getName());
     }
     
     /**
-     * Starts session of a player with the specified username.
+     * Starts a session associated with the given username.
      * 
-     * @param username the player username.
+     * <p> If the session has already been started (e.i. is alive), no action will be taken.
      * 
-     * @return a {@code CancellableState} indicating whether
-     *         the operation was cancelled or not by a Bukkit event.
+     * <p> This method emits the {@code SessionStartEvent} event.
+     * 
+     * @param username the username.
+     * 
+     * @return a {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code SessionStartEvent} handlers.
      * 
      * @throws SessionNotFoundException if no such session exists.
      */
@@ -341,7 +370,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
         if (evt.isCancelled())
             return CancelledState.CANCELLED;
         
-        // Start session.
+        // Start the session.
         session.setStatus(0L);
         
         log(Level.FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
@@ -349,18 +378,36 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
         return CancelledState.NOT_CANCELLED;
     }
     
+    /**
+     * Starts a session associated with a player's name.
+     * 
+     * <p> If the session has already been started (e.i. is alive), no action will be taken.
+     * 
+     * <p> This method emits the {@code SessionStartEvent} event.
+     * 
+     * @param player the player.
+     * 
+     * @return a {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code SessionStartEvent} handlers.
+     * 
+     * @throws SessionNotFoundException if no such session exists.
+     */
     public CancelledState startSession(Player player)
     {
         return startSession(player.getName());
     }
     
     /**
-     * Ends session of a player with the specified username.
+     * Ends a session associated with the given username.
      * 
-     * @param username the player username.
-     * .
-     * @return a {@code CancellableState} indicating whether
-     *         the operation was cancelled or not by a Bukkit event.
+     * <p> If the session is not alive, no action will be taken.
+     * 
+     * <p> This method emits the {@code SessionEndEvent} event.
+     * 
+     * @param username the username.
+     * 
+     * @return a {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code SessionEndEvent} handlers.
      * 
      * @throws SessionNotFoundException if no such session exists.
      */
@@ -381,7 +428,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
         if (evt.isCancelled())
             return CancelledState.CANCELLED;
         
-        // End session.
+        // End the session.
         session.setStatus(-1L);
         
         log(Level.FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
@@ -389,15 +436,29 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
         return CancelledState.NOT_CANCELLED;
     }
     
+    /**
+     * Ends a session associated with a player's name.
+     * 
+     * <p> If the session is not alive, no action will be taken.
+     * 
+     * <p> This method emits the {@code SessionEndEvent} event.
+     * 
+     * @param player the player.
+     * 
+     * @return a {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code SessionEndEvent} handlers.
+     * 
+     * @throws SessionNotFoundException if no such session exists.
+     */
     public CancelledState endSession(Player player)
     {
         return endSession(player.getName());
     }
     
     /**
-     * Exports all sessions in this session manager to a file.
+     * Exports all sessions from this {@code SessionManager} to a file.
      * 
-     * @param file the file to which sessions will be exported.
+     * @param file the file to which the sessions will be exported.
      * 
      * @throws IOException if an I/O error occured.
      */
@@ -434,9 +495,9 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Imports all the sessions from a file to this session manager.
+     * Imports all sessions from a file to this {@code SessionManager}.
      * 
-     * @param file the file from which sessions will be imported.
+     * @param file the file from which the sessions will be imported.
      * 
      * @throws IOException if an I/O error occured.
      */

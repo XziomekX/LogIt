@@ -18,8 +18,19 @@
  */
 package io.github.lucaseasedup.logit.session;
 
+/**
+ * Represents a player session. It holds a time-based status,
+ * a player IP address and inactivity time of the player.
+ */
 public final class Session
 {
+    /**
+     * Creates a new {@code Session} object with a new status equal to {@code -1L}.
+     * 
+     * @param ip an IP address of this session.
+     * 
+     * @throws IllegalArgumentException if {@code ip} is {@code null}.
+     */
     public Session(String ip)
     {
         if (ip == null)
@@ -29,15 +40,30 @@ public final class Session
     }
     
     /**
+     * Creates a new {@code Session} object with a new status equal to {@code -1L}.
+     */
+    public Session()
+    {
+        this("");
+    }
+    
+    /**
      * Returns an IP address associated with this session.
      * 
-     * @return IP address.
+     * @return an IP address.
      */
     public String getIp()
     {
         return ip;
     }
     
+    /**
+     * Sets a new IP address for this session.
+     * 
+     * @param ip new IP address.
+     * 
+     * @throws IllegalArgumentException if {@code ip} is {@code null}.
+     */
     public void setIp(String ip)
     {
         if (ip == null)
@@ -49,10 +75,10 @@ public final class Session
     /**
      * Returns session status.
      * 
-     * <p> Values above or equal to {@code 0} mean <i>session alive/logged in</i>.
-     * Values below {@code 0} mean <i>session ended/logged out</i>.
+     * <p> Values above or equal to {@code 0} mean that the session is alive (logged-in state).
+     * Values below {@code 0} mean that the session is not alive (logged-out state).
      * 
-     * @return session status.
+     * @return the session status.
      */
     public long getStatus()
     {
@@ -60,9 +86,9 @@ public final class Session
     }
     
     /**
-     * Sets session status to value of {@code status}.
+     * Sets a new session status.
      * 
-     * @param status the new session status.
+     * @param status new session status.
      */
     public void setStatus(long status)
     {
@@ -70,21 +96,21 @@ public final class Session
     }
     
     /**
-     * Updates session status by adding {@code update} to the current status.
+     * Updates status of this session by adding {@code update} to the actual status.
      * 
-     * @param update update value.
+     * @param delta a value by which the status will be changed.
      */
-    public void updateStatus(long update)
+    public void updateStatus(long delta)
     {
-        status += update;
+        status += delta;
     }
     
     /**
-     * Checks if the session is alive.
+     * Checks if this session is alive.
      * 
-     * <p> A session is alive when its status is below or equal to {@code 0}.
+     * <p> A session is alive when its status is greater or equal to {@code 0}.
      * 
-     * @return {@code true} if the session is alive.
+     * @return {@code true} if the session is alive; {@code false} otherwise.
      */
     public boolean isAlive()
     {
@@ -104,7 +130,7 @@ public final class Session
     /**
      * Adds a delta to player's inactivity time.
      * 
-     * @param delta the delta time in server ticks.
+     * @param delta a value in server ticks by which the inactivity time will be changed.
      */
     public void updateInactivityTime(long delta)
     {
