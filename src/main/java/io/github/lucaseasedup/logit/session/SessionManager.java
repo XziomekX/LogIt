@@ -174,7 +174,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     public boolean isSessionAlive(String username)
     {
         if (username == null)
-            return false;
+            throw new IllegalArgumentException();
         
         Session session = getSession(username);
         
@@ -208,7 +208,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     public boolean isSessionAlive(Player player)
     {
         if (player == null)
-            return false;
+            throw new IllegalArgumentException();
         
         Session session = getSession(player.getName());
         
@@ -234,6 +234,9 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
      */
     public CancelledState createSession(String username, String ip)
     {
+        if (username == null || ip == null)
+            throw new IllegalArgumentException();
+        
         if (getSession(username) != null)
             return CancelledState.NOT_CANCELLED;
         

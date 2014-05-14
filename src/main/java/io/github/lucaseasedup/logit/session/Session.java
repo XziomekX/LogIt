@@ -22,6 +22,9 @@ public final class Session
 {
     public Session(String ip)
     {
+        if (ip == null)
+            throw new IllegalArgumentException();
+        
         this.ip = ip;
     }
     
@@ -37,6 +40,9 @@ public final class Session
     
     public void setIp(String ip)
     {
+        if (ip == null)
+            throw new IllegalArgumentException();
+        
         this.ip = ip;
     }
     
