@@ -497,16 +497,19 @@ public final class LogItCore
         
         start();
         
-        try
+        if (sessionFile.exists())
         {
-            sessionManager.importSessions(sessionFile);
+            try
+            {
+                sessionManager.importSessions(sessionFile);
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, "Could not import sessions.", ex);
+            }
+            
+            sessionFile.delete();
         }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, "Could not import sessions.", ex);
-        }
-        
-        sessionFile.delete();
         
         log(Level.INFO, getMessage("RELOADED"));
     }

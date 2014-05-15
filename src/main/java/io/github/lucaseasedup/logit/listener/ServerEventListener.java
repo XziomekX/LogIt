@@ -38,16 +38,19 @@ public final class ServerEventListener extends LogItCoreObject implements Listen
         
         File sessions = getDataFile(getConfig().getString("storage.sessions.filename"));
         
-        try
+        if (sessions.exists())
         {
-            getSessionManager().importSessions(sessions);
+            try
+            {
+                getSessionManager().importSessions(sessions);
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, "Could not import sessions.", ex);
+            }
+            
+            sessions.delete();
         }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, "Could not import sessions.", ex);
-        }
-        
-        sessions.delete();
     }
     
     @EventHandler(priority = EventPriority.HIGHEST)
