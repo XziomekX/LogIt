@@ -275,9 +275,14 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
      * 
      * @return a {@code CancellableState} indicating whether
      *         this operation was cancelled or not by a Bukkit event.
+     * 
+     * @throws IllegalArgumentException if {@code player} is {@code null}.
      */
     public CancelledState createSession(Player player)
     {
+        if (player == null)
+            throw new IllegalArgumentException();
+        
         return createSession(player.getName(), getPlayerIp(player));
     }
     
@@ -293,9 +298,14 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
      * 
      * @return a {@code CancellableState} indicating whether this operation
      *         has been cancelled by one of the {@code SessionDestroyEvent} handlers.
+     * 
+     * @throws IllegalArgumentException if {@code username} is {@code null}.
      */
     public CancelledState destroySession(String username)
     {
+        if (username == null)
+            throw new IllegalArgumentException();
+        
         Session session = getSession(username);
         
         if (session == null)
@@ -333,9 +343,14 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
      * 
      * @return a {@code CancellableState} indicating whether this operation
      *         has been cancelled by one of the {@code SessionDestroyEvent} handlers.
+     * 
+     * @throws IllegalArgumentException if {@code player} is {@code null}.
      */
     public CancelledState destroySession(Player player)
     {
+        if (player == null)
+            throw new IllegalArgumentException();
+        
         return destroySession(player.getName());
     }
     
@@ -352,9 +367,13 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
      *         has been cancelled by one of the {@code SessionStartEvent} handlers.
      * 
      * @throws SessionNotFoundException if no such session exists.
+     * @throws IllegalArgumentException if {@code username} is {@code null}.
      */
     public CancelledState startSession(String username)
     {
+        if (username == null)
+            throw new IllegalArgumentException();
+        
         Session session = getSession(username);
         
         if (session == null)
@@ -391,9 +410,13 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
      *         has been cancelled by one of the {@code SessionStartEvent} handlers.
      * 
      * @throws SessionNotFoundException if no such session exists.
+     * @throws IllegalArgumentException if {@code player} is {@code null}.
      */
     public CancelledState startSession(Player player)
     {
+        if (player == null)
+            throw new IllegalArgumentException();
+        
         return startSession(player.getName());
     }
     
@@ -410,9 +433,13 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
      *         has been cancelled by one of the {@code SessionEndEvent} handlers.
      * 
      * @throws SessionNotFoundException if no such session exists.
+     * @throws IllegalArgumentException if {@code username} is {@code null}.
      */
     public CancelledState endSession(String username)
     {
+        if (username == null)
+            throw new IllegalArgumentException();
+        
         Session session = getSession(username);
         
         if (session == null)
@@ -449,9 +476,13 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
      *         has been cancelled by one of the {@code SessionEndEvent} handlers.
      * 
      * @throws SessionNotFoundException if no such session exists.
+     * @throws IllegalArgumentException if {@code player} is {@code null}.
      */
     public CancelledState endSession(Player player)
     {
+        if (player == null)
+            throw new IllegalArgumentException();
+        
         return endSession(player.getName());
     }
     
@@ -461,9 +492,13 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
      * @param file the file to which the sessions will be exported.
      * 
      * @throws IOException if an I/O error occured.
+     * @throws IllegalArgumentException if {@code file} is {@code null}.
      */
     public void exportSessions(File file) throws IOException
     {
+        if (file == null)
+            throw new IllegalArgumentException();
+        
         file.delete();
         
         try (Storage sessionsStorage = new SqliteStorage("jdbc:sqlite:" + file))
@@ -500,9 +535,13 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
      * @param file the file from which the sessions will be imported.
      * 
      * @throws IOException if an I/O error occured.
+     * @throws IllegalArgumentException if {@code file} is {@code null}.
      */
     public void importSessions(File file) throws IOException
     {
+        if (file == null)
+            throw new IllegalArgumentException();
+        
         try (Storage sessionsStorage = new SqliteStorage("jdbc:sqlite:" + file))
         {
             sessionsStorage.connect();
