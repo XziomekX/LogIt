@@ -41,14 +41,14 @@ public final class H2Storage extends Storage
     @Override
     public void connect() throws IOException
     {
-        org.h2.Driver.load();
-        
         try
         {
+            Class.forName("org.h2.Driver");
+            
             connection = DriverManager.getConnection(host);
             statement = connection.createStatement();
         }
-        catch (SQLException ex)
+        catch (ClassNotFoundException | SQLException ex)
         {
             throw new IOException(ex);
         }
