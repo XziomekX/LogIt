@@ -37,6 +37,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -45,7 +46,8 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public final class SessionManager extends LogItCoreObject implements Runnable, Disposable
+public final class SessionManager extends LogItCoreObject
+        implements Iterable<Entry<String, Session>>, Runnable, Disposable
 {
     @Override
     public void dispose()
@@ -484,6 +486,44 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
             throw new IllegalArgumentException();
         
         return endSession(player.getName());
+    }
+    
+    /**
+     * Creates an iterator over the sessions in this {@code SessionManager}
+     * with element removing disabled.
+     * 
+     * @return the session iterator.
+     */
+    @Override
+    public Iterator<Entry<String, Session>> iterator()
+    {
+        return newSessionIterator();
+    }
+    
+    private Iterator<Entry<String, Session>> newSessionIterator()
+    {
+        return new Iterator<Entry<String, Session>>()
+        {
+            @Override
+            public void remove()
+            {
+                throw new UnsupportedOperationException();
+            }
+            
+            @Override
+            public Entry<String, Session> next()
+            {
+                return it.next();
+            }
+            
+            @Override
+            public boolean hasNext()
+            {
+                return it.hasNext();
+            }
+            
+            private final Iterator<Entry<String, Session>> it = sessions.entrySet().iterator();
+        };
     }
     
     /**
