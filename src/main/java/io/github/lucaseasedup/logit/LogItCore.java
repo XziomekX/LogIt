@@ -473,11 +473,11 @@ public final class LogItCore
         if (!isStarted())
             throw new IllegalStateException("The LogIt core is not started.");
         
-        File sessionFile = getDataFile(config.getString("storage.sessions.filename"));
+        File sessionsFile = getDataFile(config.getString("storage.sessions.filename"));
         
         try
         {
-            sessionManager.exportSessions(sessionFile);
+            sessionManager.exportSessions(sessionsFile);
         }
         catch (IOException ex)
         {
@@ -497,18 +497,18 @@ public final class LogItCore
         
         start();
         
-        if (sessionFile.exists())
+        if (sessionsFile.exists())
         {
             try
             {
-                sessionManager.importSessions(sessionFile);
+                sessionManager.importSessions(sessionsFile);
             }
             catch (IOException ex)
             {
                 log(Level.WARNING, "Could not import sessions.", ex);
             }
             
-            sessionFile.delete();
+            sessionsFile.delete();
         }
         
         log(Level.INFO, getMessage("RELOADED"));

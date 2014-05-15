@@ -36,20 +36,20 @@ public final class ServerEventListener extends LogItCoreObject implements Listen
         if (!event.getPlugin().equals(getPlugin()))
             return;
         
-        File sessions = getDataFile(getConfig().getString("storage.sessions.filename"));
+        File sessionsFile = getDataFile(getConfig().getString("storage.sessions.filename"));
         
-        if (sessions.exists())
+        if (sessionsFile.exists())
         {
             try
             {
-                getSessionManager().importSessions(sessions);
+                getSessionManager().importSessions(sessionsFile);
             }
             catch (IOException ex)
             {
                 log(Level.WARNING, "Could not import sessions.", ex);
             }
             
-            sessions.delete();
+            sessionsFile.delete();
         }
     }
     
@@ -59,11 +59,11 @@ public final class ServerEventListener extends LogItCoreObject implements Listen
         if (!event.getPlugin().equals(getPlugin()) || !getCore().isStarted())
             return;
         
-        File sessions = getDataFile(getConfig().getString("storage.sessions.filename"));
+        File sessionsFile = getDataFile(getConfig().getString("storage.sessions.filename"));
         
         try
         {
-            getSessionManager().exportSessions(sessions);
+            getSessionManager().exportSessions(sessionsFile);
         }
         catch (IOException ex)
         {
