@@ -83,17 +83,20 @@ public final class H2Storage extends Storage
     @Override
     public void close() throws IOException
     {
-        try
+        if (connection != null)
         {
-            if (connection != null)
+            try
             {
                 connection.close();
+            }
+            catch (SQLException ex)
+            {
+                throw new IOException(ex);
+            }
+            finally
+            {
                 connection = null;
             }
-        }
-        catch (SQLException ex)
-        {
-            throw new IOException(ex);
         }
     }
     
