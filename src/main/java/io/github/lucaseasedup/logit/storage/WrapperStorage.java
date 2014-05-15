@@ -50,9 +50,9 @@ public final class WrapperStorage extends Storage
     {
         leading.connect();
         
-        for (Storage storage : mirrors)
+        for (Storage mirror : mirrors)
         {
-            storage.connect();
+            mirror.connect();
         }
     }
     
@@ -67,9 +67,9 @@ public final class WrapperStorage extends Storage
     {
         leading.ping();
         
-        for (Storage storage : mirrors)
+        for (Storage mirror : mirrors)
         {
-            storage.ping();
+            mirror.ping();
         }
     }
     
@@ -78,9 +78,9 @@ public final class WrapperStorage extends Storage
     {
         leading.close();
         
-        for (Storage storage : mirrors)
+        for (Storage mirror : mirrors)
         {
-            storage.close();
+            mirror.close();
         }
     }
     
@@ -441,9 +441,9 @@ public final class WrapperStorage extends Storage
     {
         leading.executeBatch();
         
-        for (Storage storage : mirrors)
+        for (Storage mirror : mirrors)
         {
-            storage.executeBatch();
+            mirror.executeBatch();
         }
     }
     
@@ -452,9 +452,9 @@ public final class WrapperStorage extends Storage
     {
         leading.clearBatch();
         
-        for (Storage storage : mirrors)
+        for (Storage mirror : mirrors)
         {
-            storage.clearBatch();
+            mirror.clearBatch();
         }
     }
     
@@ -464,9 +464,9 @@ public final class WrapperStorage extends Storage
         super.setAutobatchEnabled(status);
         leading.setAutobatchEnabled(status);
         
-        for (Storage storage : mirrors)
+        for (Storage mirror : mirrors)
         {
-            storage.setAutobatchEnabled(status);
+            mirror.setAutobatchEnabled(status);
         }
     }
     
