@@ -77,12 +77,11 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (!getAccountManager().changeAccountPassword(args[1], args[2]).isCancelled())
-                    {
-                        sendMessage(args[1], getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
-                        sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_OTHERS")
-                                .replace("%player%", args[1]));
-                    }
+                    getAccountManager().changeAccountPassword(args[1], args[2]);
+                    
+                    sendMessage(args[1], getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
+                    sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_OTHERS")
+                            .replace("%player%", args[1]));
                 }
                 catch (ReportedException ex)
                 {
@@ -145,10 +144,9 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (!getAccountManager().changeAccountPassword(p.getName(), args[1]).isCancelled())
-                    {
-                        sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
-                    }
+                    getAccountManager().changeAccountPassword(p.getName(), args[1]);
+                    
+                    sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
                 }
                 catch (ReportedException ex)
                 {

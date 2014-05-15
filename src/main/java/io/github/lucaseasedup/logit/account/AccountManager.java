@@ -46,15 +46,16 @@ import java.util.Set;
 import java.util.logging.Level;
 import javax.xml.bind.DatatypeConverter;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 public final class AccountManager extends LogItCoreObject implements Runnable, Disposable
 {
     /**
-     * Creates a new account manager.
+     * Creates a new {@code AccountManager}.
      * 
-     * @param storage the storage.
-     * @param unit name of the unit.
-     * @param keys the storage keys.
+     * @param storage the storage which this {@code AccountManager} will operate on.
+     * @param unit    a name of the storage unit.
+     * @param keys    the storage keys.
      */
     public AccountManager(Storage storage, String unit, AccountKeys keys)
     {
@@ -91,19 +92,16 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Returns account data belonging to an account with the specified username.
-     * 
-     * <p> Take caution that this method may imply quering the storage
-     * every time it's called, therefore consider storing the result
-     * for future use when possible.
+     * Fetches all data belonging to an account with the given username
+     * from the underlying storage unit.
      * 
      * @param username the username.
      * 
      * @return a storage entry with account data,
      *         or {@code null} if there is no account with the specified username.
      * 
-     * @throws IllegalArgumentException if {@code username} is null.
      * @throws IOException              if an I/O error occurred.
+     * @throws IllegalArgumentException if {@code username} is {@code null}.
      */
     public Storage.Entry queryAccount(String username) throws IOException
     {
@@ -120,12 +118,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Returns specific keys of account data
-     * belonging to an account with the specified username.
-     * 
-     * <p> Take caution that this method may imply quering the storage
-     * every time it's called, therefore consider storing the result
-     * for future use when possible.
+     * Fetches certain data belonging to an account with the given username
+     * from the underlying storage unit.
      * 
      * @param username  the username.
      * @param queryKeys the keys to be returned.
@@ -133,8 +127,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @return a storage entry with account data,
      *         or {@code null} if there is no account with the specified username.
      * 
-     * @throws IllegalArgumentException if {@code username} is null.
      * @throws IOException              if an I/O error occurred.
+     * @throws IllegalArgumentException if {@code username} is {@code null}.
      */
     public Storage.Entry queryAccount(String username, List<String> queryKeys) throws IOException
     {
@@ -155,8 +149,23 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         return entries.get(0);
     }
     
+    /**
+     * Checks if an account with the given username has been registered
+     * in the underlying storage unit.
+     * 
+     * @param username the username.
+     * 
+     * @return {@code true} if the account has been registered; {@code false} otherwise.
+     * 
+     * @throws IllegalArgumentException if {@code username} is {@code null}.
+     * @throws ReportedException        if an I/O error occured,
+     *                                  and it was reported to the logger.
+     */
     public boolean isRegistered(String username)
     {
+        if (username == null)
+            throw new IllegalArgumentException();
+        
         try
         {
             return queryAccount(username, Arrays.asList(keys.username())) != null;
@@ -171,6 +180,13 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         return false;
     }
     
+    /**
+     * Fetches all registered usernames in the underlying storage unit.
+     * 
+     * @return a {@code Set} of usernames.
+     * 
+     * @throws IOException if an I/O error occured.
+     */
     public Set<String> getRegisteredUsernames() throws IOException
     {
         Set<String> usernames = new HashSet<>();
@@ -185,26 +201,36 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Creates a new account with the given username and password.
+     * Creates a new account with the given username and password
+     * in the underlying storage unit.
      * 
      * <p> The password will be hashed using
      * the default algorithm specified in the config file.
+     * The username may not preserve its original letter case
+     * after it's saved in the storage.
      * 
-     * <p> Also, note that the username may not preserve its original letter case
-     * when stored in the storage.
+     * <p> This method emits the {@code AccountCreateEvent} event.
      * 
      * @param username the username.
      * @param password the password.
      * 
-     * @return a {@code CancellableState} indicating whether
-     *         the operation was cancelled or not by a Bukkit event.
+     * @return a {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code AccountCreateEvent} handlers.
      * 
-     * @throws AccountAlreadyExistsException if an account with the given username already exists.
-     * @throws ReportedException             if account creation failed
-     *                                       and was reported to the logger.
+     * @throws IllegalArgumentException      if {@code username} or
+     *                                       {@code password} is {@code null}.
+     *                                       
+     * @throws AccountAlreadyExistsException if an account with the
+     *                                       given username already exists.
+     *                                       
+     * @throws ReportedException             if an I/O error occured,
+     *                                       and it was reported to the logger.
      */
     public CancelledState createAccount(String username, String password)
     {
+        if (username == null || password == null)
+            throw new IllegalArgumentException();
+        
         if (isRegistered(username))
             throw new AccountAlreadyExistsException();
         
@@ -262,21 +288,30 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Removes an account with the specified username.
+     * Removes an account with the given username
+     * from the underlying storage unit.
      * 
-     * <p> Removing an account does not entail logging out the underlying player.
-     * To log out a player, see {@link SessionManager#endSession(String)}.
+     * <p> Removing an account does not entail logging out the corresponding player.
+     * To log out a player, use {@link SessionManager#endSession(String)}
+     * or {@link SessionManager#endSession(Player)}.
      * 
-     * @param username a username representing the account to be removed.
+     * <p> This method emits the {@code AccountRemoveEvent} event.
      * 
-     * @return a {@code CancellableState} indicating whether
-     *         the operation was cancelled or not by a Bukkit event.
+     * @param username the username.
      * 
-     * @throws ReportedException if account removal failed
-     *                           and was reported to the logger.
+     * @return a {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code AccountRemoveEvent} handlers.
+     * 
+     * @throws IllegalArgumentException      if {@code username} is {@code null}.
+     * 
+     * @throws ReportedException             if an I/O error occured,
+     *                                       and it was reported to the logger.
      */
     public CancelledState removeAccount(String username)
     {
+        if (username == null)
+            throw new IllegalArgumentException();
+        
         AccountEvent evt = new AccountRemoveEvent(username);
         Bukkit.getPluginManager().callEvent(evt);
         
@@ -305,24 +340,30 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     
     /**
      * Checks if a password is equal, after hashing,
-     * to the password of an account represented by the specified username.
+     * to a password of an account represented by the given username
+     * in the underlying storage unit.
      * 
      * <p> The password will be hashed using the algorithm specified
-     * in the appropriate key of the account entry in the current fstorage.
+     * in the appropriate key of the account entry.
+     * If no hashing algorithm was specified in the account entry,
+     * the global hashing algorithm stored in the config file will be used instead.
      * 
-     * <p> If no hashing algorithm was specified in the account entry,
-     * the global one stored in the config file will be used instead.
-     * 
-     * @param username a username representing the account whose password will be checked.
+     * @param username the username.
      * @param password the password to be checked.
      * 
-     * @return {@code true} if they match; {@code false} otherwise.
+     * @return {@code true} if the password is correct; {@code false} otherwise.
      * 
-     * @throws ReportedException if an error occured
-     *                           and was reported to the logger.
+     * @throws IllegalArgumentException      if {@code username} or
+     *                                       {@code password} is {@code null}.
+     *                                       
+     * @throws ReportedException             if an I/O error occured,
+     *                                       and it was reported to the logger.
      */
     public boolean checkAccountPassword(String username, String password)
     {
+        if (username == null || password == null)
+            throw new IllegalArgumentException();
+        
         if (getConfig().getBoolean("password.disable-passwords"))
             return true;
         
@@ -373,25 +414,28 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Changes password of an account with the specified username.
+     * Changes password of an account with the given username
+     * in the underlying storage unit.
      * 
      * <p> The password will be hashed
      * using the default algorithm specified in the config file.
      * 
-     * @param username    a username representing the account
-     *                    to be subject to password change.
+     * @param username    the username.
      * @param newPassword the new password.
      * 
-     * @return a {@code CancellableState} indicating whether
-     *         the operation was cancelled or not by a Bukkit event.
-     * 
-     * @throws ReportedException if this operation failed.
-     *                           and was reported to the logger.
+     * @throws IllegalArgumentException      if {@code username} or
+     *                                       {@code newPassword} is {@code null}.
+     *                                       
+     * @throws ReportedException             if an I/O error occured,
+     *                                       and it was reported to the logger.
      */
-    public CancelledState changeAccountPassword(String username, String newPassword)
+    public void changeAccountPassword(String username, String newPassword)
     {
+        if (username == null || newPassword == null)
+            throw new IllegalArgumentException();
+        
         if (getConfig().getBoolean("password.disable-passwords"))
-            return CancelledState.NOT_CANCELLED;
+            return;
         
         Storage.Entry entry = new Storage.Entry();
         HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
@@ -426,24 +470,26 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
             
             ReportedException.throwNew(ex);
         }
-        
-        return CancelledState.NOT_CANCELLED;
     }
     
     /**
-     * Attaches an IP address to an account with the specified username.
+     * Attaches an IP address to an account with the given username
+     * in the underlying storage unit.
      * 
-     * @param username a username representing the account to be subject of IP attachment.
+     * @param username the username.
      * @param ip       the new IP address.
      * 
-     * @return a {@code CancellableState} indicating whether
-     *         the operation was cancelled or not by a Bukkit event.
-     * 
-     * @throws ReportedException if this operation failed
-     *                           and was reported to the logger.
+     * @throws IllegalArgumentException      if {@code username} or
+     *                                       {@code ip} is {@code null}.
+     *                                       
+     * @throws ReportedException             if an I/O error occured,
+     *                                       and it was reported to the logger.
      */
-    public CancelledState attachIp(String username, String ip)
+    public void attachIp(String username, String ip)
     {
+        if (username == null || ip == null)
+            throw new IllegalArgumentException();
+        
         try
         {
             if (getCore().getIntegration() == IntegrationType.PHPBB2)
@@ -466,14 +512,13 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
             
             ReportedException.throwNew(ex);
         }
-        
-        return CancelledState.NOT_CANCELLED;
     }
     
     /**
-     * Returns number of accounts with the given IP address.
+     * Checks how many accounts with the given IP address are registered
+     * in the underlying storage unit.
      * 
-     * <p> If {@code ip} is {@code null} or an empty string, the returned value is {@code 0}.
+     * <p> If {@code ip} is an empty string, the returned value is {@code 0}.
      * 
      * @param ip the IP address.
      * 
@@ -481,7 +526,10 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      */
     public int countAccountsWithIp(String ip)
     {
-        if (ip == null || ip.isEmpty())
+        if (ip == null)
+            throw new IllegalArgumentException();
+        
+        if (ip.isEmpty())
             return 0;
         
         try
@@ -502,7 +550,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Counts how many unique, non-null, IP addresses are in the current storage.
+     * Checks how many unique, not empty, IP addresses are
+     * in the underlying storage unit.
      * 
      * @return number of unique IP addresses.
      */
@@ -531,16 +580,22 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Returns e-mail address of an account with the specified username.
+     * Fetches an e-mail address of an account with the given username
+     * from the underlying storage unit.
      * 
      * @param username the username.
      * 
-     * @return the e-mail address or {@code null} if no account with this username was found.
+     * @return an e-mail address, or {@code null}
+     *         if no account with this username was found.
      * 
-     * @throws IOException if an I/O error occured.
+     * @throws IOException              if an I/O error occured.
+     * @throws IllegalArgumentException if {@code username} is {@code null}.
      */
     public String getEmail(String username) throws IOException
     {
+        if (username == null)
+            throw new IllegalArgumentException();
+        
         Storage.Entry entry = queryAccount(username, Arrays.asList(
                 keys.username(),
                 keys.email()
@@ -553,20 +608,23 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Changes e-mail address of an account with the specified username.
+     * Changes e-mail address of an account with the given username
+     * in the underlying storage unit.
      * 
-     * @param username a username representing the account
-     *                 to be subject to e-mail address change.
+     * @param username the username.
      * @param newEmail the new e-mail address.
      * 
-     * @return a {@code CancellableState} indicating whether
-     *         the operation was cancelled or not by a Bukkit event.
+     * @throws IllegalArgumentException if {@code username} or
+     *                                  {@code newMail} is {@code null}.
      * 
-     * @throws ReportedException if this operation failed
-     *                           and was reported to the logger.
+     * @throws ReportedException        if an I/O error occured,
+     *                                  and it was reported to the logger.
      */
-    public CancelledState changeEmail(String username, String newEmail)
+    public void changeEmail(String username, String newEmail)
     {
+        if (username == null || newEmail == null)
+            throw new IllegalArgumentException();
+        
         try
         {
             updateEntry(username, new Storage.Entry.Builder()
@@ -582,66 +640,86 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
             
             ReportedException.throwNew(ex);
         }
-        
-        return CancelledState.NOT_CANCELLED;
     }
     
     /**
-     * Saves login session for an account with the specified username.
+     * Saves login session for an account with the given username
+     * to the underlying storage unit.
      * 
      * @param username the username.
      * @param ip       the player IP address.
      * @param time     the UNIX time of when the login session was created.
      * 
-     * @throws IOException if an I/O error occured.
+     * @throws IOException              if an I/O error occured.
+     * @throws IllegalArgumentException if {@code username} or
+     *                                  {@code ip} is {@code null},
+     *                                  or {@code time} is negative.
      */
     public void saveLoginSession(String username, String ip, long time) throws IOException
     {
+        if (username == null || ip == null || time < 0)
+            throw new IllegalArgumentException();
+        
         updateEntry(username, new Storage.Entry.Builder()
                 .put(keys.login_session(), ip + ";" + time)
                 .build());
     }
     
     /**
-     * Erases login session of an account with the specified username.
+     * Erases login session of an account with the given username
+     * in the underlying storage unit.
      * 
      * @param username the username.
      * 
-     * @throws IOException if an I/O error occured.
+     * @throws IOException              if an I/O error occured.
+     * @throws IllegalArgumentException if {@code username} is {@code null}.
      */
     public void eraseLoginSession(String username) throws IOException
     {
+        if (username == null)
+            throw new IllegalArgumentException();
+        
         updateEntry(username, new Storage.Entry.Builder()
                 .put(keys.login_session(), "")
                 .build());
     }
     
     /**
-     * Updates last-active date of an account with the specified username
-     * overwriting it with the current time.
+     * Updates last-active date of an account with the given username,
+     * overwriting it with the current time, in the underlying storage unit.
      * 
      * @param username the username.
      * 
-     * @throws IOException if an I/O error occured.
+     * @throws IOException              if an I/O error occured.
+     * @throws IllegalArgumentException if {@code username} is {@code null}.
      */
     public void updateLastActiveDate(String username) throws IOException
     {
+        if (username == null)
+            throw new IllegalArgumentException();
+        
         updateEntry(username, new Storage.Entry.Builder()
                 .put(keys.last_active_date(), String.valueOf(System.currentTimeMillis() / 1000L))
                 .build());
     }
     
     /**
-     * Reads persistence data from an account with the specified username.
+     * Fetches persistence data from an account with the given username
+     * from the underlying storage unit.
      * 
      * @param username the username.
      * 
-     * @return the persistence data or {@code null} if no account with this username was found.
+     * @return the persistence data, or {@code null}
+     *         if no account with this username was found.
      * 
-     * @throws IOException if an I/O error occured.
+     * @throws IOException              if an I/O error occured.
+     * @throws IllegalArgumentException if {@code username} is {@code null}.
      */
     public Map<String, String> getAccountPersistence(String username) throws IOException
     {
+        if (username == null)
+            throw new IllegalArgumentException();
+        
         Storage.Entry entry = queryAccount(username, Arrays.asList(
                 keys.username(),
                 keys.persistence()
@@ -668,16 +746,22 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Overwrites persistence data of an account with the specified username.
+     * Overwrites persistence data of an account with the given username
+     * in the underlying storage unit.
      * 
-     * @param username the username.
+     * @param username    the username.
      * @param persistence the persistence data.
      * 
-     * @throws IOException if an I/O error occured.
+     * @throws IOException              if an I/O error occured.
+     * @throws IllegalArgumentException if {@code username} or
+     *                                  {@code persistence} is {@code null}.
      */
     public void updateAccountPersistence(String username, Map<String, String> persistence)
             throws IOException
     {
+        if (username == null || persistence == null)
+            throw new IllegalArgumentException();
+        
         Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
         
         persistenceIni.put("persistence", persistence);
@@ -688,7 +772,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Queries the current storage and returns the number of accounts registered.
+     * Checks how many accounts are registered in the underlying storage unit.
      * 
      * @return the number of accounts registered.
      * 
@@ -700,7 +784,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Returns the storage this account manager operates on.
+     * Returns the {@code Storage} that this {@code AccountManager} operates on.
      * 
      * @return the storage.
      */
@@ -710,9 +794,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Returns name of the unit this account manager operates on.
+     * Returns a name of the storage unit that this {@code AccountManager} operates on.
      * 
-     * @return the unit name.
+     * @return the storage unit name.
      */
     public String getUnit()
     {
@@ -720,8 +804,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Returns a hashtable of the current storage keys
-     * as pairs of <i>name</i> and <i>data type</i>.
+     * Returns a {@code Hashtable}, with the storage keys of this {@code AccountManager}
+     * as pairs of <i>name</i> and <i>data type</i> (both strings),
+     * as an {@code AccountKeys} subclass.
      * 
      * @return the account keys.
      */

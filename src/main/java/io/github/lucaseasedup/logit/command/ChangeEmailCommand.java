@@ -69,13 +69,12 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (!getAccountManager().changeEmail(args[1], args[2]).isCancelled())
-                    {
-                        sendMessage(args[1], getMessage("CHANGE_EMAIL_SUCCESS_SELF")
-                                .replace("%email%", args[2]));
-                        sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_OTHERS")
-                                .replace("%player%", args[1]));
-                    }
+                    getAccountManager().changeEmail(args[1], args[2]);
+                    
+                    sendMessage(args[1], getMessage("CHANGE_EMAIL_SUCCESS_SELF")
+                            .replace("%email%", args[2]));
+                    sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_OTHERS")
+                            .replace("%player%", args[1]));
                 }
                 catch (ReportedException ex)
                 {
@@ -116,11 +115,10 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (!getAccountManager().changeEmail(p.getName(), args[0]).isCancelled())
-                    {
-                        sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_SELF")
-                                .replace("%email%", args[0]));
-                    }
+                    getAccountManager().changeEmail(p.getName(), args[0]);
+                    
+                    sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_SELF")
+                            .replace("%email%", args[0]));
                 }
                 catch (ReportedException ex)
                 {

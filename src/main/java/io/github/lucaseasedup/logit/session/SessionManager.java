@@ -236,8 +236,8 @@ public final class SessionManager extends LogItCoreObject
      * @param username the username.
      * @param ip       the player IP address.
      * 
-     * @return a {@code CancellableState} indicating whether
-     *         this operation was cancelled or not by a Bukkit event.
+     * @return a {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code SessionCreateEvent} handlers.
      * 
      * @throws IllegalArgumentException if {@code username} or {@code ip} is {@code null}.
      */
@@ -275,8 +275,8 @@ public final class SessionManager extends LogItCoreObject
      * 
      * @param player the player.
      * 
-     * @return a {@code CancellableState} indicating whether
-     *         this operation was cancelled or not by a Bukkit event.
+     * @return a {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code SessionCreateEvent} handlers.
      * 
      * @throws IllegalArgumentException if {@code player} is {@code null}.
      */
