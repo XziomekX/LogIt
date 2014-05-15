@@ -28,18 +28,18 @@ import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
-import io.github.lucaseasedup.logit.storage.Infix;
-import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.storage.Storage.DataType;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
@@ -489,6 +489,8 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     /**
      * Exports all sessions from this {@code SessionManager} to a file.
      * 
+     * <p> The file will be deleted before exporting.
+     * 
      * @param file the file to which the sessions will be exported.
      * 
      * @throws IOException if an I/O error occured.
@@ -512,14 +514,12 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
                 }});
             sessionsStorage.setAutobatchEnabled(true);
             
-            for (Player player : Bukkit.getOnlinePlayers())
+            for (Entry<String, Session> e : sessions.entrySet())
             {
-                String username = player.getName().toLowerCase();
-                
                 sessionsStorage.addEntry("sessions", new Storage.Entry.Builder()
-                        .put("username", username)
-                        .put("status", String.valueOf(getSession(username).getStatus()))
-                        .put("ip", getPlayerIp(player))
+                        .put("username", e.getKey())
+                        .put("status", String.valueOf(e.getValue().getStatus()))
+                        .put("ip", e.getValue().getIp())
                         .build());
             }
             
@@ -532,39 +532,41 @@ public final class SessionManager extends LogItCoreObject implements Runnable, D
     /**
      * Imports all sessions from a file to this {@code SessionManager}.
      * 
+     * <p> Only the sessions that don't exist in this {@code SessionManager} will be imported.
+     * 
      * @param file the file from which the sessions will be imported.
      * 
+     * @throws FileNotFoundException if no such file exists.
      * @throws IOException if an I/O error occured.
      * @throws IllegalArgumentException if {@code file} is {@code null}.
      */
-    public void importSessions(File file) throws IOException
+    public void importSessions(File file) throws FileNotFoundException, IOException
     {
         if (file == null)
             throw new IllegalArgumentException();
+        
+        if (!file.exists())
+            throw new FileNotFoundException();
         
         try (Storage sessionsStorage = new SqliteStorage("jdbc:sqlite:" + file))
         {
             sessionsStorage.connect();
             
-            for (Player player : Bukkit.getOnlinePlayers())
+            List<Storage.Entry> entries = sessionsStorage.selectEntries("sessions",
+                    Arrays.asList("username", "status", "ip"));
+            
+            for (Storage.Entry entry : entries)
             {
-                String username = player.getName().toLowerCase();
+                String username = entry.get("username");
                 
                 if (getSession(username) == null)
                 {
-                    createSession(username, "");
-                }
-                
-                List<Storage.Entry> entries = sessionsStorage.selectEntries("sessions",
-                        Arrays.asList("username", "status", "ip"),
-                        new SelectorCondition("username", Infix.EQUALS, username));
-                
-                if (!entries.isEmpty())
-                {
-                    Session session = getSession(username);
+                    String ip = entry.get("ip");
+                    long status = Long.parseLong(entry.get("status"));
                     
-                    session.setStatus(Integer.parseInt(entries.get(0).get("status")));
-                    session.setIp(entries.get(0).get("ip"));
+                    createSession(username, ip);
+                    
+                    getSession(username).setStatus(status);
                 }
             }
         }
