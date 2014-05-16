@@ -44,15 +44,14 @@ public class ReportedException extends RuntimeException
     
     public void rethrow()
     {
-        decrementRequestCount();
-        
-        throw this;
+        if (shouldSignal())
+        {
+            throw this;
+        }
     }
     
     public void rethrowAsFatal() throws FatalReportedException
     {
-        decrementRequestCount();
-        
         FatalReportedException.throwNew(getMessage(), getCause());
     }
     
