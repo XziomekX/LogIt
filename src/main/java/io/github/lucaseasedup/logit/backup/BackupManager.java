@@ -141,7 +141,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
         {
             ReportedException.incrementRequestCount();
             
-            File backupFile = getBackup(filename);
+            File backupFile = getBackupFile(filename);
             
             try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
             {
@@ -236,7 +236,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
      * @return the backup file, or {@code null} if a backup
      *         with the given filename does not exist.
      */
-    public File getBackup(String filename)
+    public File getBackupFile(String filename)
     {
         File backupDir = getDataFile(getConfig().getString("backup.path"));
         File backupFile = new File(backupDir, filename);
