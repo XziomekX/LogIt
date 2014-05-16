@@ -302,10 +302,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @return a {@code CancellableState} indicating whether this operation
      *         has been cancelled by one of the {@code AccountRemoveEvent} handlers.
      * 
-     * @throws IllegalArgumentException      if {@code username} is {@code null}.
-     * 
-     * @throws ReportedException             if an I/O error occured,
-     *                                       and it was reported to the logger.
+     * @throws IllegalArgumentException if {@code username} is {@code null}.
+     * @throws ReportedException        if an I/O error occured,
+     *                                  and it was reported to the logger.
      */
     public CancelledState removeAccount(String username)
     {
@@ -353,11 +352,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * 
      * @return {@code true} if the password is correct; {@code false} otherwise.
      * 
-     * @throws IllegalArgumentException      if {@code username} or
-     *                                       {@code password} is {@code null}.
+     * @throws IllegalArgumentException if {@code username} or
+     *                                  {@code password} is {@code null}.
      *                                       
-     * @throws ReportedException             if an I/O error occured,
-     *                                       and it was reported to the logger.
+     * @throws ReportedException        if an I/O error occured,
+     *                                  and it was reported to the logger.
      */
     public boolean checkAccountPassword(String username, String password)
     {
@@ -423,11 +422,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @param username    the username.
      * @param newPassword the new password.
      * 
-     * @throws IllegalArgumentException      if {@code username} or
-     *                                       {@code newPassword} is {@code null}.
+     * @throws IllegalArgumentException if {@code username} or
+     *                                  {@code newPassword} is {@code null}.
      *                                       
-     * @throws ReportedException             if an I/O error occured,
-     *                                       and it was reported to the logger.
+     * @throws ReportedException        if an I/O error occured,
+     *                                  and it was reported to the logger.
      */
     public void changeAccountPassword(String username, String newPassword)
     {
@@ -478,11 +477,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @param username the username.
      * @param ip       the new IP address.
      * 
-     * @throws IllegalArgumentException      if {@code username} or
-     *                                       {@code ip} is {@code null}.
+     * @throws IllegalArgumentException if {@code username} or
+     *                                  {@code ip} is {@code null}.
      *                                       
-     * @throws ReportedException             if an I/O error occured,
-     *                                       and it was reported to the logger.
+     * @throws ReportedException        if an I/O error occured,
+     *                                  and it was reported to the logger.
      */
     public void attachIp(String username, String ip)
     {
