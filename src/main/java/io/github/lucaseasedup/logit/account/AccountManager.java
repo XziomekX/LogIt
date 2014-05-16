@@ -457,8 +457,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         
         try
         {
-            storage.updateEntries(unit, entry,
-                    new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
+            updateEntry(username, entry);
             
             log(Level.FINE,
                     getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
