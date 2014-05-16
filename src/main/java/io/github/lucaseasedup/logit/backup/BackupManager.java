@@ -38,9 +38,10 @@ import java.util.logging.Level;
 public final class BackupManager extends LogItCoreObject implements Runnable, Disposable
 {
     /**
-     * Creates a new backup manager.
+     * Creates a new {@code BackupManager}.
      * 
-     * @param accountManager the account manager whose accounts will be backed up.
+     * @param accountManager the {@code AccountManager} that this
+     *                       {@code BackupManager} will operate on.
      */
     public BackupManager(AccountManager accountManager)
     {
@@ -204,7 +205,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
     }
     
     /**
-     * Returns all the backups from the backup directory as an array of {@code File} objects.
+     * Creates an array of all the backup files from the backup directory.
      * 
      * @param sortAlphabetically whether to alphabetically sort the backups
      *                           according to their filenames.
@@ -228,7 +229,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
     }
     
     /**
-     * Returns a backup {@code File} object with the specified name
+     * Creates a backup {@code File} object with the given filename
      * relative to the backup directory.
      * 
      * @param filename the backup filename.
