@@ -219,14 +219,15 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             getCore().getPersistenceManager().serialize(player);
             
-            long promptPeriod = getConfig().getTime("force-login.periodical-prompt.period", TimeUnit.TICKS);
+            long promptPeriod =
+                    getConfig().getTime("force-login.periodical-prompt.period", TimeUnit.TICKS);
             
             if (getConfig().getBoolean("force-login.prompt-on.join"))
             {
                 if (getConfig().getBoolean("force-login.periodical-prompt.enabled"))
                 {
-                    getCore().getMessageDispatcher()
-                            .dispatchRepeatingForceLoginPrompter(username, 20L, promptPeriod);
+                    getCore().getMessageDispatcher().dispatchRepeatingForceLoginPrompter(username,
+                            TimeUnit.SECONDS.convertTo(1, TimeUnit.TICKS), promptPeriod);
                 }
                 else
                 {
@@ -236,7 +237,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             else if (getConfig().getBoolean("force-login.periodical-prompt.enabled"))
             {
                 getCore().getMessageDispatcher().dispatchRepeatingForceLoginPrompter(username,
-                        20L + promptPeriod, promptPeriod);
+                        TimeUnit.SECONDS.convertTo(1, TimeUnit.TICKS) + promptPeriod, promptPeriod);
             }
         }
         
