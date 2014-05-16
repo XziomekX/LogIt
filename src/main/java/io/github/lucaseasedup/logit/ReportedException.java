@@ -23,37 +23,21 @@ package io.github.lucaseasedup.logit;
  */
 public class ReportedException extends RuntimeException
 {
-    /**
-     * Creates a new instance of
-     * <code>ReportedException</code> without detail message.
-     */
-    protected ReportedException()
+    private ReportedException()
     {
     }
     
-    /**
-     * Constructs an instance of
-     * <code>ReportedException</code> with the specified detail message.
-     *
-     * @param msg The detail message.
-     */
-    protected ReportedException(String msg)
+    private ReportedException(String msg)
     {
         super(msg);
     }
     
-    /**
-     * Constructs an instance of
-     * <code>ReportedException</code> with the specified cause.
-     *
-     * @param cause The cause.
-     */
-    protected ReportedException(Throwable cause)
+    private ReportedException(Throwable cause)
     {
         super(cause);
     }
     
-    protected ReportedException(String msg, Throwable cause)
+    private ReportedException(String msg, Throwable cause)
     {
         super(msg, cause);
     }
@@ -69,7 +53,7 @@ public class ReportedException extends RuntimeException
     {
         decrementRequestCount();
         
-        throw new FatalReportedException(getMessage(), getCause());
+        FatalReportedException.throwNew(getMessage(), getCause());
     }
     
     public static void throwNew()
