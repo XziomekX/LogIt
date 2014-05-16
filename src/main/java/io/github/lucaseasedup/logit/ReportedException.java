@@ -69,7 +69,7 @@ public class ReportedException extends RuntimeException
     {
         decrementRequestCount();
         
-        throw new FatalReportedException(getCause());
+        throw new FatalReportedException(getMessage(), getCause());
     }
     
     public static void throwNew()
