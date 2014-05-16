@@ -97,8 +97,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * 
      * @param username the username.
      * 
-     * @return a storage entry with account data,
-     *         or {@code null} if there is no account with the specified username.
+     * @return a storage entry with account data, or {@code null}
+     *         if there was no account with the given username.
      * 
      * @throws IOException              if an I/O error occurred.
      * @throws IllegalArgumentException if {@code username} is {@code null}.
@@ -121,11 +121,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * Fetches certain data belonging to an account with the given username
      * from the underlying storage unit.
      * 
+     * <p> The username key will be fetched regardless of what keys have been provided
+     * in {@code queryKeys}.
+     * 
      * @param username  the username.
      * @param queryKeys the keys to be returned.
      * 
-     * @return a storage entry with account data,
-     *         or {@code null} if there is no account with the specified username.
+     * @return a storage entry with account data, or {@code null}
+     *         if there was no account with the given username.
      * 
      * @throws IOException              if an I/O error occurred.
      * @throws IllegalArgumentException if {@code username} is {@code null}.
@@ -155,7 +158,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * 
      * @param username the username.
      * 
-     * @return {@code true} if the account has been registered; {@code false} otherwise.
+     * @return {@code true} if the account has been registered;
+     *         {@code false} otherwise.
      * 
      * @throws IllegalArgumentException if {@code username} is {@code null}.
      * @throws ReportedException        if an I/O error occured,
@@ -347,10 +351,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * If no hashing algorithm was specified in the account entry,
      * the global hashing algorithm stored in the config file will be used instead.
      * 
+     * <p> If passwords have been disabled as of the config file,
+     * this method will always return {@code true}.
+     * 
      * @param username the username.
      * @param password the password to be checked.
      * 
-     * @return {@code true} if the password is correct; {@code false} otherwise.
+     * @return {@code true} if the account exists and the password is correct;
+     *         {@code false} otherwise.
      * 
      * @throws IllegalArgumentException if {@code username} or
      *                                  {@code password} is {@code null}.
@@ -418,6 +426,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * 
      * <p> The password will be hashed
      * using the default algorithm specified in the config file.
+     * 
+     * <p> If passwords have been disabled as of the config file,
+     * no action will be taken.
      * 
      * @param username    the username.
      * @param newPassword the new password.
