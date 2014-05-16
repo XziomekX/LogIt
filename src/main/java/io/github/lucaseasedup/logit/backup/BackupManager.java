@@ -42,9 +42,14 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
      * 
      * @param accountManager the {@code AccountManager} that this
      *                       {@code BackupManager} will operate on.
+     * 
+     * @throws IllegalArgumentException if {@code accountManager} is {@code null}.
      */
     public BackupManager(AccountManager accountManager)
     {
+        if (accountManager == null)
+            throw new IllegalArgumentException();
+        
         timer = new Timer(TASK_PERIOD);
         timer.start();
         
@@ -135,9 +140,14 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
      * Restores a backup, loading all the accounts into the underlying {@code AccountManager}.
      * 
      * @param filename the backup filename.
+     * 
+     * @throws IllegalArgumentException if {@code filename} is {@code null}.
      */
     public void restoreBackup(String filename)
     {
+        if (filename == null)
+            throw new IllegalArgumentException();
+        
         try
         {
             ReportedException.incrementRequestCount();
@@ -236,9 +246,14 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
      * 
      * @return the backup file, or {@code null} if a backup
      *         with the given filename does not exist.
+     * 
+     * @throws IllegalArgumentException if {@code filename} is {@code null}.
      */
     public File getBackupFile(String filename)
     {
+        if (filename == null)
+            throw new IllegalArgumentException();
+        
         File backupDir = getDataFile(getConfig().getString("backup.path"));
         File backupFile = new File(backupDir, filename);
         
