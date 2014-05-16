@@ -53,6 +53,11 @@ public class ReportedException extends RuntimeException
         super(cause);
     }
     
+    protected ReportedException(String msg, Throwable cause)
+    {
+        super(msg, cause);
+    }
+    
     public void rethrow()
     {
         decrementRequestCount();
@@ -88,6 +93,14 @@ public class ReportedException extends RuntimeException
         if (shouldSignal())
         {
             throw new ReportedException(cause);
+        }
+    }
+    
+    public static void throwNew(String msg, Throwable cause)
+    {
+        if (shouldSignal())
+        {
+            throw new ReportedException(msg, cause);
         }
     }
     

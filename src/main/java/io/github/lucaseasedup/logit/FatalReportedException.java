@@ -54,6 +54,11 @@ public class FatalReportedException extends Exception
         super(cause);
     }
     
+    protected FatalReportedException(String msg, Throwable cause)
+    {
+        super(msg, cause);
+    }
+    
     public void rethrow() throws FatalReportedException
     {
         throw this;
@@ -72,5 +77,10 @@ public class FatalReportedException extends Exception
     public static void throwNew(Throwable cause) throws FatalReportedException
     {
         throw new FatalReportedException(cause);
+    }
+    
+    public static void throwNew(String msg, Throwable cause) throws FatalReportedException
+    {
+        throw new FatalReportedException(msg, cause);
     }
 }
