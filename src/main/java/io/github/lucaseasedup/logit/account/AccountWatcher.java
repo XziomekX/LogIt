@@ -90,5 +90,5 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
     /**
      * Recommended task period of {@code AccountWatcher} running as a Bukkit task.
      */
-    public static final long TASK_PERIOD = (10 * 60) * 20;
+    public static final long TASK_PERIOD = TimeUnit.MINUTES.convert(10, TimeUnit.TICKS);
 }

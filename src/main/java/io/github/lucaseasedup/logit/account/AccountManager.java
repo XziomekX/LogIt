@@ -24,6 +24,7 @@ import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.IntegrationType;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
+import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.security.HashingAlgorithm;
 import io.github.lucaseasedup.logit.security.SecurityHelper;
 import io.github.lucaseasedup.logit.session.SessionManager;
@@ -935,7 +936,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     /**
      * Recommended task period of {@code AccountManager} running as a Bukkit task.
      */
-    public static final long TASK_PERIOD = (5 * 60) * 20;
+    public static final long TASK_PERIOD = TimeUnit.MINUTES.convert(5, TimeUnit.TICKS);
     
     private Storage storage;
     private String unit;

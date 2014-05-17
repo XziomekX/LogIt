@@ -266,7 +266,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
     /**
      * Recommended task period of {@code BackupManager} running as a Bukkit task.
      */
-    public static final long TASK_PERIOD = 2 * 20;
+    public static final long TASK_PERIOD = TimeUnit.SECONDS.convert(2, TimeUnit.TICKS);
     
     private Timer timer;
     private AccountManager accountManager;
