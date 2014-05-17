@@ -228,7 +228,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
         File[] backupFiles = backupDir.listFiles();
         
         if (backupFiles == null)
-            return NO_FILES;
+            return new File[0];
         
         if (sortAlphabetically)
         {
@@ -267,8 +267,6 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
      * Recommended task period of {@code BackupManager} running as a Bukkit task.
      */
     public static final long TASK_PERIOD = 2 * 20;
-    
-    private static final File[] NO_FILES = new File[0];
     
     private Timer timer;
     private AccountManager accountManager;
