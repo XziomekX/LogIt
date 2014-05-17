@@ -36,7 +36,7 @@ public enum TimeUnit
         return milliseconds;
     }
     
-    public long convertTo(long value, TimeUnit to)
+    public long convert(long value, TimeUnit to)
     {
         if (to == null || value < 0)
             throw new IllegalArgumentException();

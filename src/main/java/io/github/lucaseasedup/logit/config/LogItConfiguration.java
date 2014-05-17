@@ -252,7 +252,7 @@ public final class LogItConfiguration extends PropertyObserver implements Dispos
             
             if (unit != null)
             {
-                time += unit.convertTo(Long.parseLong(longValue), resultingUnit);
+                time += unit.convert(Long.parseLong(longValue), resultingUnit);
             }
         }
         
