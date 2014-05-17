@@ -36,7 +36,6 @@ import io.github.lucaseasedup.logit.util.IniUtils;
 import it.sauronsoftware.base64.Base64;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -595,7 +594,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      */
     public int countUniqueIps()
     {
-        List<String> ips = new ArrayList<>();
+        Set<String> ips = new HashSet<>();
         
         try
         {
@@ -616,7 +615,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
             return -1;
         }
         
-        return new HashSet<>(ips).size();
+        return ips.size();
     }
     
     /**
