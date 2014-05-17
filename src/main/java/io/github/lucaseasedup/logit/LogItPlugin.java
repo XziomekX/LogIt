@@ -148,7 +148,7 @@ public final class LogItPlugin extends JavaPlugin
         loadCustomLocalMessages("lang/messages" + suffix + ".properties");
     }
     
-    public void loadCustomGlobalMessages(String path) throws IOException
+    private void loadCustomGlobalMessages(String path) throws IOException
     {
         File file = new File(getDataFolder(), path);
         
@@ -161,7 +161,7 @@ public final class LogItPlugin extends JavaPlugin
         }
     }
     
-    public void loadCustomLocalMessages(String path) throws IOException
+    private void loadCustomLocalMessages(String path) throws IOException
     {
         File file = new File(getDataFolder(), path);
         
