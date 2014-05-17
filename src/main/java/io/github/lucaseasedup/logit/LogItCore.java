@@ -1105,11 +1105,6 @@ public final class LogItCore
         return instance;
     }
     
-    /**
-     * INTERNAL is a message level providing internal information typically used for debugging.
-     */
-    public static final Level INTERNAL = new CustomLevel("INTERNAL", -1000);
-    
     private static volatile LogItCore instance = null;
     
     private final LogItPlugin plugin;

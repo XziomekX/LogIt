@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.storage;
 
+import io.github.lucaseasedup.logit.CustomLevel;
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.io.IOException;
@@ -368,7 +369,7 @@ public final class SqliteStorage extends Storage
     
     private ResultSet executeQuery(String sql) throws SQLException
     {
-        LogItCore.getInstance().log(LogItCore.INTERNAL, "(Q) " + sql);
+        LogItCore.getInstance().log(CustomLevel.INTERNAL, "(Q) " + sql);
         
         return statement.executeQuery(sql);
     }
@@ -377,7 +378,7 @@ public final class SqliteStorage extends Storage
     {
         if (!isAutobatchEnabled())
         {
-            LogItCore.getInstance().log(LogItCore.INTERNAL, "(S) " + sql);
+            LogItCore.getInstance().log(CustomLevel.INTERNAL, "(S) " + sql);
             
             return statement.execute(sql);
         }
@@ -389,7 +390,7 @@ public final class SqliteStorage extends Storage
     
     private void addBatch(String sql) throws SQLException
     {
-        LogItCore.getInstance().log(LogItCore.INTERNAL, "(BS) " + sql);
+        LogItCore.getInstance().log(CustomLevel.INTERNAL, "(BS) " + sql);
         
         statement.addBatch(sql);
     }
