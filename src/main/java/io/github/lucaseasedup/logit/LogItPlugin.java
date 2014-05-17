@@ -216,7 +216,7 @@ public final class LogItPlugin extends JavaPlugin
         return parseMessage(message);
     }
     
-    public static String parseMessage(String message)
+    private static String parseMessage(String message)
     {
         message = message.replace("%bukkit_version%", Bukkit.getBukkitVersion());
         message = message.replace("%logit_version%",
