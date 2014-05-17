@@ -41,6 +41,9 @@ import org.mcstats.MetricsLite;
 
 public final class LogItPlugin extends JavaPlugin
 {
+    /**
+     * Internal method. Do not call directly.
+     */
     @Override
     public void onEnable()
     {
@@ -78,6 +81,9 @@ public final class LogItPlugin extends JavaPlugin
         }
     }
     
+    /**
+     * Internal method. Do not call directly.
+     */
     @Override
     public void onDisable()
     {
