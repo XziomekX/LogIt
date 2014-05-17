@@ -267,7 +267,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
             throw new IllegalArgumentException();
         
         if (isRegistered(username))
-            throw new AccountAlreadyExistsException();
+            throw new AccountAlreadyExistsException(username);
         
         Storage.Entry entry = new Storage.Entry();
         String now = String.valueOf(System.currentTimeMillis() / 1000L);

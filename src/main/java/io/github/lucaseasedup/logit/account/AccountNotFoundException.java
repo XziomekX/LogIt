@@ -20,22 +20,9 @@ package io.github.lucaseasedup.logit.account;
 
 public class AccountNotFoundException extends RuntimeException
 {
-    /**
-     * Creates a new instance of
-     * <code>AccountNotFoundException</code> without detail message.
-     */
-    public AccountNotFoundException()
+    public AccountNotFoundException(String username)
     {
+        super(username);
     }
     
-    /**
-     * Constructs an instance of
-     * <code>AccountNotFoundException</code> with the specified detail message.
-     *
-     * @param msg The detail message.
-     */
-    public AccountNotFoundException(String msg)
-    {
-        super(msg);
-    }
 }

@@ -379,7 +379,7 @@ public final class SessionManager extends LogItCoreObject
         Session session = getSession(username);
         
         if (session == null)
-            throw new SessionNotFoundException();
+            throw new SessionNotFoundException(username);
         
         if (session.isAlive())
             return CancelledState.NOT_CANCELLED;
@@ -445,7 +445,7 @@ public final class SessionManager extends LogItCoreObject
         Session session = getSession(username);
         
         if (session == null)
-            throw new SessionNotFoundException();
+            throw new SessionNotFoundException(username);
         
         if (!session.isAlive())
             return CancelledState.NOT_CANCELLED;

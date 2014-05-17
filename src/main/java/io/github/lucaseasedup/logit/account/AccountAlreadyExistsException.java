@@ -20,22 +20,9 @@ package io.github.lucaseasedup.logit.account;
 
 public class AccountAlreadyExistsException extends RuntimeException
 {
-    /**
-     * Creates a new instance of
-     * <code>AccountAlreadyExistsException</code> without detail message.
-     */
-    public AccountAlreadyExistsException()
+    public AccountAlreadyExistsException(String username)
     {
+        super(username);
     }
     
-    /**
-     * Constructs an instance of
-     * <code>AccountAlreadyExistsException</code> with the specified detail message.
-     *
-     * @param msg The detail message.
-     */
-    public AccountAlreadyExistsException(String msg)
-    {
-        super(msg);
-    }
 }
