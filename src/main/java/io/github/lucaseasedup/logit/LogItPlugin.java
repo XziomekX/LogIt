@@ -109,18 +109,27 @@ public final class LogItPlugin extends JavaPlugin
     }
     
     /**
-     * Loads messages from file.
+     * Reloads message files.
      * 
-     * <p> First, it tries to load messages_{locale}.properties from the data folder
-     * (where {locale} is the "locale" config property). If it does not exist,
-     * it tries to load messages.properties. If this fails too, it does it all again
-     * but within JAR file. If the JAR file does not contain any of the aforementioned files,
-     * it throws FileNotFoundException.
+     * <p> First, it tries to load local <i>messages_{locale}.properties</i>
+     * from the plugin JAR (where <i>{locale}</i> is a value of the <i>locale</i>
+     * config property). If the file does not exist, it tries to load global
+     * <i>messages.properties</i>. If this fails too,
+     * {@code FileNotFoundException} will be thrown.
+     * 
+     * <p> This method will also try to load custom
+     * global/local message files from the <i>lang</i> directory if present,
+     * that will be merged with built-in message files.
      * 
      * @throws FileNotFoundException if no message file has been found.
      * @throws IOException           if there was an error while reading.
      */
-    public void loadMessages() throws IOException
+    public void reloadMessages() throws FileNotFoundException, IOException
+    {
+        loadMessages();
+    }
+    
+    private void loadMessages() throws FileNotFoundException, IOException
     {
         String suffix = "_" + getConfig().getString("locale", "en");
         

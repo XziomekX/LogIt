@@ -493,7 +493,7 @@ public final class LogItCore
         
         try
         {
-            plugin.loadMessages();
+            plugin.reloadMessages();
         }
         catch (IOException ex)
         {
