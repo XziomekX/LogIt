@@ -52,10 +52,10 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 && ((args.length <= 2 && disablePasswords)
                         || (args.length <= 3 && !disablePasswords)))
         {
-            boolean playerNeedsToLogIn =
-                    getCore().isPlayerForcedToLogIn(p) && !getSessionManager().isSessionAlive(p);
-            
-            if (p != null && (playerNeedsToLogIn || !p.hasPermission("logit.register.others")))
+            if (p != null && (
+                   (getCore().isPlayerForcedToLogIn(p) && !getSessionManager().isSessionAlive(p))
+                || !p.hasPermission("logit.register.others")
+            ))
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
             }
