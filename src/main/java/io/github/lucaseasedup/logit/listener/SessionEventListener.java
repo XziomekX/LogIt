@@ -25,8 +25,6 @@ import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.session.SessionEndEvent;
 import io.github.lucaseasedup.logit.session.SessionStartEvent;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
-import java.io.IOException;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -118,14 +116,6 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
     
     private void updateLastActiveDate(String username)
     {
-        try
-        {
-            getAccountManager().updateLastActiveDate(username);
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING,
-                    "Could not update last active date for player: "+ username + ".", ex);
-        }
+        getAccountManager().updateLastActiveDate(username);
     }
 }

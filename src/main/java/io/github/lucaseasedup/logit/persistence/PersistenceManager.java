@@ -20,14 +20,13 @@ package io.github.lucaseasedup.logit.persistence;
 
 import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import java.io.IOException;
+import io.github.lucaseasedup.logit.ReportedException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import org.bukkit.entity.Player;
 
 /**
@@ -59,18 +58,26 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      * @param player the player whose data will be serialized.
      * @param clazz  serializer class.
      * 
-     * @throws IllegalArgumentException     if {@code player} or {@code clazz} is {@code null}.
      * @throws ReflectiveOperationException if serializer construction failed.
-     * @throws IOException                  if an I/O error occured while updating the persistence.
+     * 
+     * @throws IllegalArgumentException     if {@code player} or
+     *                                      {@code clazz} is {@code null}.
+     *                                      
+     * @throws ReportedException            if an I/O error occured,
+     *                                      and it was reported to the logger.
      */
     public void serializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
-            throws ReflectiveOperationException, IOException
+            throws ReflectiveOperationException
     {
         if (player == null || clazz == null)
             throw new IllegalArgumentException();
         
         String username = player.getName().toLowerCase();
         PersistenceSerializer serializer = getSerializer(clazz);
+        
+        if (serializer == null)
+            return;
+        
         Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
         
         if (persistence == null)
@@ -86,11 +93,13 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
     
     /**
      * Serializes player data using all enabled serializers registered
-     * using {@link #registerSerializer} method.
+     * using the {@link #registerSerializer} method.
      * 
      * @param player the player whose data will be serialized.
      * 
      * @throws IllegalArgumentException if {@code player} is {@code null}.
+     * @throws ReportedException        if an I/O error occured,
+     *                                  and it was reported to the logger.
      */
     public void serialize(Player player)
     {
@@ -98,41 +107,27 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
             throw new IllegalArgumentException();
         
         String username = player.getName().toLowerCase();
+        Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
         
-        try
+        if (persistence == null)
+            return;
+        
+        for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
         {
-            Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
+            PersistenceSerializer serializer = getSerializer(clazz);
             
-            if (persistence == null)
-                return;
+            if (serializer == null)
+                continue;
             
-            for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
+            if (!isSerializedUsing(persistence, serializer))
             {
-                try
-                {
-                    PersistenceSerializer serializer = getSerializer(clazz);
-                    
-                    if (!isSerializedUsing(persistence, serializer))
-                    {
-                        serializer.serialize(persistence, player);
-                    }
-                }
-                catch (ReflectiveOperationException ex)
-                {
-                    log(Level.WARNING,
-                            "Could not obtain persistence serializer: " + clazz.getName(), ex);
-                }
+                serializer.serialize(persistence, player);
             }
-            
-            getAccountManager().updateAccountPersistence(username, persistence);
         }
-        catch (IOException ex)
-        {
-            log(Level.WARNING,
-                    "Could not serialize persistence for player: " + player.getName(), ex);
-        }
+        
+        getAccountManager().updateAccountPersistence(username, persistence);
     }
-
+    
     /**
      * Unserializes player data using the specified persistence serializer
      * 
@@ -142,18 +137,26 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      * @param player the player whose data will be unserialized.
      * @param clazz  serializer class.
      * 
-     * @throws IllegalArgumentException     if {@code player} or {@code clazz} is {@code null}.
      * @throws ReflectiveOperationException if serializer construction failed.
-     * @throws IOException                  if an I/O error occured while updating the persistence.
+     * 
+     * @throws IllegalArgumentException     if {@code player} or
+     *                                      {@code clazz} is {@code null}.
+     *                                      
+     * @throws ReportedException            if an I/O error occured,
+     *                                      and it was reported to the logger.
      */
     public void unserializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
-            throws ReflectiveOperationException, IOException
+            throws ReflectiveOperationException
     {
         if (player == null || clazz == null)
             throw new IllegalArgumentException();
         
         String username = player.getName().toLowerCase();
         PersistenceSerializer serializer = getSerializer(clazz);
+        
+        if (serializer == null)
+            return;
+        
         Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
         
         if (persistence == null)
@@ -174,11 +177,13 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
 
     /**
      * Unserializes player data using all enabled serializers registered
-     * using {@link #registerSerializer} method.
+     * using the {@link #registerSerializer} method.
      * 
      * @param player the player whose data will be unserialized.
      * 
      * @throws IllegalArgumentException if {@code player} is {@code null}.
+     * @throws ReportedException        if an I/O error occured,
+     *                                  and it was reported to the logger.
      */
     public void unserialize(Player player)
     {
@@ -187,51 +192,35 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
         
         String username = player.getName().toLowerCase();
         Set<Key> keysToErase = new HashSet<>();
+        Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
         
-        try
+        if (persistence == null)
+            return;
+        
+        for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
         {
-            Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
+            PersistenceSerializer serializer = getSerializer(clazz);
             
-            if (persistence == null)
-                return;
+            if (serializer == null)
+                continue;
             
-            for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
+            if (isSerializedUsing(persistence, serializer))
             {
-                PersistenceSerializer serializer;
+                for (Key key : getSerializerKeys(serializer.getClass()))
+                {
+                    keysToErase.add(key);
+                }
                 
-                try
-                {
-                    serializer = getSerializer(clazz);
-                    
-                    if (isSerializedUsing(persistence, serializer))
-                    {
-                        for (Key key : getSerializerKeys(serializer.getClass()))
-                        {
-                            keysToErase.add(key);
-                        }
-                        
-                        serializer.unserialize(persistence, player);
-                    }
-                }
-                catch (ReflectiveOperationException ex)
-                {
-                    log(Level.WARNING,
-                            "Could not obtain persistence serializer: " + clazz.getName(), ex);
-                }
+                serializer.unserialize(persistence, player);
             }
-            
-            for (Key key : keysToErase)
-            {
-                persistence.put(key.name(), key.defaultValue());
-            }
-            
-            getAccountManager().updateAccountPersistence(username, persistence);
         }
-        catch (IOException ex)
+        
+        for (Key key : keysToErase)
         {
-            log(Level.WARNING,
-                    "Could not unserialize persistence for player: " + player.getName(), ex);
+            persistence.put(key.name(), key.defaultValue());
         }
+        
+        getAccountManager().updateAccountPersistence(username, persistence);
     }
     
     /**
@@ -239,10 +228,11 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      * 
      * @param clazz the serializer class to be registered.
      * 
-     * @return {@code false} if the serializer class was already registered; {@code true} otherwise.
+     * @return {@code false} if the serializer class was already registered;
+     *         {@code true} otherwise.
      * 
-     * @throws IllegalArgumentException     if {@code clazz} is {@code null}.
      * @throws ReflectiveOperationException if serializer constructor invocation failed.
+     * @throws IllegalArgumentException     if {@code clazz} is {@code null}.
      * 
      */
     public boolean registerSerializer(Class<? extends PersistenceSerializer> clazz)
@@ -264,7 +254,8 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      * 
      * @param clazz the serializer class to be unregistered.
      * 
-     * @return {@code false} if the serializer class was not registered; {@code true} otherwise.
+     * @return {@code false} if the serializer class was not registered;
+     *         {@code true} otherwise.
      * 
      * @throws IllegalArgumentException if {@code clazz} is {@code null}.
      */
@@ -281,23 +272,32 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
         return true;
     }
     
+    /**
+     * Returns an instance of a serializer based on the provided class.
+     * 
+     * @param clazz the serializer class.
+     * 
+     * @return the serializer instance, or {@code null}
+     *         if this serializer class has not been
+     *         registered in this {@code PersistenceManager}.
+     * 
+     * @throws IllegalArgumentException if {@code clazz} is {@code null}.
+     */
     public PersistenceSerializer getSerializer(Class<? extends PersistenceSerializer> clazz)
-            throws ReflectiveOperationException
     {
-        PersistenceSerializer serializer = serializers.get(clazz);
+        if (clazz == null)
+            throw new IllegalArgumentException();
         
-        if (serializer == null)
-        {
-            return constructSerializer(clazz);
-        }
-        
-        return serializer;
+        return serializers.get(clazz);
     }
     
     @SuppressWarnings("incomplete-switch")
     private boolean isSerializedUsing(Map<String, String> persistence,
                                       PersistenceSerializer serializer)
     {
+        if (persistence == null || serializer == null)
+            throw new IllegalArgumentException();
+        
         for (Key key : getSerializerKeys(serializer.getClass()))
         {
             String value = persistence.get(key.name());
@@ -393,18 +393,21 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
     private Key[] getSerializerKeys(Class<? extends PersistenceSerializer> clazz)
     {
         if (clazz == null)
-            return NO_KEYS;
+            throw new IllegalArgumentException();
         
         Keys keys = clazz.getAnnotation(Keys.class);
         
         if (keys == null)
-            return NO_KEYS;
+            return new Key[0];
         
         return keys.value();
     }
     
     private boolean containsKey(Class<? extends PersistenceSerializer> clazz, String keyName)
     {
+        if (clazz == null || keyName == null)
+            throw new IllegalArgumentException();
+        
         Key[] keys = getSerializerKeys(clazz);
         
         for (Key key : keys)
@@ -421,10 +424,11 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
     private static PersistenceSerializer constructSerializer(Class<? extends PersistenceSerializer> clazz)
             throws ReflectiveOperationException
     {
+        if (clazz == null)
+            throw new IllegalArgumentException();
+        
         return clazz.getConstructor().newInstance();
     }
-    
-    private static final Key[] NO_KEYS = new Key[0];
     
     private Map<Class<? extends PersistenceSerializer>, PersistenceSerializer> serializers;
 }

@@ -649,15 +649,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
     
     private void subcommandAccountCount(CommandSender sender)
     {
-        try
-        {
-            sender.sendMessage(getMessage("ACCOUNT_COUNT")
-                    .replace("%num%", String.valueOf(getAccountManager().countAccounts())));
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, ex);
-        }
+        sender.sendMessage(getMessage("ACCOUNT_COUNT")
+                .replace("%num%", String.valueOf(getAccountManager().countAccounts())));
     }
     
     private void subcommandAccountStatus(CommandSender sender, String username)

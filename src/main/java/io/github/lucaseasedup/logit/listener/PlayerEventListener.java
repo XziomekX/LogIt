@@ -30,10 +30,8 @@ import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.session.Session;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -65,26 +63,17 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         String username = player.getName().toLowerCase();
         
         AccountKeys keys = getAccountManager().getKeys();
-        Storage.Entry accountData = null;
+        Storage.Entry accountData = getAccountManager().queryAccount(username,
+                Arrays.asList(keys.username(), keys.is_locked()));
         
-        try
+        if (accountData != null)
         {
-            accountData = getAccountManager().queryAccount(username,
-                    Arrays.asList(keys.username(), keys.is_locked()));
-            
-            if (accountData != null)
+            if ("1".equals(accountData.get(keys.is_locked())))
             {
-                if ("1".equals(accountData.get(keys.is_locked())))
-                {
-                    event.disallow(Result.KICK_OTHER, getMessage("ACCLOCK_SUCCESS_SELF"));
-                    
-                    return;
-                }
+                event.disallow(Result.KICK_OTHER, getMessage("ACCLOCK_SUCCESS_SELF"));
+                
+                return;
             }
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, ex);
         }
         
         int minUsernameLength = getConfig().getInt("username.min-length");
@@ -165,46 +154,37 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         long validnessTime = getConfig().getTime("login-sessions.validness-time", TimeUnit.SECONDS);
         
-        AccountKeys keys = getAccountManager().getKeys();
-        Storage.Entry accountData = null;
-        
         if (getConfig().getBoolean("login-sessions.enabled") && validnessTime > 0)
         {
-            try
+            AccountKeys keys = getAccountManager().getKeys();
+            Storage.Entry accountData = getAccountManager().queryAccount(username,
+                    Arrays.asList(keys.username(), keys.login_session()));
+            
+            if (accountData != null)
             {
-                accountData = getAccountManager().queryAccount(username,
-                        Arrays.asList(keys.username(), keys.login_session()));
+                String loginSession = accountData.get(keys.login_session());
                 
-                if (accountData != null)
+                if (loginSession != null && !loginSession.isEmpty())
                 {
-                    String loginSession = accountData.get(keys.login_session());
+                    String[] loginSplit = loginSession.split(";");
                     
-                    if (loginSession != null && !loginSession.isEmpty())
+                    if (loginSplit.length == 2)
                     {
-                        String[] loginSplit = loginSession.split(";");
+                        String loginIp = loginSplit[0];
+                        int loginTime = Integer.parseInt(loginSplit[1]);
+                        int currentTime = (int) (System.currentTimeMillis() / 1000L);
                         
-                        if (loginSplit.length == 2)
+                        if (ip.equals(loginIp) && currentTime - loginTime < validnessTime
+                                && !getSessionManager().isSessionAlive(username))
                         {
-                            String loginIp = loginSplit[0];
-                            int loginTime = Integer.parseInt(loginSplit[1]);
-                            int currentTime = (int) (System.currentTimeMillis() / 1000L);
-                            
-                            if (ip.equals(loginIp) && currentTime - loginTime < validnessTime
-                                    && !getSessionManager().isSessionAlive(username))
-                            {
-                                getSessionManager().startSession(username);
-                            }
+                            getSessionManager().startSession(username);
                         }
                     }
                 }
-                else if (getConfig().getBoolean("waiting-room.enabled"))
-                {
-                    player.teleport(getConfig().getLocation("waiting-room.location").toBukkitLocation());
-                }
             }
-            catch (IOException ex)
+            else if (getConfig().getBoolean("waiting-room.enabled"))
             {
-                log(Level.WARNING, ex);
+                player.teleport(getConfig().getLocation("waiting-room.location").toBukkitLocation());
             }
         }
         

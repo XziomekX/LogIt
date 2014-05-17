@@ -23,8 +23,6 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.sendMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import java.io.IOException;
-import java.util.logging.Level;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -93,14 +91,7 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
                     
                     if (getConfig().getBoolean("login-sessions.enabled"))
                     {
-                        try
-                        {
-                            getAccountManager().eraseLoginSession(p.getName());
-                        }
-                        catch (IOException ex)
-                        {
-                            log(Level.WARNING, ex);
-                        }
+                        getAccountManager().eraseLoginSession(p.getName());
                     }
                 }
             }

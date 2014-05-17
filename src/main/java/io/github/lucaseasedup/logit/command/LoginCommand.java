@@ -28,11 +28,9 @@ import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.security.HashingAlgorithm;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -127,26 +125,13 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             String username = p.getName().toLowerCase();
             AccountKeys keys = getAccountManager().getKeys();
-            Storage.Entry accountData;
-            
-            try
-            {
-                accountData = getAccountManager().queryAccount(username, Arrays.asList(
-                        keys.username(),
-                        keys.salt(),
-                        keys.password(),
-                        keys.hashing_algorithm(),
-                        keys.ip()
-                    ));
-            }
-            catch (IOException ex)
-            {
-                log(Level.WARNING, ex);
-                
-                sender.sendMessage(getMessage("START_SESSION_FAIL_SELF"));
-                
-                return true;
-            }
+            Storage.Entry accountData = getAccountManager().queryAccount(username, Arrays.asList(
+                    keys.username(),
+                    keys.salt(),
+                    keys.password(),
+                    keys.hashing_algorithm(),
+                    keys.ip()
+                ));
             
             if (accountData == null)
             {

@@ -99,8 +99,9 @@ public final class LogItCore
     /**
      * Starts up the LogIt core.
      * 
-     * @throws IllegalStateException  if the core has already been started.
-     * @throws FatalReportedException if critical error occured and LogIt could not start.
+     * @throws FatalReportedException if a critical error occured
+     *                                and LogIt could not start.
+     * @throws IllegalStateException  if the LogIt core is already running.
      * 
      * @see #isStarted()
      * @see #stop()
@@ -339,7 +340,7 @@ public final class LogItCore
     /**
      * Stops the LogIt core.
      * 
-     * @throws IllegalStateException if the core has already been stopped.
+     * @throws IllegalStateException if the LogIt core is not running.
      * 
      * @see #isStarted()
      * @see #start()
@@ -393,10 +394,15 @@ public final class LogItCore
         log(Level.FINE, getMessage("PLUGIN_STOP_SUCCESS"));
     }
     
+    /**
+     * Disposes the LogIt core.
+     * 
+     * @throws IllegalStateException if the LogIt core is running.
+     */
     private void dispose()
     {
         if (isStarted())
-            throw new IllegalStateException();
+            throw new IllegalStateException("Cannot dispose the LogIt core while it's running.");
         
         if (config != null)
         {
@@ -461,9 +467,8 @@ public final class LogItCore
     /**
      * Restarts the LogIt core.
      * 
-     * @throws IllegalStateException  if the LogIt core has not been started yet
-     *                                in order to be restarted obviously.
      * @throws FatalReportedException if the LogIt core could not be started again.
+     * @throws IllegalStateException  if the LogIt core is not running.
      * 
      * @see #isStarted()
      * @see #start()
@@ -857,7 +862,7 @@ public final class LogItCore
             catch (ReflectiveOperationException ex)
             {
                 log(Level.SEVERE,
-                        "Could not register persistence serializer: " + clazz.getSimpleName(), ex);
+                        "Could not register persistence serializer: " + clazz.getSimpleName());
                 
                 FatalReportedException.throwNew(ex);
             }
@@ -868,7 +873,7 @@ public final class LogItCore
             {
                 persistenceManager.unserializeUsing(player, clazz);
             }
-            catch (ReflectiveOperationException | IOException ex)
+            catch (ReflectiveOperationException ex)
             {
                 log(Level.WARNING,
                         "Could not unserialize persistence for player: " + player.getName(), ex);

@@ -97,21 +97,34 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * 
      * @param username the username.
      * 
-     * @return a storage entry with account data, or {@code null}
-     *         if there was no account with the given username.
+     * @return a storage entry with account data; {@code null}
+     *         if there was no account with the given username
+     *         or an I/O error occured.
      * 
-     * @throws IOException              if an I/O error occurred.
      * @throws IllegalArgumentException if {@code username} is {@code null}.
+     * @throws ReportedException        if an I/O error occurred,
+     *                                  and it was reported to the logger.
      */
-    public Storage.Entry queryAccount(String username) throws IOException
+    public Storage.Entry queryAccount(String username)
     {
         if (username == null)
             throw new IllegalArgumentException();
         
-        List<Storage.Entry> entries = storage.selectEntries(unit,
-                new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
+        List<Storage.Entry> entries = null;
         
-        if (entries.isEmpty())
+        try
+        {
+            entries = storage.selectEntries(unit,
+                    new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, ex);
+            
+            ReportedException.throwNew(ex);
+        }
+        
+        if (entries == null || entries.isEmpty())
             return null;
         
         return entries.get(0);
@@ -127,13 +140,15 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @param username  the username.
      * @param queryKeys the keys to be returned.
      * 
-     * @return a storage entry with account data, or {@code null}
-     *         if there was no account with the given username.
+     * @return a storage entry with account data; {@code null}
+     *         if there was no account with the given username
+     *         or an I/O error occured.
      * 
-     * @throws IOException              if an I/O error occurred.
      * @throws IllegalArgumentException if {@code username} is {@code null}.
+     * @throws ReportedException        if an I/O error occurred,
+     *                                  and it was reported to the logger.
      */
-    public Storage.Entry queryAccount(String username, List<String> queryKeys) throws IOException
+    public Storage.Entry queryAccount(String username, List<String> queryKeys)
     {
         if (username == null)
             throw new IllegalArgumentException();
@@ -143,10 +158,21 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
             queryKeys.add(keys.username());
         }
         
-        List<Storage.Entry> entries = storage.selectEntries(unit, queryKeys,
-                new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
+        List<Storage.Entry> entries = null;
         
-        if (entries.isEmpty())
+        try
+        {
+            entries = storage.selectEntries(unit, queryKeys,
+                    new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, ex);
+            
+            ReportedException.throwNew(ex);
+        }
+        
+        if (entries == null || entries.isEmpty())
             return null;
         
         return entries.get(0);
@@ -159,7 +185,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @param username the username.
      * 
      * @return {@code true} if the account has been registered;
-     *         {@code false} otherwise.
+     *         {@code false} otherwise or if an I/O error occured.
      * 
      * @throws IllegalArgumentException if {@code username} is {@code null}.
      * @throws ReportedException        if an I/O error occured,
@@ -170,9 +196,26 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         if (username == null)
             throw new IllegalArgumentException();
         
+        return queryAccount(username, Arrays.asList(keys.username())) != null;
+    }
+    
+    /**
+     * Fetches all registered usernames in the underlying storage unit.
+     * 
+     * @return a {@code Set} of usernames, or
+     *         {@code null} if an I/O error occured.
+     * 
+     * @throws ReportedException if an I/O error occured,
+     *                           and it was reported to the logger.
+     */
+    public Set<String> getRegisteredUsernames()
+    {
+        Set<String> usernames = new HashSet<>();
+        List<Storage.Entry> entries = null;
+        
         try
         {
-            return queryAccount(username, Arrays.asList(keys.username())) != null;
+            entries = storage.selectEntries(unit, Arrays.asList(keys.username()));
         }
         catch (IOException ex)
         {
@@ -181,20 +224,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
             ReportedException.throwNew(ex);
         }
         
-        return false;
-    }
-    
-    /**
-     * Fetches all registered usernames in the underlying storage unit.
-     * 
-     * @return a {@code Set} of usernames.
-     * 
-     * @throws IOException if an I/O error occured.
-     */
-    public Set<String> getRegisteredUsernames() throws IOException
-    {
-        Set<String> usernames = new HashSet<>();
-        List<Storage.Entry> entries = storage.selectEntries(unit, Arrays.asList(keys.username()));
+        if (entries == null)
+            return null;
         
         for (Storage.Entry entry : entries)
         {
@@ -358,7 +389,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @param password the password to be checked.
      * 
      * @return {@code true} if the account exists and the password is correct;
-     *         {@code false} otherwise.
+     *         {@code false} otherwise or if an I/O error occured.
      * 
      * @throws IllegalArgumentException if {@code username} or
      *                                  {@code password} is {@code null}.
@@ -374,50 +405,39 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         if (getConfig().getBoolean("password.disable-passwords"))
             return true;
         
-        try
+        Storage.Entry entry = queryAccount(username, Arrays.asList(
+                keys.username(),
+                keys.salt(),
+                keys.password(),
+                keys.hashing_algorithm()
+            ));
+        
+        if (entry == null)
+            return false;
+        
+        String actualHashedPassword = entry.get(keys.password());
+        HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
+        
+        if (!getConfig().getBoolean("password.global-hashing-algorithm"))
         {
-            Storage.Entry entry = queryAccount(username, Arrays.asList(
-                    keys.username(),
-                    keys.salt(),
-                    keys.password(),
-                    keys.hashing_algorithm()
-                ));
+            String userAlgorithm = entry.get(keys.hashing_algorithm());
             
-            if (entry == null)
-                return false;
-            
-            String actualHashedPassword = entry.get(keys.password());
-            HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
-            
-            if (!getConfig().getBoolean("password.global-hashing-algorithm"))
+            if (userAlgorithm != null)
             {
-                String userAlgorithm = entry.get(keys.hashing_algorithm());
-                
-                if (userAlgorithm != null)
-                {
-                    algorithm = HashingAlgorithm.decode(userAlgorithm);
-                }
+                algorithm = HashingAlgorithm.decode(userAlgorithm);
             }
-            
-            if (getConfig().getBoolean("password.use-salt"))
-            {
-                String actualSalt = entry.get(keys.salt());
-                
-                return getCore().checkPassword(password, actualHashedPassword, actualSalt, algorithm);
-            }
-            else
-            {
-                return getCore().checkPassword(password, actualHashedPassword, algorithm);
-            }
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, ex);
-            
-            ReportedException.throwNew(ex);
         }
         
-        return false;
+        if (getConfig().getBoolean("password.use-salt"))
+        {
+            String actualSalt = entry.get(keys.salt());
+            
+            return getCore().checkPassword(password, actualHashedPassword, actualSalt, algorithm);
+        }
+        else
+        {
+            return getCore().checkPassword(password, actualHashedPassword, algorithm);
+        }
     }
     
     /**
@@ -531,7 +551,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * 
      * @param ip the IP address.
      * 
-     * @return number of accounts with the given IP.
+     * @return number of accounts with the given IP;
+     *         {@code -1} if an I/O error occured.
+     * 
+     * @throws ReportedException if an I/O error occured,
+     *                           and it was reported to the logger.
      */
     public int countAccountsWithIp(String ip)
     {
@@ -553,16 +577,20 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
             log(Level.WARNING, ex);
             
             ReportedException.throwNew(ex);
+            
+            return -1;
         }
-        
-        return 0;
     }
     
     /**
      * Checks how many unique, not empty, IP addresses are
      * in the underlying storage unit.
      * 
-     * @return number of unique IP addresses.
+     * @return number of unique IP addresses;
+     *         {@code -1} if an I/O error occured.
+     * 
+     * @throws ReportedException if an I/O error occured,
+     *                           and it was reported to the logger.
      */
     public int countUniqueIps()
     {
@@ -583,6 +611,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
             log(Level.WARNING, ex);
             
             ReportedException.throwNew(ex);
+            
+            return -1;
         }
         
         return new HashSet<>(ips).size();
@@ -594,13 +624,15 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * 
      * @param username the username.
      * 
-     * @return an e-mail address, or {@code null}
-     *         if no account with this username was found.
+     * @return an e-mail address; {@code null}
+     *         if no account with this username was found
+     *         or an I/O error occured.
      * 
-     * @throws IOException              if an I/O error occured.
      * @throws IllegalArgumentException if {@code username} is {@code null}.
+     * @throws ReportedException        if an I/O error occured,
+     *                                  and it was reported to the logger.
      */
-    public String getEmail(String username) throws IOException
+    public String getEmail(String username)
     {
         if (username == null)
             throw new IllegalArgumentException();
@@ -659,19 +691,30 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @param ip       the player IP address.
      * @param time     the UNIX time of when the login session was created.
      * 
-     * @throws IOException              if an I/O error occured.
      * @throws IllegalArgumentException if {@code username} or
      *                                  {@code ip} is {@code null},
      *                                  or {@code time} is negative.
+     *                                  
+     * @throws ReportedException        if an I/O error occured,
+     *                                  and it was reported to the logger.
      */
-    public void saveLoginSession(String username, String ip, long time) throws IOException
+    public void saveLoginSession(String username, String ip, long time)
     {
         if (username == null || ip == null || time < 0)
             throw new IllegalArgumentException();
         
-        updateEntry(username, new Storage.Entry.Builder()
-                .put(keys.login_session(), ip + ";" + time)
-                .build());
+        try
+        {
+            updateEntry(username, new Storage.Entry.Builder()
+                    .put(keys.login_session(), ip + ";" + time)
+                    .build());
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, ex);
+            
+            ReportedException.throwNew(ex);
+        }
     }
     
     /**
@@ -680,17 +723,27 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * 
      * @param username the username.
      * 
-     * @throws IOException              if an I/O error occured.
      * @throws IllegalArgumentException if {@code username} is {@code null}.
+     * @throws ReportedException        if an I/O error occured,
+     *                                  and it was reported to the logger.
      */
-    public void eraseLoginSession(String username) throws IOException
+    public void eraseLoginSession(String username)
     {
         if (username == null)
             throw new IllegalArgumentException();
         
-        updateEntry(username, new Storage.Entry.Builder()
-                .put(keys.login_session(), "")
-                .build());
+        try
+        {
+            updateEntry(username, new Storage.Entry.Builder()
+                    .put(keys.login_session(), "")
+                    .build());
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, ex);
+            
+            ReportedException.throwNew(ex);
+        }
     }
     
     /**
@@ -699,17 +752,29 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * 
      * @param username the username.
      * 
-     * @throws IOException              if an I/O error occured.
      * @throws IllegalArgumentException if {@code username} is {@code null}.
+     * @throws ReportedException        if an I/O error occured,
+     *                                  and it was reported to the logger.
      */
-    public void updateLastActiveDate(String username) throws IOException
+    public void updateLastActiveDate(String username)
     {
         if (username == null)
             throw new IllegalArgumentException();
         
-        updateEntry(username, new Storage.Entry.Builder()
-                .put(keys.last_active_date(), String.valueOf(System.currentTimeMillis() / 1000L))
-                .build());
+        long currentTimeSecs = System.currentTimeMillis() / 1000L;
+        
+        try
+        {
+            updateEntry(username, new Storage.Entry.Builder()
+                    .put(keys.last_active_date(), String.valueOf(currentTimeSecs))
+                    .build());
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, "Could not update last-active date for player: " + username, ex);
+            
+            ReportedException.throwNew(ex);
+        }
     }
     
     /**
@@ -718,13 +783,15 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * 
      * @param username the username.
      * 
-     * @return the persistence data, or {@code null}
-     *         if no account with this username was found.
+     * @return the persistence data; {@code null}
+     *         if no account with this username was found
+     *         or an I/O error occured.
      * 
-     * @throws IOException              if an I/O error occured.
      * @throws IllegalArgumentException if {@code username} is {@code null}.
+     * @throws ReportedException        if an I/O error occured,
+     *                                  and it was reported to the logger.
      */
-    public Map<String, String> getAccountPersistence(String username) throws IOException
+    public Map<String, String> getAccountPersistence(String username)
     {
         if (username == null)
             throw new IllegalArgumentException();
@@ -743,7 +810,19 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         if (persistenceBase64String != null)
         {
             String persistenceString = Base64.decode(persistenceBase64String);
-            persistence = IniUtils.unserialize(persistenceString).get("persistence");
+            
+            try
+            {
+                persistence = IniUtils.unserialize(persistenceString).get("persistence");
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, "Could not fetch persistence data for player: " + username, ex);
+                
+                ReportedException.throwNew(ex);
+                
+                return null;
+            }
             
             if (persistence == null)
             {
@@ -761,12 +840,13 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @param username    the username.
      * @param persistence the persistence data.
      * 
-     * @throws IOException              if an I/O error occured.
      * @throws IllegalArgumentException if {@code username} or
      *                                  {@code persistence} is {@code null}.
+     *                                  
+     * @throws ReportedException        if an I/O error occured,
+     *                                  and it was reported to the logger.
      */
     public void updateAccountPersistence(String username, Map<String, String> persistence)
-            throws IOException
     {
         if (username == null || persistence == null)
             throw new IllegalArgumentException();
@@ -775,21 +855,43 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         
         persistenceIni.put("persistence", persistence);
         
-        updateEntry(username, new Storage.Entry.Builder()
-                .put(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
-                .build());
+        try
+        {
+            updateEntry(username, new Storage.Entry.Builder()
+                    .put(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
+                    .build());
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, "Could not update persistence data for player: " + username, ex);
+            
+            ReportedException.throwNew(ex);
+        }
     }
     
     /**
      * Checks how many accounts are registered in the underlying storage unit.
      * 
-     * @return the number of accounts registered.
+     * @return the number of accounts registered;
+     *         {@code -1} if an I/O error occured.
      * 
-     * @throws IOException if an I/O error occured.
+     * @throws ReportedException if an I/O error occured,
+     *                           and it was reported to the logger.
      */
-    public int countAccounts() throws IOException
+    public int countAccounts()
     {
-        return storage.selectEntries(unit, Arrays.asList(keys.username())).size();
+        try
+        {
+            return storage.selectEntries(unit, Arrays.asList(keys.username())).size();
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, ex);
+            
+            ReportedException.throwNew(ex);
+        }
+        
+        return -1;
     }
     
     /**

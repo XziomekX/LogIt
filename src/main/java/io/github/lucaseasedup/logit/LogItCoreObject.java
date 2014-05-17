@@ -30,14 +30,14 @@ import java.io.File;
 import java.util.logging.Level;
 
 /**
- * Provides a convenient way for objects to interact with {@code LogItCore}.
+ * Provides a convenient way for objects to interact with the LogIt core.
  */
 public abstract class LogItCoreObject
 {
     /**
      * Constructs a new {@code LogItCoreObject}.
      * 
-     * @throws IllegalStateException if no LogItCore instance could be found.
+     * @throws IllegalStateException if no {@code LogItCore} instance could be found.
      */
     public LogItCoreObject()
     {

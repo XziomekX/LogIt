@@ -20,11 +20,10 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.locale.Locale;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
-import java.io.IOException;
-import java.util.logging.Level;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -68,6 +67,8 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
                 
                 try
                 {
+                    ReportedException.incrementRequestCount();
+                    
                     getAccountManager().saveLoginSession(p.getName(),
                             PlayerUtils.getPlayerIp(p), currentTime);
                     
@@ -76,10 +77,13 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
                     sender.sendMessage(getMessage("REMEMBER_SUCCESS").replace("%time%",
                             activeLocale.stringifySeconds((int) validnessTime)));
                 }
-                catch (IOException ex)
+                catch (ReportedException ex)
                 {
-                    log(Level.WARNING, ex);
                     sender.sendMessage(getMessage("REMEMBER_FAIL"));
+                }
+                finally
+                {
+                    ReportedException.decrementRequestCount();
                 }
             }
         }
