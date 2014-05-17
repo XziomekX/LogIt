@@ -174,7 +174,8 @@ public final class ProfileManager extends LogItCoreObject implements Disposable
         }
         else
         {
-            throw new RuntimeException("Incompatible field type: " + field.getClass().getSimpleName());
+            throw new RuntimeException("Incompatible field type: "
+                                       + field.getClass().getSimpleName());
         }
         
         getProfileConfiguration(playerName).set(fieldName, value);
@@ -186,7 +187,8 @@ public final class ProfileManager extends LogItCoreObject implements Disposable
         Field field = getField(fieldName);
         
         if (!(field instanceof IntegerField))
-            throw new RuntimeException("Incompatible field type: " + field.getClass().getSimpleName());
+            throw new RuntimeException("Incompatible field type: "
+                                       + field.getClass().getSimpleName());
         
         IntegerField integerField = (IntegerField) field;
         
@@ -203,7 +205,8 @@ public final class ProfileManager extends LogItCoreObject implements Disposable
         Field field = getField(fieldName);
         
         if (!(field instanceof FloatField))
-            throw new RuntimeException("Incompatible field type: " + field.getClass().getSimpleName());
+            throw new RuntimeException("Incompatible field type: "
+                                       + field.getClass().getSimpleName());
         
         FloatField floatField = (FloatField) field;
         

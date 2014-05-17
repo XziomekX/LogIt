@@ -52,8 +52,10 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 && ((args.length <= 2 && disablePasswords)
                         || (args.length <= 3 && !disablePasswords)))
         {
-            if (p != null && ((getCore().isPlayerForcedToLogIn(p) && !getSessionManager().isSessionAlive(p))
-                    || !p.hasPermission("logit.register.others")))
+            boolean playerNeedsToLogIn =
+                    getCore().isPlayerForcedToLogIn(p) && !getSessionManager().isSessionAlive(p);
+            
+            if (p != null && (playerNeedsToLogIn || !p.hasPermission("logit.register.others")))
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
             }
@@ -93,32 +95,34 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (!getAccountManager().createAccount(args[1], password).isCancelled())
+                    if (getAccountManager().createAccount(args[1], password).isCancelled())
                     {
-                        sendMessage(args[1], getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
-                        sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_OTHERS")
-                                .replace("%player%", args[1]));
+                        return true;
+                    }
+                    
+                    sendMessage(args[1], getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
+                    sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_OTHERS")
+                            .replace("%player%", args[1]));
+                    
+                    if (isPlayerOnline(args[1]))
+                    {
+                        getAccountManager().attachIp(args[1], getPlayerIp(getPlayer(args[1])));
                         
-                        if (isPlayerOnline(args[1]))
+                        if (!getSessionManager().startSession(args[1]).isCancelled())
                         {
-                            getAccountManager().attachIp(args[1], getPlayerIp(getPlayer(args[1])));
+                            sendMessage(args[1], getMessage("START_SESSION_SUCCESS_SELF"));
+                            sender.sendMessage(getMessage("START_SESSION_SUCCESS_OTHERS")
+                                    .replace("%player%", args[1]));
+                        }
+                        
+                        if (getConfig().getBoolean("waiting-room.enabled")
+                                && getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
+                        {
+                            Location newbieTeleportLocation =
+                                    getConfig().getLocation("waiting-room.newbie-teleport.location")
+                                            .toBukkitLocation();
                             
-                            if (!getSessionManager().startSession(args[1]).isCancelled())
-                            {
-                                sendMessage(args[1], getMessage("START_SESSION_SUCCESS_SELF"));
-                                sender.sendMessage(getMessage("START_SESSION_SUCCESS_OTHERS")
-                                        .replace("%player%", args[1]));
-                            }
-                            
-                            if (getConfig().getBoolean("waiting-room.enabled")
-                                    && getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
-                            {
-                                Location newbieTeleportLocation =
-                                        getConfig().getLocation("waiting-room.newbie-teleport.location")
-                                                .toBukkitLocation();
-                                
-                                getPlayer(args[1]).teleport(newbieTeleportLocation);
-                            }
+                            getPlayer(args[1]).teleport(newbieTeleportLocation);
                         }
                     }
                 }
@@ -191,37 +195,39 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (!getAccountManager().createAccount(p.getName(), password).isCancelled())
+                    if (getAccountManager().createAccount(p.getName(), password).isCancelled())
                     {
-                        sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
+                        return true;
+                    }
+                    
+                    sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
+                    
+                    getAccountManager().attachIp(p.getName(), getPlayerIp(p));
+                    
+                    if (!getSessionManager().startSession(p.getName()).isCancelled())
+                    {
+                        sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
+                    }
+                    
+                    if (getConfig().getBoolean("waiting-room.enabled")
+                            && getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
+                    {
+                        Location newbieTeleportLocation =
+                                getConfig().getLocation("waiting-room.newbie-teleport.location")
+                                        .toBukkitLocation();
                         
-                        getAccountManager().attachIp(p.getName(), getPlayerIp(p));
-                        
-                        if (!getSessionManager().startSession(p.getName()).isCancelled())
-                        {
-                            sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
-                        }
-                        
-                        if (getConfig().getBoolean("waiting-room.enabled")
-                                && getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
-                        {
-                            Location newbieTeleportLocation =
-                                    getConfig().getLocation("waiting-room.newbie-teleport.location")
-                                            .toBukkitLocation();
-                            
-                            p.teleport(newbieTeleportLocation);
-                        }
-                        
-                        if (getConfig().getBoolean("login-sessions.enabled"))
-                        {
-                            sender.sendMessage(getMessage("REMEMBER_PROMPT"));
-                        }
-                        
-                        if (getConfig().getBoolean("password-recovery.prompt-to-add-email")
-                                && getConfig().getBoolean("password-recovery.enabled"))
-                        {
-                            sender.sendMessage(getMessage("NO_EMAIL_SET_REMINDER"));
-                        }
+                        p.teleport(newbieTeleportLocation);
+                    }
+                    
+                    if (getConfig().getBoolean("login-sessions.enabled"))
+                    {
+                        sender.sendMessage(getMessage("REMEMBER_PROMPT"));
+                    }
+                    
+                    if (getConfig().getBoolean("password-recovery.prompt-to-add-email")
+                            && getConfig().getBoolean("password-recovery.enabled"))
+                    {
+                        sender.sendMessage(getMessage("NO_EMAIL_SET_REMINDER"));
                     }
                 }
                 catch (ReportedException ex)

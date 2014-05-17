@@ -70,8 +70,8 @@ public final class ConvertWizard extends Wizard
         }
         else if (getCurrentStep() == Step.ENTER_DBTYPE)
         {
-            if (!new DbTypeValidator()
-                    .validate("storage.accounts.leading.storage-type", PropertyType.STRING, message))
+            if (!new DbTypeValidator().validate("storage.accounts.leading.storage-type",
+                    PropertyType.STRING, message))
             {
                 sendMessage(getMessage("CONVERT_INVALID_DBTYPE")
                         .replace("%dbtype%", message));

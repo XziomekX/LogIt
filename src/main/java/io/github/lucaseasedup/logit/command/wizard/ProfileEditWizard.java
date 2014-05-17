@@ -100,46 +100,7 @@ public final class ProfileEditWizard extends Wizard
             
             if (getCurrentStep() == Step.EDIT_FIELD)
             {
-                if (field instanceof StringField)
-                {
-                    sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_STRING")
-                            .replace("%field%", field.getName()));
-                }
-                else if (field instanceof IntegerField)
-                {
-                    sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_INTEGER")
-                            .replace("%field%", field.getName()));
-                }
-                else if (field instanceof FloatField)
-                {
-                    sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_FLOAT")
-                            .replace("%field%", field.getName()));
-                }
-                else if (field instanceof SetField)
-                {
-                    SetField setField = (SetField) field;
-                    StringBuilder values = new StringBuilder();
-                    
-                    for (String value : setField.getAcceptedValues())
-                    {
-                        if (values.length() > 0)
-                        {
-                            values.append(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_SET_SEPARATOR"));
-                        }
-                        
-                        values.append(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_SET_VALUE")
-                                .replace("%value%", value));
-                    }
-                    
-                    sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_SET")
-                            .replace("%field%", field.getName())
-                            .replace("%values%", values.toString()));
-                }
-                else
-                {
-                    throw new RuntimeException("Unknown field type: "
-                            + field.getClass().getSimpleName());
-                }
+                sendFieldEditingPrompt();
                 
                 updateStep(Step.ENTER_FIELD_VALUE);
             }
@@ -175,7 +136,8 @@ public final class ProfileEditWizard extends Wizard
                     return;
                 }
                 
-                getCore().getProfileManager().setProfileString(playerName, field.getName(), message);
+                getCore().getProfileManager().setProfileString(playerName,
+                        field.getName(), message);
             }
             else if (field instanceof IntegerField)
             {
@@ -317,6 +279,50 @@ public final class ProfileEditWizard extends Wizard
             
             sendMessage("");
             sendMessage(getMessage("PROFILE_EDIT_CHOOSE_ACTION"));
+        }
+    }
+    
+    private void sendFieldEditingPrompt()
+    {
+        if (field instanceof StringField)
+        {
+            sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_STRING")
+                    .replace("%field%", field.getName()));
+        }
+        else if (field instanceof IntegerField)
+        {
+            sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_INTEGER")
+                    .replace("%field%", field.getName()));
+        }
+        else if (field instanceof FloatField)
+        {
+            sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_FLOAT")
+                    .replace("%field%", field.getName()));
+        }
+        else if (field instanceof SetField)
+        {
+            SetField setField = (SetField) field;
+            StringBuilder values = new StringBuilder();
+            
+            for (String value : setField.getAcceptedValues())
+            {
+                if (values.length() > 0)
+                {
+                    values.append(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_SET_SEPARATOR"));
+                }
+                
+                values.append(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_SET_VALUE")
+                        .replace("%value%", value));
+            }
+            
+            sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_SET")
+                    .replace("%field%", field.getName())
+                    .replace("%values%", values.toString()));
+        }
+        else
+        {
+            throw new RuntimeException("Unknown field type: "
+                    + field.getClass().getSimpleName());
         }
     }
     

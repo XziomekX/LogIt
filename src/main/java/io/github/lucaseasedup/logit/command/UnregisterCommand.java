@@ -113,7 +113,8 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             {
                 p.sendMessage(getMessage("NOT_REGISTERED_SELF"));
             }
-            else if (!disablePasswords && !getAccountManager().checkAccountPassword(p.getName(), args[0]))
+            else if (!disablePasswords
+                    && !getAccountManager().checkAccountPassword(p.getName(), args[0]))
             {
                 p.sendMessage(getMessage("INCORRECT_PASSWORD"));
             }

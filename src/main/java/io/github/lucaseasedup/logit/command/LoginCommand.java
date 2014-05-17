@@ -53,8 +53,10 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 2)
         {
-            if (p != null && ((getCore().isPlayerForcedToLogIn(p) && !getSessionManager().isSessionAlive(p))
-                    || !p.hasPermission("logit.login.others")))
+            boolean playerNeedsToLogIn =
+                    getCore().isPlayerForcedToLogIn(p) && !getSessionManager().isSessionAlive(p);
+            
+            if (p != null && (playerNeedsToLogIn || !p.hasPermission("logit.login.others")))
             {
                 sender.sendMessage(getMessage("NO_PERMS"));
             }
@@ -155,9 +157,9 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     Integer currentFailedLoginsToBan = failedLoginsToBan.get(username);
                     
                     failedLoginsToKick.put(username,
-                            (currentFailedLoginsToKick != null) ? currentFailedLoginsToKick + 1 : 1);
+                            currentFailedLoginsToKick != null ? currentFailedLoginsToKick + 1 : 1);
                     failedLoginsToBan.put(username,
-                            (currentFailedLoginsToBan != null) ? currentFailedLoginsToBan + 1 : 1);
+                            currentFailedLoginsToBan != null ? currentFailedLoginsToBan + 1 : 1);
                     
                     if (failedLoginsToBan.get(username) >= failsToBan && failsToBan > 0)
                     {

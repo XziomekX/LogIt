@@ -90,7 +90,8 @@ public final class LogItConfiguration extends PropertyObserver implements Dispos
         Map<String, Map<String, String>> userDef =
                 IniUtils.unserialize(decodeConfigDef(userDefBase64String));
         
-        String jarUrlPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        String jarUrlPath =
+                getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         String jarPath = URLDecoder.decode(jarUrlPath, "UTF-8");
         
         try (ZipFile jarZipFile = new ZipFile(jarPath))
@@ -383,33 +384,40 @@ public final class LogItConfiguration extends PropertyObserver implements Dispos
                 oldDefSection.put("path", newDefSection.get("path"));
             }
             
-            if (!oldDefSection.get("type").equals(newDefSection.get("type")))
+            if (!compareSectionKeys(oldDefSection, newDefSection, "type"))
             {
                 oldDefSection.put("type", newDefSection.get("type"));
             }
             
-            if (!oldDefSection.get("requires_restart").equals(newDefSection.get("requires_restart")))
+            if (!compareSectionKeys(oldDefSection, newDefSection, "requires_restart"))
             {
                 oldDefSection.put("requires_restart", newDefSection.get("requires_restart"));
             }
             
-            if (!oldDefSection.get("default_value").equals(newDefSection.get("default_value")))
+            if (!compareSectionKeys(oldDefSection, newDefSection, "default_value"))
             {
                 oldDefSection.put("default_value", newDefSection.get("default_value"));
             }
             
-            if (!oldDefSection.get("validator").equals(newDefSection.get("validator")))
+            if (!compareSectionKeys(oldDefSection, newDefSection, "validator"))
             {
                 oldDefSection.put("validator", newDefSection.get("validator"));
             }
             
-            if (!oldDefSection.get("observer").equals(newDefSection.get("observer")))
+            if (!compareSectionKeys(oldDefSection, newDefSection, "observer"))
             {
                 oldDefSection.put("observer", newDefSection.get("observer"));
             }
         }
         
         os.write(encodeConfigDef(IniUtils.serialize(oldDef)).getBytes());
+    }
+    
+    private boolean compareSectionKeys(Map<String, String> oldDefSection,
+                                       Map<String, String> newDefSection,
+                                       String key)
+    {
+        return oldDefSection.get(key).equals(newDefSection.get(key));
     }
     
     private void loadConfigDef(Map<String, Map<String, String>> def)

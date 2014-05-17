@@ -27,6 +27,7 @@ import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.account.AccountKeys;
+import io.github.lucaseasedup.logit.config.LocationSerializable;
 import io.github.lucaseasedup.logit.session.Session;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
@@ -184,7 +185,10 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             }
             else if (getConfig().getBoolean("waiting-room.enabled"))
             {
-                player.teleport(getConfig().getLocation("waiting-room.location").toBukkitLocation());
+                LocationSerializable waitingRoomLocationSerializable =
+                        getConfig().getLocation("waiting-room.location");
+                
+                player.teleport(waitingRoomLocationSerializable.toBukkitLocation());
             }
         }
         

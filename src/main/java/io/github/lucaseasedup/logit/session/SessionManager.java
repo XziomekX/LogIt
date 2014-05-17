@@ -71,7 +71,8 @@ public final class SessionManager extends LogItCoreObject
         List<String> disableTimeoutForPlayers =
                 getConfig().getStringList("force-login.timeout.disable-for-players");
         long inactivityTimeToLogOut =
-                getConfig().getTime("crowd-control.automatic-logout.inactivity-time", TimeUnit.TICKS);
+                getConfig().getTime("crowd-control.automatic-logout.inactivity-time",
+                        TimeUnit.TICKS);
         
         for (Map.Entry<String, Session> entry : sessions.entrySet())
         {

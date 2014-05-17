@@ -60,7 +60,8 @@ public final class AccunlockCommand extends LogItCoreObject implements CommandEx
             }
             else if (!getAccountManager().isRegistered(args[0]))
             {
-                sender.sendMessage(getMessage("NOT_REGISTERED_OTHERS").replace("%player%", args[0]));
+                sender.sendMessage(getMessage("NOT_REGISTERED_OTHERS")
+                        .replace("%player%", args[0]));
             }
             else
             {

@@ -68,38 +68,40 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                 {
                     ReportedException.incrementRequestCount();
                     
-                    if (!args[0].equals(getAccountManager().getEmail(p.getName())))
+                    String email = getAccountManager().getEmail(p.getName());
+                    
+                    if (!args[0].equals(email))
                     {
                         p.sendMessage(getMessage("INCORRECT_EMAIL_ADDRESS"));
+                        
+                        return true;
                     }
-                    else
-                    {
-                        String to = getAccountManager().getEmail(p.getName());
-                        String from = getConfig().getString("mail.email-address");
-                        String subject = getConfig().getString("password-recovery.subject")
-                                .replace("%player%", p.getName());
-                        
-                        int passwordLength = getConfig().getInt("password-recovery.password-length");
-                        String newPassword = SecurityHelper.generatePassword(passwordLength,
-                                getConfig().getString("password-recovery.password-combination"));
-                        getAccountManager().changeAccountPassword(p.getName(), newPassword);
-                        
-                        File bodyTemplateFile =
-                                getDataFile(getConfig().getString("password-recovery.body-template"));
-                        String bodyTemplate = IoUtils.toString(bodyTemplateFile);
-                        String body = bodyTemplate
-                                .replace("%player%", p.getName())
-                                .replace("%password%", newPassword);
-                        
-                        getMailSender().sendMail(Arrays.asList(to), from, subject, body,
-                                getConfig().getBoolean("password-recovery.html-enabled"));
-                        
-                        sender.sendMessage(getMessage("RECOVER_PASSWORD_SUCCESS_SELF")
-                                .replace("%email%", args[0]));
-                        log(Level.FINE, getMessage("RECOVER_PASSWORD_SUCCESS_LOG")
-                                .replace("%player%", p.getName())
-                                .replace("%email%", to));
-                    }
+                    
+                    String to = email;
+                    String from = getConfig().getString("mail.email-address");
+                    String subject = getConfig().getString("password-recovery.subject")
+                            .replace("%player%", p.getName());
+                    
+                    int passwordLength = getConfig().getInt("password-recovery.password-length");
+                    String newPassword = SecurityHelper.generatePassword(passwordLength,
+                            getConfig().getString("password-recovery.password-combination"));
+                    getAccountManager().changeAccountPassword(p.getName(), newPassword);
+                    
+                    File bodyTemplateFile =
+                            getDataFile(getConfig().getString("password-recovery.body-template"));
+                    String bodyTemplate = IoUtils.toString(bodyTemplateFile);
+                    String body = bodyTemplate
+                            .replace("%player%", p.getName())
+                            .replace("%password%", newPassword);
+                    
+                    getMailSender().sendMail(Arrays.asList(to), from, subject, body,
+                            getConfig().getBoolean("password-recovery.html-enabled"));
+                    
+                    sender.sendMessage(getMessage("RECOVER_PASSWORD_SUCCESS_SELF")
+                            .replace("%email%", args[0]));
+                    log(Level.FINE, getMessage("RECOVER_PASSWORD_SUCCESS_LOG")
+                            .replace("%player%", p.getName())
+                            .replace("%email%", to));
                 }
                 catch (ReportedException | IOException ex)
                 {

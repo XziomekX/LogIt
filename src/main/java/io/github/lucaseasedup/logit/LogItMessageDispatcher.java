@@ -49,7 +49,8 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
      */
     public void sendForceLoginMessage(Player player)
     {
-        long minInterval = getConfig().getTime("force-login.prompt.min-interval", TimeUnit.MILLISECONDS);
+        long minInterval =
+                getConfig().getTime("force-login.prompt.min-interval", TimeUnit.MILLISECONDS);
         
         if (minInterval > 0)
         {

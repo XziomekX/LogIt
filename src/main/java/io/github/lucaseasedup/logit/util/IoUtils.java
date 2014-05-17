@@ -65,7 +65,8 @@ public final class IoUtils
         int readBytes;
         byte[] buffer = new byte[4096];
         
-        String jarUrlPath = IoUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String jarUrlPath =
+                IoUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         String jarPath = URLDecoder.decode(jarUrlPath, "UTF-8");
         
         try (

@@ -46,7 +46,8 @@ public abstract class Storage implements AutoCloseable
                                                       List<String> keys,
                                                       Selector selector) throws IOException;
     
-    public abstract void createUnit(String unit, Hashtable<String, DataType> keys) throws IOException;
+    public abstract void createUnit(String unit, Hashtable<String, DataType> keys)
+            throws IOException;
     public abstract void renameUnit(String unit, String newName) throws IOException;
     public abstract void eraseUnit(String unit) throws IOException;
     public abstract void removeUnit(String unit) throws IOException;

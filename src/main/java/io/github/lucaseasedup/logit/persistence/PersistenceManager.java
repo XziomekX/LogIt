@@ -421,7 +421,8 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
         return false;
     }
     
-    private static PersistenceSerializer constructSerializer(Class<? extends PersistenceSerializer> clazz)
+    private static PersistenceSerializer
+                        constructSerializer(Class<? extends PersistenceSerializer> clazz)
             throws ReflectiveOperationException
     {
         if (clazz == null)

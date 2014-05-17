@@ -124,7 +124,8 @@ public final class SqlUtils
                 return actualValue.contains(operandValue);
                 
             default:
-                throw new RuntimeException("Unsupported relation: " + selectorCondition.getRelation());
+                throw new RuntimeException("Unsupported relation: "
+                                           + selectorCondition.getRelation());
             }
         }
         else
@@ -172,7 +173,9 @@ public final class SqlUtils
         {
             SelectorNegation selectorNegation = (SelectorNegation) selector;
             
-            return "NOT (" + translateSelector(selectorNegation.getOperand(), columnQuote, valueQuote) + ")";
+            return "NOT ("
+                 + translateSelector(selectorNegation.getOperand(), columnQuote, valueQuote)
+                 + ")";
         }
         else if (selector instanceof SelectorBinary)
         {
@@ -235,7 +238,8 @@ public final class SqlUtils
                 break;
                 
             default:
-                throw new RuntimeException("Unsupported relation: " + selectorCondition.getRelation());
+                throw new RuntimeException("Unsupported relation: "
+                                           + selectorCondition.getRelation());
             }
             
             sb.append(" (");

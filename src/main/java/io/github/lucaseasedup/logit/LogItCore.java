@@ -192,7 +192,8 @@ public final class LogItCore
                 config.getConfigurationSection("storage.accounts.leading"));
         Storage mirrorAccountStorage = StorageFactory.produceStorage(mirrorStorageType,
                 config.getConfigurationSection("storage.accounts.mirror"));
-        CacheType accountCacheType = CacheType.decode(config.getString("storage.accounts.leading.cache"));
+        CacheType accountCacheType =
+                CacheType.decode(config.getString("storage.accounts.leading.cache"));
         
         @SuppressWarnings("resource")
         WrapperStorage accountStorage = new WrapperStorage.Builder()
@@ -313,7 +314,8 @@ public final class LogItCore
         
         if (Bukkit.getPluginManager().isPluginEnabled("Vault"))
         {
-            vaultPermissions = Bukkit.getServicesManager().getRegistration(Permission.class).getProvider();
+            vaultPermissions =
+                    Bukkit.getServicesManager().getRegistration(Permission.class).getProvider();
         }
         
         accountManagerTask = Bukkit.getScheduler().runTaskTimer(plugin,
