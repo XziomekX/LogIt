@@ -85,6 +85,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.scheduler.BukkitTask;
 
 /**
  * The central part of LogIt.
@@ -315,13 +316,13 @@ public final class LogItCore
             vaultPermissions = Bukkit.getServicesManager().getRegistration(Permission.class).getProvider();
         }
         
-        accountManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+        accountManagerTask = Bukkit.getScheduler().runTaskTimer(plugin,
                 accountManager, 0, AccountManager.TASK_PERIOD);
-        backupManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+        backupManagerTask = Bukkit.getScheduler().runTaskTimer(plugin,
                 backupManager, 0, BackupManager.TASK_PERIOD);
-        sessionManagerTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+        sessionManagerTask = Bukkit.getScheduler().runTaskTimer(plugin,
                 sessionManager, 0, SessionManager.TASK_PERIOD);
-        accountWatcherTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,
+        accountWatcherTask = Bukkit.getScheduler().runTaskTimer(plugin,
                 accountWatcher, 0, AccountWatcher.TASK_PERIOD);
         
         enableCommands();
@@ -367,10 +368,10 @@ public final class LogItCore
             log(Level.WARNING, "Could not close database connection.", ex);
         }
         
-        Bukkit.getScheduler().cancelTask(accountManagerTaskId);
-        Bukkit.getScheduler().cancelTask(sessionManagerTaskId);
-        Bukkit.getScheduler().cancelTask(accountWatcherTaskId);
-        Bukkit.getScheduler().cancelTask(backupManagerTaskId);
+        accountManagerTask.cancel();
+        sessionManagerTask.cancel();
+        accountWatcherTask.cancel();
+        backupManagerTask.cancel();
         
         // Unregister all event listeners.
         HandlerList.unregisterAll(plugin);
@@ -1124,10 +1125,10 @@ public final class LogItCore
     private AccountWatcher  accountWatcher;
     private Permission      vaultPermissions;
     
-    private int accountManagerTaskId;
-    private int backupManagerTaskId;
-    private int sessionManagerTaskId;
-    private int accountWatcherTaskId;
+    private BukkitTask accountManagerTask;
+    private BukkitTask backupManagerTask;
+    private BukkitTask sessionManagerTask;
+    private BukkitTask accountWatcherTask;
     
     private FileWriter logFileWriter;
     private final SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

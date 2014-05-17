@@ -25,11 +25,11 @@ import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.session.SessionEndEvent;
 import io.github.lucaseasedup.logit.session.SessionStartEvent;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public final class SessionEventListener extends LogItCoreObject implements Listener
 {
@@ -45,7 +45,7 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
         
         final Player player = PlayerUtils.getPlayer(username);
         
-        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
+        new BukkitRunnable()
         {
             @Override
             public void run()
@@ -58,10 +58,11 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
                 if (getCore().isPlayerForcedToLogIn(player)
                         && !getConfig().getBoolean("messages.join.hide"))
                 {
-                    broadcastJoinMessage(player, getConfig().getBoolean("messages.join.show-world"));
+                    broadcastJoinMessage(player,
+                            getConfig().getBoolean("messages.join.show-world"));
                 }
             }
-        }, 1L);
+        }.runTaskLater(getPlugin(), 1L);
         
         if (getCore().isPlayerForcedToLogIn(player))
         {
@@ -81,7 +82,7 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
         
         final Player player = PlayerUtils.getPlayer(username);
         
-        Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable()
+        new BukkitRunnable()
         {
             @Override
             public void run()
@@ -97,7 +98,7 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
                     broadcastQuitMessage(player);
                 }
             }
-        }, 1L);
+        }.runTaskLater(getPlugin(), 1L);
         
         if (getCore().isPlayerForcedToLogIn(player))
         {

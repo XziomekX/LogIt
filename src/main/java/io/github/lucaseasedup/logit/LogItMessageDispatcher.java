@@ -21,12 +21,12 @@ package io.github.lucaseasedup.logit;
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Hashtable;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public final class LogItMessageDispatcher extends LogItCoreObject implements Listener, Disposable
 {
@@ -97,11 +97,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         if (username == null)
             throw new IllegalArgumentException();
         
-        ForceLoginPrompter prompter = new ForceLoginPrompter(username);
-        
-        int taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), prompter, delay);
-        
-        prompter.setTaskId(taskId);
+        new ForceLoginPrompter(username).runTaskLater(getPlugin(), delay);
     }
     
     public void dispatchRepeatingForceLoginPrompter(String username, long delay, long period)
@@ -109,11 +105,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         if (username == null)
             throw new IllegalArgumentException();
         
-        ForceLoginPrompter prompter = new ForceLoginPrompter(username);
-        
-        int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(), prompter, delay, period);
-        
-        prompter.setTaskId(taskId);
+        new ForceLoginPrompter(username).runTaskTimer(getPlugin(), delay, period);
     }
     
     @EventHandler
@@ -128,16 +120,11 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         forceLoginPromptIntervals.remove(event.getPlayer());
     }
     
-    private final class ForceLoginPrompter implements Runnable
+    private final class ForceLoginPrompter extends BukkitRunnable
     {
         public ForceLoginPrompter(String username)
         {
             this.username = username;
-        }
-        
-        public void setTaskId(int taskId)
-        {
-            this.taskId = taskId;
         }
         
         @Override
@@ -147,10 +134,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
             
             if (player == null || !isCoreStarted())
             {
-                if (taskId != -1)
-                {
-                    Bukkit.getScheduler().cancelTask(taskId);
-                }
+                cancel();
             }
             else if (getCore().isPlayerForcedToLogIn(player))
             {
@@ -158,15 +142,14 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
                 {
                     sendForceLoginMessage(player);
                 }
-                else if (taskId != -1)
+                else
                 {
-                    Bukkit.getScheduler().cancelTask(taskId);
+                    cancel();
                 }
             }
         }
         
         private final String username;
-        private int taskId = -1;
     }
     
     private Hashtable<Player, Long> forceLoginPromptIntervals = new Hashtable<>();
