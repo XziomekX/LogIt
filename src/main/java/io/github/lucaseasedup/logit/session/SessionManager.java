@@ -207,14 +207,13 @@ public final class SessionManager extends LogItCoreObject
      * 
      * @param player the player.
      * 
-     * @return {@code true} if the session is alive; {@code false} otherwise.
-     * 
-     * @throws IllegalArgumentException if {@code player} is {@code null}.
+     * @return {@code true} if {@code player} is not {@code null}
+     *         and the session is alive; {@code false} otherwise.
      */
     public boolean isSessionAlive(Player player)
     {
         if (player == null)
-            throw new IllegalArgumentException();
+            return false;
         
         Session session = getSession(player.getName());
         
