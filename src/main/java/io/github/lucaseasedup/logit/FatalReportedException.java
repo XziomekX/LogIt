@@ -67,4 +67,6 @@ public class FatalReportedException extends Exception
     {
         throw new FatalReportedException(msg, cause);
     }
+    
+    private static final long serialVersionUID = 1L;
 }

@@ -30,5 +30,7 @@ public final class InvalidPropertyValueException extends RuntimeException
         return propertyName;
     }
     
+    private static final long serialVersionUID = 1L;
+    
     private final String propertyName;
 }

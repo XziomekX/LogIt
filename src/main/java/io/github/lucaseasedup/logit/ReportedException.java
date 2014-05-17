@@ -128,5 +128,6 @@ public class ReportedException extends RuntimeException
         public int count = 0;
     }
     
+    private static final long serialVersionUID = 1L;
     private static final ThreadLocal<RequestCounter> requestCounter = new ThreadLocal<>();
 }

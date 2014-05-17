@@ -25,4 +25,5 @@ public class AccountAlreadyExistsException extends RuntimeException
         super(username);
     }
     
+    private static final long serialVersionUID = 1L;
 }
