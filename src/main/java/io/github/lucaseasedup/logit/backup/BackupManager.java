@@ -28,6 +28,7 @@ import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -141,18 +142,22 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
      * 
      * @param filename the backup filename.
      * 
+     * @throws FileNotFoundException    if no such backup exists.
      * @throws IllegalArgumentException if {@code filename} is {@code null}.
      */
-    public void restoreBackup(String filename)
+    public void restoreBackup(String filename) throws FileNotFoundException
     {
         if (filename == null)
             throw new IllegalArgumentException();
         
+        File backupFile = getBackupFile(filename);
+        
+        if (!backupFile.exists())
+            throw new FileNotFoundException();
+        
         try
         {
             ReportedException.incrementRequestCount();
-            
-            File backupFile = getBackupFile(filename);
             
             try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
             {
