@@ -74,7 +74,8 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
                     sendMessage(args[1], getMessage("CHANGE_EMAIL_SUCCESS_SELF")
                             .replace("%email%", args[2]));
                     sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_OTHERS")
-                            .replace("%player%", args[1]));
+                            .replace("%player%", args[1])
+                            .replace("%email%", args[2]));
                 }
                 catch (ReportedException ex)
                 {
