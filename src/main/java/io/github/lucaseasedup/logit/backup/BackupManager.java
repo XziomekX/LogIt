@@ -120,13 +120,13 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
         try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
         {
             backupStorage.connect();
-            backupStorage.createUnit(accountManager.getUnit(),
+            backupStorage.createUnit("accounts",
                     accountManager.getStorage().getKeys(accountManager.getUnit()));
             backupStorage.setAutobatchEnabled(true);
             
             for (Storage.Entry entry : entries)
             {
-                backupStorage.addEntry(accountManager.getUnit(), entry);
+                backupStorage.addEntry("accounts", entry);
             }
             
             backupStorage.executeBatch();
@@ -163,8 +163,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
             {
                 backupStorage.connect();
                 
-                List<Storage.Entry> entries =
-                        backupStorage.selectEntries(accountManager.getUnit());
+                List<Storage.Entry> entries = backupStorage.selectEntries("accounts");
                 
                 accountManager.getStorage().eraseUnit(accountManager.getUnit());
                 accountManager.getStorage().setAutobatchEnabled(true);
