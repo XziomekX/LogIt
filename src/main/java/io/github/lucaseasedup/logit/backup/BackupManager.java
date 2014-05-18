@@ -81,14 +81,20 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
         {
             try
             {
+                ReportedException.incrementRequestCount();
+                
                 File backupFile = createBackup();
                 
                 log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS")
                         .replace("%filename%", backupFile.getName()));
             }
-            catch (IOException ex)
+            catch (ReportedException ex)
             {
-                log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"), ex);
+                log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"));
+            }
+            finally
+            {
+                ReportedException.decrementRequestCount();
             }
             
             timer.reset();
@@ -100,9 +106,10 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
      * 
      * @return the created backup file.
      * 
-     * @throws IOException if an I/O error occured.
+     * @throws ReportedException if an I/O error occured,
+     *                           and it was reported to the logger.
      */
-    public File createBackup() throws IOException
+    public File createBackup()
     {
         String backupFilenameFormat = getConfig().getString("backup.filename-format");
         SimpleDateFormat sdf = new SimpleDateFormat(backupFilenameFormat);
@@ -111,27 +118,36 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
         
         backupDir.mkdir();
         
-        if (!backupFile.createNewFile())
-            throw new IOException("Backup file could not be created.");
-        
-        List<Storage.Entry> entries =
-                accountManager.getStorage().selectEntries(accountManager.getUnit());
-        
-        try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
+        try
         {
-            backupStorage.connect();
-            backupStorage.createUnit("accounts",
-                    accountManager.getStorage().getKeys(accountManager.getUnit()));
-            backupStorage.setAutobatchEnabled(true);
+            if (!backupFile.createNewFile())
+                throw new IOException("The backup file " + backupFile + " could not be created.");
             
-            for (Storage.Entry entry : entries)
+            List<Storage.Entry> entries =
+                    accountManager.getStorage().selectEntries(accountManager.getUnit());
+            
+            try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
             {
-                backupStorage.addEntry("accounts", entry);
+                backupStorage.connect();
+                backupStorage.createUnit("accounts",
+                        accountManager.getStorage().getKeys(accountManager.getUnit()));
+                backupStorage.setAutobatchEnabled(true);
+                
+                for (Storage.Entry entry : entries)
+                {
+                    backupStorage.addEntry("accounts", entry);
+                }
+                
+                backupStorage.executeBatch();
+                backupStorage.clearBatch();
+                backupStorage.setAutobatchEnabled(false);
             }
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, ex);
             
-            backupStorage.executeBatch();
-            backupStorage.clearBatch();
-            backupStorage.setAutobatchEnabled(false);
+            ReportedException.throwNew(ex);
         }
         
         return backupFile;
@@ -144,6 +160,8 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
      * 
      * @throws FileNotFoundException    if no such backup exists.
      * @throws IllegalArgumentException if {@code filename} is {@code null}.
+     * @throws ReportedException        if an I/O error occured,
+     *                                  and it was reported to the logger.
      */
     public void restoreBackup(String filename) throws FileNotFoundException
     {
@@ -152,49 +170,35 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
         
         File backupFile = getBackupFile(filename);
         
-        if (!backupFile.exists())
+        if (backupFile == null)
             throw new FileNotFoundException();
         
-        try
+        try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
         {
-            ReportedException.incrementRequestCount();
+            backupStorage.connect();
             
-            try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
+            List<Storage.Entry> entries = backupStorage.selectEntries("accounts");
+            
+            accountManager.getStorage().eraseUnit(accountManager.getUnit());
+            accountManager.getStorage().setAutobatchEnabled(true);
+            
+            for (Storage.Entry entry : entries)
             {
-                backupStorage.connect();
-                
-                List<Storage.Entry> entries = backupStorage.selectEntries("accounts");
-                
-                accountManager.getStorage().eraseUnit(accountManager.getUnit());
-                accountManager.getStorage().setAutobatchEnabled(true);
-                
-                for (Storage.Entry entry : entries)
-                {
-                    accountManager.getStorage().addEntry(accountManager.getUnit(), entry);
-                }
-                
-                accountManager.getStorage().executeBatch();
-                accountManager.getStorage().clearBatch();
-                accountManager.getStorage().setAutobatchEnabled(false);
+                accountManager.getStorage().addEntry(accountManager.getUnit(), entry);
             }
             
-            log(Level.INFO, getMessage("RESTORE_BACKUP_SUCCESS"));
+            accountManager.getStorage().executeBatch();
+            accountManager.getStorage().clearBatch();
+            accountManager.getStorage().setAutobatchEnabled(false);
+            
+            log(Level.INFO, getMessage("RESTORE_BACKUP_SUCCESS")
+                    .replace("%filename%", filename));
         }
         catch (IOException ex)
         {
-            log(Level.WARNING, getMessage("RESTORE_BACKUP_FAIL"), ex);
+            log(Level.WARNING, ex);
             
             ReportedException.throwNew(ex);
-        }
-        catch (ReportedException ex)
-        {
-            log(Level.WARNING, getMessage("RESTORE_BACKUP_FAIL"), ex);
-            
-            ex.rethrow();
-        }
-        finally
-        {
-            ReportedException.decrementRequestCount();
         }
     }
     

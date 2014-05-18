@@ -147,7 +147,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else
             {
-                subcommandBackupRestore(p, (args.length >= 3) ? args[2] : null);
+                subcommandBackupRestore(sender, (args.length >= 3) ? args[2] : null);
             }
         }
         else if (checkSubcommand(args, "backup remove", 1))
@@ -540,6 +540,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
     {
         try
         {
+            ReportedException.incrementRequestCount();
+            
             File backupFile = getBackupManager().createBackup();
             
             if (player != null)
@@ -551,13 +553,17 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS")
                     .replace("%filename%", backupFile.getName()));
         }
-        catch (IOException ex)
+        catch (ReportedException ex)
         {
-            log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"), ex);
+            log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"));
+        }
+        finally
+        {
+            ReportedException.decrementRequestCount();
         }
     }
     
-    private void subcommandBackupRestore(Player player, String filename)
+    private void subcommandBackupRestore(CommandSender sender, String filename)
     {
         try
         {
@@ -575,17 +581,23 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             
             getBackupManager().restoreBackup(filename);
             
-            if (player != null)
+            if (sender instanceof Player)
             {
-                player.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS")
+                sender.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS")
                         .replace("%filename%", filename));
             }
         }
-        catch (ReportedException | FileNotFoundException ex)
+        catch (FileNotFoundException ex)
         {
-            if (player != null)
+            sender.sendMessage(getMessage("RESTORE_BACKUP_NOT_FOUND")
+                    .replace("%filename%", filename));
+        }
+        catch (ReportedException ex)
+        {
+            if (sender instanceof Player)
             {
-                player.sendMessage(getMessage("RESTORE_BACKUP_FAIL"));
+                sender.sendMessage(getMessage("RESTORE_BACKUP_FAIL")
+                        .replace("%filename%", filename));
             }
         }
         finally
