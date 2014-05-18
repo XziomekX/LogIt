@@ -139,7 +139,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onJoin(PlayerJoinEvent event)
     {
         final Player player   = event.getPlayer();
