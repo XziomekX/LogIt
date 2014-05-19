@@ -759,6 +759,7 @@ public final class LogItCore
                     logFileWriter.write("] ");
                     logFileWriter.write(ChatColor.stripColor(message));
                     logFileWriter.write("\n");
+                    logFileWriter.flush();
                 }
                 catch (IOException ex)
                 {
