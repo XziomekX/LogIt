@@ -18,9 +18,11 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.FatalReportedException;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.MessageReader;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.command.wizard.ConvertWizard;
 import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
@@ -57,7 +59,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             if (!checkPermission(p, "logit.help"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else
             {
@@ -65,10 +67,13 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
         }
         else if (checkSubcommand(args, "version", 0))
+        {for (Entry<String, String> e : MessageReader.loadMsgs().entrySet())
         {
+            sendMsg(sender, e.getKey() + ": " + e.getValue());
+        }
             if (!checkPermission(p, "logit.version"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else
             {
@@ -79,11 +84,11 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             if (!checkPermission(p, "logit.start"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (isCoreStarted())
             {
-                sender.sendMessage(getMessage("CORE_ALREADY_STARTED"));
+                sendMsg(sender, _("coreAlreadyStarted"));
             }
             else
             {
@@ -94,11 +99,11 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             if (!checkPermission(p, "logit.stop"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (!isCoreStarted())
             {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+                sendMsg(sender, _("coreNotStarted"));
             }
             else
             {
@@ -109,11 +114,11 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             if (!checkPermission(p, "logit.reload"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (!isCoreStarted())
             {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+                sendMsg(sender, _("coreNotStarted"));
             }
             else
             {
@@ -124,11 +129,11 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             if (!checkPermission(p, "logit.backup.force"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (!isCoreStarted())
             {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+                sendMsg(sender, _("coreNotStarted"));
             }
             else
             {
@@ -139,11 +144,11 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             if (!checkPermission(p, "logit.backup.restore"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (!isCoreStarted())
             {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+                sendMsg(sender, _("coreNotStarted"));
             }
             else
             {
@@ -154,49 +159,34 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             if (!checkPermission(p, "logit.backup.remove"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (!isCoreStarted())
             {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+                sendMsg(sender, _("coreNotStarted"));
             }
             else if (args.length < 3)
             {
-                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "amount"));
+                sendMsg(sender, _("paramMissing").replace("{0}", "amount"));
             }
             else
             {
                 subcommandBackupRemove(sender, args[2]);
             }
         }
-        else if (checkSubcommand(args, "backup count", 0))
-        {
-            if (!checkPermission(p, "logit.backup.count"))
-            {
-                sender.sendMessage(getMessage("NO_PERMS"));
-            }
-            else if (!isCoreStarted())
-            {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
-            }
-            else
-            {
-                subcommandBackupCount(sender);
-            }
-        }
         else if (checkSubcommand(args, "gotowr", 0))
         {
             if (p == null)
             {
-                sender.sendMessage(getMessage("ONLY_PLAYERS"));
+                sendMsg(sender, _("onlyForPlayers"));
             }
             else if (!p.hasPermission("logit.gotowr"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (!isCoreStarted())
             {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+                sendMsg(sender, _("coreNotStarted"));
             }
             else
             {
@@ -210,24 +200,24 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             
             if (!checkPermission(p, "logit.globalpass.set"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (args.length < 3)
             {
-                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+                sendMsg(sender, _("paramMissing").replace("{0}", "password"));
             }
             else if (!isCoreStarted())
             {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+                sendMsg(sender, _("coreNotStarted"));
             }
             else if (args[2].length() < minPasswordLength)
             {
-                sender.sendMessage(getMessage("PASSWORD_TOO_SHORT")
+                sendMsg(sender, _("PASSWORD_TOO_SHORT")
                         .replace("%min-length%", String.valueOf(minPasswordLength)));
             }
             else if (args[2].length() > maxPasswordLength)
             {
-                sender.sendMessage(getMessage("PASSWORD_TOO_LONG")
+                sendMsg(sender, _("PASSWORD_TOO_LONG")
                         .replace("%max-length%", String.valueOf(maxPasswordLength)));
             }
             else
@@ -239,45 +229,30 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             if (!checkPermission(p, "logit.globalpass.remove"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (!isCoreStarted())
             {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+                sendMsg(sender, _("coreNotStarted"));
             }
             else
             {
                 subcommandGlobalpassRemove(p);
             }
         }
-        else if (checkSubcommand(args, "account count", 0))
-        {
-            if (!checkPermission(p, "logit.account.count"))
-            {
-                sender.sendMessage(getMessage("NO_PERMS"));
-            }
-            else if (!isCoreStarted())
-            {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
-            }
-            else
-            {
-                subcommandAccountCount(sender);
-            }
-        }
         else if (checkSubcommand(args, "account status", 1))
         {
             if (!checkPermission(p, "logit.account.status"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (args.length < 3)
             {
-                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "username"));
+                sendMsg(sender, _("paramMissing").replace("{0}", "username"));
             }
             else if (!isCoreStarted())
             {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+                sendMsg(sender, _("coreNotStarted"));
             }
             else
             {
@@ -288,38 +263,42 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             if (!checkPermission(p, "logit.ipcount"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
+            }
+            else if (args.length < 2)
+            {
+                sendMsg(sender, _("paramMissing").replace("{0}", "ip"));
             }
             else if (!isCoreStarted())
             {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+                sendMsg(sender, _("coreNotStarted"));
             }
             else
             {
-                subcommandIpcount(sender, (args.length >= 2) ? args[1] : null);
+                subcommandIpcount(sender, args[1]);
             }
         }
         else if (checkSubcommand(args, "config set"))
         {
             if (!checkPermission(p, "logit.config.set"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (args.length < 3)
             {
-                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "path"));
+                sendMsg(sender, _("paramMissing").replace("{0}", "path"));
             }
             else if (args.length < 4)
             {
-                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "value"));
+                sendMsg(sender, _("paramMissing").replace("{0}", "value"));
             }
             else if (!isCoreStarted())
             {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+                sendMsg(sender, _("coreNotStarted"));
             }
             else if (!getConfig().contains(args[2]))
             {
-                sender.sendMessage(getMessage("CONFIG_PROPERTY_NOT_FOUND")
+                sendMsg(sender, _("CONFIG_PROPERTY_NOT_FOUND")
                         .replace("%param%", "path"));
             }
             else
@@ -331,19 +310,19 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             if (!checkPermission(p, "logit.config.get"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (args.length < 3)
             {
-                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "path"));
+                sendMsg(sender, _("paramMissing").replace("{0}", "path"));
             }
             else if (!isCoreStarted())
             {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+                sendMsg(sender, _("coreNotStarted"));
             }
             else if (!getConfig().contains(args[2]))
             {
-                sender.sendMessage(getMessage("CONFIG_PROPERTY_NOT_FOUND")
+                sendMsg(sender, _("CONFIG_PROPERTY_NOT_FOUND")
                         .replace("%param%", "path"));
             }
             else
@@ -355,11 +334,11 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             if (!checkPermission(p, "logit.config.list"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (!isCoreStarted())
             {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+                sendMsg(sender, _("coreNotStarted"));
             }
             else
             {
@@ -370,11 +349,11 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             if (!checkPermission(p, "logit.config.reload"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (!isCoreStarted())
             {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+                sendMsg(sender, _("coreNotStarted"));
             }
             else
             {
@@ -385,26 +364,41 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             if (!checkPermission(p, "logit.convert"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (!isCoreStarted())
             {
-                sender.sendMessage(getMessage("CORE_NOT_STARTED"));
+                sendMsg(sender, _("coreNotStarted"));
             }
             else
             {
-                subcommandConvert(sender, args);
+                subcommandConvert(sender);
+            }
+        }
+        else if (checkSubcommand(args, "stats", 0))
+        {
+            if (!checkPermission(p, "logit.stats"))
+            {
+                sendMsg(sender, _("noPerms"));
+            }
+            else if (!isCoreStarted())
+            {
+                sendMsg(sender, _("coreNotStarted"));
+            }
+            else
+            {
+                subcommandStats(sender);
             }
         }
         else
         {
             if (!checkPermission(p, "logit"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else
             {
-                sender.sendMessage(getMessage("TYPE_FOR_HELP"));
+                sendMsg(sender, _("typeForHelp"));
             }
         }
         
@@ -415,75 +409,95 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
     {
         if (checkPermission(p, "logit.help"))
         {
-            sender.sendMessage(buildSubcommandHelp("help", null));
+            sendMsg(sender, buildSubcommandHelp("help", null,
+                    "subCmdDesc.help"));
         }
         if (checkPermission(p, "logit.version"))
         {
-            sender.sendMessage(buildSubcommandHelp("version", null));
+            sendMsg(sender, buildSubcommandHelp("version", null,
+                    "subCmdDesc.version"));
         }
         if (checkPermission(p, "logit.reload"))
         {
-            sender.sendMessage(buildSubcommandHelp("reload", null));
+            sendMsg(sender, buildSubcommandHelp("reload", null,
+                    "subCmdDesc.reload"));
         }
         if (checkPermission(p, "logit.backup.force"))
         {
-            sender.sendMessage(buildSubcommandHelp("backup force", null));
+            sendMsg(sender, buildSubcommandHelp("backup force", null,
+                    "subCmdDesc.backup.force"));
         }
         if (checkPermission(p, "logit.backup.restore"))
         {
-            sender.sendMessage(buildSubcommandHelp("backup restore", "[filename]"));
+            sendMsg(sender, buildSubcommandHelp("backup restore", null,
+                    "subCmdDesc.backup.restore.newest"));
+            sendMsg(sender, buildSubcommandHelp("backup restore", "<filename>",
+                    "subCmdDesc.backup.restore.certain"));
         }
         if (checkPermission(p, "logit.backup.remove"))
         {
-            sender.sendMessage(buildSubcommandHelp("backup remove", "<amount>"));
+            sendMsg(sender, buildSubcommandHelp("backup remove", "<amount>",
+                    "subCmdDesc.backup.remove"));
         }
         if (checkPermission(p, "logit.backup.count"))
         {
-            sender.sendMessage(buildSubcommandHelp("backup count", null));
+            sendMsg(sender, buildSubcommandHelp("backup count", null,
+                    "subCmdDesc.backup.count"));
         }
         if (checkPermission(p, "logit.gotowr"))
         {
-            sender.sendMessage(buildSubcommandHelp("gotowr", null));
+            sendMsg(sender, buildSubcommandHelp("gotowr", null,
+                    "subCmdDesc.gotowr"));
         }
         if (checkPermission(p, "logit.globalpass.set"))
         {
-            sender.sendMessage(buildSubcommandHelp("globalpass set", "<password>"));
+            sendMsg(sender, buildSubcommandHelp("globalpass set", "<password>",
+                    "subCmdDesc.globalpass.set"));
         }
         if (checkPermission(p, "logit.globalpass.remove"))
         {
-            sender.sendMessage(buildSubcommandHelp("globalpass remove", null));
+            sendMsg(sender, buildSubcommandHelp("globalpass remove", null,
+                    "subCmdDesc.globalpass.remove"));
         }
         if (checkPermission(p, "logit.account.count"))
         {
-            sender.sendMessage(buildSubcommandHelp("account count", null));
+            sendMsg(sender, buildSubcommandHelp("account count", null,
+                    "subCmdDesc.account.count"));
         }
         if (checkPermission(p, "logit.account.status"))
         {
-            sender.sendMessage(buildSubcommandHelp("account status", "<username>"));
+            sendMsg(sender, buildSubcommandHelp("account status", "<username>",
+                    "subCmdDesc.account.status"));
         }
         if (checkPermission(p, "logit.ipcount"))
         {
-            sender.sendMessage(buildSubcommandHelp("ipcount", "[ip]"));
+            sendMsg(sender, buildSubcommandHelp("ipcount", "<ip>",
+                    "subCmdDesc.ipcount"));
         }
         if (checkPermission(p, "logit.config.get"))
         {
-            sender.sendMessage(buildSubcommandHelp("config get", "<path>"));
+            sendMsg(sender, buildSubcommandHelp("config get", "<path>",
+                    "subCmdDesc.config.get"));
         }
         if (checkPermission(p, "logit.config.set"))
         {
-            sender.sendMessage(buildSubcommandHelp("config set", "<path> <value>"));
+            sendMsg(sender, buildSubcommandHelp("config set", "<path> <value>",
+                    "subCmdDesc.config.set"));
         }
         if (checkPermission(p, "logit.config.list"))
         {
-            sender.sendMessage(buildSubcommandHelp("config list", "[page]"));
+            sendMsg(sender, buildSubcommandHelp("config list", "[page]",
+                    "subCmdDesc.config.list"));
         }
         if (checkPermission(p, "logit.config.reload"))
         {
-            sender.sendMessage(buildSubcommandHelp("config reload", null));
+            sendMsg(sender, buildSubcommandHelp("config reload", null,
+                    "subCmdDesc.config.reload"));
         }
         if (checkPermission(p, "logit.convert"))
         {
-            sender.sendMessage(buildSubcommandHelp("convert", null));
+            sendMsg(sender, buildSubcommandHelp("convert", null,
+                    "subCmdDesc.convert"));
         }
     }
     
@@ -491,12 +505,13 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
     {
         if (sender instanceof Player)
         {
-            sender.sendMessage("");
+            sendMsg(sender, "");
         }
         
-        sender.sendMessage(getMessage("PLUGIN_ABOUT"));
-        sender.sendMessage(getMessage("PLUGIN_VERSION"));
-        sender.sendMessage(getMessage("PLUGIN_AUTHOR"));
+        sendMsg(sender, _("aboutPlugin.header"));
+        sendMsg(sender, _("aboutPlugin.version")
+                .replace("{0}", getPlugin().getDescription().getVersion()));
+        sendMsg(sender, _("aboutPlugin.author"));
     }
     
     private void subcommandStart(CommandSender sender)
@@ -505,11 +520,11 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             getCore().start();
             
-            sender.sendMessage(getMessage("CORE_STARTED"));
+            sendMsg(sender, _("startCore.success"));
         }
         catch (FatalReportedException ex)
         {
-            sender.sendMessage(getMessage("COULD_NOT_START_CORE"));
+            sendMsg(sender, _("startCore.fail"));
         }
     }
     
@@ -517,7 +532,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
     {
         getCore().stop();
         
-        sender.sendMessage(getMessage("CORE_STOPPED"));
+        sendMsg(sender, _("stopCore.success"));
     }
     
     private void subcommandReload(Player player)
@@ -528,7 +543,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             
             if (player != null)
             {
-                player.sendMessage(getMessage("RELOADED"));
+                sendMsg(player, _("reloadPlugin.success"));
             }
         }
         catch (FatalReportedException ex)
@@ -546,16 +561,16 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             
             if (player != null)
             {
-                player.sendMessage(getMessage("CREATE_BACKUP_SUCCESS")
+                sendMsg(player, _("CREATE_BACKUP_SUCCESS")
                         .replace("%filename%", backupFile.getName()));
             }
             
-            log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS")
+            log(Level.INFO, _("CREATE_BACKUP_SUCCESS")
                     .replace("%filename%", backupFile.getName()));
         }
         catch (ReportedException ex)
         {
-            log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"));
+            log(Level.WARNING, _("CREATE_BACKUP_FAIL"));
         }
         finally
         {
@@ -583,20 +598,20 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             
             if (sender instanceof Player)
             {
-                sender.sendMessage(getMessage("RESTORE_BACKUP_SUCCESS")
+                sendMsg(sender, _("RESTORE_BACKUP_SUCCESS")
                         .replace("%filename%", filename));
             }
         }
         catch (FileNotFoundException ex)
         {
-            sender.sendMessage(getMessage("RESTORE_BACKUP_NOT_FOUND")
+            sendMsg(sender, _("RESTORE_BACKUP_NOT_FOUND")
                     .replace("%filename%", filename));
         }
         catch (ReportedException ex)
         {
             if (sender instanceof Player)
             {
-                sender.sendMessage(getMessage("RESTORE_BACKUP_FAIL")
+                sendMsg(sender, _("RESTORE_BACKUP_FAIL")
                         .replace("%filename%", filename));
             }
         }
@@ -616,22 +631,13 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             
             if (sender instanceof Player)
             {
-                sender.sendMessage(getMessage("REMOVE_BACKUPS_SUCCESS"));
+                sendMsg(sender, _("REMOVE_BACKUPS_SUCCESS"));
             }
         }
         catch (NumberFormatException ex)
         {
-            sender.sendMessage(getMessage("INVALID_PARAMETER")
-                    .replace("%param%", "amount"));
+            sendMsg(sender, _("invalidParam").replace("{0}", "amount"));
         }
-    }
-    
-    private void subcommandBackupCount(CommandSender sender)
-    {
-        int backupCount = getBackupManager().getBackups(false).length;
-        
-        sender.sendMessage(getMessage("BACKUP_COUNT")
-                .replace("%count%", String.valueOf(backupCount)));
     }
     
     private void subcommandGotowr(Player player)
@@ -645,7 +651,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         
         if (player != null)
         {
-            player.sendMessage(getMessage("GLOBALPASS_SET_SUCCESS"));
+            sendMsg(player, _("GLOBALPASS_SET_SUCCESS"));
         }
     }
     
@@ -655,14 +661,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         
         if (player != null)
         {
-            player.sendMessage(getMessage("GLOBALPASS_REMOVE_SUCCESS"));
+            sendMsg(player, _("GLOBALPASS_REMOVE_SUCCESS"));
         }
-    }
-    
-    private void subcommandAccountCount(CommandSender sender)
-    {
-        sender.sendMessage(getMessage("ACCOUNT_COUNT")
-                .replace("%num%", String.valueOf(getAccountManager().countAccounts())));
     }
     
     private void subcommandAccountStatus(CommandSender sender, String username)
@@ -671,31 +671,23 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         
         if (getAccountManager().isRegistered(username))
         {
-            status.append(getMessage("ACCOUNT_STATUS_REGISTERED"));
+            status.append(_("accountStatus.registered"));
         }
         else
         {
-            status.append(getMessage("ACCOUNT_STATUS_NOT_REGISTERED"));
+            status.append(_("accountStatus.notRegistered"));
         }
         
-        sender.sendMessage(getMessage("ACCOUNT_STATUS")
-                .replace("%username%", username)
-                .replace("%status%", status.toString()));
+        sendMsg(sender, _("accountStatus")
+                .replace("{0}", username)
+                .replace("{1}", status.toString()));
     }
     
     private void subcommandIpcount(CommandSender sender, String ip)
     {
-        if (ip == null)
-        {
-            sender.sendMessage(getMessage("IP_COUNT_UNIQUE")
-                .replace("%num%", String.valueOf(getAccountManager().countUniqueIps())));
-        }
-        else
-        {
-            sender.sendMessage(getMessage("IP_COUNT_ACCOUNTS")
-                .replace("%ip%", ip)
-                .replace("%num%", String.valueOf(getAccountManager().countAccountsWithIp(ip))));
-        }
+        sendMsg(sender, _("ipcount")
+            .replace("{0}", ip)
+            .replace("{1}", String.valueOf(getAccountManager().countAccountsWithIp(ip))));
     }
     
     private void subcommandConfigSet(CommandSender sender, String[] args)
@@ -762,8 +754,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                     }
                     catch (NumberFormatException ex)
                     {
-                        sender.sendMessage(getMessage("INVALID_PARAMETER")
-                                .replace("%param%", "value"));
+                        sendMsg(sender, _("invalidParam").replace("{0}", "value"));
                         
                         return;
                     }
@@ -797,7 +788,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 if ("$".equals(inputValue))
                 {
                     if (!(sender instanceof Player))
-                        throw new Exception(getMessage("ONLY_PLAYERS"));
+                        throw new Exception(_("onlyForPlayers"));
                     
                     Player player = ((Player) sender);
                     
@@ -820,8 +811,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                     }
                     catch (NumberFormatException ex)
                     {
-                        sender.sendMessage(getMessage("INVALID_PARAMETER")
-                                .replace("%param%", "value"));
+                        sendMsg(sender, _("invalidParam").replace("{0}", "value"));
                         
                         return;
                     }
@@ -848,7 +838,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 if ("$".equals(inputValue))
                 {
                     if (!(sender instanceof Player))
-                        throw new Exception(getMessage("ONLY_PLAYERS"));
+                        throw new Exception(_("onlyForPlayers"));
                     
                     Location loc = ((Player) sender).getLocation();
                     
@@ -872,26 +862,26 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             
             if (sender instanceof Player)
             {
-                sender.sendMessage(getMessage("CONFIG_PROPERTY_SET_SUCCESS")
+                sendMsg(sender, _("CONFIG_PROPERTY_SET_SUCCESS")
                         .replace("%path%", args[2])
                         .replace("%value%", getConfig().toString(args[2])));
             }
             
             if (getConfig().getProperty(args[2]).requiresRestart())
             {
-                sender.sendMessage(getMessage("CONFIG_RELOAD_PLUGIN"));
+                sendMsg(sender, _("CONFIG_RELOAD_PLUGIN"));
             }
         }
         catch (Exception ex)
         {
-            sender.sendMessage(getMessage("CONFIG_PROPERTY_SET_FAIL")
+            sendMsg(sender, _("CONFIG_PROPERTY_SET_FAIL")
                     .replace("%cause%", ex.getMessage()));
         }
     }
     
     private void subcommandConfigGet(CommandSender sender, String path)
     {
-        sender.sendMessage(getMessage("CONFIG_PROPERTY_GET")
+        sendMsg(sender, _("CONFIG_PROPERTY_GET")
                 .replace("%path%", path)
                 .replace("%value%", getConfig().toString(path)));
     }
@@ -913,8 +903,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             catch (NumberFormatException ex)
             {
-                sender.sendMessage(getMessage("INVALID_PARAMETER")
-                        .replace("%param%", "page"));
+                sendMsg(sender, _("invalidParam").replace("{0}", "page"));
                 
                 return;
             }
@@ -927,20 +916,20 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         
         if (sender instanceof Player)
         {
-            sender.sendMessage("");
+            sendMsg(sender, "");
         }
         
-        sender.sendMessage(getMessage("CONFIG_PROPERTY_LIST_HEADER")
+        sendMsg(sender, _("CONFIG_PROPERTY_LIST_HEADER")
                 .replace("%page%", String.valueOf(page))
                 .replace("%pages%", String.valueOf(pages)));
-        sender.sendMessage(getMessage("CONFIG_PROPERTY_LIST_HEADER2"));
-        sender.sendMessage(getMessage("CONFIG_PROPERTY_LIST_HEADER3"));
+        sendMsg(sender, _("CONFIG_PROPERTY_LIST_HEADER2"));
+        sendMsg(sender, _("CONFIG_PROPERTY_LIST_HEADER3"));
         
         for (Entry<String, Property> e : properties.entrySet())
         {
             if ((i > ((PROPERTIES_PER_PAGE * (page - 1)) - 1)) && (j < PROPERTIES_PER_PAGE))
             {
-                sender.sendMessage(getMessage("CONFIG_PROPERTY_GET")
+                sendMsg(sender, _("CONFIG_PROPERTY_GET")
                         .replace("%path%", e.getValue().getPath())
                         .replace("%value%", e.getValue().toString()));
                 
@@ -952,7 +941,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         
         if (page > pages)
         {
-            sender.sendMessage(getMessage("CONFIG_PROPERTY_LIST_NO_PROPERTIES"));
+            sendMsg(sender, _("CONFIG_PROPERTY_LIST_NO_PROPERTIES"));
         }
     }
     
@@ -962,24 +951,44 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             getConfig().load();
             
-            log(Level.INFO, getMessage("CONFIG_RELOAD_SUCCESS"));
+            log(Level.INFO, _("reloadConfig.success"));
             
             if (sender instanceof Player)
             {
-                sender.sendMessage(getMessage("CONFIG_RELOAD_SUCCESS"));
+                sendMsg(sender, _("reloadConfig.success"));
             }
         }
         catch (IOException | InvalidPropertyValueException ex)
         {
             ex.printStackTrace();
             
-            sender.sendMessage(getMessage("CONFIG_RELOAD_FAIL"));
+            sendMsg(sender, _("reloadConfig.fail"));
         }
     }
     
-    private void subcommandConvert(CommandSender sender, String[] args)
+    private void subcommandConvert(CommandSender sender)
     {
         new ConvertWizard(sender).createWizard();
+    }
+    
+    private void subcommandStats(CommandSender sender)
+    {
+        int accountCount = getAccountManager().countAccounts();
+        int uniqueIps = getAccountManager().countUniqueIps();
+        int backupCount = getBackupManager().getBackups(false).length;
+        
+        if (sender instanceof Player)
+        {
+            sendMsg(sender, "");
+        }
+        
+        sendMsg(sender, _("stats.header"));
+        sendMsg(sender, _("stats.accountCount")
+                .replace("{0}", String.valueOf(accountCount)));
+        sendMsg(sender, _("stats.uniqueIps")
+                .replace("{0}", String.valueOf(uniqueIps)));
+        sendMsg(sender, _("stats.backupCount")
+                .replace("{0}", String.valueOf(backupCount)));
     }
     
     private boolean checkPermission(Player player, String permission)
@@ -1029,20 +1038,21 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         return checkSubcommand(args, subcommand, Integer.MAX_VALUE);
     }
     
-    private static String buildSubcommandHelp(String subcommand, String params)
+    private static String buildSubcommandHelp(String subcommand,
+                                              String params,
+                                              String descriptionLabel)
     {
-        String line = getMessage("CMD_HELP");
+        String line = _("subCmdHelpLine");
         
         if (params != null)
         {
-            line = line.replace("%cmd%", "logit " + subcommand + " " + params);
+            line = line.replace("{0}", "logit " + subcommand + " " + params);
         }
         else
         {
-            line = line.replace("%cmd%", "logit " + subcommand);
+            line = line.replace("{0}", "logit " + subcommand);
         }
         
-        return line.replace("%desc%",
-                getMessage("DESC_" + subcommand.replace(" ", "_").toUpperCase()));
+        return line.replace("{1}", _(descriptionLabel));
     }
 }

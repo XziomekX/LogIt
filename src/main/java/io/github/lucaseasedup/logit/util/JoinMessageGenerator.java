@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.util;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import io.github.lucaseasedup.logit.LogItCore;
 import org.bukkit.Bukkit;
@@ -38,11 +38,11 @@ public final class JoinMessageGenerator
         
         assert core != null;
         
-        String message = getMessage("JOIN");
+        String message = _("JOIN");
         
         if (core.getConfig().getBoolean("messages.beautify"))
         {
-            message = getMessage("JOIN");
+            message = _("JOIN");
         }
         else
         {
@@ -53,7 +53,7 @@ public final class JoinMessageGenerator
         
         if (core.getConfig().getBoolean("messages.beautify"))
         {
-            inWorld = getMessage("IN_WORLD");
+            inWorld = _("IN_WORLD");
         }
         else
         {

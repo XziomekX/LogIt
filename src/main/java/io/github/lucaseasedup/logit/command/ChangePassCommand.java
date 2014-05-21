@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.sendMessage;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import org.bukkit.command.Command;
@@ -46,29 +46,28 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
         {
             if (p != null && !p.hasPermission("logit.changepass.others"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (args.length < 2)
             {
-                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
+                sendMsg(sender, _("paramMissing").replace("{0}", "player"));
             }
             else if (args.length < 3)
             {
-                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "newpassword"));
+                sendMsg(sender, _("paramMissing").replace("{0}", "newpassword"));
             }
             else if (!getAccountManager().isRegistered(args[1]))
             {
-                sender.sendMessage(getMessage("NOT_REGISTERED_OTHERS")
-                        .replace("%player%", args[1]));
+                sendMsg(sender, _("notRegistered.others").replace("{0}", args[1]));
             }
             else if (args[2].length() < minPasswordLength)
             {
-                sender.sendMessage(getMessage("PASSWORD_TOO_SHORT")
+                sendMsg(sender, _("PASSWORD_TOO_SHORT")
                         .replace("%min-length%", String.valueOf(minPasswordLength)));
             }
             else if (args[2].length() > maxPasswordLength)
             {
-                sender.sendMessage(getMessage("PASSWORD_TOO_LONG")
+                sendMsg(sender, _("PASSWORD_TOO_LONG")
                         .replace("%max-length%", String.valueOf(maxPasswordLength)));
             }
             else
@@ -79,14 +78,12 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
                     
                     getAccountManager().changeAccountPassword(args[1], args[2]);
                     
-                    sendMessage(args[1], getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
-                    sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_OTHERS")
-                            .replace("%player%", args[1]));
+                    sendMsg(args[1], _("changePassword.success.self"));
+                    sendMsg(sender, _("changePassword.success.others").replace("{0}", args[1]));
                 }
                 catch (ReportedException ex)
                 {
-                    sender.sendMessage(getMessage("CHANGE_PASSWORD_FAIL_OTHERS")
-                            .replace("%player%", args[1]));
+                    sendMsg(sender, _("changePassword.fail.others").replace("{0}", args[1]));
                 }
                 finally
                 {
@@ -98,45 +95,45 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
         {
             if (p == null)
             {
-                sender.sendMessage(getMessage("ONLY_PLAYERS"));
+                sendMsg(sender, _("onlyForPlayers"));
             }
             else if (!p.hasPermission("logit.changepass.self"))
             {
-                p.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(p, _("noPerms"));
             }
             else if (args.length < 1)
             {
-                p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "oldpassword"));
+                sendMsg(p, _("paramMissing").replace("{0}", "oldpassword"));
             }
             else if (args.length < 2)
             {
-                p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "newpassword"));
+                sendMsg(p, _("paramMissing").replace("{0}", "newpassword"));
             }
             else if (args.length < 3)
             {
-                p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
+                sendMsg(p, _("paramMissing").replace("{0}", "confirmpassword"));
             }
             else if (!getAccountManager().isRegistered(p.getName()))
             {
-                p.sendMessage(getMessage("NOT_REGISTERED_SELF"));
+                sendMsg(p, _("notRegistered.self"));
             }
             else if (!getAccountManager().checkAccountPassword(p.getName(), args[0]))
             {
-                p.sendMessage(getMessage("INCORRECT_PASSWORD"));
+                sendMsg(p, _("INCORRECT_PASSWORD"));
             }
             else if (args[1].length() < minPasswordLength)
             {
-                p.sendMessage(getMessage("PASSWORD_TOO_SHORT")
+                sendMsg(p, _("PASSWORD_TOO_SHORT")
                         .replace("%min-length%", String.valueOf(minPasswordLength)));
             }
             else if (args[1].length() > maxPasswordLength)
             {
-                p.sendMessage(getMessage("PASSWORD_TOO_LONG")
+                sendMsg(p, _("PASSWORD_TOO_LONG")
                         .replace("%max-length%", String.valueOf(maxPasswordLength)));
             }
             else if (!args[1].equals(args[2]))
             {
-                p.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
+                sendMsg(p, _("PASSWORDS_DO_NOT_MATCH"));
             }
             else
             {
@@ -146,11 +143,11 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
                     
                     getAccountManager().changeAccountPassword(p.getName(), args[1]);
                     
-                    sender.sendMessage(getMessage("CHANGE_PASSWORD_SUCCESS_SELF"));
+                    sendMsg(sender, _("changePassword.success.self"));
                 }
                 catch (ReportedException ex)
                 {
-                    sender.sendMessage(getMessage("CHANGE_PASSWORD_FAIL_SELF"));
+                    sendMsg(sender, _("changePassword.fail.self"));
                 }
                 finally
                 {
@@ -160,7 +157,7 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
         }
         else
         {
-            sender.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
+            sendMsg(sender, _("incorrectParamCombination"));
         }
         
         return true;

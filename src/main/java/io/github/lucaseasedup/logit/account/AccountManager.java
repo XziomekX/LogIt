@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.IntegrationType;
@@ -307,13 +307,12 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         {
             storage.addEntry(unit, entry);
             
-            log(Level.FINE, getMessage("CREATE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
+            log(Level.FINE, _("createAccount.success.log").replace("{0}", username));
             evt.executeSuccessTasks();
         }
         catch (IOException ex)
         {
-            log(Level.WARNING,
-                    getMessage("CREATE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
+            log(Level.WARNING, _("createAccount.fail.log").replace("{0}", username), ex);
             evt.executeFailureTasks();
             
             ReportedException.throwNew(ex);
@@ -357,13 +356,12 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
             storage.removeEntries(unit,
                     new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
             
-            log(Level.FINE, getMessage("REMOVE_ACCOUNT_SUCCESS_LOG").replace("%player%", username));
+            log(Level.FINE, _("removeAccount.success.log").replace("{0}", username));
             evt.executeSuccessTasks();
         }
         catch (IOException ex)
         {
-            log(Level.WARNING,
-                    getMessage("REMOVE_ACCOUNT_FAIL_LOG").replace("%player%", username), ex);
+            log(Level.WARNING, _("removeAccount.fail.log").replace("{0}", username), ex);
             evt.executeFailureTasks();
             
             ReportedException.throwNew(ex);
@@ -489,13 +487,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         {
             updateEntry(username, entry);
             
-            log(Level.FINE,
-                    getMessage("CHANGE_PASSWORD_SUCCESS_LOG").replace("%player%", username));
+            log(Level.FINE, _("changePassword.success.log").replace("{0}", username));
         }
         catch (IOException ex)
         {
-            log(Level.WARNING,
-                    getMessage("CHANGE_PASSWORD_FAIL_LOG").replace("%player%", username), ex);
+            log(Level.WARNING, _("changePassword.fail.log").replace("{0}", username), ex);
             
             ReportedException.throwNew(ex);
         }
@@ -531,12 +527,12 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
                     .put(keys.ip(), ip)
                     .build());
             
-            log(Level.FINE, getMessage("ATTACH_IP_SUCCESS_LOG").replace("%player%", username)
+            log(Level.FINE, _("ATTACH_IP_SUCCESS_LOG").replace("%player%", username)
                     .replace("%ip%", ip));
         }
         catch (IOException ex)
         {
-            log(Level.WARNING, getMessage("ATTACH_IP_FAIL_LOG").replace("%player%", username)
+            log(Level.WARNING, _("ATTACH_IP_FAIL_LOG").replace("%player%", username)
                     .replace("%ip%", ip), ex);
             
             ReportedException.throwNew(ex);
@@ -672,12 +668,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
                     .put(keys.email(), newEmail)
                     .build());
             
-            log(Level.FINE, getMessage("CHANGE_EMAIL_SUCCESS_LOG").replace("%player%", username));
+            log(Level.FINE, _("CHANGE_EMAIL_SUCCESS_LOG").replace("%player%", username));
         }
         catch (IOException ex)
         {
-            log(Level.WARNING,
-                    getMessage("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username), ex);
+            log(Level.WARNING, _("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username), ex);
             
             ReportedException.throwNew(ex);
         }

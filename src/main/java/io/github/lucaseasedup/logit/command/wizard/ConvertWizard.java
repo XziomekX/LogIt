@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.command.wizard;
 
 import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import io.github.lucaseasedup.logit.FatalReportedException;
 import io.github.lucaseasedup.logit.config.PropertyType;
 import io.github.lucaseasedup.logit.config.validators.DbTypeValidator;
@@ -201,7 +202,7 @@ public final class ConvertWizard extends Wizard
             {
                 for (Player player : Bukkit.getOnlinePlayers())
                 {
-                    player.kickPlayer(getMessage("SERVER_MAINTENANCE"));
+                    player.kickPlayer(getMessage("serverMaintenance"));
                 }
                 
                 getConfig().set("storage.accounts.leading.storage-type", dbtype);
@@ -258,7 +259,7 @@ public final class ConvertWizard extends Wizard
                                 .replace("%dbtype%", dbtype));
                     }
                     
-                    log(Level.INFO, getMessage("CONVERT_SUCCESS_LOG")
+                    log(Level.INFO, _("CONVERT_SUCCESS_LOG")
                             .replace("%dbtype%", dbtype));
                     
                     updateStep(Step.SUCCESS);
@@ -270,7 +271,7 @@ public final class ConvertWizard extends Wizard
                         sendMessage(getMessage("CONVERT_FAIL"));
                     }
                     
-                    log(Level.SEVERE, getMessage("CONVERT_FAIL"), ex);
+                    log(Level.SEVERE, _("CONVERT_FAIL"), ex);
                     
                     updateStep(Step.FAIL);
                 }

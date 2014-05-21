@@ -18,7 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.storage.Infix;
@@ -48,20 +49,19 @@ public final class AccunlockCommand extends LogItCoreObject implements CommandEx
         {
             if (p != null && !p.hasPermission("logit.accunlock"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (args.length < 1)
             {
-                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "username"));
+                sendMsg(sender, _("paramMissing").replace("{0}", "username"));
             }
             else if (p != null && p.getName().equalsIgnoreCase(args[0]))
             {
-                sender.sendMessage(getMessage("CANNOT_UNLOCK_YOURSELF"));
+                sendMsg(sender, _("CANNOT_UNLOCK_YOURSELF"));
             }
             else if (!getAccountManager().isRegistered(args[0]))
             {
-                sender.sendMessage(getMessage("NOT_REGISTERED_OTHERS")
-                        .replace("%player%", args[0]));
+                sendMsg(sender, _("notRegistered.others").replace("{0}", args[0]));
             }
             else
             {
@@ -82,24 +82,22 @@ public final class AccunlockCommand extends LogItCoreObject implements CommandEx
                     {
                         playerName = PlayerUtils.getPlayerName(args[0]);
                         
-                        PlayerUtils.getPlayer(args[0])
-                                .sendMessage(getMessage("ACCUNLOCK_SUCCESS_SELF"));
+                        sendMsg(PlayerUtils.getPlayer(args[0]), _("ACCUNLOCK_SUCCESS_SELF"));
                     }
                     
-                    sender.sendMessage(getMessage("ACCUNLOCK_SUCCESS_OTHERS")
-                            .replace("%player%", playerName));
+                    sendMsg(sender, _("ACCUNLOCK_SUCCESS_OTHERS").replace("%player%", playerName));
                 }
                 catch (IOException ex)
                 {
                     log(Level.WARNING, ex);
                     
-                    sender.sendMessage(getMessage("UNEXPECTED_ERROR"));
+                    sendMsg(sender, _("UNEXPECTED_ERROR"));
                 }
             }
         }
         else
         {
-            sender.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
+            sendMsg(sender, _("incorrectParamCombination"));
         }
         
         return true;

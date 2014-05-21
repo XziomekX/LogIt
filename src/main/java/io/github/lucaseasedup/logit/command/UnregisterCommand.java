@@ -18,9 +18,9 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.sendMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import org.bukkit.command.Command;
@@ -46,20 +46,19 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
         {
             if (p != null && !p.hasPermission("logit.unregister.others"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (args.length < 2)
             {
-                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
+                sendMsg(sender, _("paramMissing").replace("{0}", "player"));
             }
             else if (!getAccountManager().isRegistered(args[1]))
             {
-                sender.sendMessage(getMessage("NOT_REGISTERED_OTHERS")
-                        .replace("%player%", args[1]));
+                sendMsg(sender, _("notRegistered.others").replace("{0}", args[1]));
             }
             else if (p != null && p.getName().equalsIgnoreCase(args[1]))
             {
-                sender.sendMessage(getMessage("INDIRECT_ACCOUNT_REMOVAL"));
+                sendMsg(sender, _("indirectAccountRemoval"));
             }
             else
             {
@@ -67,8 +66,8 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
                 {
                     if (!getSessionManager().endSession(args[1]).isCancelled())
                     {
-                        sendMessage(args[1], getMessage("END_SESSION_SUCCESS_SELF"));
-                        sender.sendMessage(getMessage("END_SESSION_SUCCESS_OTHERS")
+                        sendMsg(args[1], _("END_SESSION_SUCCESS_SELF"));
+                        sendMsg(sender, _("END_SESSION_SUCCESS_OTHERS")
                                 .replace("%player%", args[1]));
                     }
                 }
@@ -79,15 +78,13 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
                     
                     if (!getAccountManager().removeAccount(args[1]).isCancelled())
                     {
-                        sendMessage(args[1], getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
-                        sender.sendMessage(getMessage("REMOVE_ACCOUNT_SUCCESS_OTHERS")
-                                .replace("%player%", args[1]));
+                        sendMsg(args[1], _("removeAccount.success.self"));
+                        sendMsg(sender, _("removeAccount.success.others").replace("{0}", args[1]));
                     }
                 }
                 catch (ReportedException ex)
                 {
-                    sender.sendMessage(getMessage("REMOVE_ACCOUNT_FAIL_OTHERS")
-                            .replace("%player%", args[1]));
+                    sendMsg(sender, _("removeAccount.fail.others").replace("{0}", args[1]));
                 }
                 finally
                 {
@@ -99,24 +96,24 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
         {
             if (p == null)
             {
-                sender.sendMessage(getMessage("ONLY_PLAYERS"));
+                sendMsg(sender, _("onlyForPlayers"));
             }
             else if (!p.hasPermission("logit.unregister.self"))
             {
-                p.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(p, _("noPerms"));
             }
             else if (args.length < 1 && !disablePasswords)
             {
-                p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+                sendMsg(p, _("paramMissing").replace("{0}", "password"));
             }
             else if (!getAccountManager().isRegistered(p.getName()))
             {
-                p.sendMessage(getMessage("NOT_REGISTERED_SELF"));
+                sendMsg(p, _("notRegistered.self"));
             }
             else if (!disablePasswords
                     && !getAccountManager().checkAccountPassword(p.getName(), args[0]))
             {
-                p.sendMessage(getMessage("INCORRECT_PASSWORD"));
+                sendMsg(p, _("INCORRECT_PASSWORD"));
             }
             else
             {
@@ -124,7 +121,7 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
                 {
                     if (!getSessionManager().endSession(p.getName()).isCancelled())
                     {
-                        sender.sendMessage(getMessage("END_SESSION_SUCCESS_SELF"));
+                        sendMsg(sender, _("END_SESSION_SUCCESS_SELF"));
                     }
                 }
                 
@@ -134,12 +131,12 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
                     
                     if (!getAccountManager().removeAccount(p.getName()).isCancelled())
                     {
-                        sender.sendMessage(getMessage("REMOVE_ACCOUNT_SUCCESS_SELF"));
+                        sendMsg(sender, _("removeAccount.success.self"));
                     }
                 }
                 catch (ReportedException ex)
                 {
-                    sender.sendMessage(getMessage("REMOVE_ACCOUNT_FAIL_SELF"));
+                    sendMsg(sender, _("removeAccount.fail.self"));
                 }
                 finally
                 {
@@ -149,7 +146,7 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
         }
         else
         {
-            sender.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
+            sendMsg(sender, _("incorrectParamCombination"));
         }
         
         return true;

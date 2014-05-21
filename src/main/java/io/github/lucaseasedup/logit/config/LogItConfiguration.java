@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.config;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import com.google.common.collect.ImmutableMap;
 import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.TimeUnit;
@@ -283,7 +283,7 @@ public final class LogItConfiguration extends PropertyObserver implements Dispos
         getPlugin().getConfig().set(p.getPath(), p.getValue());
         getPlugin().saveConfig();
         
-        log(Level.INFO, getMessage("CONFIG_PROPERTY_SET_LOG")
+        log(Level.INFO, _("CONFIG_PROPERTY_SET_LOG")
                 .replace("%path%", p.getPath())
                 .replace("%value%", p.toString()));
     }

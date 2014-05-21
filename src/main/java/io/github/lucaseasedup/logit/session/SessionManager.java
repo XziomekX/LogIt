@@ -18,8 +18,9 @@
  */
 package io.github.lucaseasedup.logit.session;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerName;
@@ -93,7 +94,7 @@ public final class SessionManager extends LogItCoreObject
                         {
                             endSession(username);
                             
-                            player.sendMessage(getMessage("END_SESSION_AUTOMATIC_SELF"));
+                            sendMsg(player, _("END_SESSION_AUTOMATIC_SELF"));
                             
                             if (getCore().isPlayerForcedToLogIn(player))
                             {
@@ -121,7 +122,7 @@ public final class SessionManager extends LogItCoreObject
                 {
                     if (timeoutEnabled && session.getStatus() <= -timeoutValue)
                     {
-                        player.kickPlayer(getMessage("FORCE_LOGIN_TIMEOUT"));
+                        player.kickPlayer(_("FORCE_LOGIN_TIMEOUT"));
                     }
                     else
                     {
@@ -260,7 +261,7 @@ public final class SessionManager extends LogItCoreObject
         Session session = new Session(ip);
         sessions.put(username.toLowerCase(), session);
         
-        log(Level.FINE, getMessage("CREATE_SESSION_SUCCESS_LOG").replace("%player%", username));
+        log(Level.FINE, _("CREATE_SESSION_SUCCESS_LOG").replace("%player%", username));
         
         return CancelledState.NOT_CANCELLED;
     }
@@ -327,7 +328,7 @@ public final class SessionManager extends LogItCoreObject
         
         sessions.remove(username.toLowerCase());
         
-        log(Level.FINE, getMessage("DESTROY_SESSION_SUCCESS_LOG")
+        log(Level.FINE, _("DESTROY_SESSION_SUCCESS_LOG")
                 .replace("%player%", getPlayerName(username)));
         
         return CancelledState.NOT_CANCELLED;
@@ -394,7 +395,7 @@ public final class SessionManager extends LogItCoreObject
         // Start the session.
         session.setStatus(0L);
         
-        log(Level.FINE, getMessage("START_SESSION_SUCCESS_LOG").replace("%player%", username));
+        log(Level.FINE, _("START_SESSION_SUCCESS_LOG").replace("%player%", username));
         
         return CancelledState.NOT_CANCELLED;
     }
@@ -460,7 +461,7 @@ public final class SessionManager extends LogItCoreObject
         // End the session.
         session.setStatus(-1L);
         
-        log(Level.FINE, getMessage("END_SESSION_SUCCESS_LOG").replace("%player%", username));
+        log(Level.FINE, _("END_SESSION_SUCCESS_LOG").replace("%player%", username));
         
         return CancelledState.NOT_CANCELLED;
     }

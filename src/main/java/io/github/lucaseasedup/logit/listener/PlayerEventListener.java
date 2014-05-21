@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.listener;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastJoinMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastQuitMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
@@ -71,7 +71,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             if ("1".equals(accountData.get(keys.is_locked())))
             {
-                event.disallow(Result.KICK_OTHER, getMessage("ACCLOCK_SUCCESS_SELF"));
+                event.disallow(Result.KICK_OTHER, _("ACCLOCK_SUCCESS_SELF"));
                 
                 return;
             }
@@ -82,34 +82,34 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         if (username.trim().isEmpty())
         {
-            event.disallow(KICK_OTHER, getMessage("USERNAME_BLANK"));
+            event.disallow(KICK_OTHER, _("USERNAME_BLANK"));
         }
         else if (!player.getName().matches(getConfig().getString("username.regex")))
         {
-            event.disallow(KICK_OTHER, getMessage("USERNAME_INVALID"));
+            event.disallow(KICK_OTHER, _("USERNAME_INVALID"));
         }
         else if (username.length() < minUsernameLength)
         {
-            event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_SHORT")
+            event.disallow(KICK_OTHER, _("USERNAME_TOO_SHORT")
                     .replace("%min-length%", String.valueOf(minUsernameLength)));
         }
         else if (username.length() > maxUsernameLength)
         {
-            event.disallow(KICK_OTHER, getMessage("USERNAME_TOO_LONG")
+            event.disallow(KICK_OTHER, _("USERNAME_TOO_LONG")
                     .replace("%max-length%", String.valueOf(maxUsernameLength)));
         }
         else if (CollectionUtils.containsIgnoreCase(username,
                 getConfig().getStringList("username.prohibited-usernames")))
         {
-            event.disallow(KICK_OTHER, getMessage("USERNAME_PROHIBITED"));
+            event.disallow(KICK_OTHER, _("USERNAME_PROHIBITED"));
         }
         else if (isPlayerOnline(username))
         {
-            event.disallow(KICK_OTHER, getMessage("USERNAME_ALREADY_USED"));
+            event.disallow(KICK_OTHER, _("USERNAME_ALREADY_USED"));
         }
         else if (getConfig().getBoolean("crowd-control.kick-unregistered") && accountData == null)
         {
-            event.disallow(KICK_OTHER, getMessage("KICK_UNREGISTERED"));
+            event.disallow(KICK_OTHER, _("KICK_UNREGISTERED"));
         }
         else
         {
@@ -134,7 +134,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             if (actualFreeSlots <= 0
                     && !CollectionUtils.containsIgnoreCase(username, reserveForPlayers))
             {
-                event.disallow(KICK_OTHER, getMessage("NO_SLOTS_FREE"));
+                event.disallow(KICK_OTHER, _("NO_SLOTS_FREE"));
             }
         }
     }

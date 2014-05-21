@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.command.wizard;
 
+import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -104,7 +105,7 @@ public abstract class Wizard extends LogItCoreObject implements Listener
     
     protected final void sendMessage(String message)
     {
-        getSender().sendMessage(message);
+        sendMsg(getSender(), message);
     }
     
     protected final void cancelWizard()

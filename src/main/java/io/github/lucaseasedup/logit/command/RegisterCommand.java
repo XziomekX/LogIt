@@ -18,11 +18,11 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.sendMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import java.util.List;
@@ -57,29 +57,28 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 || !p.hasPermission("logit.register.others")
             ))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (args.length < 2)
             {
-                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
+                sendMsg(sender, _("paramMissing").replace("{0}", "player"));
             }
             else if (!disablePasswords && args.length < 3)
             {
-                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+                sendMsg(sender, _("paramMissing").replace("{0}", "password"));
             }
             else if (getAccountManager().isRegistered(args[1]))
             {
-                sender.sendMessage(getMessage("ALREADY_REGISTERED_OTHERS")
-                        .replace("%player%", args[1]));
+                sendMsg(sender, _("alreadyRegistered.others").replace("{0}", args[1]));
             }
             else if (!disablePasswords && args[2].length() < minPasswordLength)
             {
-                sender.sendMessage(getMessage("PASSWORD_TOO_SHORT")
+                sendMsg(sender, _("PASSWORD_TOO_SHORT")
                         .replace("%min-length%", String.valueOf(minPasswordLength)));
             }
             else if (!disablePasswords && args[2].length() > maxPasswordLength)
             {
-                sender.sendMessage(getMessage("PASSWORD_TOO_LONG")
+                sendMsg(sender, _("PASSWORD_TOO_LONG")
                         .replace("%max-length%", String.valueOf(maxPasswordLength)));
             }
             else
@@ -100,9 +99,9 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         return true;
                     }
                     
-                    sendMessage(args[1], getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
-                    sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_OTHERS")
-                            .replace("%player%", args[1]));
+                    sendMsg(args[1], _("createAccount.success.self"));
+                    sendMsg(sender, _("createAccount.success.others")
+                            .replace("{0}", args[1]));
                     
                     if (isPlayerOnline(args[1]))
                     {
@@ -110,8 +109,8 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         
                         if (!getSessionManager().startSession(args[1]).isCancelled())
                         {
-                            sendMessage(args[1], getMessage("START_SESSION_SUCCESS_SELF"));
-                            sender.sendMessage(getMessage("START_SESSION_SUCCESS_OTHERS")
+                            sendMsg(args[1], _("START_SESSION_SUCCESS_SELF"));
+                            sendMsg(sender, _("START_SESSION_SUCCESS_OTHERS")
                                     .replace("%player%", args[1]));
                         }
                         
@@ -128,8 +127,8 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 }
                 catch (ReportedException ex)
                 {
-                    sender.sendMessage(getMessage("CREATE_ACCOUNT_FAIL_OTHERS")
-                            .replace("%player%", args[1]));
+                    sendMsg(sender, _("createAccount.fail.others")
+                            .replace("{0}", args[1]));
                 }
                 finally
                 {
@@ -145,42 +144,42 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             
             if (p == null)
             {
-                sender.sendMessage(getMessage("ONLY_PLAYERS"));
+                sendMsg(sender, _("onlyForPlayers"));
             }
             else if (!p.hasPermission("logit.register.self"))
             {
-                p.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(p, _("noPerms"));
             }
             else if (!disablePasswords && args.length < 1)
             {
-                p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "password"));
+                sendMsg(p, _("paramMissing").replace("{0}", "password"));
             }
             else if (!disablePasswords && args.length < 2)
             {
-                p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "confirmpassword"));
+                sendMsg(p, _("paramMissing").replace("{0}", "confirmpassword"));
             }
             else if (getAccountManager().isRegistered(p.getName()))
             {
-                p.sendMessage(getMessage("ALREADY_REGISTERED_SELF"));
+                sendMsg(p, _("alreadyRegistered.self"));
             }
             else if (!disablePasswords && args[0].length() < minPasswordLength)
             {
-                p.sendMessage(getMessage("PASSWORD_TOO_SHORT")
+                sendMsg(p, _("PASSWORD_TOO_SHORT")
                         .replace("%min-length%", String.valueOf(minPasswordLength)));
             }
             else if (!disablePasswords && args[0].length() > maxPasswordLength)
             {
-                p.sendMessage(getMessage("PASSWORD_TOO_LONG")
+                sendMsg(p, _("PASSWORD_TOO_LONG")
                         .replace("%max-length%", String.valueOf(maxPasswordLength)));
             }
             else if (!disablePasswords && !args[0].equals(args[1]))
             {
-                p.sendMessage(getMessage("PASSWORDS_DO_NOT_MATCH"));
+                sendMsg(p, _("PASSWORDS_DO_NOT_MATCH"));
             }
             else if (getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= accountsPerIp
                     && !unrestrictedIps.contains(getPlayerIp(p)) && accountsPerIp >= 0)
             {
-                p.sendMessage(getMessage("ACCOUNTS_PER_IP_LIMIT"));
+                sendMsg(p, _("ACCOUNTS_PER_IP_LIMIT"));
             }
             else
             {
@@ -200,13 +199,13 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         return true;
                     }
                     
-                    sender.sendMessage(getMessage("CREATE_ACCOUNT_SUCCESS_SELF"));
+                    sendMsg(sender, _("createAccount.success.self"));
                     
                     getAccountManager().attachIp(p.getName(), getPlayerIp(p));
                     
                     if (!getSessionManager().startSession(p.getName()).isCancelled())
                     {
-                        sender.sendMessage(getMessage("START_SESSION_SUCCESS_SELF"));
+                        sendMsg(sender, _("START_SESSION_SUCCESS_SELF"));
                     }
                     
                     if (getConfig().getBoolean("waiting-room.enabled")
@@ -221,18 +220,18 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                     
                     if (getConfig().getBoolean("login-sessions.enabled"))
                     {
-                        sender.sendMessage(getMessage("REMEMBER_PROMPT"));
+                        sendMsg(sender, _("REMEMBER_PROMPT"));
                     }
                     
                     if (getConfig().getBoolean("password-recovery.prompt-to-add-email")
                             && getConfig().getBoolean("password-recovery.enabled"))
                     {
-                        sender.sendMessage(getMessage("NO_EMAIL_SET_REMINDER"));
+                        sendMsg(sender, _("NO_EMAIL_SET_REMINDER"));
                     }
                 }
                 catch (ReportedException ex)
                 {
-                    sender.sendMessage(getMessage("CREATE_ACCOUNT_FAIL_SELF"));
+                    sendMsg(sender, _("createAccount.fail.self"));
                 }
                 finally
                 {
@@ -242,7 +241,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
         }
         else
         {
-            sender.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
+            sendMsg(sender, _("incorrectParamCombination"));
         }
         
         return true;

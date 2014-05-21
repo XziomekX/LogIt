@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.sendMessage;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.util.EmailUtils;
@@ -44,24 +44,23 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
         {
             if (p != null && !p.hasPermission("logit.changeemail.others"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (args.length < 2)
             {
-                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "player"));
+                sendMsg(sender, _("paramMissing").replace("{0}", "player"));
             }
             else if (args.length < 3)
             {
-                sender.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "newemail"));
+                sendMsg(sender, _("paramMissing").replace("{0}", "newemail"));
             }
             else if (!getAccountManager().isRegistered(args[1]))
             {
-                sender.sendMessage(getMessage("NOT_REGISTERED_OTHERS")
-                        .replace("%player%", args[1]));
+                sendMsg(sender, _("notRegistered.others").replace("{0}", args[1]));
             }
             else if (!EmailUtils.validateEmail(args[2]))
             {
-                sender.sendMessage(getMessage("INVALID_EMAIL_ADDRESS"));
+                sendMsg(sender, _("INVALID_EMAIL_ADDRESS"));
             }
             else
             {
@@ -71,15 +70,15 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
                     
                     getAccountManager().changeEmail(args[1], args[2]);
                     
-                    sendMessage(args[1], getMessage("CHANGE_EMAIL_SUCCESS_SELF")
+                    sendMsg(args[1], _("CHANGE_EMAIL_SUCCESS_SELF")
                             .replace("%email%", args[2]));
-                    sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_OTHERS")
+                    sendMsg(sender, _("CHANGE_EMAIL_SUCCESS_OTHERS")
                             .replace("%player%", args[1])
                             .replace("%email%", args[2]));
                 }
                 catch (ReportedException ex)
                 {
-                    sender.sendMessage(getMessage("CHANGE_EMAIL_FAIL_OTHERS")
+                    sendMsg(sender, _("CHANGE_EMAIL_FAIL_OTHERS")
                             .replace("%player%", args[1]));
                 }
                 finally
@@ -92,23 +91,23 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
         {
             if (p == null)
             {
-                sender.sendMessage(getMessage("ONLY_PLAYERS"));
+                sendMsg(sender, _("onlyForPlayers"));
             }
             else if (!p.hasPermission("logit.changeemail.self"))
             {
-                p.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(p, _("noPerms"));
             }
             else if (args.length < 1)
             {
-                p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "newemail"));
+                sendMsg(p, _("paramMissing").replace("{0}", "newemail"));
             }
             else if (!getAccountManager().isRegistered(p.getName()))
             {
-                p.sendMessage(getMessage("NOT_REGISTERED_SELF"));
+                sendMsg(p, _("notRegistered.self"));
             }
             else if (!EmailUtils.validateEmail(args[0]))
             {
-                p.sendMessage(getMessage("INVALID_EMAIL_ADDRESS"));
+                sendMsg(p, _("INVALID_EMAIL_ADDRESS"));
             }
             else
             {
@@ -118,12 +117,12 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
                     
                     getAccountManager().changeEmail(p.getName(), args[0]);
                     
-                    sender.sendMessage(getMessage("CHANGE_EMAIL_SUCCESS_SELF")
+                    sendMsg(sender, _("CHANGE_EMAIL_SUCCESS_SELF")
                             .replace("%email%", args[0]));
                 }
                 catch (ReportedException ex)
                 {
-                    sender.sendMessage(getMessage("CHANGE_EMAIL_FAIL_SELF"));
+                    sendMsg(sender, _("CHANGE_EMAIL_FAIL_SELF"));
                 }
                 finally
                 {
@@ -133,7 +132,7 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
         }
         else
         {
-            sender.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
+            sendMsg(sender, _("incorrectParamCombination"));
         }
         
         return true;

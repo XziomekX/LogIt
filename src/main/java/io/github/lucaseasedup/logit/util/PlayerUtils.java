@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.util;
 
+import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import java.util.Arrays;
 import java.util.Collection;
 import org.bukkit.Bukkit;
@@ -113,22 +114,6 @@ public final class PlayerUtils
     }
     
     /**
-     * Sends player a message.
-     * 
-     * @param name    the name of the player who will receive the message.
-     * @param message the message to be sent.
-     */
-    public static void sendMessage(String name, String message)
-    {
-        Player player = getPlayer(name);
-        
-        if (player != null)
-        {
-            player.sendMessage(message);
-        }
-    }
-    
-    /**
      * Sends a message to all online players.
      * 
      * @param message the message to be sent.
@@ -137,24 +122,25 @@ public final class PlayerUtils
     {
         for (Player p : Bukkit.getOnlinePlayers())
         {
-            p.sendMessage(message);
+            sendMsg(p, message);
         }
     }
     
     /**
-     * Sends a message to all online players, except
-     * those with names contained in {@code exceptPlayers}.
+     * Sends a message to all online players with an exception to player names
+     * confined in {@code exceptPlayers}.
      * 
-     * @param message       the message to be sent.
-     * @param exceptPlayers the players to be omitted in broadcasting.
+     * @param message       the message to be broadcasted.
+     * @param exceptPlayers the case-insensitive player names {@code Collection}
+     *                      that will omitted in the broadcasting.
      */
-    public static void broadcastMessageExcept(String message, Collection<Player> exceptPlayers)
+    public static void broadcastMessageExcept(String message, Collection<String> exceptPlayers)
     {
         for (Player p : Bukkit.getOnlinePlayers())
         {
-            if (!exceptPlayers.contains(p))
+            if (!CollectionUtils.containsIgnoreCase(p.getName(), exceptPlayers))
             {
-                p.sendMessage(message);
+                sendMsg(p, message);
             }
         }
     }
@@ -163,14 +149,14 @@ public final class PlayerUtils
      * Broadcasts a join message.
      * 
      * @param player           the player who joined.
-     * @param revealSpawnWorld whether to show name of the world
+     * @param revealSpawnWorld whether to show a name of the world
      *                         where the player spawned after joining.
      */
     public static void broadcastJoinMessage(Player player, boolean revealSpawnWorld)
     {
         String joinMessage = JoinMessageGenerator.generate(player, revealSpawnWorld);
         
-        broadcastMessageExcept(joinMessage, Arrays.asList(player));
+        broadcastMessageExcept(joinMessage, Arrays.asList(player.getName()));
     }
     
     /**
@@ -182,6 +168,6 @@ public final class PlayerUtils
     {
         String quitMessage = QuitMessageGenerator.generate(player);
         
-        broadcastMessageExcept(quitMessage, Arrays.asList(player));
+        broadcastMessageExcept(quitMessage, Arrays.asList(player.getName()));
     }
 }

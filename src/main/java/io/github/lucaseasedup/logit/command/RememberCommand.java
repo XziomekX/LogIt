@@ -18,7 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.TimeUnit;
@@ -45,19 +46,19 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
         {
             if (p == null)
             {
-                sender.sendMessage(getMessage("ONLY_PLAYERS"));
+                sendMsg(sender, _("onlyForPlayers"));
             }
             else if (!p.hasPermission("logit.remember"))
             {
-                sender.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(sender, _("noPerms"));
             }
             else if (!getSessionManager().isSessionAlive(p))
             {
-                sender.sendMessage(getMessage("NOT_LOGGED_IN_SELF"));
+                sendMsg(sender, _("NOT_LOGGED_IN_SELF"));
             }
             else if (!getAccountManager().isRegistered(p.getName()))
             {
-                sender.sendMessage(getMessage("NOT_REGISTERED_SELF"));
+                sendMsg(sender, _("notRegistered.self"));
             }
             else
             {
@@ -74,12 +75,12 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
                     
                     Locale activeLocale = getLocaleManager().getActiveLocale();
                     
-                    sender.sendMessage(getMessage("REMEMBER_SUCCESS").replace("%time%",
+                    sendMsg(sender, _("REMEMBER_SUCCESS").replace("%time%",
                             activeLocale.stringifySeconds((int) validnessTime)));
                 }
                 catch (ReportedException ex)
                 {
-                    sender.sendMessage(getMessage("REMEMBER_FAIL"));
+                    sendMsg(sender, _("REMEMBER_FAIL"));
                 }
                 finally
                 {
@@ -89,7 +90,7 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
         }
         else
         {
-            sender.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
+            sendMsg(sender, _("incorrectParamCombination"));
         }
         
         return true;

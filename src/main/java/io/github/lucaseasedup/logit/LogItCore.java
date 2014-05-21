@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.account.AccountWatcher;
@@ -332,11 +332,11 @@ public final class LogItCore
         
         started = true;
         
-        log(Level.FINE, getMessage("PLUGIN_START_SUCCESS"));
+        log(Level.FINE, _("startPlugin.success"));
         
         if (isFirstRun())
         {
-            log(Level.INFO, getMessage("PLUGIN_FIRST_RUN"));
+            log(Level.INFO, _("firstRun"));
         }
     }
     
@@ -394,7 +394,7 @@ public final class LogItCore
         
         dispose();
         
-        log(Level.FINE, getMessage("PLUGIN_STOP_SUCCESS"));
+        log(Level.FINE, _("stopPlugin.success"));
     }
     
     /**
@@ -519,7 +519,7 @@ public final class LogItCore
             sessionsFile.delete();
         }
         
-        log(Level.INFO, getMessage("RELOADED"));
+        log(Level.INFO, _("reloadPlugin.success"));
     }
     
     /**
@@ -641,7 +641,7 @@ public final class LogItCore
         config.set("password.global-password.salt", salt);
         config.set("password.global-password.hash", hash);
         
-        log(Level.INFO, getMessage("GLOBALPASS_SET_SUCCESS"));
+        log(Level.INFO, _("GLOBALPASS_SET_SUCCESS"));
     }
     
     /**
@@ -653,7 +653,7 @@ public final class LogItCore
         config.set("password.global-password.hash", "");
         config.set("password.global-password.salt", "");
         
-        log(Level.INFO, getMessage("GLOBALPASS_REMOVE_SUCCESS"));
+        log(Level.INFO, _("GLOBALPASS_REMOVE_SUCCESS"));
     }
     
     /**

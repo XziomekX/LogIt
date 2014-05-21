@@ -18,7 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.security.SecurityHelper;
@@ -48,19 +49,19 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
         {
             if (p == null)
             {
-                sender.sendMessage(getMessage("ONLY_PLAYERS"));
+                sendMsg(sender, _("onlyForPlayers"));
             }
             else if (!p.hasPermission("logit.recoverpass"))
             {
-                p.sendMessage(getMessage("NO_PERMS"));
+                sendMsg(p, _("noPerms"));
             }
             else if (args.length < 1)
             {
-                p.sendMessage(getMessage("PARAM_MISSING").replace("%param%", "email"));
+                sendMsg(p, _("paramMissing").replace("{0}", "email"));
             }
             else if (!getAccountManager().isRegistered(p.getName()))
             {
-                p.sendMessage(getMessage("NOT_REGISTERED_SELF"));
+                sendMsg(p, _("notRegistered.self"));
             }
             else
             {
@@ -72,7 +73,7 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                     
                     if (!args[0].equals(email))
                     {
-                        p.sendMessage(getMessage("INCORRECT_EMAIL_ADDRESS"));
+                        sendMsg(p, _("INCORRECT_EMAIL_ADDRESS"));
                         
                         return true;
                     }
@@ -97,17 +98,17 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                     getMailSender().sendMail(Arrays.asList(to), from, subject, body,
                             getConfig().getBoolean("password-recovery.html-enabled"));
                     
-                    sender.sendMessage(getMessage("RECOVER_PASSWORD_SUCCESS_SELF")
-                            .replace("%email%", args[0]));
-                    log(Level.FINE, getMessage("RECOVER_PASSWORD_SUCCESS_LOG")
-                            .replace("%player%", p.getName())
-                            .replace("%email%", to));
+                    sendMsg(sender, _("recoverPassword.success.self")
+                            .replace("{0}", args[0]));
+                    log(Level.FINE, _("recoverPassword.success.log")
+                            .replace("{0}", p.getName())
+                            .replace("{1}", to));
                 }
                 catch (ReportedException | IOException ex)
                 {
-                    sender.sendMessage(getMessage("RECOVER_PASSWORD_FAIL_SELF"));
-                    log(Level.WARNING, getMessage("RECOVER_PASSWORD_FAIL_LOG")
-                            .replace("%player%", p.getName()), ex);
+                    sendMsg(sender, _("recoverPassword.fail.self"));
+                    log(Level.WARNING, _("recoverPassword.fail.log")
+                            .replace("{0}", p.getName()), ex);
                 }
                 finally
                 {
@@ -117,7 +118,7 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
         }
         else
         {
-            sender.sendMessage(getMessage("INCORRECT_PARAMETER_COMBINATION"));
+            sendMsg(sender, _("incorrectParamCombination"));
         }
         
         return true;

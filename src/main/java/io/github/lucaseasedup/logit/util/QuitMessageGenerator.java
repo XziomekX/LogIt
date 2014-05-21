@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.util;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import io.github.lucaseasedup.logit.LogItCore;
 import org.bukkit.entity.Player;
 
@@ -38,7 +38,7 @@ public final class QuitMessageGenerator
         
         if (core.getConfig().getBoolean("messages.beautify"))
         {
-            message = getMessage("QUIT");
+            message = _("QUIT");
         }
         else
         {

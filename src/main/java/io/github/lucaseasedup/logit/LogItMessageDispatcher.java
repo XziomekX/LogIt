@@ -18,7 +18,8 @@
  */
 package io.github.lucaseasedup.logit;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Hashtable;
 import org.bukkit.entity.Player;
@@ -69,11 +70,11 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
             {
                 if (!getConfig().getBoolean("password.disable-passwords"))
                 {
-                    player.sendMessage(getMessage("PLEASE_LOGIN"));
+                    sendMsg(player, _("PLEASE_LOGIN"));
                 }
                 else
                 {
-                    player.sendMessage(getMessage("PLEASE_LOGIN_NOPASS"));
+                    sendMsg(player, _("PLEASE_LOGIN_NOPASS"));
                 }
             }
         }
@@ -83,11 +84,11 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
             {
                 if (!getConfig().getBoolean("password.disable-passwords"))
                 {
-                    player.sendMessage(getMessage("PLEASE_REGISTER"));
+                    sendMsg(player, _("PLEASE_REGISTER"));
                 }
                 else
                 {
-                    player.sendMessage(getMessage("PLEASE_REGISTER_NOPASS"));
+                    sendMsg(player, _("PLEASE_REGISTER_NOPASS"));
                 }
             }
         }

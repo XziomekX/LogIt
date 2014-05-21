@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.backup;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
+import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
@@ -85,12 +85,12 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
                 
                 File backupFile = createBackup();
                 
-                log(Level.INFO, getMessage("CREATE_BACKUP_SUCCESS")
+                log(Level.INFO, _("CREATE_BACKUP_SUCCESS")
                         .replace("%filename%", backupFile.getName()));
             }
             catch (ReportedException ex)
             {
-                log(Level.WARNING, getMessage("CREATE_BACKUP_FAIL"));
+                log(Level.WARNING, _("CREATE_BACKUP_FAIL"));
             }
             finally
             {
@@ -191,7 +191,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
             accountManager.getStorage().clearBatch();
             accountManager.getStorage().setAutobatchEnabled(false);
             
-            log(Level.INFO, getMessage("RESTORE_BACKUP_SUCCESS")
+            log(Level.INFO, _("RESTORE_BACKUP_SUCCESS")
                     .replace("%filename%", filename));
         }
         catch (IOException ex)
@@ -219,7 +219,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
             backupFiles[i].delete();
         }
         
-        log(Level.INFO, getMessage("REMOVE_BACKUPS_SUCCESS"));
+        log(Level.INFO, _("REMOVE_BACKUPS_SUCCESS"));
     }
     
     /**
