@@ -587,12 +587,17 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             ReportedException.incrementRequestCount();
             
+            // If filename is null, get the most recent backup.
             if (filename == null)
             {
                 File[] backups = getBackupManager().getBackups(true);
                 
                 if (backups.length == 0)
-                    throw new FileNotFoundException();
+                {
+                    sendMsg(sender, _("restoreBackup.noBackups"));
+                    
+                    return;
+                }
                 
                 filename = backups[backups.length - 1].getName();
             }
