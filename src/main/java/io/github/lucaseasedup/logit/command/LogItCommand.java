@@ -437,11 +437,6 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             sendMsg(sender, buildSubcommandHelp("backup remove", "<amount>",
                     "subCmdDesc.backup.remove"));
         }
-        if (checkPermission(p, "logit.backup.count"))
-        {
-            sendMsg(sender, buildSubcommandHelp("backup count", null,
-                    "subCmdDesc.backup.count"));
-        }
         if (checkPermission(p, "logit.gotowr"))
         {
             sendMsg(sender, buildSubcommandHelp("gotowr", null,
@@ -456,11 +451,6 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             sendMsg(sender, buildSubcommandHelp("globalpass remove", null,
                     "subCmdDesc.globalpass.remove"));
-        }
-        if (checkPermission(p, "logit.account.count"))
-        {
-            sendMsg(sender, buildSubcommandHelp("account count", null,
-                    "subCmdDesc.account.count"));
         }
         if (checkPermission(p, "logit.account.status"))
         {
