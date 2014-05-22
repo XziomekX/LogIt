@@ -21,8 +21,8 @@ package io.github.lucaseasedup.logit.config;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import com.google.common.collect.ImmutableMap;
 import io.github.lucaseasedup.logit.Disposable;
+import io.github.lucaseasedup.logit.TimeString;
 import io.github.lucaseasedup.logit.TimeUnit;
-import io.github.lucaseasedup.logit.config.validators.TimeStringValidator;
 import io.github.lucaseasedup.logit.util.IniUtils;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import it.sauronsoftware.base64.Base64;
@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.bukkit.Color;
@@ -238,26 +237,12 @@ public final class LogItConfiguration extends PropertyObserver implements Dispos
         return (LocationSerializable) properties.get(path).getValue();
     }
     
-    public long getTime(String path, TimeUnit resultingUnit)
+    public long getTime(String path, TimeUnit returnTimeUnit)
     {
-        if (path == null || resultingUnit == null)
+        if (path == null || returnTimeUnit == null)
             throw new IllegalArgumentException();
         
-        Matcher matcher = TimeStringValidator.PATTERN.matcher(getString(path));
-        long time = 0;
-        
-        while (matcher.find())
-        {
-            String longValue = matcher.group(1);
-            TimeUnit unit = TimeUnit.decode(matcher.group(2));
-            
-            if (unit != null)
-            {
-                time += unit.convert(Long.parseLong(longValue), resultingUnit);
-            }
-        }
-        
-        return time;
+        return TimeString.decode(getString(path), returnTimeUnit);
     }
     
     /**
