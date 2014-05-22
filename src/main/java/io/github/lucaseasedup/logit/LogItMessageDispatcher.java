@@ -20,8 +20,8 @@ package io.github.lucaseasedup.logit;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
-import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Hashtable;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -132,7 +132,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         @Override
         public void run()
         {
-            Player player = PlayerUtils.getPlayer(username);
+            Player player = Bukkit.getPlayerExact(username);
             
             if (player == null || !isCoreStarted())
             {

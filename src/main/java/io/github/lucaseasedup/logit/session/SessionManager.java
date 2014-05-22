@@ -21,7 +21,6 @@ package io.github.lucaseasedup.logit.session;
 import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerName;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
@@ -79,7 +78,7 @@ public final class SessionManager extends LogItCoreObject
         {
             String  username = entry.getKey();
             Session session  = entry.getValue();
-            Player  player   = getPlayer(username);
+            Player  player   = Bukkit.getPlayerExact(username);
             
             // Player is logged in, either online or offline.
             if (session.getStatus() >= 0L)
@@ -189,7 +188,7 @@ public final class SessionManager extends LogItCoreObject
         
         if (PlayerUtils.isPlayerOnline(username))
         {
-            Player player = getPlayer(username);
+            Player player = Bukkit.getPlayerExact(username);
             String ip     = getPlayerIp(player);
             
             return session.isAlive() && ip.equals(session.getIp());

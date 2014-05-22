@@ -28,6 +28,7 @@ import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.io.IOException;
 import java.util.logging.Level;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -82,7 +83,7 @@ public final class AcclockCommand extends LogItCoreObject implements CommandExec
                     {
                         playerName = PlayerUtils.getPlayerName(args[0]);
                         
-                        PlayerUtils.getPlayer(args[0]).kickPlayer(_("acclock.success.self"));
+                        Bukkit.getPlayerExact(args[0]).kickPlayer(_("acclock.success.self"));
                     }
                     
                     sendMsg(sender, _("acclock.success.others")

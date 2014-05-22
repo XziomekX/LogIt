@@ -20,9 +20,9 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -56,7 +56,7 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
                 sendMsg(sender, _("playerNotOnline")
                         .replace("{0}", args[1]));
             }
-            else if (!getSessionManager().isSessionAlive(getPlayer(args[1])))
+            else if (!getSessionManager().isSessionAlive(Bukkit.getPlayerExact(args[1])))
             {
                 sendMsg(sender, _("notLoggedIn.others")
                         .replace("{0}", args[1]));

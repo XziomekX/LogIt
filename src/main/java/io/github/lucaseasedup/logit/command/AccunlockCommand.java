@@ -28,6 +28,7 @@ import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.io.IOException;
 import java.util.logging.Level;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -82,7 +83,7 @@ public final class AccunlockCommand extends LogItCoreObject implements CommandEx
                     {
                         playerName = PlayerUtils.getPlayerName(args[0]);
                         
-                        sendMsg(PlayerUtils.getPlayer(args[0]), _("accunlock.success.self"));
+                        sendMsg(Bukkit.getPlayerExact(args[0]), _("accunlock.success.self"));
                     }
                     
                     sendMsg(sender, _("accunlock.success.others")

@@ -42,7 +42,7 @@ public final class PlayerUtils
     {
         if (isPlayerOnline(name))
         {
-            return getPlayer(name).getName();
+            return Bukkit.getPlayerExact(name).getName();
         }
         else
         {
@@ -59,19 +59,7 @@ public final class PlayerUtils
      */
     public static boolean isPlayerOnline(String name)
     {
-        return (getPlayer(name) != null) ? true : false;
-    }
-    
-    /**
-     * Returns an online {@code Player} with the given name.
-     * 
-     * @param name the player name.
-     * 
-     * @return the player object.
-     */
-    public static Player getPlayer(String name)
-    {
-        return Bukkit.getPlayerExact(name);
+        return (Bukkit.getPlayerExact(name) != null) ? true : false;
     }
     
     public static String getPlayerIp(Player player)

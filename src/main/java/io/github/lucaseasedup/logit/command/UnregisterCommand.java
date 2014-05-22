@@ -20,9 +20,9 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -62,7 +62,7 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             }
             else
             {
-                if (getSessionManager().isSessionAlive(getPlayer(args[1])))
+                if (getSessionManager().isSessionAlive(Bukkit.getPlayerExact(args[1])))
                 {
                     if (!getSessionManager().endSession(args[1]).isCancelled())
                     {

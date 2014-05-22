@@ -25,6 +25,7 @@ import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.session.SessionEndEvent;
 import io.github.lucaseasedup.logit.session.SessionStartEvent;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -43,7 +44,7 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
         if (!PlayerUtils.isPlayerOnline(username))
             return;
         
-        final Player player = PlayerUtils.getPlayer(username);
+        final Player player = Bukkit.getPlayerExact(username);
         
         new BukkitRunnable()
         {
@@ -80,7 +81,7 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
         if (!PlayerUtils.isPlayerOnline(username))
             return;
         
-        final Player player = PlayerUtils.getPlayer(username);
+        final Player player = Bukkit.getPlayerExact(username);
         
         new BukkitRunnable()
         {

@@ -20,14 +20,12 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.security.HashingAlgorithm;
 import io.github.lucaseasedup.logit.storage.Storage;
-import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,14 +68,14 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 sendMsg(sender, _("playerNotOnline")
                         .replace("{0}", args[1]));
             }
-            else if (getSessionManager().isSessionAlive(getPlayer(args[1])))
+            else if (getSessionManager().isSessionAlive(Bukkit.getPlayerExact(args[1])))
             {
                 sendMsg(sender, _("alreadyLoggedIn.others")
                         .replace("{0}", args[1]));
             }
             else
             {
-                Player argPlayer = PlayerUtils.getPlayer(args[1]);
+                Player argPlayer = Bukkit.getPlayerExact(args[1]);
                 
                 assert argPlayer != null;
                 
