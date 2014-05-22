@@ -38,11 +38,11 @@ public final class QuitMessageGenerator
         
         if (core.getConfig().getBoolean("messages.beautify"))
         {
-            message = _("quit");
+            message = _("quit.beautified");
         }
         else
         {
-            message = "\u00A7e{0} left the game.";
+            message = _("quit.native");
         }
         
         return message.replace("{0}", player.getName());

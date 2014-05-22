@@ -38,26 +38,26 @@ public final class JoinMessageGenerator
         
         assert core != null;
         
-        String message = _("join");
+        String message;
         
         if (core.getConfig().getBoolean("messages.beautify"))
         {
-            message = _("join");
+            message = _("join.beautified");
         }
         else
         {
-            message = "\u00A7e{0} joined the game{1}.";
+            message = _("join.native");
         }
         
         String inWorld;
         
         if (core.getConfig().getBoolean("messages.beautify"))
         {
-            inWorld = _("join.inWorld");
+            inWorld = _("join.beautified.inWorld");
         }
         else
         {
-            inWorld = " (in \"\u00A76{0}\u00A7e\")";
+            inWorld = _("join.native.inWorld");
         }
         
         if (revealSpawnWorld)
