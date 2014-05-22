@@ -57,7 +57,8 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
             }
             else if (args.length < 1)
             {
-                sendMsg(p, _("paramMissing").replace("{0}", "email"));
+                sendMsg(p, _("paramMissing")
+                        .replace("{0}", "email"));
             }
             else if (!getAccountManager().isRegistered(p.getName()))
             {

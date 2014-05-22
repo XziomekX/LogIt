@@ -163,7 +163,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else if (args.length < 3)
             {
-                sendMsg(sender, _("paramMissing").replace("{0}", "amount"));
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "amount"));
             }
             else
             {
@@ -200,7 +201,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else if (args.length < 3)
             {
-                sendMsg(sender, _("paramMissing").replace("{0}", "password"));
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "password"));
             }
             else if (!isCoreStarted())
             {
@@ -244,7 +246,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else if (args.length < 3)
             {
-                sendMsg(sender, _("paramMissing").replace("{0}", "username"));
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "username"));
             }
             else if (!isCoreStarted())
             {
@@ -263,7 +266,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else if (args.length < 2)
             {
-                sendMsg(sender, _("paramMissing").replace("{0}", "ip"));
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "ip"));
             }
             else if (!isCoreStarted())
             {
@@ -282,11 +286,13 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else if (args.length < 3)
             {
-                sendMsg(sender, _("paramMissing").replace("{0}", "path"));
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "path"));
             }
             else if (args.length < 4)
             {
-                sendMsg(sender, _("paramMissing").replace("{0}", "value"));
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "value"));
             }
             else if (!isCoreStarted())
             {
@@ -310,7 +316,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else if (args.length < 3)
             {
-                sendMsg(sender, _("paramMissing").replace("{0}", "path"));
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "path"));
             }
             else if (!isCoreStarted())
             {
@@ -633,7 +640,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         }
         catch (NumberFormatException ex)
         {
-            sendMsg(sender, _("invalidParam").replace("{0}", "amount"));
+            sendMsg(sender, _("invalidParam")
+                    .replace("{0}", "amount"));
         }
     }
     
@@ -751,7 +759,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                     }
                     catch (NumberFormatException ex)
                     {
-                        sendMsg(sender, _("invalidParam").replace("{0}", "value"));
+                        sendMsg(sender, _("invalidParam")
+                                .replace("{0}", "value"));
                         
                         return;
                     }
@@ -808,7 +817,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                     }
                     catch (NumberFormatException ex)
                     {
-                        sendMsg(sender, _("invalidParam").replace("{0}", "value"));
+                        sendMsg(sender, _("invalidParam")
+                                .replace("{0}", "value"));
                         
                         return;
                     }
@@ -901,7 +911,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             catch (NumberFormatException ex)
             {
-                sendMsg(sender, _("invalidParam").replace("{0}", "page"));
+                sendMsg(sender, _("invalidParam")
+                        .replace("{0}", "page"));
                 
                 return;
             }

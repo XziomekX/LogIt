@@ -54,7 +54,8 @@ public final class AcclockCommand extends LogItCoreObject implements CommandExec
             }
             else if (args.length < 1)
             {
-                sendMsg(sender, _("paramMissing").replace("{0}", "username"));
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "username"));
             }
             else if (p != null && p.getName().equalsIgnoreCase(args[0]))
             {
@@ -62,7 +63,8 @@ public final class AcclockCommand extends LogItCoreObject implements CommandExec
             }
             else if (!getAccountManager().isRegistered(args[0]))
             {
-                sendMsg(sender, _("notRegistered.others").replace("{0}", args[0]));
+                sendMsg(sender, _("notRegistered.others")
+                        .replace("{0}", args[0]));
             }
             else
             {

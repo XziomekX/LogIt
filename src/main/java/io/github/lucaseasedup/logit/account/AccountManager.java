@@ -307,12 +307,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         {
             storage.addEntry(unit, entry);
             
-            log(Level.FINE, _("createAccount.success.log").replace("{0}", username));
+            log(Level.FINE, _("createAccount.success.log")
+                    .replace("{0}", username));
             evt.executeSuccessTasks();
         }
         catch (IOException ex)
         {
-            log(Level.WARNING, _("createAccount.fail.log").replace("{0}", username), ex);
+            log(Level.WARNING, _("createAccount.fail.log")
+                    .replace("{0}", username), ex);
             evt.executeFailureTasks();
             
             ReportedException.throwNew(ex);
@@ -356,12 +358,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
             storage.removeEntries(unit,
                     new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
             
-            log(Level.FINE, _("removeAccount.success.log").replace("{0}", username));
+            log(Level.FINE, _("removeAccount.success.log")
+                    .replace("{0}", username));
             evt.executeSuccessTasks();
         }
         catch (IOException ex)
         {
-            log(Level.WARNING, _("removeAccount.fail.log").replace("{0}", username), ex);
+            log(Level.WARNING, _("removeAccount.fail.log")
+                    .replace("{0}", username), ex);
             evt.executeFailureTasks();
             
             ReportedException.throwNew(ex);
@@ -487,11 +491,13 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         {
             updateEntry(username, entry);
             
-            log(Level.FINE, _("changePassword.success.log").replace("{0}", username));
+            log(Level.FINE, _("changePassword.success.log")
+                    .replace("{0}", username));
         }
         catch (IOException ex)
         {
-            log(Level.WARNING, _("changePassword.fail.log").replace("{0}", username), ex);
+            log(Level.WARNING, _("changePassword.fail.log")
+                    .replace("{0}", username), ex);
             
             ReportedException.throwNew(ex);
         }

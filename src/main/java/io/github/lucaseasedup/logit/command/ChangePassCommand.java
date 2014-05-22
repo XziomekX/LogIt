@@ -50,15 +50,18 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
             }
             else if (args.length < 2)
             {
-                sendMsg(sender, _("paramMissing").replace("{0}", "player"));
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "player"));
             }
             else if (args.length < 3)
             {
-                sendMsg(sender, _("paramMissing").replace("{0}", "newpassword"));
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "newpassword"));
             }
             else if (!getAccountManager().isRegistered(args[1]))
             {
-                sendMsg(sender, _("notRegistered.others").replace("{0}", args[1]));
+                sendMsg(sender, _("notRegistered.others")
+                        .replace("{0}", args[1]));
             }
             else if (args[2].length() < minPasswordLength)
             {
@@ -79,11 +82,13 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
                     getAccountManager().changeAccountPassword(args[1], args[2]);
                     
                     sendMsg(args[1], _("changePassword.success.self"));
-                    sendMsg(sender, _("changePassword.success.others").replace("{0}", args[1]));
+                    sendMsg(sender, _("changePassword.success.others")
+                            .replace("{0}", args[1]));
                 }
                 catch (ReportedException ex)
                 {
-                    sendMsg(sender, _("changePassword.fail.others").replace("{0}", args[1]));
+                    sendMsg(sender, _("changePassword.fail.others")
+                            .replace("{0}", args[1]));
                 }
                 finally
                 {
@@ -103,15 +108,18 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
             }
             else if (args.length < 1)
             {
-                sendMsg(p, _("paramMissing").replace("{0}", "oldpassword"));
+                sendMsg(p, _("paramMissing")
+                        .replace("{0}", "oldpassword"));
             }
             else if (args.length < 2)
             {
-                sendMsg(p, _("paramMissing").replace("{0}", "newpassword"));
+                sendMsg(p, _("paramMissing")
+                        .replace("{0}", "newpassword"));
             }
             else if (args.length < 3)
             {
-                sendMsg(p, _("paramMissing").replace("{0}", "confirmpassword"));
+                sendMsg(p, _("paramMissing")
+                        .replace("{0}", "confirmpassword"));
             }
             else if (!getAccountManager().isRegistered(p.getName()))
             {

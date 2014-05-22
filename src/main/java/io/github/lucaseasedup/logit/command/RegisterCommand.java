@@ -61,15 +61,18 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             }
             else if (args.length < 2)
             {
-                sendMsg(sender, _("paramMissing").replace("{0}", "player"));
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "player"));
             }
             else if (!disablePasswords && args.length < 3)
             {
-                sendMsg(sender, _("paramMissing").replace("{0}", "password"));
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "password"));
             }
             else if (getAccountManager().isRegistered(args[1]))
             {
-                sendMsg(sender, _("alreadyRegistered.others").replace("{0}", args[1]));
+                sendMsg(sender, _("alreadyRegistered.others")
+                        .replace("{0}", args[1]));
             }
             else if (!disablePasswords && args[2].length() < minPasswordLength)
             {
@@ -153,11 +156,13 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             }
             else if (!disablePasswords && args.length < 1)
             {
-                sendMsg(p, _("paramMissing").replace("{0}", "password"));
+                sendMsg(p, _("paramMissing")
+                        .replace("{0}", "password"));
             }
             else if (!disablePasswords && args.length < 2)
             {
-                sendMsg(p, _("paramMissing").replace("{0}", "confirmpassword"));
+                sendMsg(p, _("paramMissing")
+                        .replace("{0}", "confirmpassword"));
             }
             else if (getAccountManager().isRegistered(p.getName()))
             {

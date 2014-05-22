@@ -113,7 +113,8 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             if (args.length < 1 && !disablePasswords)
             {
-                sendMsg(p, _("paramMissing").replace("{0}", "password"));
+                sendMsg(p, _("paramMissing")
+                        .replace("{0}", "password"));
                 
                 return true;
             }

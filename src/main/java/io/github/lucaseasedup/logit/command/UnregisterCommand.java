@@ -50,11 +50,13 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             }
             else if (args.length < 2)
             {
-                sendMsg(sender, _("paramMissing").replace("{0}", "player"));
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "player"));
             }
             else if (!getAccountManager().isRegistered(args[1]))
             {
-                sendMsg(sender, _("notRegistered.others").replace("{0}", args[1]));
+                sendMsg(sender, _("notRegistered.others")
+                        .replace("{0}", args[1]));
             }
             else if (p != null && p.getName().equalsIgnoreCase(args[1]))
             {
@@ -79,12 +81,14 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
                     if (!getAccountManager().removeAccount(args[1]).isCancelled())
                     {
                         sendMsg(args[1], _("removeAccount.success.self"));
-                        sendMsg(sender, _("removeAccount.success.others").replace("{0}", args[1]));
+                        sendMsg(sender, _("removeAccount.success.others")
+                                .replace("{0}", args[1]));
                     }
                 }
                 catch (ReportedException ex)
                 {
-                    sendMsg(sender, _("removeAccount.fail.others").replace("{0}", args[1]));
+                    sendMsg(sender, _("removeAccount.fail.others")
+                            .replace("{0}", args[1]));
                 }
                 finally
                 {
@@ -104,7 +108,8 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             }
             else if (args.length < 1 && !disablePasswords)
             {
-                sendMsg(p, _("paramMissing").replace("{0}", "password"));
+                sendMsg(p, _("paramMissing")
+                        .replace("{0}", "password"));
             }
             else if (!getAccountManager().isRegistered(p.getName()))
             {
