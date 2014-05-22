@@ -487,6 +487,11 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             sendMsg(sender, buildSubcommandHelp("convert", null,
                     "subCmdDesc.convert"));
         }
+        if (checkPermission(p, "logit.stats"))
+        {
+            sendMsg(sender, buildSubcommandHelp("stats", null,
+                    "subCmdDesc.stats"));
+        }
     }
     
     private void subcommandVersion(CommandSender sender)
