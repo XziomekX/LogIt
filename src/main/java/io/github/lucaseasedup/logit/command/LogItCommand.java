@@ -862,9 +862,9 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             
             if (sender instanceof Player)
             {
-                sendMsg(sender, _("CONFIG_PROPERTY_SET_SUCCESS")
-                        .replace("%path%", args[2])
-                        .replace("%value%", getConfig().toString(args[2])));
+                sendMsg(sender, _("config.set.success")
+                        .replace("{0}", args[2])
+                        .replace("{1}", getConfig().toString(args[2])));
             }
             
             if (getConfig().getProperty(args[2]).requiresRestart())
@@ -874,16 +874,17 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         }
         catch (Exception ex)
         {
-            sendMsg(sender, _("CONFIG_PROPERTY_SET_FAIL")
-                    .replace("%cause%", ex.getMessage()));
+            sendMsg(sender, _("config.set.fail")
+                    .replace("{0}", args[2])
+                    .replace("{1}", ex.getMessage()));
         }
     }
     
     private void subcommandConfigGet(CommandSender sender, String path)
     {
-        sendMsg(sender, _("CONFIG_PROPERTY_GET")
-                .replace("%path%", path)
-                .replace("%value%", getConfig().toString(path)));
+        sendMsg(sender, _("config.get.property")
+                .replace("{0}", path)
+                .replace("{1}", getConfig().toString(path)));
     }
     
     private void subcommandConfigList(CommandSender sender, String pageString)
@@ -929,9 +930,9 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             if ((i > ((PROPERTIES_PER_PAGE * (page - 1)) - 1)) && (j < PROPERTIES_PER_PAGE))
             {
-                sendMsg(sender, _("CONFIG_PROPERTY_GET")
-                        .replace("%path%", e.getValue().getPath())
-                        .replace("%value%", e.getValue().toString()));
+                sendMsg(sender, _("config.list.property")
+                        .replace("{0}", e.getValue().getPath())
+                        .replace("{1}", e.getValue().toString()));
                 
                 j++;
             }

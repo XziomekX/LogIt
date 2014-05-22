@@ -58,7 +58,7 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             }
             else if (p != null && p.getName().equalsIgnoreCase(args[1]))
             {
-                sendMsg(sender, _("indirectAccountRemoval"));
+                sendMsg(sender, _("removeAccount.indirectAccountRemoval"));
             }
             else
             {

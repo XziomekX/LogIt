@@ -527,13 +527,15 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
                     .put(keys.ip(), ip)
                     .build());
             
-            log(Level.FINE, _("ATTACH_IP_SUCCESS_LOG").replace("%player%", username)
-                    .replace("%ip%", ip));
+            log(Level.FINE, _("attachIp.success.log")
+                    .replace("{0}", ip)
+                    .replace("{1}", username));
         }
         catch (IOException ex)
         {
-            log(Level.WARNING, _("ATTACH_IP_FAIL_LOG").replace("%player%", username)
-                    .replace("%ip%", ip), ex);
+            log(Level.WARNING, _("attachIp.fail.log")
+                    .replace("{0}", ip)
+                    .replace("{1}", username), ex);
             
             ReportedException.throwNew(ex);
         }
@@ -668,11 +670,15 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
                     .put(keys.email(), newEmail)
                     .build());
             
-            log(Level.FINE, _("CHANGE_EMAIL_SUCCESS_LOG").replace("%player%", username));
+            log(Level.FINE, _("changeEmail.success.log")
+                    .replace("{0}", username)
+                    .replace("{1}", newEmail));
         }
         catch (IOException ex)
         {
-            log(Level.WARNING, _("CHANGE_EMAIL_FAIL_LOG").replace("%player%", username), ex);
+            log(Level.WARNING, _("changeEmail.fail.log")
+                    .replace("{0}", username)
+                    .replace("{1}", newEmail), ex);
             
             ReportedException.throwNew(ex);
         }

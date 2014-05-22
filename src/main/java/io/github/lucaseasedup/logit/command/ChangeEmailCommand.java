@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import org.mozilla.javascript.ast.NewExpression;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.util.EmailUtils;
@@ -60,7 +61,7 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
             }
             else if (!EmailUtils.validateEmail(args[2]))
             {
-                sendMsg(sender, _("INVALID_EMAIL_ADDRESS"));
+                sendMsg(sender, _("changeEmail.invalidEmailAddress"));
             }
             else
             {
@@ -70,16 +71,17 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
                     
                     getAccountManager().changeEmail(args[1], args[2]);
                     
-                    sendMsg(args[1], _("CHANGE_EMAIL_SUCCESS_SELF")
-                            .replace("%email%", args[2]));
-                    sendMsg(sender, _("CHANGE_EMAIL_SUCCESS_OTHERS")
-                            .replace("%player%", args[1])
-                            .replace("%email%", args[2]));
+                    sendMsg(args[1], _("changeEmail.success.self")
+                            .replace("{0}", args[2]));
+                    sendMsg(sender, _("changeEmail.success.others")
+                            .replace("{0}", args[1])
+                            .replace("{1}", args[2]));
                 }
                 catch (ReportedException ex)
                 {
-                    sendMsg(sender, _("CHANGE_EMAIL_FAIL_OTHERS")
-                            .replace("%player%", args[1]));
+                    sendMsg(sender, _("changeEmail.fail.others")
+                            .replace("{0}", args[1])
+                            .replace("{1}", args[2]));
                 }
                 finally
                 {
@@ -107,7 +109,7 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
             }
             else if (!EmailUtils.validateEmail(args[0]))
             {
-                sendMsg(p, _("INVALID_EMAIL_ADDRESS"));
+                sendMsg(p, _("changeEmail.invalidEmailAddress"));
             }
             else
             {
@@ -117,12 +119,12 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
                     
                     getAccountManager().changeEmail(p.getName(), args[0]);
                     
-                    sendMsg(sender, _("CHANGE_EMAIL_SUCCESS_SELF")
-                            .replace("%email%", args[0]));
+                    sendMsg(sender, _("changeEmail.success.self")
+                            .replace("{0}", args[0]));
                 }
                 catch (ReportedException ex)
                 {
-                    sendMsg(sender, _("CHANGE_EMAIL_FAIL_SELF"));
+                    sendMsg(sender, _("changeEmail.fail.self"));
                 }
                 finally
                 {

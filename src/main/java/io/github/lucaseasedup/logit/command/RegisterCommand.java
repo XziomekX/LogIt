@@ -226,7 +226,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                     if (getConfig().getBoolean("password-recovery.prompt-to-add-email")
                             && getConfig().getBoolean("password-recovery.enabled"))
                     {
-                        sendMsg(sender, _("NO_EMAIL_SET_REMINDER"));
+                        sendMsg(sender, _("noEmailSet"));
                     }
                 }
                 catch (ReportedException ex)

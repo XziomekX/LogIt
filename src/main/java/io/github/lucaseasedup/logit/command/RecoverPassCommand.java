@@ -73,7 +73,7 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                     
                     if (!args[0].equals(email))
                     {
-                        sendMsg(p, _("INCORRECT_EMAIL_ADDRESS"));
+                        sendMsg(p, _("recoverPassword.incorrectEmailAddress"));
                         
                         return true;
                     }
