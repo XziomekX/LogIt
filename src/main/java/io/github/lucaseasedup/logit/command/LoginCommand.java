@@ -71,8 +71,8 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             }
             else if (getSessionManager().isSessionAlive(getPlayer(args[1])))
             {
-                sendMsg(sender, _("ALREADY_LOGGED_IN_OTHERS")
-                        .replace("%player%", args[1]));
+                sendMsg(sender, _("alreadyLoggedIn.others")
+                        .replace("{0}", args[1]));
             }
             else
             {
@@ -87,9 +87,9 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 
                 if (!getSessionManager().startSession(args[1]).isCancelled())
                 {
-                    sendMsg(args[1], _("START_SESSION_SUCCESS_SELF"));
-                    sendMsg(sender, _("START_SESSION_SUCCESS_OTHERS")
-                            .replace("%player%", args[1]));
+                    sendMsg(args[1], _("startSession.success.self"));
+                    sendMsg(sender, _("startSession.success.others")
+                            .replace("{0}", args[1]));
                 }
             }
         }
@@ -121,7 +121,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             if (getSessionManager().isSessionAlive(p))
             {
-                sendMsg(p, _("ALREADY_LOGGED_IN_SELF"));
+                sendMsg(p, _("alreadyLoggedIn.self"));
                 
                 return true;
             }
@@ -152,7 +152,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 
                 if (!getCore().checkPassword(args[0], hashedPassword, actualSalt, algorithm))
                 {
-                    sendMsg(p, _("INCORRECT_PASSWORD"));
+                    sendMsg(p, _("incorrectPassword"));
                     
                     Integer currentFailedLoginsToKick = failedLoginsToKick.get(username);
                     Integer currentFailedLoginsToBan = failedLoginsToBan.get(username);
@@ -191,11 +191,11 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 failedLoginsToKick.remove(username);
                 failedLoginsToBan.remove(username);
                 
-                sendMsg(sender, _("START_SESSION_SUCCESS_SELF"));
+                sendMsg(sender, _("startSession.success.self"));
                 
                 if (getConfig().getBoolean("login-sessions.enabled"))
                 {
-                    sendMsg(sender, _("REMEMBER_PROMPT"));
+                    sendMsg(sender, _("rememberLogin.prompt"));
                 }
                 
                 if (accountData.get(keys.ip()).trim().isEmpty())

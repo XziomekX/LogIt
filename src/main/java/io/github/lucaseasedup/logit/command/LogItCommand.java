@@ -22,19 +22,20 @@ import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.FatalReportedException;
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.MessageReader;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.command.wizard.ConvertWizard;
 import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyType;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -67,10 +68,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
         }
         else if (checkSubcommand(args, "version", 0))
-        {for (Entry<String, String> e : MessageReader.loadMsgs().entrySet())
         {
-            sendMsg(sender, e.getKey() + ": " + e.getValue());
-        }
             if (!checkPermission(p, "logit.version"))
             {
                 sendMsg(sender, _("noPerms"));
@@ -212,13 +210,13 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else if (args[2].length() < minPasswordLength)
             {
-                sendMsg(sender, _("PASSWORD_TOO_SHORT")
-                        .replace("%min-length%", String.valueOf(minPasswordLength)));
+                sendMsg(sender, _("passwordTooShort")
+                        .replace("{0}", String.valueOf(minPasswordLength)));
             }
             else if (args[2].length() > maxPasswordLength)
             {
-                sendMsg(sender, _("PASSWORD_TOO_LONG")
-                        .replace("%max-length%", String.valueOf(maxPasswordLength)));
+                sendMsg(sender, _("passwordTooLong")
+                        .replace("{0}", String.valueOf(maxPasswordLength)));
             }
             else
             {
@@ -298,8 +296,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else if (!getConfig().contains(args[2]))
             {
-                sendMsg(sender, _("CONFIG_PROPERTY_NOT_FOUND")
-                        .replace("%param%", "path"));
+                sendMsg(sender, _("config.propertyNotFound")
+                        .replace("{0}", args[2]));
             }
             else
             {
@@ -322,8 +320,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else if (!getConfig().contains(args[2]))
             {
-                sendMsg(sender, _("CONFIG_PROPERTY_NOT_FOUND")
-                        .replace("%param%", "path"));
+                sendMsg(sender, _("config.propertyNotFound")
+                        .replace("{0}", args[2]));
             }
             else
             {
@@ -561,16 +559,21 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             
             if (player != null)
             {
-                sendMsg(player, _("CREATE_BACKUP_SUCCESS")
-                        .replace("%filename%", backupFile.getName()));
+                sendMsg(player, _("createBackup.success")
+                        .replace("{0}", backupFile.getName()));
             }
             
-            log(Level.INFO, _("CREATE_BACKUP_SUCCESS")
-                    .replace("%filename%", backupFile.getName()));
+            log(Level.INFO, _("createBackup.success.log")
+                    .replace("{0}", backupFile.getName()));
         }
         catch (ReportedException ex)
         {
-            log(Level.WARNING, _("CREATE_BACKUP_FAIL"));
+            if (player != null)
+            {
+                sendMsg(player, _("createBackup.fail"));
+            }
+            
+            log(Level.WARNING, _("createBackup.fail.log"));
         }
         finally
         {
@@ -598,21 +601,21 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             
             if (sender instanceof Player)
             {
-                sendMsg(sender, _("RESTORE_BACKUP_SUCCESS")
-                        .replace("%filename%", filename));
+                sendMsg(sender, _("restoreBackup.success")
+                        .replace("{0}", filename));
             }
         }
         catch (FileNotFoundException ex)
         {
-            sendMsg(sender, _("RESTORE_BACKUP_NOT_FOUND")
-                    .replace("%filename%", filename));
+            sendMsg(sender, _("restoreBackup.backupNotFound")
+                    .replace("{0}", filename));
         }
         catch (ReportedException ex)
         {
             if (sender instanceof Player)
             {
-                sendMsg(sender, _("RESTORE_BACKUP_FAIL")
-                        .replace("%filename%", filename));
+                sendMsg(sender, _("restoreBackup.fail")
+                        .replace("{0}", filename));
             }
         }
         finally
@@ -631,7 +634,8 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             
             if (sender instanceof Player)
             {
-                sendMsg(sender, _("REMOVE_BACKUPS_SUCCESS"));
+                sendMsg(sender, _("removeBackups.success")
+                        .replace("{0}", String.valueOf(amount)));
             }
         }
         catch (NumberFormatException ex)
@@ -651,7 +655,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         
         if (player != null)
         {
-            sendMsg(player, _("GLOBALPASS_SET_SUCCESS"));
+            sendMsg(player, _("globalpass.set.success"));
         }
     }
     
@@ -661,7 +665,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         
         if (player != null)
         {
-            sendMsg(player, _("GLOBALPASS_REMOVE_SUCCESS"));
+            sendMsg(player, _("globalpass.remove.success"));
         }
     }
     
@@ -869,7 +873,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             
             if (getConfig().getProperty(args[2]).requiresRestart())
             {
-                sendMsg(sender, _("CONFIG_RELOAD_PLUGIN"));
+                sendMsg(sender, _("config.set.reloadPlugin"));
             }
         }
         catch (Exception ex)
@@ -920,11 +924,11 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             sendMsg(sender, "");
         }
         
-        sendMsg(sender, _("CONFIG_PROPERTY_LIST_HEADER")
-                .replace("%page%", String.valueOf(page))
-                .replace("%pages%", String.valueOf(pages)));
-        sendMsg(sender, _("CONFIG_PROPERTY_LIST_HEADER2"));
-        sendMsg(sender, _("CONFIG_PROPERTY_LIST_HEADER3"));
+        sendMsg(sender, _("config.list.header1")
+                .replace("{0}", String.valueOf(page))
+                .replace("{1}", String.valueOf(pages)));
+        sendMsg(sender, _("config.list.header2"));
+        sendMsg(sender, _("config.list.header3"));
         
         for (Entry<String, Property> e : properties.entrySet())
         {
@@ -942,7 +946,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         
         if (page > pages)
         {
-            sendMsg(sender, _("CONFIG_PROPERTY_LIST_NO_PROPERTIES"));
+            sendMsg(sender, _("config.list.noProperties"));
         }
     }
     

@@ -66,9 +66,9 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
                 {
                     if (!getSessionManager().endSession(args[1]).isCancelled())
                     {
-                        sendMsg(args[1], _("END_SESSION_SUCCESS_SELF"));
-                        sendMsg(sender, _("END_SESSION_SUCCESS_OTHERS")
-                                .replace("%player%", args[1]));
+                        sendMsg(args[1], _("endSession.success.self"));
+                        sendMsg(sender, _("endSession.success.others")
+                                .replace("{0}", args[1]));
                     }
                 }
                 
@@ -113,7 +113,7 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             else if (!disablePasswords
                     && !getAccountManager().checkAccountPassword(p.getName(), args[0]))
             {
-                sendMsg(p, _("INCORRECT_PASSWORD"));
+                sendMsg(p, _("incorrectPassword"));
             }
             else
             {
@@ -121,7 +121,7 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
                 {
                     if (!getSessionManager().endSession(p.getName()).isCancelled())
                     {
-                        sendMsg(sender, _("END_SESSION_SUCCESS_SELF"));
+                        sendMsg(sender, _("endSession.success.self"));
                     }
                 }
                 

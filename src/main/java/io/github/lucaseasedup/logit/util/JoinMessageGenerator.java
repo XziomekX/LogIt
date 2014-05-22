@@ -38,40 +38,40 @@ public final class JoinMessageGenerator
         
         assert core != null;
         
-        String message = _("JOIN");
+        String message = _("join");
         
         if (core.getConfig().getBoolean("messages.beautify"))
         {
-            message = _("JOIN");
+            message = _("join");
         }
         else
         {
-            message = "\u00A7e%player% joined the game%in_world%.";
+            message = "\u00A7e{0} joined the game{1}.";
         }
         
         String inWorld;
         
         if (core.getConfig().getBoolean("messages.beautify"))
         {
-            inWorld = _("IN_WORLD");
+            inWorld = _("join.inWorld");
         }
         else
         {
-            inWorld = " (in \"\u00A76%world%\u00A7e\")";
+            inWorld = " (in \"\u00A76{0}\u00A7e\")";
         }
         
         if (revealSpawnWorld)
         {
             String worldAlias = getWorldAlias(player.getWorld());
             
-            message = message.replace("%in_world%", inWorld.replace("%world%", worldAlias));
+            message = message.replace("{1}", inWorld.replace("{0}", worldAlias));
         }
         else
         {
-            message = message.replace("%in_world%", "");
+            message = message.replace("{1}", "");
         }
         
-        return message.replace("%player%", player.getName());
+        return message.replace("{0}", player.getName());
     }
     
     public static String getWorldAlias(World world)

@@ -82,30 +82,30 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         if (username.trim().isEmpty())
         {
-            event.disallow(KICK_OTHER, _("USERNAME_BLANK"));
+            event.disallow(KICK_OTHER, _("usernameBlank"));
         }
         else if (!player.getName().matches(getConfig().getString("username.regex")))
         {
-            event.disallow(KICK_OTHER, _("USERNAME_INVALID"));
+            event.disallow(KICK_OTHER, _("usernameInvalid"));
         }
         else if (username.length() < minUsernameLength)
         {
-            event.disallow(KICK_OTHER, _("USERNAME_TOO_SHORT")
-                    .replace("%min-length%", String.valueOf(minUsernameLength)));
+            event.disallow(KICK_OTHER, _("usernameTooShort")
+                    .replace("{0}", String.valueOf(minUsernameLength)));
         }
         else if (username.length() > maxUsernameLength)
         {
-            event.disallow(KICK_OTHER, _("USERNAME_TOO_LONG")
-                    .replace("%max-length%", String.valueOf(maxUsernameLength)));
+            event.disallow(KICK_OTHER, _("usernameTooLong")
+                    .replace("{0}", String.valueOf(maxUsernameLength)));
         }
         else if (CollectionUtils.containsIgnoreCase(username,
                 getConfig().getStringList("username.prohibited-usernames")))
         {
-            event.disallow(KICK_OTHER, _("USERNAME_PROHIBITED"));
+            event.disallow(KICK_OTHER, _("usernameProhibited"));
         }
         else if (isPlayerOnline(username))
         {
-            event.disallow(KICK_OTHER, _("USERNAME_ALREADY_USED"));
+            event.disallow(KICK_OTHER, _("usernameAlreadyUsed"));
         }
         else if (getConfig().getBoolean("crowd-control.kick-unregistered") && accountData == null)
         {

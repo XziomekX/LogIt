@@ -94,7 +94,7 @@ public final class SessionManager extends LogItCoreObject
                         {
                             endSession(username);
                             
-                            sendMsg(player, _("END_SESSION_AUTOMATIC_SELF"));
+                            sendMsg(player, _("automaticallyLoggedOut"));
                             
                             if (getCore().isPlayerForcedToLogIn(player))
                             {
@@ -261,7 +261,8 @@ public final class SessionManager extends LogItCoreObject
         Session session = new Session(ip);
         sessions.put(username.toLowerCase(), session);
         
-        log(Level.FINE, _("CREATE_SESSION_SUCCESS_LOG").replace("%player%", username));
+        log(Level.FINE, _("createSession.success.log")
+                .replace("{0}", username));
         
         return CancelledState.NOT_CANCELLED;
     }
@@ -328,8 +329,8 @@ public final class SessionManager extends LogItCoreObject
         
         sessions.remove(username.toLowerCase());
         
-        log(Level.FINE, _("DESTROY_SESSION_SUCCESS_LOG")
-                .replace("%player%", getPlayerName(username)));
+        log(Level.FINE, _("destroySession.success.log")
+                .replace("{0}", getPlayerName(username)));
         
         return CancelledState.NOT_CANCELLED;
     }
@@ -395,7 +396,8 @@ public final class SessionManager extends LogItCoreObject
         // Start the session.
         session.setStatus(0L);
         
-        log(Level.FINE, _("START_SESSION_SUCCESS_LOG").replace("%player%", username));
+        log(Level.FINE, _("startSession.success.log")
+                .replace("{0}", username));
         
         return CancelledState.NOT_CANCELLED;
     }
@@ -461,7 +463,8 @@ public final class SessionManager extends LogItCoreObject
         // End the session.
         session.setStatus(-1L);
         
-        log(Level.FINE, _("END_SESSION_SUCCESS_LOG").replace("%player%", username));
+        log(Level.FINE, _("endSession.success.log")
+                .replace("{0}", username));
         
         return CancelledState.NOT_CANCELLED;
     }

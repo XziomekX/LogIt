@@ -56,16 +56,16 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
             }
             else if (!getSessionManager().isSessionAlive(getPlayer(args[1])))
             {
-                sendMsg(sender, _("NOT_LOGGED_IN_OTHERS")
-                        .replace("%player%", args[1]));
+                sendMsg(sender, _("notLoggedIn.others")
+                        .replace("{0}", args[1]));
             }
             else
             {
                 if (!getSessionManager().endSession(args[1]).isCancelled())
                 {
-                    sendMsg(args[1], _("END_SESSION_SUCCESS_SELF"));
-                    sendMsg(sender, _("END_SESSION_SUCCESS_OTHERS")
-                            .replace("%player%", args[1]));
+                    sendMsg(args[1], _("endSession.success.self"));
+                    sendMsg(sender, _("endSession.success.others")
+                            .replace("{0}", args[1]));
                 }
             }
         }
@@ -81,13 +81,13 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
             }
             else if (!getSessionManager().isSessionAlive(p))
             {
-                sendMsg(p, _("NOT_LOGGED_IN_SELF"));
+                sendMsg(p, _("notLoggedIn.self"));
             }
             else
             {
                 if (!getSessionManager().endSession(p.getName()).isCancelled())
                 {
-                    sendMsg(sender, _("END_SESSION_SUCCESS_SELF"));
+                    sendMsg(sender, _("endSession.success.self"));
                     
                     if (getConfig().getBoolean("login-sessions.enabled"))
                     {

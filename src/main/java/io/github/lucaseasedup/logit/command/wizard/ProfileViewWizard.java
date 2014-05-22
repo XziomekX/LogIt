@@ -38,9 +38,9 @@ public final class ProfileViewWizard extends Wizard
         List<Field> fields = getCore().getProfileManager().getDefinedFields();
         
         sendMessage("");
-        sendMessage(getMessage("PROFILE_HEADER")
-                .replace("%player%", playerName));
-        sendMessage(getMessage("ORANGE_HORIZONTAL_LINE"));
+        sendMessage(getMessage("profile.view.header")
+                .replace("{0}", playerName));
+        sendMessage(getMessage("wizard.orangeHorizontalLine"));
         
         if (!fields.isEmpty())
         {
@@ -54,17 +54,17 @@ public final class ProfileViewWizard extends Wizard
                     value = "";
                 }
                 
-                sendMessage(getMessage("PROFILE_VIEW_FIELD")
-                        .replace("%field%", field.getName())
-                        .replace("%value%", value.toString()));
+                sendMessage(getMessage("profile.view.field")
+                        .replace("{0}", field.getName())
+                        .replace("{1}", value.toString()));
             }
         }
         else
         {
-            sendMessage(getMessage("PROFILE_VIEW_NO_FIELDS"));
+            sendMessage(getMessage("profile.view.noFields"));
         }
         
-        sendMessage(getMessage("ORANGE_HORIZONTAL_LINE"));
+        sendMessage(getMessage("wizard.orangeHorizontalLine"));
         cancelWizard();
     }
     

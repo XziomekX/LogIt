@@ -283,9 +283,9 @@ public final class LogItConfiguration extends PropertyObserver implements Dispos
         getPlugin().getConfig().set(p.getPath(), p.getValue());
         getPlugin().saveConfig();
         
-        log(Level.INFO, _("CONFIG_PROPERTY_SET_LOG")
-                .replace("%path%", p.getPath())
-                .replace("%value%", p.toString()));
+        log(Level.INFO, _("config.set.success.log")
+                .replace("{0}", p.getPath())
+                .replace("{1}", p.toString()));
     }
     
     /**

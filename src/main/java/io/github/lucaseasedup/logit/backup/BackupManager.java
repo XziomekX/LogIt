@@ -85,12 +85,12 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
                 
                 File backupFile = createBackup();
                 
-                log(Level.INFO, _("CREATE_BACKUP_SUCCESS")
-                        .replace("%filename%", backupFile.getName()));
+                log(Level.INFO, _("createBackup.success.log")
+                        .replace("{0}", backupFile.getName()));
             }
             catch (ReportedException ex)
             {
-                log(Level.WARNING, _("CREATE_BACKUP_FAIL"));
+                log(Level.WARNING, _("createBackup.fail.log"));
             }
             finally
             {
@@ -191,8 +191,8 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
             accountManager.getStorage().clearBatch();
             accountManager.getStorage().setAutobatchEnabled(false);
             
-            log(Level.INFO, _("RESTORE_BACKUP_SUCCESS")
-                    .replace("%filename%", filename));
+            log(Level.INFO, _("restoreBackup.success.log")
+                    .replace("{0}", filename));
         }
         catch (IOException ex)
         {
@@ -219,7 +219,8 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
             backupFiles[i].delete();
         }
         
-        log(Level.INFO, _("REMOVE_BACKUPS_SUCCESS"));
+        log(Level.INFO, _("removeBackups.success")
+                .replace("{0}", String.valueOf(amount)));
     }
     
     /**

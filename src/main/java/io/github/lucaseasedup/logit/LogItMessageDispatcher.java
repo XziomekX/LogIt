@@ -70,11 +70,11 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
             {
                 if (!getConfig().getBoolean("password.disable-passwords"))
                 {
-                    sendMsg(player, _("PLEASE_LOGIN"));
+                    sendMsg(player, _("pleaseLogIn"));
                 }
                 else
                 {
-                    sendMsg(player, _("PLEASE_LOGIN_NOPASS"));
+                    sendMsg(player, _("pleaseLogIn_noPassword"));
                 }
             }
         }
@@ -84,11 +84,11 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
             {
                 if (!getConfig().getBoolean("password.disable-passwords"))
                 {
-                    sendMsg(player, _("PLEASE_REGISTER"));
+                    sendMsg(player, _("pleaseRegister"));
                 }
                 else
                 {
-                    sendMsg(player, _("PLEASE_REGISTER_NOPASS"));
+                    sendMsg(player, _("pleaseRegister_noPassword"));
                 }
             }
         }

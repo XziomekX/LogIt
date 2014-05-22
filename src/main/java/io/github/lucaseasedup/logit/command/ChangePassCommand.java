@@ -62,13 +62,13 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
             }
             else if (args[2].length() < minPasswordLength)
             {
-                sendMsg(sender, _("PASSWORD_TOO_SHORT")
-                        .replace("%min-length%", String.valueOf(minPasswordLength)));
+                sendMsg(sender, _("passwordTooShort")
+                        .replace("{0}", String.valueOf(minPasswordLength)));
             }
             else if (args[2].length() > maxPasswordLength)
             {
-                sendMsg(sender, _("PASSWORD_TOO_LONG")
-                        .replace("%max-length%", String.valueOf(maxPasswordLength)));
+                sendMsg(sender, _("passwordTooLong")
+                        .replace("{0}", String.valueOf(maxPasswordLength)));
             }
             else
             {
@@ -119,21 +119,21 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
             }
             else if (!getAccountManager().checkAccountPassword(p.getName(), args[0]))
             {
-                sendMsg(p, _("INCORRECT_PASSWORD"));
+                sendMsg(p, _("incorrectPassword"));
             }
             else if (args[1].length() < minPasswordLength)
             {
-                sendMsg(p, _("PASSWORD_TOO_SHORT")
-                        .replace("%min-length%", String.valueOf(minPasswordLength)));
+                sendMsg(p, _("passwordTooShort")
+                        .replace("{0}", String.valueOf(minPasswordLength)));
             }
             else if (args[1].length() > maxPasswordLength)
             {
-                sendMsg(p, _("PASSWORD_TOO_LONG")
-                        .replace("%max-length%", String.valueOf(maxPasswordLength)));
+                sendMsg(p, _("passwordTooLong")
+                        .replace("{0}", String.valueOf(maxPasswordLength)));
             }
             else if (!args[1].equals(args[2]))
             {
-                sendMsg(p, _("PASSWORDS_DO_NOT_MATCH"));
+                sendMsg(p, _("passwordsDoNotMatch"));
             }
             else
             {

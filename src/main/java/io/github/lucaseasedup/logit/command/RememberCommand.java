@@ -54,7 +54,7 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
             }
             else if (!getSessionManager().isSessionAlive(p))
             {
-                sendMsg(sender, _("NOT_LOGGED_IN_SELF"));
+                sendMsg(sender, _("notLoggedIn.self"));
             }
             else if (!getAccountManager().isRegistered(p.getName()))
             {
@@ -75,12 +75,12 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
                     
                     Locale activeLocale = getLocaleManager().getActiveLocale();
                     
-                    sendMsg(sender, _("REMEMBER_SUCCESS").replace("%time%",
-                            activeLocale.stringifySeconds((int) validnessTime)));
+                    sendMsg(sender, _("rememberLogin.success")
+                            .replace("{0}", activeLocale.stringifySeconds((int) validnessTime)));
                 }
                 catch (ReportedException ex)
                 {
-                    sendMsg(sender, _("REMEMBER_FAIL"));
+                    sendMsg(sender, _("rememberLogin.fail"));
                 }
                 finally
                 {

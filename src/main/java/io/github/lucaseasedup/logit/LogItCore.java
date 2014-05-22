@@ -641,7 +641,7 @@ public final class LogItCore
         config.set("password.global-password.salt", salt);
         config.set("password.global-password.hash", hash);
         
-        log(Level.INFO, _("GLOBALPASS_SET_SUCCESS"));
+        log(Level.INFO, _("globalpass.set.success.log"));
     }
     
     /**
@@ -653,7 +653,7 @@ public final class LogItCore
         config.set("password.global-password.hash", "");
         config.set("password.global-password.salt", "");
         
-        log(Level.INFO, _("GLOBALPASS_REMOVE_SUCCESS"));
+        log(Level.INFO, _("globalpass.remove.success.log"));
     }
     
     /**

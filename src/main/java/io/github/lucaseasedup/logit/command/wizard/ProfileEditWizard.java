@@ -48,7 +48,7 @@ public final class ProfileEditWizard extends Wizard
         }
         else
         {
-            sendMessage(getMessage("ORANGE_HORIZONTAL_LINE"));
+            sendMessage(getMessage("wizard.orangeHorizontalLine"));
             cancelWizard();
         }
     }
@@ -60,17 +60,17 @@ public final class ProfileEditWizard extends Wizard
         {
             if (message.equalsIgnoreCase("done"))
             {
-                sendMessage(getMessage("ORANGE_HORIZONTAL_LINE"));
+                sendMessage(getMessage("wizard.orangeHorizontalLine"));
                 cancelWizard();
             }
             else if (message.equalsIgnoreCase("edit"))
             {
-                sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_NUMBER"));
+                sendMessage(getMessage("profile.edit.enterFieldNumber"));
                 updateStep(Step.EDIT_FIELD);
             }
             else if (message.equalsIgnoreCase("erase"))
             {
-                sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_NUMBER"));
+                sendMessage(getMessage("profile.edit.enterFieldNumber"));
                 updateStep(Step.ERASE_FIELD);
             }
         }
@@ -84,14 +84,14 @@ public final class ProfileEditWizard extends Wizard
             }
             catch (NumberFormatException ex)
             {
-                sendMessage(getMessage("PROFILE_EDIT_UNKNOWN_FIELD").replace("%field%", message));
+                sendMessage(getMessage("profile.edit.unknownField"));
                 
                 return;
             }
             
             if (number > fields.size() || number <= 0)
             {
-                sendMessage(getMessage("PROFILE_EDIT_UNKNOWN_FIELD").replace("%field%", message));
+                sendMessage(getMessage("profile.edit.unknownField"));
                 
                 return;
             }
@@ -120,18 +120,18 @@ public final class ProfileEditWizard extends Wizard
                 
                 if (message.length() < stringField.getMinLength())
                 {
-                    sendMessage(getMessage("PROFILE_EDIT_STRING_TOO_SHORT")
-                            .replace("%field%", field.getName())
-                            .replace("%min-length%", String.valueOf(stringField.getMinLength())));
+                    sendMessage(getMessage("profile.edit.stringTooShort")
+                            .replace("{0}", field.getName())
+                            .replace("{1}", String.valueOf(stringField.getMinLength())));
                     
                     return;
                 }
                 
                 if (message.length() > stringField.getMaxLength())
                 {
-                    sendMessage(getMessage("PROFILE_EDIT_STRING_TOO_LONG")
-                            .replace("%field%", field.getName())
-                            .replace("%max-length%", String.valueOf(stringField.getMaxLength())));
+                    sendMessage(getMessage("profile.edit.stringTooLong")
+                            .replace("{0}", field.getName())
+                            .replace("{1}", String.valueOf(stringField.getMaxLength())));
                     
                     return;
                 }
@@ -150,26 +150,26 @@ public final class ProfileEditWizard extends Wizard
                 }
                 catch (NumberFormatException ex)
                 {
-                    sendMessage(getMessage("PROFILE_EDIT_INVALID_VALUE")
-                            .replace("%value%", message));
+                    sendMessage(getMessage("profile.edit.invalidValue")
+                            .replace("{0}", message));
                     
                     return;
                 }
                 
                 if (value < integerField.getMinValue())
                 {
-                    sendMessage(getMessage("PROFILE_EDIT_NUMBER_TOO_SMALL")
-                            .replace("%field%", field.getName())
-                            .replace("%min-value%", String.valueOf(integerField.getMinValue())));
+                    sendMessage(getMessage("profile.edit.numberTooSmall")
+                            .replace("{0}", field.getName())
+                            .replace("{1}", String.valueOf(integerField.getMinValue())));
                     
                     return;
                 }
                 
                 if (value > integerField.getMaxValue())
                 {
-                    sendMessage(getMessage("PROFILE_EDIT_NUMBER_TOO_BIG")
-                            .replace("%field%", field.getName())
-                            .replace("%max-value%", String.valueOf(integerField.getMaxValue())));
+                    sendMessage(getMessage("profile.edit.numberTooBig")
+                            .replace("{0}", field.getName())
+                            .replace("{1}", String.valueOf(integerField.getMaxValue())));
                     
                     return;
                 }
@@ -187,26 +187,26 @@ public final class ProfileEditWizard extends Wizard
                 }
                 catch (NumberFormatException ex)
                 {
-                    sendMessage(getMessage("PROFILE_EDIT_INVALID_VALUE")
-                            .replace("%value%", message));
+                    sendMessage(getMessage("profile.edit.invalidValue")
+                            .replace("{0}", message));
                     
                     return;
                 }
                 
                 if (value < floatField.getMinValue())
                 {
-                    sendMessage(getMessage("PROFILE_EDIT_NUMBER_TOO_SMALL")
-                            .replace("%field%", field.getName())
-                            .replace("%min-value%", String.valueOf(floatField.getMinValue())));
+                    sendMessage(getMessage("profile.edit.numberTooSmall")
+                            .replace("{0}", field.getName())
+                            .replace("{1}", String.valueOf(floatField.getMinValue())));
                     
                     return;
                 }
                 
                 if (value > floatField.getMaxValue())
                 {
-                    sendMessage(getMessage("PROFILE_EDIT_NUMBER_TOO_BIG")
-                            .replace("%field%", field.getName())
-                            .replace("%max-value%", String.valueOf(floatField.getMaxValue())));
+                    sendMessage(getMessage("profile.edit.numberTooBig")
+                            .replace("{0}", field.getName())
+                            .replace("{1}", String.valueOf(floatField.getMaxValue())));
                     
                     return;
                 }
@@ -220,8 +220,8 @@ public final class ProfileEditWizard extends Wizard
                 
                 if (!setField.isAccepted(trimmedMessage))
                 {
-                    sendMessage(getMessage("PROFILE_EDIT_INVALID_VALUE")
-                            .replace("%value%", message));
+                    sendMessage(getMessage("profile.edit.invalidValue")
+                            .replace("{0}", message));
                     
                     return;
                 }
@@ -243,13 +243,13 @@ public final class ProfileEditWizard extends Wizard
     private void viewProfile(String updatedFieldName)
     {
         sendMessage("");
-        sendMessage(getMessage("PROFILE_HEADER")
-                .replace("%player%", playerName));
-        sendMessage(getMessage("ORANGE_HORIZONTAL_LINE"));
+        sendMessage(getMessage("profile.edit.header")
+                .replace("{0}", playerName));
+        sendMessage(getMessage("wizard.orangeHorizontalLine"));
         
         if (fields.isEmpty())
         {
-            sendMessage(getMessage("PROFILE_EDIT_NO_FIELDS"));
+            sendMessage(getMessage("profile.edit.noFields"));
         }
         else
         {
@@ -265,20 +265,27 @@ public final class ProfileEditWizard extends Wizard
                     value = "";
                 }
                 
-                String messageName = (field.getName().equals(updatedFieldName))
-                        ? "PROFILE_EDIT_FIELD_UPDATED"
-                                : "PROFILE_EDIT_FIELD";
-                
-                sendMessage(getMessage(messageName)
-                        .replace("%number%", String.valueOf(i))
-                        .replace("%field%", field.getName())
-                        .replace("%value%", value.toString()));
+                if (field.getName().equals(updatedFieldName))
+                {
+                    sendMessage(getMessage("profile.edit.updatedField")
+                            .replace("{0}", String.valueOf(i))
+                            .replace("{1}", field.getName())
+                            .replace("{2}", value.toString()));
+                }
+                else
+                {
+                    sendMessage(getMessage("profile.edit.field")
+                            .replace("{0}", String.valueOf(i))
+                            .replace("{1}", field.getName())
+                            .replace("{2}", value.toString()));
+                    
+                }
                 
                 i++;
             }
             
             sendMessage("");
-            sendMessage(getMessage("PROFILE_EDIT_CHOOSE_ACTION"));
+            sendMessage(getMessage("profile.edit.chooseAction"));
         }
     }
     
@@ -286,18 +293,18 @@ public final class ProfileEditWizard extends Wizard
     {
         if (field instanceof StringField)
         {
-            sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_STRING")
-                    .replace("%field%", field.getName()));
+            sendMessage(getMessage("profile.edit.enterFieldValue.string")
+                    .replace("{0}", field.getName()));
         }
         else if (field instanceof IntegerField)
         {
-            sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_INTEGER")
-                    .replace("%field%", field.getName()));
+            sendMessage(getMessage("profile.edit.enterFieldValue.integer")
+                    .replace("{0}", field.getName()));
         }
         else if (field instanceof FloatField)
         {
-            sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_FLOAT")
-                    .replace("%field%", field.getName()));
+            sendMessage(getMessage("profile.edit.enterFieldValue.float")
+                    .replace("{0}", field.getName()));
         }
         else if (field instanceof SetField)
         {
@@ -308,16 +315,16 @@ public final class ProfileEditWizard extends Wizard
             {
                 if (values.length() > 0)
                 {
-                    values.append(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_SET_SEPARATOR"));
+                    values.append(getMessage("profile.edit.enterFieldValue.set.separator"));
                 }
                 
-                values.append(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_SET_VALUE")
-                        .replace("%value%", value));
+                values.append(getMessage("profile.edit.enterFieldValue.set.value")
+                        .replace("{0}", value));
             }
             
-            sendMessage(getMessage("PROFILE_EDIT_ENTER_FIELD_VALUE_SET")
-                    .replace("%field%", field.getName())
-                    .replace("%values%", values.toString()));
+            sendMessage(getMessage("profile.edit.enterFieldValue.set")
+                    .replace("{0}", field.getName())
+                    .replace("{1}", values.toString()));
         }
         else
         {

@@ -73,13 +73,13 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             }
             else if (!disablePasswords && args[2].length() < minPasswordLength)
             {
-                sendMsg(sender, _("PASSWORD_TOO_SHORT")
-                        .replace("%min-length%", String.valueOf(minPasswordLength)));
+                sendMsg(sender, _("passwordTooShort")
+                        .replace("{0}", String.valueOf(minPasswordLength)));
             }
             else if (!disablePasswords && args[2].length() > maxPasswordLength)
             {
-                sendMsg(sender, _("PASSWORD_TOO_LONG")
-                        .replace("%max-length%", String.valueOf(maxPasswordLength)));
+                sendMsg(sender, _("passwordTooLong")
+                        .replace("{0}", String.valueOf(maxPasswordLength)));
             }
             else
             {
@@ -109,9 +109,9 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         
                         if (!getSessionManager().startSession(args[1]).isCancelled())
                         {
-                            sendMsg(args[1], _("START_SESSION_SUCCESS_SELF"));
-                            sendMsg(sender, _("START_SESSION_SUCCESS_OTHERS")
-                                    .replace("%player%", args[1]));
+                            sendMsg(args[1], _("startSession.success.self"));
+                            sendMsg(sender, _("startSession.success.others")
+                                    .replace("{0}", args[1]));
                         }
                         
                         if (getConfig().getBoolean("waiting-room.enabled")
@@ -164,17 +164,17 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             }
             else if (!disablePasswords && args[0].length() < minPasswordLength)
             {
-                sendMsg(p, _("PASSWORD_TOO_SHORT")
-                        .replace("%min-length%", String.valueOf(minPasswordLength)));
+                sendMsg(p, _("passwordTooShort")
+                        .replace("{0}", String.valueOf(minPasswordLength)));
             }
             else if (!disablePasswords && args[0].length() > maxPasswordLength)
             {
-                sendMsg(p, _("PASSWORD_TOO_LONG")
-                        .replace("%max-length%", String.valueOf(maxPasswordLength)));
+                sendMsg(p, _("passwordTooLong")
+                        .replace("{0}", String.valueOf(maxPasswordLength)));
             }
             else if (!disablePasswords && !args[0].equals(args[1]))
             {
-                sendMsg(p, _("PASSWORDS_DO_NOT_MATCH"));
+                sendMsg(p, _("passwordsDoNotMatch"));
             }
             else if (getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= accountsPerIp
                     && !unrestrictedIps.contains(getPlayerIp(p)) && accountsPerIp >= 0)
@@ -205,7 +205,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                     
                     if (!getSessionManager().startSession(p.getName()).isCancelled())
                     {
-                        sendMsg(sender, _("START_SESSION_SUCCESS_SELF"));
+                        sendMsg(sender, _("startSession.success.self"));
                     }
                     
                     if (getConfig().getBoolean("waiting-room.enabled")
@@ -220,7 +220,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                     
                     if (getConfig().getBoolean("login-sessions.enabled"))
                     {
-                        sendMsg(sender, _("REMEMBER_PROMPT"));
+                        sendMsg(sender, _("rememberLogin.prompt"));
                     }
                     
                     if (getConfig().getBoolean("password-recovery.prompt-to-add-email")

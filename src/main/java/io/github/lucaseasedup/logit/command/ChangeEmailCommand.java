@@ -20,7 +20,6 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
-import org.mozilla.javascript.ast.NewExpression;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.util.EmailUtils;
