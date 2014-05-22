@@ -57,7 +57,7 @@ public final class AccunlockCommand extends LogItCoreObject implements CommandEx
             }
             else if (p != null && p.getName().equalsIgnoreCase(args[0]))
             {
-                sendMsg(sender, _("CANNOT_UNLOCK_YOURSELF"));
+                sendMsg(sender, _("accunlock.cannotUnlockYourself"));
             }
             else if (!getAccountManager().isRegistered(args[0]))
             {
@@ -82,16 +82,17 @@ public final class AccunlockCommand extends LogItCoreObject implements CommandEx
                     {
                         playerName = PlayerUtils.getPlayerName(args[0]);
                         
-                        sendMsg(PlayerUtils.getPlayer(args[0]), _("ACCUNLOCK_SUCCESS_SELF"));
+                        sendMsg(PlayerUtils.getPlayer(args[0]), _("accunlock.success.self"));
                     }
                     
-                    sendMsg(sender, _("ACCUNLOCK_SUCCESS_OTHERS").replace("%player%", playerName));
+                    sendMsg(sender, _("accunlock.success.others")
+                            .replace("{0}", playerName));
                 }
                 catch (IOException ex)
                 {
                     log(Level.WARNING, ex);
                     
-                    sendMsg(sender, _("UNEXPECTED_ERROR"));
+                    sendMsg(sender, _("unexpectedError"));
                 }
             }
         }

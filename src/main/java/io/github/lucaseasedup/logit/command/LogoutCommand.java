@@ -48,11 +48,13 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
             }
             else if (args.length < 2)
             {
-                sendMsg(sender, _("paramMissing").replace("{0}", "player"));
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "player"));
             }
             else if (!isPlayerOnline(args[1]))
             {
-                sendMsg(sender, _("NOT_ONLINE").replace("%player%", args[1]));
+                sendMsg(sender, _("playerNotOnline")
+                        .replace("{0}", args[1]));
             }
             else if (!getSessionManager().isSessionAlive(getPlayer(args[1])))
             {

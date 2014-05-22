@@ -122,7 +122,7 @@ public final class SessionManager extends LogItCoreObject
                 {
                     if (timeoutEnabled && session.getStatus() <= -timeoutValue)
                     {
-                        player.kickPlayer(_("FORCE_LOGIN_TIMEOUT"));
+                        player.kickPlayer(_("forcedLoginTimeout"));
                     }
                     else
                     {

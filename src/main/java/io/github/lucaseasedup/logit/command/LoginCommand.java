@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.LogItPlugin.getMessage;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayer;
@@ -63,11 +62,13 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             }
             else if (args.length < 2)
             {
-                sendMsg(sender, _("paramMissing").replace("{0}", "player"));
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "player"));
             }
             else if (!isPlayerOnline(args[1]))
             {
-                sendMsg(sender, _("NOT_ONLINE").replace("%player%", args[1]));
+                sendMsg(sender, _("playerNotOnline")
+                        .replace("{0}", args[1]));
             }
             else if (getSessionManager().isSessionAlive(getPlayer(args[1])))
             {
@@ -165,14 +166,14 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     if (failedLoginsToBan.get(username) >= failsToBan && failsToBan > 0)
                     {
                         Bukkit.banIP(getPlayerIp(p));
-                        p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS_BAN"));
+                        p.kickPlayer(_("tooManyLoginFails.ban"));
                         
                         failedLoginsToKick.remove(username);
                         failedLoginsToBan.remove(username);
                     }
                     else if (failedLoginsToKick.get(username) >= failsToKick && failsToKick > 0)
                     {
-                        p.kickPlayer(getMessage("TOO_MANY_LOGIN_FAILS_KICK"));
+                        p.kickPlayer(_("tooManyLoginFails.kick"));
                         
                         failedLoginsToKick.remove(username);
                     }

@@ -109,7 +109,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
         else if (getConfig().getBoolean("crowd-control.kick-unregistered") && accountData == null)
         {
-            event.disallow(KICK_OTHER, _("KICK_UNREGISTERED"));
+            event.disallow(KICK_OTHER, _("kickUnregistered"));
         }
         else
         {
@@ -134,7 +134,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             if (actualFreeSlots <= 0
                     && !CollectionUtils.containsIgnoreCase(username, reserveForPlayers))
             {
-                event.disallow(KICK_OTHER, _("NO_SLOTS_FREE"));
+                event.disallow(KICK_OTHER, _("noSlotsFree"));
             }
         }
     }

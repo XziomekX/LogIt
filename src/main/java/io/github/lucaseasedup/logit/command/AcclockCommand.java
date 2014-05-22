@@ -57,7 +57,7 @@ public final class AcclockCommand extends LogItCoreObject implements CommandExec
             }
             else if (p != null && p.getName().equalsIgnoreCase(args[0]))
             {
-                sendMsg(sender, _("CANNOT_LOCK_YOURSELF"));
+                sendMsg(sender, _("acclock.cannotLockYourself"));
             }
             else if (!getAccountManager().isRegistered(args[0]))
             {
@@ -82,17 +82,17 @@ public final class AcclockCommand extends LogItCoreObject implements CommandExec
                     {
                         playerName = PlayerUtils.getPlayerName(args[0]);
                         
-                        PlayerUtils.getPlayer(args[0]).kickPlayer(_("ACCLOCK_SUCCESS_SELF"));
+                        PlayerUtils.getPlayer(args[0]).kickPlayer(_("acclock.success.self"));
                     }
                     
-                    sendMsg(sender, _("ACCLOCK_SUCCESS_OTHERS")
-                            .replace("%player%", playerName));
+                    sendMsg(sender, _("acclock.success.others")
+                            .replace("{0}", playerName));
                 }
                 catch (IOException ex)
                 {
                     log(Level.WARNING, ex);
                     
-                    sendMsg(sender, _("UNEXPECTED_ERROR"));
+                    sendMsg(sender, _("unexpectedError"));
                 }
             }
         }

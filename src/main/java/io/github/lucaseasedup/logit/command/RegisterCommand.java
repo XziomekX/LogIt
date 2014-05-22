@@ -179,7 +179,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             else if (getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= accountsPerIp
                     && !unrestrictedIps.contains(getPlayerIp(p)) && accountsPerIp >= 0)
             {
-                sendMsg(p, _("ACCOUNTS_PER_IP_LIMIT"));
+                sendMsg(p, _("accountsPerIpLimitReached"));
             }
             else
             {
