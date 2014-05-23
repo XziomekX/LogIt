@@ -748,12 +748,17 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             int amount = Integer.parseInt(amountString);
             
-            getBackupManager().removeBackups(amount);
+            if (amount > getConfig().getInt("backup.manual-remove-limit"))
+            {
+                amount = getConfig().getInt("backup.manual-remove-limit");
+            }
+            
+            int effectiveAmount = getBackupManager().removeBackups(amount);
             
             if (sender instanceof Player)
             {
                 sendMsg(sender, _("removeBackups.success")
-                        .replace("{0}", String.valueOf(amount)));
+                        .replace("{0}", String.valueOf(effectiveAmount)));
             }
         }
         catch (NumberFormatException ex)
