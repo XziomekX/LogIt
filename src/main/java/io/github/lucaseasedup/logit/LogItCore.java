@@ -38,7 +38,7 @@ import io.github.lucaseasedup.logit.command.RegisterCommand;
 import io.github.lucaseasedup.logit.command.RememberCommand;
 import io.github.lucaseasedup.logit.command.UnregisterCommand;
 import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
-import io.github.lucaseasedup.logit.config.LogItConfiguration;
+import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
 import io.github.lucaseasedup.logit.listener.BlockEventListener;
 import io.github.lucaseasedup.logit.listener.EntityEventListener;
 import io.github.lucaseasedup.logit.listener.InventoryEventListener;
@@ -115,7 +115,7 @@ public final class LogItCore
         getDataFolder().mkdir();
         
         firstRun = !getDataFile("config.yml").exists();
-        config = new LogItConfiguration();
+        config = new PredefinedConfiguration("config-def.b64", "config-def.b64");
         
         try
         {
@@ -1011,7 +1011,7 @@ public final class LogItCore
         return started;
     }
     
-    public LogItConfiguration getConfig()
+    public PredefinedConfiguration getConfig()
     {
         return config;
     }
@@ -1115,15 +1115,15 @@ public final class LogItCore
     private boolean firstRun;
     private boolean started = false;
     
-    private LogItConfiguration     config;
-    private LocaleManager          localeManager;
-    private AccountManager         accountManager;
-    private PersistenceManager     persistenceManager;
-    private BackupManager          backupManager;
-    private SessionManager         sessionManager;
-    private MailSender             mailSender;
-    private LogItMessageDispatcher messageDispatcher;
-    private ProfileManager         profileManager;
+    private PredefinedConfiguration config;
+    private LocaleManager           localeManager;
+    private AccountManager          accountManager;
+    private PersistenceManager      persistenceManager;
+    private BackupManager           backupManager;
+    private SessionManager          sessionManager;
+    private MailSender              mailSender;
+    private LogItMessageDispatcher  messageDispatcher;
+    private ProfileManager          profileManager;
     
     private AccountWatcher  accountWatcher;
     private Permission      vaultPermissions;

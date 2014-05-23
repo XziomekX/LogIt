@@ -20,7 +20,7 @@ package io.github.lucaseasedup.logit;
 
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.backup.BackupManager;
-import io.github.lucaseasedup.logit.config.LogItConfiguration;
+import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
 import io.github.lucaseasedup.logit.locale.LocaleManager;
 import io.github.lucaseasedup.logit.mail.MailSender;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
@@ -70,12 +70,12 @@ public abstract class LogItCoreObject
     }
     
     /**
-     * Returns the {@code LogItConfiguration} instance.
+     * Returns the {@code PredefinedConfiguration} instance.
      * 
-     * @return the {@code LogItConfiguration} instance,
+     * @return the {@code PredefinedConfiguration} instance,
      *         or {@code null} if the config has not been loaded yet.
      */
-    protected final LogItConfiguration getConfig()
+    protected final PredefinedConfiguration getConfig()
     {
         if (!core.isConfigLoaded())
             return null;

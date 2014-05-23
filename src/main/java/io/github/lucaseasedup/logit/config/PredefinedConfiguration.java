@@ -1,5 +1,5 @@
 /*
- * LogItConfiguration.java
+ * PredefinedConfiguration.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -47,8 +47,14 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-public final class LogItConfiguration extends PropertyObserver implements Disposable
+public final class PredefinedConfiguration extends PropertyObserver implements Disposable
 {
+    public PredefinedConfiguration(String userConfigDef, String packageConfigDef)
+    {
+        this.userConfigDef = userConfigDef;
+        this.packageConfigDef = packageConfigDef;
+    }
+    
     @Override
     public void dispose()
     {
@@ -72,11 +78,11 @@ public final class LogItConfiguration extends PropertyObserver implements Dispos
            + " LogIt Configuration File   #\n"
            + "# # # # # # # # # # # # # # #\n");
         
-        File userDefFile = getDataFile(USER_CONFIG_DEF);
+        File userDefFile = getDataFile(userConfigDef);
         
         if (!userDefFile.exists())
         {
-            IoUtils.extractResource(PACKAGE_CONFIG_DEF, userDefFile);
+            IoUtils.extractResource(packageConfigDef, userDefFile);
         }
         
         String userDefBase64String;
@@ -95,7 +101,7 @@ public final class LogItConfiguration extends PropertyObserver implements Dispos
         
         try (ZipFile jarZipFile = new ZipFile(jarPath))
         {
-            ZipEntry packageDefEntry = jarZipFile.getEntry(PACKAGE_CONFIG_DEF);
+            ZipEntry packageDefEntry = jarZipFile.getEntry(packageConfigDef);
             
             try (InputStream packageDefInputStream = jarZipFile.getInputStream(packageDefEntry))
             {
@@ -586,17 +592,8 @@ public final class LogItConfiguration extends PropertyObserver implements Dispos
         return Base64.decode(input);
     }
     
-    /**
-     * The config definition file
-     * found in the LogIt data folder (<i>/plugins/LogIt/</i>).
-     */
-    public static final String USER_CONFIG_DEF = "config-def.b64";
-    
-    /**
-     * The config definition file found in the plugin JAR.
-     */
-    public static final String PACKAGE_CONFIG_DEF = "config-def.b64";
-    
+    private final String userConfigDef;
+    private final String packageConfigDef;
     private boolean loaded = false;
     private Map<String, Property> properties = new LinkedHashMap<>();
 }
