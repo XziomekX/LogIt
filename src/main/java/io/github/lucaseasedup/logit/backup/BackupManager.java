@@ -205,10 +205,13 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
      * Removes a certain amount of backups starting from the oldest.
      * 
      * @param amount the amount of backups to remove.
+     * 
+     * @return number of backups actually removed.
      */
-    public void removeBackups(int amount)
+    public int removeBackups(int amount)
     {
         File[] backupFiles = getBackups(true);
+        int effectiveAmount = 0;
         
         for (int i = 0; i < amount; i++)
         {
@@ -216,10 +219,14 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
                 break;
             
             backupFiles[i].delete();
+            
+            effectiveAmount++;
         }
         
         log(Level.INFO, _("removeBackups.success")
-                .replace("{0}", String.valueOf(amount)));
+                .replace("{0}", String.valueOf(effectiveAmount)));
+        
+        return effectiveAmount;
     }
     
     /**
