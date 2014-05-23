@@ -25,6 +25,7 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.TimeString;
 import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.command.wizard.BackupRestoreWizard;
 import io.github.lucaseasedup.logit.command.wizard.ConvertWizard;
 import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
@@ -34,7 +35,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -644,38 +644,58 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         subcommandBackupRestore_File(sender, filename);
     }
     
-    private void subcommandBackupRestore_File(CommandSender sender, String filename)
+    private void subcommandBackupRestore_File(final CommandSender sender, final String filename)
     {
         assert filename != null;
         
-        try
-        {
-            ReportedException.incrementRequestCount();
-            
-            getBackupManager().restoreBackup(filename);
-            
-            if (sender instanceof Player)
-            {
-                sendMsg(sender, _("restoreBackup.success")
-                        .replace("{0}", filename));
-            }
-        }
-        catch (FileNotFoundException ex)
+        final File selectedBackup = getBackupManager().getBackupFile(filename);
+        
+        if (selectedBackup == null)
         {
             sendMsg(sender, _("restoreBackup.backupNotFound")
                     .replace("{0}", filename));
+            
+            return;
         }
-        catch (ReportedException ex)
+        
+        try
         {
-            if (sender instanceof Player)
+            new BackupRestoreWizard(sender, selectedBackup, new Runnable()
             {
-                sendMsg(sender, _("restoreBackup.fail")
-                        .replace("{0}", filename));
-            }
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        ReportedException.incrementRequestCount();
+                        
+                        getBackupManager().restoreBackup(filename);
+                        
+                        if (sender instanceof Player)
+                        {
+                            sendMsg(sender, _("restoreBackup.success")
+                                    .replace("{0}", filename));
+                        }
+                    }
+                    catch (FileNotFoundException | ReportedException ex)
+                    {
+                        if (sender instanceof Player)
+                        {
+                            sendMsg(sender, _("restoreBackup.fail")
+                                    .replace("{0}", filename));
+                        }
+                    }
+                    finally
+                    {
+                        ReportedException.decrementRequestCount();
+                    }
+                }
+            }).createWizard();
         }
-        finally
+        catch (ParseException ex)
         {
-            ReportedException.decrementRequestCount();
+            sendMsg(sender, _("restoreBackup.fail")
+                    .replace("{0}", selectedBackup.getName()));
         }
     }
     
@@ -683,24 +703,21 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
     {
         assert desiredDeltaTime != null;
         
-        String backupFilenameFormat = getConfig().getString("backup.filename-format");
-        SimpleDateFormat sdf = new SimpleDateFormat(backupFilenameFormat);
         File[] backups = getBackupManager().getBackups(true);
         
         long currentTimeMillis = System.currentTimeMillis();
         long desiredDeltaTimeMillis = TimeString.decode(desiredDeltaTime, TimeUnit.MILLISECONDS);
+        long smallestDeltaDifference = Long.MAX_VALUE;
         
         File closestBackup = null;
-        long smallestDeltaDifference = Long.MAX_VALUE;
         
         for (File backup : backups)
         {
             try
             {
-                Date backupDate = sdf.parse(backup.getName());
+                Date backupDate = getBackupManager().parseBackupFilename(backup.getName());
                 long deltaTimeMillis = (currentTimeMillis - backupDate.getTime());
-                long deltaDifference =
-                        Math.abs(desiredDeltaTimeMillis - deltaTimeMillis);
+                long deltaDifference = Math.abs(desiredDeltaTimeMillis - deltaTimeMillis);
                 
                 if (closestBackup == null || deltaDifference < smallestDeltaDifference)
                 {

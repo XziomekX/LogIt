@@ -30,6 +30,7 @@ import io.github.lucaseasedup.logit.storage.Storage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -111,10 +112,8 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
      */
     public File createBackup()
     {
-        String backupFilenameFormat = getConfig().getString("backup.filename-format");
-        SimpleDateFormat sdf = new SimpleDateFormat(backupFilenameFormat);
         File backupDir = getDataFile(getConfig().getString("backup.path"));
-        File backupFile = new File(backupDir, sdf.format(new Date()));
+        File backupFile = new File(backupDir, formatBackupFilename(new Date()));
         
         backupDir.mkdir();
         
@@ -270,6 +269,30 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
             return null;
         
         return backupFile;
+    }
+    
+    public Date parseBackupFilename(String filename) throws ParseException
+    {
+        if (filename == null)
+            throw new IllegalArgumentException();
+        
+        return buildDateFormat().parse(filename);
+    }
+    
+    public String formatBackupFilename(Date date)
+    {
+        if (date == null)
+            throw new IllegalArgumentException();
+        
+        return buildDateFormat().format(date);
+    }
+    
+    private SimpleDateFormat buildDateFormat()
+    {
+        String backupFilenameFormat = getConfig().getString("backup.filename-format");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(backupFilenameFormat);
+        
+        return dateFormat;
     }
     
     /**
