@@ -44,6 +44,7 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -1090,7 +1091,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 sendMsg(sender, _("reloadConfig.success"));
             }
         }
-        catch (IOException | InvalidPropertyValueException ex)
+        catch (IOException | InvalidConfigurationException | InvalidPropertyValueException ex)
         {
             ex.printStackTrace();
             
@@ -1121,6 +1122,16 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 .replace("{0}", String.valueOf(uniqueIps)));
         sendMsg(sender, _("stats.backupCount")
                 .replace("{0}", String.valueOf(backupCount)));
+        sendMsg(sender, "");
+        sendMsg(sender, _("stats.logins")
+                .replace("{0}", String.valueOf(getCore().getStats().getInt("logins"))));
+        sendMsg(sender, _("stats.passwordChanges")
+                .replace("{0}", String.valueOf(getCore().getStats().getInt("password-changes"))));
+        
+        if (sender instanceof Player)
+        {
+            sendMsg(sender, "");
+        }
     }
     
     private boolean checkPermission(Player player, String permission)

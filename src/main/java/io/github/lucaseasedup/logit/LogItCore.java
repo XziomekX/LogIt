@@ -83,6 +83,7 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.scheduler.BukkitTask;
@@ -115,15 +116,23 @@ public final class LogItCore
         getDataFolder().mkdir();
         
         firstRun = !getDataFile("config.yml").exists();
-        config = new PredefinedConfiguration("config-def.b64", "config-def.b64");
+        config = new PredefinedConfiguration("config.yml", "config-def.b64", "config-def.b64",
+                "# # # # # # # # # # # # # # #\n"
+              + " LogIt Configuration File   #\n"
+              + "# # # # # # # # # # # # # # #\n");
+        stats = new PredefinedConfiguration("stats.yml", "stats-def.b64", "stats-def.b64",
+                "# # # # # # # # # # # # # # #\n"
+              + "  LogIt Statistics File     #\n"
+              + "# # # # # # # # # # # # # # #\n");
         
         try
         {
             config.load();
+            stats.load();
         }
-        catch (IOException ex)
+        catch (IOException | InvalidConfigurationException ex)
         {
-            log(Level.SEVERE, "Could not load the configuration file.", ex);
+            log(Level.SEVERE, "Could not load a predefined configuration file.", ex);
             
             FatalReportedException.throwNew(ex);
         }
@@ -411,6 +420,12 @@ public final class LogItCore
         {
             config.dispose();
             config = null;
+        }
+        
+        if (stats != null)
+        {
+            stats.dispose();
+            stats = null;
         }
         
         if (localeManager != null)
@@ -1016,6 +1031,11 @@ public final class LogItCore
         return config;
     }
     
+    public PredefinedConfiguration getStats()
+    {
+        return stats;
+    }
+    
     /**
      * Checks if the LogIt configuration file has been successfully loaded.
      * 
@@ -1116,6 +1136,7 @@ public final class LogItCore
     private boolean started = false;
     
     private PredefinedConfiguration config;
+    private PredefinedConfiguration stats;
     private LocaleManager           localeManager;
     private AccountManager          accountManager;
     private PersistenceManager      persistenceManager;

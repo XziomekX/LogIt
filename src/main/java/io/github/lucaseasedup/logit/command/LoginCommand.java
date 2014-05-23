@@ -89,6 +89,8 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     sendMsg(args[1], _("startSession.success.self"));
                     sendMsg(sender, _("startSession.success.others")
                             .replace("{0}", args[1]));
+                    
+                    getCore().getStats().set("logins", getCore().getStats().getInt("logins") + 1);
                 }
             }
         }
@@ -192,6 +194,8 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 failedLoginsToBan.remove(username);
                 
                 sendMsg(sender, _("startSession.success.self"));
+                
+                getCore().getStats().set("logins", getCore().getStats().getInt("logins") + 1);
                 
                 if (getConfig().getBoolean("login-sessions.enabled"))
                 {

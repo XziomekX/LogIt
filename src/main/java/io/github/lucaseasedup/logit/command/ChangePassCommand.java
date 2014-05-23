@@ -84,6 +84,9 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
                     sendMsg(args[1], _("changePassword.success.self"));
                     sendMsg(sender, _("changePassword.success.others")
                             .replace("{0}", args[1]));
+                    
+                    getCore().getStats().set("password-changes",
+                            getCore().getStats().getInt("password-changes") + 1);
                 }
                 catch (ReportedException ex)
                 {
@@ -152,6 +155,9 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
                     getAccountManager().changeAccountPassword(p.getName(), args[1]);
                     
                     sendMsg(sender, _("changePassword.success.self"));
+                    
+                    getCore().getStats().set("password-changes",
+                            getCore().getStats().getInt("password-changes") + 1);
                 }
                 catch (ReportedException ex)
                 {

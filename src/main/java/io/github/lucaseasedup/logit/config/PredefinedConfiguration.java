@@ -44,15 +44,29 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.bukkit.Color;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 public final class PredefinedConfiguration extends PropertyObserver implements Disposable
 {
-    public PredefinedConfiguration(String userConfigDef, String packageConfigDef)
+    public PredefinedConfiguration(String filename,
+                                   String userConfigDef,
+                                   String packageConfigDef,
+                                   String header)
     {
+        this.file = getDataFile(filename);
+        this.configuration = YamlConfiguration.loadConfiguration(file);
         this.userConfigDef = userConfigDef;
         this.packageConfigDef = packageConfigDef;
+        this.header = header;
+    }
+    
+    public PredefinedConfiguration(String filename, String userConfigDef, String packageConfigDef)
+    {
+        this(filename, userConfigDef, packageConfigDef, null);
     }
     
     @Override
@@ -70,13 +84,21 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
         }
     }
     
-    public void load() throws IOException, InvalidPropertyValueException
+    public void load() throws IOException,
+                              InvalidConfigurationException,
+                              InvalidPropertyValueException
     {
-        getPlugin().reloadConfig();
-        getPlugin().getConfig().options().header(
-             "# # # # # # # # # # # # # # #\n"
-           + " LogIt Configuration File   #\n"
-           + "# # # # # # # # # # # # # # #\n");
+        if (!file.exists())
+        {
+            file.createNewFile();
+        }
+        
+        configuration.load(file);
+        
+        if (header != null)
+        {
+            configuration.options().header(header);
+        }
         
         File userDefFile = getDataFile(userConfigDef);
         
@@ -131,10 +153,12 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
     
     /**
      * Saves the config to a predefined file.
+     * 
+     * @throws IOException if an I/O error occured.
      */
-    public void save()
+    public void save() throws IOException
     {
-        getPlugin().saveConfig();
+        configuration.save(file);
     }
     
     public Map<String, Property> getProperties()
@@ -178,7 +202,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
     
     public ConfigurationSection getConfigurationSection(String path)
     {
-        return getPlugin().getConfig().getConfigurationSection(path);
+        return configuration.getConfigurationSection(path);
     }
     
     public Object get(String path)
@@ -271,12 +295,20 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
     @Override
     public void update(Property p)
     {
-        getPlugin().getConfig().set(p.getPath(), p.getValue());
-        getPlugin().saveConfig();
+        configuration.set(p.getPath(), p.getValue());
         
-        log(Level.INFO, _("config.set.success.log")
-                .replace("{0}", p.getPath())
-                .replace("{1}", p.toString()));
+        try
+        {
+            save();
+            
+            log(Level.INFO, _("config.set.success.log")
+                    .replace("{0}", p.getPath())
+                    .replace("{1}", p.toString()));
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, _("config.set.fail.log"), ex);
+        }
     }
     
     /**
@@ -296,7 +328,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
                              PropertyValidator validator,
                              PropertyObserver obs) throws InvalidPropertyValueException
     {
-        Object existingValue = getPlugin().getConfig().get(path, defaultValue);
+        Object existingValue = configuration.get(path, defaultValue);
         Property property = new Property(path, type, requiresRestart, existingValue, validator);
         
         if (obs != null)
@@ -308,7 +340,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
         
         Object value;
         
-        if (!getPlugin().getConfig().isConfigurationSection(path))
+        if (!configuration.isConfigurationSection(path))
         {
             value = property.getValue();
         }
@@ -322,7 +354,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
             throw new InvalidPropertyValueException(path);
         }
         
-        getPlugin().getConfig().set(property.getPath(), value);
+        configuration.set(property.getPath(), value);
         properties.put(property.getPath(), property);
     }
     
@@ -338,7 +370,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
             
             if (!newDef.containsKey(entry.getKey()))
             {
-                getPlugin().getConfig().set(entry.getValue().get("path"), null);
+                configuration.set(entry.getValue().get("path"), null);
                 
                 it.remove();
             }
@@ -367,10 +399,10 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
             if (!oldDefSection.get("path").equals(newDefSection.get("path")))
             {
                 String oldPath = oldDefSection.get("path");
-                Object oldValue = getPlugin().getConfig().get(oldPath);
+                Object oldValue = configuration.get(oldPath);
                 
-                getPlugin().getConfig().set(oldPath, null);
-                getPlugin().getConfig().set(newDefSection.get("path"), oldValue);
+                configuration.set(oldPath, null);
+                configuration.set(newDefSection.get("path"), oldValue);
                 
                 oldDefSection.put("path", newDefSection.get("path"));
             }
@@ -444,11 +476,11 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
             {
             case CONFIGURATION_SECTION:
             {
-                defaultValue = getPlugin().getConfig().getConfigurationSection(path);
+                defaultValue = configuration.getConfigurationSection(path);
                 
                 if (defaultValue == null)
                 {
-                    defaultValue = getPlugin().getConfig().createSection(path);
+                    defaultValue = configuration.createSection(path);
                 }
                 
                 break;
@@ -592,8 +624,11 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
         return Base64.decode(input);
     }
     
+    private final File file;
+    private final FileConfiguration configuration;
     private final String userConfigDef;
     private final String packageConfigDef;
+    private final String header;
     private boolean loaded = false;
     private Map<String, Property> properties = new LinkedHashMap<>();
 }
