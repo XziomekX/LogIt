@@ -23,6 +23,8 @@ import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.FatalReportedException;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
+import io.github.lucaseasedup.logit.TimeString;
+import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.command.wizard.ConvertWizard;
 import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
@@ -31,6 +33,9 @@ import io.github.lucaseasedup.logit.config.PropertyType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -136,7 +141,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 subcommandBackupForce(p);
             }
         }
-        else if (checkSubcommand(args, "backup restore", 1))
+        else if (checkSubcommand(args, "backup restore", 0))
         {
             if (!checkPermission(p, "logit.backup.restore"))
             {
@@ -148,7 +153,47 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else
             {
-                subcommandBackupRestore(sender, (args.length >= 3) ? args[2] : null);
+                subcommandBackupRestore(sender);
+            }
+        }
+        else if (checkSubcommand(args, "backup restore file", 1))
+        {
+            if (!checkPermission(p, "logit.backup.restore"))
+            {
+                sendMsg(sender, _("noPerms"));
+            }
+            else if (args.length < 4)
+            {
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "filename"));
+            }
+            else if (!isCoreStarted())
+            {
+                sendMsg(sender, _("coreNotStarted"));
+            }
+            else
+            {
+                subcommandBackupRestore_File(sender, args[3]);
+            }
+        }
+        else if (checkSubcommand(args, "backup restore time", 1))
+        {
+            if (!checkPermission(p, "logit.backup.restore"))
+            {
+                sendMsg(sender, _("noPerms"));
+            }
+            else if (args.length < 4)
+            {
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", "time"));
+            }
+            else if (!isCoreStarted())
+            {
+                sendMsg(sender, _("coreNotStarted"));
+            }
+            else
+            {
+                subcommandBackupRestore_Time(sender, args[3]);
             }
         }
         else if (checkSubcommand(args, "backup remove", 1))
@@ -434,8 +479,10 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             sendMsg(sender, buildSubcommandHelp("backup restore", null,
                     "subCmdDesc.backup.restore.newest"));
-            sendMsg(sender, buildSubcommandHelp("backup restore", "<filename>",
-                    "subCmdDesc.backup.restore.certain"));
+            sendMsg(sender, buildSubcommandHelp("backup restore file", "<filename>",
+                    "subCmdDesc.backup.restore.filename"));
+            sendMsg(sender, buildSubcommandHelp("backup restore time", "<time>",
+                    "subCmdDesc.backup.restore.time"));
         }
         if (checkPermission(p, "logit.backup.remove"))
         {
@@ -581,26 +628,29 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         }
     }
     
-    private void subcommandBackupRestore(CommandSender sender, String filename)
+    private void subcommandBackupRestore(CommandSender sender)
     {
+        File[] backups = getBackupManager().getBackups(true);
+        
+        if (backups.length == 0)
+        {
+            sendMsg(sender, _("restoreBackup.noBackups"));
+            
+            return;
+        }
+        
+        String filename = backups[backups.length - 1].getName();
+        
+        subcommandBackupRestore_File(sender, filename);
+    }
+    
+    private void subcommandBackupRestore_File(CommandSender sender, String filename)
+    {
+        assert filename != null;
+        
         try
         {
             ReportedException.incrementRequestCount();
-            
-            // If filename is null, get the most recent backup.
-            if (filename == null)
-            {
-                File[] backups = getBackupManager().getBackups(true);
-                
-                if (backups.length == 0)
-                {
-                    sendMsg(sender, _("restoreBackup.noBackups"));
-                    
-                    return;
-                }
-                
-                filename = backups[backups.length - 1].getName();
-            }
             
             getBackupManager().restoreBackup(filename);
             
@@ -627,6 +677,52 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         {
             ReportedException.decrementRequestCount();
         }
+    }
+    
+    private void subcommandBackupRestore_Time(CommandSender sender, String desiredDeltaTime)
+    {
+        assert desiredDeltaTime != null;
+        
+        String backupFilenameFormat = getConfig().getString("backup.filename-format");
+        SimpleDateFormat sdf = new SimpleDateFormat(backupFilenameFormat);
+        File[] backups = getBackupManager().getBackups(true);
+        
+        long currentTimeMillis = System.currentTimeMillis();
+        long desiredDeltaTimeMillis = TimeString.decode(desiredDeltaTime, TimeUnit.MILLISECONDS);
+        
+        File closestBackup = null;
+        long smallestDeltaDifference = Long.MAX_VALUE;
+        
+        for (File backup : backups)
+        {
+            try
+            {
+                Date backupDate = sdf.parse(backup.getName());
+                long deltaTimeMillis = (currentTimeMillis - backupDate.getTime());
+                long deltaDifference =
+                        Math.abs(desiredDeltaTimeMillis - deltaTimeMillis);
+                
+                if (closestBackup == null || deltaDifference < smallestDeltaDifference)
+                {
+                    closestBackup = backup;
+                    smallestDeltaDifference = deltaDifference;
+                }
+            }
+            catch (ParseException ex)
+            {
+                // If a ParseException has been thrown, the file is probably not a backup,
+                // so we skip it without notice.
+            }
+        }
+        
+        if (closestBackup == null)
+        {
+            sendMsg(sender, _("restoreBackup.noBackups"));
+            
+            return;
+        }
+        
+        subcommandBackupRestore_File(sender, closestBackup.getName());
     }
     
     private void subcommandBackupRemove(CommandSender sender, String amountString)
