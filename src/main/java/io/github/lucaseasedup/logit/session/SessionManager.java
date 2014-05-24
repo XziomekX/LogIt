@@ -23,7 +23,6 @@ import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerName;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
@@ -83,7 +82,8 @@ public final class SessionManager extends LogItCoreObject
             // Player is logged in, either online or offline.
             if (session.getStatus() >= 0L)
             {
-                if (isPlayerOnline(username))
+                // If player is online.
+                if (player != null)
                 {
                     session.setStatus(0L);
                     
@@ -113,8 +113,8 @@ public final class SessionManager extends LogItCoreObject
                     destroySession(username);
                 }
             }
-            // Player is logged out but online.
-            else if (isPlayerOnline(username))
+            // Player is online but otherwise logged out.
+            else if (player != null)
             {
                 if (!containsIgnoreCase(username, disableTimeoutForPlayers)
                         && getCore().isPlayerForcedToLogIn(player))
