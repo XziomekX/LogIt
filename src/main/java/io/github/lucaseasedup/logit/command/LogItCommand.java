@@ -458,91 +458,91 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
     {
         if (checkPermission(p, "logit.help"))
         {
-            sendMsg(sender, buildSubcommandHelp("help", null,
+            sendMsg(sender, buildSubcommandHelpLine("help", null,
                     "subCmdDesc.help"));
         }
         if (checkPermission(p, "logit.version"))
         {
-            sendMsg(sender, buildSubcommandHelp("version", null,
+            sendMsg(sender, buildSubcommandHelpLine("version", null,
                     "subCmdDesc.version"));
         }
         if (checkPermission(p, "logit.reload"))
         {
-            sendMsg(sender, buildSubcommandHelp("reload", null,
+            sendMsg(sender, buildSubcommandHelpLine("reload", null,
                     "subCmdDesc.reload"));
         }
         if (checkPermission(p, "logit.backup.force"))
         {
-            sendMsg(sender, buildSubcommandHelp("backup force", null,
+            sendMsg(sender, buildSubcommandHelpLine("backup force", null,
                     "subCmdDesc.backup.force"));
         }
         if (checkPermission(p, "logit.backup.restore"))
         {
-            sendMsg(sender, buildSubcommandHelp("backup restore", null,
+            sendMsg(sender, buildSubcommandHelpLine("backup restore", null,
                     "subCmdDesc.backup.restore.newest"));
-            sendMsg(sender, buildSubcommandHelp("backup restore file", "<filename>",
+            sendMsg(sender, buildSubcommandHelpLine("backup restore file", "<filename>",
                     "subCmdDesc.backup.restore.filename"));
-            sendMsg(sender, buildSubcommandHelp("backup restore time", "<time>",
+            sendMsg(sender, buildSubcommandHelpLine("backup restore time", "<time>",
                     "subCmdDesc.backup.restore.time"));
         }
         if (checkPermission(p, "logit.backup.remove"))
         {
-            sendMsg(sender, buildSubcommandHelp("backup remove", "<amount>",
+            sendMsg(sender, buildSubcommandHelpLine("backup remove", "<amount>",
                     "subCmdDesc.backup.remove"));
         }
         if (checkPermission(p, "logit.gotowr"))
         {
-            sendMsg(sender, buildSubcommandHelp("gotowr", null,
+            sendMsg(sender, buildSubcommandHelpLine("gotowr", null,
                     "subCmdDesc.gotowr"));
         }
         if (checkPermission(p, "logit.globalpass.set"))
         {
-            sendMsg(sender, buildSubcommandHelp("globalpass set", "<password>",
+            sendMsg(sender, buildSubcommandHelpLine("globalpass set", "<password>",
                     "subCmdDesc.globalpass.set"));
         }
         if (checkPermission(p, "logit.globalpass.remove"))
         {
-            sendMsg(sender, buildSubcommandHelp("globalpass remove", null,
+            sendMsg(sender, buildSubcommandHelpLine("globalpass remove", null,
                     "subCmdDesc.globalpass.remove"));
         }
         if (checkPermission(p, "logit.account.status"))
         {
-            sendMsg(sender, buildSubcommandHelp("account status", "<username>",
+            sendMsg(sender, buildSubcommandHelpLine("account status", "<username>",
                     "subCmdDesc.account.status"));
         }
         if (checkPermission(p, "logit.ipcount"))
         {
-            sendMsg(sender, buildSubcommandHelp("ipcount", "<ip>",
+            sendMsg(sender, buildSubcommandHelpLine("ipcount", "<ip>",
                     "subCmdDesc.ipcount"));
         }
         if (checkPermission(p, "logit.config.get"))
         {
-            sendMsg(sender, buildSubcommandHelp("config get", "<path>",
+            sendMsg(sender, buildSubcommandHelpLine("config get", "<path>",
                     "subCmdDesc.config.get"));
         }
         if (checkPermission(p, "logit.config.set"))
         {
-            sendMsg(sender, buildSubcommandHelp("config set", "<path> <value>",
+            sendMsg(sender, buildSubcommandHelpLine("config set", "<path> <value>",
                     "subCmdDesc.config.set"));
         }
         if (checkPermission(p, "logit.config.list"))
         {
-            sendMsg(sender, buildSubcommandHelp("config list", "[page]",
+            sendMsg(sender, buildSubcommandHelpLine("config list", "[page]",
                     "subCmdDesc.config.list"));
         }
         if (checkPermission(p, "logit.config.reload"))
         {
-            sendMsg(sender, buildSubcommandHelp("config reload", null,
+            sendMsg(sender, buildSubcommandHelpLine("config reload", null,
                     "subCmdDesc.config.reload"));
         }
         if (checkPermission(p, "logit.convert"))
         {
-            sendMsg(sender, buildSubcommandHelp("convert", null,
+            sendMsg(sender, buildSubcommandHelpLine("convert", null,
                     "subCmdDesc.convert"));
         }
         if (checkPermission(p, "logit.stats"))
         {
-            sendMsg(sender, buildSubcommandHelp("stats", null,
+            sendMsg(sender, buildSubcommandHelpLine("stats", null,
                     "subCmdDesc.stats"));
         }
     }
@@ -1197,9 +1197,9 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         return checkSubcommand(args, subcommand, Integer.MAX_VALUE);
     }
     
-    private static String buildSubcommandHelp(String subcommand,
-                                              String params,
-                                              String descriptionLabel)
+    private static String buildSubcommandHelpLine(String subcommand,
+                                                  String params,
+                                                  String descriptionLabel)
     {
         String line = _("subCmdHelpLine");
         
