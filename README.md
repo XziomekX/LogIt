@@ -1,8 +1,4 @@
 LogIt
 =====
 
-Installation steps:
-* Put LogIt.jar and LogIt data folder folder into "plugins" directory.
-* Reload your server by typing "reload".
-* Open config.yml located in the LogIt data folder and customize it according to your preference.
-* Type "logit reload" and you're done!
+LogIt is a complex and highly customizable Bukkit plugin, which forces players to authenticate in order to play. With the default configuration, it does not nothing besides that. Out of the box, it is ready to work.
