@@ -63,7 +63,7 @@ public final class LogItPlugin extends JavaPlugin
         catch (IOException ex)
         {
             // If messages could not be loaded, just log the failure.
-            // They're not nessesary for LogIt to work.
+            // They're not necessary for LogIt to work.
             getLogger().log(Level.WARNING, "Could not load messages.", ex);
         }
         
