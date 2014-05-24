@@ -574,11 +574,27 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         }
     }
     
-    private void subcommandStop(CommandSender sender)
+    private void subcommandStop(final CommandSender sender)
     {
-        getCore().stop();
+        if (sender instanceof Player)
+        {
+            sendMsg(sender, "");
+        }
         
-        sendMsg(sender, _("stopCore.success"));
+        sendMsg(sender, _("stopCore.confirm.areYouSure"));
+        sendMsg(sender, _("stopCore.confirm.vulnerabilityInfo"));
+        sendMsg(sender, _("stopCore.confirm.typeToConfirm"));
+        
+        new ConfirmationWizard(sender, "stop", new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                getCore().stop();
+                
+                sendMsg(sender, _("stopCore.success"));
+            }
+        }).createWizard();
     }
     
     private void subcommandReload(Player player)

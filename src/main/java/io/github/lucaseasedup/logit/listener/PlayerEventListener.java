@@ -306,6 +306,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL)
     private void onChat(AsyncPlayerChatEvent event)
     {
+        if (!isCoreStarted())
+            return;
+        
         Player player = event.getPlayer();
         Session session = getSessionManager().getSession(player.getName());
         
@@ -326,6 +329,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL)
     private void onCommandPreprocess(PlayerCommandPreprocessEvent event)
     {
+        if (!isCoreStarted())
+            return;
+        
         Player player = event.getPlayer();
         Session session = getSessionManager().getSession(player.getName());
         
