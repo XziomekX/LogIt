@@ -508,17 +508,16 @@ public final class LogItCore
         }
         
         stop();
+        start();
         
         try
         {
-            plugin.reloadMessages();
+            plugin.reloadMessages(getConfig().getString("locale"));
         }
         catch (IOException ex)
         {
             log(Level.WARNING, "Could not load messages.", ex);
         }
-        
-        start();
         
         if (sessionsFile.exists())
         {

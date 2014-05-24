@@ -58,7 +58,7 @@ public final class LogItPlugin extends JavaPlugin
         
         try
         {
-            loadMessages();
+            loadMessages(getConfig().getString("locale", "en"));
         }
         catch (IOException ex)
         {
@@ -117,9 +117,8 @@ public final class LogItPlugin extends JavaPlugin
     /**
      * Reloads message files.
      * 
-     * <p> First, it tries to load local <i>messages_{locale}.properties</i>
-     * from the plugin JAR (where <i>{locale}</i> is a value of the <i>locale</i>
-     * config property). If the file does not exist, it tries to load global
+     * <p> First, it tries to load local <i>messages_{prefix}.properties</i>
+     * from the plugin JAR. If the file does not exist, it tries to load global
      * <i>messages.properties</i>. If this fails too,
      * {@code FileNotFoundException} will be thrown.
      * 
@@ -127,19 +126,21 @@ public final class LogItPlugin extends JavaPlugin
      * global/local message files from the <i>lang</i> directory if present,
      * that will be merged with built-in message files.
      * 
+     * @param prefix the locale prefix.
+     * 
      * @throws FileNotFoundException if no message file has been found.
      * @throws IOException           if there was an error while reading.
      */
-    public void reloadMessages() throws FileNotFoundException, IOException
+    public void reloadMessages(String prefix) throws FileNotFoundException, IOException
     {
-        loadMessages();
+        loadMessages(prefix);
     }
     
-    private void loadMessages() throws FileNotFoundException, IOException
+    private void loadMessages(String prefix) throws FileNotFoundException, IOException
     {
         messages = null;
         
-        String suffix = "_" + getConfig().getString("locale", "en");
+        String suffix = "_" + prefix;
         
         try (JarFile jarFile = new JarFile(getFile()))
         {

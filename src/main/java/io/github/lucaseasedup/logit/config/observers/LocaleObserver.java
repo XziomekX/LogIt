@@ -30,7 +30,7 @@ public final class LocaleObserver extends PropertyObserver
     {
         try
         {
-            getPlugin().reloadMessages();
+            getPlugin().reloadMessages(p.getString());
             getLocaleManager().switchActiveLocale(p.getString());
         }
         catch (IOException ex)
