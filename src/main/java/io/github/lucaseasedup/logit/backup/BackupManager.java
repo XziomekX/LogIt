@@ -249,9 +249,10 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
             if (i >= backupFiles.length)
                 break;
             
-            backupFiles[i].delete();
-            
-            effectiveAmount++;
+            if (backupFiles[i].delete())
+            {
+                effectiveAmount++;
+            }
         }
         
         log(Level.INFO, _("removeBackups.success")
