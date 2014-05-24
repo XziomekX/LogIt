@@ -25,7 +25,7 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.TimeString;
 import io.github.lucaseasedup.logit.TimeUnit;
-import io.github.lucaseasedup.logit.command.wizard.BackupRestoreWizard;
+import io.github.lucaseasedup.logit.command.wizard.ConfirmationWizard;
 import io.github.lucaseasedup.logit.command.wizard.ConvertWizard;
 import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
@@ -659,45 +659,66 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             return;
         }
         
+        Date selectedBackupDate;
+        
         try
         {
-            new BackupRestoreWizard(sender, selectedBackup, new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    try
-                    {
-                        ReportedException.incrementRequestCount();
-                        
-                        getBackupManager().restoreBackup(filename);
-                        
-                        if (sender instanceof Player)
-                        {
-                            sendMsg(sender, _("restoreBackup.success")
-                                    .replace("{0}", filename));
-                        }
-                    }
-                    catch (FileNotFoundException | ReportedException ex)
-                    {
-                        if (sender instanceof Player)
-                        {
-                            sendMsg(sender, _("restoreBackup.fail")
-                                    .replace("{0}", filename));
-                        }
-                    }
-                    finally
-                    {
-                        ReportedException.decrementRequestCount();
-                    }
-                }
-            }).createWizard();
+            selectedBackupDate = getBackupManager().parseBackupFilename(selectedBackup.getName());
         }
         catch (ParseException ex)
         {
             sendMsg(sender, _("restoreBackup.fail")
                     .replace("{0}", selectedBackup.getName()));
+            
+            return;
         }
+        
+        if (sender instanceof Player)
+        {
+            sendMsg(sender, "");
+        }
+        
+        sendMsg(sender, _("restoreBackup.confirm.header"));
+        sendMsg(sender, _("restoreBackup.confirm.typeToProceed"));
+        sendMsg(sender, "");
+        sendMsg(sender, _("restoreBackup.confirm.filename")
+                .replace("{0}", selectedBackup.getName()));
+        sendMsg(sender, _("restoreBackup.confirm.date")
+                .replace("{0}", selectedBackupDate.toString()));
+        sendMsg(sender, "");
+        sendMsg(sender, _("restoreBackup.confirm.typeToCancel"));
+        
+        new ConfirmationWizard(sender, "proceed", new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    ReportedException.incrementRequestCount();
+                    
+                    getBackupManager().restoreBackup(filename);
+                    
+                    if (sender instanceof Player)
+                    {
+                        sendMsg(sender, _("restoreBackup.success")
+                                .replace("{0}", filename));
+                    }
+                }
+                catch (FileNotFoundException | ReportedException ex)
+                {
+                    if (sender instanceof Player)
+                    {
+                        sendMsg(sender, _("restoreBackup.fail")
+                                .replace("{0}", filename));
+                    }
+                }
+                finally
+                {
+                    ReportedException.decrementRequestCount();
+                }
+            }
+        }).createWizard();
     }
     
     private void subcommandBackupRestore_Time(CommandSender sender, String desiredDeltaTime)
