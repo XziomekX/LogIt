@@ -139,7 +139,7 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
             }
             else
             {
-                subcommandBackupForce(p);
+                subcommandBackupForce(sender);
             }
         }
         else if (checkSubcommand(args, "backup restore", 0))
@@ -597,31 +597,26 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
         }
     }
     
-    private void subcommandBackupForce(Player player)
+    private void subcommandBackupForce(CommandSender sender)
     {
         try
         {
             ReportedException.incrementRequestCount();
             
-            File backupFile = getBackupManager().createBackup();
+            File backupFile = getBackupManager().createBackup(false);
             
-            if (player != null)
+            if (sender instanceof Player)
             {
-                sendMsg(player, _("createBackup.success")
+                sendMsg(sender, _("createBackup.success")
                         .replace("{0}", backupFile.getName()));
             }
-            
-            log(Level.INFO, _("createBackup.success.log")
-                    .replace("{0}", backupFile.getName()));
         }
         catch (ReportedException ex)
         {
-            if (player != null)
+            if (sender instanceof Player)
             {
-                sendMsg(player, _("createBackup.fail"));
+                sendMsg(sender, _("createBackup.fail"));
             }
-            
-            log(Level.WARNING, _("createBackup.fail.log"));
         }
         finally
         {

@@ -27,6 +27,7 @@ import io.github.lucaseasedup.logit.Timer;
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
+import io.github.lucaseasedup.logit.storage.Storage.DataType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -34,8 +35,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public final class BackupManager extends LogItCoreObject implements Runnable, Disposable
 {
@@ -80,23 +83,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
         
         if (timer.getElapsed() >= interval)
         {
-            try
-            {
-                ReportedException.incrementRequestCount();
-                
-                File backupFile = createBackup();
-                
-                log(Level.INFO, _("createBackup.success.log")
-                        .replace("{0}", backupFile.getName()));
-            }
-            catch (ReportedException ex)
-            {
-                log(Level.WARNING, _("createBackup.fail.log"));
-            }
-            finally
-            {
-                ReportedException.decrementRequestCount();
-            }
+            createBackup(true);
             
             timer.reset();
         }
@@ -105,51 +92,95 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
     /**
      * Creates a new backup of all the accounts stored in the underlying {@code AccountManager}.
      * 
+     * <p> If this method was called with the {@code asynchronously}
+     * parameter set to {@code true}, a {@code ReportedException} will not be thrown
+     * even if an I/O error occurred.
+     * 
+     * @param asynchronously if {@code true}, the backup will be created
+     *                       asynchronously in a separate thread.
+     * 
      * @return the created backup file.
      * 
      * @throws ReportedException if an I/O error occured,
      *                           and it was reported to the logger.
      */
-    public File createBackup()
+    public File createBackup(boolean asynchronously)
     {
         File backupDir = getDataFile(getConfig().getString("backup.path"));
-        File backupFile = new File(backupDir, formatBackupFilename(new Date()));
+        final File backupFile = new File(backupDir, formatBackupFilename(new Date()));
         
         backupDir.mkdir();
         
-        try
+        if (backupFile.exists())
         {
-            if (!backupFile.createNewFile())
-                throw new IOException("The backup file " + backupFile + " could not be created.");
-            
-            List<Storage.Entry> entries =
-                    accountManager.getStorage().selectEntries(accountManager.getUnit());
-            
-            try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
+            backupFile.delete();
+        }
+        
+        log(Level.INFO, _("createBackup.creating"));
+        
+        if (!asynchronously)
+        {
+            try
             {
-                backupStorage.connect();
-                backupStorage.createUnit("accounts",
-                        accountManager.getStorage().getKeys(accountManager.getUnit()));
-                backupStorage.setAutobatchEnabled(true);
+                copyAccounts(backupFile);
                 
-                for (Storage.Entry entry : entries)
-                {
-                    backupStorage.addEntry("accounts", entry);
-                }
+                log(Level.INFO, _("createBackup.success.log")
+                        .replace("{0}", backupFile.getName()));
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, _("createBackup.fail.log"), ex);
                 
-                backupStorage.executeBatch();
-                backupStorage.clearBatch();
-                backupStorage.setAutobatchEnabled(false);
+                ReportedException.throwNew(ex);
             }
         }
-        catch (IOException ex)
+        else
         {
-            log(Level.WARNING, ex);
-            
-            ReportedException.throwNew(ex);
+            new BukkitRunnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        copyAccounts(backupFile);
+                        
+                        log(Level.INFO, _("createBackup.success.log")
+                                .replace("{0}", backupFile.getName()));
+                    }
+                    catch (IOException ex)
+                    {
+                        log(Level.WARNING, _("createBackup.fail.log"), ex);
+                    }
+                }
+            }.runTaskLaterAsynchronously(getPlugin(), 0L);
         }
         
         return backupFile;
+    }
+    
+    private void copyAccounts(File backupFile) throws IOException
+    {
+        Hashtable<String, DataType> keys =
+                accountManager.getStorage().getKeys(accountManager.getUnit());
+        List<Storage.Entry> entries =
+                accountManager.getStorage().selectEntries(accountManager.getUnit());
+        
+        try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
+        {
+            backupStorage.connect();
+            backupStorage.createUnit("accounts", keys);
+            backupStorage.setAutobatchEnabled(true);
+            
+            for (Storage.Entry entry : entries)
+            {
+                backupStorage.addEntry("accounts", entry);
+            }
+            
+            backupStorage.executeBatch();
+            backupStorage.clearBatch();
+            backupStorage.setAutobatchEnabled(false);
+        }
     }
     
     /**
