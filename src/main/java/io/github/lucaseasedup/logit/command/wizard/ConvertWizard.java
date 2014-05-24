@@ -75,6 +75,7 @@ public final class ConvertWizard extends Wizard
             {
                 sendMessage(_("wizard.convert.unknownStorageType")
                         .replace("{0}", message));
+                sendMessage(_("wizard.convert.unknownStorageType.tryAgain"));
             }
             else
             {
