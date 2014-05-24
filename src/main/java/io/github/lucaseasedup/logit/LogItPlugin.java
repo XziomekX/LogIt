@@ -137,6 +137,8 @@ public final class LogItPlugin extends JavaPlugin
     
     private void loadMessages() throws FileNotFoundException, IOException
     {
+        messages = null;
+        
         String suffix = "_" + getConfig().getString("locale", "en");
         
         try (JarFile jarFile = new JarFile(getFile()))
@@ -168,7 +170,11 @@ public final class LogItPlugin extends JavaPlugin
         File file = new File(getDataFolder(), path);
         
         if (!file.exists())
+        {
+            customGlobalMessages = null;
+            
             return;
+        }
         
         try (InputStream is = new FileInputStream(file))
         {
@@ -181,7 +187,11 @@ public final class LogItPlugin extends JavaPlugin
         File file = new File(getDataFolder(), path);
         
         if (!file.exists())
+        {
+            customLocalMessages = null;
+            
             return;
+        }
         
         try (InputStream is = new FileInputStream(file))
         {
