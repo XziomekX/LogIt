@@ -615,28 +615,12 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
     
     private void subcommandBackupForce(CommandSender sender)
     {
-        try
+        File backupFile = getBackupManager().createBackup(true);
+        
+        if (sender instanceof Player)
         {
-            ReportedException.incrementRequestCount();
-            
-            File backupFile = getBackupManager().createBackup(false);
-            
-            if (sender instanceof Player)
-            {
-                sendMsg(sender, _("createBackup.success")
-                        .replace("{0}", backupFile.getName()));
-            }
-        }
-        catch (ReportedException ex)
-        {
-            if (sender instanceof Player)
-            {
-                sendMsg(sender, _("createBackup.fail"));
-            }
-        }
-        finally
-        {
-            ReportedException.decrementRequestCount();
+            sendMsg(sender, _("createBackup.willBeCreated")
+                    .replace("{0}", backupFile.getName()));
         }
     }
     
