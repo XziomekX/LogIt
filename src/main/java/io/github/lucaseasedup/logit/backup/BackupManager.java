@@ -101,7 +101,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
      * 
      * @return the created backup file.
      * 
-     * @throws ReportedException if an I/O error occured,
+     * @throws ReportedException if an I/O error occurred,
      *                           and it was reported to the logger.
      */
     public File createBackup(boolean asynchronously)
@@ -190,7 +190,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
      * 
      * @throws FileNotFoundException    if no such backup exists.
      * @throws IllegalArgumentException if {@code filename} is {@code null}.
-     * @throws ReportedException        if an I/O error occured,
+     * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public void restoreBackup(String filename) throws FileNotFoundException

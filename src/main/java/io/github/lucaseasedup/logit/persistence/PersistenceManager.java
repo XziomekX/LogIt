@@ -63,7 +63,7 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      * @throws IllegalArgumentException     if {@code player} or
      *                                      {@code clazz} is {@code null}.
      *                                      
-     * @throws ReportedException            if an I/O error occured,
+     * @throws ReportedException            if an I/O error occurred,
      *                                      and it was reported to the logger.
      */
     public void serializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
@@ -98,7 +98,7 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      * @param player the player whose data will be serialized.
      * 
      * @throws IllegalArgumentException if {@code player} is {@code null}.
-     * @throws ReportedException        if an I/O error occured,
+     * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public void serialize(Player player)
@@ -142,7 +142,7 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      * @throws IllegalArgumentException     if {@code player} or
      *                                      {@code clazz} is {@code null}.
      *                                      
-     * @throws ReportedException            if an I/O error occured,
+     * @throws ReportedException            if an I/O error occurred,
      *                                      and it was reported to the logger.
      */
     public void unserializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
@@ -182,7 +182,7 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      * @param player the player whose data will be unserialized.
      * 
      * @throws IllegalArgumentException if {@code player} is {@code null}.
-     * @throws ReportedException        if an I/O error occured,
+     * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public void unserialize(Player player)

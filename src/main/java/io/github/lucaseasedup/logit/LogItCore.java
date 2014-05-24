@@ -101,7 +101,7 @@ public final class LogItCore
     /**
      * Starts up the LogIt core.
      * 
-     * @throws FatalReportedException if a critical error occured
+     * @throws FatalReportedException if a critical error occurred
      *                                and LogIt could not start.
      * @throws IllegalStateException  if the LogIt core is already running.
      * 

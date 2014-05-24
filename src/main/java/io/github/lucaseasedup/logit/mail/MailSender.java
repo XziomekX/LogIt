@@ -80,7 +80,7 @@ public final class MailSender extends LogItCoreObject implements Disposable
      * @param body    the mail body.
      * @param html    whether HTML should be enabled in this mail.
      * 
-     * @throws IOException if an I/O error occured.
+     * @throws IOException if an I/O error occurred.
      */
     public void sendMail(Collection<String> to,
                          String from,

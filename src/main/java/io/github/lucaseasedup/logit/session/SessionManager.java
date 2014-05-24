@@ -536,7 +536,7 @@ public final class SessionManager extends LogItCoreObject
      * 
      * @param file the file to which the sessions will be exported.
      * 
-     * @throws IOException if an I/O error occured.
+     * @throws IOException if an I/O error occurred.
      * @throws IllegalArgumentException if {@code file} is {@code null}.
      */
     public void exportSessions(File file) throws IOException
@@ -580,7 +580,7 @@ public final class SessionManager extends LogItCoreObject
      * @param file the file from which the sessions will be imported.
      * 
      * @throws FileNotFoundException if no such file exists.
-     * @throws IOException if an I/O error occured.
+     * @throws IOException if an I/O error occurred.
      * @throws IllegalArgumentException if {@code file} is {@code null}.
      */
     public void importSessions(File file) throws FileNotFoundException, IOException

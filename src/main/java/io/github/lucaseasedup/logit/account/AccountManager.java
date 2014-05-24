@@ -99,7 +99,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * 
      * @return a storage entry with account data; {@code null}
      *         if there was no account with the given username
-     *         or an I/O error occured.
+     *         or an I/O error occurred.
      * 
      * @throws IllegalArgumentException if {@code username} is {@code null}.
      * @throws ReportedException        if an I/O error occurred,
@@ -142,7 +142,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * 
      * @return a storage entry with account data; {@code null}
      *         if there was no account with the given username
-     *         or an I/O error occured.
+     *         or an I/O error occurred.
      * 
      * @throws IllegalArgumentException if {@code username} is {@code null}.
      * @throws ReportedException        if an I/O error occurred,
@@ -185,10 +185,10 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @param username the username.
      * 
      * @return {@code true} if the account has been registered;
-     *         {@code false} otherwise or if an I/O error occured.
+     *         {@code false} otherwise or if an I/O error occurred.
      * 
      * @throws IllegalArgumentException if {@code username} is {@code null}.
-     * @throws ReportedException        if an I/O error occured,
+     * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public boolean isRegistered(String username)
@@ -203,9 +203,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * Fetches all registered usernames in the underlying storage unit.
      * 
      * @return a {@code Set} of usernames, or
-     *         {@code null} if an I/O error occured.
+     *         {@code null} if an I/O error occurred.
      * 
-     * @throws ReportedException if an I/O error occured,
+     * @throws ReportedException if an I/O error occurred,
      *                           and it was reported to the logger.
      */
     public Set<String> getRegisteredUsernames()
@@ -258,7 +258,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @throws AccountAlreadyExistsException if an account with the
      *                                       given username already exists.
      *                                       
-     * @throws ReportedException             if an I/O error occured,
+     * @throws ReportedException             if an I/O error occurred,
      *                                       and it was reported to the logger.
      */
     public CancelledState createAccount(String username, String password)
@@ -339,7 +339,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      *         has been cancelled by one of the {@code AccountRemoveEvent} handlers.
      * 
      * @throws IllegalArgumentException if {@code username} is {@code null}.
-     * @throws ReportedException        if an I/O error occured,
+     * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public CancelledState removeAccount(String username)
@@ -391,12 +391,12 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @param password the password to be checked.
      * 
      * @return {@code true} if the account exists and the password is correct;
-     *         {@code false} otherwise or if an I/O error occured.
+     *         {@code false} otherwise or if an I/O error occurred.
      * 
      * @throws IllegalArgumentException if {@code username} or
      *                                  {@code password} is {@code null}.
      *                                       
-     * @throws ReportedException        if an I/O error occured,
+     * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public boolean checkAccountPassword(String username, String password)
@@ -458,7 +458,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @throws IllegalArgumentException if {@code username} or
      *                                  {@code newPassword} is {@code null}.
      *                                       
-     * @throws ReportedException        if an I/O error occured,
+     * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public void changeAccountPassword(String username, String newPassword)
@@ -513,7 +513,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @throws IllegalArgumentException if {@code username} or
      *                                  {@code ip} is {@code null}.
      *                                       
-     * @throws ReportedException        if an I/O error occured,
+     * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public void attachIp(String username, String ip)
@@ -556,9 +556,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @param ip the IP address.
      * 
      * @return number of accounts with the given IP;
-     *         {@code -1} if an I/O error occured.
+     *         {@code -1} if an I/O error occurred.
      * 
-     * @throws ReportedException if an I/O error occured,
+     * @throws ReportedException if an I/O error occurred,
      *                           and it was reported to the logger.
      */
     public int countAccountsWithIp(String ip)
@@ -591,9 +591,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * in the underlying storage unit.
      * 
      * @return number of unique IP addresses;
-     *         {@code -1} if an I/O error occured.
+     *         {@code -1} if an I/O error occurred.
      * 
-     * @throws ReportedException if an I/O error occured,
+     * @throws ReportedException if an I/O error occurred,
      *                           and it was reported to the logger.
      */
     public int countUniqueIps()
@@ -630,10 +630,10 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * 
      * @return an e-mail address; {@code null}
      *         if no account with this username was found
-     *         or an I/O error occured.
+     *         or an I/O error occurred.
      * 
      * @throws IllegalArgumentException if {@code username} is {@code null}.
-     * @throws ReportedException        if an I/O error occured,
+     * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public String getEmail(String username)
@@ -662,7 +662,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @throws IllegalArgumentException if {@code username} or
      *                                  {@code newMail} is {@code null}.
      * 
-     * @throws ReportedException        if an I/O error occured,
+     * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public void changeEmail(String username, String newEmail)
@@ -702,7 +702,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      *                                  {@code ip} is {@code null},
      *                                  or {@code time} is negative.
      *                                  
-     * @throws ReportedException        if an I/O error occured,
+     * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public void saveLoginSession(String username, String ip, long time)
@@ -731,7 +731,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @param username the username.
      * 
      * @throws IllegalArgumentException if {@code username} is {@code null}.
-     * @throws ReportedException        if an I/O error occured,
+     * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public void eraseLoginSession(String username)
@@ -760,7 +760,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @param username the username.
      * 
      * @throws IllegalArgumentException if {@code username} is {@code null}.
-     * @throws ReportedException        if an I/O error occured,
+     * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public void updateLastActiveDate(String username)
@@ -792,10 +792,10 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * 
      * @return the persistence data; {@code null}
      *         if no account with this username was found
-     *         or an I/O error occured.
+     *         or an I/O error occurred.
      * 
      * @throws IllegalArgumentException if {@code username} is {@code null}.
-     * @throws ReportedException        if an I/O error occured,
+     * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public Map<String, String> getAccountPersistence(String username)
@@ -850,7 +850,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * @throws IllegalArgumentException if {@code username} or
      *                                  {@code persistence} is {@code null}.
      *                                  
-     * @throws ReportedException        if an I/O error occured,
+     * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public void updateAccountPersistence(String username, Map<String, String> persistence)
@@ -880,9 +880,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * Checks how many accounts are registered in the underlying storage unit.
      * 
      * @return the number of accounts registered;
-     *         {@code -1} if an I/O error occured.
+     *         {@code -1} if an I/O error occurred.
      * 
-     * @throws ReportedException if an I/O error occured,
+     * @throws ReportedException if an I/O error occurred,
      *                           and it was reported to the logger.
      */
     public int countAccounts()

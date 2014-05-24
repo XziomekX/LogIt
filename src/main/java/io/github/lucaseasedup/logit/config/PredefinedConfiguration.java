@@ -154,7 +154,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
     /**
      * Saves the config to a predefined file.
      * 
-     * @throws IOException if an I/O error occured.
+     * @throws IOException if an I/O error occurred.
      */
     public void save() throws IOException
     {
