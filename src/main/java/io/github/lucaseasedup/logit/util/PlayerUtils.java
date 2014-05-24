@@ -59,7 +59,7 @@ public final class PlayerUtils
      */
     public static boolean isPlayerOnline(String name)
     {
-        return (Bukkit.getPlayerExact(name) != null) ? true : false;
+        return Bukkit.getPlayerExact(name) != null;
     }
     
     public static String getPlayerIp(Player player)
