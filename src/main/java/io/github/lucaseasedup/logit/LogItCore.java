@@ -319,6 +319,7 @@ public final class LogItCore
                     config.getConfigurationSection("profiles.fields"));
         }
         
+        globalPasswordManager = new GlobalPasswordManager();
         accountWatcher = new AccountWatcher();
         
         if (Bukkit.getPluginManager().isPluginEnabled("Vault"))
@@ -333,6 +334,8 @@ public final class LogItCore
                 backupManager, 0, BackupManager.TASK_PERIOD);
         sessionManagerTask = Bukkit.getScheduler().runTaskTimer(plugin,
                 sessionManager, 0, SessionManager.TASK_PERIOD);
+        globalPasswordManagerTask = Bukkit.getScheduler().runTaskTimer(plugin,
+                globalPasswordManager, 0, GlobalPasswordManager.TASK_PERIOD);
         accountWatcherTask = Bukkit.getScheduler().runTaskTimer(plugin,
                 accountWatcher, 0, AccountWatcher.TASK_PERIOD);
         
@@ -382,6 +385,7 @@ public final class LogItCore
         accountManagerTask.cancel();
         sessionManagerTask.cancel();
         accountWatcherTask.cancel();
+        globalPasswordManagerTask.cancel();
         backupManagerTask.cancel();
         
         // Unregister all event listeners.
@@ -474,6 +478,12 @@ public final class LogItCore
         {
             profileManager.dispose();
             profileManager = null;
+        }
+        
+        if (globalPasswordManager != null)
+        {
+            globalPasswordManager.dispose();
+            globalPasswordManager = null;
         }
         
         accountWatcher = null;
@@ -623,51 +633,6 @@ public final class LogItCore
                 return hashedPassword.equals(SecurityHelper.hash(password, hashingAlgorithm));
             }
         }
-    }
-    
-    /**
-     * Checks if a password is equal, after hashing
-     * using the default algorithm, to the global password.
-     * 
-     * @param password the plain-text password.
-     * 
-     * @return {@code true} if the passwords match; {@code false} otherwise.
-     */
-    public boolean checkGlobalPassword(String password)
-    {
-        return checkPassword(password, config.getString("password.global-password.hash"),
-            config.getString("password.global-password.salt"), getDefaultHashingAlgorithm());
-    }
-
-    /**
-     * Changes the global password.
-     * 
-     * <p> This method hashes {@code password} with a random salt
-     * using the default algorithm specified in the config file.
-     * 
-     * @param password the new global password.
-     */
-    public void changeGlobalPassword(String password)
-    {
-        String salt = SecurityHelper.generateSalt(getDefaultHashingAlgorithm());
-        String hash = SecurityHelper.hash(password, salt, getDefaultHashingAlgorithm());
-        
-        config.set("password.global-password.salt", salt);
-        config.set("password.global-password.hash", hash);
-        
-        log(Level.INFO, _("globalpass.set.success.log"));
-    }
-    
-    /**
-     * Removes the global password, making it unusable
-     * in the login processes following this method call.
-     */
-    public void removeGlobalPassword()
-    {
-        config.set("password.global-password.hash", "");
-        config.set("password.global-password.salt", "");
-        
-        log(Level.INFO, _("globalpass.remove.success.log"));
     }
     
     /**
@@ -1101,6 +1066,11 @@ public final class LogItCore
         return profileManager;
     }
     
+    public GlobalPasswordManager getGlobalPasswordManager()
+    {
+        return globalPasswordManager;
+    }
+    
     /**
      * Checks if LogIt is linked to the Vault plugin
      * (e.i. Vault is enabled on this server and LogIt has successfully
@@ -1144,13 +1114,14 @@ public final class LogItCore
     private MailSender              mailSender;
     private LogItMessageDispatcher  messageDispatcher;
     private ProfileManager          profileManager;
-    
-    private AccountWatcher  accountWatcher;
-    private Permission      vaultPermissions;
+    private GlobalPasswordManager   globalPasswordManager;
+    private AccountWatcher          accountWatcher;
+    private Permission              vaultPermissions;
     
     private BukkitTask accountManagerTask;
     private BukkitTask backupManagerTask;
     private BukkitTask sessionManagerTask;
+    private BukkitTask globalPasswordManagerTask;
     private BukkitTask accountWatcherTask;
     
     private FileWriter logFileWriter;

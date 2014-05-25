@@ -69,8 +69,7 @@ public final class HubCommands
         hubCommands.add(new BackupRestoreTimeHubCommand());
         hubCommands.add(new BackupRemoveHubCommand());
         hubCommands.add(new GotowrHubCommand());
-        hubCommands.add(new GlobalpassSetHubCommand());
-        hubCommands.add(new GlobalpassRemoveHubCommand());
+        hubCommands.add(new GlobalpassHubCommand());
         hubCommands.add(new AccountStatusHubCommand());
         hubCommands.add(new IpcountHubCommand());
         hubCommands.add(new ConfigGetHubCommand());

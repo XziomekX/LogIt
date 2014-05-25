@@ -1,5 +1,5 @@
 /*
- * GlobalpassRemoveHubCommand.java
+ * GlobalpassHubCommand.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -20,29 +20,33 @@ package io.github.lucaseasedup.logit.command.hub;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
+import io.github.lucaseasedup.logit.locale.Locale;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
-public final class GlobalpassRemoveHubCommand extends HubCommand
+public final class GlobalpassHubCommand extends HubCommand
 {
-    public GlobalpassRemoveHubCommand()
+    public GlobalpassHubCommand()
     {
-        super("globalpass remove", new String[] {}, "logit.globalpass.remove", false, true,
+        super("globalpass", new String[] {}, "logit.globalpass.generate", false, true,
                 new CommandHelpLine.Builder()
-                        .command("logit globalpass remove")
-                        .descriptionLabel("subCmdDesc.globalpass.remove")
+                        .command("logit globalpass")
+                        .descriptionLabel("subCmdDesc.globalpass")
                         .build());
     }
     
     @Override
     public void execute(final CommandSender sender, String[] args)
     {
-        getCore().removeGlobalPassword();
+        String password = getCore().getGlobalPasswordManager().generatePassword();
+        long lifetimeSecs =
+                getConfig().getTime("password.global-password.invalidate-after", TimeUnit.SECONDS);
+        Locale activeLocale = getLocaleManager().getActiveLocale();
         
-        if (sender instanceof Player)
-        {
-            sendMsg(sender, _("globalpass.remove.success"));
-        }
+        sendMsg(sender, _("globalpass.generated")
+                .replace("{0}", password));
+        sendMsg(sender, _("globalpass.invalidationInfo")
+                .replace("{0}", activeLocale.stringifySeconds((int) lifetimeSecs)));
     }
 }
