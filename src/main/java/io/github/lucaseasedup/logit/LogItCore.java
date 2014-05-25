@@ -177,10 +177,10 @@ public final class LogItCore
         localeManager.switchActiveLocale(getConfig().getString("locale"));
         
         StorageType leadingStorageType = StorageType.decode(
-            plugin.getConfig().getString("storage.accounts.leading.storage-type")
+            getConfig().getString("storage.accounts.leading.storage-type")
         );
         StorageType mirrorStorageType = StorageType.decode(
-            plugin.getConfig().getString("storage.accounts.mirror.storage-type")
+            getConfig().getString("storage.accounts.mirror.storage-type")
         );
         
         String accountsUnit = config.getString("storage.accounts.leading.unit");
@@ -1018,12 +1018,12 @@ public final class LogItCore
      */
     public HashingAlgorithm getDefaultHashingAlgorithm()
     {
-        return HashingAlgorithm.decode(plugin.getConfig().getString("password.hashing-algorithm"));
+        return HashingAlgorithm.decode(getConfig().getString("password.hashing-algorithm"));
     }
     
     public IntegrationType getIntegration()
     {
-        return IntegrationType.decode(plugin.getConfig().getString("integration"));
+        return IntegrationType.decode(getConfig().getString("integration"));
     }
     
     public LocaleManager getLocaleManager()
