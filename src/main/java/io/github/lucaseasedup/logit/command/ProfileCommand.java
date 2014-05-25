@@ -63,7 +63,7 @@ public final class ProfileCommand extends LogItCoreObject implements CommandExec
             }
             else
             {
-                if (!getCore().getProfileManager().containsProfile(args[1]))
+                if (!getProfileManager().containsProfile(args[1]))
                 {
                     sendMsg(sender, _("profile.view.profileNotFound"));
                 }

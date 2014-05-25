@@ -35,7 +35,7 @@ public final class ProfileViewWizard extends Wizard
     @Override
     protected void onCreate()
     {
-        List<Field> fields = getCore().getProfileManager().getDefinedFields();
+        List<Field> fields = getProfileManager().getDefinedFields();
         
         sendMessage("");
         sendMessage(_("profile.view.header")
@@ -46,7 +46,7 @@ public final class ProfileViewWizard extends Wizard
         {
             for (Field field : fields)
             {
-                Object value = getCore().getProfileManager()
+                Object value = getProfileManager()
                         .getProfileObject(playerName, field.getName());
                 
                 if (value == null)

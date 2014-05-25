@@ -34,7 +34,7 @@ public final class ProfileEditWizard extends Wizard
         super(sender, Step.VIEW);
         
         this.playerName = playerName;
-        this.fields = getCore().getProfileManager().getDefinedFields();
+        this.fields = getProfileManager().getDefinedFields();
     }
     
     @Override
@@ -106,7 +106,7 @@ public final class ProfileEditWizard extends Wizard
             }
             else if (getCurrentStep() == Step.ERASE_FIELD)
             {
-                getCore().getProfileManager().removeProfileObject(playerName, field.getName());
+                getProfileManager().removeProfileObject(playerName, field.getName());
                 
                 viewProfile(field.getName());
                 updateStep(Step.CHOOSE_ACTION);
@@ -136,7 +136,7 @@ public final class ProfileEditWizard extends Wizard
                     return;
                 }
                 
-                getCore().getProfileManager().setProfileString(playerName,
+                getProfileManager().setProfileString(playerName,
                         field.getName(), message);
             }
             else if (field instanceof IntegerField)
@@ -174,7 +174,7 @@ public final class ProfileEditWizard extends Wizard
                     return;
                 }
                 
-                getCore().getProfileManager().setProfileInteger(playerName, field.getName(), value);
+                getProfileManager().setProfileInteger(playerName, field.getName(), value);
             }
             else if (field instanceof FloatField)
             {
@@ -211,7 +211,7 @@ public final class ProfileEditWizard extends Wizard
                     return;
                 }
                 
-                getCore().getProfileManager().setProfileFloat(playerName, field.getName(), value);
+                getProfileManager().setProfileFloat(playerName, field.getName(), value);
             }
             else if (field instanceof SetField)
             {
@@ -226,7 +226,7 @@ public final class ProfileEditWizard extends Wizard
                     return;
                 }
                 
-                getCore().getProfileManager().setProfileString(playerName,
+                getProfileManager().setProfileString(playerName,
                         field.getName(), trimmedMessage);
             }
             else
@@ -257,7 +257,7 @@ public final class ProfileEditWizard extends Wizard
             
             for (Field field : fields)
             {
-                Object value = getCore().getProfileManager()
+                Object value = getProfileManager()
                         .getProfileObject(playerName, field.getName());
                 
                 if (value == null)

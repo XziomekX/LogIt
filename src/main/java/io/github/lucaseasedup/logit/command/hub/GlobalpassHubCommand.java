@@ -39,7 +39,7 @@ public final class GlobalpassHubCommand extends HubCommand
     @Override
     public void execute(final CommandSender sender, String[] args)
     {
-        String password = getCore().getGlobalPasswordManager().generatePassword();
+        String password = getGlobalPasswordManager().generatePassword();
         long lifetimeSecs =
                 getConfig().getTime("password.global-password.invalidate-after", TimeUnit.SECONDS);
         Locale activeLocale = getLocaleManager().getActiveLocale();

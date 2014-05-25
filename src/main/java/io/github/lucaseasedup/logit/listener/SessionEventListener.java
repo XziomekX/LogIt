@@ -110,7 +110,7 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
                 long promptPeriod =
                         getConfig().getTime("force-login.periodical-prompt.period", TimeUnit.TICKS);
                 
-                getCore().getMessageDispatcher()
+                getMessageDispatcher()
                         .dispatchRepeatingForceLoginPrompter(username, promptPeriod, promptPeriod);
             }
         }

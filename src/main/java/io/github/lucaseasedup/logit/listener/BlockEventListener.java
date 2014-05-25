@@ -43,7 +43,7 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
             
             if (getConfig().getBoolean("force-login.prompt-on.block-place"))
             {
-                getCore().getMessageDispatcher().sendForceLoginMessage(player);
+                getMessageDispatcher().sendForceLoginMessage(player);
             }
         }
     }
@@ -62,7 +62,7 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
             
             if (getConfig().getBoolean("force-login.prompt-on.block-break"))
             {
-                getCore().getMessageDispatcher().sendForceLoginMessage(player);
+                getMessageDispatcher().sendForceLoginMessage(player);
             }
         }
     }
@@ -82,7 +82,7 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
             
             if (getConfig().getBoolean("force-login.prompt-on.block-break"))
             {
-                getCore().getMessageDispatcher().sendForceLoginMessage(player);
+                getMessageDispatcher().sendForceLoginMessage(player);
             }
         }
     }

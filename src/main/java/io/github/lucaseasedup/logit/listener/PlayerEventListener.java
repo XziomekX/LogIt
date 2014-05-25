@@ -210,17 +210,17 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             {
                 if (getConfig().getBoolean("force-login.periodical-prompt.enabled"))
                 {
-                    getCore().getMessageDispatcher().dispatchRepeatingForceLoginPrompter(username,
+                    getMessageDispatcher().dispatchRepeatingForceLoginPrompter(username,
                             TimeUnit.SECONDS.convert(1, TimeUnit.TICKS), promptPeriod);
                 }
                 else
                 {
-                    getCore().getMessageDispatcher().dispatchForceLoginPrompter(username, 5L);
+                    getMessageDispatcher().dispatchForceLoginPrompter(username, 5L);
                 }
             }
             else if (getConfig().getBoolean("force-login.periodical-prompt.enabled"))
             {
-                getCore().getMessageDispatcher().dispatchRepeatingForceLoginPrompter(username,
+                getMessageDispatcher().dispatchRepeatingForceLoginPrompter(username,
                         TimeUnit.SECONDS.convert(1, TimeUnit.TICKS) + promptPeriod, promptPeriod);
             }
         }
@@ -322,7 +322,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
-            getCore().getMessageDispatcher().sendForceLoginMessage(player);
+            getMessageDispatcher().sendForceLoginMessage(player);
         }
     }
     
@@ -387,7 +387,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
-            getCore().getMessageDispatcher().sendForceLoginMessage(player);
+            getMessageDispatcher().sendForceLoginMessage(player);
         }
     }
     
@@ -416,7 +416,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             {
                 if (getConfig().getBoolean("force-login.prompt-on.interact"))
                 {
-                    getCore().getMessageDispatcher().sendForceLoginMessage(player);
+                    getMessageDispatcher().sendForceLoginMessage(player);
                 }
             }
         }
@@ -441,7 +441,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             
             if (getConfig().getBoolean("force-login.prompt-on.interact-entity"))
             {
-                getCore().getMessageDispatcher().sendForceLoginMessage(player);
+                getMessageDispatcher().sendForceLoginMessage(player);
             }
         }
     }
@@ -479,7 +479,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             
             if (getConfig().getBoolean("force-login.prompt-on.drop-item"))
             {
-                getCore().getMessageDispatcher().sendForceLoginMessage(player);
+                getMessageDispatcher().sendForceLoginMessage(player);
             }
         }
     }
@@ -491,7 +491,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         if (!getSessionManager().isSessionAlive(player) && getCore().isPlayerForcedToLogIn(player))
         {
-            getCore().getMessageDispatcher().sendForceLoginMessage(player);
+            getMessageDispatcher().sendForceLoginMessage(player);
         }
     }
 }

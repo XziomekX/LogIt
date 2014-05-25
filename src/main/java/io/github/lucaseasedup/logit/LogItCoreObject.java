@@ -24,6 +24,7 @@ import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
 import io.github.lucaseasedup.logit.locale.LocaleManager;
 import io.github.lucaseasedup.logit.mail.MailSender;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
+import io.github.lucaseasedup.logit.profile.ProfileManager;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.storage.Storage;
 import java.io.File;
@@ -49,6 +50,21 @@ public abstract class LogItCoreObject
         }
     }
     
+    protected final void log(Level level, String msg)
+    {
+        core.log(level, msg);
+    }
+    
+    protected final void log(Level level, String msg, Throwable throwable)
+    {
+        core.log(level, msg, throwable);
+    }
+    
+    protected final void log(Level level, Throwable throwable)
+    {
+        core.log(level, throwable);
+    }
+    
     protected final LogItCore getCore()
     {
         return core;
@@ -69,18 +85,46 @@ public abstract class LogItCoreObject
         return core.getPlugin().getDataFolder();
     }
     
+    protected final File getDataFile(String path)
+    {
+        return core.getDataFile(path);
+    }
+    
     /**
-     * Returns the {@code PredefinedConfiguration} instance.
+     * Returns the main config for LogIt.
      * 
-     * @return the {@code PredefinedConfiguration} instance,
-     *         or {@code null} if the config has not been loaded yet.
+     * @return the main config, or {@code null}
+     *         if the config has not been loaded yet.
      */
     protected final PredefinedConfiguration getConfig()
     {
-        if (!core.isConfigLoaded())
+        PredefinedConfiguration config = core.getConfig();
+        
+        if (config == null || !config.isLoaded())
             return null;
         
-        return core.getConfig();
+        return config;
+    }
+    
+    /**
+     * Returns the statistics config for LogIt.
+     * 
+     * @return the statistics config, or {@code null}
+     *         if the config has not been loaded yet.
+     */
+    protected final PredefinedConfiguration getStats()
+    {
+        PredefinedConfiguration stats = core.getStats();
+        
+        if (stats == null || !stats.isLoaded())
+            return null;
+        
+        return stats;
+    }
+    
+    protected final LocaleManager getLocaleManager()
+    {
+        return core.getLocaleManager();
     }
     
     protected final AccountManager getAccountManager()
@@ -93,6 +137,11 @@ public abstract class LogItCoreObject
         return core.getAccountManager().getStorage();
     }
     
+    protected final PersistenceManager getPersistenceManager()
+    {
+        return core.getPersistenceManager();
+    }
+    
     protected final BackupManager getBackupManager()
     {
         return core.getBackupManager();
@@ -103,39 +152,24 @@ public abstract class LogItCoreObject
         return core.getSessionManager();
     }
     
-    protected final PersistenceManager getPersistenceManager()
-    {
-        return core.getPersistenceManager();
-    }
-    
     protected final MailSender getMailSender()
     {
         return core.getMailSender();
     }
     
-    protected final LocaleManager getLocaleManager()
+    protected final LogItMessageDispatcher getMessageDispatcher()
     {
-        return core.getLocaleManager();
+        return core.getMessageDispatcher();
     }
     
-    protected final void log(Level level, String msg)
+    protected final ProfileManager getProfileManager()
     {
-        core.log(level, msg);
+        return core.getProfileManager();
     }
     
-    protected final void log(Level level, String msg, Throwable throwable)
+    protected final GlobalPasswordManager getGlobalPasswordManager()
     {
-        core.log(level, msg, throwable);
-    }
-    
-    protected final void log(Level level, Throwable throwable)
-    {
-        core.log(level, throwable);
-    }
-    
-    protected final File getDataFile(String path)
-    {
-        return core.getDataFile(path);
+        return core.getGlobalPasswordManager();
     }
     
     private final LogItCore core;

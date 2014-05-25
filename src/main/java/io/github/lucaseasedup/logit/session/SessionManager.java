@@ -97,7 +97,7 @@ public final class SessionManager extends LogItCoreObject
                             
                             if (getCore().isPlayerForcedToLogIn(player))
                             {
-                                getCore().getMessageDispatcher().sendForceLoginMessage(player);
+                                getMessageDispatcher().sendForceLoginMessage(player);
                             }
                             
                             session.resetInactivityTime();

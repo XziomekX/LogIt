@@ -145,7 +145,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 return true;
             }
             
-            if (!disablePasswords && !getCore().getGlobalPasswordManager().checkPassword(args[0]))
+            if (!disablePasswords && !getGlobalPasswordManager().checkPassword(args[0]))
             {
                 String userAlgorithm = accountData.get(keys.hashing_algorithm());
                 String hashedPassword = accountData.get(keys.password());
