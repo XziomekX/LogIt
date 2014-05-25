@@ -923,13 +923,13 @@ public final class LogItCore
     
     private void registerEvents()
     {
-        plugin.getServer().getPluginManager().registerEvents(messageDispatcher, plugin);
-        plugin.getServer().getPluginManager().registerEvents(new ServerEventListener(), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new BlockEventListener(), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new EntityEventListener(), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new PlayerEventListener(), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new InventoryEventListener(), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new SessionEventListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(messageDispatcher, plugin);
+        Bukkit.getPluginManager().registerEvents(new ServerEventListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new BlockEventListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new EntityEventListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new PlayerEventListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new InventoryEventListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new SessionEventListener(), plugin);
     }
     
     /**
