@@ -1,5 +1,5 @@
 /*
- * DbTypeValidator.java
+ * StorageTypeValidator.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -22,7 +22,7 @@ import io.github.lucaseasedup.logit.config.PropertyType;
 import io.github.lucaseasedup.logit.config.PropertyValidator;
 import io.github.lucaseasedup.logit.storage.StorageType;
 
-public final class DbTypeValidator implements PropertyValidator
+public final class StorageTypeValidator implements PropertyValidator
 {
     @Override
     public boolean validate(String path, PropertyType type, Object value)

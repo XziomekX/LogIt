@@ -21,7 +21,7 @@ package io.github.lucaseasedup.logit.command.wizard;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import io.github.lucaseasedup.logit.FatalReportedException;
 import io.github.lucaseasedup.logit.config.PropertyType;
-import io.github.lucaseasedup.logit.config.validators.DbTypeValidator;
+import io.github.lucaseasedup.logit.config.validators.StorageTypeValidator;
 import io.github.lucaseasedup.logit.storage.Storage;
 import java.io.IOException;
 import java.util.List;
@@ -70,7 +70,7 @@ public final class ConvertWizard extends Wizard
         }
         else if (getCurrentStep() == Step.ENTER_DBTYPE)
         {
-            if (!new DbTypeValidator().validate("storage.accounts.leading.storage-type",
+            if (!new StorageTypeValidator().validate("storage.accounts.leading.storage-type",
                     PropertyType.STRING, message))
             {
                 sendMessage(_("wizard.convert.unknownStorageType")
