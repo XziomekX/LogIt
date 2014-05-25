@@ -70,7 +70,7 @@ public final class HelpHubCommand extends HubCommand
                 helpLine = helpLine.replace("{0}", command + params.toString());
                 helpLine = helpLine.replace("{1}", description);
                 
-                sendMsg(sender, helpLine.toString());
+                sendMsg(sender, helpLine);
             }
         }
     }
