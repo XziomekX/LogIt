@@ -139,11 +139,8 @@ permissions:
   logit.globalpass.*:
     default: false
     children:
-      logit.globalpass.set: true
-      logit.globalpass.remove: true
-  logit.globalpass.set:
-    default: false
-  logit.globalpass.remove:
+      logit.globalpass.generate: true
+  logit.globalpass.generate:
     default: false
   logit.account.*:
     default: false
