@@ -140,11 +140,9 @@ public final class LogItPlugin extends JavaPlugin
     {
         messages = null;
         
-        String suffix = "_" + prefix;
-        
         try (JarFile jarFile = new JarFile(getFile()))
         {
-            JarEntry jarEntry = jarFile.getJarEntry("messages" + suffix + ".properties");
+            JarEntry jarEntry = jarFile.getJarEntry("messages_" + prefix + ".properties");
             
             if (jarEntry == null)
             {
@@ -163,7 +161,7 @@ public final class LogItPlugin extends JavaPlugin
         }
         
         loadCustomGlobalMessages("lang/messages.properties");
-        loadCustomLocalMessages("lang/messages" + suffix + ".properties");
+        loadCustomLocalMessages("lang/messages_" + prefix + ".properties");
     }
     
     private void loadCustomGlobalMessages(String path) throws IOException
