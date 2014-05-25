@@ -70,7 +70,11 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 }
             }
             
-            if (hubCommand.isPlayerOnly() && !(sender instanceof Player))
+            if (sender instanceof Player && !sender.hasPermission(hubCommand.getPermission()))
+            {
+                sendMsg(sender, _("noPerms"));
+            }
+            else if (hubCommand.isPlayerOnly() && !(sender instanceof Player))
             {
                 sendMsg(sender, _("onlyForPlayers"));
             }
