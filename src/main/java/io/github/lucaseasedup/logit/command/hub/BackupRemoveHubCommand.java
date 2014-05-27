@@ -28,7 +28,7 @@ public final class BackupRemoveHubCommand extends HubCommand
 {
     public BackupRemoveHubCommand()
     {
-        super("backup remove", new String[] {"amount"}, "logit.remove", false, true,
+        super("backup remove", new String[] {"amount"}, "logit.backup.remove", false, true,
                 new CommandHelpLine.Builder()
                         .command("logit backup remove")
                         .descriptionLabel("subCmdDesc.backup.remove")
