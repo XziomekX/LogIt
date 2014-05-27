@@ -22,7 +22,6 @@ import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.backup.BackupManager;
 import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
 import io.github.lucaseasedup.logit.locale.LocaleManager;
-import io.github.lucaseasedup.logit.mail.MailSender;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.profile.ProfileManager;
 import io.github.lucaseasedup.logit.session.SessionManager;
@@ -150,11 +149,6 @@ public abstract class LogItCoreObject
     protected final SessionManager getSessionManager()
     {
         return core.getSessionManager();
-    }
-    
-    protected final MailSender getMailSender()
-    {
-        return core.getMailSender();
     }
     
     protected final LogItMessageDispatcher getMessageDispatcher()

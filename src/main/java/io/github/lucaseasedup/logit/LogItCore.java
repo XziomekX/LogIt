@@ -49,7 +49,6 @@ import io.github.lucaseasedup.logit.locale.EnglishLocale;
 import io.github.lucaseasedup.logit.locale.GermanLocale;
 import io.github.lucaseasedup.logit.locale.LocaleManager;
 import io.github.lucaseasedup.logit.locale.PolishLocale;
-import io.github.lucaseasedup.logit.mail.MailSender;
 import io.github.lucaseasedup.logit.persistence.AirBarSerializer;
 import io.github.lucaseasedup.logit.persistence.ExperienceSerializer;
 import io.github.lucaseasedup.logit.persistence.HealthBarSerializer;
@@ -292,18 +291,6 @@ public final class LogItCore
         
         backupManager = new BackupManager(accountManager);
         sessionManager = new SessionManager();
-        
-        if (config.getBoolean("password-recovery.enabled"))
-        {
-            mailSender = new MailSender();
-            mailSender.configure(
-                config.getString("mail.smtp-host"),
-                config.getInt("mail.smtp-port"),
-                config.getString("mail.smtp-user"),
-                config.getString("mail.smtp-password")
-            );
-        }
-        
         messageDispatcher = new LogItMessageDispatcher();
         
         if (config.getBoolean("profiles.enabled"))
@@ -460,12 +447,6 @@ public final class LogItCore
         {
             sessionManager.dispose();
             sessionManager = null;
-        }
-        
-        if (mailSender != null)
-        {
-            mailSender.dispose();
-            mailSender = null;
         }
         
         if (messageDispatcher != null)
@@ -1050,11 +1031,6 @@ public final class LogItCore
     {
         return sessionManager;
     }
-
-    public MailSender getMailSender()
-    {
-        return mailSender;
-    }
     
     public LogItMessageDispatcher getMessageDispatcher()
     {
@@ -1111,7 +1087,6 @@ public final class LogItCore
     private PersistenceManager      persistenceManager;
     private BackupManager           backupManager;
     private SessionManager          sessionManager;
-    private MailSender              mailSender;
     private LogItMessageDispatcher  messageDispatcher;
     private ProfileManager          profileManager;
     private GlobalPasswordManager   globalPasswordManager;

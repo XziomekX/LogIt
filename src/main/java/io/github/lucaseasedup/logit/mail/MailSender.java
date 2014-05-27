@@ -18,9 +18,6 @@
  */
 package io.github.lucaseasedup.logit.mail;
 
-import io.github.lucaseasedup.logit.Disposable;
-import io.github.lucaseasedup.logit.LogItCoreObject;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Properties;
@@ -33,37 +30,12 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public final class MailSender extends LogItCoreObject implements Disposable
+public final class MailSender
 {
-    @Override
-    public void dispose()
+    private MailSender(String host, int port, String user, String password)
     {
-        if (properties != null)
-        {
-            properties.clear();
-            properties = null;
-        }
-        
-        user = null;
-        password = null;
-    }
-    
-    /**
-     * Configures this mail sender for a SMTP server.
-     * 
-     * @param host     the host.
-     * @param port     the port number.
-     * @param user     the user.
-     * @param password the password.
-     */
-    public void configure(String host, int port, String user, String password)
-    {
-        properties.setProperty("mail.smtp.host", host);
-        properties.setProperty("mail.smtp.port", String.valueOf(port));
-        properties.setProperty("mail.smtp.auth", "true");
-        properties.setProperty("mail.smtp.socketFactory.port", String.valueOf(port));
-		properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        
+        this.host = host;
+        this.port = port;
         this.user = user;
         this.password = password;
     }
@@ -71,23 +43,28 @@ public final class MailSender extends LogItCoreObject implements Disposable
     /**
      * Sends a mail through a SMTP server.
      * 
-     * <p> Configure this {@code MailSender} using
-     * {@link #configure(String, int, String, String)} before calling this method.
-     * 
      * @param to      a collection of recipient addresses to which the mail will be sent.
      * @param from    the sender address.
      * @param subject the mail subject.
      * @param body    the mail body.
      * @param html    whether HTML should be enabled in this mail.
      * 
-     * @throws IOException if an I/O error occurred.
+     * @throws MessagingException if an error occurred.
      */
     public void sendMail(Collection<String> to,
                          String from,
                          String subject,
                          String body,
-                         boolean html) throws IOException
+                         boolean html) throws MessagingException
     {
+        Properties properties = new Properties();
+        
+        properties.setProperty("mail.smtp.host", host);
+        properties.setProperty("mail.smtp.port", String.valueOf(port));
+        properties.setProperty("mail.smtp.auth", "true");
+        properties.setProperty("mail.smtp.socketFactory.port", String.valueOf(port));
+        properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        
         Session session = Session.getDefaultInstance(properties, new Authenticator()
         {
             @Override
@@ -98,38 +75,37 @@ public final class MailSender extends LogItCoreObject implements Disposable
         });
         MimeMessage message = new MimeMessage(session);
         
-        try
+        message.setFrom(new InternetAddress(from));
+        
+        for (String address : to)
         {
-            message.setFrom(new InternetAddress(from));
-            
-            for (String address : to)
-            {
-                message.addRecipient(Message.RecipientType.TO, new InternetAddress(address));
-            }
-            
-            message.setSentDate(new Date());
-            message.setSubject(subject);
-            
-            if (html)
-            {
-                message.setContent(body, "text/html; charset=utf-8");
-            }
-            else
-            {
-                message.setText(body);
-            }
-            
-            message.saveChanges();
-            
-            Transport.send(message);
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(address));
         }
-        catch (MessagingException ex)
+        
+        message.setSentDate(new Date());
+        message.setSubject(subject);
+        
+        if (html)
         {
-            throw new IOException(ex);
+            message.setContent(body, "text/html; charset=utf-8");
         }
+        else
+        {
+            message.setText(body);
+        }
+        
+        message.saveChanges();
+        
+        Transport.send(message);
     }
     
-    private Properties properties = new Properties();
-    private String user;
-    private String password;
+    public static MailSender from(String host, int port, String user, String password)
+    {
+        return new MailSender(host, port, user, password);
+    }
+    
+    private final String host;
+    private final int port;
+    private final String user;
+    private final String password;
 }

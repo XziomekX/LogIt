@@ -22,12 +22,14 @@ import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
+import io.github.lucaseasedup.logit.mail.MailSender;
 import io.github.lucaseasedup.logit.security.SecurityHelper;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
+import javax.mail.MessagingException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -96,8 +98,18 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                             .replace("%player%", p.getName())
                             .replace("%password%", newPassword);
                     
-                    getMailSender().sendMail(Arrays.asList(to), from, subject, body,
-                            getConfig().getBoolean("password-recovery.html-enabled"));
+                    MailSender.from(
+                            getConfig().getString("mail.smtp-host"),
+                            getConfig().getInt("mail.smtp-port"),
+                            getConfig().getString("mail.smtp-user"),
+                            getConfig().getString("mail.smtp-password")
+                    ).sendMail(
+                            Arrays.asList(to),
+                            from,
+                            subject,
+                            body,
+                            getConfig().getBoolean("password-recovery.html-enabled")
+                    );
                     
                     sendMsg(sender, _("recoverPassword.success.self")
                             .replace("{0}", args[0]));
@@ -105,7 +117,7 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                             .replace("{0}", p.getName())
                             .replace("{1}", to));
                 }
-                catch (ReportedException | IOException ex)
+                catch (ReportedException | IOException | MessagingException ex)
                 {
                     sendMsg(sender, _("recoverPassword.fail.self"));
                     log(Level.WARNING, _("recoverPassword.fail.log")
