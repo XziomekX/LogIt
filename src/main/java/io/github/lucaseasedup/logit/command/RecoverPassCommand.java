@@ -34,17 +34,22 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public final class RecoverPassCommand extends LogItCoreObject implements CommandExecutor
 {
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+    public boolean onCommand(final CommandSender sender, Command cmd, String label, String[] args)
     {
-        Player p = null;
+        final Player p;
         
         if (sender instanceof Player)
         {
             p = (Player) sender;
+        }
+        else
+        {
+            p = null;
         }
         
         if (args.length <= 1)
@@ -52,82 +57,96 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
             if (p == null)
             {
                 sendMsg(sender, _("onlyForPlayers"));
+                
+                return true;
             }
             else if (!p.hasPermission("logit.recoverpass"))
             {
                 sendMsg(p, _("noPerms"));
+                
+                return true;
             }
             else if (args.length < 1)
             {
                 sendMsg(p, _("paramMissing")
                         .replace("{0}", "email"));
+                
+                return true;
             }
             else if (!getAccountManager().isRegistered(p.getName()))
             {
                 sendMsg(p, _("notRegistered.self"));
+                
+                return true;
             }
-            else
+            
+            final String playerName = p.getName();
+            final String argEmail = args[0];
+            
+            final String newPassword = SecurityHelper.generatePassword(
+                    getConfig().getInt("password-recovery.password-length"),
+                    getConfig().getString("password-recovery.password-combination")
+            );
+            
+            final String from = getConfig().getString("mail.email-address");
+            final String smtpHost = getConfig().getString("mail.smtp-host");
+            final int smtpPort = getConfig().getInt("mail.smtp-port");
+            final String smtpUser = getConfig().getString("mail.smtp-user");
+            final String smtpPassword = getConfig().getString("mail.smtp-password");
+            
+            final String subject = getConfig().getString("password-recovery.subject")
+                    .replace("%player%", p.getName());
+            final File bodyTemplateFile =
+                    getDataFile(getConfig().getString("password-recovery.body-template"));
+            final boolean htmlEnabled = getConfig().getBoolean("password-recovery.html-enabled");
+            
+            new BukkitRunnable()
             {
-                try
+                @Override
+                public void run()
                 {
-                    ReportedException.incrementRequestCount();
-                    
-                    String email = getAccountManager().getEmail(p.getName());
-                    
-                    if (!args[0].equals(email))
+                    try
                     {
-                        sendMsg(p, _("recoverPassword.incorrectEmailAddress"));
+                        ReportedException.incrementRequestCount();
                         
-                        return true;
+                        String email = getAccountManager().getEmail(playerName);
+                        
+                        if (!argEmail.equals(email))
+                        {
+                            sendMsg(p, _("recoverPassword.incorrectEmailAddress"));
+                            
+                            return;
+                        }
+                        
+                        String to = email;
+                        String bodyTemplate = IoUtils.toString(bodyTemplateFile);
+                        String body = bodyTemplate
+                                .replace("%player%", playerName)
+                                .replace("%password%", newPassword);
+                        
+                        MailSender.from(smtpHost, smtpPort, smtpUser, smtpPassword)
+                                .sendMail(Arrays.asList(to),from, subject, body, htmlEnabled);
+                        
+                        getAccountManager().changeAccountPassword(playerName, newPassword);
+                        
+                        sendMsg(sender, _("recoverPassword.success.self")
+                                .replace("{0}", email));
+                        log(Level.FINE, _("recoverPassword.success.log")
+                                .replace("{0}", playerName)
+                                .replace("{1}", to));
                     }
-                    
-                    String to = email;
-                    String from = getConfig().getString("mail.email-address");
-                    String subject = getConfig().getString("password-recovery.subject")
-                            .replace("%player%", p.getName());
-                    
-                    int passwordLength = getConfig().getInt("password-recovery.password-length");
-                    String newPassword = SecurityHelper.generatePassword(passwordLength,
-                            getConfig().getString("password-recovery.password-combination"));
-                    getAccountManager().changeAccountPassword(p.getName(), newPassword);
-                    
-                    File bodyTemplateFile =
-                            getDataFile(getConfig().getString("password-recovery.body-template"));
-                    String bodyTemplate = IoUtils.toString(bodyTemplateFile);
-                    String body = bodyTemplate
-                            .replace("%player%", p.getName())
-                            .replace("%password%", newPassword);
-                    
-                    MailSender.from(
-                            getConfig().getString("mail.smtp-host"),
-                            getConfig().getInt("mail.smtp-port"),
-                            getConfig().getString("mail.smtp-user"),
-                            getConfig().getString("mail.smtp-password")
-                    ).sendMail(
-                            Arrays.asList(to),
-                            from,
-                            subject,
-                            body,
-                            getConfig().getBoolean("password-recovery.html-enabled")
-                    );
-                    
-                    sendMsg(sender, _("recoverPassword.success.self")
-                            .replace("{0}", args[0]));
-                    log(Level.FINE, _("recoverPassword.success.log")
-                            .replace("{0}", p.getName())
-                            .replace("{1}", to));
+                    catch (ReportedException | IOException | MessagingException ex)
+                    {
+                        sendMsg(sender, _("recoverPassword.fail.self"));
+                        log(Level.WARNING, _("recoverPassword.fail.log")
+                                .replace("{0}", playerName), ex);
+                    }
+                    finally
+                    {
+                        ReportedException.decrementRequestCount();
+                    }
                 }
-                catch (ReportedException | IOException | MessagingException ex)
-                {
-                    sendMsg(sender, _("recoverPassword.fail.self"));
-                    log(Level.WARNING, _("recoverPassword.fail.log")
-                            .replace("{0}", p.getName()), ex);
-                }
-                finally
-                {
-                    ReportedException.decrementRequestCount();
-                }
-            }
+            }.runTaskAsynchronously(getPlugin());
         }
         else
         {
