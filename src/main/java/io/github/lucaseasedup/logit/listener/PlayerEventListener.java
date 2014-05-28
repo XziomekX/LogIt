@@ -57,7 +57,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 public final class PlayerEventListener extends LogItCoreObject implements Listener
 {
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onLogin(PlayerLoginEvent event)
     {
         Player player = event.getPlayer();

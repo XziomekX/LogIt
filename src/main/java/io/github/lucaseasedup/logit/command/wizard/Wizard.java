@@ -47,7 +47,7 @@ public abstract class Wizard extends LogItCoreObject implements Listener
         onCreate();
     }
     
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.NORMAL)
     public final void onPlayerChat(AsyncPlayerChatEvent event)
     {
         if (event.getPlayer() == sender)
@@ -57,7 +57,7 @@ public abstract class Wizard extends LogItCoreObject implements Listener
         }
     }
     
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.NORMAL)
     public final void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event)
     {
         if (event.getPlayer() == sender)
@@ -67,7 +67,7 @@ public abstract class Wizard extends LogItCoreObject implements Listener
         }
     }
     
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.NORMAL)
     public final void onServerCommand(ServerCommandEvent event)
     {
         if (event.getSender() == sender)
@@ -77,7 +77,7 @@ public abstract class Wizard extends LogItCoreObject implements Listener
         }
     }
     
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.NORMAL)
     public final void onPlayerQuit(PlayerQuitEvent event)
     {
         if (event.getPlayer() == sender)
@@ -86,7 +86,7 @@ public abstract class Wizard extends LogItCoreObject implements Listener
         }
     }
     
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.NORMAL)
     public final void onPlayerKick(PlayerKickEvent event)
     {
         if (event.getPlayer() == sender)

@@ -53,7 +53,7 @@ public final class ServerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onPluginDisable(PluginDisableEvent event)
     {
         if (!event.getPlugin().equals(getPlugin()) || !getCore().isStarted())
