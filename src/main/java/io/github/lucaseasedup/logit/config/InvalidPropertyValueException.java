@@ -20,17 +20,19 @@ package io.github.lucaseasedup.logit.config;
 
 public final class InvalidPropertyValueException extends RuntimeException
 {
-    public InvalidPropertyValueException(String propertyName)
+    public InvalidPropertyValueException(String propertyPath)
     {
-        this.propertyName = propertyName;
+        super("Invalid value for the property \"" + propertyPath + "\".");
+        
+        this.propertyPath = propertyPath;
     }
     
-    public String getPropertyName()
+    public String getPropertyPath()
     {
-        return propertyName;
+        return propertyPath;
     }
     
     private static final long serialVersionUID = 1L;
     
-    private final String propertyName;
+    private final String propertyPath;
 }
