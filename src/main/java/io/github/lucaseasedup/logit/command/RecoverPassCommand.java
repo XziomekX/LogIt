@@ -107,7 +107,7 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
             final String smtpUser = getConfig().getString("mail.smtp-user");
             final String smtpPassword = getConfig().getString("mail.smtp-password");
             
-            final long cooldown =
+            final long cooldownMillis =
                     getConfig().getTime("cooldowns.recoverpass", TimeUnit.MILLISECONDS);
             final String subject = getConfig().getString("password-recovery.subject")
                     .replace("%player%", p.getName());
@@ -139,7 +139,8 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                                 .replace("%player%", playerName)
                                 .replace("%password%", newPassword);
                         
-                        getCooldownManager().activateCooldown(p, Cooldown.RECOVERPASS, cooldown);
+                        getCooldownManager().activateCooldown(p,
+                                Cooldown.RECOVERPASS, cooldownMillis);
                         
                         MailSender.from(smtpHost, smtpPort, smtpUser, smtpPassword)
                                 .sendMail(Arrays.asList(to),from, subject, body, htmlEnabled);
