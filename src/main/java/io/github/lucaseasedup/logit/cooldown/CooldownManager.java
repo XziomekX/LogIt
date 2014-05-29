@@ -90,14 +90,14 @@ public final class CooldownManager extends LogItCoreObject implements Disposable
         return cooldownExpirationMillis - System.currentTimeMillis();
     }
     
-    public void activateCooldown(Player player, Cooldown cooldown, long timeMillis)
+    public void activateCooldown(Player player, Cooldown cooldown, long cooldownMillis)
     {
         if (!cooldowns.containsKey(player))
         {
             cooldowns.put(player, new HashMap<Cooldown, Long>());
         }
         
-        cooldowns.get(player).put(cooldown, System.currentTimeMillis() + timeMillis);
+        cooldowns.get(player).put(cooldown, System.currentTimeMillis() + cooldownMillis);
     }
     
     public void deactivateCooldown(Player player, Cooldown cooldown)
