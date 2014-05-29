@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import io.github.lucaseasedup.logit.locale.Locale;
 import java.util.Hashtable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -108,6 +109,24 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
             throw new IllegalArgumentException();
         
         new ForceLoginPrompter(username).runTaskTimer(getPlugin(), delay, period);
+    }
+    
+    public void sendCooldownMessage(String username, long cooldownMillis)
+    {
+        Locale activeLocale = getLocaleManager().getActiveLocale();
+        int cooldownSecs = (int) TimeUnit.MILLISECONDS.convert(cooldownMillis, TimeUnit.SECONDS);
+        String cooldownText = activeLocale.stringifySeconds(cooldownSecs);
+        
+        if (cooldownMillis >= 2000L)
+        {
+            sendMsg(username, _("cooldown.moreThanSecond")
+                    .replace("{0}", cooldownText));
+        }
+        else
+        {
+            sendMsg(username, _("cooldown.secondOrLess")
+                    .replace("{0}", cooldownText));
+        }
     }
     
     @EventHandler

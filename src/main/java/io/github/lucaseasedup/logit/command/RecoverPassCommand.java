@@ -23,15 +23,13 @@ import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.TimeUnit;
-import io.github.lucaseasedup.logit.locale.Locale;
+import io.github.lucaseasedup.logit.cooldown.Cooldown;
 import io.github.lucaseasedup.logit.mail.MailSender;
 import io.github.lucaseasedup.logit.security.SecurityHelper;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Map;
 import java.util.logging.Level;
 import javax.mail.MessagingException;
 import org.bukkit.command.Command;
@@ -80,30 +78,12 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
             
             final String username = p.getName().toLowerCase();
             
-            Long cooldownExpiration = cooldownExpirations.get(username);
-            
-            if (cooldownExpiration != null)
+            if (getCooldownManager().isCooldownActive(p, Cooldown.RECOVERPASS))
             {
-                long deltaMillis = cooldownExpiration - System.currentTimeMillis();
+                getMessageDispatcher().sendCooldownMessage(username,
+                        getCooldownManager().getCooldownMillis(p, Cooldown.RECOVERPASS));
                 
-                if (deltaMillis >= 1000)
-                {
-                    Locale activeLocale = getLocaleManager().getActiveLocale();
-                    
-                    int deltaSecs = (int) TimeUnit.MILLISECONDS.convert(
-                            deltaMillis,
-                            TimeUnit.SECONDS
-                    );
-                    
-                    sendMsg(p, _("recoverPassword.cooldown")
-                            .replace("{0}", activeLocale.stringifySeconds(deltaSecs)));
-                    
-                    return true;
-                }
-                else
-                {
-                    cooldownExpirations.remove(username);
-                }
+                return true;
             }
             
             if (!getAccountManager().isRegistered(p.getName()))
@@ -128,7 +108,7 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
             final String smtpPassword = getConfig().getString("mail.smtp-password");
             
             final long cooldown =
-                    getConfig().getTime("password-recovery.cooldown", TimeUnit.MILLISECONDS);
+                    getConfig().getTime("cooldowns.recoverpass", TimeUnit.MILLISECONDS);
             final String subject = getConfig().getString("password-recovery.subject")
                     .replace("%player%", p.getName());
             final File bodyTemplateFile =
@@ -159,7 +139,7 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                                 .replace("%player%", playerName)
                                 .replace("%password%", newPassword);
                         
-                        cooldownExpirations.put(username, System.currentTimeMillis() + cooldown);
+                        getCooldownManager().activateCooldown(p, Cooldown.RECOVERPASS, cooldown);
                         
                         MailSender.from(smtpHost, smtpPort, smtpUser, smtpPassword)
                                 .sendMail(Arrays.asList(to),from, subject, body, htmlEnabled);
@@ -192,6 +172,4 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
         
         return true;
     }
-    
-    private final Map<String, Long> cooldownExpirations = new Hashtable<>();
 }

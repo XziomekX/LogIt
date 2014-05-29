@@ -39,6 +39,7 @@ import io.github.lucaseasedup.logit.command.RememberCommand;
 import io.github.lucaseasedup.logit.command.UnregisterCommand;
 import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
 import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
+import io.github.lucaseasedup.logit.cooldown.CooldownManager;
 import io.github.lucaseasedup.logit.listener.BlockEventListener;
 import io.github.lucaseasedup.logit.listener.EntityEventListener;
 import io.github.lucaseasedup.logit.listener.InventoryEventListener;
@@ -307,6 +308,7 @@ public final class LogItCore
         }
         
         globalPasswordManager = new GlobalPasswordManager();
+        cooldownManager = new CooldownManager();
         accountWatcher = new AccountWatcher();
         
         if (Bukkit.getPluginManager().isPluginEnabled("Vault"))
@@ -465,6 +467,12 @@ public final class LogItCore
         {
             globalPasswordManager.dispose();
             globalPasswordManager = null;
+        }
+        
+        if (cooldownManager != null)
+        {
+            cooldownManager.dispose();
+            cooldownManager = null;
         }
         
         accountWatcher = null;
@@ -905,6 +913,7 @@ public final class LogItCore
     private void registerEvents()
     {
         Bukkit.getPluginManager().registerEvents(messageDispatcher, plugin);
+        Bukkit.getPluginManager().registerEvents(cooldownManager, plugin);
         Bukkit.getPluginManager().registerEvents(new ServerEventListener(), plugin);
         Bukkit.getPluginManager().registerEvents(new BlockEventListener(), plugin);
         Bukkit.getPluginManager().registerEvents(new EntityEventListener(), plugin);
@@ -1047,6 +1056,11 @@ public final class LogItCore
         return globalPasswordManager;
     }
     
+    public CooldownManager getCooldownManager()
+    {
+        return cooldownManager;
+    }
+    
     /**
      * Checks if LogIt is linked to the Vault plugin
      * (e.i. Vault is enabled on this server and LogIt has successfully
@@ -1090,6 +1104,7 @@ public final class LogItCore
     private LogItMessageDispatcher  messageDispatcher;
     private ProfileManager          profileManager;
     private GlobalPasswordManager   globalPasswordManager;
+    private CooldownManager         cooldownManager;
     private AccountWatcher          accountWatcher;
     private Permission              vaultPermissions;
     

@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit;
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.backup.BackupManager;
 import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
+import io.github.lucaseasedup.logit.cooldown.CooldownManager;
 import io.github.lucaseasedup.logit.locale.LocaleManager;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.profile.ProfileManager;
@@ -164,6 +165,11 @@ public abstract class LogItCoreObject
     protected final GlobalPasswordManager getGlobalPasswordManager()
     {
         return core.getGlobalPasswordManager();
+    }
+    
+    protected final CooldownManager getCooldownManager()
+    {
+        return core.getCooldownManager();
     }
     
     private final LogItCore core;
