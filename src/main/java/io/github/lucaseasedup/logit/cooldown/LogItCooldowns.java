@@ -1,5 +1,5 @@
 /*
- * Cooldown.java
+ * LogItCooldowns.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -18,17 +18,11 @@
  */
 package io.github.lucaseasedup.logit.cooldown;
 
-public class Cooldown
+public final class LogItCooldowns
 {
-    public Cooldown(String name)
+    private LogItCooldowns()
     {
-        this.name = name;
     }
     
-    public String getName()
-    {
-        return name;
-    }
-    
-    private final String name;
+    public static final Cooldown RECOVERPASS = new Cooldown("logit.recoverpass");
 }

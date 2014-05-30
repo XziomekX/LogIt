@@ -23,7 +23,7 @@ import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.TimeUnit;
-import io.github.lucaseasedup.logit.cooldown.Cooldown;
+import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
 import io.github.lucaseasedup.logit.mail.MailSender;
 import io.github.lucaseasedup.logit.security.SecurityHelper;
 import io.github.lucaseasedup.logit.util.IoUtils;
@@ -78,10 +78,10 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
             
             final String username = p.getName().toLowerCase();
             
-            if (getCooldownManager().isCooldownActive(p, Cooldown.RECOVERPASS))
+            if (getCooldownManager().isCooldownActive(p, LogItCooldowns.RECOVERPASS))
             {
                 getMessageDispatcher().sendCooldownMessage(username,
-                        getCooldownManager().getCooldownMillis(p, Cooldown.RECOVERPASS));
+                        getCooldownManager().getCooldownMillis(p, LogItCooldowns.RECOVERPASS));
                 
                 return true;
             }
@@ -140,7 +140,7 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                                 .replace("%password%", newPassword);
                         
                         getCooldownManager().activateCooldown(p,
-                                Cooldown.RECOVERPASS, cooldownMillis);
+                                LogItCooldowns.RECOVERPASS, cooldownMillis);
                         
                         MailSender.from(smtpHost, smtpPort, smtpUser, smtpPassword)
                                 .sendMail(Arrays.asList(to),from, subject, body, htmlEnabled);
