@@ -22,6 +22,8 @@ import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
+import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -101,52 +103,77 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             if (p == null)
             {
                 sendMsg(sender, _("onlyForPlayers"));
+                
+                return true;
             }
-            else if (!p.hasPermission("logit.unregister.self"))
+            
+            if (!p.hasPermission("logit.unregister.self"))
             {
                 sendMsg(p, _("noPerms"));
+                
+                return true;
             }
-            else if (args.length < 1 && !disablePasswords)
+            
+            if (args.length < 1 && !disablePasswords)
             {
                 sendMsg(p, _("paramMissing")
                         .replace("{0}", "password"));
+                
+                return true;
             }
-            else if (!getAccountManager().isRegistered(p.getName()))
+            
+            if (getCooldownManager().isCooldownActive(p, LogItCooldowns.UNREGISTER))
+            {
+                getMessageDispatcher().sendCooldownMessage(p.getName(),
+                        getCooldownManager().getCooldownMillis(p, LogItCooldowns.UNREGISTER));
+                
+                return true;
+            }
+            
+            if (!getAccountManager().isRegistered(p.getName()))
             {
                 sendMsg(p, _("notRegistered.self"));
+                
+                return true;
             }
-            else if (!disablePasswords
+            
+            if (!disablePasswords
                     && !getAccountManager().checkAccountPassword(p.getName(), args[0]))
             {
                 sendMsg(p, _("incorrectPassword"));
+                
+                return true;
             }
-            else
+            
+            if (getSessionManager().isSessionAlive(p))
             {
-                if (getSessionManager().isSessionAlive(p))
+                if (!getSessionManager().endSession(p.getName()).isCancelled())
                 {
-                    if (!getSessionManager().endSession(p.getName()).isCancelled())
-                    {
-                        sendMsg(sender, _("endSession.success.self"));
-                    }
+                    sendMsg(sender, _("endSession.success.self"));
+                }
+            }
+            
+            try
+            {
+                ReportedException.incrementRequestCount();
+                
+                if (getAccountManager().removeAccount(p.getName()).isCancelled())
+                {
+                    return true;
                 }
                 
-                try
-                {
-                    ReportedException.incrementRequestCount();
-                    
-                    if (!getAccountManager().removeAccount(p.getName()).isCancelled())
-                    {
-                        sendMsg(sender, _("removeAccount.success.self"));
-                    }
-                }
-                catch (ReportedException ex)
-                {
-                    sendMsg(sender, _("removeAccount.fail.self"));
-                }
-                finally
-                {
-                    ReportedException.decrementRequestCount();
-                }
+                getCooldownManager().activateCooldown(p, LogItCooldowns.UNREGISTER,
+                        getConfig().getTime("cooldowns.unregister", TimeUnit.MILLISECONDS));
+                
+                sendMsg(sender, _("removeAccount.success.self"));
+            }
+            catch (ReportedException ex)
+            {
+                sendMsg(sender, _("removeAccount.fail.self"));
+            }
+            finally
+            {
+                ReportedException.decrementRequestCount();
             }
         }
         else

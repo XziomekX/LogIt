@@ -24,5 +24,9 @@ public final class LogItCooldowns
     {
     }
     
+    public static final Cooldown REGISTER = new Cooldown("logit.register");
+    public static final Cooldown UNREGISTER = new Cooldown("logit.unregister");
+    public static final Cooldown CHANGEPASS = new Cooldown("logit.changepass");
+    public static final Cooldown CHANGEEMAIL = new Cooldown("logit.changeemail");
     public static final Cooldown RECOVERPASS = new Cooldown("logit.recoverpass");
 }

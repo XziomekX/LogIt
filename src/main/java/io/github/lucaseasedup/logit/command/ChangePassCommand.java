@@ -22,6 +22,8 @@ import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
+import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -104,69 +106,108 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
             if (p == null)
             {
                 sendMsg(sender, _("onlyForPlayers"));
+                
+                return true;
             }
-            else if (!p.hasPermission("logit.changepass.self"))
+            
+            if (!p.hasPermission("logit.changepass.self"))
             {
                 sendMsg(p, _("noPerms"));
+                
+                return true;
             }
-            else if (args.length < 1)
+            
+            if (args.length < 1)
             {
                 sendMsg(p, _("paramMissing")
                         .replace("{0}", "oldpassword"));
+                
+                return true;
             }
-            else if (args.length < 2)
+            
+            if (args.length < 2)
             {
                 sendMsg(p, _("paramMissing")
                         .replace("{0}", "newpassword"));
+                
+                return true;
             }
-            else if (args.length < 3)
+            
+            if (args.length < 3)
             {
                 sendMsg(p, _("paramMissing")
                         .replace("{0}", "confirmpassword"));
+                
+                return true;
             }
-            else if (!getAccountManager().isRegistered(p.getName()))
+            
+            if (getCooldownManager().isCooldownActive(p, LogItCooldowns.CHANGEPASS))
+            {
+                getMessageDispatcher().sendCooldownMessage(p.getName(),
+                        getCooldownManager().getCooldownMillis(p, LogItCooldowns.CHANGEPASS));
+                
+                return true;
+            }
+            
+            if (!getAccountManager().isRegistered(p.getName()))
             {
                 sendMsg(p, _("notRegistered.self"));
+                
+                return true;
             }
-            else if (!getAccountManager().checkAccountPassword(p.getName(), args[0]))
+            
+            if (!getAccountManager().checkAccountPassword(p.getName(), args[0]))
             {
                 sendMsg(p, _("incorrectPassword"));
+                
+                return true;
             }
-            else if (args[1].length() < minPasswordLength)
+            
+            
+            if (args[1].length() < minPasswordLength)
             {
                 sendMsg(p, _("passwordTooShort")
                         .replace("{0}", String.valueOf(minPasswordLength)));
+                
+                return true;
             }
-            else if (args[1].length() > maxPasswordLength)
+            
+            if (args[1].length() > maxPasswordLength)
             {
                 sendMsg(p, _("passwordTooLong")
                         .replace("{0}", String.valueOf(maxPasswordLength)));
+                
+                return true;
             }
-            else if (!args[1].equals(args[2]))
+            
+            if (!args[1].equals(args[2]))
             {
                 sendMsg(p, _("passwordsDoNotMatch"));
+                
+                return true;
             }
-            else
+            
+            try
             {
-                try
-                {
-                    ReportedException.incrementRequestCount();
-                    
-                    getAccountManager().changeAccountPassword(p.getName(), args[1]);
-                    
-                    sendMsg(sender, _("changePassword.success.self"));
-                    
-                    getCore().getStats().set("password-changes",
-                            getCore().getStats().getInt("password-changes") + 1);
-                }
-                catch (ReportedException ex)
-                {
-                    sendMsg(sender, _("changePassword.fail.self"));
-                }
-                finally
-                {
-                    ReportedException.decrementRequestCount();
-                }
+                ReportedException.incrementRequestCount();
+                
+                getAccountManager().changeAccountPassword(p.getName(), args[1]);
+                
+                getCooldownManager().activateCooldown(p, LogItCooldowns.CHANGEPASS,
+                        getConfig().getTime("cooldowns.changepass", TimeUnit.MILLISECONDS));
+                
+                sendMsg(sender, _("changePassword.success.self"));
+                
+                getCore().getStats().set("password-changes",
+                        getCore().getStats().getInt("password-changes") + 1);
+            }
+            catch (ReportedException ex)
+            {
+                sendMsg(sender, _("changePassword.fail.self"));
+            }
+            finally
+            {
+                ReportedException.decrementRequestCount();
             }
         }
         else

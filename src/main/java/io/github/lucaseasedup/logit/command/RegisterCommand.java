@@ -24,6 +24,8 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
+import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -142,107 +144,142 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
         }
         else if ((args.length == 0 && disablePasswords) || (args.length <= 2 && !disablePasswords))
         {
+            if (p == null)
+            {
+                sendMsg(sender, _("onlyForPlayers"));
+                
+                return true;
+            }
+            
+            if (!p.hasPermission("logit.register.self"))
+            {
+                sendMsg(p, _("noPerms"));
+                
+                return true;
+            }
+            
+            if (!disablePasswords && args.length < 1)
+            {
+                sendMsg(p, _("paramMissing")
+                        .replace("{0}", "password"));
+                
+                return true;
+            }
+            
+            if (!disablePasswords && args.length < 2)
+            {
+                sendMsg(p, _("paramMissing")
+                        .replace("{0}", "confirmpassword"));
+                
+                return true;
+            }
+            
+            if (getCooldownManager().isCooldownActive(p, LogItCooldowns.REGISTER))
+            {
+                getMessageDispatcher().sendCooldownMessage(p.getName(),
+                        getCooldownManager().getCooldownMillis(p, LogItCooldowns.REGISTER));
+                
+                return true;
+            }
+            
+            if (getAccountManager().isRegistered(p.getName()))
+            {
+                sendMsg(p, _("alreadyRegistered.self"));
+                
+                return true;
+            }
+            
+            if (!disablePasswords && args[0].length() < minPasswordLength)
+            {
+                sendMsg(p, _("passwordTooShort")
+                        .replace("{0}", String.valueOf(minPasswordLength)));
+                
+                return true;
+            }
+            
+            if (!disablePasswords && args[0].length() > maxPasswordLength)
+            {
+                sendMsg(p, _("passwordTooLong")
+                        .replace("{0}", String.valueOf(maxPasswordLength)));
+                
+                return true;
+            }
+            
+            if (!disablePasswords && !args[0].equals(args[1]))
+            {
+                sendMsg(p, _("passwordsDoNotMatch"));
+                
+                return true;
+            }
+            
             final int accountsPerIp = getConfig().getInt("crowd-control.accounts-per-ip.amount");
             final List<String> unrestrictedIps =
                     getConfig().getStringList("crowd-control.accounts-per-ip.unrestricted-ips");
             
-            if (p == null)
-            {
-                sendMsg(sender, _("onlyForPlayers"));
-            }
-            else if (!p.hasPermission("logit.register.self"))
-            {
-                sendMsg(p, _("noPerms"));
-            }
-            else if (!disablePasswords && args.length < 1)
-            {
-                sendMsg(p, _("paramMissing")
-                        .replace("{0}", "password"));
-            }
-            else if (!disablePasswords && args.length < 2)
-            {
-                sendMsg(p, _("paramMissing")
-                        .replace("{0}", "confirmpassword"));
-            }
-            else if (getAccountManager().isRegistered(p.getName()))
-            {
-                sendMsg(p, _("alreadyRegistered.self"));
-            }
-            else if (!disablePasswords && args[0].length() < minPasswordLength)
-            {
-                sendMsg(p, _("passwordTooShort")
-                        .replace("{0}", String.valueOf(minPasswordLength)));
-            }
-            else if (!disablePasswords && args[0].length() > maxPasswordLength)
-            {
-                sendMsg(p, _("passwordTooLong")
-                        .replace("{0}", String.valueOf(maxPasswordLength)));
-            }
-            else if (!disablePasswords && !args[0].equals(args[1]))
-            {
-                sendMsg(p, _("passwordsDoNotMatch"));
-            }
-            else if (getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= accountsPerIp
+            if (getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= accountsPerIp
                     && !unrestrictedIps.contains(getPlayerIp(p)) && accountsPerIp >= 0)
             {
                 sendMsg(p, _("accountsPerIpLimitReached"));
+                
+                return true;
             }
-            else
+            
+            String password = "";
+            
+            if (!disablePasswords)
             {
-                String password = "";
+                password = args[0];
+            }
+            
+            try
+            {
+                ReportedException.incrementRequestCount();
                 
-                if (!disablePasswords)
+                if (getAccountManager().createAccount(p.getName(), password).isCancelled())
                 {
-                    password = args[0];
+                    return true;
                 }
                 
-                try
+                getCooldownManager().activateCooldown(p, LogItCooldowns.REGISTER,
+                        getConfig().getTime("cooldowns.register", TimeUnit.MILLISECONDS));
+                
+                sendMsg(sender, _("createAccount.success.self"));
+                
+                getAccountManager().attachIp(p.getName(), getPlayerIp(p));
+                
+                if (!getSessionManager().startSession(p.getName()).isCancelled())
                 {
-                    ReportedException.incrementRequestCount();
-                    
-                    if (getAccountManager().createAccount(p.getName(), password).isCancelled())
-                    {
-                        return true;
-                    }
-                    
-                    sendMsg(sender, _("createAccount.success.self"));
-                    
-                    getAccountManager().attachIp(p.getName(), getPlayerIp(p));
-                    
-                    if (!getSessionManager().startSession(p.getName()).isCancelled())
-                    {
-                        sendMsg(sender, _("startSession.success.self"));
-                    }
-                    
-                    if (getConfig().getBoolean("waiting-room.enabled")
-                            && getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
-                    {
-                        Location newbieTeleportLocation =
-                                getConfig().getLocation("waiting-room.newbie-teleport.location")
-                                        .toBukkitLocation();
-                        
-                        p.teleport(newbieTeleportLocation);
-                    }
-                    
-                    if (getConfig().getBoolean("login-sessions.enabled"))
-                    {
-                        sendMsg(sender, _("rememberLogin.prompt"));
-                    }
-                    
-                    if (getConfig().getBoolean("password-recovery.prompt-to-add-email")
-                            && getConfig().getBoolean("password-recovery.enabled"))
-                    {
-                        sendMsg(sender, _("noEmailSet"));
-                    }
+                    sendMsg(sender, _("startSession.success.self"));
                 }
-                catch (ReportedException ex)
+                
+                if (getConfig().getBoolean("waiting-room.enabled")
+                        && getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
                 {
-                    sendMsg(sender, _("createAccount.fail.self"));
+                    Location newbieTeleportLocation =
+                            getConfig().getLocation("waiting-room.newbie-teleport.location")
+                                    .toBukkitLocation();
+                    
+                    p.teleport(newbieTeleportLocation);
                 }
-                finally
+                
+                if (getConfig().getBoolean("login-sessions.enabled"))
                 {
-                    ReportedException.decrementRequestCount();
+                    sendMsg(sender, _("rememberLogin.prompt"));
                 }
+                
+                if (getConfig().getBoolean("password-recovery.prompt-to-add-email")
+                        && getConfig().getBoolean("password-recovery.enabled"))
+                {
+                    sendMsg(sender, _("noEmailSet"));
+                }
+            }
+            catch (ReportedException ex)
+            {
+                sendMsg(sender, _("createAccount.fail.self"));
+            }
+            finally
+            {
+                ReportedException.decrementRequestCount();
             }
         }
         else
