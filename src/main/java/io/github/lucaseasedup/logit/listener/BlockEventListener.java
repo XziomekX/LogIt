@@ -29,7 +29,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 
 public final class BlockEventListener extends LogItCoreObject implements Listener
 {
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onPlace(BlockPlaceEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.block-place"))
@@ -48,7 +48,7 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
         }
     }
     
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onBreak(BlockBreakEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.block-break"))
@@ -67,7 +67,7 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
         }
     }
     
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onHangingBreak(HangingBreakByEntityEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.block-break")

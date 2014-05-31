@@ -31,7 +31,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 
 public final class EntityEventListener extends LogItCoreObject implements Listener
 {
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onDamageIn(EntityDamageEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.damage-in")
@@ -48,7 +48,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onDamageOut(EntityDamageByEntityEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.damage-out")
@@ -65,7 +65,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onRegainHealth(EntityRegainHealthEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.regain-health")
@@ -82,7 +82,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onFoodLevelChange(FoodLevelChangeEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.food-level-change")
@@ -99,7 +99,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onEntityTarget(EntityTargetEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.entity-target")

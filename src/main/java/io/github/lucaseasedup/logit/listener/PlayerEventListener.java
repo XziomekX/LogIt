@@ -251,7 +251,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     private void onKick(PlayerKickEvent event)
     {
         Player player = event.getPlayer();
@@ -451,7 +451,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onPickupItem(PlayerPickupItemEvent event)
     {
         if (!getConfig().getBoolean("force-login.prevent.pickup-item"))
