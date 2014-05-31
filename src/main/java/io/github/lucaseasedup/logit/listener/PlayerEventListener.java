@@ -19,8 +19,6 @@
 package io.github.lucaseasedup.logit.listener;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastJoinMessage;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastQuitMessage;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
@@ -31,6 +29,8 @@ import io.github.lucaseasedup.logit.config.LocationSerializable;
 import io.github.lucaseasedup.logit.session.Session;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
+import io.github.lucaseasedup.logit.util.JoinMessageGenerator;
+import io.github.lucaseasedup.logit.util.QuitMessageGenerator;
 import java.util.Arrays;
 import java.util.List;
 import org.bukkit.Bukkit;
@@ -196,7 +196,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             if (!getConfig().getBoolean("messages.join.hide"))
             {
-                broadcastJoinMessage(player, getConfig().getBoolean("messages.join.show-world"));
+                event.setJoinMessage(JoinMessageGenerator.generate(player,
+                        getConfig().getBoolean("messages.join.show-world")));
             }
         }
         else
@@ -236,15 +237,17 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     {
         Player player = event.getPlayer();
         
-        event.setQuitMessage(null);
-        
         getCore().getPersistenceManager().unserialize(player);
         
         if (!getConfig().getBoolean("messages.quit.hide")
                 && (!getCore().isPlayerForcedToLogIn(player)
                         || getSessionManager().isSessionAlive(player)))
         {
-            broadcastQuitMessage(player);
+            event.setQuitMessage(QuitMessageGenerator.generate(player));
+        }
+        else
+        {
+            event.setQuitMessage(null);
         }
     }
     
@@ -253,15 +256,17 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     {
         Player player = event.getPlayer();
         
-        event.setLeaveMessage(null);
-        
         getCore().getPersistenceManager().unserialize(player);
         
         if (!getConfig().getBoolean("messages.quit.hide")
                 && (!getCore().isPlayerForcedToLogIn(player)
                         || getSessionManager().isSessionAlive(player)))
         {
-            broadcastQuitMessage(player);
+            event.setLeaveMessage(QuitMessageGenerator.generate(player));
+        }
+        else
+        {
+            event.setLeaveMessage(null);
         }
     }
     
