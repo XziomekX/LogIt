@@ -253,7 +253,7 @@ public final class SecurityHelper
      * Generates a random password of length equal to {@code length},
      * consisting only of the characters contained in {@code combination}.
      * 
-     * <p> If {@code combination} contains more than one occurence of a character,
+     * <p> If {@code combination} contains more than one occurrence of a character,
      * the overall probability of using it in password generation will be higher.
      * 
      * @param length      the desired password length.
