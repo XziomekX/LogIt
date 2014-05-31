@@ -139,7 +139,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.LOW)
     private void onJoin(PlayerJoinEvent event)
     {
         final Player player   = event.getPlayer();
@@ -231,7 +231,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.LOW)
     private void onQuit(PlayerQuitEvent event)
     {
         Player player = event.getPlayer();
@@ -248,7 +248,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
     }
     
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.LOW)
     private void onKick(PlayerKickEvent event)
     {
         Player player = event.getPlayer();
