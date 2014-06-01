@@ -19,11 +19,11 @@
 package io.github.lucaseasedup.logit;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.broadcastMsgExcept;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.hooks.VanishNoPacketHook;
 import io.github.lucaseasedup.logit.locale.Locale;
 import io.github.lucaseasedup.logit.util.JoinMessageGenerator;
-import io.github.lucaseasedup.logit.util.PlayerUtils;
 import io.github.lucaseasedup.logit.util.QuitMessageGenerator;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -129,7 +129,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         String joinMessage = JoinMessageGenerator.generate(player,
                 getConfig().getBoolean("messages.join.show-world"));
         
-        PlayerUtils.broadcastMessageExcept(joinMessage, Arrays.asList(player.getName()));
+        broadcastMsgExcept(joinMessage, Arrays.asList(player.getName()));
     }
     
     /**
@@ -144,7 +144,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         
         String quitMessage = QuitMessageGenerator.generate(player);
         
-        PlayerUtils.broadcastMessageExcept(quitMessage, Arrays.asList(player.getName()));
+        broadcastMsgExcept(quitMessage, Arrays.asList(player.getName()));
     }
     
     public void sendCooldownMessage(String username, long cooldownMillis)

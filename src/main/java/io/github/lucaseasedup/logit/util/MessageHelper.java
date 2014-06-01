@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.util;
 
 import io.github.lucaseasedup.logit.LogItPlugin;
+import java.util.Collection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -76,6 +77,38 @@ public final class MessageHelper
         if (player != null)
         {
             sendMsg(player, message);
+        }
+    }
+    
+    /**
+     * Sends a message to all online players.
+     * 
+     * @param message the message to be sent.
+     */
+    public static void broadcastMsg(String message)
+    {
+        for (Player p : Bukkit.getOnlinePlayers())
+        {
+            sendMsg(p, message);
+        }
+    }
+    
+    /**
+     * Sends a message to all online players with an exception to player names
+     * confined in {@code exceptPlayers}.
+     * 
+     * @param message       the message to be broadcasted.
+     * @param exceptPlayers the case-insensitive player names {@code Collection}
+     *                      that will omitted in the broadcasting.
+     */
+    public static void broadcastMsgExcept(String message, Collection<String> exceptPlayers)
+    {
+        for (Player p : Bukkit.getOnlinePlayers())
+        {
+            if (!CollectionUtils.containsIgnoreCase(p.getName(), exceptPlayers))
+            {
+                sendMsg(p, message);
+            }
         }
     }
 }
