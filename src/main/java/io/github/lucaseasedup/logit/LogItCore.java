@@ -74,6 +74,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
@@ -167,6 +168,23 @@ public final class LogItCore
                     log(Level.WARNING, "Could not copy resource: password-recovery.html", ex);
                 }
             }
+        }
+        
+        try
+        {
+            int latestBuild = LogItUpdateChecker.fetchLatestBuildNumber();
+            int runningBuild = getPlugin().getBuildNumber();
+            
+            if (latestBuild > runningBuild)
+            {
+                log(Level.INFO, _("updateAvailable")
+                        .replace("{0}", String.valueOf(latestBuild))
+                        .replace("{1}", "http://dev.bukkit.org/bukkit-plugins/logit/"));
+            }
+        }
+        catch (IOException | ParseException ex)
+        {
+            log(Level.WARNING, ex);
         }
         
         localeManager = new LocaleManager();
