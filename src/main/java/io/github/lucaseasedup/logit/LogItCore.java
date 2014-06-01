@@ -30,6 +30,7 @@ import io.github.lucaseasedup.logit.command.ChangeEmailCommand;
 import io.github.lucaseasedup.logit.command.ChangePassCommand;
 import io.github.lucaseasedup.logit.command.DisabledCommandExecutor;
 import io.github.lucaseasedup.logit.command.LoginCommand;
+import io.github.lucaseasedup.logit.command.LoginHistoryCommand;
 import io.github.lucaseasedup.logit.command.LogoutCommand;
 import io.github.lucaseasedup.logit.command.NopCommandExecutor;
 import io.github.lucaseasedup.logit.command.ProfileCommand;
@@ -213,6 +214,7 @@ public final class LogItCore
             config.getString("storage.accounts.keys.last_active_date"),
             config.getString("storage.accounts.keys.reg_date"),
             config.getString("storage.accounts.keys.is_locked"),
+            config.getString("storage.accounts.keys.login_history"),
             config.getString("storage.accounts.keys.persistence")
         );
         Storage leadingAccountStorage = StorageFactory.produceStorage(leadingStorageType,
@@ -884,9 +886,12 @@ public final class LogItCore
         enableCommand("changeemail", new ChangeEmailCommand());
         enableCommand("recoverpass", new RecoverPassCommand(),
                 config.getBoolean("password-recovery.enabled"));
-        enableCommand("profile", new ProfileCommand(), config.getBoolean("profiles.enabled"));
+        enableCommand("profile", new ProfileCommand(),
+                config.getBoolean("profiles.enabled"));
         enableCommand("acclock", new AcclockCommand());
         enableCommand("accunlock", new AccunlockCommand());
+        enableCommand("loginhistory", new LoginHistoryCommand(),
+                config.getBoolean("login-history.enabled"));
         enableCommand("$logit-nop-command", new NopCommandExecutor());
     }
     
@@ -903,6 +908,7 @@ public final class LogItCore
         disableCommand("profile");
         disableCommand("acclock");
         disableCommand("accunlock");
+        disableCommand("loginhistory");
         disableCommand("$logit-nop-command");
     }
     

@@ -56,6 +56,10 @@ commands:
     description: Unlocks an account.
     usage: /<command> <username>
   
+  loginhistory:
+    descripton: Shows login history for your account.
+    usage: /<command> [username]
+  
   $logit-nop-command:
     description: Reserved for internal use.
     usage: /<command>
@@ -82,6 +86,7 @@ permissions:
       logit.profile.view.self: true
       logit.profile.view.others: true
       logit.profile.edit.self: true
+      logit.loginhistory.self: true
   logit.mod:
     default: op
     children:
@@ -94,6 +99,7 @@ permissions:
       logit.changepass.others: true
       logit.changeemail.others: true
       logit.profile.edit.others: true
+      logit.loginhistory.others: true
   logit.admin:
     default: false
     children:
@@ -236,4 +242,12 @@ permissions:
   logit.acclock:
     default: false
   logit.accunlock:
+    default: false
+  logit.loginhistory:
+    default: false
+    children:
+      logit.loginhistory.self: true
+  logit.loginhistory.self:
+    default: false
+  logit.loginhistory.others:
     default: false

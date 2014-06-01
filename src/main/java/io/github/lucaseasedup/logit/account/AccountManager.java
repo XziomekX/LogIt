@@ -36,6 +36,7 @@ import io.github.lucaseasedup.logit.util.IniUtils;
 import it.sauronsoftware.base64.Base64;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -806,6 +807,71 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         catch (IOException ex)
         {
             log(Level.WARNING, "Could not update last-active date for player: " + username, ex);
+            
+            ReportedException.throwNew(ex);
+        }
+    }
+    
+    public List<String> getLoginHistory(String username)
+    {
+        if (username == null)
+            throw new IllegalArgumentException();
+        
+        Storage.Entry entry = queryAccount(username, Arrays.asList(
+                keys.username(),
+                keys.login_history()
+        ));
+        
+        if (entry == null)
+            return null;
+        
+        String historyString = entry.get(keys.login_history());
+        
+        return new ArrayList<>(Arrays.asList(historyString.split("\\|")));
+    }
+    
+    public void recordLogin(String username, long unixTime, String ip, boolean succeeded)
+    {
+        Storage.Entry entry = queryAccount(username, Arrays.asList(
+                keys.username(),
+                keys.login_history()
+        ));
+        
+        if (entry == null)
+            return;
+        
+        String historyString = entry.get(keys.login_history());
+        List<String> records = new ArrayList<>(Arrays.asList(historyString.split("\\|")));
+        
+        for (int i = 0,
+                 n = records.size() - getConfig().getInt("login-history.records-to-keep") + 1;
+             i < n; i++)
+        {
+            records.remove(0);
+        }
+        
+        records.add(String.valueOf(unixTime) + ";" + ip + ";" + succeeded);
+        
+        StringBuilder historyBuilder = new StringBuilder();
+        
+        for (String record : records)
+        {
+            if (!record.isEmpty())
+            {
+                historyBuilder.append(record);
+                historyBuilder.append("|");
+            }
+        }
+        
+        entry.put(keys.login_history(), historyBuilder.toString());
+        
+        try
+        {
+            updateEntry(username, entry);
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, ex);
             
             ReportedException.throwNew(ex);
         }

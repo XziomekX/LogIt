@@ -145,6 +145,8 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 return true;
             }
             
+            String playerIp = getPlayerIp(p);
+            
             if (!disablePasswords && !getGlobalPasswordManager().checkPassword(args[0]))
             {
                 String userAlgorithm = accountData.get(keys.hashing_algorithm());
@@ -166,7 +168,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     
                     if (failedLoginsToBan.get(username) >= failsToBan && failsToBan > 0)
                     {
-                        Bukkit.banIP(getPlayerIp(p));
+                        Bukkit.banIP(playerIp);
                         p.kickPlayer(_("tooManyLoginFails.ban"));
                         
                         failedLoginsToKick.remove(username);
@@ -177,6 +179,12 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                         p.kickPlayer(_("tooManyLoginFails.kick"));
                         
                         failedLoginsToKick.remove(username);
+                    }
+                    
+                    if (getConfig().getBoolean("login-history.enabled"))
+                    {
+                        getAccountManager().recordLogin(username,
+                                System.currentTimeMillis() / 1000L, playerIp, false);
                     }
                     
                     return true;
@@ -202,9 +210,15 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     sendMsg(sender, _("rememberLogin.prompt"));
                 }
                 
+                if (getConfig().getBoolean("login-history.enabled"))
+                {
+                    getAccountManager().recordLogin(username,
+                            System.currentTimeMillis() / 1000L, playerIp, true);
+                }
+                
                 if (accountData.get(keys.ip()).trim().isEmpty())
                 {
-                    getAccountManager().attachIp(username, getPlayerIp(p));
+                    getAccountManager().attachIp(username, playerIp);
                 }
             }
         }
