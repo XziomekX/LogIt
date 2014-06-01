@@ -572,7 +572,34 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         try
         {
             List<Storage.Entry> entries = storage.selectEntries(unit,
-                    Arrays.asList(keys.ip()), new SelectorCondition(keys.ip(), Infix.EQUALS, ip));
+                    Arrays.asList(keys.ip()),
+                    new SelectorCondition(keys.ip(), Infix.EQUALS, ip));
+            
+            return entries.size();
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, ex);
+            
+            ReportedException.throwNew(ex);
+            
+            return -1;
+        }
+    }
+    
+    public int countAccountsWithEmail(String email)
+    {
+        if (email == null)
+            throw new IllegalArgumentException();
+        
+        if (email.isEmpty())
+            return 0;
+        
+        try
+        {
+            List<Storage.Entry> entries = storage.selectEntries(unit,
+                    Arrays.asList(keys.email()),
+                    new SelectorCondition(keys.email(), Infix.EQUALS, email));
             
             return entries.size();
         }

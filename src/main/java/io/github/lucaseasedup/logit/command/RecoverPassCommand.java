@@ -101,11 +101,11 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                     getConfig().getString("password-recovery.password-combination")
             );
             
-            final String from = getConfig().getString("mail.email-address");
-            final String smtpHost = getConfig().getString("mail.smtp-host");
-            final int smtpPort = getConfig().getInt("mail.smtp-port");
-            final String smtpUser = getConfig().getString("mail.smtp-user");
-            final String smtpPassword = getConfig().getString("mail.smtp-password");
+            final String from = getConfig().getString("mail.sending.email-address");
+            final String smtpHost = getConfig().getString("mail.sending.smtp-host");
+            final int smtpPort = getConfig().getInt("mail.sending.smtp-port");
+            final String smtpUser = getConfig().getString("mail.sending.smtp-user");
+            final String smtpPassword = getConfig().getString("mail.sending.smtp-password");
             
             final long cooldownMillis =
                     getConfig().getTime("cooldowns.recoverpass", TimeUnit.MILLISECONDS);

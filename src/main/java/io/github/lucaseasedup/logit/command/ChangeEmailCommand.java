@@ -139,6 +139,15 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
                 return true;
             }
             
+            int accountsWithEmail = getAccountManager().countAccountsWithEmail(args[0]);
+            
+            if (accountsWithEmail >= getConfig().getInt("mail.accounts-per-email"))
+            {
+                sendMsg(p, _("accountsPerEmailLimitReached"));
+                
+                return true;
+            }
+            
             try
             {
                 ReportedException.incrementRequestCount();
