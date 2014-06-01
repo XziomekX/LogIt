@@ -30,6 +30,8 @@ import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import javax.mail.MessagingException;
 import org.bukkit.command.Command;
@@ -78,6 +80,13 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
             
             final String username = p.getName().toLowerCase();
             
+            if (playerLocks.contains(username))
+            {
+                sendMsg(p, _("cmdPlayerLock"));
+                
+                return true;
+            }
+            
             if (getCooldownManager().isCooldownActive(p, LogItCooldowns.RECOVERPASS))
             {
                 getMessageDispatcher().sendCooldownMessage(username,
@@ -114,6 +123,8 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
             final File bodyTemplateFile =
                     getDataFile(getConfig().getString("password-recovery.body-template"));
             final boolean htmlEnabled = getConfig().getBoolean("password-recovery.html-enabled");
+            
+            playerLocks.add(username);
             
             new BukkitRunnable()
             {
@@ -162,6 +173,8 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                     finally
                     {
                         ReportedException.decrementRequestCount();
+                        
+                        playerLocks.remove(username);
                     }
                 }
             }.runTaskAsynchronously(getPlugin());
@@ -173,4 +186,6 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
         
         return true;
     }
+    
+    private final Set<String> playerLocks = new HashSet<>();
 }
