@@ -19,7 +19,6 @@
 package io.github.lucaseasedup.logit.util;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
-import java.util.Arrays;
 import java.util.Collection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -131,31 +130,5 @@ public final class PlayerUtils
                 sendMsg(p, message);
             }
         }
-    }
-    
-    /**
-     * Broadcasts a join message.
-     * 
-     * @param player           the player who joined.
-     * @param revealSpawnWorld whether to show a name of the world
-     *                         where the player spawned after joining.
-     */
-    public static void broadcastJoinMessage(Player player, boolean revealSpawnWorld)
-    {
-        String joinMessage = JoinMessageGenerator.generate(player, revealSpawnWorld);
-        
-        broadcastMessageExcept(joinMessage, Arrays.asList(player.getName()));
-    }
-    
-    /**
-     * Broadcasts a quit message.
-     * 
-     * @param player the player who quit.
-     */
-    public static void broadcastQuitMessage(Player player)
-    {
-        String quitMessage = QuitMessageGenerator.generate(player);
-        
-        broadcastMessageExcept(quitMessage, Arrays.asList(player.getName()));
     }
 }

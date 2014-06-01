@@ -26,6 +26,7 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
+import io.github.lucaseasedup.logit.hooks.VanishNoPacketHook;
 import io.github.lucaseasedup.logit.session.Session;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
@@ -194,7 +195,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         if (getSessionManager().isSessionAlive(player) || !getCore().isPlayerForcedToLogIn(player))
         {
-            if (!getConfig().getBoolean("messages.join.hide"))
+            if (!getConfig().getBoolean("messages.join.hide")
+                    && !VanishNoPacketHook.isVanished(player))
             {
                 event.setJoinMessage(JoinMessageGenerator.generate(player,
                         getConfig().getBoolean("messages.join.show-world")));
@@ -241,7 +243,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         if (!getConfig().getBoolean("messages.quit.hide")
                 && (!getCore().isPlayerForcedToLogIn(player)
-                        || getSessionManager().isSessionAlive(player)))
+                        || getSessionManager().isSessionAlive(player))
+                && !VanishNoPacketHook.isVanished(player))
         {
             event.setQuitMessage(QuitMessageGenerator.generate(player));
         }
@@ -260,7 +263,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         if (!getConfig().getBoolean("messages.quit.hide")
                 && (!getCore().isPlayerForcedToLogIn(player)
-                        || getSessionManager().isSessionAlive(player)))
+                        || getSessionManager().isSessionAlive(player))
+                && !VanishNoPacketHook.isVanished(player))
         {
             event.setLeaveMessage(QuitMessageGenerator.generate(player));
         }

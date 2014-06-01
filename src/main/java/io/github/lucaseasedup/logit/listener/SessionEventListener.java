@@ -18,8 +18,6 @@
  */
 package io.github.lucaseasedup.logit.listener;
 
-import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastJoinMessage;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.broadcastQuitMessage;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.session.SessionEndEvent;
@@ -59,8 +57,7 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
                 if (getCore().isPlayerForcedToLogIn(player)
                         && !getConfig().getBoolean("messages.join.hide"))
                 {
-                    broadcastJoinMessage(player,
-                            getConfig().getBoolean("messages.join.show-world"));
+                    getMessageDispatcher().broadcastJoinMessage(player);
                 }
             }
         }.runTaskLater(getPlugin(), 1L);
@@ -96,7 +93,7 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
                 if (getCore().isPlayerForcedToLogIn(player)
                         && !getConfig().getBoolean("messages.quit.hide"))
                 {
-                    broadcastQuitMessage(player);
+                    getMessageDispatcher().broadcastQuitMessage(player);
                 }
             }
         }.runTaskLater(getPlugin(), 1L);
