@@ -137,7 +137,7 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                         
                         String email = getAccountManager().getEmail(playerName);
                         
-                        if (!argEmail.equals(email))
+                        if (!argEmail.equalsIgnoreCase(email))
                         {
                             sendMsg(p, _("recoverPassword.incorrectEmailAddress"));
                             
