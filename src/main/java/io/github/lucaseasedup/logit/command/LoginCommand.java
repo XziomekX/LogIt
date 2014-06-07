@@ -96,8 +96,8 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
         }
         else if ((args.length == 0 && disablePasswords) || (args.length <= 1 && !disablePasswords))
         {
-            int failsToKick = getConfig().getInt("crowd-control.login-fails-to-kick");
-            int failsToBan = getConfig().getInt("crowd-control.login-fails-to-ban");
+            int failsToKick = getConfig().getInt("login-fails-to-kick");
+            int failsToBan = getConfig().getInt("login-fails-to-ban");
             
             if (p == null)
             {

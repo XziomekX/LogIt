@@ -212,9 +212,9 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 return true;
             }
             
-            final int accountsPerIp = getConfig().getInt("crowd-control.accounts-per-ip.amount");
+            final int accountsPerIp = getConfig().getInt("accounts-per-ip.amount");
             final List<String> unrestrictedIps =
-                    getConfig().getStringList("crowd-control.accounts-per-ip.unrestricted-ips");
+                    getConfig().getStringList("accounts-per-ip.unrestricted-ips");
             
             if (getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= accountsPerIp
                     && !unrestrictedIps.contains(getPlayerIp(p)) && accountsPerIp >= 0)

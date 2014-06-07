@@ -38,15 +38,14 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
     public void run()
     {
         boolean accountDeletionEnabled =
-                getConfig().getBoolean("crowd-control.automatic-account-deletion.enabled");
+                getConfig().getBoolean("automatic-account-deletion.enabled");
         
         if (!accountDeletionEnabled)
             return;
         
         long now = System.currentTimeMillis() / 1000L;
         long inactivityTime =
-                getConfig().getTime("crowd-control.automatic-account-deletion.inactivity-time",
-                        TimeUnit.SECONDS);
+                getConfig().getTime("automatic-account-deletion.inactivity-time", TimeUnit.SECONDS);
         
         try
         {

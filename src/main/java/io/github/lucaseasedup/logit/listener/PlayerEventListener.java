@@ -107,7 +107,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             event.disallow(KICK_OTHER, _("usernameAlreadyUsed"));
         }
-        else if (getConfig().getBoolean("crowd-control.kick-unregistered") && accountData == null)
+        else if (getConfig().getBoolean("kick-unregistered") && accountData == null)
         {
             event.disallow(KICK_OTHER, _("kickUnregistered"));
         }
@@ -115,7 +115,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             int freeSlots = Bukkit.getMaxPlayers() - Bukkit.getOnlinePlayers().length;
             List<String> reserveForPlayers =
-                    getConfig().getStringList("crowd-control.reserve-slots.for-players");
+                    getConfig().getStringList("reserve-slots.for-players");
             int reservedSlots = 0;
             
             // Calculate how many players for which slots should be reserved are online.
@@ -127,7 +127,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 }
             }
             
-            int maxReservedSlots = getConfig().getInt("crowd-control.reserve-slots.amount");
+            int maxReservedSlots = getConfig().getInt("reserve-slots.amount");
             int unusedReservedSlots = maxReservedSlots - reservedSlots;
             int actualFreeSlots = freeSlots - unusedReservedSlots;
             
