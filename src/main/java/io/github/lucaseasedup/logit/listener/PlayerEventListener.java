@@ -48,7 +48,6 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -251,26 +250,6 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         else
         {
             event.setQuitMessage(null);
-        }
-    }
-    
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    private void onKick(PlayerKickEvent event)
-    {
-        Player player = event.getPlayer();
-        
-        getCore().getPersistenceManager().unserialize(player);
-        
-        if (!getConfig().getBoolean("messages.quit.hide")
-                && (!getCore().isPlayerForcedToLogIn(player)
-                        || getSessionManager().isSessionAlive(player))
-                && !VanishNoPacketHook.isVanished(player))
-        {
-            event.setLeaveMessage(QuitMessageGenerator.generate(player));
-        }
-        else
-        {
-            event.setLeaveMessage(null);
         }
     }
     
