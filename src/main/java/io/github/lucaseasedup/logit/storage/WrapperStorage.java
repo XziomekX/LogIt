@@ -633,8 +633,8 @@ public final class WrapperStorage extends Storage
     private final String indexKey;
     private final CacheType cacheType;
     
-    private final Set<Storage> mirrors = new HashSet<>(5);
-    private final Hashtable<Storage, Hashtable<String, String>> unitMappings = new Hashtable<>(5);
+    private final Set<Storage> mirrors = new HashSet<>();
+    private final Hashtable<Storage, Hashtable<String, String>> unitMappings = new Hashtable<>();
     private final Vector<StorageObserver> obs = new Vector<>();
     
     private Hashtable<String, List<Storage.Entry>> preloadedCache;
