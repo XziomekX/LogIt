@@ -217,6 +217,10 @@ permissions:
     default: false
   logit.changepass.others:
     default: false
+  logit.changeemail:
+    default: false
+    children:
+      logit.changeemail.self: true
   logit.changeemail.self:
     default: false
   logit.changeemail.others:
