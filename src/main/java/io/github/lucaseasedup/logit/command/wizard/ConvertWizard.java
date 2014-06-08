@@ -205,27 +205,34 @@ public final class ConvertWizard extends Wizard
                     player.kickPlayer(_("serverMaintenance"));
                 }
                 
-                getConfig().set("storage.accounts.leading.storage-type", dbtype);
+                getConfig("config.yml")
+                        .set("storage.accounts.leading.storage-type", dbtype);
                 
                 switch (dbtype)
                 {
                 case "sqlite":
-                    getConfig().set("storage.accounts.leading.sqlite.filename", filename);
+                    getConfig("config.yml")
+                            .set("storage.accounts.leading.sqlite.filename", filename);
                     break;
                     
                 case "h2":
-                    getConfig().set("storage.accounts.leading.h2.filename", filename);
+                    getConfig("config.yml")
+                            .set("storage.accounts.leading.h2.filename", filename);
                     break;
                     
                 case "mysql":
-                    getConfig().set("storage.accounts.leading.mysql.host", host);
-                    getConfig().set("storage.accounts.leading.mysql.user", user);
-                    getConfig().set("storage.accounts.leading.mysql.password", password);
-                    getConfig().set("storage.accounts.leading.mysql.database", database);
+                    getConfig("config.yml")
+                            .set("storage.accounts.leading.mysql.host", host);
+                    getConfig("config.yml")
+                            .set("storage.accounts.leading.mysql.user", user);
+                    getConfig("config.yml")
+                            .set("storage.accounts.leading.mysql.password", password);
+                    getConfig("config.yml")
+                            .set("storage.accounts.leading.mysql.database", database);
                     break;
                 }
                 
-                getConfig().set("storage.accounts.leading.unit", table);
+                getConfig("config.yml").set("storage.accounts.leading.unit", table);
                 
                 try
                 {

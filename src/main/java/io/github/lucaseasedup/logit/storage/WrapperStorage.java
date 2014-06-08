@@ -32,7 +32,10 @@ import java.util.Vector;
 
 public final class WrapperStorage extends Storage
 {
-    private WrapperStorage(Storage leading, List<String> keys, String indexKey, CacheType cacheType)
+    private WrapperStorage(Storage leading,
+                           List<String> keys,
+                           String indexKey,
+                           CacheType cacheType)
     {
         this.leading = leading;
         this.keys = keys;

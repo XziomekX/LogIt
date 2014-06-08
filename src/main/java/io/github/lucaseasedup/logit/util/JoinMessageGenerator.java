@@ -40,7 +40,7 @@ public final class JoinMessageGenerator
         
         String message;
         
-        if (core.getConfig().getBoolean("messages.beautify"))
+        if (core.getConfig("config.yml").getBoolean("messages.beautify"))
         {
             message = _("join.beautified");
         }
@@ -51,7 +51,7 @@ public final class JoinMessageGenerator
         
         String inWorld;
         
-        if (core.getConfig().getBoolean("messages.beautify"))
+        if (core.getConfig("config.yml").getBoolean("messages.beautify"))
         {
             inWorld = _("join.beautified.inWorld");
         }
@@ -76,7 +76,11 @@ public final class JoinMessageGenerator
     
     public static String getWorldAlias(World world)
     {
-        if (!LogItCore.getInstance().getConfig().getBoolean("messages.multiverse-hook")
+        LogItCore core = LogItCore.getInstance();
+        
+        assert core != null;
+        
+        if (!core.getConfig("config.yml").getBoolean("messages.multiverse-hook")
                 || !Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core"))
         {
             return world.getName();

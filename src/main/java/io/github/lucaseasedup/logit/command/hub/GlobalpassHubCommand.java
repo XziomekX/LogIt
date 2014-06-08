@@ -41,7 +41,8 @@ public final class GlobalpassHubCommand extends HubCommand
     {
         String password = getGlobalPasswordManager().generatePassword();
         long lifetimeSecs =
-                getConfig().getTime("password.global-password.invalidate-after", TimeUnit.SECONDS);
+                getConfig("config.yml").getTime("password.global-password.invalidate-after",
+                        TimeUnit.SECONDS);
         Locale activeLocale = getLocaleManager().getActiveLocale();
         
         sendMsg(sender, _("globalpass.generated")

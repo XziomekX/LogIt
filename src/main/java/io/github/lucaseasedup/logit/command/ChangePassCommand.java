@@ -41,8 +41,8 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
             p = (Player) sender;
         }
         
-        int minPasswordLength = getConfig().getInt("password.min-length");
-        int maxPasswordLength = getConfig().getInt("password.max-length");
+        int minPasswordLength = getConfig("config.yml").getInt("password.min-length");
+        int maxPasswordLength = getConfig("config.yml").getInt("password.max-length");
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 3)
         {
@@ -87,8 +87,8 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
                     sendMsg(sender, _("changePassword.success.others")
                             .replace("{0}", args[1]));
                     
-                    getCore().getStats().set("password-changes",
-                            getCore().getStats().getInt("password-changes") + 1);
+                    getConfig("stats.yml").set("password-changes",
+                            getConfig("stats.yml").getInt("password-changes") + 1);
                 }
                 catch (ReportedException ex)
                 {
@@ -193,13 +193,15 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
                 
                 getAccountManager().changeAccountPassword(p.getName(), args[1]);
                 
-                getCooldownManager().activateCooldown(p, LogItCooldowns.CHANGEPASS,
-                        getConfig().getTime("cooldowns.changepass", TimeUnit.MILLISECONDS));
+                long cooldown = getConfig("config.yml")
+                        .getTime("cooldowns.changepass", TimeUnit.MILLISECONDS);
+                
+                getCooldownManager().activateCooldown(p, LogItCooldowns.CHANGEPASS, cooldown);
                 
                 sendMsg(sender, _("changePassword.success.self"));
                 
-                getCore().getStats().set("password-changes",
-                        getCore().getStats().getInt("password-changes") + 1);
+                getConfig("stats.yml").set("password-changes",
+                        getConfig("stats.yml").getInt("password-changes") + 1);
             }
             catch (ReportedException ex)
             {

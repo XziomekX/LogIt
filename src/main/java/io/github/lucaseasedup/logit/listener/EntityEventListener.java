@@ -34,7 +34,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onDamageIn(EntityDamageEvent event)
     {
-        if (!getConfig().getBoolean("force-login.prevent.damage-in")
+        if (!getConfig("config.yml").getBoolean("force-login.prevent.damage-in")
                 || !(event.getEntity() instanceof Player))
         {
             return;
@@ -51,7 +51,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onDamageOut(EntityDamageByEntityEvent event)
     {
-        if (!getConfig().getBoolean("force-login.prevent.damage-out")
+        if (!getConfig("config.yml").getBoolean("force-login.prevent.damage-out")
                 || !(event.getDamager() instanceof Player))
         {
             return;
@@ -68,7 +68,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onRegainHealth(EntityRegainHealthEvent event)
     {
-        if (!getConfig().getBoolean("force-login.prevent.regain-health")
+        if (!getConfig("config.yml").getBoolean("force-login.prevent.regain-health")
                 || !(event.getEntity() instanceof Player))
         {
             return;
@@ -85,7 +85,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onFoodLevelChange(FoodLevelChangeEvent event)
     {
-        if (!getConfig().getBoolean("force-login.prevent.food-level-change")
+        if (!getConfig("config.yml").getBoolean("force-login.prevent.food-level-change")
                 || !(event.getEntity() instanceof Player))
         {
             return;
@@ -102,7 +102,7 @@ public final class EntityEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onEntityTarget(EntityTargetEvent event)
     {
-        if (!getConfig().getBoolean("force-login.prevent.entity-target")
+        if (!getConfig("config.yml").getBoolean("force-login.prevent.entity-target")
                 || !(event.getTarget() instanceof Player))
         {
             return;

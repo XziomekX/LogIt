@@ -274,11 +274,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         String now = String.valueOf(System.currentTimeMillis() / 1000L);
         HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
         
-        if (!getConfig().getBoolean("password.disable-passwords"))
+        if (!getConfig("config.yml").getBoolean("password.disable-passwords"))
         {
             String hash;
             
-            if (getConfig().getBoolean("password.use-salt"))
+            if (getConfig("config.yml").getBoolean("password.use-salt"))
             {
                 String salt = SecurityHelper.generateSalt(algorithm);
                 hash = SecurityHelper.hash(password, salt, algorithm);
@@ -405,7 +405,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         if (username == null || password == null)
             throw new IllegalArgumentException();
         
-        if (getConfig().getBoolean("password.disable-passwords"))
+        if (getConfig("config.yml").getBoolean("password.disable-passwords"))
             return true;
         
         Storage.Entry entry = queryAccount(username, Arrays.asList(
@@ -421,7 +421,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         String actualHashedPassword = entry.get(keys.password());
         HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
         
-        if (!getConfig().getBoolean("password.global-hashing-algorithm"))
+        if (!getConfig("config.yml").getBoolean("password.global-hashing-algorithm"))
         {
             String userAlgorithm = entry.get(keys.hashing_algorithm());
             
@@ -431,7 +431,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
             }
         }
         
-        if (getConfig().getBoolean("password.use-salt"))
+        if (getConfig("config.yml").getBoolean("password.use-salt"))
         {
             String actualSalt = entry.get(keys.salt());
             
@@ -467,14 +467,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         if (username == null || newPassword == null)
             throw new IllegalArgumentException();
         
-        if (getConfig().getBoolean("password.disable-passwords"))
+        if (getConfig("config.yml").getBoolean("password.disable-passwords"))
             return;
         
         Storage.Entry entry = new Storage.Entry();
         HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
         String newHash;
         
-        if (getConfig().getBoolean("password.use-salt"))
+        if (getConfig("config.yml").getBoolean("password.use-salt"))
         {
             String newSalt = SecurityHelper.generateSalt(algorithm);
             newHash = SecurityHelper.hash(newPassword, newSalt, algorithm);
@@ -842,10 +842,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         
         String historyString = entry.get(keys.login_history());
         List<String> records = new ArrayList<>(Arrays.asList(historyString.split("\\|")));
+        int recordsToKeep = getConfig("config.yml").getInt("login-history.records-to-keep");
         
-        for (int i = 0,
-                 n = records.size() - getConfig().getInt("login-history.records-to-keep") + 1;
-             i < n; i++)
+        for (int i = 0, n = records.size() - recordsToKeep + 1;  i < n; i++)
         {
             records.remove(0);
         }

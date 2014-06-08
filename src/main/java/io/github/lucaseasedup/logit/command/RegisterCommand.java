@@ -46,9 +46,11 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             p = (Player) sender;
         }
         
-        int minPasswordLength = getConfig().getInt("password.min-length");
-        int maxPasswordLength = getConfig().getInt("password.max-length");
-        boolean disablePasswords = getConfig().getBoolean("password.disable-passwords");
+        int minPasswordLength = getConfig("config.yml").getInt("password.min-length");
+        int maxPasswordLength = getConfig("config.yml").getInt("password.max-length");
+        
+        boolean disablePasswords = getConfig("config.yml")
+                .getBoolean("password.disable-passwords");
         
         if (args.length > 0 && args[0].equals("-x")
                 && ((args.length <= 2 && disablePasswords)
@@ -120,12 +122,15 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                                     .replace("{0}", args[1]));
                         }
                         
-                        if (getConfig().getBoolean("waiting-room.enabled")
-                                && getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
+                        boolean newbieTeleportEnabled = getConfig("config.yml")
+                                .getBoolean("waiting-room.newbie-teleport.enabled");
+                        
+                        if (getConfig("config.yml").getBoolean("waiting-room.enabled")
+                                && newbieTeleportEnabled)
                         {
-                            Location newbieTeleportLocation =
-                                    getConfig().getLocation("waiting-room.newbie-teleport.location")
-                                            .toBukkitLocation();
+                            Location newbieTeleportLocation = getConfig("config.yml")
+                                    .getLocation("waiting-room.newbie-teleport.location")
+                                    .toBukkitLocation();
                             
                             Bukkit.getPlayerExact(args[1]).teleport(newbieTeleportLocation);
                         }
@@ -212,9 +217,9 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 return true;
             }
             
-            final int accountsPerIp = getConfig().getInt("accounts-per-ip.amount");
+            final int accountsPerIp = getConfig("config.yml").getInt("accounts-per-ip.amount");
             final List<String> unrestrictedIps =
-                    getConfig().getStringList("accounts-per-ip.unrestricted-ips");
+                    getConfig("config.yml").getStringList("accounts-per-ip.unrestricted-ips");
             
             if (getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= accountsPerIp
                     && !unrestrictedIps.contains(getPlayerIp(p)) && accountsPerIp >= 0)
@@ -240,8 +245,10 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                     return true;
                 }
                 
-                getCooldownManager().activateCooldown(p, LogItCooldowns.REGISTER,
-                        getConfig().getTime("cooldowns.register", TimeUnit.MILLISECONDS));
+                long cooldown = getConfig("config.yml")
+                        .getTime("cooldowns.register", TimeUnit.MILLISECONDS);
+                
+                getCooldownManager().activateCooldown(p, LogItCooldowns.REGISTER, cooldown);
                 
                 sendMsg(sender, _("createAccount.success.self"));
                 
@@ -252,23 +259,26 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                     sendMsg(sender, _("startSession.success.self"));
                 }
                 
-                if (getConfig().getBoolean("waiting-room.enabled")
-                        && getConfig().getBoolean("waiting-room.newbie-teleport.enabled"))
+                boolean newbieTeleportEnabled = getConfig("config.yml")
+                        .getBoolean("waiting-room.newbie-teleport.enabled");
+                
+                if (getConfig("config.yml").getBoolean("waiting-room.enabled")
+                        && newbieTeleportEnabled)
                 {
-                    Location newbieTeleportLocation =
-                            getConfig().getLocation("waiting-room.newbie-teleport.location")
-                                    .toBukkitLocation();
+                    Location newbieTeleportLocation = getConfig("config.yml")
+                            .getLocation("waiting-room.newbie-teleport.location")
+                            .toBukkitLocation();
                     
                     p.teleport(newbieTeleportLocation);
                 }
                 
-                if (getConfig().getBoolean("login-sessions.enabled"))
+                if (getConfig("config.yml").getBoolean("login-sessions.enabled"))
                 {
                     sendMsg(sender, _("rememberLogin.prompt"));
                 }
                 
-                if (getConfig().getBoolean("password-recovery.prompt-to-add-email")
-                        && getConfig().getBoolean("password-recovery.enabled"))
+                if (getConfig("config.yml").getBoolean("password-recovery.prompt-to-add-email")
+                        && getConfig("config.yml").getBoolean("password-recovery.enabled"))
                 {
                     sendMsg(sender, _("noEmailSet"));
                 }

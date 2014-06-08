@@ -141,7 +141,7 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
             
             int accountsWithEmail = getAccountManager().countAccountsWithEmail(args[0]);
             
-            if (accountsWithEmail >= getConfig().getInt("mail.accounts-per-email"))
+            if (accountsWithEmail >= getConfig("config.yml").getInt("mail.accounts-per-email"))
             {
                 sendMsg(p, _("accountsPerEmailLimitReached"));
                 
@@ -154,8 +154,10 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
                 
                 getAccountManager().changeEmail(p.getName(), args[0]);
                 
-                getCooldownManager().activateCooldown(p, LogItCooldowns.CHANGEEMAIL,
-                        getConfig().getTime("cooldowns.changeemail", TimeUnit.MILLISECONDS));
+                long cooldown = getConfig("config.yml")
+                        .getTime("cooldowns.changeemail", TimeUnit.MILLISECONDS);
+                
+                getCooldownManager().activateCooldown(p, LogItCooldowns.CHANGEEMAIL, cooldown);
                 
                 sendMsg(sender, _("changeEmail.success.self")
                         .replace("{0}", args[0]));

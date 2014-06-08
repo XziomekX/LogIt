@@ -34,24 +34,25 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public final class ProfileManager extends LogItCoreObject implements Disposable
 {
-    public ProfileManager(File path, ConfigurationSection fieldsSection)
+    public ProfileManager(File path, Map<String, Object> fields)
     {
-        if (path == null || fieldsSection == null)
+        if (path == null || fields == null)
             throw new IllegalArgumentException();
         
         this.path = path;
         
-        for (String fieldName : fieldsSection.getKeys(false))
+        for (Entry<String, Object> e : fields.entrySet())
         {
-            String fieldDefinition = fieldsSection.getString(fieldName);
+            String fieldName = e.getKey();
+            String fieldDefinition = e.getValue().toString();
             
             try
             {

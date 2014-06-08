@@ -38,6 +38,7 @@ import io.github.lucaseasedup.logit.command.RecoverPassCommand;
 import io.github.lucaseasedup.logit.command.RegisterCommand;
 import io.github.lucaseasedup.logit.command.RememberCommand;
 import io.github.lucaseasedup.logit.command.UnregisterCommand;
+import io.github.lucaseasedup.logit.config.ConfigurationManager;
 import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
 import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
 import io.github.lucaseasedup.logit.cooldown.CooldownManager;
@@ -79,6 +80,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import net.milkbowl.vault.permission.Permission;
@@ -118,23 +120,28 @@ public final class LogItCore
         getDataFolder().mkdir();
         
         firstRun = !getDataFile("config.yml").exists();
-        config = new PredefinedConfiguration("config.yml", "config-def.b64", "config-def.b64",
-                "# # # # # # # # # # # # # # #\n"
-              + " LogIt Configuration File   #\n"
-              + "# # # # # # # # # # # # # # #\n");
-        stats = new PredefinedConfiguration("stats.yml", "stats-def.b64", "stats-def.b64",
-                "# # # # # # # # # # # # # # #\n"
-              + "  LogIt Statistics File     #\n"
-              + "# # # # # # # # # # # # # # #\n");
+        
+        String configHeader = "# # # # # # # # # # # # # # #\n"
+                            + " LogIt Configuration File   #\n"
+                            + "# # # # # # # # # # # # # # #\n";
+        
+        String statsHeader = "# # # # # # # # # # # # # # #\n"
+                           + "  LogIt Statistics File     #\n"
+                           + "# # # # # # # # # # # # # # #\n";
+        
+        configurationManager = new ConfigurationManager();
+        configurationManager.registerConfiguration("config.yml",
+                "config-def.b64", "config-def.b64", configHeader);
+        configurationManager.registerConfiguration("stats.yml",
+                "stats-def.b64", "stats-def.b64", statsHeader);
         
         try
         {
-            config.load();
-            stats.load();
+            configurationManager.loadAll();
         }
         catch (IOException | InvalidConfigurationException ex)
         {
-            log(Level.SEVERE, "Could not load a predefined configuration file.", ex);
+            log(Level.SEVERE, "Could not load a configuration file.", ex);
             
             FatalReportedException.throwNew(ex);
         }
@@ -145,9 +152,9 @@ public final class LogItCore
             FatalReportedException.throwNew(ex);
         }
         
-        if (config.getBoolean("logging.file.enabled"))
+        if (getConfig("config.yml").getBoolean("logging.file.enabled"))
         {
-            openLogFile(config.getString("logging.file.filename"));
+            openLogFile(getConfig("config.yml").getString("logging.file.filename"));
         }
         
         if (firstRun)
@@ -162,7 +169,8 @@ public final class LogItCore
             {
                 try
                 {
-                    IoUtils.extractResource("password-recovery.html", passwordRecoveryTemplateFile);
+                    IoUtils.extractResource("password-recovery.html",
+                            passwordRecoveryTemplateFile);
                 }
                 catch (IOException ex)
                 {
@@ -193,36 +201,42 @@ public final class LogItCore
         localeManager.registerLocale(PolishLocale.getInstance());
         localeManager.registerLocale(GermanLocale.getInstance());
         localeManager.setFallbackLocale(EnglishLocale.class);
-        localeManager.switchActiveLocale(getConfig().getString("locale"));
+        localeManager.switchActiveLocale(getConfig("config.yml").getString("locale"));
         
         StorageType leadingStorageType = StorageType.decode(
-            getConfig().getString("storage.accounts.leading.storage-type")
+                getConfig("config.yml").getString("storage.accounts.leading.storage-type")
         );
         StorageType mirrorStorageType = StorageType.decode(
-            getConfig().getString("storage.accounts.mirror.storage-type")
+                getConfig("config.yml").getString("storage.accounts.mirror.storage-type")
         );
         
-        String accountsUnit = config.getString("storage.accounts.leading.unit");
+        String accountsUnit = getConfig("config.yml").getString("storage.accounts.leading.unit");
         AccountKeys accountKeys = new AccountKeys(
-            config.getString("storage.accounts.keys.username"),
-            config.getString("storage.accounts.keys.salt"),
-            config.getString("storage.accounts.keys.password"),
-            config.getString("storage.accounts.keys.hashing_algorithm"),
-            config.getString("storage.accounts.keys.ip"),
-            config.getString("storage.accounts.keys.login_session"),
-            config.getString("storage.accounts.keys.email"),
-            config.getString("storage.accounts.keys.last_active_date"),
-            config.getString("storage.accounts.keys.reg_date"),
-            config.getString("storage.accounts.keys.is_locked"),
-            config.getString("storage.accounts.keys.login_history"),
-            config.getString("storage.accounts.keys.persistence")
+            getConfig("config.yml").getString("storage.accounts.keys.username"),
+            getConfig("config.yml").getString("storage.accounts.keys.salt"),
+            getConfig("config.yml").getString("storage.accounts.keys.password"),
+            getConfig("config.yml").getString("storage.accounts.keys.hashing_algorithm"),
+            getConfig("config.yml").getString("storage.accounts.keys.ip"),
+            getConfig("config.yml").getString("storage.accounts.keys.login_session"),
+            getConfig("config.yml").getString("storage.accounts.keys.email"),
+            getConfig("config.yml").getString("storage.accounts.keys.last_active_date"),
+            getConfig("config.yml").getString("storage.accounts.keys.reg_date"),
+            getConfig("config.yml").getString("storage.accounts.keys.is_locked"),
+            getConfig("config.yml").getString("storage.accounts.keys.login_history"),
+            getConfig("config.yml").getString("storage.accounts.keys.persistence")
         );
-        Storage leadingAccountStorage = StorageFactory.produceStorage(leadingStorageType,
-                config.getConfigurationSection("storage.accounts.leading"));
-        Storage mirrorAccountStorage = StorageFactory.produceStorage(mirrorStorageType,
-                config.getConfigurationSection("storage.accounts.mirror"));
-        CacheType accountCacheType =
-                CacheType.decode(config.getString("storage.accounts.leading.cache"));
+        
+        Storage leadingAccountStorage =
+                new StorageFactory(getConfig("config.yml"), "storage.accounts.leading")
+                        .produceStorage(leadingStorageType);
+        
+        Storage mirrorAccountStorage = 
+                new StorageFactory(getConfig("config.yml"), "storage.accounts.mirror")
+                        .produceStorage(mirrorStorageType);
+        
+        CacheType accountCacheType = CacheType.decode(
+                getConfig("config.yml").getString("storage.accounts.leading.cache")
+        );
         
         @SuppressWarnings("resource")
         WrapperStorage accountStorage = new WrapperStorage.Builder()
@@ -233,8 +247,8 @@ public final class LogItCore
                 .build();
         accountStorage.mirrorStorage(mirrorAccountStorage, new Hashtable<String, String>()
             {{
-                put(config.getString("storage.accounts.leading.unit"),
-                    config.getString("storage.accounts.mirror.unit"));
+                put(getConfig("config.yml").getString("storage.accounts.leading.unit"),
+                    getConfig("config.yml").getString("storage.accounts.mirror.unit"));
             }});
         
         try
@@ -288,7 +302,9 @@ public final class LogItCore
         {
             try
             {
-                accountStorage.selectEntries(config.getString("storage.accounts.leading.unit"));
+                accountStorage.selectEntries(
+                        getConfig("config.yml").getString("storage.accounts.leading.unit")
+                );
             }
             catch (IOException ex)
             {
@@ -300,23 +316,23 @@ public final class LogItCore
         persistenceManager = new PersistenceManager();
         
         setSerializerEnabled(LocationSerializer.class,
-                config.getBoolean("waiting-room.enabled"));
+                getConfig("config.yml").getBoolean("waiting-room.enabled"));
         setSerializerEnabled(AirBarSerializer.class,
-                config.getBoolean("force-login.obfuscate-bars.air"));
+                getConfig("config.yml").getBoolean("force-login.obfuscate-bars.air"));
         setSerializerEnabled(HealthBarSerializer.class,
-                config.getBoolean("force-login.obfuscate-bars.health"));
+                getConfig("config.yml").getBoolean("force-login.obfuscate-bars.health"));
         setSerializerEnabled(ExperienceSerializer.class,
-                config.getBoolean("force-login.obfuscate-bars.experience"));
+                getConfig("config.yml").getBoolean("force-login.obfuscate-bars.experience"));
         setSerializerEnabled(HungerBarSerializer.class,
-                config.getBoolean("force-login.obfuscate-bars.hunger"));
+                getConfig("config.yml").getBoolean("force-login.obfuscate-bars.hunger"));
         
         backupManager = new BackupManager(accountManager);
         sessionManager = new SessionManager();
         messageDispatcher = new LogItMessageDispatcher();
         
-        if (config.getBoolean("profiles.enabled"))
+        if (getConfig("config.yml").getBoolean("profiles.enabled"))
         {
-            File profilesPath = getDataFile(config.getString("profiles.path"));
+            File profilesPath = getDataFile(getConfig("config.yml").getString("profiles.path"));
             
             if (!profilesPath.exists())
             {
@@ -324,7 +340,7 @@ public final class LogItCore
             }
             
             profileManager = new ProfileManager(profilesPath,
-                    config.getConfigurationSection("profiles.fields"));
+                    getConfig("config.yml").getValues("profiles.fields"));
         }
         
         globalPasswordManager = new GlobalPasswordManager();
@@ -429,16 +445,10 @@ public final class LogItCore
         if (isStarted())
             throw new IllegalStateException("Cannot dispose the LogIt core while it's running.");
         
-        if (config != null)
+        if (configurationManager != null)
         {
-            config.dispose();
-            config = null;
-        }
-        
-        if (stats != null)
-        {
-            stats.dispose();
-            stats = null;
+            configurationManager.dispose();
+            configurationManager = null;
         }
         
         if (localeManager != null)
@@ -515,7 +525,8 @@ public final class LogItCore
         if (!isStarted())
             throw new IllegalStateException("The LogIt core is not started.");
         
-        File sessionsFile = getDataFile(config.getString("storage.sessions.filename"));
+        File sessionsFile =
+                getDataFile(getConfig("config.yml").getString("storage.sessions.filename"));
         
         try
         {
@@ -531,7 +542,7 @@ public final class LogItCore
         
         try
         {
-            plugin.reloadMessages(getConfig().getString("locale"));
+            plugin.reloadMessages(getConfig("config.yml").getString("locale"));
         }
         catch (IOException ex)
         {
@@ -574,7 +585,8 @@ public final class LogItCore
     public boolean checkPassword(String password, String hashedPassword,
                                  HashingAlgorithm hashingAlgorithm)
     {
-        if (hashingAlgorithm == null || config.getBoolean("password.global-hashing-algorithm"))
+        if (hashingAlgorithm == null
+                || getConfig("config.yml").getBoolean("password.global-hashing-algorithm"))
         {
             hashingAlgorithm = getDefaultHashingAlgorithm();
         }
@@ -615,7 +627,8 @@ public final class LogItCore
         if (hashedPassword == null || hashedPassword.isEmpty())
             return false;
         
-        if (hashingAlgorithm == null || config.getBoolean("password.global-hashing-algorithm"))
+        if (hashingAlgorithm == null
+                || getConfig("config.yml").getBoolean("password.global-hashing-algorithm"))
         {
             hashingAlgorithm = getDefaultHashingAlgorithm();
         }
@@ -633,13 +646,17 @@ public final class LogItCore
         }
         else
         {
-            if (config.getBoolean("password.use-salt"))
+            if (getConfig("config.yml").getBoolean("password.use-salt"))
             {
-                return hashedPassword.equals(SecurityHelper.hash(password, salt, hashingAlgorithm));
+                return hashedPassword.equals(
+                        SecurityHelper.hash(password, salt, hashingAlgorithm)
+                );
             }
             else
             {
-                return hashedPassword.equals(SecurityHelper.hash(password, hashingAlgorithm));
+                return hashedPassword.equals(
+                        SecurityHelper.hash(password, hashingAlgorithm)
+                );
             }
         }
     }
@@ -663,12 +680,17 @@ public final class LogItCore
      */
     public boolean isPlayerForcedToLogIn(Player player)
     {
-        String worldName = player.getWorld().getName();
+        String playerWorldName = player.getWorld().getName();
         
-        return (config.getBoolean("force-login.global")
-                || config.getStringList("force-login.in-worlds").contains(worldName))
-             && !containsIgnoreCase(player.getName(),
-                     config.getStringList("force-login.exempt-players"));
+        boolean forcedLoginGlobal =
+                getConfig("config.yml").getBoolean("force-login.global");
+        List<String> exemptedWorlds =
+                getConfig("config.yml").getStringList("force-login.in-worlds");
+        List<String> exemptedPlayers =
+                getConfig("config.yml").getStringList("force-login.exempt-players");
+        
+        return (forcedLoginGlobal || exemptedWorlds.contains(playerWorldName))
+                && !containsIgnoreCase(player.getName(), exemptedPlayers);
     }
     
     /**
@@ -692,24 +714,32 @@ public final class LogItCore
         
         if (accountManager.isRegistered(player.getName()))
         {
-            vaultPermissions.playerRemoveGroup(player, config.getString("groups.unregistered"));
-            vaultPermissions.playerAddGroup(player, config.getString("groups.registered"));
+            vaultPermissions.playerRemoveGroup(player,
+                    getConfig("config.yml").getString("groups.unregistered"));
+            vaultPermissions.playerAddGroup(player,
+                    getConfig("config.yml").getString("groups.registered"));
         }
         else
         {
-            vaultPermissions.playerRemoveGroup(player, config.getString("groups.registered"));
-            vaultPermissions.playerAddGroup(player, config.getString("groups.unregistered"));
+            vaultPermissions.playerRemoveGroup(player,
+                    getConfig("config.yml").getString("groups.registered"));
+            vaultPermissions.playerAddGroup(player,
+                    getConfig("config.yml").getString("groups.unregistered"));
         }
         
         if (sessionManager.isSessionAlive(player))
         {
-            vaultPermissions.playerRemoveGroup(player, config.getString("groups.logged-out"));
-            vaultPermissions.playerAddGroup(player, config.getString("groups.logged-in"));
+            vaultPermissions.playerRemoveGroup(player,
+                    getConfig("config.yml").getString("groups.logged-out"));
+            vaultPermissions.playerAddGroup(player,
+                    getConfig("config.yml").getString("groups.logged-in"));
         }
         else
         {
-            vaultPermissions.playerRemoveGroup(player, config.getString("groups.logged-in"));
-            vaultPermissions.playerAddGroup(player, config.getString("groups.logged-out"));
+            vaultPermissions.playerRemoveGroup(player,
+                    getConfig("config.yml").getString("groups.logged-in"));
+            vaultPermissions.playerAddGroup(player,
+                    getConfig("config.yml").getString("groups.logged-out"));
         }
     }
     
@@ -729,14 +759,14 @@ public final class LogItCore
         if (level == null)
             throw new IllegalArgumentException();
         
-        if (config != null && config.isLoaded())
+        if (getConfig("config.yml") != null && getConfig("config.yml").isLoaded())
         {
-            if (config.getBoolean("logging.file.enabled")
-                    && level.intValue() >= config.getInt("logging.file.level"))
+            if (getConfig("config.yml").getBoolean("logging.file.enabled")
+                    && level.intValue() >= getConfig("config.yml").getInt("logging.file.level"))
             {
                 if (logFileWriter == null)
                 {
-                    openLogFile(config.getString("logging.file.filename"));
+                    openLogFile(getConfig("config.yml").getString("logging.file.filename"));
                 }
                 
                 try
@@ -755,7 +785,7 @@ public final class LogItCore
                 }
             }
             
-            if (config.getBoolean("logging.verbose-console"))
+            if (getConfig("config.yml").getBoolean("logging.verbose-console"))
             {
                 System.out.println("[" + level + "] " + ChatColor.stripColor(message));
                 
@@ -878,20 +908,20 @@ public final class LogItCore
         enableCommand("login", new LoginCommand());
         enableCommand("logout", new LogoutCommand());
         enableCommand("remember", new RememberCommand(),
-                config.getBoolean("login-sessions.enabled"));
+                getConfig("config.yml").getBoolean("login-sessions.enabled"));
         enableCommand("register", new RegisterCommand());
         enableCommand("unregister", new UnregisterCommand());
         enableCommand("changepass", new ChangePassCommand(),
-                !config.getBoolean("password.disable-passwords"));
+                !getConfig("config.yml").getBoolean("password.disable-passwords"));
         enableCommand("changeemail", new ChangeEmailCommand());
         enableCommand("recoverpass", new RecoverPassCommand(),
-                config.getBoolean("password-recovery.enabled"));
+                getConfig("config.yml").getBoolean("password-recovery.enabled"));
         enableCommand("profile", new ProfileCommand(),
-                config.getBoolean("profiles.enabled"));
+                getConfig("config.yml").getBoolean("profiles.enabled"));
         enableCommand("acclock", new AcclockCommand());
         enableCommand("accunlock", new AccunlockCommand());
         enableCommand("loginhistory", new LoginHistoryCommand(),
-                config.getBoolean("login-history.enabled"));
+                getConfig("config.yml").getBoolean("login-history.enabled"));
         enableCommand("$logit-nop-command", new NopCommandExecutor());
     }
     
@@ -1004,25 +1034,14 @@ public final class LogItCore
         return started;
     }
     
-    public PredefinedConfiguration getConfig()
+    public ConfigurationManager getConfigurationManager()
     {
-        return config;
+        return configurationManager;
     }
     
-    public PredefinedConfiguration getStats()
+    public PredefinedConfiguration getConfig(String filename)
     {
-        return stats;
-    }
-    
-    /**
-     * Checks if the LogIt configuration file has been successfully loaded.
-     * 
-     * @return {@code true} if the configuration file has been loaded;
-     *         {@code false} otherwise.
-     */
-    public boolean isConfigLoaded()
-    {
-        return config != null && config.isLoaded();
+        return configurationManager.getConfiguration(filename);
     }
     
     /**
@@ -1032,12 +1051,16 @@ public final class LogItCore
      */
     public HashingAlgorithm getDefaultHashingAlgorithm()
     {
-        return HashingAlgorithm.decode(getConfig().getString("password.hashing-algorithm"));
+        return HashingAlgorithm.decode(
+                getConfig("config.yml").getString("password.hashing-algorithm")
+        );
     }
     
     public IntegrationType getIntegration()
     {
-        return IntegrationType.decode(getConfig().getString("integration"));
+        return IntegrationType.decode(
+                getConfig("config.yml").getString("integration")
+        );
     }
     
     public LocaleManager getLocaleManager()
@@ -1118,8 +1141,7 @@ public final class LogItCore
     private boolean firstRun;
     private boolean started = false;
     
-    private PredefinedConfiguration config;
-    private PredefinedConfiguration stats;
+    private ConfigurationManager    configurationManager;
     private LocaleManager           localeManager;
     private AccountManager          accountManager;
     private PersistenceManager      persistenceManager;

@@ -74,12 +74,13 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
     @Override
     public void run()
     {
-        if (!getConfig().getBoolean("backup.schedule.enabled"))
+        if (!getConfig("config.yml").getBoolean("backup.schedule.enabled"))
             return;
         
         timer.run();
         
-        long interval = getConfig().getTime("backup.schedule.interval", TimeUnit.TICKS);
+        long interval = getConfig("config.yml")
+                .getTime("backup.schedule.interval", TimeUnit.TICKS);
         
         if (timer.getElapsed() >= interval)
         {
@@ -106,7 +107,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
      */
     public File createBackup(boolean asynchronously)
     {
-        File backupDir = getDataFile(getConfig().getString("backup.path"));
+        File backupDir = getDataFile(getConfig("config.yml").getString("backup.path"));
         final File backupFile = new File(backupDir, formatBackupFilename(new Date()));
         
         backupDir.mkdir();
@@ -271,7 +272,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
      */
     public File[] getBackups(boolean sortAlphabetically)
     {
-        File backupDir = getDataFile(getConfig().getString("backup.path"));
+        File backupDir = getDataFile(getConfig("config.yml").getString("backup.path"));
         File[] backupFiles = backupDir.listFiles();
         
         if (backupFiles == null)
@@ -301,7 +302,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
         if (filename == null)
             throw new IllegalArgumentException();
         
-        File backupDir = getDataFile(getConfig().getString("backup.path"));
+        File backupDir = getDataFile(getConfig("config.yml").getString("backup.path"));
         File backupFile = new File(backupDir, filename);
         
         if (!backupFile.exists())
@@ -328,7 +329,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
     
     private SimpleDateFormat buildDateFormat()
     {
-        String backupFilenameFormat = getConfig().getString("backup.filename-format");
+        String backupFilenameFormat = getConfig("config.yml").getString("backup.filename-format");
         SimpleDateFormat dateFormat = new SimpleDateFormat(backupFilenameFormat);
         
         return dateFormat;

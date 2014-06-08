@@ -43,7 +43,7 @@ public final class ConfigSetHubCommand extends HubCommand
     @Override
     public void execute(CommandSender sender, String[] args)
     {
-        if (!getConfig().contains(args[0]))
+        if (!getConfig("config.yml").contains(args[0]))
         {
             sendMsg(sender, _("config.propertyNotFound")
                     .replace("{0}", args[0]));
@@ -51,7 +51,7 @@ public final class ConfigSetHubCommand extends HubCommand
             return;
         }
         
-        PropertyType type = getConfig().getType(args[0]);
+        PropertyType type = getConfig("config.yml").getProperty(args[0]).getType();
         String inputValue = args[1];
         Object outputValue = null;
         
@@ -209,16 +209,16 @@ public final class ConfigSetHubCommand extends HubCommand
                 throw new Exception("Unknown property type.");
             }
             
-            getConfig().set(args[0], outputValue);
+            getConfig("config.yml").set(args[0], outputValue);
             
             if (sender instanceof Player)
             {
                 sendMsg(sender, _("config.set.success")
                         .replace("{0}", args[0])
-                        .replace("{1}", getConfig().toString(args[0])));
+                        .replace("{1}", getConfig("config.yml").get(args[0]).toString()));
             }
             
-            if (getConfig().getProperty(args[0]).requiresRestart())
+            if (getConfig("config.yml").getProperty(args[0]).requiresRestart())
             {
                 sendMsg(sender, _("config.set.reloadPlugin"));
             }

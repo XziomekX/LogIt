@@ -42,7 +42,7 @@ public final class ConfigListHubCommand extends HubCommand
     @Override
     public void execute(CommandSender sender, String[] args)
     {
-        Map<String, Property> properties = getConfig().getProperties();
+        Map<String, Property> properties = getConfig("config.yml").getProperties();
         
         final int PROPERTIES_PER_PAGE = 15;
         int page = 1;

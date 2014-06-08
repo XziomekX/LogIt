@@ -62,8 +62,9 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
             }
             else
             {
-                long validnessTime =
-                        getConfig().getTime("login-sessions.validness-time", TimeUnit.SECONDS);
+                long validnessTime = getConfig("config.yml")
+                        .getTime("login-sessions.validness-time", TimeUnit.SECONDS);
+                
                 int currentTime = (int) (System.currentTimeMillis() / 1000L);
                 
                 try

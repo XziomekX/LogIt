@@ -42,7 +42,8 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             p = (Player) sender;
         }
         
-        boolean disablePasswords = getConfig().getBoolean("password.disable-passwords");
+        boolean disablePasswords = getConfig("config.yml")
+                .getBoolean("password.disable-passwords");
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 2)
         {
@@ -162,8 +163,10 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
                     return true;
                 }
                 
-                getCooldownManager().activateCooldown(p, LogItCooldowns.UNREGISTER,
-                        getConfig().getTime("cooldowns.unregister", TimeUnit.MILLISECONDS));
+                long cooldown = getConfig("config.yml")
+                        .getTime("cooldowns.unregister", TimeUnit.MILLISECONDS);
+                
+                getCooldownManager().activateCooldown(p, LogItCooldowns.UNREGISTER, cooldown);
                 
                 sendMsg(sender, _("removeAccount.success.self"));
             }

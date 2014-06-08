@@ -36,7 +36,7 @@ public final class QuitMessageGenerator
         
         String message;
         
-        if (core.getConfig().getBoolean("messages.beautify"))
+        if (core.getConfig("config.yml").getBoolean("messages.beautify"))
         {
             message = _("quit.beautified");
         }

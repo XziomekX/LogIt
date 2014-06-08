@@ -76,7 +76,8 @@ public final class SqlUtils
                         || resolveSelector(selectorBinary.getRightOperand(), entry);
                 
             default:
-                throw new RuntimeException("Unsupported relation: " + selectorBinary.getRelation());
+                throw new RuntimeException("Unsupported relation: "
+                                         + selectorBinary.getRelation());
             }
         }
         else if (selector instanceof SelectorCondition)
@@ -158,7 +159,9 @@ public final class SqlUtils
         return entries;
     }
     
-    public static String translateSelector(Selector selector, String columnQuote, String valueQuote)
+    public static String translateSelector(Selector selector,
+                                           String columnQuote,
+                                           String valueQuote)
     {
         if (selector == null)
             throw new IllegalArgumentException();
@@ -197,7 +200,8 @@ public final class SqlUtils
                 break;
                 
             default:
-                throw new RuntimeException("Unsupported relation: " + selectorBinary.getRelation());
+                throw new RuntimeException("Unsupported relation: "
+                                         + selectorBinary.getRelation());
             }
             
             sb.append(" (");

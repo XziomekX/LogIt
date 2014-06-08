@@ -49,13 +49,13 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
             @Override
             public void run()
             {
-                if (getConfig().getBoolean("groups.enabled"))
+                if (getConfig("config.yml").getBoolean("groups.enabled"))
                 {
                     getCore().updatePlayerGroup(player);
                 }
                 
                 if (getCore().isPlayerForcedToLogIn(player)
-                        && !getConfig().getBoolean("messages.join.hide"))
+                        && !getConfig("config.yml").getBoolean("messages.join.hide"))
                 {
                     getMessageDispatcher().broadcastJoinMessage(player);
                 }
@@ -85,13 +85,13 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
             @Override
             public void run()
             {
-                if (getConfig().getBoolean("groups.enabled"))
+                if (getConfig("config.yml").getBoolean("groups.enabled"))
                 {
                     getCore().updatePlayerGroup(player);
                 }
                 
                 if (getCore().isPlayerForcedToLogIn(player)
-                        && !getConfig().getBoolean("messages.quit.hide"))
+                        && !getConfig("config.yml").getBoolean("messages.quit.hide"))
                 {
                     getMessageDispatcher().broadcastQuitMessage(player);
                 }
@@ -102,10 +102,10 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
         {
             getPersistenceManager().serialize(player);
             
-            if (getConfig().getBoolean("force-login.periodical-prompt.enabled"))
+            if (getConfig("config.yml").getBoolean("force-login.periodical-prompt.enabled"))
             {
-                long promptPeriod =
-                        getConfig().getTime("force-login.periodical-prompt.period", TimeUnit.TICKS);
+                long promptPeriod = getConfig("config.yml")
+                        .getTime("force-login.periodical-prompt.period", TimeUnit.TICKS);
                 
                 getMessageDispatcher()
                         .dispatchRepeatingForceLoginPrompter(username, promptPeriod, promptPeriod);

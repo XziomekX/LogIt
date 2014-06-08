@@ -39,18 +39,20 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.bukkit.Color;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-public final class PredefinedConfiguration extends PropertyObserver implements Disposable
+public final class PredefinedConfiguration
+        extends PropertyObserver
+        implements PropertyHolder, Disposable
 {
     public PredefinedConfiguration(String filename,
                                    String userConfigDef,
@@ -62,11 +64,6 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
         this.userConfigDef = userConfigDef;
         this.packageConfigDef = packageConfigDef;
         this.header = header;
-    }
-    
-    public PredefinedConfiguration(String filename, String userConfigDef, String packageConfigDef)
-    {
-        this(filename, userConfigDef, packageConfigDef, null);
     }
     
     @Override
@@ -161,6 +158,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
         configuration.save(file);
     }
     
+    @Override
     public Map<String, Property> getProperties()
     {
         return ImmutableMap.copyOf(properties);
@@ -173,6 +171,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
      * 
      * @return the property object.
      */
+    @Override
     public Property getProperty(String path)
     {
         return properties.get(path);
@@ -185,94 +184,174 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
      * 
      * @return {@code true} if such property exists; {@code false} otherwise.
      */
+    @Override
     public boolean contains(String path)
     {
         return properties.containsKey(path);
     }
     
-    public PropertyType getType(String path)
+    @Override
+    public Set<String> getKeys(String path)
     {
-        return properties.get(path).getType();
+        return configuration.getConfigurationSection(path).getKeys(false);
     }
     
-    public String toString(String path)
+    @Override
+    public Map<String, Object> getValues(String path)
     {
-        return properties.get(path).toString();
+        Map<String, Object> values = new LinkedHashMap<>();
+        
+        for (String key : getKeys(path))
+        {
+            values.put(key, getString(path + "." + key));
+        }
+        
+        return values;
     }
     
-    public ConfigurationSection getConfigurationSection(String path)
-    {
-        return configuration.getConfigurationSection(path);
-    }
-    
+    @Override
     public Object get(String path)
     {
         return properties.get(path);
     }
     
+    @Override
     public boolean getBoolean(String path)
     {
         return (Boolean) properties.get(path).getValue();
     }
     
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Boolean> getBooleanList(String path)
+    {
+        return (List<Boolean>) properties.get(path).getValue();
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Byte> getByteList(String path)
+    {
+        return (List<Byte>) properties.get(path).getValue();
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Character> getCharacterList(String path)
+    {
+        return (List<Character>) properties.get(path).getValue();
+    }
+    
+    @Override
     public Color getColor(String path)
     {
         return (Color) properties.get(path).getValue();
     }
     
+    @Override
     public double getDouble(String path)
     {
         return (Double) properties.get(path).getValue();
     }
     
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Double> getDoubleList(String path)
+    {
+        return (List<Double>) properties.get(path).getValue();
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Float> getFloatList(String path)
+    {
+        return (List<Float>) properties.get(path).getValue();
+    }
+    
+    @Override
     public int getInt(String path)
     {
         return (Integer) properties.get(path).getValue();
     }
     
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Integer> getIntegerList(String path)
+    {
+        return (List<Integer>) properties.get(path).getValue();
+    }
+    
+    @Override
     public ItemStack getItemStack(String path)
     {
         return (ItemStack) properties.get(path).getValue();
     }
     
+    @Override
+    public List<?> getList(String path)
+    {
+        return (List<?>) properties.get(path).getValue();
+    }
+    
+    @Override
     public long getLong(String path)
     {
         return (Long) properties.get(path).getValue();
     }
     
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Long> getLongList(String path)
+    {
+        return (List<Long>) properties.get(path).getValue();
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Map<?, ?>> getMapList(String path)
+    {
+        return (List<Map<?, ?>>) properties.get(path).getValue();
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Short> getShortList(String path)
+    {
+        return (List<Short>) properties.get(path).getValue();
+    }
+    
+    @Override
     public String getString(String path)
     {
         return (String) properties.get(path).getValue();
     }
     
-    public Vector getVector(String path)
-    {
-        return (Vector) properties.get(path).getValue();
-    }
-    
-    @SuppressWarnings("rawtypes")
-    public List getList(String path)
-    {
-        return (List) properties.get(path).getValue();
-    }
-    
+    @Override
     @SuppressWarnings("unchecked")
     public List<String> getStringList(String path)
     {
         return (List<String>) properties.get(path).getValue();
     }
     
+    @Override
+    public Vector getVector(String path)
+    {
+        return (Vector) properties.get(path).getValue();
+    }
+    
+    @Override
     public LocationSerializable getLocation(String path)
     {
         return (LocationSerializable) properties.get(path).getValue();
     }
     
-    public long getTime(String path, TimeUnit returnTimeUnit)
+    @Override
+    public long getTime(String path, TimeUnit convertTo)
     {
-        if (path == null || returnTimeUnit == null)
+        if (path == null || convertTo == null)
             throw new IllegalArgumentException();
         
-        return TimeString.decode(getString(path), returnTimeUnit);
+        return TimeString.decode(getString(path), convertTo);
     }
     
     /**
@@ -284,6 +363,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
      * @throws InvalidPropertyValueException if the value provided
      *                                       is not valid for this property.
      */
+    @Override
     public void set(String path, Object value) throws InvalidPropertyValueException
     {
         properties.get(path).set(value);
@@ -450,12 +530,12 @@ public final class PredefinedConfiguration extends PropertyObserver implements D
         {
             final Map<String, String> defSection = entry.getValue();
             
-            String            path = defSection.get("path");
-            PropertyType      type;
-            boolean           requiresRestart = Boolean.valueOf(defSection.get("requires_restart"));
-            Object            defaultValue;
+            String path = defSection.get("path");
+            PropertyType type;
+            boolean requiresRestart = Boolean.valueOf(defSection.get("requires_restart"));
+            Object defaultValue;
             PropertyValidator validator = null;
-            PropertyObserver  observer = null;
+            PropertyObserver observer = null;
             
             String typeString = defSection.get("type");
             

@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit;
 
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.backup.BackupManager;
+import io.github.lucaseasedup.logit.config.ConfigurationManager;
 import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
 import io.github.lucaseasedup.logit.cooldown.CooldownManager;
 import io.github.lucaseasedup.logit.locale.LocaleManager;
@@ -90,36 +91,14 @@ public abstract class LogItCoreObject
         return core.getDataFile(path);
     }
     
-    /**
-     * Returns the main config for LogIt.
-     * 
-     * @return the main config, or {@code null}
-     *         if the config has not been loaded yet.
-     */
-    protected final PredefinedConfiguration getConfig()
+    protected final ConfigurationManager getConfigurationManager()
     {
-        PredefinedConfiguration config = core.getConfig();
-        
-        if (config == null || !config.isLoaded())
-            return null;
-        
-        return config;
+        return core.getConfigurationManager();
     }
     
-    /**
-     * Returns the statistics config for LogIt.
-     * 
-     * @return the statistics config, or {@code null}
-     *         if the config has not been loaded yet.
-     */
-    protected final PredefinedConfiguration getStats()
+    protected final PredefinedConfiguration getConfig(String filename)
     {
-        PredefinedConfiguration stats = core.getStats();
-        
-        if (stats == null || !stats.isLoaded())
-            return null;
-        
-        return stats;
+        return core.getConfig(filename);
     }
     
     protected final LocaleManager getLocaleManager()

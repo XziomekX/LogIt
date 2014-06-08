@@ -56,8 +56,8 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
      */
     public void sendForceLoginMessage(Player player)
     {
-        long minInterval =
-                getConfig().getTime("force-login.prompt.min-interval", TimeUnit.MILLISECONDS);
+        long minInterval = getConfig("config.yml")
+                .getTime("force-login.prompt.min-interval", TimeUnit.MILLISECONDS);
         
         if (minInterval > 0)
         {
@@ -72,9 +72,9 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         
         if (getAccountManager().isRegistered(player.getName()))
         {
-            if (getConfig().getBoolean("force-login.prompt.login"))
+            if (getConfig("config.yml").getBoolean("force-login.prompt.login"))
             {
-                if (!getConfig().getBoolean("password.disable-passwords"))
+                if (!getConfig("config.yml").getBoolean("password.disable-passwords"))
                 {
                     sendMsg(player, _("pleaseLogIn"));
                 }
@@ -86,9 +86,9 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         }
         else
         {
-            if (getConfig().getBoolean("force-login.prompt.register"))
+            if (getConfig("config.yml").getBoolean("force-login.prompt.register"))
             {
-                if (!getConfig().getBoolean("password.disable-passwords"))
+                if (!getConfig("config.yml").getBoolean("password.disable-passwords"))
                 {
                     sendMsg(player, _("pleaseRegister"));
                 }
@@ -127,7 +127,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
             return;
         
         String joinMessage = JoinMessageGenerator.generate(player,
-                getConfig().getBoolean("messages.join.show-world"));
+                getConfig("config.yml").getBoolean("messages.join.show-world"));
         
         broadcastMsgExcept(joinMessage, Arrays.asList(player.getName()));
     }

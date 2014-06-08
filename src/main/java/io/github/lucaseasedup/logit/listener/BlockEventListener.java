@@ -32,7 +32,7 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onPlace(BlockPlaceEvent event)
     {
-        if (!getConfig().getBoolean("force-login.prevent.block-place"))
+        if (!getConfig("config.yml").getBoolean("force-login.prevent.block-place"))
             return;
         
         Player player = event.getPlayer();
@@ -41,7 +41,7 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
         {
             event.setCancelled(true);
             
-            if (getConfig().getBoolean("force-login.prompt-on.block-place"))
+            if (getConfig("config.yml").getBoolean("force-login.prompt-on.block-place"))
             {
                 getMessageDispatcher().sendForceLoginMessage(player);
             }
@@ -51,7 +51,7 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onBreak(BlockBreakEvent event)
     {
-        if (!getConfig().getBoolean("force-login.prevent.block-break"))
+        if (!getConfig("config.yml").getBoolean("force-login.prevent.block-break"))
             return;
         
         Player player = event.getPlayer();
@@ -60,7 +60,7 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
         {
             event.setCancelled(true);
             
-            if (getConfig().getBoolean("force-login.prompt-on.block-break"))
+            if (getConfig("config.yml").getBoolean("force-login.prompt-on.block-break"))
             {
                 getMessageDispatcher().sendForceLoginMessage(player);
             }
@@ -70,7 +70,7 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onHangingBreak(HangingBreakByEntityEvent event)
     {
-        if (!getConfig().getBoolean("force-login.prevent.block-break")
+        if (!getConfig("config.yml").getBoolean("force-login.prevent.block-break")
                 || !(event.getRemover() instanceof Player))
             return;
         
@@ -80,7 +80,7 @@ public final class BlockEventListener extends LogItCoreObject implements Listene
         {
             event.setCancelled(true);
             
-            if (getConfig().getBoolean("force-login.prompt-on.block-break"))
+            if (getConfig("config.yml").getBoolean("force-login.prompt-on.block-break"))
             {
                 getMessageDispatcher().sendForceLoginMessage(player);
             }

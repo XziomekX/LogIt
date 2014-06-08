@@ -44,7 +44,7 @@ public final class ConfigReloadHubCommand extends HubCommand
     {
         try
         {
-            getConfig().load();
+            getConfigurationManager().loadAll();
             
             log(Level.INFO, _("reloadConfig.success"));
             

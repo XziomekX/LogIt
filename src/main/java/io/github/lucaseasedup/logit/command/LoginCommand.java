@@ -47,7 +47,8 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             p = (Player) sender;
         }
         
-        boolean disablePasswords = getConfig().getBoolean("password.disable-passwords");
+        boolean disablePasswords = getConfig("config.yml")
+                .getBoolean("password.disable-passwords");
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 2)
         {
@@ -90,14 +91,15 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     sendMsg(sender, _("startSession.success.others")
                             .replace("{0}", args[1]));
                     
-                    getCore().getStats().set("logins", getCore().getStats().getInt("logins") + 1);
+                    getConfig("stats.yml").set("logins",
+                            getConfig("stats.yml").getInt("logins") + 1);
                 }
             }
         }
         else if ((args.length == 0 && disablePasswords) || (args.length <= 1 && !disablePasswords))
         {
-            int failsToKick = getConfig().getInt("login-fails-to-kick");
-            int failsToBan = getConfig().getInt("login-fails-to-ban");
+            int failsToKick = getConfig("config.yml").getInt("login-fails-to-kick");
+            int failsToBan = getConfig("config.yml").getInt("login-fails-to-ban");
             
             if (p == null)
             {
@@ -181,7 +183,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                         failedLoginsToKick.remove(username);
                     }
                     
-                    if (getConfig().getBoolean("login-history.enabled"))
+                    if (getConfig("config.yml").getBoolean("login-history.enabled"))
                     {
                         getAccountManager().recordLogin(username,
                                 System.currentTimeMillis() / 1000L, playerIp, false);
@@ -203,14 +205,14 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 
                 sendMsg(sender, _("startSession.success.self"));
                 
-                getCore().getStats().set("logins", getCore().getStats().getInt("logins") + 1);
+                getConfig("stats.yml").set("logins", getConfig("stats.yml").getInt("logins") + 1);
                 
-                if (getConfig().getBoolean("login-sessions.enabled"))
+                if (getConfig("config.yml").getBoolean("login-sessions.enabled"))
                 {
                     sendMsg(sender, _("rememberLogin.prompt"));
                 }
                 
-                if (getConfig().getBoolean("login-history.enabled"))
+                if (getConfig("config.yml").getBoolean("login-history.enabled"))
                 {
                     getAccountManager().recordLogin(username,
                             System.currentTimeMillis() / 1000L, playerIp, true);

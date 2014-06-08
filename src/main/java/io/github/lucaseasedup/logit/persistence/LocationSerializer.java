@@ -102,6 +102,6 @@ public final class LocationSerializer extends LogItCoreObject implements Persist
     
     private org.bukkit.Location getWaitingRoomLocation()
     {
-        return getConfig().getLocation("waiting-room.location").toBukkitLocation();
+        return getConfig("config.yml").getLocation("waiting-room.location").toBukkitLocation();
     }
 }

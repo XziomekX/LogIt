@@ -38,7 +38,7 @@ public final class GotowrHubCommand extends HubCommand
     public void execute(final CommandSender sender, String[] args)
     {
         Location waitingRoomLocation =
-                getConfig().getLocation("waiting-room.location").toBukkitLocation();
+                getConfig("config.yml").getLocation("waiting-room.location").toBukkitLocation();
         
         ((Player) sender).teleport(waitingRoomLocation);
     }

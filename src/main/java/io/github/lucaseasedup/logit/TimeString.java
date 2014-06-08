@@ -27,7 +27,7 @@ public final class TimeString
     {
     }
     
-    public static long decode(String string, TimeUnit timeUnit)
+    public static long decode(String string, TimeUnit convertTo)
     {
         Matcher matcher = TimeStringValidator.PATTERN.matcher(string);
         long time = 0;
@@ -39,7 +39,7 @@ public final class TimeString
             
             if (unit != null)
             {
-                time += unit.convert(Long.parseLong(longValue), timeUnit);
+                time += unit.convert(Long.parseLong(longValue), convertTo);
             }
         }
         

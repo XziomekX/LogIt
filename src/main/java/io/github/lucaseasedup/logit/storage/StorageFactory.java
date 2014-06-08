@@ -19,16 +19,18 @@
 package io.github.lucaseasedup.logit.storage;
 
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
 import java.io.File;
-import org.bukkit.configuration.ConfigurationSection;
 
 public final class StorageFactory
 {
-    private StorageFactory()
+    public StorageFactory(PredefinedConfiguration configuration, String path)
     {
+        this.configuration = configuration;
+        this.path = path;
     }
     
-    public static Storage produceStorage(StorageType type, ConfigurationSection config)
+    public Storage produceStorage(StorageType type)
     {
         LogItCore core = LogItCore.getInstance();
         
@@ -39,28 +41,28 @@ public final class StorageFactory
         
         case SQLITE:
             return new SqliteStorage("jdbc:sqlite:" + core.getDataFolder() + "/"
-                    + config.getString("sqlite.filename"));
+                    + configuration.getString(path + ".sqlite.filename"));
             
         case MYSQL:
             return new MySqlStorage(
-                    config.getString("mysql.host"),
-                    config.getString("mysql.user"),
-                    config.getString("mysql.password"),
-                    config.getString("mysql.database"));
+                    configuration.getString(path + ".mysql.host"),
+                    configuration.getString(path + ".mysql.user"),
+                    configuration.getString(path + ".mysql.password"),
+                    configuration.getString(path + ".mysql.database"));
             
         case H2:
             return new H2Storage("jdbc:h2:" + core.getDataFolder()
-                    + "/" + config.getString("h2.filename"));
+                    + "/" + configuration.getString(path + ".h2.filename"));
             
         case POSTGRESQL:
             return new PostgreSqlStorage(
-                    config.getString("postgresql.host"),
-                    config.getString("postgresql.user"),
-                    config.getString("postgresql.password"));
+                    configuration.getString(path + ".postgresql.host"),
+                    configuration.getString(path + ".postgresql.user"),
+                    configuration.getString(path + ".postgresql.password"));
             
         case CSV:
         {
-            File dir = core.getDataFile(config.getString("csv.dir"));
+            File dir = core.getDataFile(configuration.getString(path + ".csv.dir"));
             
             if (!dir.exists())
             {
@@ -74,4 +76,7 @@ public final class StorageFactory
                                        + type.name() + " storage type.");
         }
     }
+    
+    private final PredefinedConfiguration configuration;
+    private final String path;
 }
