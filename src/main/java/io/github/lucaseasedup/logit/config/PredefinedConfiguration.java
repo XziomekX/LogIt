@@ -102,6 +102,8 @@ public final class PredefinedConfiguration
         
         if (!userDefFile.exists())
         {
+            userDefFile.getParentFile().mkdirs();
+            
             IoUtils.extractResource(packageConfigDef, userDefFile);
         }
         
