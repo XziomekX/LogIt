@@ -25,10 +25,14 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.security.HashingAlgorithm;
+import io.github.lucaseasedup.logit.storage.Infix;
+import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.Storage;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -220,7 +224,19 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 
                 if (accountData.get(keys.ip()).trim().isEmpty())
                 {
-                    getAccountManager().attachIp(username, playerIp);
+                    getAccountManager().attachIp(accountData, playerIp);
+                    
+                    try
+                    {
+                        getAccountStorage().updateEntries(getAccountManager().getUnit(),
+                                accountData,
+                                new SelectorCondition(keys.username(), Infix.EQUALS, username)
+                        );
+                    }
+                    catch (IOException ex)
+                    {
+                        log(Level.WARNING, ex);
+                    }
                 }
             }
         }

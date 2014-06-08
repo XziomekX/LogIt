@@ -31,6 +31,7 @@ import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.Storage;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
@@ -118,8 +119,17 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                     
                     if (isPlayerOnline(args[1]))
                     {
-                        getAccountManager().attachIp(args[1],
+                        AccountKeys keys = getAccountManager().getKeys();
+                        Storage.Entry accountData = getAccountManager().queryAccount(args[1],
+                                Arrays.asList(keys.username(), keys.is_locked()));
+                        
+                        getAccountManager().attachIp(accountData,
                                 getPlayerIp(Bukkit.getPlayerExact(args[1])));
+                        
+                        getAccountStorage().updateEntries(getAccountManager().getUnit(),
+                                accountData,
+                                new SelectorCondition(keys.username(), Infix.EQUALS, args[1])
+                        );
                         
                         if (!getSessionManager().startSession(args[1]).isCancelled())
                         {
@@ -141,6 +151,13 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                             Bukkit.getPlayerExact(args[1]).teleport(newbieTeleportLocation);
                         }
                     }
+                }
+                catch (IOException ex)
+                {
+                    log(Level.WARNING, ex);
+                    
+                    sendMsg(sender, _("createAccount.fail.others")
+                            .replace("{0}", args[1]));
                 }
                 catch (ReportedException ex)
                 {
@@ -242,11 +259,13 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 password = args[0];
             }
             
+            String username = p.getName().toLowerCase();
+            
             try
             {
                 ReportedException.incrementRequestCount();
                 
-                if (getAccountManager().createAccount(p.getName(), password).isCancelled())
+                if (getAccountManager().createAccount(username, password).isCancelled())
                 {
                     return true;
                 }
@@ -259,17 +278,18 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 sendMsg(sender, _("createAccount.success.self"));
                 
                 AccountKeys keys = getAccountManager().getKeys();
+                Storage.Entry accountData = getAccountManager().queryAccount(username,
+                        Arrays.asList(keys.username(), keys.is_locked()));
                 
-                getAccountStorage().updateEntries(getAccountManager().getUnit(),
-                        new Storage.Entry.Builder()
-                                .put(keys.display_name(), p.getName())
-                                .build(),
+                getAccountManager().attachIp(accountData, getPlayerIp(p));
+                
+                accountData.put(keys.display_name(), p.getName());
+                
+                getAccountStorage().updateEntries(getAccountManager().getUnit(), accountData,
                         new SelectorCondition(
                                 keys.username(), Infix.EQUALS, p.getName().toLowerCase()
                         )
                 );
-                
-                getAccountManager().attachIp(p.getName(), getPlayerIp(p));
                 
                 if (!getSessionManager().startSession(p.getName()).isCancelled())
                 {

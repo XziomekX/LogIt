@@ -505,46 +505,32 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     }
     
     /**
-     * Attaches an IP address to an account with the given username
-     * in the underlying storage unit.
+     * Attaches an IP address to account data.
      * 
-     * @param username the username.
-     * @param ip       the new IP address.
+     * @param accountData the account data retrieved using {@link #queryAccount}.
+     * @param ip          the new IP address.
      * 
-     * @throws IllegalArgumentException if {@code username} or
+     * @throws IllegalArgumentException if {@code accountData} or
      *                                  {@code ip} is {@code null}.
-     *                                       
-     * @throws ReportedException        if an I/O error occurred,
-     *                                  and it was reported to the logger.
      */
-    public void attachIp(String username, String ip)
+    public void attachIp(Storage.Entry accountData, String ip)
     {
-        if (username == null || ip == null)
+        if (accountData == null || ip == null)
             throw new IllegalArgumentException();
         
         try
         {
             if (getCore().getIntegration() == IntegrationType.PHPBB2)
             {
-                ip = DatatypeConverter.printHexBinary(InetAddress.getByName(ip).getAddress())
-                        .toLowerCase();
+                byte[] address = InetAddress.getByName(ip).getAddress();
+                
+                ip = DatatypeConverter.printHexBinary(address).toLowerCase();
             }
             
-            updateEntry(username, new Storage.Entry.Builder()
-                    .put(keys.ip(), ip)
-                    .build());
-            
-            log(Level.FINE, _("attachIp.success.log")
-                    .replace("{0}", ip)
-                    .replace("{1}", username));
+            accountData.put(keys.ip(), ip);
         }
         catch (IOException ex)
         {
-            log(Level.WARNING, _("attachIp.fail.log")
-                    .replace("{0}", ip)
-                    .replace("{1}", username), ex);
-            
-            ReportedException.throwNew(ex);
         }
     }
     
