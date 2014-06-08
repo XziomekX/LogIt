@@ -1050,6 +1050,9 @@ public final class LogItCore
     
     public PredefinedConfiguration getConfig(String filename)
     {
+        if (configurationManager == null)
+            return null;
+        
         return configurationManager.getConfiguration(filename);
     }
     
