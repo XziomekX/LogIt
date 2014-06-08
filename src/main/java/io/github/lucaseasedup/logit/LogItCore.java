@@ -336,6 +336,7 @@ public final class LogItCore
             
             if (!profilesPath.exists())
             {
+                profilesPath.getParentFile().mkdirs();
                 profilesPath.mkdir();
             }
             

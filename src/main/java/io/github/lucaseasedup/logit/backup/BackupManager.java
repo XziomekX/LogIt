@@ -110,6 +110,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
         File backupDir = getDataFile(getConfig("config.yml").getString("backup.path"));
         final File backupFile = new File(backupDir, formatBackupFilename(new Date()));
         
+        backupDir.getParentFile().mkdirs();
         backupDir.mkdir();
         
         if (backupFile.exists())

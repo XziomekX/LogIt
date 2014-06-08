@@ -66,6 +66,7 @@ public final class StorageFactory
             
             if (!dir.exists())
             {
+                dir.getParentFile().mkdirs();
                 dir.mkdir();
             }
             

@@ -87,6 +87,7 @@ public final class PredefinedConfiguration
     {
         if (!file.exists())
         {
+            file.getParentFile().mkdirs();
             file.createNewFile();
         }
         
