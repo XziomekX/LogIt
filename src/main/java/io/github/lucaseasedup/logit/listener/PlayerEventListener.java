@@ -77,14 +77,14 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             }
         }
         
-        int minUsernameLength = getConfig("config.yml").getInt("username.min-length");
-        int maxUsernameLength = getConfig("config.yml").getInt("username.max-length");
+        int minUsernameLength = getConfig("secret.yml").getInt("username.min-length");
+        int maxUsernameLength = getConfig("secret.yml").getInt("username.max-length");
         
         if (username.trim().isEmpty())
         {
             event.disallow(KICK_OTHER, _("usernameBlank"));
         }
-        else if (!player.getName().matches(getConfig("config.yml").getString("username.regex")))
+        else if (!player.getName().matches(getConfig("secret.yml").getString("username.regex")))
         {
             event.disallow(KICK_OTHER, _("usernameInvalid"));
         }
@@ -99,7 +99,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                     .replace("{0}", String.valueOf(maxUsernameLength)));
         }
         else if (CollectionUtils.containsIgnoreCase(username,
-                getConfig("config.yml").getStringList("username.prohibited-usernames")))
+                getConfig("config.yml").getStringList("prohibited-usernames")))
         {
             event.disallow(KICK_OTHER, _("usernameProhibited"));
         }
