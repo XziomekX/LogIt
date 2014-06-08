@@ -47,6 +47,26 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         }
     }
     
+    public void dispatchMessage(final String username, final String message, long delay)
+    {
+        if (username == null || message == null)
+            throw new IllegalArgumentException();
+        
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                Player player = Bukkit.getPlayerExact(username);
+                
+                if (player != null)
+                {
+                    player.sendMessage(message);
+                }
+            }
+        }.runTaskLater(getPlugin(), delay);
+    }
+    
     /**
      * Sends a message to the given player telling them either to log in or to register.
      * 

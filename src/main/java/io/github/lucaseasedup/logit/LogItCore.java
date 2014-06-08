@@ -231,6 +231,7 @@ public final class LogItCore
             getConfig("config.yml").getString("storage.accounts.keys.reg_date"),
             getConfig("config.yml").getString("storage.accounts.keys.is_locked"),
             getConfig("config.yml").getString("storage.accounts.keys.login_history"),
+            getConfig("config.yml").getString("storage.accounts.keys.display_name"),
             getConfig("config.yml").getString("storage.accounts.keys.persistence")
         );
         

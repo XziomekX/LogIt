@@ -36,6 +36,7 @@ public final class AccountKeys extends LinkedHashtable<String, DataType>
                        String reg_date,
                        String is_locked,
                        String login_history,
+                       String display_name,
                        String persistence)
     {
         put(username,          DataType.TINYTEXT);
@@ -49,6 +50,7 @@ public final class AccountKeys extends LinkedHashtable<String, DataType>
         put(reg_date,          DataType.INTEGER);
         put(is_locked,         DataType.INTEGER);
         put(login_history,     DataType.LONGTEXT);
+        put(display_name,      DataType.TINYTEXT);
         put(persistence,       DataType.TEXT);
         
         this.names = new ImmutableList.Builder<String>().add(
@@ -63,6 +65,7 @@ public final class AccountKeys extends LinkedHashtable<String, DataType>
             reg_date,
             is_locked,
             login_history,
+            display_name,
             persistence).build();
         
         this.username = username;
@@ -76,6 +79,7 @@ public final class AccountKeys extends LinkedHashtable<String, DataType>
         this.reg_date = reg_date;
         this.is_locked = is_locked;
         this.login_history = login_history;
+        this.display_name = display_name;
         this.persistence = persistence;
     }
     
@@ -134,6 +138,11 @@ public final class AccountKeys extends LinkedHashtable<String, DataType>
         return login_history;
     }
     
+    public String display_name()
+    {
+        return display_name;
+    }
+    
     public String persistence()
     {
         return persistence;
@@ -158,5 +167,6 @@ public final class AccountKeys extends LinkedHashtable<String, DataType>
     private final String reg_date;
     private final String is_locked;
     private final String login_history;
+    private final String display_name;
     private final String persistence;
 }

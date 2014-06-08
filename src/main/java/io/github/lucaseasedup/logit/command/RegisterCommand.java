@@ -25,8 +25,14 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
+import io.github.lucaseasedup.logit.storage.Infix;
+import io.github.lucaseasedup.logit.storage.SelectorCondition;
+import io.github.lucaseasedup.logit.storage.Storage;
+import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -252,6 +258,17 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 
                 sendMsg(sender, _("createAccount.success.self"));
                 
+                AccountKeys keys = getAccountManager().getKeys();
+                
+                getAccountStorage().updateEntries(getAccountManager().getUnit(),
+                        new Storage.Entry.Builder()
+                                .put(keys.display_name(), p.getName())
+                                .build(),
+                        new SelectorCondition(
+                                keys.username(), Infix.EQUALS, p.getName().toLowerCase()
+                        )
+                );
+                
                 getAccountManager().attachIp(p.getName(), getPlayerIp(p));
                 
                 if (!getSessionManager().startSession(p.getName()).isCancelled())
@@ -282,6 +299,12 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 {
                     sendMsg(sender, _("noEmailSet"));
                 }
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, ex);
+                
+                sendMsg(sender, _("createAccount.fail.self"));
             }
             catch (ReportedException ex)
             {

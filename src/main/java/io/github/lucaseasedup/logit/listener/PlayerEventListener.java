@@ -156,12 +156,12 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         long validnessTime = getConfig("config.yml")
                 .getTime("login-sessions.validness-time", TimeUnit.SECONDS);
         
+        AccountKeys keys = getAccountManager().getKeys();
+        Storage.Entry accountData = getAccountManager().queryAccount(username,
+                Arrays.asList(keys.username(), keys.login_session(), keys.display_name()));
+        
         if (getConfig("config.yml").getBoolean("login-sessions.enabled") && validnessTime > 0)
         {
-            AccountKeys keys = getAccountManager().getKeys();
-            Storage.Entry accountData = getAccountManager().queryAccount(username,
-                    Arrays.asList(keys.username(), keys.login_session()));
-            
             if (accountData != null)
             {
                 String loginSession = accountData.get(keys.login_session());
@@ -190,6 +190,17 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                         getConfig("config.yml").getLocation("waiting-room.location");
                 
                 player.teleport(waitingRoomLocationSerializable.toBukkitLocation());
+            }
+        }
+        
+        if (accountData != null
+                && getConfig("config.yml").getBoolean("username-case-mismatch-warning"))
+        {
+            String displayName = accountData.get(keys.display_name());
+            
+            if (!displayName.isEmpty() && !player.getName().equals(displayName))
+            {
+                getMessageDispatcher().dispatchMessage(username, _("usernameCaseMismatch"), 4L);
             }
         }
         
