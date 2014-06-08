@@ -143,6 +143,9 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
      */
     public void broadcastJoinMessage(Player player)
     {
+        if (player == null)
+            throw new IllegalArgumentException();
+        
         if (VanishNoPacketHook.isVanished(player))
             return;
         
@@ -159,6 +162,9 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
      */
     public void broadcastQuitMessage(Player player)
     {
+        if (player == null)
+            throw new IllegalArgumentException();
+        
         if (VanishNoPacketHook.isVanished(player))
             return;
         
@@ -169,6 +175,9 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
     
     public void sendCooldownMessage(String username, long cooldownMillis)
     {
+        if (username == null)
+            throw new IllegalArgumentException();
+        
         Locale activeLocale = getLocaleManager().getActiveLocale();
         int cooldownSecs = (int) TimeUnit.MILLISECONDS.convert(cooldownMillis, TimeUnit.SECONDS);
         String cooldownText = activeLocale.stringifySeconds(cooldownSecs);
