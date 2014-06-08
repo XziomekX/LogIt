@@ -37,6 +37,9 @@ public final class WrapperStorage extends Storage
                            String indexKey,
                            CacheType cacheType)
     {
+        if (leading == null || keys == null || indexKey == null || cacheType == null)
+            throw new IllegalArgumentException();
+        
         this.leading = leading;
         this.keys = keys;
         this.indexKey = indexKey;
