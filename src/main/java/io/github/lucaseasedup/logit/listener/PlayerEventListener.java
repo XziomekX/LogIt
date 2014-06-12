@@ -65,10 +65,21 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         AccountKeys keys = getAccountManager().getKeys();
         Storage.Entry accountData = getAccountManager().queryAccount(username,
-                Arrays.asList(keys.username(), keys.is_locked()));
+                Arrays.asList(keys.username(), keys.is_locked(), keys.display_name()));
         
         if (accountData != null)
         {
+            String displayName = accountData.get(keys.display_name());
+            
+            if (!displayName.isEmpty() && !player.getName().equals(displayName)
+                    && getConfig("config.yml").getBoolean("username-case-mismatch.kick"))
+            {
+                event.disallow(Result.KICK_OTHER, _("usernameCaseMismatch.kick")
+                        .replace("{0}", displayName));
+                
+                return;
+            }
+            
             if ("1".equals(accountData.get(keys.is_locked())))
             {
                 event.disallow(Result.KICK_OTHER, _("ACCLOCK_SUCCESS_SELF"));
@@ -193,14 +204,15 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             }
         }
         
-        if (accountData != null
-                && getConfig("config.yml").getBoolean("username-case-mismatch-warning"))
+        if (accountData != null)
         {
             String displayName = accountData.get(keys.display_name());
             
-            if (!displayName.isEmpty() && !player.getName().equals(displayName))
+            if (!displayName.isEmpty() && !player.getName().equals(displayName)
+                    && getConfig("config.yml").getBoolean("username-case-mismatch.warning"))
             {
-                getMessageDispatcher().dispatchMessage(username, _("usernameCaseMismatch"), 4L);
+                getMessageDispatcher().dispatchMessage(username, _("usernameCaseMismatch.warning")
+                        .replace("{0}", displayName), 4L);
             }
         }
         
