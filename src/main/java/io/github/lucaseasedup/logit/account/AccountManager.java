@@ -586,7 +586,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         {
             List<Storage.Entry> entries = storage.selectEntries(unit,
                     Arrays.asList(keys.email()),
-                    new SelectorCondition(keys.email(), Infix.EQUALS, email));
+                    new SelectorCondition(keys.email(), Infix.EQUALS, email.toLowerCase()));
             
             return entries.size();
         }
@@ -687,18 +687,18 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         try
         {
             updateEntry(username, new Storage.Entry.Builder()
-                    .put(keys.email(), newEmail)
+                    .put(keys.email(), newEmail.toLowerCase())
                     .build());
             
             log(Level.FINE, _("changeEmail.success.log")
                     .replace("{0}", username)
-                    .replace("{1}", newEmail));
+                    .replace("{1}", newEmail.toLowerCase()));
         }
         catch (IOException ex)
         {
             log(Level.WARNING, _("changeEmail.fail.log")
                     .replace("{0}", username)
-                    .replace("{1}", newEmail), ex);
+                    .replace("{1}", newEmail.toLowerCase()), ex);
             
             ReportedException.throwNew(ex);
         }
