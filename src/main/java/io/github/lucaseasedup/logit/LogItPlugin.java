@@ -33,7 +33,6 @@ import java.util.PropertyResourceBundle;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -113,17 +112,6 @@ public final class LogItPlugin extends JavaPlugin
     private void disable()
     {
         getServer().getPluginManager().disablePlugin(this);
-    }
-    
-    public int getBuildNumber()
-    {
-        String itemTitle = getDescription().getFullName();
-        Matcher titleMatcher = LogItUpdateChecker.ITEM_TITLE_PATTERN.matcher(itemTitle);
-        
-        if (!titleMatcher.find())
-            throw new RuntimeException();
-        
-        return Integer.parseInt(titleMatcher.group(1));
     }
     
     /**

@@ -189,17 +189,24 @@ public final class LogItCore
         
         try
         {
-            int latestBuild = LogItUpdateChecker.fetchLatestBuildNumber();
-            int runningBuild = getPlugin().getBuildNumber();
+            String updateVersion = LogItUpdateChecker.checkForUpdate(
+                    getPlugin().getDescription().getFullName()
+            );
             
-            if (latestBuild > runningBuild)
+            if (updateVersion != null)
             {
                 log(Level.INFO, _("updateAvailable")
-                        .replace("{0}", String.valueOf(latestBuild))
+                        .replace("{0}", String.valueOf(updateVersion))
                         .replace("{1}", "http://dev.bukkit.org/bukkit-plugins/logit/"));
             }
         }
-        catch (IOException | ParseException ex)
+        catch (IOException ex)
+        {
+            // If a connection to the remote host could not be established,
+            // we can't do anything about it and neither the user can,
+            // so we'll just act as it never happened.
+        }
+        catch (ParseException ex)
         {
             log(Level.WARNING, ex);
         }

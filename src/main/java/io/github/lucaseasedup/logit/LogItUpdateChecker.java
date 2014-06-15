@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,15 +38,24 @@ public final class LogItUpdateChecker
     }
     
     /**
-     * Fetches the latest LogIt build number available from BukkitDev.
+     * Fetches the latest LogIt build version string available from BukkitDev.
      * 
-     * @return the latest LogIt build number available.
+     * @param currentFullName the current plugin's full name obtained
+     *                        using {@code plugin.getDescription().getFullName()}.
      * 
-     * @throws IOException    if an I/O error occurred while downloading the RSS.
-     * @throws ParseException if the RSS could not be parsed.
+     * @return the latest LogIt build version string available,
+     *         or {@code null} if no update is available.
+     * 
+     * @throws IOException          if an I/O error occurred while downloading the RSS.
+     * @throws ParseException       if the RSS could not be parsed.
+     * @throws UnknownHostException if a connection to the remote host could not be established.
      */
-    public static int fetchLatestBuildNumber() throws IOException, ParseException
+    public static String checkForUpdate(String currentFullName)
+            throws IOException, ParseException
     {
+        if (currentFullName == null)
+            throw new IllegalArgumentException();
+        
         try (InputStream is = new URL(RSS_URL).openConnection().getInputStream())
         {
             Document doc;
@@ -59,25 +69,89 @@ public final class LogItUpdateChecker
                 throw new ParseException("Could not parse an RSS document.", -1);
             }
             
-            NodeList latestItem = doc.getElementsByTagName("item").item(0).getChildNodes();
-            String title = latestItem.item(1).getTextContent();
-            Matcher titleMatcher = ITEM_TITLE_PATTERN.matcher(title);
+            NodeList latestItemNodeList = doc.getElementsByTagName("item").item(0).getChildNodes();
+            String latestFullName = latestItemNodeList.item(1).getTextContent();
             
-            if (titleMatcher.find())
+            Matcher latestFullNameMatcher =
+                    PLUGIN_FULL_NAME_PATTERN.matcher(latestFullName);
+            Matcher currentFullNameMatcher =
+                    PLUGIN_FULL_NAME_PATTERN.matcher(currentFullName);
+            
+            if (latestFullNameMatcher.find() && currentFullNameMatcher.find())
             {
-                return Integer.parseInt(titleMatcher.group(1));
+                String currentMajor = currentFullNameMatcher.group(1);
+                String currentMinor = currentFullNameMatcher.group(2);
+                String currentPatch = currentFullNameMatcher.group(3);
+                String currentQualifier = currentFullNameMatcher.group(4);
+                String latestMajor = latestFullNameMatcher.group(1);
+                String latestMinor = latestFullNameMatcher.group(2);
+                String latestPatch = latestFullNameMatcher.group(3);
+                String latestQualifier = latestFullNameMatcher.group(4);
+                
+                if (currentPatch == null)
+                {
+                    currentPatch = "0";
+                }
+                
+                if (latestPatch == null)
+                {
+                    latestPatch = "0";
+                }
+                
+                boolean updateFound = false;
+                
+                if (latestMajor.compareTo(currentMajor) > 0)
+                {
+                    updateFound = true;
+                }
+                else if (latestMajor.compareTo(currentMajor) == 0)
+                {
+                    if (latestMinor.compareTo(currentMinor) > 0)
+                    {
+                        updateFound = true;
+                    }
+                    else if (latestMinor.compareTo(currentMinor) == 0)
+                    {
+                        if (latestPatch.compareTo(currentPatch) > 0)
+                        {
+                            updateFound = true;
+                        }
+                        else if (latestPatch.compareTo(currentPatch) == 0)
+                        {
+                            if (latestQualifier == null && currentQualifier != null)
+                            {
+                                updateFound = true;
+                            }
+                        }
+                    }
+                }
+                
+                if (updateFound)
+                {
+                    String versionString = "v" + latestMajor
+                                         + "." + latestMinor
+                                         + "." + latestPatch;
+                    
+                    if (latestQualifier != null)
+                    {
+                        versionString += "-" + latestQualifier;
+                    }
+                    
+                    return versionString;
+                }
             }
-            else
-            {
-                throw new ParseException("Invalid item title: " + title, -1);
-            }
+            
+            return null;
         }
     }
     
-    public static final Pattern ITEM_TITLE_PATTERN =
-            Pattern.compile("^ *LogIt +(?:[A-Za-z ]+ |)"
-                          + "v(?:[0-9]+\\.[0-9]+\\.[0-9]+(?:\\.[0-9]+|)|)"
-                          + "\\-b([0-9]+) *$");
+    public static final Pattern PLUGIN_FULL_NAME_PATTERN =
+            Pattern.compile("^ *LogIt *"               // LogIt
+                          + "v([0-9]+)"                // v<major>
+                          + "\\.([0-9]+)"              // .<minor>
+                          + "(?:\\.([0-9]+)|)"         // (.<patch>)
+                          + "(?:\\-([A-Za-z0-9_-]+)|)" // (-<qualifier>)
+                          + " *$");                    // 
     
     private static final String RSS_URL = "http://dev.bukkit.org/bukkit-plugins/logit/files.rss";
 }
