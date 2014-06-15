@@ -137,11 +137,11 @@ public final class LogItCore
         
         configurationManager = new ConfigurationManager();
         configurationManager.registerConfiguration("config.yml",
-                ".doNotTouch/config-def.b64", "config-def.b64", configHeader);
+                ".doNotTouch/config-def.b64", "config-def.ini", configHeader);
         configurationManager.registerConfiguration("stats.yml",
-                ".doNotTouch/stats-def.b64", "stats-def.b64", statsHeader);
+                ".doNotTouch/stats-def.b64", "stats-def.ini", statsHeader);
         configurationManager.registerConfiguration("secret.yml",
-                ".doNotTouch/secret-def.b64", "secret-def.b64", secretHeader);
+                ".doNotTouch/secret-def.b64", "secret-def.ini", secretHeader);
         
         try
         {

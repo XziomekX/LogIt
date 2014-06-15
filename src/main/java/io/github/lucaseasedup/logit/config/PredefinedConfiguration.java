@@ -98,25 +98,6 @@ public final class PredefinedConfiguration
             configuration.options().header(header);
         }
         
-        File userDefFile = getDataFile(userConfigDef);
-        
-        if (!userDefFile.exists())
-        {
-            userDefFile.getParentFile().mkdirs();
-            
-            IoUtils.extractResource(packageConfigDef, userDefFile);
-        }
-        
-        String userDefBase64String;
-        
-        try (InputStream userDefInputStream = new FileInputStream(userDefFile))
-        {
-            userDefBase64String = IoUtils.toString(userDefInputStream);
-        }
-        
-        Map<String, Map<String, String>> userDef =
-                IniUtils.unserialize(decodeConfigDef(userDefBase64String));
-        
         String jarUrlPath =
                 getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         String jarPath = URLDecoder.decode(jarUrlPath, "UTF-8");
@@ -127,26 +108,45 @@ public final class PredefinedConfiguration
             
             try (InputStream packageDefInputStream = jarZipFile.getInputStream(packageDefEntry))
             {
-                if (packageDefInputStream != null)
+                String packageDefString = IoUtils.toString(packageDefInputStream);
+                
+                File userDefFile = getDataFile(userConfigDef);
+                
+                if (!userDefFile.exists())
                 {
-                    String packageDefBase64String = IoUtils.toString(packageDefInputStream);
+                    userDefFile.getParentFile().mkdirs();
                     
-                    if (!userDefBase64String.equals(packageDefBase64String))
+                    try (OutputStream userDefOutputStream = new FileOutputStream(userDefFile))
                     {
-                        Map<String, Map<String, String>> packageDef =
-                                IniUtils.unserialize(decodeConfigDef(packageDefBase64String));
-                        
-                        try (OutputStream userDefOutputStream = new FileOutputStream(userDefFile))
-                        {
-                            updateConfigDef(userDef, packageDef, userDefOutputStream);
-                        }
+                        userDefOutputStream.write(encodeConfigDef(packageDefString).getBytes());
                     }
                 }
+                
+                String userDefBase64String;
+                
+                try (InputStream userDefInputStream = new FileInputStream(userDefFile))
+                {
+                    userDefBase64String = IoUtils.toString(userDefInputStream);
+                }
+                
+                String userDefString = decodeConfigDef(userDefBase64String);
+                Map<String, Map<String, String>> userDef = IniUtils.unserialize(userDefString);
+                
+                if (!userDefString.equals(packageDefString))
+                {
+                    Map<String, Map<String, String>> packageDef =
+                            IniUtils.unserialize(packageDefString);
+                    
+                    try (OutputStream userDefOutputStream = new FileOutputStream(userDefFile))
+                    {
+                        updateConfigDef(userDef, packageDef, userDefOutputStream);
+                    }
+                }
+                
+                loadConfigDef(userDef);
+                save();
             }
         }
-        
-        loadConfigDef(userDef);
-        save();
         
         loaded = true;
     }
