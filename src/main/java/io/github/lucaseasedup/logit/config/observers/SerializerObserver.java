@@ -75,15 +75,7 @@ public final class SerializerObserver extends PropertyObserver
                 if (getSessionManager().isSessionAlive(player))
                     continue;
                 
-                try
-                {
-                    getPersistenceManager().serializeUsing(player, clazz);
-                }
-                catch (ReflectiveOperationException ex)
-                {
-                    log(Level.WARNING, "Could not serialize persistence for player: "
-                                       + player.getName(), ex);
-                }
+                getPersistenceManager().serializeUsing(player, clazz);
             }
             
             try
@@ -99,15 +91,7 @@ public final class SerializerObserver extends PropertyObserver
         {
             for (Player player : Bukkit.getOnlinePlayers())
             {
-                try
-                {
-                    getPersistenceManager().unserializeUsing(player, clazz);
-                }
-                catch (ReflectiveOperationException ex)
-                {
-                    log(Level.WARNING, "Could not unserialize persistence for player: "
-                                       + player.getName(), ex);
-                }
+                getPersistenceManager().unserializeUsing(player, clazz);
             }
             
             getPersistenceManager().unregisterSerializer(clazz);

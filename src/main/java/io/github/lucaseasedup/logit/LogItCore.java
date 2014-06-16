@@ -908,15 +908,7 @@ public final class LogItCore
         }
         else for (Player player : Bukkit.getOnlinePlayers())
         {
-            try
-            {
-                persistenceManager.unserializeUsing(player, clazz);
-            }
-            catch (ReflectiveOperationException ex)
-            {
-                log(Level.WARNING,
-                        "Could not unserialize persistence for player: " + player.getName(), ex);
-            }
+            persistenceManager.unserializeUsing(player, clazz);
         }
     }
     

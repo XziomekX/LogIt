@@ -58,8 +58,6 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      * @param player the player whose data will be serialized.
      * @param clazz  serializer class.
      * 
-     * @throws ReflectiveOperationException if serializer construction failed.
-     * 
      * @throws IllegalArgumentException     if {@code player} or
      *                                      {@code clazz} is {@code null}.
      *                                      
@@ -67,7 +65,6 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      *                                      and it was reported to the logger.
      */
     public void serializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
-            throws ReflectiveOperationException
     {
         if (player == null || clazz == null)
             throw new IllegalArgumentException();
@@ -137,8 +134,6 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      * @param player the player whose data will be unserialized.
      * @param clazz  serializer class.
      * 
-     * @throws ReflectiveOperationException if serializer construction failed.
-     * 
      * @throws IllegalArgumentException     if {@code player} or
      *                                      {@code clazz} is {@code null}.
      *                                      
@@ -146,7 +141,6 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      *                                      and it was reported to the logger.
      */
     public void unserializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
-            throws ReflectiveOperationException
     {
         if (player == null || clazz == null)
             throw new IllegalArgumentException();
