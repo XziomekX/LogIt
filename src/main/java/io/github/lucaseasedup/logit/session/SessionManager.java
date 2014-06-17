@@ -73,6 +73,9 @@ public final class SessionManager extends LogItCoreObject
         List<String> disableTimeoutForPlayers = getConfig("config.yml")
                 .getStringList("force-login.timeout.disable-for-players");
         
+        boolean automaticLogoutEnabled = getConfig("config.yml")
+                .getBoolean("automatic-logout.enabled");
+        
         long inactivityTimeToLogOut = getConfig("config.yml")
                 .getTime("automatic-logout.inactivity-time", TimeUnit.TICKS);
         
@@ -90,7 +93,7 @@ public final class SessionManager extends LogItCoreObject
                 {
                     session.setStatus(0L);
                     
-                    if (getConfig("config.yml").getBoolean("automatic-logout.enabled"))
+                    if (automaticLogoutEnabled)
                     {
                         if (session.getInactivityTime() >= inactivityTimeToLogOut)
                         {
