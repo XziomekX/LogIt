@@ -37,7 +37,7 @@ public final class BackupForceHubCommand extends HubCommand
     }
     
     @Override
-    public void execute(final CommandSender sender, String[] args)
+    public void execute(CommandSender sender, String[] args)
     {
         File backupFile = getBackupManager().createBackup(true);
         

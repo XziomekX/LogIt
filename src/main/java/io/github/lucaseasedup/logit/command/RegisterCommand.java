@@ -240,8 +240,8 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 return true;
             }
             
-            final int accountsPerIp = getConfig("config.yml").getInt("accounts-per-ip.amount");
-            final List<String> unrestrictedIps =
+            int accountsPerIp = getConfig("config.yml").getInt("accounts-per-ip.amount");
+            List<String> unrestrictedIps =
                     getConfig("config.yml").getStringList("accounts-per-ip.unrestricted-ips");
             
             if (getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= accountsPerIp

@@ -462,7 +462,7 @@ public final class PredefinedConfiguration
         for (Entry<String, Map<String, String>> entry : newDef.entrySet())
         {
             final Map<String, String> newDefSection = entry.getValue();
-            final Map<String, String> oldDefSection = oldDef.get(entry.getKey());
+            Map<String, String> oldDefSection = oldDef.get(entry.getKey());
             
             if (oldDefSection == null)
             {

@@ -44,7 +44,7 @@ public final class BackupRestoreFileHubCommand extends HubCommand
     @Override
     public void execute(final CommandSender sender, final String[] args)
     {
-        final File selectedBackup = getBackupManager().getBackupFile(args[0]);
+        File selectedBackup = getBackupManager().getBackupFile(args[0]);
         
         if (selectedBackup == null)
         {

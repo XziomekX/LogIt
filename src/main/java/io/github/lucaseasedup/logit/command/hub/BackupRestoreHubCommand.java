@@ -36,7 +36,7 @@ public final class BackupRestoreHubCommand extends HubCommand
     }
     
     @Override
-    public void execute(final CommandSender sender, String[] args)
+    public void execute(CommandSender sender, String[] args)
     {
         File[] backups = getBackupManager().getBackups(true);
         

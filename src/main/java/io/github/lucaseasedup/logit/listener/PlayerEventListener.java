@@ -158,9 +158,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.LOW)
     private void onJoin(PlayerJoinEvent event)
     {
-        final Player player   = event.getPlayer();
-        final String username = player.getName().toLowerCase();
-        final String ip       = getPlayerIp(player);
+        Player player = event.getPlayer();
+        String username = player.getName().toLowerCase();
+        String ip = getPlayerIp(player);
         
         event.setJoinMessage(null);
         

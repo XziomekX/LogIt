@@ -37,7 +37,7 @@ public final class GlobalpassHubCommand extends HubCommand
     }
     
     @Override
-    public void execute(final CommandSender sender, String[] args)
+    public void execute(CommandSender sender, String[] args)
     {
         String password = getGlobalPasswordManager().generatePassword();
         long lifetimeSecs =

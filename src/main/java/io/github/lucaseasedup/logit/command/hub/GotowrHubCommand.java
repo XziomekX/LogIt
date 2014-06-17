@@ -35,7 +35,7 @@ public final class GotowrHubCommand extends HubCommand
     }
     
     @Override
-    public void execute(final CommandSender sender, String[] args)
+    public void execute(CommandSender sender, String[] args)
     {
         Location waitingRoomLocation =
                 getConfig("config.yml").getLocation("waiting-room.location").toBukkitLocation();
