@@ -549,7 +549,10 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             event.setRespawnLocation(waitingRoomLocationSerializable.toBukkitLocation());
         }
         
-        playersDeadOnJoin.remove(player);
+        if (playersDeadOnJoin.contains(player))
+        {
+            playersDeadOnJoin.remove(player);
+        }
     }
     
     private final Set<Player> playersDeadOnJoin = new HashSet<>();
