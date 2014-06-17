@@ -34,8 +34,10 @@ import io.github.lucaseasedup.logit.util.CollectionUtils;
 import io.github.lucaseasedup.logit.util.JoinMessageGenerator;
 import io.github.lucaseasedup.logit.util.QuitMessageGenerator;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -63,7 +65,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 public final class PlayerEventListener extends LogItCoreObject implements Listener
 {
     @EventHandler(priority = EventPriority.NORMAL)
-    private void onLogin(PlayerLoginEvent event)
+    private void onLogin_NORMAL(PlayerLoginEvent event)
     {
         if (!Result.ALLOWED.equals(event.getResult()))
             return;
@@ -73,7 +75,13 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         AccountKeys keys = getAccountManager().getKeys();
         Storage.Entry accountData = getAccountManager().queryAccount(username,
-                Arrays.asList(keys.username(), keys.is_locked(), keys.display_name()));
+                Arrays.asList(
+                        keys.username(),
+                        keys.login_session(),
+                        keys.is_locked(),
+                        keys.display_name()
+                )
+        );
         
         if (accountData != null)
         {
@@ -156,6 +164,20 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 event.disallow(KICK_OTHER, _("noSlotsFree"));
             }
         }
+        
+        if (Result.ALLOWED.equals(event.getResult()) && accountData != null)
+        {
+            accountDataCache.put(player.getName(), accountData);
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.MONITOR)
+    private void onLogin_MONITOR(PlayerLoginEvent event)
+    {
+        if (!Result.ALLOWED.equals(event.getResult()))
+        {
+            accountDataCache.remove(event.getPlayer().getName());
+        }
     }
     
     @EventHandler(priority = EventPriority.LOW)
@@ -176,8 +198,22 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 .getTime("login-sessions.validness-time", TimeUnit.SECONDS);
         
         AccountKeys keys = getAccountManager().getKeys();
-        Storage.Entry accountData = getAccountManager().queryAccount(username,
-                Arrays.asList(keys.username(), keys.login_session(), keys.display_name()));
+        Storage.Entry accountData;
+        
+        if (accountDataCache.containsKey(player.getName()))
+        {
+            accountData = accountDataCache.remove(player.getName());
+        }
+        else
+        {
+            accountData = getAccountManager().queryAccount(username,
+                    Arrays.asList(
+                            keys.username(),
+                            keys.login_session(),
+                            keys.display_name()
+                    )
+            );
+        }
         
         if (getConfig("config.yml").getBoolean("login-sessions.enabled") && validnessTime > 0)
         {
@@ -276,6 +312,11 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         Player player = event.getPlayer();
         
         playersDeadOnJoin.remove(player);
+        
+        // Make sure the cached entry is removed before the player gets away.
+        // Normally, it should be removed by the PlayerLoginEvent monitor,
+        // but we'll make sure anyway. Just in case.
+        accountDataCache.remove(player.getName());
         
         getCore().getPersistenceManager().unserialize(player);
         
@@ -559,4 +600,5 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     }
     
     private final Set<Player> playersDeadOnJoin = new HashSet<>();
+    private final Map<String, Storage.Entry> accountDataCache = new HashMap<>();
 }
