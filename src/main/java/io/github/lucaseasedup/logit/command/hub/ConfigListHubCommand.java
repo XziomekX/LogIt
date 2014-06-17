@@ -44,7 +44,6 @@ public final class ConfigListHubCommand extends HubCommand
     {
         Map<String, Property> properties = getConfig("config.yml").getProperties();
         
-        final int PROPERTIES_PER_PAGE = 15;
         int page = 1;
         int pages = (properties.size() / PROPERTIES_PER_PAGE) + 1;
         int i = 0, j = 0;
@@ -99,4 +98,6 @@ public final class ConfigListHubCommand extends HubCommand
             sendMsg(sender, _("config.list.noProperties"));
         }
     }
+    
+    private static final int PROPERTIES_PER_PAGE = 15;
 }
