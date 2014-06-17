@@ -69,12 +69,20 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
         if (player == null || clazz == null)
             throw new IllegalArgumentException();
         
-        String username = player.getName().toLowerCase();
         PersistenceSerializer serializer = getSerializer(clazz);
         
         if (serializer == null)
             return;
         
+        serializeUsing(player, serializer);
+    }
+    
+    public void serializeUsing(Player player, PersistenceSerializer serializer)
+    {
+        if (player == null || serializer == null)
+            throw new IllegalArgumentException();
+        
+        String username = player.getName().toLowerCase();
         Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
         
         if (persistence == null)
@@ -145,12 +153,20 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
         if (player == null || clazz == null)
             throw new IllegalArgumentException();
         
-        String username = player.getName().toLowerCase();
         PersistenceSerializer serializer = getSerializer(clazz);
         
         if (serializer == null)
             return;
         
+        unserializeUsing(player, serializer);
+    }
+    
+    public void unserializeUsing(Player player, PersistenceSerializer serializer)
+    {
+        if (player == null || serializer == null)
+            throw new IllegalArgumentException();
+        
+        String username = player.getName().toLowerCase();
         Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
         
         if (persistence == null)
@@ -168,7 +184,7 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
             getAccountManager().updateAccountPersistence(username, persistence);
         }
     }
-
+    
     /**
      * Unserializes player data using all enabled serializers registered
      * using the {@link #registerSerializer} method.

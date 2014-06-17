@@ -27,14 +27,18 @@ import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
 import io.github.lucaseasedup.logit.hooks.VanishNoPacketHook;
+import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.session.Session;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
 import io.github.lucaseasedup.logit.util.JoinMessageGenerator;
 import io.github.lucaseasedup.logit.util.QuitMessageGenerator;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -53,6 +57,7 @@ import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 public final class PlayerEventListener extends LogItCoreObject implements Listener
@@ -251,6 +256,11 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             }
         }
         
+        if (player.isDead())
+        {
+            playersDeadOnJoin.add(player);
+        }
+        
         if (getConfig("config.yml").getBoolean("groups.enabled"))
         {
             getCore().updatePlayerGroup(player);
@@ -261,6 +271,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     private void onQuit(PlayerQuitEvent event)
     {
         Player player = event.getPlayer();
+        
+        playersDeadOnJoin.remove(player);
         
         getCore().getPersistenceManager().unserialize(player);
         
@@ -512,4 +524,30 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             getMessageDispatcher().sendForceLoginMessage(player);
         }
     }
+    
+    @EventHandler(priority = EventPriority.NORMAL)
+    private void onRespawn(PlayerRespawnEvent event)
+    {
+        if (playersDeadOnJoin.contains(event.getPlayer()))
+        {
+            if (getConfig("config.yml").getBoolean("waiting-room.enabled"))
+            {
+                Location respawnLocation = event.getRespawnLocation();
+                
+                getPersistenceManager().unserializeUsing(event.getPlayer(),
+                        LocationSerializer.class);
+                getPersistenceManager().serializeUsing(event.getPlayer(),
+                        new LocationSerializer.PlayerlessLocationSerializer(respawnLocation));
+                
+                LocationSerializable waitingRoomLocationSerializable =
+                        getConfig("config.yml").getLocation("waiting-room.location");
+                
+                event.setRespawnLocation(waitingRoomLocationSerializable.toBukkitLocation());
+            }
+            
+            playersDeadOnJoin.remove(event.getPlayer());
+        }
+    }
+    
+    private final Set<Player> playersDeadOnJoin = new HashSet<>();
 }
