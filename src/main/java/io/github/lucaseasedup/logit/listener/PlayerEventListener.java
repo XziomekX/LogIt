@@ -528,15 +528,18 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL)
     private void onRespawn(PlayerRespawnEvent event)
     {
-        if (playersDeadOnJoin.contains(event.getPlayer()))
+        Player player = event.getPlayer();
+        
+        if (playersDeadOnJoin.contains(player))
         {
-            if (getConfig("config.yml").getBoolean("waiting-room.enabled"))
+            if (getConfig("config.yml").getBoolean("waiting-room.enabled")
+                    && !getSessionManager().isSessionAlive(player)
+                    && getCore().isPlayerForcedToLogIn(player))
             {
                 Location respawnLocation = event.getRespawnLocation();
                 
-                getPersistenceManager().unserializeUsing(event.getPlayer(),
-                        LocationSerializer.class);
-                getPersistenceManager().serializeUsing(event.getPlayer(),
+                getPersistenceManager().unserializeUsing(player, LocationSerializer.class);
+                getPersistenceManager().serializeUsing(player,
                         new LocationSerializer.PlayerlessLocationSerializer(respawnLocation));
                 
                 LocationSerializable waitingRoomLocationSerializable =
@@ -545,7 +548,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 event.setRespawnLocation(waitingRoomLocationSerializable.toBukkitLocation());
             }
             
-            playersDeadOnJoin.remove(event.getPlayer());
+            playersDeadOnJoin.remove(player);
         }
     }
     
