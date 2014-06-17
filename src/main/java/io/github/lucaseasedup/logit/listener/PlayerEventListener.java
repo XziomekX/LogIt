@@ -65,6 +65,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL)
     private void onLogin(PlayerLoginEvent event)
     {
+        if (!Result.ALLOWED.equals(event.getResult()))
+            return;
+        
         Player player = event.getPlayer();
         String username = player.getName().toLowerCase();
         
