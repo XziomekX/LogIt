@@ -37,7 +37,7 @@ public final class ConfigGetHubCommand extends HubCommand
     @Override
     public void execute(CommandSender sender, String[] args)
     {
-        if (!getConfig("config.yml").contains(args[2]))
+        if (!getConfig("config.yml").contains(args[0]))
         {
             sendMsg(sender, _("config.propertyNotFound")
                     .replace("{0}", args[0]));
