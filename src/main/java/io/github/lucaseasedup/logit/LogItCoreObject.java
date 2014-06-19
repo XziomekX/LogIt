@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit;
 
+import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.backup.BackupManager;
 import io.github.lucaseasedup.logit.config.ConfigurationManager;
@@ -109,6 +110,11 @@ public abstract class LogItCoreObject
     protected final AccountManager getAccountManager()
     {
         return core.getAccountManager();
+    }
+    
+    protected final AccountKeys keys()
+    {
+        return core.getAccountManager().getKeys();
     }
     
     protected final Storage getAccountStorage()
