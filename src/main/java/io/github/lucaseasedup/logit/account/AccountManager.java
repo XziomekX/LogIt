@@ -419,15 +419,15 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
             return false;
         
         String actualHashedPassword = entry.get(keys.password());
-        HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
+        String hashingAlgorithm = getCore().getDefaultHashingAlgorithm().name();
         
         if (!getConfig("secret.yml").getBoolean("password.force-hashing-algorithm"))
         {
-            String userAlgorithm = entry.get(keys.hashing_algorithm());
+            String userHashingAlgorithm = entry.get(keys.hashing_algorithm());
             
-            if (userAlgorithm != null)
+            if (userHashingAlgorithm != null)
             {
-                algorithm = HashingAlgorithm.decode(userAlgorithm);
+                hashingAlgorithm = userHashingAlgorithm;
             }
         }
         
@@ -435,11 +435,13 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         {
             String actualSalt = entry.get(keys.salt());
             
-            return getCore().checkPassword(password, actualHashedPassword, actualSalt, algorithm);
+            return getCore().checkPassword(password, actualHashedPassword,
+                    actualSalt, hashingAlgorithm);
         }
         else
         {
-            return getCore().checkPassword(password, actualHashedPassword, algorithm);
+            return getCore().checkPassword(password, actualHashedPassword,
+                    hashingAlgorithm);
         }
     }
     

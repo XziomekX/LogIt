@@ -60,6 +60,7 @@ import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
 import io.github.lucaseasedup.logit.profile.ProfileManager;
+import io.github.lucaseasedup.logit.security.AuthMePasswordHelper;
 import io.github.lucaseasedup.logit.security.BCrypt;
 import io.github.lucaseasedup.logit.security.HashingAlgorithm;
 import io.github.lucaseasedup.logit.security.SecurityHelper;
@@ -597,24 +598,30 @@ public final class LogItCore
      * 
      * @return {@code true} if passwords match; {@code false} otherwise.
      * 
-     * @see #checkPassword(String, String, String, HashingAlgorithm)
+     * @see #checkPassword(String, String, String, String)
      */
-    public boolean checkPassword(String password, String hashedPassword,
-                                 HashingAlgorithm hashingAlgorithm)
+    public boolean checkPassword(String password, String hashedPassword, String hashingAlgorithm)
     {
         if (hashingAlgorithm == null
                 || getConfig("secret.yml").getBoolean("password.force-hashing-algorithm"))
         {
-            hashingAlgorithm = getDefaultHashingAlgorithm();
+            hashingAlgorithm = getDefaultHashingAlgorithm().name();
         }
         
-        if (hashingAlgorithm == HashingAlgorithm.BCRYPT)
+        HashingAlgorithm algorithmType = HashingAlgorithm.decode(hashingAlgorithm);
+        
+        if (algorithmType == HashingAlgorithm.BCRYPT)
         {
             return BCrypt.checkpw(password, hashedPassword);
         }
+        else if (algorithmType == HashingAlgorithm.AUTHME)
+        {
+            return AuthMePasswordHelper.comparePasswordWithHash(password, hashedPassword,
+                    hashingAlgorithm.replaceAll("^authme:", ""));
+        }
         else
         {
-            return hashedPassword.equals(SecurityHelper.hash(password, hashingAlgorithm));
+            return hashedPassword.equals(SecurityHelper.hash(password, algorithmType));
         }
     }
     
@@ -634,12 +641,12 @@ public final class LogItCore
      * 
      * @return {@code true} if passwords match; {@code false} otherwise.
      * 
-     * @see #checkPassword(String, String, HashingAlgorithm)
+     * @see #checkPassword(String, String, String)
      */
     public boolean checkPassword(String password,
                                  String hashedPassword,
                                  String salt,
-                                 HashingAlgorithm hashingAlgorithm)
+                                 String hashingAlgorithm)
     {
         if (hashedPassword == null || hashedPassword.isEmpty())
             return false;
@@ -647,10 +654,12 @@ public final class LogItCore
         if (hashingAlgorithm == null
                 || getConfig("secret.yml").getBoolean("password.force-hashing-algorithm"))
         {
-            hashingAlgorithm = getDefaultHashingAlgorithm();
+            hashingAlgorithm = getDefaultHashingAlgorithm().name();
         }
         
-        if (hashingAlgorithm == HashingAlgorithm.BCRYPT)
+        HashingAlgorithm algorithmType = HashingAlgorithm.decode(hashingAlgorithm);
+        
+        if (algorithmType == HashingAlgorithm.BCRYPT)
         {
             try
             {
@@ -661,18 +670,23 @@ public final class LogItCore
                 return false;
             }
         }
+        else if (algorithmType == HashingAlgorithm.AUTHME)
+        {
+            return AuthMePasswordHelper.comparePasswordWithHash(password, hashedPassword,
+                    hashingAlgorithm.replaceAll("^authme:", ""));
+        }
         else
         {
             if (getConfig("config.yml").getBoolean("password.use-salt"))
             {
                 return hashedPassword.equals(
-                        SecurityHelper.hash(password, salt, hashingAlgorithm)
+                        SecurityHelper.hash(password, salt, algorithmType)
                 );
             }
             else
             {
                 return hashedPassword.equals(
-                        SecurityHelper.hash(password, hashingAlgorithm)
+                        SecurityHelper.hash(password, algorithmType)
                 );
             }
         }

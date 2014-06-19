@@ -24,7 +24,6 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.AccountKeys;
-import io.github.lucaseasedup.logit.security.HashingAlgorithm;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.Storage;
@@ -157,10 +156,9 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             {
                 String userAlgorithm = accountData.get(keys.hashing_algorithm());
                 String hashedPassword = accountData.get(keys.password());
-                HashingAlgorithm algorithm = HashingAlgorithm.decode(userAlgorithm);
                 String actualSalt = accountData.get(keys.salt());
                 
-                if (!getCore().checkPassword(args[0], hashedPassword, actualSalt, algorithm))
+                if (!getCore().checkPassword(args[0], hashedPassword, actualSalt, userAlgorithm))
                 {
                     sendMsg(p, _("incorrectPassword"));
                     

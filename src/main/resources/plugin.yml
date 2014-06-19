@@ -8,7 +8,7 @@ loadbefore: [LogItH2Helper, LogItPostgreSQLHelper]
 commands:
   logit:
     description: LogIt generic command.
-    usage: /<command> [help|version|start|stop|reload|backup <force|restore <|file <filename>|time <time>>|remove <amount>>|gotowr|globalpass|account status <username>|ipcount <ip>|config <get <path>|set <path> <value>|list [page]|reload>|convert|stats]
+    usage: /<command> [help|version|start|stop|reload|backup <force|restore <|file <filename>|time <time>>|remove <amount>>|gotowr|globalpass|account status <username>|ipcount <ip>|config <get <path>|set <path> <value>|list [page]|reload>|convert|stats|import authme]
 
   login:
     description: Logs you in.
@@ -114,6 +114,7 @@ permissions:
       logit.config.*: true
       logit.convert: true
       logit.stats: true
+      logit.import: true
       logit.acclock: true
       logit.accunlock: true
   logit:
@@ -174,6 +175,8 @@ permissions:
   logit.convert:
     default: false
   logit.stats:
+    default: false
+  logit.import:
     default: false
   logit.login:
     default: false

@@ -23,7 +23,7 @@ public enum HashingAlgorithm
     PLAIN("plain"),
     MD2("md2"), MD5("md5"),
     SHA1("sha-1"), SHA256("sha-256"), SHA384("sha-384"), SHA512("sha-512"),
-    WHIRLPOOL("whirlpool"), BCRYPT("bcrypt");
+    WHIRLPOOL("whirlpool"), BCRYPT("bcrypt"), AUTHME("authme");
     
     private HashingAlgorithm(String name)
     {
@@ -54,6 +54,11 @@ public enum HashingAlgorithm
     {
         for (HashingAlgorithm value : values())
         {
+            if (value == AUTHME && name.startsWith("authme:"))
+            {
+                return value;
+            }
+            
             if (value.encode().equals(name))
             {
                 return value;
