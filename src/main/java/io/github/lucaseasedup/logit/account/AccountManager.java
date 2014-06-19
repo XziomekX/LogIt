@@ -421,7 +421,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         String actualHashedPassword = entry.get(keys.password());
         HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
         
-        if (!getConfig("config.yml").getBoolean("password.global-hashing-algorithm"))
+        if (!getConfig("secret.yml").getBoolean("password.force-hashing-algorithm"))
         {
             String userAlgorithm = entry.get(keys.hashing_algorithm());
             

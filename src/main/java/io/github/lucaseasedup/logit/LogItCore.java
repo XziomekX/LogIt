@@ -586,8 +586,8 @@ public final class LogItCore
     /**
      * Checks if a password is equal, after hashing, to {@code hashedPassword}.
      * 
-     * <p> If the <i>password.global-hashing-algorithm</i>
-     * config setting is set to <i>true</i>,
+     * <p> If the <i>password.force-hashing-algorithm</i>
+     * secret setting is set to <i>true</i>,
      * the global hashing algorithm (specified in the config file)
      * will be used instead of the provided {@code hashingAlgorithm}.
      * 
@@ -603,7 +603,7 @@ public final class LogItCore
                                  HashingAlgorithm hashingAlgorithm)
     {
         if (hashingAlgorithm == null
-                || getConfig("config.yml").getBoolean("password.global-hashing-algorithm"))
+                || getConfig("secret.yml").getBoolean("password.force-hashing-algorithm"))
         {
             hashingAlgorithm = getDefaultHashingAlgorithm();
         }
@@ -622,8 +622,8 @@ public final class LogItCore
      * Checks if a password (with a salt appended) is equal,
      * after hashing, to {@code hashedPassword}.
      * 
-     * <p> If the <i>password.global-hashing-algorithm</i>
-     * config setting is set to <i>true</i>,
+     * <p> If the <i>password.force-hashing-algorithm</i>
+     * secret setting is set to <i>true</i>,
      * the global hashing algorithm (specified in the config file)
      * will be used instead of the provided {@code hashingAlgorithm}.
      * 
@@ -645,7 +645,7 @@ public final class LogItCore
             return false;
         
         if (hashingAlgorithm == null
-                || getConfig("config.yml").getBoolean("password.global-hashing-algorithm"))
+                || getConfig("secret.yml").getBoolean("password.force-hashing-algorithm"))
         {
             hashingAlgorithm = getDefaultHashingAlgorithm();
         }
