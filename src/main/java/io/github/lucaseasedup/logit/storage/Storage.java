@@ -107,6 +107,28 @@ public abstract class Storage implements AutoCloseable
     
     public static final class Entry implements Iterable<Storage.Entry.Datum>
     {
+        @Override
+        public String toString()
+        {
+            StringBuilder sb = new StringBuilder();
+            
+            for (Datum datum : this)
+            {
+                if (sb.length() > 0)
+                {
+                    sb.append(", ");
+                }
+                
+                sb.append("\"");
+                sb.append(datum.getKey());
+                sb.append("\": \"");
+                sb.append(datum.getValue());
+                sb.append("\"");
+            }
+            
+            return "Entry {" + sb.toString() + "}";
+        }
+        
         public String get(String key)
         {
             if (key == null || key.trim().isEmpty())
