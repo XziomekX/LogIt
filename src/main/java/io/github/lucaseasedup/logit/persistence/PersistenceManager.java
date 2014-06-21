@@ -30,7 +30,7 @@ import java.util.Set;
 import org.bukkit.entity.Player;
 
 /**
- * Provides a centred persistence serialization interface.
+ * Provides a centralized persistence serialization platform.
  */
 public final class PersistenceManager extends LogItCoreObject implements Disposable
 {
