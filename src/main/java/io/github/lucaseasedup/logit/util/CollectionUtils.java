@@ -75,6 +75,19 @@ public final class CollectionUtils
         }
     }
     
+    public static boolean isSubset(Collection<?> subset, Collection<?> of)
+    {
+        for (Object obj : subset)
+        {
+            if (!of.contains(obj))
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
     public static boolean containsDuplicates(Collection<?> coll)
     {
         if (coll == null)
