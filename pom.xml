@@ -105,7 +105,6 @@
     </dependencies>
     
     <build>
-        <finalName>${project.name}</finalName>
         <defaultGoal>clean package</defaultGoal>
         
         <plugins>
