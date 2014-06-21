@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.util;
 
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -96,5 +97,22 @@ public final class CollectionUtils
         Set<Object> set = new HashSet<>(coll);
         
         return set.size() != coll.size();
+    }
+    
+    public static String toString(Enumeration<?> enumeration)
+    {
+        StringBuilder sb = new StringBuilder();
+        
+        while (enumeration.hasMoreElements())
+        {
+            if (sb.length() > 0)
+            {
+                sb.append(", ");
+            }
+            
+            sb.append(enumeration.nextElement());
+        }
+        
+        return sb.toString();
     }
 }
