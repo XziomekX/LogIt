@@ -28,6 +28,11 @@ public final class PlayerUtils
     {
     }
     
+    public static Player getPlayer(String name)
+    {
+        return Bukkit.getPlayerExact(name);
+    }
+    
     /**
      * Returns a case-correct player name.
      * 
