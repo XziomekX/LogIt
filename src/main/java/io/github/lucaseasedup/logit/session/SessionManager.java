@@ -22,7 +22,6 @@ import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCa
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerName;
 import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
@@ -267,7 +266,7 @@ public final class SessionManager extends LogItCoreObject
         sessions.put(username.toLowerCase(), session);
         
         log(Level.FINE, _("createSession.success.log")
-                .replace("{0}", username));
+                .replace("{0}", PlayerUtils.getPlayerRealName(username)));
         
         return CancelledState.NOT_CANCELLED;
     }
@@ -335,7 +334,7 @@ public final class SessionManager extends LogItCoreObject
         sessions.remove(username.toLowerCase());
         
         log(Level.FINE, _("destroySession.success.log")
-                .replace("{0}", getPlayerName(username)));
+                .replace("{0}", PlayerUtils.getPlayerRealName(username)));
         
         return CancelledState.NOT_CANCELLED;
     }
@@ -402,7 +401,7 @@ public final class SessionManager extends LogItCoreObject
         session.setStatus(0L);
         
         log(Level.FINE, _("startSession.success.log")
-                .replace("{0}", username));
+                .replace("{0}", PlayerUtils.getPlayerRealName(username)));
         
         return CancelledState.NOT_CANCELLED;
     }
@@ -469,7 +468,7 @@ public final class SessionManager extends LogItCoreObject
         session.setStatus(-1L);
         
         log(Level.FINE, _("endSession.success.log")
-                .replace("{0}", username));
+                .replace("{0}", PlayerUtils.getPlayerRealName(username)));
         
         return CancelledState.NOT_CANCELLED;
     }
