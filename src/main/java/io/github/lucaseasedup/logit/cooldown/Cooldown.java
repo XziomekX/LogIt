@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.cooldown;
 
-public class Cooldown
+public final class Cooldown
 {
     public Cooldown(String name)
     {

@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-public class AccountNotFoundException extends RuntimeException
+public final class AccountNotFoundException extends RuntimeException
 {
     public AccountNotFoundException(String username)
     {

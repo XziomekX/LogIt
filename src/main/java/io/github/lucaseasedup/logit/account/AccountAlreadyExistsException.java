@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-public class AccountAlreadyExistsException extends RuntimeException
+public final class AccountAlreadyExistsException extends RuntimeException
 {
     public AccountAlreadyExistsException(String username)
     {

@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit;
 
-public class Timer implements Runnable
+public final class Timer implements Runnable
 {
     /**
      * Constructs a new {@code Timer}.

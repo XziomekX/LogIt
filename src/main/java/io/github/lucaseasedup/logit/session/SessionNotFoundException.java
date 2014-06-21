@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.session;
 
-public class SessionNotFoundException extends RuntimeException
+public final class SessionNotFoundException extends RuntimeException
 {
     public SessionNotFoundException(String username)
     {
