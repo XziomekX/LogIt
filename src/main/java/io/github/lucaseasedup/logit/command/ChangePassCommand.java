@@ -21,9 +21,10 @@ package io.github.lucaseasedup.logit.command;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.ReportedException;
-import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
+import io.github.lucaseasedup.logit.util.PlayerUtils;
+import java.util.Arrays;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -34,11 +35,11 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        Player p = null;
+        Player player = null;
         
         if (sender instanceof Player)
         {
-            p = (Player) sender;
+            player = (Player) sender;
         }
         
         int minPasswordLength = getConfig("config.yml").getInt("password.min-length");
@@ -46,80 +47,85 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 3)
         {
-            if (p != null && !p.hasPermission("logit.changepass.others"))
+            if (player != null && !player.hasPermission("logit.changepass.others"))
             {
                 sendMsg(sender, _("noPerms"));
+                
+                return true;
             }
-            else if (args.length < 2)
+            
+            if (args.length < 2)
             {
                 sendMsg(sender, _("paramMissing")
                         .replace("{0}", "player"));
+                
+                return true;
             }
-            else if (args.length < 3)
+            
+            if (args.length < 3)
             {
                 sendMsg(sender, _("paramMissing")
                         .replace("{0}", "newpassword"));
+                
+                return true;
             }
-            else if (!getAccountManager().isRegistered(args[1]))
-            {
-                sendMsg(sender, _("notRegistered.others")
-                        .replace("{0}", args[1]));
-            }
-            else if (args[2].length() < minPasswordLength)
+            
+            if (args[2].length() < minPasswordLength)
             {
                 sendMsg(sender, _("passwordTooShort")
                         .replace("{0}", String.valueOf(minPasswordLength)));
+                
+                return true;
             }
-            else if (args[2].length() > maxPasswordLength)
+            
+            if (args[2].length() > maxPasswordLength)
             {
                 sendMsg(sender, _("passwordTooLong")
                         .replace("{0}", String.valueOf(maxPasswordLength)));
+                
+                return true;
             }
-            else
+            
+            Account account = getAccountManager().selectAccount(args[1], Arrays.asList(
+                    keys().username()
+            ));
+            
+            if (account == null)
             {
-                try
-                {
-                    ReportedException.incrementRequestCount();
-                    
-                    getAccountManager().changeAccountPassword(args[1], args[2]);
-                    
-                    sendMsg(args[1], _("changePassword.success.self"));
-                    sendMsg(sender, _("changePassword.success.others")
-                            .replace("{0}", args[1]));
-                    
-                    getConfig("stats.yml").set("password-changes",
-                            getConfig("stats.yml").getInt("password-changes") + 1);
-                }
-                catch (ReportedException ex)
-                {
-                    sendMsg(sender, _("changePassword.fail.others")
-                            .replace("{0}", args[1]));
-                }
-                finally
-                {
-                    ReportedException.decrementRequestCount();
-                }
+                sendMsg(sender, _("notRegistered.others")
+                        .replace("{0}", PlayerUtils.getPlayerRealName(args[1])));
+                
+                return true;
             }
+            
+            account.changePassword(args[2]);
+            
+            sendMsg(args[1], _("changePassword.success.self"));
+            sendMsg(sender, _("changePassword.success.others")
+                    .replace("{0}", PlayerUtils.getPlayerRealName(args[1])));
+            
+            getConfig("stats.yml").set("password-changes",
+                    getConfig("stats.yml").getInt("password-changes") + 1);
         }
         else if (args.length <= 3)
         {
-            if (p == null)
+            if (player == null)
             {
                 sendMsg(sender, _("onlyForPlayers"));
                 
                 return true;
             }
             
-            if (!p.hasPermission("logit.changepass.self"))
+            if (!player.hasPermission("logit.changepass.self"))
             {
-                sendMsg(p, _("noPerms"));
+                sendMsg(player, _("noPerms"));
                 
                 return true;
             }
             
             if (args.length < 1)
             {
-                sendMsg(p, _("paramMissing")
+                sendMsg(player, _("paramMissing")
                         .replace("{0}", "oldpassword"));
                 
                 return true;
@@ -127,7 +133,7 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
             
             if (args.length < 2)
             {
-                sendMsg(p, _("paramMissing")
+                sendMsg(player, _("paramMissing")
                         .replace("{0}", "newpassword"));
                 
                 return true;
@@ -135,38 +141,23 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
             
             if (args.length < 3)
             {
-                sendMsg(p, _("paramMissing")
+                sendMsg(player, _("paramMissing")
                         .replace("{0}", "confirmpassword"));
                 
                 return true;
             }
             
-            if (getCooldownManager().isCooldownActive(p, LogItCooldowns.CHANGEPASS))
+            if (getCooldownManager().isCooldownActive(player, LogItCooldowns.CHANGEPASS))
             {
-                getMessageDispatcher().sendCooldownMessage(p.getName(),
-                        getCooldownManager().getCooldownMillis(p, LogItCooldowns.CHANGEPASS));
+                getMessageDispatcher().sendCooldownMessage(player.getName(),
+                        getCooldownManager().getCooldownMillis(player, LogItCooldowns.CHANGEPASS));
                 
                 return true;
             }
-            
-            if (!getAccountManager().isRegistered(p.getName()))
-            {
-                sendMsg(p, _("notRegistered.self"));
-                
-                return true;
-            }
-            
-            if (!getAccountManager().checkAccountPassword(p.getName(), args[0]))
-            {
-                sendMsg(p, _("incorrectPassword"));
-                
-                return true;
-            }
-            
             
             if (args[1].length() < minPasswordLength)
             {
-                sendMsg(p, _("passwordTooShort")
+                sendMsg(player, _("passwordTooShort")
                         .replace("{0}", String.valueOf(minPasswordLength)));
                 
                 return true;
@@ -174,7 +165,7 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
             
             if (args[1].length() > maxPasswordLength)
             {
-                sendMsg(p, _("passwordTooLong")
+                sendMsg(player, _("passwordTooLong")
                         .replace("{0}", String.valueOf(maxPasswordLength)));
                 
                 return true;
@@ -182,35 +173,40 @@ public final class ChangePassCommand extends LogItCoreObject implements CommandE
             
             if (!args[1].equals(args[2]))
             {
-                sendMsg(p, _("passwordsDoNotMatch"));
+                sendMsg(player, _("passwordsDoNotMatch"));
                 
                 return true;
             }
             
-            try
+            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
+                    keys().username(),
+                    keys().salt(),
+                    keys().password(),
+                    keys().hashing_algorithm()
+            ));
+            
+            if (account == null)
             {
-                ReportedException.incrementRequestCount();
+                sendMsg(player, _("notRegistered.self"));
                 
-                getAccountManager().changeAccountPassword(p.getName(), args[1]);
-                
-                long cooldown = getConfig("config.yml")
-                        .getTime("cooldowns.changepass", TimeUnit.MILLISECONDS);
-                
-                getCooldownManager().activateCooldown(p, LogItCooldowns.CHANGEPASS, cooldown);
-                
-                sendMsg(sender, _("changePassword.success.self"));
-                
-                getConfig("stats.yml").set("password-changes",
-                        getConfig("stats.yml").getInt("password-changes") + 1);
+                return true;
             }
-            catch (ReportedException ex)
+            
+            if (!account.checkPassword(args[0]))
             {
-                sendMsg(sender, _("changePassword.fail.self"));
+                sendMsg(player, _("incorrectPassword"));
+                
+                return true;
             }
-            finally
-            {
-                ReportedException.decrementRequestCount();
-            }
+            
+            account.changePassword(args[1]);
+            
+            sendMsg(sender, _("changePassword.success.self"));
+            
+            LogItCooldowns.activate(LogItCooldowns.CHANGEPASS, player);
+            
+            getConfig("stats.yml").set("password-changes",
+                    getConfig("stats.yml").getInt("password-changes") + 1);
         }
         else
         {

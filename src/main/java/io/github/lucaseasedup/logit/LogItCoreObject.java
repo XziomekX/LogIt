@@ -28,7 +28,6 @@ import io.github.lucaseasedup.logit.locale.LocaleManager;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.profile.ProfileManager;
 import io.github.lucaseasedup.logit.session.SessionManager;
-import io.github.lucaseasedup.logit.storage.Storage;
 import java.io.File;
 import java.util.logging.Level;
 
@@ -115,11 +114,6 @@ public abstract class LogItCoreObject
     protected final AccountKeys keys()
     {
         return core.getAccountManager().getKeys();
-    }
-    
-    protected final Storage getAccountStorage()
-    {
-        return core.getAccountManager().getStorage();
     }
     
     protected final PersistenceManager getPersistenceManager()

@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit;
 
 import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.account.AccountWatcher;
@@ -79,6 +80,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -372,15 +374,20 @@ public final class LogItCore
         }
         
         accountManagerTask = Bukkit.getScheduler().runTaskTimer(plugin,
-                accountManager, 0, AccountManager.TASK_PERIOD);
+                accountManager, 0L,
+                getConfig("secret.yml").getTime("buffer-flush-interval", TimeUnit.TICKS));
         backupManagerTask = Bukkit.getScheduler().runTaskTimer(plugin,
-                backupManager, 0, BackupManager.TASK_PERIOD);
+                backupManager, 0L,
+                BackupManager.TASK_PERIOD);
         sessionManagerTask = Bukkit.getScheduler().runTaskTimer(plugin,
-                sessionManager, 0, SessionManager.TASK_PERIOD);
+                sessionManager, 0L,
+                SessionManager.TASK_PERIOD);
         globalPasswordManagerTask = Bukkit.getScheduler().runTaskTimer(plugin,
-                globalPasswordManager, 0, GlobalPasswordManager.TASK_PERIOD);
+                globalPasswordManager, 0L,
+                GlobalPasswordManager.TASK_PERIOD);
         accountWatcherTask = Bukkit.getScheduler().runTaskTimer(plugin,
-                accountWatcher, 0, AccountWatcher.TASK_PERIOD);
+                accountWatcher, 0L,
+                AccountWatcher.TASK_PERIOD);
         
         enableCommands();
         registerEvents();
@@ -418,6 +425,7 @@ public final class LogItCore
         
         try
         {
+            accountManager.flushBuffer();
             accountManager.getStorage().close();
         }
         catch (IOException ex)
@@ -922,7 +930,15 @@ public final class LogItCore
         }
         else for (Player player : Bukkit.getOnlinePlayers())
         {
-            persistenceManager.unserializeUsing(player, clazz);
+            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
+                    getAccountManager().getKeys().username(),
+                    getAccountManager().getKeys().persistence()
+            ));
+            
+            if (account != null)
+            {
+                persistenceManager.unserializeUsing(account, player, clazz);
+            }
         }
     }
     

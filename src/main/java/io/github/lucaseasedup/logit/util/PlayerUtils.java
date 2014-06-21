@@ -40,11 +40,11 @@ public final class PlayerUtils
      * 
      * @return the case-correct player name.
      */
-    public static String getPlayerName(String name)
+    public static String getPlayerRealName(String name)
     {
         if (isPlayerOnline(name))
         {
-            return Bukkit.getPlayerExact(name).getName();
+            return getPlayer(name).getName();
         }
         else
         {

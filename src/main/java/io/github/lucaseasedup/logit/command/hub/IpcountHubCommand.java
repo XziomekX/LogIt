@@ -20,7 +20,12 @@ package io.github.lucaseasedup.logit.command.hub;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
+import io.github.lucaseasedup.logit.storage.Infix;
+import io.github.lucaseasedup.logit.storage.SelectorCondition;
+import java.util.Arrays;
+import java.util.List;
 import org.bukkit.command.CommandSender;
 
 public final class IpcountHubCommand extends HubCommand
@@ -37,10 +42,16 @@ public final class IpcountHubCommand extends HubCommand
     @Override
     public void execute(CommandSender sender, String[] args)
     {
-        int ipCount = getAccountManager().countAccountsWithIp(args[0]);
+        List<Account> accounts = getAccountManager().selectAccounts(
+                Arrays.asList(
+                        keys().username(),
+                        keys().ip()
+                ),
+                new SelectorCondition(keys().ip(), Infix.EQUALS, args[0])
+        );
         
         sendMsg(sender, _("ipcount")
                 .replace("{0}", args[0])
-                .replace("{1}", String.valueOf(ipCount)));
+                .replace("{1}", (accounts != null) ? String.valueOf(accounts.size()) : "?"));
     }
 }

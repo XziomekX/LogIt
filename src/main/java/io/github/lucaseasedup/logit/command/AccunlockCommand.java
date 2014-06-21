@@ -21,14 +21,9 @@ package io.github.lucaseasedup.logit.command;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.account.AccountKeys;
-import io.github.lucaseasedup.logit.storage.Infix;
-import io.github.lucaseasedup.logit.storage.SelectorCondition;
-import io.github.lucaseasedup.logit.storage.Storage;
+import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
-import java.io.IOException;
-import java.util.logging.Level;
-import org.bukkit.Bukkit;
+import java.util.Arrays;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -39,65 +34,55 @@ public final class AccunlockCommand extends LogItCoreObject implements CommandEx
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        Player p = null;
+        Player player = null;
         
         if (sender instanceof Player)
         {
-            p = (Player) sender;
+            player = (Player) sender;
         }
         
         if (args.length <= 1)
         {
-            if (p != null && !p.hasPermission("logit.accunlock"))
+            if (player != null && !player.hasPermission("logit.accunlock"))
             {
                 sendMsg(sender, _("noPerms"));
+                
+                return true;
             }
-            else if (args.length < 1)
+            
+            if (args.length < 1)
             {
                 sendMsg(sender, _("paramMissing")
                         .replace("{0}", "username"));
+                
+                return true;
             }
-            else if (p != null && p.getName().equalsIgnoreCase(args[0]))
+            
+            if (player != null && player.getName().equalsIgnoreCase(args[0]))
             {
                 sendMsg(sender, _("accunlock.cannotUnlockYourself"));
+                
+                return true;
             }
-            else if (!getAccountManager().isRegistered(args[0]))
+            
+            Account account = getAccountManager().selectAccount(args[0], Arrays.asList(
+                    keys().username(),
+                    keys().is_locked()
+            ));
+            
+            if (account == null)
             {
                 sendMsg(sender, _("notRegistered.others")
                         .replace("{0}", args[0]));
+                
+                return true;
             }
-            else
-            {
-                try
-                {
-                    AccountKeys keys = getAccountManager().getKeys();
-                    getAccountStorage().updateEntries(getAccountManager().getUnit(),
-                            new Storage.Entry.Builder()
-                                .put(keys.is_locked(), "0")
-                                .build(),
-                            new SelectorCondition(
-                                keys.username(), Infix.EQUALS, args[0].toLowerCase()
-                            ));
-                    
-                    String playerName = args[0]; 
-                    
-                    if (PlayerUtils.isPlayerOnline(args[0]))
-                    {
-                        playerName = PlayerUtils.getPlayerName(args[0]);
-                        
-                        sendMsg(Bukkit.getPlayerExact(args[0]), _("accunlock.success.self"));
-                    }
-                    
-                    sendMsg(sender, _("accunlock.success.others")
-                            .replace("{0}", playerName));
-                }
-                catch (IOException ex)
-                {
-                    log(Level.WARNING, ex);
-                    
-                    sendMsg(sender, _("unexpectedError"));
-                }
-            }
+            
+            account.setLocked(false);
+            
+            sendMsg(args[0], _("accunlock.success.self"));
+            sendMsg(sender, _("accunlock.success.others")
+                    .replace("{0}", PlayerUtils.getPlayerRealName(args[0])));
         }
         else
         {

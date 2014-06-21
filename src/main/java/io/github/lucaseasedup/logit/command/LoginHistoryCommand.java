@@ -21,7 +21,9 @@ package io.github.lucaseasedup.logit.command;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.ReportedException;
+import io.github.lucaseasedup.logit.account.Account;
+import io.github.lucaseasedup.logit.util.PlayerUtils;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import org.bukkit.command.Command;
@@ -34,125 +36,113 @@ public final class LoginHistoryCommand extends LogItCoreObject implements Comman
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        Player p;
+        Player player = null;
         
         if (sender instanceof Player)
         {
-            p = (Player) sender;
-        }
-        else
-        {
-            p = null;
+            player = (Player) sender;
         }
         
         if (args.length == 0 || args.length == 1)
         {
-            String username;
+            String playerName;
             
             if (args.length == 0)
             {
-                if (p == null)
+                if (player == null)
                 {
                     sendMsg(sender, _("onlyForPlayers"));
                     
                     return true;
                 }
                 
-                if (!p.hasPermission("logit.loginhistory.self"))
+                if (!player.hasPermission("logit.loginhistory.self"))
                 {
                     sendMsg(sender, _("noPerms"));
                     
                     return true;
                 }
                 
-                username = p.getName().toLowerCase();
-                
-                if (!getAccountManager().isRegistered(username))
-                {
-                    sendMsg(sender, _("notRegistered.self"));
-                    
-                    return true;
-                }
+                playerName = player.getName();
             }
             else
             {
-                if (p != null && !p.hasPermission("logit.loginhistory.others"))
+                if (player != null && !player.hasPermission("logit.loginhistory.others"))
                 {
                     sendMsg(sender, _("noPerms"));
                     
                     return true;
                 }
                 
-                username = args[0];
-                
-                if (!getAccountManager().isRegistered(username))
-                {
-                    sendMsg(sender, _("notRegistered.others")
-                            .replace("{0}", username));
-                    
-                    return true;
-                }
+                playerName = args[0];
             }
             
-            try
+            Account account = getAccountManager().selectAccount(playerName, Arrays.asList(
+                    keys().username(),
+                    keys().login_history()
+            ));
+            
+            if (account == null)
             {
-                ReportedException.incrementRequestCount();
-                
-                List<String> records = getAccountManager().getLoginHistory(username);
-                
-                sendMsg(sender, "");
-                sendMsg(sender, _("loginHistory.header"));
-                
-                String lastIp = null;
-                int equalRecords = 1;
-                
-                for (int i = 0, n = records.size(); i < n - 1; i++)
+                if (args.length == 0)
                 {
-                    String record = records.get(i);
-                    String[] split = record.split(";");
-                    String nextRecord = records.get(i + 1);
-                    String[] nextSplit = nextRecord.split(";");
-                    
-                    if (split.length < 3 || nextSplit.length < 3)
-                        continue;
-                    
-                    boolean nextRecordEqual = split[0].equals(nextSplit[0])
-                            && split[1].equals(nextSplit[1])
-                            && split[2].equals(nextSplit[2]);
-                    
-                    if (nextRecordEqual)
-                    {
-                        equalRecords++;
-                    }
-                    
-                    if (!nextRecordEqual)
-                    {
-                        printLoginRecord(sender, split[0], split[1], split[2],
-                                equalRecords, lastIp);
-                        
-                        equalRecords = 1;
-                    }
-                    
-                    // If the next record is the last one.
-                    if (i + 1 >= n - 1)
-                    {
-                        printLoginRecord(sender, nextSplit[0], nextSplit[1], nextSplit[2],
-                                equalRecords, split[1]);
-                    }
-                    
-                    lastIp = split[1];
+                    sendMsg(sender, _("notRegistered.self"));
+                }
+                else
+                {
+                    sendMsg(sender, _("notRegistered.others")
+                            .replace("{0}", PlayerUtils.getPlayerRealName(playerName)));
                 }
                 
-                sendMsg(sender, "");
+                return true;
             }
-            catch (ReportedException ex)
+            
+            List<String> records = account.getLoginHistory();
+            
+            sendMsg(sender, "");
+            sendMsg(sender, _("loginHistory.header"));
+            
+            String lastIp = null;
+            int equalRecords = 1;
+            
+            for (int i = 0, n = records.size(); i < n - 1; i++)
             {
-                sendMsg(sender, _("unexpectedError"));
+                String record = records.get(i);
+                String[] split = record.split(";");
+                String nextRecord = records.get(i + 1);
+                String[] nextSplit = nextRecord.split(";");
+                
+                if (split.length < 3 || nextSplit.length < 3)
+                    continue;
+                
+                boolean nextRecordEqual = split[0].equals(nextSplit[0])
+                        && split[1].equals(nextSplit[1])
+                        && split[2].equals(nextSplit[2]);
+                
+                if (nextRecordEqual)
+                {
+                    equalRecords++;
+                }
+                
+                if (!nextRecordEqual)
+                {
+                    printLoginRecord(sender, split[0], split[1], split[2],
+                            equalRecords, lastIp);
+                    
+                    equalRecords = 1;
+                }
+                
+                // If the next record is the last one.
+                if (i + 1 >= n - 1)
+                {
+                    printLoginRecord(sender, nextSplit[0], nextSplit[1], nextSplit[2],
+                            equalRecords, split[1]);
+                }
+                
+                lastIp = split[1];
             }
-            finally
-            {
-                ReportedException.decrementRequestCount();
-            }
+            
+            sendMsg(sender, "");
         }
         else
         {

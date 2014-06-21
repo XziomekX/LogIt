@@ -24,17 +24,14 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
-import io.github.lucaseasedup.logit.TimeUnit;
-import io.github.lucaseasedup.logit.account.AccountKeys;
+import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.Storage;
-import java.io.IOException;
+import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -46,11 +43,11 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        Player p = null;
+        Player player = null;
         
         if (sender instanceof Player)
         {
-            p = (Player) sender;
+            player = (Player) sender;
         }
         
         int minPasswordLength = getConfig("config.yml").getInt("password.min-length");
@@ -63,79 +60,103 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 && ((args.length <= 2 && disablePasswords)
                         || (args.length <= 3 && !disablePasswords)))
         {
-            if (p != null && (
-                   (getCore().isPlayerForcedToLogIn(p) && !getSessionManager().isSessionAlive(p))
-                || !p.hasPermission("logit.register.others")
+            if (player != null && (
+                   (getCore().isPlayerForcedToLogIn(player)
+                           && !getSessionManager().isSessionAlive(player))
+                   || !player.hasPermission("logit.register.others")
             ))
             {
                 sendMsg(sender, _("noPerms"));
+                
+                return true;
             }
-            else if (args.length < 2)
+            
+            if (args.length < 2)
             {
                 sendMsg(sender, _("paramMissing")
                         .replace("{0}", "player"));
+                
+                return true;
             }
-            else if (!disablePasswords && args.length < 3)
+            
+            if (!disablePasswords && args.length < 3)
             {
                 sendMsg(sender, _("paramMissing")
                         .replace("{0}", "password"));
+                
+                return true;
             }
-            else if (getAccountManager().isRegistered(args[1]))
+            
+            if (getAccountManager().isRegistered(args[1]))
             {
                 sendMsg(sender, _("alreadyRegistered.others")
                         .replace("{0}", args[1]));
+                
+                return true;
             }
-            else if (!disablePasswords && args[2].length() < minPasswordLength)
+            
+            if (!disablePasswords && args[2].length() < minPasswordLength)
             {
                 sendMsg(sender, _("passwordTooShort")
                         .replace("{0}", String.valueOf(minPasswordLength)));
+                
+                return true;
             }
-            else if (!disablePasswords && args[2].length() > maxPasswordLength)
+            
+            if (!disablePasswords && args[2].length() > maxPasswordLength)
             {
                 sendMsg(sender, _("passwordTooLong")
                         .replace("{0}", String.valueOf(maxPasswordLength)));
-            }
-            else
-            {
-                String password = "";
                 
-                if (!disablePasswords)
+                return true;
+            }
+            
+            String password = "";
+            
+            if (!disablePasswords)
+            {
+                password = args[2];
+            }
+            
+            try
+            {
+                ReportedException.incrementRequestCount();
+                
+                Account account = new Account(args[1], new Storage.Entry());
+                account.changePassword(password);
+                
+                if (isPlayerOnline(args[1]))
                 {
-                    password = args[2];
+                    Player paramPlayer = PlayerUtils.getPlayer(args[1]);
+                    
+                    account.setIp(PlayerUtils.getPlayerIp(paramPlayer));
+                    account.setDisplayName(paramPlayer.getName());
                 }
                 
-                try
+                account.setLastActiveDate(System.currentTimeMillis() / 1000L);
+                account.setRegistrationDate(System.currentTimeMillis() / 1000L);
+                
+                if (!getAccountManager().insertAccount(account).isCancelled())
                 {
-                    ReportedException.incrementRequestCount();
-                    
-                    if (getAccountManager().createAccount(args[1], password).isCancelled())
-                    {
-                        return true;
-                    }
-                    
-                    sendMsg(args[1], _("createAccount.success.self"));
                     sendMsg(sender, _("createAccount.success.others")
-                            .replace("{0}", args[1]));
+                            .replace("{0}", PlayerUtils.getPlayerRealName(args[1])));
                     
                     if (isPlayerOnline(args[1]))
                     {
-                        AccountKeys keys = getAccountManager().getKeys();
-                        Storage.Entry accountData = getAccountManager().queryAccount(args[1],
-                                Arrays.asList(keys.username(), keys.is_locked()));
+                        Player paramPlayer = PlayerUtils.getPlayer(args[1]);
                         
-                        getAccountManager().attachIp(accountData,
-                                getPlayerIp(Bukkit.getPlayerExact(args[1])));
+                        sendMsg(paramPlayer, _("createAccount.success.self"));
                         
-                        getAccountStorage().updateEntries(getAccountManager().getUnit(),
-                                accountData,
-                                new SelectorCondition(keys.username(), Infix.EQUALS, args[1])
-                        );
-                        
-                        if (!getSessionManager().startSession(args[1]).isCancelled())
+                        if (getSessionManager().getSession(paramPlayer) == null)
                         {
-                            sendMsg(args[1], _("startSession.success.self"));
+                            getSessionManager().createSession(paramPlayer);
+                        }
+                        
+                        if (!getSessionManager().startSession(paramPlayer).isCancelled())
+                        {
+                            sendMsg(paramPlayer, _("startSession.success.self"));
                             sendMsg(sender, _("startSession.success.others")
-                                    .replace("{0}", args[1]));
+                                    .replace("{0}", paramPlayer.getName()));
                         }
                         
                         boolean newbieTeleportEnabled = getConfig("config.yml")
@@ -148,47 +169,40 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                                     .getLocation("waiting-room.newbie-teleport.location")
                                     .toBukkitLocation();
                             
-                            Bukkit.getPlayerExact(args[1]).teleport(newbieTeleportLocation);
+                            paramPlayer.teleport(newbieTeleportLocation);
                         }
                     }
                 }
-                catch (IOException ex)
-                {
-                    log(Level.WARNING, ex);
-                    
-                    sendMsg(sender, _("createAccount.fail.others")
-                            .replace("{0}", args[1]));
-                }
-                catch (ReportedException ex)
-                {
-                    sendMsg(sender, _("createAccount.fail.others")
-                            .replace("{0}", args[1]));
-                }
-                finally
-                {
-                    ReportedException.decrementRequestCount();
-                }
+            }
+            catch (ReportedException ex)
+            {
+                sendMsg(sender, _("createAccount.fail.others")
+                        .replace("{0}", args[1]));
+            }
+            finally
+            {
+                ReportedException.decrementRequestCount();
             }
         }
         else if ((args.length == 0 && disablePasswords) || (args.length <= 2 && !disablePasswords))
         {
-            if (p == null)
+            if (player == null)
             {
                 sendMsg(sender, _("onlyForPlayers"));
                 
                 return true;
             }
             
-            if (!p.hasPermission("logit.register.self"))
+            if (!player.hasPermission("logit.register.self"))
             {
-                sendMsg(p, _("noPerms"));
+                sendMsg(player, _("noPerms"));
                 
                 return true;
             }
             
             if (!disablePasswords && args.length < 1)
             {
-                sendMsg(p, _("paramMissing")
+                sendMsg(player, _("paramMissing")
                         .replace("{0}", "password"));
                 
                 return true;
@@ -196,30 +210,30 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             
             if (!disablePasswords && args.length < 2)
             {
-                sendMsg(p, _("paramMissing")
+                sendMsg(player, _("paramMissing")
                         .replace("{0}", "confirmpassword"));
                 
                 return true;
             }
             
-            if (getCooldownManager().isCooldownActive(p, LogItCooldowns.REGISTER))
+            if (getCooldownManager().isCooldownActive(player, LogItCooldowns.REGISTER))
             {
-                getMessageDispatcher().sendCooldownMessage(p.getName(),
-                        getCooldownManager().getCooldownMillis(p, LogItCooldowns.REGISTER));
+                getMessageDispatcher().sendCooldownMessage(player.getName(),
+                        getCooldownManager().getCooldownMillis(player, LogItCooldowns.REGISTER));
                 
                 return true;
             }
             
-            if (getAccountManager().isRegistered(p.getName()))
+            if (getAccountManager().isRegistered(player.getName()))
             {
-                sendMsg(p, _("alreadyRegistered.self"));
+                sendMsg(player, _("alreadyRegistered.self"));
                 
                 return true;
             }
             
             if (!disablePasswords && args[0].length() < minPasswordLength)
             {
-                sendMsg(p, _("passwordTooShort")
+                sendMsg(player, _("passwordTooShort")
                         .replace("{0}", String.valueOf(minPasswordLength)));
                 
                 return true;
@@ -227,7 +241,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             
             if (!disablePasswords && args[0].length() > maxPasswordLength)
             {
-                sendMsg(p, _("passwordTooLong")
+                sendMsg(player, _("passwordTooLong")
                         .replace("{0}", String.valueOf(maxPasswordLength)));
                 
                 return true;
@@ -235,21 +249,30 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             
             if (!disablePasswords && !args[0].equals(args[1]))
             {
-                sendMsg(p, _("passwordsDoNotMatch"));
+                sendMsg(player, _("passwordsDoNotMatch"));
                 
                 return true;
             }
             
             int accountsPerIp = getConfig("config.yml").getInt("accounts-per-ip.amount");
-            List<String> unrestrictedIps =
-                    getConfig("config.yml").getStringList("accounts-per-ip.unrestricted-ips");
             
-            if (getAccountManager().countAccountsWithIp(getPlayerIp(p)) >= accountsPerIp
-                    && !unrestrictedIps.contains(getPlayerIp(p)) && accountsPerIp >= 0)
+            if (accountsPerIp >= 0)
             {
-                sendMsg(p, _("accountsPerIpLimitReached"));
+                int accountsWithIp = getAccountManager().selectAccounts(
+                        Arrays.asList(keys().username(), keys().ip()),
+                        new SelectorCondition(keys().ip(), Infix.EQUALS, getPlayerIp(player))
+                ).size();
                 
-                return true;
+                List<String> unrestrictedIps =
+                        getConfig("config.yml").getStringList("accounts-per-ip.unrestricted-ips");
+                
+                if (accountsWithIp >= accountsPerIp
+                        && !unrestrictedIps.contains(getPlayerIp(player)))
+                {
+                    sendMsg(player, _("accountsPerIpLimitReached"));
+                    
+                    return true;
+                }
             }
             
             String password = "";
@@ -259,72 +282,54 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 password = args[0];
             }
             
-            String username = p.getName().toLowerCase();
+            String username = player.getName().toLowerCase();
             
             try
             {
                 ReportedException.incrementRequestCount();
                 
-                if (getAccountManager().createAccount(username, password).isCancelled())
+                Account account = new Account(username, new Storage.Entry());
+                account.changePassword(password);
+                account.setIp(PlayerUtils.getPlayerIp(player));
+                account.setLastActiveDate(System.currentTimeMillis() / 1000L);
+                account.setRegistrationDate(System.currentTimeMillis() / 1000L);
+                account.setDisplayName(player.getName());
+                
+                if (!getAccountManager().insertAccount(account).isCancelled())
                 {
-                    return true;
-                }
-                
-                long cooldown = getConfig("config.yml")
-                        .getTime("cooldowns.register", TimeUnit.MILLISECONDS);
-                
-                getCooldownManager().activateCooldown(p, LogItCooldowns.REGISTER, cooldown);
-                
-                sendMsg(sender, _("createAccount.success.self"));
-                
-                AccountKeys keys = getAccountManager().getKeys();
-                Storage.Entry accountData = getAccountManager().queryAccount(username,
-                        Arrays.asList(keys.username(), keys.is_locked()));
-                
-                getAccountManager().attachIp(accountData, getPlayerIp(p));
-                
-                accountData.put(keys.display_name(), p.getName());
-                
-                getAccountStorage().updateEntries(getAccountManager().getUnit(), accountData,
-                        new SelectorCondition(
-                                keys.username(), Infix.EQUALS, p.getName().toLowerCase()
-                        )
-                );
-                
-                if (!getSessionManager().startSession(p.getName()).isCancelled())
-                {
-                    sendMsg(sender, _("startSession.success.self"));
-                }
-                
-                boolean newbieTeleportEnabled = getConfig("config.yml")
-                        .getBoolean("waiting-room.newbie-teleport.enabled");
-                
-                if (getConfig("config.yml").getBoolean("waiting-room.enabled")
-                        && newbieTeleportEnabled)
-                {
-                    Location newbieTeleportLocation = getConfig("config.yml")
-                            .getLocation("waiting-room.newbie-teleport.location")
-                            .toBukkitLocation();
+                    LogItCooldowns.activate(LogItCooldowns.REGISTER, player);
                     
-                    p.teleport(newbieTeleportLocation);
+                    sendMsg(sender, _("createAccount.success.self"));
+                    
+                    if (!getSessionManager().startSession(player).isCancelled())
+                    {
+                        sendMsg(sender, _("startSession.success.self"));
+                    }
+                    
+                    boolean newbieTeleportEnabled = getConfig("config.yml")
+                            .getBoolean("waiting-room.newbie-teleport.enabled");
+                    
+                    if (getConfig("config.yml").getBoolean("waiting-room.enabled")
+                            && newbieTeleportEnabled)
+                    {
+                        Location newbieTeleportLocation = getConfig("config.yml")
+                                .getLocation("waiting-room.newbie-teleport.location")
+                                .toBukkitLocation();
+                        
+                        player.teleport(newbieTeleportLocation);
+                    }
+                    
+                    if (getConfig("config.yml").getBoolean("login-sessions.enabled"))
+                    {
+                        sendMsg(sender, _("rememberLogin.prompt"));
+                    }
+                    
+                    if (getConfig("config.yml").getBoolean("password-recovery.prompt-to-add-email")
+                            && getConfig("config.yml").getBoolean("password-recovery.enabled"))
+                    {
+                        sendMsg(sender, _("noEmailSet"));
+                    }
                 }
-                
-                if (getConfig("config.yml").getBoolean("login-sessions.enabled"))
-                {
-                    sendMsg(sender, _("rememberLogin.prompt"));
-                }
-                
-                if (getConfig("config.yml").getBoolean("password-recovery.prompt-to-add-email")
-                        && getConfig("config.yml").getBoolean("password-recovery.enabled"))
-                {
-                    sendMsg(sender, _("noEmailSet"));
-                }
-            }
-            catch (IOException ex)
-            {
-                log(Level.WARNING, ex);
-                
-                sendMsg(sender, _("createAccount.fail.self"));
             }
             catch (ReportedException ex)
             {

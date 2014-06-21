@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit.persistence;
 import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
+import io.github.lucaseasedup.logit.account.Account;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -53,18 +54,21 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      * Serializes player data using the specified persistence serializer
      * 
      * <p> No action will be taken if the player's data
-     * has already been serialized using this serializer.
+     * has already been serialized using the specified serializer.
      * 
-     * @param player the player whose data will be serialized.
-     * @param clazz  serializer class.
+     * @param account the account from which persistence data will be read.
+     * @param player  the player whose data will be serialized.
+     * @param clazz   the serializer class.
      * 
-     * @throws IllegalArgumentException     if {@code player} or
-     *                                      {@code clazz} is {@code null}.
-     *                                      
-     * @throws ReportedException            if an I/O error occurred,
-     *                                      and it was reported to the logger.
+     * @throws IllegalArgumentException if {@code account}, {@code player}
+     *                                  or {@code clazz} is {@code null}.
+     *                                  
+     * @throws ReportedException        if an I/O error occurred,
+     *                                  and it was reported to the logger.
      */
-    public void serializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
+    public void serializeUsing(Account account,
+                               Player player,
+                               Class<? extends PersistenceSerializer> clazz)
     {
         if (player == null || clazz == null)
             throw new IllegalArgumentException();
@@ -74,16 +78,15 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
         if (serializer == null)
             return;
         
-        serializeUsing(player, serializer);
+        serializeUsing(account, player, serializer);
     }
     
-    public void serializeUsing(Player player, PersistenceSerializer serializer)
+    public void serializeUsing(Account account, Player player, PersistenceSerializer serializer)
     {
-        if (player == null || serializer == null)
+        if (account == null || player == null || serializer == null)
             throw new IllegalArgumentException();
         
-        String username = player.getName().toLowerCase();
-        Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
+        Map<String, String> persistence = account.getPersistence();
         
         if (persistence == null)
             return;
@@ -92,7 +95,7 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
         {
             serializer.serialize(persistence, player);
             
-            getAccountManager().updateAccountPersistence(username, persistence);
+            account.savePersistence(persistence);
         }
     }
     
@@ -100,19 +103,21 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      * Serializes player data using all enabled serializers registered
      * using the {@link #registerSerializer} method.
      * 
-     * @param player the player whose data will be serialized.
+     * @param account the account from which persistence data will be read.
+     * @param player  the player whose data will be serialized.
      * 
-     * @throws IllegalArgumentException if {@code player} is {@code null}.
+     * @throws IllegalArgumentException if {@code account} or
+     *                                  {@code player} is {@code null}.
+     *                                  
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
-    public void serialize(Player player)
+    public void serialize(Account account, Player player)
     {
-        if (player == null)
+        if (account == null || player == null)
             throw new IllegalArgumentException();
         
-        String username = player.getName().toLowerCase();
-        Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
+        Map<String, String> persistence = account.getPersistence();
         
         if (persistence == null)
             return;
@@ -130,27 +135,30 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
             }
         }
         
-        getAccountManager().updateAccountPersistence(username, persistence);
+        account.savePersistence(persistence);
     }
     
     /**
      * Unserializes player data using the specified persistence serializer
      * 
      * <p> No action will be taken if the player's data
-     * has not been serialized using this serializer.
+     * has not been serialized using the specified serializer.
      * 
-     * @param player the player whose data will be unserialized.
-     * @param clazz  serializer class.
+     * @param account the account from which persistence data will be read.
+     * @param player  the player whose data will be unserialized.
+     * @param clazz   the serializer class.
      * 
-     * @throws IllegalArgumentException     if {@code player} or
-     *                                      {@code clazz} is {@code null}.
-     *                                      
-     * @throws ReportedException            if an I/O error occurred,
-     *                                      and it was reported to the logger.
+     * @throws IllegalArgumentException if {@code account}, {@code player} or
+     *                                  {@code clazz} is {@code null}.
+     *                                  
+     * @throws ReportedException        if an I/O error occurred,
+     *                                  and it was reported to the logger.
      */
-    public void unserializeUsing(Player player, Class<? extends PersistenceSerializer> clazz)
+    public void unserializeUsing(Account account,
+                                 Player player,
+                                 Class<? extends PersistenceSerializer> clazz)
     {
-        if (player == null || clazz == null)
+        if (account == null || player == null || clazz == null)
             throw new IllegalArgumentException();
         
         PersistenceSerializer serializer = getSerializer(clazz);
@@ -158,16 +166,15 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
         if (serializer == null)
             return;
         
-        unserializeUsing(player, serializer);
+        unserializeUsing(account, player, serializer);
     }
     
-    public void unserializeUsing(Player player, PersistenceSerializer serializer)
+    public void unserializeUsing(Account account, Player player, PersistenceSerializer serializer)
     {
-        if (player == null || serializer == null)
+        if (account == null || player == null || serializer == null)
             throw new IllegalArgumentException();
         
-        String username = player.getName().toLowerCase();
-        Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
+        Map<String, String> persistence = account.getPersistence();
         
         if (persistence == null)
             return;
@@ -181,7 +188,7 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
                 persistence.put(key.name(), key.defaultValue());
             }
             
-            getAccountManager().updateAccountPersistence(username, persistence);
+            account.savePersistence(persistence);
         }
     }
     
@@ -189,23 +196,26 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
      * Unserializes player data using all enabled serializers registered
      * using the {@link #registerSerializer} method.
      * 
-     * @param player the player whose data will be unserialized.
+     * @param account the account from which persistence data will be read.
+     * @param player  the player whose data will be unserialized.
      * 
-     * @throws IllegalArgumentException if {@code player} is {@code null}.
+     * @throws IllegalArgumentException if {@code account} or
+     *                                  {@code player} is {@code null}.
+     *                                  
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
-    public void unserialize(Player player)
+    public void unserialize(Account account, Player player)
     {
-        if (player == null)
+        if (account == null || player == null)
             throw new IllegalArgumentException();
         
-        String username = player.getName().toLowerCase();
-        Set<Key> keysToErase = new HashSet<>();
-        Map<String, String> persistence = getAccountManager().getAccountPersistence(username);
+        Map<String, String> persistence = account.getPersistence();
         
         if (persistence == null)
             return;
+        
+        Set<Key> keysToErase = new HashSet<>();
         
         for (Class<? extends PersistenceSerializer> clazz : getSerializersInOrder())
         {
@@ -230,7 +240,7 @@ public final class PersistenceManager extends LogItCoreObject implements Disposa
             persistence.put(key.name(), key.defaultValue());
         }
         
-        getAccountManager().updateAccountPersistence(username, persistence);
+        account.savePersistence(persistence);
     }
     
     /**

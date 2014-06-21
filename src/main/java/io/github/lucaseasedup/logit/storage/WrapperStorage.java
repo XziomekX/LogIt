@@ -18,9 +18,12 @@
  */
 package io.github.lucaseasedup.logit.storage;
 
+import io.github.lucaseasedup.logit.CustomLevel;
+import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
 import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -29,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Level;
 
 public final class WrapperStorage extends Storage
 {
@@ -54,6 +58,8 @@ public final class WrapperStorage extends Storage
     @Override
     public void connect() throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#connect()");
+        
         leading.connect();
         
         for (Storage mirror : mirrors)
@@ -65,12 +71,16 @@ public final class WrapperStorage extends Storage
     @Override
     public boolean isConnected() throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#isConnected()");
+        
         return leading.isConnected();
     }
     
     @Override
     public void ping() throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#ping()");
+        
         leading.ping();
         
         for (Storage mirror : mirrors)
@@ -82,6 +92,8 @@ public final class WrapperStorage extends Storage
     @Override
     public void close() throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#close()");
+        
         leading.close();
         
         for (Storage mirror : mirrors)
@@ -93,18 +105,24 @@ public final class WrapperStorage extends Storage
     @Override
     public List<String> getUnitNames() throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#getUnitNames()");
+        
         return leading.getUnitNames();
     }
     
     @Override
     public Hashtable<String, DataType> getKeys(String unit) throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#getKeys(\"" + unit + "\")");
+        
         return leading.getKeys(unit);
     }
     
     @Override
     public List<Storage.Entry> selectEntries(String unit) throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#selectEntries(\"" + unit + "\")");
+        
         if (cacheType == CacheType.DISABLED)
         {
             return leading.selectEntries(unit);
@@ -137,6 +155,10 @@ public final class WrapperStorage extends Storage
     public List<Storage.Entry> selectEntries(String unit, List<String> keys)
             throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#selectEntries("
+                                + "\"" + unit + "\", "
+                                + Arrays.toString(keys.toArray()) + ")");
+        
         if (cacheType == CacheType.DISABLED)
         {
             return leading.selectEntries(unit, keys);
@@ -161,6 +183,10 @@ public final class WrapperStorage extends Storage
     @Override
     public List<Storage.Entry> selectEntries(String unit, Selector selector) throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#selectEntries("
+                                + "\"" + unit + "\", "
+                                + SqlUtils.translateSelector(selector, "`", "'") + ")");
+        
         if (cacheType == CacheType.DISABLED)
         {
             return leading.selectEntries(unit, selector);
@@ -186,6 +212,11 @@ public final class WrapperStorage extends Storage
     public List<Storage.Entry> selectEntries(String unit, List<String> keys, Selector selector)
             throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#selectEntries("
+                                + "\"" + unit + "\", "
+                                + Arrays.toString(keys.toArray()) + ", "
+                                + SqlUtils.translateSelector(selector, "`", "'") + ")");
+        
         if (cacheType == CacheType.DISABLED)
         {
             return leading.selectEntries(unit, keys, selector);
@@ -210,6 +241,12 @@ public final class WrapperStorage extends Storage
     @Override
     public void createUnit(String unit, Hashtable<String, DataType> keys) throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#createUnit("
+                                + "\"" + unit + "\", "
+                                + "Hashtable {keys: ["
+                                        + CollectionUtils.toString(keys.keys())
+                                + "]})");
+        
         leading.createUnit(unit, keys);
         
         for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
@@ -236,6 +273,10 @@ public final class WrapperStorage extends Storage
     @Override
     public void renameUnit(String unit, String newName) throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#renameUnit("
+                                + "\"" + unit + "\", "
+                                + "\"" + newName + "\")");
+        
         if (unit.equals(newName))
             throw new IllegalArgumentException();
         
@@ -266,6 +307,9 @@ public final class WrapperStorage extends Storage
     @Override
     public void eraseUnit(String unit) throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#eraseUnit("
+                                + "\"" + unit + "\")");
+        
         leading.eraseUnit(unit);
         
         for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
@@ -292,6 +336,9 @@ public final class WrapperStorage extends Storage
     @Override
     public void removeUnit(String unit) throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#removeUnit("
+                                + "\"" + unit + "\")");
+        
         leading.removeUnit(unit);
         
         for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
@@ -318,6 +365,11 @@ public final class WrapperStorage extends Storage
     @Override
     public void addKey(String unit, String key, DataType type) throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#addKey("
+                                + "\"" + unit + "\", "
+                                + "\"" + key + "\", "
+                                + type + ")");
+        
         leading.addKey(unit, key, type);
         
         for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
@@ -347,6 +399,10 @@ public final class WrapperStorage extends Storage
     @Override
     public void addEntry(String unit, Storage.Entry entry) throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#addEntry("
+                                + "\"" + unit + "\", "
+                                + entry + ")");
+        
         leading.addEntry(unit, entry);
         
         for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
@@ -374,6 +430,11 @@ public final class WrapperStorage extends Storage
     public void updateEntries(String unit, Storage.Entry entrySubset, Selector selector)
             throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#updateEntries("
+                                + "\"" + unit + "\", "
+                                + entrySubset + ", "
+                                + SqlUtils.translateSelector(selector, "`", "'") + ")");
+        
         leading.updateEntries(unit, entrySubset, selector);
         
         for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
@@ -409,6 +470,10 @@ public final class WrapperStorage extends Storage
     @Override
     public void removeEntries(String unit, Selector selector) throws IOException
     {
+        log(CustomLevel.INTERNAL, "WrapperStorage#removeEntries("
+                                + "\"" + unit + "\", "
+                                + SqlUtils.translateSelector(selector, "`", "'") + ")");
+        
         leading.removeEntries(unit, selector);
         
         for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
@@ -555,21 +620,31 @@ public final class WrapperStorage extends Storage
         {
             if (SqlUtils.resolveSelector(selector, entry))
             {
-                Storage.Entry copiedEntry = new Storage.Entry();
+                Storage.Entry.Builder copiedEntryBuilder = new Storage.Entry.Builder();
                 
                 for (Storage.Entry.Datum datum : entry)
                 {
                     if (keys == null || keys.contains(datum.getKey()))
                     {
-                        copiedEntry.put(datum.getKey(), datum.getValue());
+                        copiedEntryBuilder.put(datum.getKey(), datum.getValue());
                     }
                 }
                 
-                copiedEntries.add(copiedEntry);
+                copiedEntries.add(copiedEntryBuilder.build());
             }
         }
         
         return copiedEntries;
+    }
+    
+    private void log(Level level, String message)
+    {
+        LogItCore logItCore = LogItCore.getInstance();
+        
+        if (logItCore != null)
+        {
+            logItCore.log(level, message);
+        }
     }
     
     public static final class Builder

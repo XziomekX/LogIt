@@ -20,8 +20,9 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.account.Account;
+import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,68 +34,91 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        Player p = null;
+        Player player = null;
         
         if (sender instanceof Player)
         {
-            p = (Player) sender;
+            player = (Player) sender;
         }
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 2)
         {
-            if (p != null && !p.hasPermission("logit.logout.others"))
+            if (player != null && !player.hasPermission("logit.logout.others"))
             {
                 sendMsg(sender, _("noPerms"));
+                
+                return true;
             }
-            else if (args.length < 2)
+            
+            if (args.length < 2)
             {
                 sendMsg(sender, _("paramMissing")
                         .replace("{0}", "player"));
+                
+                return true;
             }
-            else if (!isPlayerOnline(args[1]))
+            
+            Player paramPlayer = Bukkit.getPlayerExact(args[1]);
+            
+            if (paramPlayer == null)
             {
                 sendMsg(sender, _("playerNotOnline")
                         .replace("{0}", args[1]));
+                
+                return true;
             }
-            else if (!getSessionManager().isSessionAlive(Bukkit.getPlayerExact(args[1])))
+            
+            if (!getSessionManager().isSessionAlive(paramPlayer))
             {
                 sendMsg(sender, _("notLoggedIn.others")
-                        .replace("{0}", args[1]));
+                        .replace("{0}", paramPlayer.getName()));
+                
+                return true;
             }
-            else
+            
+            if (!getSessionManager().endSession(paramPlayer).isCancelled())
             {
-                if (!getSessionManager().endSession(args[1]).isCancelled())
-                {
-                    sendMsg(args[1], _("endSession.success.self"));
-                    sendMsg(sender, _("endSession.success.others")
-                            .replace("{0}", args[1]));
-                }
+                sendMsg(paramPlayer, _("endSession.success.self"));
+                sendMsg(sender, _("endSession.success.others")
+                        .replace("{0}", paramPlayer.getName()));
             }
         }
         else if (args.length == 0)
         {
-            if (p == null)
+            if (player == null)
             {
                 sendMsg(sender, _("onlyForPlayers"));
+                
+                return true;
             }
-            else if (!p.hasPermission("logit.logout.self"))
+            
+            if (!player.hasPermission("logit.logout.self"))
             {
-                sendMsg(p, _("noPerms"));
+                sendMsg(player, _("noPerms"));
+                
+                return true;
             }
-            else if (!getSessionManager().isSessionAlive(p))
+            
+            if (!getSessionManager().isSessionAlive(player))
             {
-                sendMsg(p, _("notLoggedIn.self"));
+                sendMsg(player, _("notLoggedIn.self"));
+                
+                return true;
             }
-            else
+            
+            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
+                    keys().username(),
+                    keys().persistence()
+            ));
+            
+            if (!getSessionManager().endSession(player).isCancelled())
             {
-                if (!getSessionManager().endSession(p.getName()).isCancelled())
+                sendMsg(sender, _("endSession.success.self"));
+                
+                if (account != null
+                        && getConfig("config.yml").getBoolean("login-sessions.enabled"))
                 {
-                    sendMsg(sender, _("endSession.success.self"));
-                    
-                    if (getConfig("config.yml").getBoolean("login-sessions.enabled"))
-                    {
-                        getAccountManager().eraseLoginSession(p.getName());
-                    }
+                    account.eraseLoginSession();
                 }
             }
         }

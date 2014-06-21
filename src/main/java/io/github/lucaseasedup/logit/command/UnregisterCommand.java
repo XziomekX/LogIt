@@ -22,9 +22,10 @@ import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
-import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
-import org.bukkit.Bukkit;
+import io.github.lucaseasedup.logit.util.PlayerUtils;
+import java.util.Arrays;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,11 +36,11 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        Player p = null;
+        Player player = null;
         
         if (sender instanceof Player)
         {
-            p = (Player) sender;
+            player = (Player) sender;
         }
         
         boolean disablePasswords = getConfig("config.yml")
@@ -47,108 +48,133 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 2)
         {
-            if (p != null && !p.hasPermission("logit.unregister.others"))
+            if (player != null && !player.hasPermission("logit.unregister.others"))
             {
                 sendMsg(sender, _("noPerms"));
+                
+                return true;
             }
-            else if (args.length < 2)
+            
+            if (args.length < 2)
             {
                 sendMsg(sender, _("paramMissing")
                         .replace("{0}", "player"));
+                
+                return true;
             }
-            else if (!getAccountManager().isRegistered(args[1]))
+            
+            Account account = getAccountManager().selectAccount(args[1], Arrays.asList(
+                    keys().username()
+            ));
+            
+            if (account == null)
             {
                 sendMsg(sender, _("notRegistered.others")
                         .replace("{0}", args[1]));
+                
+                return true;
             }
-            else if (p != null && p.getName().equalsIgnoreCase(args[1]))
+            
+            if (player != null && player.getName().equalsIgnoreCase(args[1]))
             {
                 sendMsg(sender, _("removeAccount.indirectAccountRemoval"));
-            }
-            else
-            {
-                if (getSessionManager().isSessionAlive(Bukkit.getPlayerExact(args[1])))
-                {
-                    if (!getSessionManager().endSession(args[1]).isCancelled())
-                    {
-                        sendMsg(args[1], _("endSession.success.self"));
-                        sendMsg(sender, _("endSession.success.others")
-                                .replace("{0}", args[1]));
-                    }
-                }
                 
-                try
+                return true;
+            }
+            
+            if (PlayerUtils.isPlayerOnline(args[1]))
+            {
+                Player paramPlayer = PlayerUtils.getPlayer(args[1]);
+                
+                if (getSessionManager().isSessionAlive(paramPlayer))
                 {
-                    ReportedException.incrementRequestCount();
-                    
-                    if (!getAccountManager().removeAccount(args[1]).isCancelled())
+                    if (!getSessionManager().endSession(paramPlayer).isCancelled())
                     {
-                        sendMsg(args[1], _("removeAccount.success.self"));
-                        sendMsg(sender, _("removeAccount.success.others")
-                                .replace("{0}", args[1]));
+                        sendMsg(paramPlayer, _("endSession.success.self"));
+                        sendMsg(sender, _("endSession.success.others")
+                                .replace("{0}", paramPlayer.getName()));
                     }
                 }
-                catch (ReportedException ex)
+            }
+            
+            try
+            {
+                ReportedException.incrementRequestCount();
+                
+                if (!getAccountManager().removeAccount(args[1]).isCancelled())
                 {
-                    sendMsg(sender, _("removeAccount.fail.others")
-                            .replace("{0}", args[1]));
+                    sendMsg(args[1], _("removeAccount.success.self"));
+                    sendMsg(sender, _("removeAccount.success.others")
+                            .replace("{0}", PlayerUtils.getPlayerRealName(args[1])));
                 }
-                finally
-                {
-                    ReportedException.decrementRequestCount();
-                }
+            }
+            catch (ReportedException ex)
+            {
+                sendMsg(sender, _("removeAccount.fail.others")
+                        .replace("{0}", PlayerUtils.getPlayerRealName(args[1])));
+            }
+            finally
+            {
+                ReportedException.decrementRequestCount();
             }
         }
         else if ((args.length == 0 && disablePasswords) || (args.length <= 1 && !disablePasswords))
         {
-            if (p == null)
+            if (player == null)
             {
                 sendMsg(sender, _("onlyForPlayers"));
                 
                 return true;
             }
             
-            if (!p.hasPermission("logit.unregister.self"))
+            if (!player.hasPermission("logit.unregister.self"))
             {
-                sendMsg(p, _("noPerms"));
+                sendMsg(player, _("noPerms"));
                 
                 return true;
             }
             
             if (args.length < 1 && !disablePasswords)
             {
-                sendMsg(p, _("paramMissing")
+                sendMsg(player, _("paramMissing")
                         .replace("{0}", "password"));
                 
                 return true;
             }
             
-            if (getCooldownManager().isCooldownActive(p, LogItCooldowns.UNREGISTER))
+            if (getCooldownManager().isCooldownActive(player, LogItCooldowns.UNREGISTER))
             {
-                getMessageDispatcher().sendCooldownMessage(p.getName(),
-                        getCooldownManager().getCooldownMillis(p, LogItCooldowns.UNREGISTER));
+                getMessageDispatcher().sendCooldownMessage(player.getName(),
+                        getCooldownManager().getCooldownMillis(player, LogItCooldowns.UNREGISTER));
                 
                 return true;
             }
             
-            if (!getAccountManager().isRegistered(p.getName()))
+            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
+                    keys().username(),
+                    keys().salt(),
+                    keys().password(),
+                    keys().hashing_algorithm(),
+                    keys().persistence()
+            ));
+            
+            if (account == null)
             {
-                sendMsg(p, _("notRegistered.self"));
+                sendMsg(player, _("notRegistered.self"));
                 
                 return true;
             }
             
-            if (!disablePasswords
-                    && !getAccountManager().checkAccountPassword(p.getName(), args[0]))
+            if (!disablePasswords && !account.checkPassword(args[0]))
             {
-                sendMsg(p, _("incorrectPassword"));
+                sendMsg(player, _("incorrectPassword"));
                 
                 return true;
             }
             
-            if (getSessionManager().isSessionAlive(p))
+            if (getSessionManager().isSessionAlive(player))
             {
-                if (!getSessionManager().endSession(p.getName()).isCancelled())
+                if (!getSessionManager().endSession(player).isCancelled())
                 {
                     sendMsg(sender, _("endSession.success.self"));
                 }
@@ -158,17 +184,12 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
             {
                 ReportedException.incrementRequestCount();
                 
-                if (getAccountManager().removeAccount(p.getName()).isCancelled())
+                if (!getAccountManager().removeAccount(player.getName()).isCancelled())
                 {
-                    return true;
+                    sendMsg(sender, _("removeAccount.success.self"));
+                    
+                    LogItCooldowns.activate(LogItCooldowns.UNREGISTER, player);
                 }
-                
-                long cooldown = getConfig("config.yml")
-                        .getTime("cooldowns.unregister", TimeUnit.MILLISECONDS);
-                
-                getCooldownManager().activateCooldown(p, LogItCooldowns.UNREGISTER, cooldown);
-                
-                sendMsg(sender, _("removeAccount.success.self"));
             }
             catch (ReportedException ex)
             {

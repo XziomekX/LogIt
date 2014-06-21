@@ -20,9 +20,11 @@ package io.github.lucaseasedup.logit.listener;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.session.SessionEndEvent;
 import io.github.lucaseasedup.logit.session.SessionStartEvent;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
+import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,7 +39,15 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
     {
         String username = event.getUsername();
         
-        updateLastActiveDate(username);
+        Account account = getAccountManager().selectAccount(username, Arrays.asList(
+                keys().username(),
+                keys().persistence()
+        ));
+        
+        if (account != null)
+        {
+            account.setLastActiveDate(System.currentTimeMillis() / 1000L);
+        }
         
         if (!PlayerUtils.isPlayerOnline(username))
             return;
@@ -64,7 +74,10 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
         
         if (getCore().isPlayerForcedToLogIn(player))
         {
-            getPersistenceManager().unserialize(player);
+            if (account != null)
+            {
+                getPersistenceManager().unserialize(account, player);
+            }
         }
     }
     
@@ -73,7 +86,15 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
     {
         String username = event.getUsername();
         
-        updateLastActiveDate(username);
+        Account account = getAccountManager().selectAccount(username, Arrays.asList(
+                keys().username(),
+                keys().persistence()
+        ));
+        
+        if (account != null)
+        {
+            account.setLastActiveDate(System.currentTimeMillis() / 1000L);
+        }
         
         if (!PlayerUtils.isPlayerOnline(username))
             return;
@@ -100,7 +121,10 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
         
         if (getCore().isPlayerForcedToLogIn(player))
         {
-            getPersistenceManager().serialize(player);
+            if (account != null)
+            {
+                getPersistenceManager().serialize(account, player);
+            }
             
             if (getConfig("config.yml").getBoolean("force-login.periodical-prompt.enabled"))
             {
@@ -111,10 +135,5 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
                         .dispatchRepeatingForceLoginPrompter(username, promptPeriod, promptPeriod);
             }
         }
-    }
-    
-    private void updateLastActiveDate(String username)
-    {
-        getAccountManager().updateLastActiveDate(username);
     }
 }

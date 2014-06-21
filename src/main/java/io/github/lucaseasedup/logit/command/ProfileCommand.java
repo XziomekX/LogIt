@@ -33,71 +33,77 @@ public final class ProfileCommand extends LogItCoreObject implements CommandExec
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        Player p = null;
+        Player player = null;
         
         if (sender instanceof Player)
         {
-            p = (Player) sender;
+            player = (Player) sender;
         }
         
         if (args.length == 1 && args[0].equalsIgnoreCase("view"))
         {
-            if (p == null)
+            if (player == null)
             {
                 sendMsg(sender, _("onlyForPlayers"));
+                
+                return true;
             }
-            else if (!p.hasPermission("logit.profile.view.self"))
+            
+            if (!player.hasPermission("logit.profile.view.self"))
             {
                 sendMsg(sender, _("noPerms"));
+                
+                return true;
             }
-            else
-            {
-                new ProfileViewWizard(sender, p.getName()).createWizard();
-            }
+            
+            new ProfileViewWizard(sender, player.getName()).createWizard();
         }
         else if (args.length == 2 && args[0].equalsIgnoreCase("view"))
         {
-            if (p != null && !p.hasPermission("logit.profile.view.others"))
+            if (player != null && !player.hasPermission("logit.profile.view.others"))
             {
                 sendMsg(sender, _("noPerms"));
+                
+                return true;
             }
-            else
+            
+            if (!getProfileManager().containsProfile(args[1]))
             {
-                if (!getProfileManager().containsProfile(args[1]))
-                {
-                    sendMsg(sender, _("profile.view.profileNotFound"));
-                }
-                else
-                {
-                    new ProfileViewWizard(sender, args[1]).createWizard();
-                }
+                sendMsg(sender, _("profile.view.profileNotFound"));
+                
+                return true;
             }
+            
+            new ProfileViewWizard(sender, args[1]).createWizard();
         }
         else if (args.length == 1 && args[0].equalsIgnoreCase("edit"))
         {
-            if (p == null)
+            if (player == null)
             {
                 sendMsg(sender, _("onlyForPlayers"));
+                
+                return true;
             }
-            else if (!p.hasPermission("logit.profile.edit.self"))
+            
+            if (!player.hasPermission("logit.profile.edit.self"))
             {
                 sendMsg(sender, _("noPerms"));
+                
+                return true;
             }
-            else
-            {
-                new ProfileEditWizard(sender, p.getName()).createWizard();
-            }
+            
+            new ProfileEditWizard(sender, player.getName()).createWizard();
         }
         else if (args.length == 2 && args[0].equalsIgnoreCase("edit"))
         {
-            if (p != null && !p.hasPermission("logit.profile.edit.others"))
+            if (player != null && !player.hasPermission("logit.profile.edit.others"))
             {
                 sendMsg(sender, _("noPerms"));
+                
+                return true;
             }
-            else
-            {
-                new ProfileEditWizard(sender, args[1]).createWizard();
-            }
+            
+            new ProfileEditWizard(sender, args[1]).createWizard();
         }
         else
         {

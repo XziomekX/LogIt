@@ -20,43 +20,38 @@ package io.github.lucaseasedup.logit.account;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import io.github.lucaseasedup.logit.CancelledState;
+import io.github.lucaseasedup.logit.CustomLevel;
 import io.github.lucaseasedup.logit.Disposable;
-import io.github.lucaseasedup.logit.IntegrationType;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.QueuedMap;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.TimeUnit;
-import io.github.lucaseasedup.logit.security.HashingAlgorithm;
-import io.github.lucaseasedup.logit.security.SecurityHelper;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.storage.Infix;
+import io.github.lucaseasedup.logit.storage.Selector;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
-import io.github.lucaseasedup.logit.storage.SelectorNegation;
 import io.github.lucaseasedup.logit.storage.Storage;
-import io.github.lucaseasedup.logit.util.IniUtils;
-import it.sauronsoftware.base64.Base64;
+import io.github.lucaseasedup.logit.storage.Storage.Entry.Datum;
+import io.github.lucaseasedup.logit.util.CollectionUtils;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
-import javax.xml.bind.DatatypeConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 public final class AccountManager extends LogItCoreObject implements Runnable, Disposable
 {
     /**
-     * Creates a new {@code AccountManager}.
+     * Constructs a new {@code AccountManager}.
      * 
-     * @param storage the storage which this {@code AccountManager} will operate on.
-     * @param unit    a name of the storage unit.
-     * @param keys    the storage keys.
+     * @param storage the storage that this {@code AccountManager} will operate on.
+     * @param unit    the name of a unit eligible for account storage.
+     * @param keys    the account keys present in the specified unit.
      */
     public AccountManager(Storage storage, String unit, AccountKeys keys)
     {
@@ -74,6 +69,18 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         storage = null;
         unit = null;
         keys = null;
+        
+        if (pingerTask != null)
+        {
+            pingerTask.cancel();
+            pingerTask = null;
+        }
+        
+        if (buffer != null)
+        {
+            buffer.clear();
+            buffer = null;
+        }
     }
     
     /**
@@ -82,81 +89,92 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
     @Override
     public void run()
     {
-        try
+        if (pingerTask == null)
         {
-            storage.ping();
+            pingerTask = new BukkitRunnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        storage.ping();
+                    }
+                    catch (IOException ex)
+                    {
+                        log(Level.WARNING, "Could not ping the database.", ex);
+                    }
+                }
+            }.runTaskTimer(getPlugin(), 20L, TimeUnit.MINUTES.convert(5, TimeUnit.TICKS));
         }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, "Could not ping the database.", ex);
-        }
+        
+        flushBuffer();
     }
     
     /**
-     * Fetches all data belonging to an account with the given username
-     * from the underlying storage unit.
+     * Selects an account with the given username from the underlying storage unit.
      * 
-     * @param username the username.
+     * @param username  the username of an account to be selected.
+     * @param queryKeys the account keys to be returned by this query.
      * 
-     * @return a storage entry with account data; {@code null}
+     * @return an {@code Account} object, or {@code null}
      *         if there was no account with the given username
      *         or an I/O error occurred.
      * 
-     * @throws IllegalArgumentException if {@code username} is {@code null}.
+     * @throws IllegalArgumentException if {@code username} or
+     *                                  {@code queryKeys} is {@code null}.
+     *                                  
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
-    public Storage.Entry queryAccount(String username)
+    public Account selectAccount(String username, List<String> queryKeys)
     {
-        if (username == null)
-            throw new IllegalArgumentException();
-        
-        List<Storage.Entry> entries = null;
-        
-        try
-        {
-            entries = storage.selectEntries(unit,
-                    new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, ex);
-            
-            ReportedException.throwNew(ex);
-        }
-        
-        if (entries == null || entries.isEmpty())
-            return null;
-        
-        return entries.get(0);
-    }
-    
-    /**
-     * Fetches certain data belonging to an account with the given username
-     * from the underlying storage unit.
-     * 
-     * <p> The username key will be fetched regardless of what keys have been provided
-     * in {@code queryKeys}.
-     * 
-     * @param username  the username.
-     * @param queryKeys the keys to be returned.
-     * 
-     * @return a storage entry with account data; {@code null}
-     *         if there was no account with the given username
-     *         or an I/O error occurred.
-     * 
-     * @throws IllegalArgumentException if {@code username} is {@code null}.
-     * @throws ReportedException        if an I/O error occurred,
-     *                                  and it was reported to the logger.
-     */
-    public Storage.Entry queryAccount(String username, List<String> queryKeys)
-    {
-        if (username == null)
+        if (username == null || queryKeys == null)
             throw new IllegalArgumentException();
         
         if (!queryKeys.contains(keys.username()))
+            throw new IllegalArgumentException("Missing query key: username");
+        
+        username = username.toLowerCase();
+        
+        Account cachedAccount = null;
+        
+        // If the buffer contains some information about this account.
+        if (buffer.containsKey(username))
         {
-            queryKeys.add(keys.username());
+            cachedAccount = buffer.get(username);
+            
+            // The account is known not to exist.
+            if (cachedAccount == null)
+            { 
+                return null;
+            }
+            // The account exists in the buffer.
+            else
+            {
+                // All the query keys can be found in the cached entry.
+                if (CollectionUtils.isSubset(queryKeys, cachedAccount.getEntry().getKeys()))
+                {
+                    return cachedAccount;
+                }
+                // Some keys need to be fetched from the storage
+                // in order to fulfill the selection request.
+                else
+                {
+                    // Remove the keys that have already been fetched;
+                    // we only need those that hasn't been.
+                    queryKeys = new ArrayList<>(queryKeys);
+                    queryKeys.removeAll(cachedAccount.getEntry().getKeys());
+                    
+                    // If the username key has been removed
+                    // (actually, it is always the case),
+                    // then put it back into the key list.
+                    if (!queryKeys.contains(keys.username()))
+                    {
+                        queryKeys.add(keys.username());
+                    }
+                }
+            }
         }
         
         List<Storage.Entry> entries = null;
@@ -164,7 +182,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         try
         {
             entries = storage.selectEntries(unit, queryKeys,
-                    new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
+                    new SelectorCondition(keys.username(), Infix.EQUALS, username));
         }
         catch (IOException ex)
         {
@@ -173,50 +191,66 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
             ReportedException.throwNew(ex);
         }
         
-        if (entries == null || entries.isEmpty())
+        // If an I/O error occurred, return null.
+        if (entries == null)
             return null;
         
-        return entries.get(0);
+        // If no such account exists in the storage,
+        // mark it in the buffer as non-existing and return null.
+        if (entries.isEmpty())
+        {
+            buffer.put(username, null);
+            
+            return null;
+        }
+        
+        // If the account is just partially cached,
+        // fill the missing keys with the values fetched from the storage.
+        if (cachedAccount != null)
+        {
+            for (Datum datum : entries.get(0))
+            {
+                if (!cachedAccount.getEntry().containsKey(datum.getKey()))
+                {
+                    cachedAccount.getEntry().put(datum.getKey(), datum.getValue());
+                    cachedAccount.getEntry().clearKeyDirty(datum.getKey());
+                }
+            }
+        }
+        
+        // If there was no cached account in the buffer,
+        // create a new Account object for it and put it into the buffer.
+        if (!buffer.containsKey(username))
+        {
+            cachedAccount = new Account(entries.get(0));
+            
+            buffer.put(username, cachedAccount);
+        }
+        
+        return cachedAccount;
     }
     
-    /**
-     * Checks if an account with the given username has been registered
-     * in the underlying storage unit.
-     * 
-     * @param username the username.
-     * 
-     * @return {@code true} if the account has been registered;
-     *         {@code false} otherwise or if an I/O error occurred.
-     * 
-     * @throws IllegalArgumentException if {@code username} is {@code null}.
-     * @throws ReportedException        if an I/O error occurred,
-     *                                  and it was reported to the logger.
-     */
     public boolean isRegistered(String username)
     {
         if (username == null)
             throw new IllegalArgumentException();
         
-        return queryAccount(username, Arrays.asList(keys.username())) != null;
+        return selectAccount(username, Arrays.asList(keys.username())) != null;
     }
     
-    /**
-     * Fetches all registered usernames in the underlying storage unit.
-     * 
-     * @return a {@code Set} of usernames, or
-     *         {@code null} if an I/O error occurred.
-     * 
-     * @throws ReportedException if an I/O error occurred,
-     *                           and it was reported to the logger.
-     */
-    public Set<String> getRegisteredUsernames()
+    public List<Account> selectAccounts(List<String> queryKeys, Selector selector)
     {
-        Set<String> usernames = new HashSet<>();
+        if (selector == null || queryKeys == null)
+            throw new IllegalArgumentException();
+        
+        if (!queryKeys.contains(keys.username()))
+            throw new IllegalArgumentException("Missing query key: username");
+        
         List<Storage.Entry> entries = null;
         
         try
         {
-            entries = storage.selectEntries(unit, Arrays.asList(keys.username()));
+            entries = storage.selectEntries(unit, queryKeys, selector);
         }
         catch (IOException ex)
         {
@@ -228,95 +262,52 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         if (entries == null)
             return null;
         
+        List<Account> accounts = new ArrayList<>(entries.size());
+        
         for (Storage.Entry entry : entries)
         {
-            usernames.add(entry.get(keys.username()));
+            String username = entry.get(keys().username());
+            
+            if (buffer.containsKey(username))
+            {
+                for (Datum datum : buffer.get(username).getEntry())
+                {
+                    entry.put(datum.getKey(), datum.getValue());
+                }
+            }
+            
+            accounts.add(new Account(entry));
         }
         
-        return usernames;
+        return accounts;
     }
     
-    /**
-     * Creates a new account with the given username and password
-     * in the underlying storage unit.
-     * 
-     * <p> The password will be hashed using
-     * the default algorithm specified in the config file.
-     * The username may not preserve its original letter case
-     * after it's saved in the storage.
-     * 
-     * <p> This method emits the {@code AccountCreateEvent} event.
-     * 
-     * @param username the username.
-     * @param password the password.
-     * 
-     * @return a {@code CancellableState} indicating whether this operation
-     *         has been cancelled by one of the {@code AccountCreateEvent} handlers.
-     * 
-     * @throws IllegalArgumentException      if {@code username} or
-     *                                       {@code password} is {@code null}.
-     *                                       
-     * @throws AccountAlreadyExistsException if an account with the
-     *                                       given username already exists.
-     *                                       
-     * @throws ReportedException             if an I/O error occurred,
-     *                                       and it was reported to the logger.
-     */
-    public CancelledState createAccount(String username, String password)
+    public CancelledState insertAccount(Account account)
     {
-        if (username == null || password == null)
+        if (account == null)
             throw new IllegalArgumentException();
         
-        if (isRegistered(username))
-            throw new AccountAlreadyExistsException(username);
+        AccountEvent event = new AccountInsertEvent(account.getEntry());
         
-        Storage.Entry entry = new Storage.Entry();
-        String now = String.valueOf(System.currentTimeMillis() / 1000L);
-        HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
+        Bukkit.getPluginManager().callEvent(event);
         
-        if (!getConfig("config.yml").getBoolean("password.disable-passwords"))
-        {
-            String hash;
-            
-            if (getConfig("config.yml").getBoolean("password.use-salt"))
-            {
-                String salt = SecurityHelper.generateSalt(algorithm);
-                hash = SecurityHelper.hash(password, salt, algorithm);
-                entry.put(keys.salt(), salt);
-            }
-            else
-            {
-                hash = SecurityHelper.hash(password, algorithm);
-            }
-            
-            entry.put(keys.password(), hash);
-            entry.put(keys.hashing_algorithm(), algorithm.encode());
-        }
-        
-        entry.put(keys.username(), username.toLowerCase());
-        entry.put(keys.last_active_date(), now);
-        entry.put(keys.reg_date(), now);
-        entry.put(keys.is_locked(), "0");
-        
-        AccountEvent evt = new AccountCreateEvent(entry);
-        Bukkit.getPluginManager().callEvent(evt);
-        
-        if (evt.isCancelled())
+        if (event.isCancelled())
             return CancelledState.CANCELLED;
+        
+        buffer.remove(account.getUsername());
         
         try
         {
-            storage.addEntry(unit, entry);
+            storage.addEntry(unit, account.getEntry());
             
-            log(Level.FINE, _("createAccount.success.log")
-                    .replace("{0}", username));
-            evt.executeSuccessTasks();
+            event.executeSuccessTasks();
         }
         catch (IOException ex)
         {
             log(Level.WARNING, _("createAccount.fail.log")
-                    .replace("{0}", username), ex);
-            evt.executeFailureTasks();
+                    .replace("{0}", account.getUsername()), ex);
+            
+            event.executeFailureTasks();
             
             ReportedException.throwNew(ex);
         }
@@ -324,9 +315,37 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         return CancelledState.NOT_CANCELLED;
     }
     
+    public void insertAccounts(Account... accounts)
+    {
+        if (accounts == null)
+            throw new IllegalArgumentException();
+        
+        try
+        {
+            storage.setAutobatchEnabled(true);
+            
+            for (Account account : accounts)
+            {
+                insertAccount(account);
+            }
+            
+            storage.executeBatch();
+            storage.clearBatch();
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, ex);
+            
+            ReportedException.throwNew(ex);
+        }
+        finally
+        {
+            storage.setAutobatchEnabled(false);
+        }
+    }
+    
     /**
-     * Removes an account with the given username
-     * from the underlying storage unit.
+     * Removes an account with the given username from the underlying storage unit.
      * 
      * <p> Removing an account does not entail logging out the corresponding player.
      * To log out a player, use {@link SessionManager#endSession(String)}
@@ -334,12 +353,13 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
      * 
      * <p> This method emits the {@code AccountRemoveEvent} event.
      * 
-     * @param username the username.
+     * @param username the username of an account to be removed.
      * 
      * @return a {@code CancellableState} indicating whether this operation
      *         has been cancelled by one of the {@code AccountRemoveEvent} handlers.
      * 
      * @throws IllegalArgumentException if {@code username} is {@code null}.
+     * 
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
@@ -348,26 +368,31 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         if (username == null)
             throw new IllegalArgumentException();
         
-        AccountEvent evt = new AccountRemoveEvent(username);
-        Bukkit.getPluginManager().callEvent(evt);
+        AccountEvent event = new AccountRemoveEvent(username);
         
-        if (evt.isCancelled())
+        Bukkit.getPluginManager().callEvent(event);
+        
+        if (event.isCancelled())
             return CancelledState.CANCELLED;
         
         try
         {
-            storage.removeEntries(unit,
-                    new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
+            storage.removeEntries(unit, new SelectorCondition(
+                    keys.username(),
+                    Infix.EQUALS,
+                    username.toLowerCase()
+            ));
             
-            log(Level.FINE, _("removeAccount.success.log")
-                    .replace("{0}", username));
-            evt.executeSuccessTasks();
+            buffer.put(username.toLowerCase(), null);
+            
+            event.executeSuccessTasks();
         }
         catch (IOException ex)
         {
             log(Level.WARNING, _("removeAccount.fail.log")
                     .replace("{0}", username), ex);
-            evt.executeFailureTasks();
+            
+            event.executeFailureTasks();
             
             ReportedException.throwNew(ex);
         }
@@ -375,656 +400,121 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         return CancelledState.NOT_CANCELLED;
     }
     
-    /**
-     * Checks if a password is equal, after hashing,
-     * to a password of an account represented by the given username
-     * in the underlying storage unit.
-     * 
-     * <p> The password will be hashed using the algorithm specified
-     * in the appropriate key of the account entry.
-     * If no hashing algorithm was specified in the account entry,
-     * the global hashing algorithm stored in the config file will be used instead.
-     * 
-     * <p> If passwords have been disabled as of the config file,
-     * this method will always return {@code true}.
-     * 
-     * @param username the username.
-     * @param password the password to be checked.
-     * 
-     * @return {@code true} if the account exists and the password is correct;
-     *         {@code false} otherwise or if an I/O error occurred.
-     * 
-     * @throws IllegalArgumentException if {@code username} or
-     *                                  {@code password} is {@code null}.
-     *                                       
-     * @throws ReportedException        if an I/O error occurred,
-     *                                  and it was reported to the logger.
-     */
-    public boolean checkAccountPassword(String username, String password)
+    public void removeAccounts(String... usernames)
     {
-        if (username == null || password == null)
+        if (usernames == null)
             throw new IllegalArgumentException();
         
-        if (getConfig("config.yml").getBoolean("password.disable-passwords"))
-            return true;
-        
-        Storage.Entry entry = queryAccount(username, Arrays.asList(
-                keys.username(),
-                keys.salt(),
-                keys.password(),
-                keys.hashing_algorithm()
-            ));
-        
-        if (entry == null)
-            return false;
-        
-        String actualHashedPassword = entry.get(keys.password());
-        String hashingAlgorithm = getCore().getDefaultHashingAlgorithm().name();
-        
-        if (!getConfig("secret.yml").getBoolean("password.force-hashing-algorithm"))
+        try
         {
-            String userHashingAlgorithm = entry.get(keys.hashing_algorithm());
+            storage.setAutobatchEnabled(true);
             
-            if (userHashingAlgorithm != null)
+            for (String username : usernames)
             {
-                hashingAlgorithm = userHashingAlgorithm;
+                removeAccount(username);
             }
-        }
-        
-        if (getConfig("config.yml").getBoolean("password.use-salt"))
-        {
-            String actualSalt = entry.get(keys.salt());
             
-            return getCore().checkPassword(password, actualHashedPassword,
-                    actualSalt, hashingAlgorithm);
+            storage.executeBatch();
+            storage.clearBatch();
         }
-        else
+        catch (IOException ex)
         {
-            return getCore().checkPassword(password, actualHashedPassword,
-                    hashingAlgorithm);
+            log(Level.WARNING, ex);
+            
+            ReportedException.throwNew(ex);
+        }
+        finally
+        {
+            storage.setAutobatchEnabled(false);
         }
     }
     
-    /**
-     * Changes password of an account with the given username
-     * in the underlying storage unit.
-     * 
-     * <p> The password will be hashed
-     * using the default algorithm specified in the config file.
-     * 
-     * <p> If passwords have been disabled as of the config file,
-     * no action will be taken.
-     * 
-     * @param username    the username.
-     * @param newPassword the new password.
-     * 
-     * @throws IllegalArgumentException if {@code username} or
-     *                                  {@code newPassword} is {@code null}.
-     *                                       
-     * @throws ReportedException        if an I/O error occurred,
-     *                                  and it was reported to the logger.
-     */
-    public void changeAccountPassword(String username, String newPassword)
+    public void flushBuffer()
     {
-        if (username == null || newPassword == null)
-            throw new IllegalArgumentException();
-        
-        if (getConfig("config.yml").getBoolean("password.disable-passwords"))
+        if (buffer == null || buffer.isEmpty())
             return;
         
-        Storage.Entry entry = new Storage.Entry();
-        HashingAlgorithm algorithm = getCore().getDefaultHashingAlgorithm();
-        String newHash;
+        QueuedMap<String, Storage.Entry> dirtyEntries = new QueuedMap<>();
         
-        if (getConfig("config.yml").getBoolean("password.use-salt"))
+        while (!buffer.isEmpty())
         {
-            String newSalt = SecurityHelper.generateSalt(algorithm);
-            newHash = SecurityHelper.hash(newPassword, newSalt, algorithm);
-            entry.put(keys.salt(), newSalt);
-        }
-        else
-        {
-            newHash = SecurityHelper.hash(newPassword, algorithm);
-        }
-        
-        entry.put(keys.hashing_algorithm(), algorithm.encode());
-        entry.put(keys.password(), newHash);
-        
-        try
-        {
-            updateEntry(username, entry);
+            Map.Entry<String, Account> e = buffer.remove();
             
-            log(Level.FINE, _("changePassword.success.log")
-                    .replace("{0}", username));
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, _("changePassword.fail.log")
-                    .replace("{0}", username), ex);
+            if (e.getValue() == null)
+                continue;
             
-            ReportedException.throwNew(ex);
-        }
-    }
-    
-    /**
-     * Attaches an IP address to account data.
-     * 
-     * @param accountData the account data retrieved using {@link #queryAccount}.
-     * @param ip          the new IP address.
-     * 
-     * @throws IllegalArgumentException if {@code accountData} or
-     *                                  {@code ip} is {@code null}.
-     */
-    public void attachIp(Storage.Entry accountData, String ip)
-    {
-        if (accountData == null || ip == null)
-            throw new IllegalArgumentException();
-        
-        try
-        {
-            if (getCore().getIntegration() == IntegrationType.PHPBB2)
+            Storage.Entry dirtyEntry = e.getValue().getEntry().copyDirty();
+            
+            if (!dirtyEntry.getKeys().isEmpty())
             {
-                byte[] address = InetAddress.getByName(ip).getAddress();
-                
-                ip = DatatypeConverter.printHexBinary(address).toLowerCase();
-            }
-            
-            accountData.put(keys.ip(), ip);
-        }
-        catch (IOException ex)
-        {
-        }
-    }
-    
-    /**
-     * Checks how many accounts with the given IP address are registered
-     * in the underlying storage unit.
-     * 
-     * <p> If {@code ip} is an empty string, the returned value is {@code 0}.
-     * 
-     * @param ip the IP address.
-     * 
-     * @return number of accounts with the given IP;
-     *         {@code -1} if an I/O error occurred.
-     * 
-     * @throws ReportedException if an I/O error occurred,
-     *                           and it was reported to the logger.
-     */
-    public int countAccountsWithIp(String ip)
-    {
-        if (ip == null)
-            throw new IllegalArgumentException();
-        
-        if (ip.isEmpty())
-            return 0;
-        
-        try
-        {
-            List<Storage.Entry> entries = storage.selectEntries(unit,
-                    Arrays.asList(keys.ip()),
-                    new SelectorCondition(keys.ip(), Infix.EQUALS, ip));
-            
-            return entries.size();
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, ex);
-            
-            ReportedException.throwNew(ex);
-            
-            return -1;
-        }
-    }
-    
-    public int countAccountsWithEmail(String email)
-    {
-        if (email == null)
-            throw new IllegalArgumentException();
-        
-        if (email.isEmpty())
-            return 0;
-        
-        try
-        {
-            List<Storage.Entry> entries = storage.selectEntries(unit,
-                    Arrays.asList(keys.email()),
-                    new SelectorCondition(keys.email(), Infix.EQUALS, email.toLowerCase()));
-            
-            return entries.size();
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, ex);
-            
-            ReportedException.throwNew(ex);
-            
-            return -1;
-        }
-    }
-    
-    /**
-     * Checks how many unique, not empty, IP addresses are
-     * in the underlying storage unit.
-     * 
-     * @return number of unique IP addresses;
-     *         {@code -1} if an I/O error occurred.
-     * 
-     * @throws ReportedException if an I/O error occurred,
-     *                           and it was reported to the logger.
-     */
-    public int countUniqueIps()
-    {
-        Set<String> ips = new HashSet<>();
-        
-        try
-        {
-            List<Storage.Entry> entries = storage.selectEntries(unit, Arrays.asList(keys.ip()),
-                    new SelectorNegation(new SelectorCondition(keys.ip(), Infix.EQUALS, "")));
-            
-            for (Storage.Entry entry : entries)
-            {
-                ips.add(entry.get(keys.ip()));
+                dirtyEntries.put(e.getKey(), dirtyEntry);
             }
         }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, ex);
-            
-            ReportedException.throwNew(ex);
-            
-            return -1;
-        }
         
-        return ips.size();
-    }
-    
-    /**
-     * Fetches an e-mail address of an account with the given username
-     * from the underlying storage unit.
-     * 
-     * @param username the username.
-     * 
-     * @return an e-mail address; {@code null}
-     *         if no account with this username was found
-     *         or an I/O error occurred.
-     * 
-     * @throws IllegalArgumentException if {@code username} is {@code null}.
-     * @throws ReportedException        if an I/O error occurred,
-     *                                  and it was reported to the logger.
-     */
-    public String getEmail(String username)
-    {
-        if (username == null)
-            throw new IllegalArgumentException();
-        
-        Storage.Entry entry = queryAccount(username, Arrays.asList(
-                keys.username(),
-                keys.email()
-            ));
-        
-        if (entry == null)
-            return null;
-        
-        return entry.get(keys.email());
-    }
-    
-    /**
-     * Changes e-mail address of an account with the given username
-     * in the underlying storage unit.
-     * 
-     * @param username the username.
-     * @param newEmail the new e-mail address.
-     * 
-     * @throws IllegalArgumentException if {@code username} or
-     *                                  {@code newMail} is {@code null}.
-     * 
-     * @throws ReportedException        if an I/O error occurred,
-     *                                  and it was reported to the logger.
-     */
-    public void changeEmail(String username, String newEmail)
-    {
-        if (username == null || newEmail == null)
-            throw new IllegalArgumentException();
-        
-        try
-        {
-            updateEntry(username, new Storage.Entry.Builder()
-                    .put(keys.email(), newEmail.toLowerCase())
-                    .build());
-            
-            log(Level.FINE, _("changeEmail.success.log")
-                    .replace("{0}", username)
-                    .replace("{1}", newEmail.toLowerCase()));
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, _("changeEmail.fail.log")
-                    .replace("{0}", username)
-                    .replace("{1}", newEmail.toLowerCase()), ex);
-            
-            ReportedException.throwNew(ex);
-        }
-    }
-    
-    /**
-     * Saves login session for an account with the given username
-     * to the underlying storage unit.
-     * 
-     * @param username the username.
-     * @param ip       the player IP address.
-     * @param time     the UNIX time of when the login session was created.
-     * 
-     * @throws IllegalArgumentException if {@code username} or
-     *                                  {@code ip} is {@code null},
-     *                                  or {@code time} is negative.
-     *                                  
-     * @throws ReportedException        if an I/O error occurred,
-     *                                  and it was reported to the logger.
-     */
-    public void saveLoginSession(String username, String ip, long time)
-    {
-        if (username == null || ip == null || time < 0)
-            throw new IllegalArgumentException();
-        
-        try
-        {
-            updateEntry(username, new Storage.Entry.Builder()
-                    .put(keys.login_session(), ip + ";" + time)
-                    .build());
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, ex);
-            
-            ReportedException.throwNew(ex);
-        }
-    }
-    
-    /**
-     * Erases login session of an account with the given username
-     * in the underlying storage unit.
-     * 
-     * @param username the username.
-     * 
-     * @throws IllegalArgumentException if {@code username} is {@code null}.
-     * @throws ReportedException        if an I/O error occurred,
-     *                                  and it was reported to the logger.
-     */
-    public void eraseLoginSession(String username)
-    {
-        if (username == null)
-            throw new IllegalArgumentException();
-        
-        try
-        {
-            updateEntry(username, new Storage.Entry.Builder()
-                    .put(keys.login_session(), "")
-                    .build());
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, ex);
-            
-            ReportedException.throwNew(ex);
-        }
-    }
-    
-    /**
-     * Updates last-active date of an account with the given username,
-     * overwriting it with the current time, in the underlying storage unit.
-     * 
-     * @param username the username.
-     * 
-     * @throws IllegalArgumentException if {@code username} is {@code null}.
-     * @throws ReportedException        if an I/O error occurred,
-     *                                  and it was reported to the logger.
-     */
-    public void updateLastActiveDate(String username)
-    {
-        if (username == null)
-            throw new IllegalArgumentException();
-        
-        long currentTimeSecs = System.currentTimeMillis() / 1000L;
-        
-        try
-        {
-            updateEntry(username, new Storage.Entry.Builder()
-                    .put(keys.last_active_date(), String.valueOf(currentTimeSecs))
-                    .build());
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, "Could not update last-active date for player: " + username, ex);
-            
-            ReportedException.throwNew(ex);
-        }
-    }
-    
-    public List<String> getLoginHistory(String username)
-    {
-        if (username == null)
-            throw new IllegalArgumentException();
-        
-        Storage.Entry entry = queryAccount(username, Arrays.asList(
-                keys.username(),
-                keys.login_history()
-        ));
-        
-        if (entry == null)
-            return null;
-        
-        String historyString = entry.get(keys.login_history());
-        
-        return new ArrayList<>(Arrays.asList(historyString.split("\\|")));
-    }
-    
-    public void recordLogin(String username, long unixTime, String ip, boolean succeeded)
-    {
-        Storage.Entry entry = queryAccount(username, Arrays.asList(
-                keys.username(),
-                keys.login_history()
-        ));
-        
-        if (entry == null)
+        if (dirtyEntries.isEmpty())
             return;
         
-        String historyString = entry.get(keys.login_history());
-        List<String> records = new ArrayList<>(Arrays.asList(historyString.split("\\|")));
-        int recordsToKeep = getConfig("config.yml").getInt("login-history.records-to-keep");
-        
-        for (int i = 0, n = records.size() - recordsToKeep + 1;  i < n; i++)
-        {
-            records.remove(0);
-        }
-        
-        records.add(String.valueOf(unixTime) + ";" + ip + ";" + succeeded);
-        
-        StringBuilder historyBuilder = new StringBuilder();
-        
-        for (String record : records)
-        {
-            if (!record.isEmpty())
-            {
-                historyBuilder.append(record);
-                historyBuilder.append("|");
-            }
-        }
-        
-        entry.put(keys.login_history(), historyBuilder.toString());
+        log(CustomLevel.INTERNAL, "AccountManager#flushBuffer() {"
+                + "dirtyEntries.size() = " + dirtyEntries.size() + "}");
         
         try
         {
-            updateEntry(username, entry);
+            storage.setAutobatchEnabled(true);
+            
+            for (Map.Entry<String, Storage.Entry> e : dirtyEntries.entrySet())
+            {
+                try
+                {
+                    storage.updateEntries(unit, e.getValue(), new SelectorCondition(
+                            keys.username(),
+                            Infix.EQUALS,
+                            e.getKey().toLowerCase()
+                    ));
+                }
+                catch (IOException ex)
+                {
+                    log(Level.WARNING, ex);
+                }
+            }
+            
+            storage.executeBatch();
+            storage.clearBatch();
         }
         catch (IOException ex)
         {
             log(Level.WARNING, ex);
-            
-            ReportedException.throwNew(ex);
         }
+        finally
+        {
+            storage.setAutobatchEnabled(false);
+        }
+        
+        log(CustomLevel.INTERNAL, "end-of #flushBuffer()");
     }
     
-    /**
-     * Fetches persistence data from an account with the given username
-     * from the underlying storage unit.
-     * 
-     * @param username the username.
-     * 
-     * @return the persistence data; {@code null}
-     *         if no account with this username was found
-     *         or an I/O error occurred.
-     * 
-     * @throws IllegalArgumentException if {@code username} is {@code null}.
-     * @throws ReportedException        if an I/O error occurred,
-     *                                  and it was reported to the logger.
-     */
-    public Map<String, String> getAccountPersistence(String username)
+    public void discardBuffer()
     {
-        if (username == null)
-            throw new IllegalArgumentException();
-        
-        Storage.Entry entry = queryAccount(username, Arrays.asList(
-                keys.username(),
-                keys.persistence()
-            ));
-        
-        if (entry == null)
-            return null;
-        
-        String persistenceBase64String = entry.get(keys.persistence());
-        Map<String, String> persistence = new LinkedHashMap<>();
-        
-        if (persistenceBase64String != null)
-        {
-            String persistenceString = Base64.decode(persistenceBase64String);
-            
-            try
-            {
-                persistence = IniUtils.unserialize(persistenceString).get("persistence");
-            }
-            catch (IOException ex)
-            {
-                log(Level.WARNING, "Could not fetch persistence data for player: " + username, ex);
-                
-                ReportedException.throwNew(ex);
-                
-                return null;
-            }
-            
-            if (persistence == null)
-            {
-                return new LinkedHashMap<>();
-            }
-        }
-        
-        return persistence;
+        buffer.clear();
     }
     
-    /**
-     * Overwrites persistence data of an account with the given username
-     * in the underlying storage unit.
-     * 
-     * @param username    the username.
-     * @param persistence the persistence data.
-     * 
-     * @throws IllegalArgumentException if {@code username} or
-     *                                  {@code persistence} is {@code null}.
-     *                                  
-     * @throws ReportedException        if an I/O error occurred,
-     *                                  and it was reported to the logger.
-     */
-    public void updateAccountPersistence(String username, Map<String, String> persistence)
-    {
-        if (username == null || persistence == null)
-            throw new IllegalArgumentException();
-        
-        Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
-        
-        persistenceIni.put("persistence", persistence);
-        
-        try
-        {
-            updateEntry(username, new Storage.Entry.Builder()
-                    .put(keys.persistence(), Base64.encode(IniUtils.serialize(persistenceIni)))
-                    .build());
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, "Could not update persistence data for player: " + username, ex);
-            
-            ReportedException.throwNew(ex);
-        }
-    }
-    
-    /**
-     * Checks how many accounts are registered in the underlying storage unit.
-     * 
-     * @return the number of accounts registered;
-     *         {@code -1} if an I/O error occurred.
-     * 
-     * @throws ReportedException if an I/O error occurred,
-     *                           and it was reported to the logger.
-     */
-    public int countAccounts()
-    {
-        try
-        {
-            return storage.selectEntries(unit, Arrays.asList(keys.username())).size();
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, ex);
-            
-            ReportedException.throwNew(ex);
-        }
-        
-        return -1;
-    }
-    
-    /**
-     * Returns the {@code Storage} that this {@code AccountManager} operates on.
-     * 
-     * @return the storage.
-     */
     public Storage getStorage()
     {
         return storage;
     }
     
-    /**
-     * Returns a name of the storage unit that this {@code AccountManager} operates on.
-     * 
-     * @return the storage unit name.
-     */
     public String getUnit()
     {
         return unit;
     }
     
-    /**
-     * Returns a {@code Hashtable}, with the storage keys of this {@code AccountManager}
-     * as pairs of <i>name</i> and <i>data type</i> (both strings),
-     * as an {@code AccountKeys} subclass.
-     * 
-     * @return the account keys.
-     */
     public AccountKeys getKeys()
     {
         return keys;
     }
     
-    private void updateEntry(String username, Storage.Entry entry) throws IOException
-    {
-        storage.updateEntries(unit, entry,
-                new SelectorCondition(keys.username(), Infix.EQUALS, username.toLowerCase()));
-    }
-    
-    /**
-     * Recommended task period of {@code AccountManager} running as a Bukkit task.
-     */
-    public static final long TASK_PERIOD = TimeUnit.MINUTES.convert(5, TimeUnit.TICKS);
-    
     private Storage storage;
     private String unit;
     private AccountKeys keys;
+    private BukkitTask pingerTask;
+    private QueuedMap<String, Account> buffer = new QueuedMap<>();
 }

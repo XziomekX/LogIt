@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit.config.observers;
 
+import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.config.PropertyObserver;
 import io.github.lucaseasedup.logit.persistence.AirBarSerializer;
@@ -26,6 +27,7 @@ import io.github.lucaseasedup.logit.persistence.HealthBarSerializer;
 import io.github.lucaseasedup.logit.persistence.HungerBarSerializer;
 import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
+import java.util.Arrays;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -75,7 +77,15 @@ public final class SerializerObserver extends PropertyObserver
                 if (getSessionManager().isSessionAlive(player))
                     continue;
                 
-                getPersistenceManager().serializeUsing(player, clazz);
+                Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
+                        keys().username(),
+                        keys().persistence()
+                ));
+                
+                if (account != null)
+                {
+                    getPersistenceManager().serializeUsing(account, player, clazz);
+                }
             }
             
             try
@@ -91,7 +101,15 @@ public final class SerializerObserver extends PropertyObserver
         {
             for (Player player : Bukkit.getOnlinePlayers())
             {
-                getPersistenceManager().unserializeUsing(player, clazz);
+                Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
+                        keys().username(),
+                        keys().persistence()
+                ));
+                
+                if (account != null)
+                {
+                    getPersistenceManager().unserializeUsing(account, player, clazz);
+                }
             }
             
             getPersistenceManager().unregisterSerializer(clazz);

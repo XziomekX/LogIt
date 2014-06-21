@@ -19,11 +19,13 @@
 package io.github.lucaseasedup.logit.storage;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class Storage implements AutoCloseable
 {
@@ -142,14 +144,26 @@ public abstract class Storage implements AutoCloseable
             if (key == null || key.trim().isEmpty())
                 throw new IllegalArgumentException();
             
+            String oldValue;
+            
             if (value == null)
             {
-                backend.put(key, "");
+                oldValue = backend.put(key, "");
             }
             else
             {
-                backend.put(key, value);
+                oldValue = backend.put(key, value);
             }
+            
+            if (oldValue == null || !oldValue.equals(value))
+            {
+                dirtyKeys.add(key);
+            }
+        }
+        
+        public Set<String> getKeys()
+        {
+            return backend.keySet();
         }
         
         public boolean containsKey(String key)
@@ -164,6 +178,31 @@ public abstract class Storage implements AutoCloseable
             copy.backend = new LinkedHashMap<>(backend);
             
             return copy;
+        }
+        
+        public Storage.Entry copyDirty()
+        {
+            Storage.Entry copy = new Storage.Entry();
+            
+            for (Map.Entry<String, String> e : backend.entrySet())
+            {
+                if (isKeyDirty(e.getKey()))
+                {
+                    copy.backend.put(e.getKey(), e.getValue());
+                }
+            }
+            
+            return copy;
+        }
+        
+        public boolean isKeyDirty(String key)
+        {
+            return dirtyKeys.contains(key);
+        }
+        
+        public void clearKeyDirty(String key)
+        {
+            dirtyKeys.remove(key);
         }
         
         @Override
@@ -237,14 +276,19 @@ public abstract class Storage implements AutoCloseable
         
         public static final class Builder
         {
-            public Builder()
-            {
-                entry = new Storage.Entry();
-            }
-            
             public Builder put(String key, String value)
             {
                 entry.put(key, value);
+                
+                return this;
+            }
+            
+            public Builder putAll(Storage.Entry sourceEntry)
+            {
+                for (Datum datum : sourceEntry)
+                {
+                    put(datum.getKey(), datum.getValue());
+                }
                 
                 return this;
             }
@@ -255,13 +299,16 @@ public abstract class Storage implements AutoCloseable
                 
                 entry = new Storage.Entry();
                 
+                builtEntry.dirtyKeys.clear();
+                
                 return builtEntry;
             }
             
-            private Storage.Entry entry;
+            private Storage.Entry entry = new Storage.Entry();
         }
         
         private Map<String, String> backend = new LinkedHashMap<>();
+        private Set<String> dirtyKeys = new HashSet<>();
     }
     
     private boolean autobatch = false;

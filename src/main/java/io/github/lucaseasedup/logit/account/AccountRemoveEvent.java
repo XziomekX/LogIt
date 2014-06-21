@@ -22,6 +22,9 @@ public final class AccountRemoveEvent extends AccountEvent
 {
     public AccountRemoveEvent(String username)
     {
+        if (username == null)
+            throw new IllegalArgumentException();
+        
         this.username = username;
     }
     

@@ -26,16 +26,16 @@ public final class PolishLocale implements Locale
     }
     
     @Override
-    public String stringifySeconds(int seconds)
+    public String stringifySeconds(long seconds)
     {
         StringBuilder sb = new StringBuilder();
-        int days, hours, minutes;
+        long days, hours, minutes;
         
-        days = seconds / 86400;
+        days = seconds / 86400L;
         seconds %= 86400;
-        hours = seconds / 3600;
+        hours = seconds / 3600L;
         seconds %= 3600;
-        minutes = seconds / 60;
+        minutes = seconds / 60L;
         seconds %= 60;
         
         if (days > 0)

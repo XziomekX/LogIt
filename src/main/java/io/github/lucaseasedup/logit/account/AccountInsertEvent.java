@@ -1,5 +1,5 @@
 /*
- * AccountCreateEvent.java
+ * AccountInsertEvent.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -20,9 +20,9 @@ package io.github.lucaseasedup.logit.account;
 
 import io.github.lucaseasedup.logit.storage.Storage;
 
-public final class AccountCreateEvent extends AccountEvent
+public final class AccountInsertEvent extends AccountEvent
 {
-    public AccountCreateEvent(Storage.Entry entry)
+    public AccountInsertEvent(Storage.Entry entry)
     {
         if (entry == null)
             throw new IllegalArgumentException();

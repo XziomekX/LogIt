@@ -143,14 +143,14 @@ public final class SqlUtils
         {
             while (rs.next())
             {
-                Storage.Entry entry = new Storage.Entry();
+                Storage.Entry.Builder entryBuilder = new Storage.Entry.Builder();
                 
                 for (int i = 1, n = rs.getMetaData().getColumnCount(); i <= n; i++)
                 {
-                    entry.put(rs.getMetaData().getColumnLabel(i), rs.getString(i));
+                    entryBuilder.put(rs.getMetaData().getColumnLabel(i), rs.getString(i));
                 }
                 
-                entries.add(entry);
+                entries.add(entryBuilder.build());
             }
             
             rs.close();

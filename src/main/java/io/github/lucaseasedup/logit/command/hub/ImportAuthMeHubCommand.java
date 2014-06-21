@@ -21,10 +21,12 @@ package io.github.lucaseasedup.logit.command.hub;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.ReportedException;
+import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.command.wizard.ConfirmationWizard;
 import io.github.lucaseasedup.logit.security.AuthMePasswordHelper;
 import io.github.lucaseasedup.logit.storage.MySqlStorage;
+import io.github.lucaseasedup.logit.storage.SelectorConstant;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.IniUtils;
@@ -34,6 +36,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -212,22 +215,22 @@ public final class ImportAuthMeHubCommand extends HubCommand
                     
                     for (Storage.Entry authMeEntry : authMeEntries)
                     {
-                        Storage.Entry logItEntry = new Storage.Entry();
+                        Storage.Entry.Builder logItEntryBuilder = new Storage.Entry.Builder();
                         
-                        logItEntry.put(keys().username(),
+                        logItEntryBuilder.put(keys().username(),
                                 authMeEntry.get(dataSourceMySqlColumnName));
-                        logItEntry.put(keys().password(),
+                        logItEntryBuilder.put(keys().password(),
                                 authMeEntry.get(dataSourceMySqlColumnPassword));
-                        logItEntry.put(keys().hashing_algorithm(),
+                        logItEntryBuilder.put(keys().hashing_algorithm(),
                                 "authme:" + settingsSecurityPasswordHash);
-                        logItEntry.put(keys().ip(),
+                        logItEntryBuilder.put(keys().ip(),
                                 authMeEntry.get(dataSourceMySqlColumnIp));
                         
                         String email = authMeEntry.get(dataSourceMySqlColumnEmail);
                         
                         if (!email.equals("your@email.com"))
                         {
-                            logItEntry.put(keys().email(), email);
+                            logItEntryBuilder.put(keys().email(), email);
                         }
                         
                         String world = authMeEntry.get(dataSourceMySqlColumnLastLocWorld);
@@ -249,11 +252,11 @@ public final class ImportAuthMeHubCommand extends HubCommand
                             
                             persistenceIni.put("persistence", persistence);
                             
-                            logItEntry.put(keys().persistence(),
+                            logItEntryBuilder.put(keys().persistence(),
                                     Base64.encode(IniUtils.serialize(persistenceIni)));
                         }
                         
-                        logItEntries.add(logItEntry);
+                        logItEntries.add(logItEntryBuilder.build());
                     }
                 }
                 finally
@@ -281,31 +284,31 @@ public final class ImportAuthMeHubCommand extends HubCommand
                     {
                         String[] split = line.split(":");
                         
-                        Storage.Entry logItEntry = new Storage.Entry();
+                        Storage.Entry.Builder logItEntryBuilder = new Storage.Entry.Builder();
                         
                         if (split.length == 0)
                             continue;
                         
                         if (split.length >= 1)
                         {
-                            logItEntry.put(keys().username(), split[0]);
+                            logItEntryBuilder.put(keys().username(), split[0]);
                         }
                         
                         if (split.length >= 2)
                         {
-                            logItEntry.put(keys().password(), split[1]);
-                            logItEntry.put(keys().hashing_algorithm(),
+                            logItEntryBuilder.put(keys().password(), split[1]);
+                            logItEntryBuilder.put(keys().hashing_algorithm(),
                                     "authme:" + settingsSecurityPasswordHash);
                         }
                         
                         if (split.length >= 3)
                         {
-                            logItEntry.put(keys().ip(), split[2]);
+                            logItEntryBuilder.put(keys().ip(), split[2]);
                         }
                         
                         if (split.length >= 4)
                         {
-                            logItEntry.put(keys().login_session(),
+                            logItEntryBuilder.put(keys().login_session(),
                                     split[2] + ";" + Long.parseLong(split[3]));
                         }
                         
@@ -323,7 +326,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
                             
                             persistenceIni.put("persistence", persistence);
                             
-                            logItEntry.put(keys().persistence(),
+                            logItEntryBuilder.put(keys().persistence(),
                                     Base64.encode(IniUtils.serialize(persistenceIni)));
                         }
                         
@@ -333,23 +336,42 @@ public final class ImportAuthMeHubCommand extends HubCommand
                             
                             if (!email.equals("your@email.com"))
                             {
-                                logItEntry.put(keys().email(), email);
+                                logItEntryBuilder.put(keys().email(), email);
                             }
                         }
                         
-                        logItEntries.add(logItEntry);
+                        logItEntries.add(logItEntryBuilder.build());
                     }
                 }
             }
             
-            Set<String> registeredUsernames = getAccountManager().getRegisteredUsernames();
+            List<Account> accounts = getAccountManager().selectAccounts(
+                    Arrays.asList(
+                            keys().username()
+                    ),
+                    new SelectorConstant(true)
+            );
+            
+            Set<String> registeredUsernames = null;
+            
+            if (accounts != null)
+            {
+                registeredUsernames = new HashSet<>();
+                
+                for (Account account : accounts)
+                {
+                    registeredUsernames.add(account.getUsername().toLowerCase());
+                }
+            }
+            
             int accountsImported = 0;
             
             for (Storage.Entry logItEntry : logItEntries)
             {
-                if (!registeredUsernames.contains(logItEntry.get(keys().username())))
+                if (registeredUsernames != null
+                        && !registeredUsernames.contains(logItEntry.get(keys().username())))
                 {
-                    getAccountStorage().addEntry(getAccountManager().getUnit(), logItEntry);
+                    getAccountManager().insertAccount(new Account(logItEntry));
                     
                     accountsImported++;
                 }

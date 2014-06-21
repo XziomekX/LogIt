@@ -22,7 +22,7 @@ import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
-import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
 import io.github.lucaseasedup.logit.mail.MailSender;
 import io.github.lucaseasedup.logit.security.SecurityHelper;
@@ -45,65 +45,67 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
     @Override
     public boolean onCommand(final CommandSender sender, Command cmd, String label, String[] args)
     {
-        final Player p;
+        final Player player;
         
         if (sender instanceof Player)
         {
-            p = (Player) sender;
+            player = (Player) sender;
         }
         else
         {
-            p = null;
+            player = null;
         }
         
         if (args.length <= 1)
         {
-            if (p == null)
+            if (player == null)
             {
                 sendMsg(sender, _("onlyForPlayers"));
                 
                 return true;
             }
-            else if (!p.hasPermission("logit.recoverpass"))
+            
+            if (!player.hasPermission("logit.recoverpass"))
             {
-                sendMsg(p, _("noPerms"));
+                sendMsg(player, _("noPerms"));
                 
                 return true;
             }
-            else if (args.length < 1)
+            
+            if (args.length < 1)
             {
-                sendMsg(p, _("paramMissing")
+                sendMsg(player, _("paramMissing")
                         .replace("{0}", "email"));
                 
                 return true;
             }
             
-            final String username = p.getName().toLowerCase();
+            final String username = player.getName().toLowerCase();
             
             if (playerLocks.contains(username))
             {
-                sendMsg(p, _("cmdPlayerLock"));
+                sendMsg(player, _("cmdPlayerLock"));
                 
                 return true;
             }
             
-            if (getCooldownManager().isCooldownActive(p, LogItCooldowns.RECOVERPASS))
+            if (getCooldownManager().isCooldownActive(player, LogItCooldowns.RECOVERPASS))
             {
                 getMessageDispatcher().sendCooldownMessage(username,
-                        getCooldownManager().getCooldownMillis(p, LogItCooldowns.RECOVERPASS));
+                        getCooldownManager().getCooldownMillis(player, LogItCooldowns.RECOVERPASS));
                 
                 return true;
             }
             
-            if (!getAccountManager().isRegistered(p.getName()))
+            if (!getAccountManager().isRegistered(player.getName()))
             {
-                sendMsg(p, _("notRegistered.self"));
+                sendMsg(player, _("notRegistered.self"));
                 
                 return true;
             }
             
-            final String playerName = p.getName();
-            final String argEmail = args[0];
+            final String playerName = player.getName();
+            final String paramEmail = args[0];
             
             final String newPassword = SecurityHelper.generatePassword(
                     getConfig("config.yml").getInt("password-recovery.password-length"),
@@ -125,12 +127,9 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
             final String smtpPassword = getConfig("config.yml")
                     .getString("mail.sending.smtp-password");
             
-            final long cooldownMillis = getConfig("config.yml")
-                    .getTime("cooldowns.recoverpass", TimeUnit.MILLISECONDS);
-            
             final String subject = getConfig("config.yml")
                     .getString("password-recovery.subject")
-                    .replace("%player%", p.getName());
+                    .replace("%player%", player.getName());
             
             String bodyTemplateFilename = getConfig("config.yml")
                     .getString("password-recovery.body-template");
@@ -151,11 +150,18 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                     {
                         ReportedException.incrementRequestCount();
                         
-                        String email = getAccountManager().getEmail(playerName);
+                        Account account = getAccountManager().selectAccount(playerName,
+                                Arrays.asList(
+                                        keys().username(),
+                                        keys().email()
+                                )
+                        );
                         
-                        if (!argEmail.equalsIgnoreCase(email))
+                        String email = account.getEmail();
+                        
+                        if (!paramEmail.equalsIgnoreCase(email))
                         {
-                            sendMsg(p, _("recoverPassword.incorrectEmailAddress"));
+                            sendMsg(player, _("recoverPassword.incorrectEmailAddress"));
                             
                             return;
                         }
@@ -166,13 +172,12 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                                 .replace("%player%", playerName)
                                 .replace("%password%", newPassword);
                         
-                        getCooldownManager().activateCooldown(p,
-                                LogItCooldowns.RECOVERPASS, cooldownMillis);
+                        LogItCooldowns.activate(LogItCooldowns.RECOVERPASS, player);
                         
                         MailSender.from(smtpHost, smtpPort, smtpUser, smtpPassword)
                                 .sendMail(Arrays.asList(to),from, subject, body, htmlEnabled);
                         
-                        getAccountManager().changeAccountPassword(playerName, newPassword);
+                        account.changePassword(newPassword);
                         
                         sendMsg(sender, _("recoverPassword.success.self")
                                 .replace("{0}", email));
@@ -183,6 +188,7 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                     catch (ReportedException | IOException | MessagingException ex)
                     {
                         sendMsg(sender, _("recoverPassword.fail.self"));
+                        
                         log(Level.WARNING, _("recoverPassword.fail.log")
                                 .replace("{0}", playerName), ex);
                     }

@@ -20,10 +20,10 @@ package io.github.lucaseasedup.logit.command.wizard;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import io.github.lucaseasedup.logit.FatalReportedException;
+import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.config.PropertyType;
 import io.github.lucaseasedup.logit.config.validators.StorageTypeValidator;
-import io.github.lucaseasedup.logit.storage.Storage;
-import java.io.IOException;
+import io.github.lucaseasedup.logit.storage.SelectorConstant;
 import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
@@ -236,28 +236,21 @@ public final class ConvertWizard extends Wizard
                 
                 try
                 {
-                    List<Storage.Entry> entries = null;
+                    List<Account> accounts = null;
                     
                     if (copyAccounts)
                     {
-                        entries = getAccountStorage().selectEntries(getAccountManager().getUnit(),
-                                getAccountManager().getKeys().getNames());
+                        accounts = getAccountManager().selectAccounts(keys().getNames(),
+                                new SelectorConstant(true));
                     }
                     
                     getCore().restart();
                     
                     if (copyAccounts)
                     {
-                        getAccountStorage().setAutobatchEnabled(true);
-                        
-                        for (Storage.Entry entry : entries)
-                        {
-                            getAccountStorage().addEntry(getAccountManager().getUnit(), entry);
-                        }
-                        
-                        getAccountStorage().executeBatch();
-                        getAccountStorage().clearBatch();
-                        getAccountStorage().setAutobatchEnabled(false);
+                        getAccountManager().insertAccounts(
+                                accounts.toArray(new Account[accounts.size()])
+                        );
                     }
                     
                     if (getSender() instanceof Player)
@@ -269,7 +262,7 @@ public final class ConvertWizard extends Wizard
                     
                     updateStep(Step.SUCCESS);
                 }
-                catch (FatalReportedException | IOException ex)
+                catch (FatalReportedException ex)
                 {
                     if (getSender() instanceof Player)
                     {

@@ -24,20 +24,17 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
-import io.github.lucaseasedup.logit.account.AccountKeys;
+import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
 import io.github.lucaseasedup.logit.hooks.VanishNoPacketHook;
 import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.session.Session;
-import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
 import io.github.lucaseasedup.logit.util.JoinMessageGenerator;
 import io.github.lucaseasedup.logit.util.QuitMessageGenerator;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -65,7 +62,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 public final class PlayerEventListener extends LogItCoreObject implements Listener
 {
     @EventHandler(priority = EventPriority.NORMAL)
-    private void onLogin_NORMAL(PlayerLoginEvent event)
+    private void onLogin(PlayerLoginEvent event)
     {
         if (!Result.ALLOWED.equals(event.getResult()))
             return;
@@ -73,19 +70,17 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         Player player = event.getPlayer();
         String username = player.getName().toLowerCase();
         
-        AccountKeys keys = getAccountManager().getKeys();
-        Storage.Entry accountData = getAccountManager().queryAccount(username,
-                Arrays.asList(
-                        keys.username(),
-                        keys.login_session(),
-                        keys.is_locked(),
-                        keys.display_name()
-                )
-        );
+        Account account = getAccountManager().selectAccount(username, Arrays.asList(
+                keys().username(),
+                keys().login_session(),
+                keys().is_locked(),
+                keys().display_name(),
+                keys().persistence()
+        ));
         
-        if (accountData != null)
+        if (account != null)
         {
-            String displayName = accountData.get(keys.display_name());
+            String displayName = account.getDisplayName();
             
             if (!displayName.isEmpty() && !player.getName().equals(displayName)
                     && getConfig("config.yml").getBoolean("username-case-mismatch.kick"))
@@ -96,7 +91,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 return;
             }
             
-            if ("1".equals(accountData.get(keys.is_locked())))
+            if (account.isLocked())
             {
                 event.disallow(Result.KICK_OTHER, _("ACCLOCK_SUCCESS_SELF"));
                 
@@ -134,7 +129,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             event.disallow(KICK_OTHER, _("usernameAlreadyUsed"));
         }
-        else if (getConfig("config.yml").getBoolean("kick-unregistered") && accountData == null)
+        else if (getConfig("config.yml").getBoolean("kick-unregistered") && account == null)
         {
             event.disallow(KICK_OTHER, _("kickUnregistered"));
         }
@@ -164,20 +159,6 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 event.disallow(KICK_OTHER, _("noSlotsFree"));
             }
         }
-        
-        if (Result.ALLOWED.equals(event.getResult()) && accountData != null)
-        {
-            accountDataCache.put(player.getName(), accountData);
-        }
-    }
-    
-    @EventHandler(priority = EventPriority.MONITOR)
-    private void onLogin_MONITOR(PlayerLoginEvent event)
-    {
-        if (!Result.ALLOWED.equals(event.getResult()))
-        {
-            accountDataCache.remove(event.getPlayer().getName());
-        }
     }
     
     @EventHandler(priority = EventPriority.LOW)
@@ -197,29 +178,18 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         long validnessTime = getConfig("config.yml")
                 .getTime("login-sessions.validness-time", TimeUnit.SECONDS);
         
-        AccountKeys keys = getAccountManager().getKeys();
-        Storage.Entry accountData;
-        
-        if (accountDataCache.containsKey(player.getName()))
-        {
-            accountData = accountDataCache.remove(player.getName());
-        }
-        else
-        {
-            accountData = getAccountManager().queryAccount(username,
-                    Arrays.asList(
-                            keys.username(),
-                            keys.login_session(),
-                            keys.display_name()
-                    )
-            );
-        }
+        Account account = getAccountManager().selectAccount(username, Arrays.asList(
+                keys().username(),
+                keys().login_session(),
+                keys().display_name(),
+                keys().persistence()
+        ));
         
         if (getConfig("config.yml").getBoolean("login-sessions.enabled") && validnessTime > 0)
         {
-            if (accountData != null)
+            if (account != null)
             {
-                String loginSession = accountData.get(keys.login_session());
+                String loginSession = account.getLoginSession();
                 
                 if (loginSession != null && !loginSession.isEmpty())
                 {
@@ -248,9 +218,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             }
         }
         
-        if (accountData != null)
+        if (account != null)
         {
-            String displayName = accountData.get(keys.display_name());
+            String displayName = account.getDisplayName();
             
             if (!displayName.isEmpty() && !player.getName().equals(displayName)
                     && getConfig("config.yml").getBoolean("username-case-mismatch.warning"))
@@ -271,7 +241,10 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
         else
         {
-            getCore().getPersistenceManager().serialize(player);
+            if (account != null)
+            {
+                getCore().getPersistenceManager().serialize(account, player);
+            }
             
             long promptPeriod = getConfig("config.yml")
                     .getTime("force-login.periodical-prompt.period", TimeUnit.TICKS);
@@ -313,12 +286,15 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         playersDeadOnJoin.remove(player);
         
-        // Make sure the cached entry is removed before the player gets away.
-        // Normally, it should be removed by the PlayerLoginEvent monitor,
-        // but we'll make sure anyway. Just in case.
-        accountDataCache.remove(player.getName());
+        Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
+                keys().username(),
+                keys().persistence()
+        ));
         
-        getCore().getPersistenceManager().unserialize(player);
+        if (account != null)
+        {
+            getCore().getPersistenceManager().unserialize(account, player);
+        }
         
         if (!getConfig("config.yml").getBoolean("messages.quit.hide")
                 && (!getCore().isPlayerForcedToLogIn(player)
@@ -582,9 +558,18 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             {
                 Location respawnLocation = event.getRespawnLocation();
                 
-                getPersistenceManager().unserializeUsing(player, LocationSerializer.class);
-                getPersistenceManager().serializeUsing(player,
-                        new LocationSerializer.PlayerlessLocationSerializer(respawnLocation));
+                Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
+                        keys().username(),
+                        keys().persistence()
+                ));
+                
+                if (account != null)
+                {
+                    getPersistenceManager().unserializeUsing(account, player,
+                            LocationSerializer.class);
+                    getPersistenceManager().serializeUsing(account, player,
+                            new LocationSerializer.PlayerlessLocationSerializer(respawnLocation));
+                }
             }
             
             LocationSerializable waitingRoomLocationSerializable =
@@ -600,5 +585,4 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     }
     
     private final Set<Player> playersDeadOnJoin = new HashSet<>();
-    private final Map<String, Storage.Entry> accountDataCache = new HashMap<>();
 }

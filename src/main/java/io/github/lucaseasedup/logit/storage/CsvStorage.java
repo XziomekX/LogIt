@@ -168,15 +168,17 @@ public final class CsvStorage extends Storage
                 }
                 
                 String[] lineValues = lineBuilder.toString().split("(?<=\"),(?=\")");
-                Storage.Entry entry = new Storage.Entry();
+                Storage.Entry.Builder entryBuilder = new Storage.Entry.Builder();
                 
                 for (int i = 0; i < lineValues.length; i++)
                 {
                     if (keys == null || keys.contains(tableKeys[i]))
                     {
-                        entry.put(tableKeys[i], unescapeValue(lineValues[i]));
+                        entryBuilder.put(tableKeys[i], unescapeValue(lineValues[i]));
                     }
                 }
+                
+                Storage.Entry entry = entryBuilder.build();
                 
                 if (SqlUtils.resolveSelector(selector, entry))
                 {

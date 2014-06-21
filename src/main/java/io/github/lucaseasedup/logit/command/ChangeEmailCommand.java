@@ -21,10 +21,13 @@ package io.github.lucaseasedup.logit.command;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.ReportedException;
-import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
+import io.github.lucaseasedup.logit.storage.Infix;
+import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.util.EmailUtils;
+import io.github.lucaseasedup.logit.util.PlayerUtils;
+import java.util.Arrays;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,141 +38,133 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        Player p = null;
+        Player player = null;
         
         if (sender instanceof Player)
         {
-            p = (Player) sender;
+            player = (Player) sender;
         }
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 3)
         {
-            if (p != null && !p.hasPermission("logit.changeemail.others"))
+            if (player != null && !player.hasPermission("logit.changeemail.others"))
             {
                 sendMsg(sender, _("noPerms"));
+                
+                return true;
             }
-            else if (args.length < 2)
+            
+            if (args.length < 2)
             {
                 sendMsg(sender, _("paramMissing")
                         .replace("{0}", "player"));
+                
+                return true;
             }
-            else if (args.length < 3)
+            
+            if (args.length < 3)
             {
                 sendMsg(sender, _("paramMissing")
                         .replace("{0}", "newemail"));
+                
+                return true;
             }
-            else if (!getAccountManager().isRegistered(args[1]))
-            {
-                sendMsg(sender, _("notRegistered.others")
-                        .replace("{0}", args[1]));
-            }
-            else if (!EmailUtils.validateEmail(args[2]))
+            
+            if (!EmailUtils.validateEmail(args[2]))
             {
                 sendMsg(sender, _("changeEmail.invalidEmailAddress"));
+                
+                return true;
             }
-            else
+            
+            Account account = getAccountManager().selectAccount(args[1], Arrays.asList(
+                    keys().username()
+            ));
+            
+            if (account == null)
             {
-                try
-                {
-                    ReportedException.incrementRequestCount();
-                    
-                    getAccountManager().changeEmail(args[1], args[2]);
-                    
-                    sendMsg(args[1], _("changeEmail.success.self")
-                            .replace("{0}", args[2]));
-                    sendMsg(sender, _("changeEmail.success.others")
-                            .replace("{0}", args[1])
-                            .replace("{1}", args[2]));
-                }
-                catch (ReportedException ex)
-                {
-                    sendMsg(sender, _("changeEmail.fail.others")
-                            .replace("{0}", args[1])
-                            .replace("{1}", args[2]));
-                }
-                finally
-                {
-                    ReportedException.decrementRequestCount();
-                }
+                sendMsg(sender, _("notRegistered.others")
+                        .replace("{0}", PlayerUtils.getPlayerRealName(args[1])));
+                
+                return true;
             }
+            
+            account.setEmail(args[2]);
+            
+            sendMsg(args[1], _("changeEmail.success.self")
+                    .replace("{0}", args[2].toLowerCase()));
+            sendMsg(sender, _("changeEmail.success.others")
+                    .replace("{0}", PlayerUtils.getPlayerRealName(args[1]))
+                    .replace("{1}", args[2].toLowerCase()));
         }
         else if (args.length <= 1)
         {
-            if (p == null)
+            if (player == null)
             {
                 sendMsg(sender, _("onlyForPlayers"));
                 
                 return true;
             }
             
-            if (!p.hasPermission("logit.changeemail.self"))
+            if (!player.hasPermission("logit.changeemail.self"))
             {
-                sendMsg(p, _("noPerms"));
+                sendMsg(player, _("noPerms"));
                 
                 return true;
             }
             
             if (args.length < 1)
             {
-                sendMsg(p, _("paramMissing")
+                sendMsg(player, _("paramMissing")
                         .replace("{0}", "newemail"));
                 
                 return true;
             }
             
-            if (getCooldownManager().isCooldownActive(p, LogItCooldowns.CHANGEEMAIL))
+            if (getCooldownManager().isCooldownActive(player, LogItCooldowns.CHANGEEMAIL))
             {
-                getMessageDispatcher().sendCooldownMessage(p.getName(),
-                        getCooldownManager().getCooldownMillis(p, LogItCooldowns.CHANGEEMAIL));
-                
-                return true;
-            }
-            
-            if (!getAccountManager().isRegistered(p.getName()))
-            {
-                sendMsg(p, _("notRegistered.self"));
+                getMessageDispatcher().sendCooldownMessage(player.getName(),
+                        getCooldownManager().getCooldownMillis(player, LogItCooldowns.CHANGEEMAIL));
                 
                 return true;
             }
             
             if (!EmailUtils.validateEmail(args[0]))
             {
-                sendMsg(p, _("changeEmail.invalidEmailAddress"));
+                sendMsg(player, _("changeEmail.invalidEmailAddress"));
                 
                 return true;
             }
             
-            int accountsWithEmail = getAccountManager().countAccountsWithEmail(args[0]);
+            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
+                    keys().username()
+            ));
+            
+            if (account == null)
+            {
+                sendMsg(player, _("notRegistered.self"));
+                
+                return true;
+            }
+            
+            int accountsWithEmail = getAccountManager().selectAccounts(
+                    Arrays.asList(keys().username(), keys().email()),
+                    new SelectorCondition(keys().email(), Infix.EQUALS, args[0].toLowerCase())
+            ).size();
             
             if (accountsWithEmail >= getConfig("config.yml").getInt("mail.accounts-per-email"))
             {
-                sendMsg(p, _("accountsPerEmailLimitReached"));
+                sendMsg(player, _("accountsPerEmailLimitReached"));
                 
                 return true;
             }
             
-            try
-            {
-                ReportedException.incrementRequestCount();
-                
-                getAccountManager().changeEmail(p.getName(), args[0]);
-                
-                long cooldown = getConfig("config.yml")
-                        .getTime("cooldowns.changeemail", TimeUnit.MILLISECONDS);
-                
-                getCooldownManager().activateCooldown(p, LogItCooldowns.CHANGEEMAIL, cooldown);
-                
-                sendMsg(sender, _("changeEmail.success.self")
-                        .replace("{0}", args[0]));
-            }
-            catch (ReportedException ex)
-            {
-                sendMsg(sender, _("changeEmail.fail.self"));
-            }
-            finally
-            {
-                ReportedException.decrementRequestCount();
-            }
+            account.setEmail(args[0]);
+            
+            sendMsg(sender, _("changeEmail.success.self")
+                    .replace("{0}", args[0].toLowerCase()));
+            
+            LogItCooldowns.activate(LogItCooldowns.CHANGEEMAIL, player);
         }
         else
         {

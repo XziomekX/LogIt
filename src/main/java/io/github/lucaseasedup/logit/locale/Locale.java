@@ -20,5 +20,5 @@ package io.github.lucaseasedup.logit.locale;
 
 public interface Locale
 {
-    public String stringifySeconds(int seconds);
+    public String stringifySeconds(long seconds);
 }

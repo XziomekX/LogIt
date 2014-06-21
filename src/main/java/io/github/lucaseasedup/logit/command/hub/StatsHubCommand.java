@@ -20,7 +20,13 @@ package io.github.lucaseasedup.logit.command.hub;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
+import io.github.lucaseasedup.logit.storage.SelectorConstant;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -38,8 +44,31 @@ public final class StatsHubCommand extends HubCommand
     @Override
     public void execute(CommandSender sender, String[] args)
     {
-        int accountCount = getAccountManager().countAccounts();
-        int uniqueIps = getAccountManager().countUniqueIps();
+        List<Account> accounts = getAccountManager().selectAccounts(
+                Arrays.asList(
+                        keys().username(),
+                        keys().ip()
+                ),
+                new SelectorConstant(true)
+        );
+        
+        Set<String> uniqueIps = null;
+        
+        if (accounts != null)
+        {
+            uniqueIps = new HashSet<>();
+            
+            for (Account account : accounts)
+            {
+                String ip = account.getIp();
+                
+                if (!ip.isEmpty())
+                {
+                    uniqueIps.add(ip);
+                }
+            }
+        }
+        
         int backupCount = getBackupManager().getBackups(false).length;
         int logins = getConfig("stats.yml").getInt("logins");
         int passwordChanges = getConfig("stats.yml").getInt("password-changes");
@@ -51,9 +80,9 @@ public final class StatsHubCommand extends HubCommand
         
         sendMsg(sender, _("stats.header"));
         sendMsg(sender, _("stats.accountCount")
-                .replace("{0}", String.valueOf(accountCount)));
+                .replace("{0}", (accounts != null) ? String.valueOf(accounts.size()) : "?"));
         sendMsg(sender, _("stats.uniqueIps")
-                .replace("{0}", String.valueOf(uniqueIps)));
+                .replace("{0}", (uniqueIps != null) ? String.valueOf(uniqueIps.size()) : "?"));
         sendMsg(sender, _("stats.backupCount")
                 .replace("{0}", String.valueOf(backupCount)));
         sendMsg(sender, "");

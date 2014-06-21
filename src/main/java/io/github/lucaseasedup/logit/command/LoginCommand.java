@@ -23,15 +23,10 @@ import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.account.AccountKeys;
-import io.github.lucaseasedup.logit.storage.Infix;
-import io.github.lucaseasedup.logit.storage.SelectorCondition;
-import io.github.lucaseasedup.logit.storage.Storage;
-import java.io.IOException;
+import io.github.lucaseasedup.logit.account.Account;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -43,11 +38,11 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        Player p = null;
+        Player player = null;
         
         if (sender instanceof Player)
         {
-            p = (Player) sender;
+            player = (Player) sender;
         }
         
         boolean disablePasswords = getConfig("config.yml")
@@ -55,48 +50,56 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 2)
         {
-            if (p != null && (
-                   (getCore().isPlayerForcedToLogIn(p) && !getSessionManager().isSessionAlive(p))
-                || !p.hasPermission("logit.login.others")
+            if (player != null && (
+                   (getCore().isPlayerForcedToLogIn(player)
+                           && !getSessionManager().isSessionAlive(player))
+                   || !player.hasPermission("logit.login.others")
             ))
             {
                 sendMsg(sender, _("noPerms"));
+                
+                return true;
             }
-            else if (args.length < 2)
+            
+            if (args.length < 2)
             {
                 sendMsg(sender, _("paramMissing")
                         .replace("{0}", "player"));
+                
+                return true;
             }
-            else if (!isPlayerOnline(args[1]))
+            
+            if (!isPlayerOnline(args[1]))
             {
                 sendMsg(sender, _("playerNotOnline")
                         .replace("{0}", args[1]));
+                
+                return true;
             }
-            else if (getSessionManager().isSessionAlive(Bukkit.getPlayerExact(args[1])))
+            
+            Player paramPlayer = Bukkit.getPlayerExact(args[1]);
+            
+            if (getSessionManager().isSessionAlive(paramPlayer))
             {
                 sendMsg(sender, _("alreadyLoggedIn.others")
-                        .replace("{0}", args[1]));
+                        .replace("{0}", paramPlayer.getName()));
+                
+                return true;
             }
-            else
+            
+            if (getSessionManager().getSession(paramPlayer) == null)
             {
-                Player argPlayer = Bukkit.getPlayerExact(args[1]);
+                getSessionManager().createSession(paramPlayer);
+            }
+            
+            if (!getSessionManager().startSession(paramPlayer).isCancelled())
+            {
+                sendMsg(paramPlayer, _("startSession.success.self"));
+                sendMsg(sender, _("startSession.success.others")
+                        .replace("{0}", paramPlayer.getName()));
                 
-                assert argPlayer != null;
-                
-                if (getSessionManager().getSession(args[1]) == null)
-                {
-                    getSessionManager().createSession(argPlayer);
-                }
-                
-                if (!getSessionManager().startSession(args[1]).isCancelled())
-                {
-                    sendMsg(args[1], _("startSession.success.self"));
-                    sendMsg(sender, _("startSession.success.others")
-                            .replace("{0}", args[1]));
-                    
-                    getConfig("stats.yml").set("logins",
-                            getConfig("stats.yml").getInt("logins") + 1);
-                }
+                getConfig("stats.yml").set("logins",
+                        getConfig("stats.yml").getInt("logins") + 1);
             }
         }
         else if ((args.length == 0 && disablePasswords) || (args.length <= 1 && !disablePasswords))
@@ -104,63 +107,62 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             int failsToKick = getConfig("config.yml").getInt("login-fails-to-kick");
             int failsToBan = getConfig("config.yml").getInt("login-fails-to-ban");
             
-            if (p == null)
+            if (player == null)
             {
                 sendMsg(sender, _("onlyForPlayers"));
                 
                 return true;
             }
             
-            if (!p.hasPermission("logit.login.self"))
+            if (!player.hasPermission("logit.login.self"))
             {
-                sendMsg(p, _("noPerms"));
+                sendMsg(player, _("noPerms"));
                 
                 return true;
             }
             
             if (args.length < 1 && !disablePasswords)
             {
-                sendMsg(p, _("paramMissing")
+                sendMsg(player, _("paramMissing")
                         .replace("{0}", "password"));
                 
                 return true;
             }
             
-            if (getSessionManager().isSessionAlive(p))
+            if (getSessionManager().isSessionAlive(player))
             {
-                sendMsg(p, _("alreadyLoggedIn.self"));
+                sendMsg(player, _("alreadyLoggedIn.self"));
                 
                 return true;
             }
             
-            String username = p.getName().toLowerCase();
-            AccountKeys keys = getAccountManager().getKeys();
-            Storage.Entry accountData = getAccountManager().queryAccount(username, Arrays.asList(
-                    keys.username(),
-                    keys.salt(),
-                    keys.password(),
-                    keys.hashing_algorithm(),
-                    keys.ip()
-                ));
+            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
+                    keys().username(),
+                    keys().salt(),
+                    keys().password(),
+                    keys().hashing_algorithm(),
+                    keys().ip(),
+                    keys().login_history(),
+                    keys().persistence()
+            ));
             
-            if (accountData == null)
+            if (account == null)
             {
-                sendMsg(p, _("notRegistered.self"));
+                sendMsg(player, _("notRegistered.self"));
                 
                 return true;
             }
             
-            String playerIp = getPlayerIp(p);
+            String username = player.getName().toLowerCase();
+            String playerIp = getPlayerIp(player);
+            
+            long currentTimeSecs = System.currentTimeMillis() / 1000L;
             
             if (!disablePasswords && !getGlobalPasswordManager().checkPassword(args[0]))
             {
-                String userAlgorithm = accountData.get(keys.hashing_algorithm());
-                String hashedPassword = accountData.get(keys.password());
-                String actualSalt = accountData.get(keys.salt());
-                
-                if (!getCore().checkPassword(args[0], hashedPassword, actualSalt, userAlgorithm))
+                if (!account.checkPassword(args[0]))
                 {
-                    sendMsg(p, _("incorrectPassword"));
+                    sendMsg(player, _("incorrectPassword"));
                     
                     Integer currentFailedLoginsToKick = failedLoginsToKick.get(username);
                     Integer currentFailedLoginsToBan = failedLoginsToBan.get(username);
@@ -173,34 +175,33 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     if (failedLoginsToBan.get(username) >= failsToBan && failsToBan > 0)
                     {
                         Bukkit.banIP(playerIp);
-                        p.kickPlayer(_("tooManyLoginFails.ban"));
+                        player.kickPlayer(_("tooManyLoginFails.ban"));
                         
                         failedLoginsToKick.remove(username);
                         failedLoginsToBan.remove(username);
                     }
                     else if (failedLoginsToKick.get(username) >= failsToKick && failsToKick > 0)
                     {
-                        p.kickPlayer(_("tooManyLoginFails.kick"));
+                        player.kickPlayer(_("tooManyLoginFails.kick"));
                         
                         failedLoginsToKick.remove(username);
                     }
                     
                     if (getConfig("config.yml").getBoolean("login-history.enabled"))
                     {
-                        getAccountManager().recordLogin(username,
-                                System.currentTimeMillis() / 1000L, playerIp, false);
+                        account.recordLogin(currentTimeSecs, playerIp, false);
                     }
                     
                     return true;
                 }
             }
             
-            if (getSessionManager().getSession(username) == null)
+            if (getSessionManager().getSession(player) == null)
             {
-                getSessionManager().createSession(p);
+                getSessionManager().createSession(player);
             }
             
-            if (!getSessionManager().startSession(username).isCancelled())
+            if (!getSessionManager().startSession(player).isCancelled())
             {
                 failedLoginsToKick.remove(username);
                 failedLoginsToBan.remove(username);
@@ -216,25 +217,12 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 
                 if (getConfig("config.yml").getBoolean("login-history.enabled"))
                 {
-                    getAccountManager().recordLogin(username,
-                            System.currentTimeMillis() / 1000L, playerIp, true);
+                    account.recordLogin(currentTimeSecs, playerIp, true);
                 }
                 
-                if (accountData.get(keys.ip()).trim().isEmpty())
+                if (account.getIp().trim().isEmpty())
                 {
-                    getAccountManager().attachIp(accountData, playerIp);
-                    
-                    try
-                    {
-                        getAccountStorage().updateEntries(getAccountManager().getUnit(),
-                                accountData,
-                                new SelectorCondition(keys.username(), Infix.EQUALS, username)
-                        );
-                    }
-                    catch (IOException ex)
-                    {
-                        log(Level.WARNING, ex);
-                    }
+                    account.setIp(playerIp);
                 }
             }
         }

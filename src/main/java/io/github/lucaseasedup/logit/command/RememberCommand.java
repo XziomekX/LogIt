@@ -21,10 +21,11 @@ package io.github.lucaseasedup.logit.command;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.locale.Locale;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
+import java.util.Arrays;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,59 +36,56 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        Player p = null;
+        Player player = null;
         
         if (sender instanceof Player)
         {
-            p = (Player) sender;
+            player = (Player) sender;
         }
         
         if (args.length == 0)
         {
-            if (p == null)
+            if (player == null)
             {
                 sendMsg(sender, _("onlyForPlayers"));
+                
+                return true;
             }
-            else if (!p.hasPermission("logit.remember"))
+            
+            if (!player.hasPermission("logit.remember"))
             {
                 sendMsg(sender, _("noPerms"));
+                
+                return true;
             }
-            else if (!getSessionManager().isSessionAlive(p))
+            
+            if (!getSessionManager().isSessionAlive(player))
             {
                 sendMsg(sender, _("notLoggedIn.self"));
+                
+                return true;
             }
-            else if (!getAccountManager().isRegistered(p.getName()))
+            
+            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
+                    keys().username()
+            ));
+            
+            if (!getAccountManager().isRegistered(player.getName()))
             {
                 sendMsg(sender, _("notRegistered.self"));
-            }
-            else
-            {
-                long validnessTime = getConfig("config.yml")
-                        .getTime("login-sessions.validness-time", TimeUnit.SECONDS);
                 
-                int currentTime = (int) (System.currentTimeMillis() / 1000L);
-                
-                try
-                {
-                    ReportedException.incrementRequestCount();
-                    
-                    getAccountManager().saveLoginSession(p.getName(),
-                            PlayerUtils.getPlayerIp(p), currentTime);
-                    
-                    Locale activeLocale = getLocaleManager().getActiveLocale();
-                    
-                    sendMsg(sender, _("rememberLogin.success")
-                            .replace("{0}", activeLocale.stringifySeconds((int) validnessTime)));
-                }
-                catch (ReportedException ex)
-                {
-                    sendMsg(sender, _("rememberLogin.fail"));
-                }
-                finally
-                {
-                    ReportedException.decrementRequestCount();
-                }
+                return true;
             }
+            
+            account.saveLoginSession(PlayerUtils.getPlayerIp(player),
+                    System.currentTimeMillis() / 1000L);
+            
+            long validnessTime = getConfig("config.yml")
+                    .getTime("login-sessions.validness-time", TimeUnit.SECONDS);
+            Locale activeLocale = getLocaleManager().getActiveLocale();
+            
+            sendMsg(sender, _("rememberLogin.success")
+                    .replace("{0}", activeLocale.stringifySeconds(validnessTime)));
         }
         else
         {

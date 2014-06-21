@@ -23,11 +23,9 @@ import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.SelectorNegation;
-import io.github.lucaseasedup.logit.storage.Storage;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 
 public final class AccountWatcher extends LogItCoreObject implements Runnable
 {
@@ -48,42 +46,32 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
                 getConfig("config.yml").getTime("automatic-account-deletion.inactivity-time",
                         TimeUnit.SECONDS);
         
-        try
+        List<Account> accounts = getAccountManager().selectAccounts(
+                Arrays.asList(keys().username(), keys().last_active_date()),
+                new SelectorNegation(new SelectorCondition(
+                        keys().last_active_date(),
+                        Infix.GREATER_THAN,
+                        String.valueOf(now - inactivityTime)
+                ))
+        );
+        
+        if (!accounts.isEmpty())
         {
-            AccountKeys keys = getAccountManager().getKeys();
-            List<Storage.Entry> entries =
-                    getAccountStorage().selectEntries(getAccountManager().getUnit(),
-                            Arrays.asList(keys.username(), keys.last_active_date()),
-                            new SelectorNegation(
-                                new SelectorCondition(
-                                    keys.last_active_date(),
-                                    Infix.GREATER_THAN,
-                                    String.valueOf(now - inactivityTime)
-                                )
-                            ));
+            List<String> accountsToDelete = new ArrayList<>();
             
-            if (!entries.isEmpty())
+            for (Account account : accounts)
             {
-                getAccountStorage().setAutobatchEnabled(true);
+                String username = account.getUsername();
                 
-                for (Storage.Entry entry : entries)
+                if (!getSessionManager().isSessionAlive(username))
                 {
-                    String username = entry.get(keys.username());
-                    
-                    if (!getSessionManager().isSessionAlive(username))
-                    {
-                        getAccountManager().removeAccount(username);
-                    }
+                    accountsToDelete.add(username);
                 }
-                
-                getAccountStorage().executeBatch();
-                getAccountStorage().clearBatch();
-                getAccountStorage().setAutobatchEnabled(false);
             }
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, ex);
+            
+            getAccountManager().removeAccounts(
+                    accountsToDelete.toArray(new String[accountsToDelete.size()])
+            );
         }
     }
     

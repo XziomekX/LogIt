@@ -172,16 +172,23 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
         {
             backupStorage.connect();
             backupStorage.createUnit("accounts", keys);
-            backupStorage.setAutobatchEnabled(true);
             
-            for (Storage.Entry entry : entries)
+            try
             {
-                backupStorage.addEntry("accounts", entry);
+                backupStorage.setAutobatchEnabled(true);
+                
+                for (Storage.Entry entry : entries)
+                {
+                    backupStorage.addEntry("accounts", entry);
+                }
+                
+                backupStorage.executeBatch();
+                backupStorage.clearBatch();
             }
-            
-            backupStorage.executeBatch();
-            backupStorage.clearBatch();
-            backupStorage.setAutobatchEnabled(false);
+            finally
+            {
+                backupStorage.setAutobatchEnabled(false);
+            }
         }
     }
     
@@ -212,16 +219,23 @@ public final class BackupManager extends LogItCoreObject implements Runnable, Di
             List<Storage.Entry> entries = backupStorage.selectEntries("accounts");
             
             accountManager.getStorage().eraseUnit(accountManager.getUnit());
-            accountManager.getStorage().setAutobatchEnabled(true);
             
-            for (Storage.Entry entry : entries)
+            try
             {
-                accountManager.getStorage().addEntry(accountManager.getUnit(), entry);
+                accountManager.getStorage().setAutobatchEnabled(true);
+                
+                for (Storage.Entry entry : entries)
+                {
+                    accountManager.getStorage().addEntry(accountManager.getUnit(), entry);
+                }
+                
+                accountManager.getStorage().executeBatch();
+                accountManager.getStorage().clearBatch();
             }
-            
-            accountManager.getStorage().executeBatch();
-            accountManager.getStorage().clearBatch();
-            accountManager.getStorage().setAutobatchEnabled(false);
+            finally
+            {
+                accountManager.getStorage().setAutobatchEnabled(false);
+            }
             
             log(Level.INFO, _("restoreBackup.success.log")
                     .replace("{0}", filename));
