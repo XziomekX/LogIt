@@ -39,12 +39,12 @@ public abstract class AccountEvent extends CancellableEvent
     
     /**
      * Schedules a task to be executed when the action following
-     * this event is succeeds.
+     * this event succeeds.
      * 
      * @param task the task to be scheduled.
      * 
      * @throws IllegalArgumentException if {@code task} is {@code null}.
-     * @throws IllegalStateException    if tasks has already been executed.
+     * @throws IllegalStateException    if tasks have already been executed.
      */
     public final void scheduleSuccessTask(Runnable task)
     {
@@ -59,12 +59,12 @@ public abstract class AccountEvent extends CancellableEvent
     
     /**
      * Schedules a task to be executed when the action following
-     * this event is fails.
+     * this event fails.
      * 
      * @param task the task to be scheduled.
      * 
      * @throws IllegalArgumentException if {@code task} is {@code null}.
-     * @throws IllegalStateException    if tasks has already been executed.
+     * @throws IllegalStateException    if tasks have already been executed.
      */
     public final void scheduleFailureTask(Runnable task)
     {
