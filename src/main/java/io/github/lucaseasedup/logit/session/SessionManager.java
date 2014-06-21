@@ -81,9 +81,9 @@ public final class SessionManager extends LogItCoreObject
         
         for (Map.Entry<String, Session> entry : sessions.entrySet())
         {
-            String  username = entry.getKey();
-            Session session  = entry.getValue();
-            Player  player   = Bukkit.getPlayerExact(username);
+            String username = entry.getKey();
+            Session session = entry.getValue();
+            Player player = Bukkit.getPlayerExact(username);
             
             // Player is logged in, either online or offline.
             if (session.getStatus() >= 0L)
@@ -195,7 +195,7 @@ public final class SessionManager extends LogItCoreObject
         if (PlayerUtils.isPlayerOnline(username))
         {
             Player player = Bukkit.getPlayerExact(username);
-            String ip     = getPlayerIp(player);
+            String ip = getPlayerIp(player);
             
             return session.isAlive() && ip.equals(session.getIp());
         }
