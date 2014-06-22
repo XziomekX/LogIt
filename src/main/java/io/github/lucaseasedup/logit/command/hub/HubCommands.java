@@ -71,6 +71,7 @@ public final class HubCommands
         hubCommands.add(new GotowrHubCommand());
         hubCommands.add(new GlobalpassHubCommand());
         hubCommands.add(new AccountStatusHubCommand());
+        hubCommands.add(new AccountInfoHubCommand());
         hubCommands.add(new IpcountHubCommand());
         hubCommands.add(new ConfigGetHubCommand());
         hubCommands.add(new ConfigSetHubCommand());

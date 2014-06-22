@@ -8,7 +8,7 @@ loadbefore: [LogItH2Helper, LogItPostgreSQLHelper]
 commands:
   logit:
     description: LogIt generic command.
-    usage: /<command> [help|version|start|stop|reload|backup <force|restore <|file <filename>|time <time>>|remove <amount>>|gotowr|globalpass|account status <username>|ipcount <ip>|config <get <path>|set <path> <value>|list [page]|reload>|convert|stats|import authme]
+    usage: /<command> [help|version|start|stop|reload|backup <force|restore <|file <filename>|time <time>>|remove <amount>>|gotowr|globalpass|account <status <username>|info <username>>|ipcount <ip>|config <get <path>|set <path> <value>|list [page]|reload>|convert|stats|import authme]
 
   login:
     description: Logs you in.
@@ -92,6 +92,8 @@ permissions:
     children:
       logit.player: true
       logit.gotowr: true
+      logit.account.status: true
+      logit.account.info.*: true
       logit.login.others: true
       logit.logout.others: true
       logit.register.others: true
@@ -109,7 +111,6 @@ permissions:
       logit.reload: true
       logit.backup.*: true
       logit.globalpass.*: true
-      logit.account.*: true
       logit.ipcount: true
       logit.config.*: true
       logit.convert: true
@@ -149,11 +150,31 @@ permissions:
       logit.globalpass.generate: true
   logit.globalpass.generate:
     default: false
-  logit.account.*:
+  logit.account.status:
+    default: false
+  logit.account.info.*:
     default: false
     children:
-      logit.account.status: true
-  logit.account.status:
+      logit.account.info: true
+      logit.account.info.ip: true
+      logit.account.info.email: true
+      logit.account.info.lastactivedate: true
+      logit.account.info.regdate: true
+      logit.account.info.islocked: true
+      logit.account.info.displayname: true
+  logit.account.info:
+    default: false
+  logit.account.info.ip:
+    default: false
+  logit.account.info.email:
+    default: false
+  logit.account.info.lastactivedate:
+    default: false
+  logit.account.info.regdate:
+    default: false
+  logit.account.info.islocked:
+    default: false
+  logit.account.info.displayname:
     default: false
   logit.ipcount:
     default: false
