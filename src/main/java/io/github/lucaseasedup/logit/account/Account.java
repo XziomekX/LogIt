@@ -455,6 +455,21 @@ public final class Account extends LogItCoreObject
         }
     }
     
+    public Account clone(String username)
+    {
+        if (username == null || username.isEmpty())
+            throw new IllegalArgumentException();
+        
+        Storage.Entry entryClone = entry.copy();
+        
+        entryClone.put(keys().username(), username.toLowerCase());
+        entryClone.clearKeyDirty(keys().username());
+        
+        Account accountClone = new Account(entryClone);
+        
+        return accountClone;
+    }
+    
     /* package */ Storage.Entry getEntry()
     {
         return entry;
