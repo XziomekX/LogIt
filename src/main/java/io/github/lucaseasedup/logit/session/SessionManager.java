@@ -266,7 +266,7 @@ public final class SessionManager extends LogItCoreObject
         sessions.put(username.toLowerCase(), session);
         
         log(Level.FINE, _("createSession.success.log")
-                .replace("{0}", PlayerUtils.getPlayerRealName(username)));
+                .replace("{0}", username.toLowerCase()));
         
         return CancelledState.NOT_CANCELLED;
     }
@@ -334,7 +334,7 @@ public final class SessionManager extends LogItCoreObject
         sessions.remove(username.toLowerCase());
         
         log(Level.FINE, _("destroySession.success.log")
-                .replace("{0}", PlayerUtils.getPlayerRealName(username)));
+                .replace("{0}", username.toLowerCase()));
         
         return CancelledState.NOT_CANCELLED;
     }
@@ -401,7 +401,7 @@ public final class SessionManager extends LogItCoreObject
         session.setStatus(0L);
         
         log(Level.FINE, _("startSession.success.log")
-                .replace("{0}", PlayerUtils.getPlayerRealName(username)));
+                .replace("{0}", username.toLowerCase()));
         
         return CancelledState.NOT_CANCELLED;
     }
@@ -468,7 +468,7 @@ public final class SessionManager extends LogItCoreObject
         session.setStatus(-1L);
         
         log(Level.FINE, _("endSession.success.log")
-                .replace("{0}", PlayerUtils.getPlayerRealName(username)));
+                .replace("{0}", username.toLowerCase()));
         
         return CancelledState.NOT_CANCELLED;
     }

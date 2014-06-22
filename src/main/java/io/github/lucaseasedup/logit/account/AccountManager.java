@@ -307,6 +307,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         {
             storage.addEntry(unit, account.getEntry());
             
+            log(Level.WARNING, _("createAccount.success.log")
+                    .replace("{0}", account.getUsername()));
+            
             event.executeSuccessTasks();
         }
         catch (IOException ex)
@@ -405,6 +408,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         if (username == null)
             throw new IllegalArgumentException();
         
+        username = username.toLowerCase();
+        
         AccountEvent event = new AccountRemoveEvent(username);
         
         Bukkit.getPluginManager().callEvent(event);
@@ -414,13 +419,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         
         try
         {
-            storage.removeEntries(unit, new SelectorCondition(
-                    keys.username(),
-                    Infix.EQUALS,
-                    username.toLowerCase()
-            ));
+            storage.removeEntries(unit,
+                    new SelectorCondition(keys.username(), Infix.EQUALS, username)
+            );
             
-            buffer.put(username.toLowerCase(), null);
+            buffer.put(username, null);
+            
+            log(Level.WARNING, _("removeAccount.success.log")
+                    .replace("{0}", username));
             
             event.executeSuccessTasks();
         }
