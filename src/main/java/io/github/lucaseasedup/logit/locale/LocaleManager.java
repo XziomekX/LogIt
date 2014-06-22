@@ -18,13 +18,12 @@
  */
 package io.github.lucaseasedup.logit.locale;
 
-import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public final class LocaleManager extends LogItCoreObject implements Disposable
+public final class LocaleManager extends LogItCoreObject
 {
     @Override
     public void dispose()

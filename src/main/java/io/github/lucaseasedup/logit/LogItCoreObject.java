@@ -35,7 +35,7 @@ import java.util.logging.Level;
 /**
  * Provides a convenient way for objects to interact with the LogIt core.
  */
-public abstract class LogItCoreObject
+public abstract class LogItCoreObject implements Disposable
 {
     /**
      * Constructs a new {@code LogItCoreObject}.
@@ -50,6 +50,11 @@ public abstract class LogItCoreObject
         {
             throw new IllegalStateException("No LogItCore instance found.");
         }
+    }
+    
+    @Override
+    public void dispose()
+    {
     }
     
     protected final void log(Level level, String msg)

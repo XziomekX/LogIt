@@ -19,7 +19,6 @@
 package io.github.lucaseasedup.logit.profile;
 
 import com.google.common.collect.ImmutableList;
-import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.profile.field.Field;
 import io.github.lucaseasedup.logit.profile.field.FloatField;
@@ -40,7 +39,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public final class ProfileManager extends LogItCoreObject implements Disposable
+public final class ProfileManager extends LogItCoreObject
 {
     public ProfileManager(File path, Map<String, Object> fields)
     {

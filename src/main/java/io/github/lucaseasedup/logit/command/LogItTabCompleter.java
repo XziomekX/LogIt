@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.storage.Infix;
@@ -28,13 +27,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public final class LogItTabCompleter extends LogItCoreObject implements Disposable
+public final class LogItTabCompleter extends LogItCoreObject
 {
-    @Override
-    public void dispose()
-    {
-    }
-    
     public List<String> completeUsername(String username)
     {
         if (username == null)

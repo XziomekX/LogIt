@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.persistence;
 
-import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.account.Account;
@@ -33,7 +32,7 @@ import org.bukkit.entity.Player;
 /**
  * Provides a centralized persistence serialization platform.
  */
-public final class PersistenceManager extends LogItCoreObject implements Disposable
+public final class PersistenceManager extends LogItCoreObject
 {
     public PersistenceManager()
     {
