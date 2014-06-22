@@ -28,12 +28,13 @@ import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.util.EmailUtils;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Arrays;
+import java.util.List;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-public final class ChangeEmailCommand extends LogItCoreObject implements CommandExecutor
+public final class ChangeEmailCommand extends LogItCoreObject implements TabExecutor
 {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
@@ -172,5 +173,23 @@ public final class ChangeEmailCommand extends LogItCoreObject implements Command
         }
         
         return true;
+    }
+    
+    @Override
+    public List<String> onTabComplete(CommandSender sender,
+                                      Command cmd,
+                                      String label,
+                                      String[] args)
+    {
+        if (args.length == 2 && args[0].equals("-x"))
+        {
+            if (sender instanceof Player
+                    && !sender.hasPermission("logit.changeemail.others"))
+                return null;
+            
+            return getTabCompleter().completeUsername(args[1]);
+        }
+        
+        return null;
     }
 }
