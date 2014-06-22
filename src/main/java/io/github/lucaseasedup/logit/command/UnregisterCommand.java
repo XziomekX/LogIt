@@ -26,12 +26,13 @@ import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Arrays;
+import java.util.List;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-public final class UnregisterCommand extends LogItCoreObject implements CommandExecutor
+public final class UnregisterCommand extends LogItCoreObject implements TabExecutor
 {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
@@ -206,5 +207,23 @@ public final class UnregisterCommand extends LogItCoreObject implements CommandE
         }
         
         return true;
+    }
+    
+    @Override
+    public List<String> onTabComplete(CommandSender sender,
+                                      Command cmd,
+                                      String label,
+                                      String[] args)
+    {
+        if (args.length == 2 && args[0].equals("-x"))
+        {
+            if (sender instanceof Player
+                    && !sender.hasPermission("logit.unregister.others"))
+                return null;
+            
+            return getTabCompleter().completeUsername(args[1]);
+        }
+        
+        return null;
     }
 }

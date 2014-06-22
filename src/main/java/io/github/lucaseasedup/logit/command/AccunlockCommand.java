@@ -24,12 +24,13 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Arrays;
+import java.util.List;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-public final class AccunlockCommand extends LogItCoreObject implements CommandExecutor
+public final class AccunlockCommand extends LogItCoreObject implements TabExecutor
 {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
@@ -90,5 +91,23 @@ public final class AccunlockCommand extends LogItCoreObject implements CommandEx
         }
         
         return true;
+    }
+    
+    @Override
+    public List<String> onTabComplete(CommandSender sender,
+                                      Command cmd,
+                                      String label,
+                                      String[] args)
+    {
+        if (args.length == 1)
+        {
+            if (sender instanceof Player
+                    && !sender.hasPermission("logit.accunlock"))
+                return null;
+            
+            return getTabCompleter().completeUsername(args[0]);
+        }
+        
+        return null;
     }
 }

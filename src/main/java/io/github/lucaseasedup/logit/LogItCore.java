@@ -30,6 +30,7 @@ import io.github.lucaseasedup.logit.command.AccunlockCommand;
 import io.github.lucaseasedup.logit.command.ChangeEmailCommand;
 import io.github.lucaseasedup.logit.command.ChangePassCommand;
 import io.github.lucaseasedup.logit.command.DisabledCommandExecutor;
+import io.github.lucaseasedup.logit.command.LogItTabCompleter;
 import io.github.lucaseasedup.logit.command.LoginCommand;
 import io.github.lucaseasedup.logit.command.LoginHistoryCommand;
 import io.github.lucaseasedup.logit.command.LogoutCommand;
@@ -349,6 +350,7 @@ public final class LogItCore
         backupManager = new BackupManager(accountManager);
         sessionManager = new SessionManager();
         messageDispatcher = new LogItMessageDispatcher();
+        tabCompleter = new LogItTabCompleter();
         
         if (getConfig("config.yml").getBoolean("profiles.enabled"))
         {
@@ -512,6 +514,12 @@ public final class LogItCore
         {
             messageDispatcher.dispose();
             messageDispatcher = null;
+        }
+        
+        if (tabCompleter != null)
+        {
+            tabCompleter.dispose();
+            tabCompleter = null;
         }
         
         if (profileManager != null)
@@ -1136,6 +1144,11 @@ public final class LogItCore
         return messageDispatcher;
     }
     
+    public LogItTabCompleter getTabCompleter()
+    {
+        return tabCompleter;
+    }
+    
     public ProfileManager getProfileManager()
     {
         return profileManager;
@@ -1191,6 +1204,7 @@ public final class LogItCore
     private BackupManager           backupManager;
     private SessionManager          sessionManager;
     private LogItMessageDispatcher  messageDispatcher;
+    private LogItTabCompleter       tabCompleter;
     private ProfileManager          profileManager;
     private GlobalPasswordManager   globalPasswordManager;
     private CooldownManager         cooldownManager;

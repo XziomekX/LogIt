@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.backup.BackupManager;
+import io.github.lucaseasedup.logit.command.LogItTabCompleter;
 import io.github.lucaseasedup.logit.config.ConfigurationManager;
 import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
 import io.github.lucaseasedup.logit.cooldown.CooldownManager;
@@ -134,6 +135,11 @@ public abstract class LogItCoreObject
     protected final LogItMessageDispatcher getMessageDispatcher()
     {
         return core.getMessageDispatcher();
+    }
+    
+    protected final LogItTabCompleter getTabCompleter()
+    {
+        return core.getTabCompleter();
     }
     
     protected final ProfileManager getProfileManager()
