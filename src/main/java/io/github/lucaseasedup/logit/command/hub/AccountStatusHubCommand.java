@@ -22,6 +22,7 @@ import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public final class AccountStatusHubCommand extends HubCommand
 {
@@ -37,19 +38,32 @@ public final class AccountStatusHubCommand extends HubCommand
     @Override
     public void execute(CommandSender sender, String[] args)
     {
-        StringBuilder status = new StringBuilder(); 
+        if (sender instanceof Player)
+        {
+            sendMsg(sender, "");
+        }
+        
+        sendMsg(sender, _("accountStatus.header"));
+        sendMsg(sender, _("accountStatus.username")
+                .replace("{0}", args[0].toLowerCase()));
+        
+        String status; 
         
         if (getAccountManager().isRegistered(args[0]))
         {
-            status.append(_("accountStatus.registered"));
+            status = _("accountStatus.status.registered");
         }
         else
         {
-            status.append(_("accountStatus.notRegistered"));
+            status = _("accountStatus.status.notRegistered");
         }
         
-        sendMsg(sender, _("accountStatus")
-                .replace("{0}", args[0])
-                .replace("{1}", status.toString()));
+        sendMsg(sender, _("accountStatus.status")
+                .replace("{0}", status));
+        
+        if (sender instanceof Player)
+        {
+            sendMsg(sender, "");
+        }
     }
 }
