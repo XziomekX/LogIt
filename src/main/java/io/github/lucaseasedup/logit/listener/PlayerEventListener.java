@@ -93,7 +93,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             
             if (account.isLocked())
             {
-                event.disallow(Result.KICK_OTHER, _("ACCLOCK_SUCCESS_SELF"));
+                event.disallow(Result.KICK_OTHER, _("acclock.success.self"));
                 
                 return;
             }
