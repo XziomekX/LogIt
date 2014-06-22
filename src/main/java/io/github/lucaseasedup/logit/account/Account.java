@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 import javax.xml.bind.DatatypeConverter;
 
@@ -52,7 +53,7 @@ public final class Account extends LogItCoreObject
     
     public Account(String username, Storage.Entry entry)
     {
-        if (username == null || entry == null)
+        if (username == null || username.isEmpty() || entry == null)
             throw new IllegalArgumentException();
         
         entry.put(keys().username(), username.toLowerCase());
@@ -66,6 +67,22 @@ public final class Account extends LogItCoreObject
             throw new IllegalArgumentException("Missing key: username");
         
         return entry.get(keys().username()).toLowerCase();
+    }
+    
+    public String getUuid()
+    {
+        if (!entry.containsKey(keys().uuid()))
+            throw new IllegalArgumentException("Missing key: uuid");
+        
+        return entry.get(keys().uuid());
+    }
+    
+    public void setUuid(UUID uuid)
+    {
+        if (uuid == null)
+            throw new IllegalArgumentException();
+        
+        entry.put(keys().uuid(), uuid.toString());
     }
     
     /**

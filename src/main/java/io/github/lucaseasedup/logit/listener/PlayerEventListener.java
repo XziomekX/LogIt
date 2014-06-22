@@ -29,6 +29,10 @@ import io.github.lucaseasedup.logit.config.LocationSerializable;
 import io.github.lucaseasedup.logit.hooks.VanishNoPacketHook;
 import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.session.Session;
+import io.github.lucaseasedup.logit.storage.Infix;
+import io.github.lucaseasedup.logit.storage.SelectorBinary;
+import io.github.lucaseasedup.logit.storage.SelectorCondition;
+import io.github.lucaseasedup.logit.storage.SelectorNegation;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
 import io.github.lucaseasedup.logit.util.JoinMessageGenerator;
 import io.github.lucaseasedup.logit.util.QuitMessageGenerator;
@@ -36,6 +40,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -167,6 +172,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         Player player = event.getPlayer();
         String username = player.getName().toLowerCase();
         String ip = getPlayerIp(player);
+        UUID uuid = player.getUniqueId();
         
         event.setJoinMessage(null);
         
@@ -178,12 +184,49 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         long validnessTime = getConfig("config.yml")
                 .getTime("login-sessions.validness-time", TimeUnit.SECONDS);
         
+        List<Account> uuidMatchedAccounts = getAccountManager().selectAccounts(
+                keys().getNames(),
+                new SelectorBinary(
+                        new SelectorCondition(keys().uuid(), Infix.EQUALS, uuid.toString()),
+                        Infix.AND,
+                        new SelectorNegation(
+                                new SelectorCondition(keys().username(), Infix.CONTAINS, "$")
+                        )
+                )
+        );
+        
         Account account = getAccountManager().selectAccount(username, Arrays.asList(
                 keys().username(),
+                keys().uuid(),
                 keys().login_session(),
                 keys().display_name(),
                 keys().persistence()
         ));
+        
+        if (uuidMatchedAccounts != null && !uuidMatchedAccounts.isEmpty())
+        {
+            Account uuidMatchedAccount = uuidMatchedAccounts.get(0);
+            String uuidMatchedUsername = uuidMatchedAccount.getUsername();
+            
+            if (!uuidMatchedUsername.equalsIgnoreCase(username))
+            {
+                if (account != null)
+                {
+                    getAccountManager().renameAccount(username,
+                            username + "$" + account.getUuid());
+                }
+                
+                getAccountManager().renameAccount(uuidMatchedUsername, username);
+            }
+        }
+        
+        if (account != null)
+        {
+            if (account.getUuid().isEmpty())
+            {
+                account.setUuid(uuid);
+            }
+        }
         
         if (getConfig("config.yml").getBoolean("login-sessions.enabled") && validnessTime > 0)
         {

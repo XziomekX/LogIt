@@ -26,7 +26,8 @@ import org.apache.tools.ant.util.LinkedHashtable;
 public final class AccountKeys extends LinkedHashtable<String, DataType>
 {
     public AccountKeys(String username,
-                       String salt,             
+                       String uuid,
+                       String salt,
                        String password,
                        String hashing_algorithm,
                        String ip,
@@ -40,6 +41,7 @@ public final class AccountKeys extends LinkedHashtable<String, DataType>
                        String persistence)
     {
         put(username,          DataType.TINYTEXT);
+        put(uuid,              DataType.TINYTEXT);
         put(salt,              DataType.TINYTEXT);
         put(password,          DataType.MEDIUMTEXT);
         put(hashing_algorithm, DataType.TINYTEXT);
@@ -55,6 +57,7 @@ public final class AccountKeys extends LinkedHashtable<String, DataType>
         
         this.names = new ImmutableList.Builder<String>().add(
             username,
+            uuid,
             salt,
             password,
             hashing_algorithm,
@@ -69,6 +72,7 @@ public final class AccountKeys extends LinkedHashtable<String, DataType>
             persistence).build();
         
         this.username = username;
+        this.uuid = uuid;
         this.salt = salt;
         this.password = password;
         this.hashing_algorithm = hashing_algorithm;
@@ -86,6 +90,11 @@ public final class AccountKeys extends LinkedHashtable<String, DataType>
     public String username()
     {
         return username;
+    }
+    
+    public String uuid()
+    {
+        return uuid;
     }
     
     public String salt()
@@ -157,6 +166,7 @@ public final class AccountKeys extends LinkedHashtable<String, DataType>
     
     private final List<String> names;
     private final String username;
+    private final String uuid;
     private final String salt;
     private final String password;
     private final String hashing_algorithm;

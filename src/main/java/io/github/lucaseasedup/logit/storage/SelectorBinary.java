@@ -20,9 +20,9 @@ package io.github.lucaseasedup.logit.storage;
 
 public final class SelectorBinary extends Selector
 {
-    public SelectorBinary(SelectorCondition leftOperand,
+    public SelectorBinary(Selector leftOperand,
                           SelectorBinary.Relation relation,
-                          SelectorCondition rightOperand)
+                          Selector rightOperand)
     {
         if (leftOperand == null || relation == null || rightOperand == null)
             throw new IllegalArgumentException();
@@ -32,7 +32,7 @@ public final class SelectorBinary extends Selector
         this.rightOperand = rightOperand;
     }
     
-    public SelectorCondition getLeftOperand()
+    public Selector getLeftOperand()
     {
         return leftOperand;
     }
@@ -42,7 +42,7 @@ public final class SelectorBinary extends Selector
         return relation;
     }
     
-    public SelectorCondition getRightOperand()
+    public Selector getRightOperand()
     {
         return rightOperand;
     }
@@ -52,7 +52,7 @@ public final class SelectorBinary extends Selector
         AND, OR;
     }
     
-    private final SelectorCondition leftOperand;
+    private final Selector leftOperand;
     private final SelectorBinary.Relation relation;
-    private final SelectorCondition rightOperand;
+    private final Selector rightOperand;
 }

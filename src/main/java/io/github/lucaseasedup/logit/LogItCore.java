@@ -231,6 +231,7 @@ public final class LogItCore
         String accountsUnit = getConfig("config.yml").getString("storage.accounts.leading.unit");
         AccountKeys accountKeys = new AccountKeys(
             getConfig("config.yml").getString("storage.accounts.keys.username"),
+            getConfig("config.yml").getString("storage.accounts.keys.uuid"),
             getConfig("config.yml").getString("storage.accounts.keys.salt"),
             getConfig("config.yml").getString("storage.accounts.keys.password"),
             getConfig("config.yml").getString("storage.accounts.keys.hashing_algorithm"),

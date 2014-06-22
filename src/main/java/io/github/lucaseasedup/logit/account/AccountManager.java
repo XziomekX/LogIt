@@ -268,7 +268,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         {
             String username = entry.get(keys().username());
             
-            if (buffer.containsKey(username))
+            if (buffer.get(username) != null)
             {
                 for (Datum datum : buffer.get(username).getEntry())
                 {
@@ -276,7 +276,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
                 }
             }
             
-            accounts.add(new Account(entry));
+            Account account = new Account(entry);
+            
+            if (buffer.get(username) == null)
+            {
+                buffer.put(username, account);
+            }
+            
+            accounts.add(account);
         }
         
         return accounts;
@@ -341,6 +348,36 @@ public final class AccountManager extends LogItCoreObject implements Runnable, D
         finally
         {
             storage.setAutobatchEnabled(false);
+        }
+    }
+    
+    public void renameAccount(String username, String newUsername)
+    {
+        if (username == null || newUsername == null || newUsername.isEmpty())
+            throw new IllegalArgumentException();
+        
+        username = username.toLowerCase();
+        newUsername = newUsername.toLowerCase();
+        
+        try
+        {
+            storage.updateEntries(unit,
+                    new Storage.Entry.Builder()
+                            .put(keys().username(), newUsername)
+                            .build(),
+                    new SelectorCondition(keys.username(), Infix.EQUALS, username)
+            );
+            
+            if (buffer.get(username) != null)
+            {
+                buffer.put(newUsername, buffer.remove(username));
+            }
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, ex);
+            
+            ReportedException.throwNew(ex);
         }
     }
     
