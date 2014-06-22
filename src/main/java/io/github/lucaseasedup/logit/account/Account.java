@@ -260,6 +260,14 @@ public final class Account extends LogItCoreObject
         entry.put(keys().email(), email.toLowerCase());
     }
     
+    public long getLastActiveDate()
+    {
+        if (!entry.containsKey(keys().last_active_date()))
+            throw new IllegalArgumentException("Missing key: last_active_date");
+        
+        return Long.parseLong(entry.get(keys().last_active_date()));
+    }
+    
     /**
      * Updates last-active date of this {@code Account}, overwriting it
      * with the current time retrieved when calling this method.
@@ -269,6 +277,14 @@ public final class Account extends LogItCoreObject
     public void setLastActiveDate(long unixTime)
     {
         entry.put(keys().last_active_date(), String.valueOf(unixTime));
+    }
+    
+    public long getRegistrationDate()
+    {
+        if (!entry.containsKey(keys().reg_date()))
+            throw new IllegalArgumentException("Missing key: reg_date");
+        
+        return Long.parseLong(entry.get(keys().reg_date()));
     }
     
     public void setRegistrationDate(long unixTime)
