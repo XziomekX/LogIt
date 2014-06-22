@@ -26,25 +26,98 @@ import io.github.lucaseasedup.logit.command.hub.HubCommands;
 import java.util.Iterator;
 import java.util.List;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-public final class LogItCommand extends LogItCoreObject implements CommandExecutor
+public final class LogItCommand extends LogItCoreObject implements TabExecutor
 {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        boolean hubCommandFound = false;
-        boolean hubCommandExecuted = false;
+        HubCommand hubCommand = findHubCommand(args);
         
+        if (hubCommand == null)
+        {
+            if (sender instanceof Player && !sender.hasPermission("logit"))
+            {
+                sendMsg(sender, _("noPerms"));
+            }
+            else
+            {
+                sendMsg(sender, _("typeForHelp"));
+            }
+            
+            return true;
+        }
+        
+        List<String> params = hubCommand.getParams();
+        String[] subcommandWords = hubCommand.getSubcommand().split("\\s+");
+        
+        for (int i = params.size() - 1; i >= 0; i--)
+        {
+            if (args.length < subcommandWords.length + i + 1)
+            {
+                sendMsg(sender, _("paramMissing")
+                        .replace("{0}", params.get(i)));
+                
+                return true;
+            }
+        }
+        
+        if (sender instanceof Player && !sender.hasPermission(hubCommand.getPermission()))
+        {
+            sendMsg(sender, _("noPerms"));
+            
+            return true;
+        }
+        
+        if (hubCommand.isPlayerOnly() && !(sender instanceof Player))
+        {
+            sendMsg(sender, _("onlyForPlayers"));
+            
+            return true;
+        }
+        
+        if (hubCommand.requiresRunningCore() && !isCoreStarted())
+        {
+            sendMsg(sender, _("coreNotStarted"));
+            
+            return true;
+        }
+        
+        String[] hubCommandArgs = translateHubCommandArgs(hubCommand, args);
+        
+        hubCommand.execute(sender, hubCommandArgs);
+        
+        return true;
+    }
+    
+    @Override
+    public List<String> onTabComplete(CommandSender sender,
+                                      Command cmd,
+                                      String label,
+                                      String[] args)
+    {
+        HubCommand hubCommand = findHubCommand(args);
+        
+        if (hubCommand != null)
+        {
+            String[] hubCommandArgs = translateHubCommandArgs(hubCommand, args);
+            
+            return hubCommand.complete(sender, hubCommandArgs);
+        }
+        
+        return null;
+    }
+    
+    private HubCommand findHubCommand(String[] args)
+    {
         hubCommandSearch:
         for (Iterator<HubCommand> it = HubCommands.iterator(); it.hasNext();)
         {
             HubCommand hubCommand = it.next();
-            
             String[] subcommandWords = hubCommand.getSubcommand().split("\\s+");
-            List<String> params = hubCommand.getParams();
             
             if (subcommandWords.length > args.length)
                 continue;
@@ -57,76 +130,43 @@ public final class LogItCommand extends LogItCoreObject implements CommandExecut
                 }
             }
             
-            hubCommandFound = true;
-            
-            for (int i = params.size() - 1; i >= 0; i--)
-            {
-                if (args.length < subcommandWords.length + i + 1)
-                {
-                    sendMsg(sender, _("paramMissing")
-                            .replace("{0}", params.get(i)));
-                    
-                    break hubCommandSearch;
-                }
-            }
-            
-            if (sender instanceof Player && !sender.hasPermission(hubCommand.getPermission()))
-            {
-                sendMsg(sender, _("noPerms"));
-            }
-            else if (hubCommand.isPlayerOnly() && !(sender instanceof Player))
-            {
-                sendMsg(sender, _("onlyForPlayers"));
-            }
-            else if (hubCommand.requiresRunningCore() && !isCoreStarted())
-            {
-                sendMsg(sender, _("coreNotStarted"));
-            }
-            else
-            {
-                String[] hubCommandArgs = new String[params.size()];
-                
-                System.arraycopy(args, subcommandWords.length, hubCommandArgs, 0, params.size());
-                
-                for (int i = subcommandWords.length + params.size(); i < args.length; i++)
-                {
-                    if (hubCommandArgs.length == 0)
-                    {
-                        hubCommandArgs = new String[1];
-                    }
-                    
-                    if (hubCommandArgs[hubCommandArgs.length - 1] == null)
-                    {
-                        hubCommandArgs[hubCommandArgs.length - 1] = "";
-                    }
-                    
-                    if (params.size() != 0 || i == subcommandWords.length + params.size() + 1)
-                    {
-                        hubCommandArgs[hubCommandArgs.length - 1] += " ";
-                    }
-                    
-                    hubCommandArgs[hubCommandArgs.length - 1] += args[i];
-                }
-                
-                hubCommand.execute(sender, hubCommandArgs);
-                hubCommandExecuted = true;
-            }
-            
-            break;
+            return hubCommand;
         }
         
-        if (!hubCommandFound)
+        return null;
+    }
+    
+    private String[] translateHubCommandArgs(HubCommand hubCommand, String[] args)
+    {
+        List<String> params = hubCommand.getParams();
+        String[] subcommandWords = hubCommand.getSubcommand().split("\\s+");
+        String[] hubCommandArgs = new String[params.size()];
+        
+        if (args.length <= subcommandWords.length)
+            return new String[0];
+        
+        System.arraycopy(args, subcommandWords.length, hubCommandArgs, 0, params.size());
+        
+        for (int i = subcommandWords.length + params.size(); i < args.length; i++)
         {
-            if (sender instanceof Player && !sender.hasPermission("logit"))
+            if (hubCommandArgs.length == 0)
             {
-                sendMsg(sender, _("noPerms"));
+                hubCommandArgs = new String[1];
             }
-            else
+            
+            if (hubCommandArgs[hubCommandArgs.length - 1] == null)
             {
-                sendMsg(sender, _("typeForHelp"));
+                hubCommandArgs[hubCommandArgs.length - 1] = "";
             }
+            
+            if (params.size() != 0 || i == subcommandWords.length + params.size() + 1)
+            {
+                hubCommandArgs[hubCommandArgs.length - 1] += " ";
+            }
+            
+            hubCommandArgs[hubCommandArgs.length - 1] += args[i];
         }
         
-        return true;
+        return hubCommandArgs;
     }
 }
