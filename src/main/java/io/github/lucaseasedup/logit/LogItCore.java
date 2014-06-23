@@ -1197,19 +1197,19 @@ public final class LogItCore
     private boolean firstRun;
     private boolean started = false;
     
-    private ConfigurationManager    configurationManager;
-    private LocaleManager           localeManager;
-    private AccountManager          accountManager;
-    private PersistenceManager      persistenceManager;
-    private BackupManager           backupManager;
-    private SessionManager          sessionManager;
-    private LogItMessageDispatcher  messageDispatcher;
-    private LogItTabCompleter       tabCompleter;
-    private ProfileManager          profileManager;
-    private GlobalPasswordManager   globalPasswordManager;
-    private CooldownManager         cooldownManager;
-    private AccountWatcher          accountWatcher;
-    private Permission              vaultPermissions;
+    private ConfigurationManager configurationManager;
+    private LocaleManager localeManager;
+    private AccountManager accountManager;
+    private PersistenceManager persistenceManager;
+    private BackupManager backupManager;
+    private SessionManager sessionManager;
+    private LogItMessageDispatcher messageDispatcher;
+    private LogItTabCompleter tabCompleter;
+    private ProfileManager profileManager;
+    private GlobalPasswordManager globalPasswordManager;
+    private CooldownManager cooldownManager;
+    private AccountWatcher accountWatcher;
+    private Permission vaultPermissions;
     
     private BukkitTask accountManagerTask;
     private BukkitTask backupManagerTask;

@@ -28,17 +28,17 @@ public final class AuthMePasswordHelper
                                                   String hashedPassword,
                                                   String encryptionMethod)
     {
-    	if (compareWithEncryptionMethod(password, hashedPassword, encryptionMethod))
-    	{
-    		return true;
-    	}
+        if (compareWithEncryptionMethod(password, hashedPassword, encryptionMethod))
+        {
+            return true;
+        }
         
         if (OLD_PASSWORDS_SUPPORTED)
         {
-        	if (compareWithAllEncryptionMethods(password, hashedPassword))
-        	{
-        		return true;
-        	}
+            if (compareWithAllEncryptionMethods(password, hashedPassword))
+            {
+                return true;
+            }
         }
         
         return false;
@@ -153,7 +153,7 @@ public final class AuthMePasswordHelper
         if (compareWithEncryptionMethod(password, hashedPassword, "XAUTH"))
             return true;
         
-    	return false;
+        return false;
     }
     
     public static boolean validateEncryptionMethod(String encryptionMethod)

@@ -430,7 +430,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         if (!getConfig("config.yml").getBoolean("force-login.prevent.command-preprocess"))
             return;
         
-        String       message = event.getMessage();
+        String message = event.getMessage();
         List<String> loginAliases = getPlugin().getCommand("login").getAliases();
         List<String> registerAliases = getPlugin().getCommand("register").getAliases();
         
