@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.command.wizard;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import io.github.lucaseasedup.logit.FatalReportedException;
+import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.config.PropertyType;
 import io.github.lucaseasedup.logit.config.validators.StorageTypeValidator;
@@ -236,6 +237,8 @@ public final class ConvertWizard extends Wizard
                 
                 try
                 {
+                    ReportedException.incrementRequestCount();
+                    
                     List<Account> accounts = null;
                     
                     if (copyAccounts)
@@ -246,7 +249,7 @@ public final class ConvertWizard extends Wizard
                     
                     getCore().restart();
                     
-                    if (copyAccounts)
+                    if (copyAccounts && accounts != null)
                     {
                         getAccountManager().insertAccounts(
                                 accounts.toArray(new Account[accounts.size()])
@@ -262,6 +265,17 @@ public final class ConvertWizard extends Wizard
                     
                     updateStep(Step.SUCCESS);
                 }
+                catch (ReportedException ex)
+                {
+                    if (getSender() instanceof Player)
+                    {
+                        sendMessage(_("wizard.convert.fail"));
+                    }
+                    
+                    log(Level.SEVERE, _("wizard.convert.fail.log"));
+                    
+                    updateStep(Step.FAIL);
+                }
                 catch (FatalReportedException ex)
                 {
                     if (getSender() instanceof Player)
@@ -272,6 +286,10 @@ public final class ConvertWizard extends Wizard
                     log(Level.SEVERE, _("wizard.convert.fail.log"), ex);
                     
                     updateStep(Step.FAIL);
+                }
+                finally
+                {
+                    ReportedException.decrementRequestCount();
                 }
                 
                 cancelWizard();
