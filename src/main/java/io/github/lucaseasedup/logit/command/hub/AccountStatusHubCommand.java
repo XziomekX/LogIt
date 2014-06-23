@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit.command.hub;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
+import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -65,5 +66,16 @@ public final class AccountStatusHubCommand extends HubCommand
         {
             sendMsg(sender, "");
         }
+    }
+    
+    @Override
+    public List<String> complete(CommandSender sender, String[] args)
+    {
+        if (args.length == 1)
+        {
+            return getTabCompleter().completeUsername(args[0]);
+        }
+        
+        return null;
     }
 }

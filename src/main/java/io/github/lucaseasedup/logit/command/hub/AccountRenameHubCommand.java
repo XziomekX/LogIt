@@ -24,6 +24,7 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.command.wizard.ConfirmationWizard;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
+import java.util.List;
 import org.bukkit.command.CommandSender;
 
 public final class AccountRenameHubCommand extends HubCommand
@@ -114,5 +115,16 @@ public final class AccountRenameHubCommand extends HubCommand
                         .replace("{0}", args[1].toLowerCase()));
             }
         }).createWizard();
+    }
+    
+    @Override
+    public List<String> complete(CommandSender sender, String[] args)
+    {
+        if (args.length == 1)
+        {
+            return getTabCompleter().completeUsername(args[0]);
+        }
+        
+        return null;
     }
 }
