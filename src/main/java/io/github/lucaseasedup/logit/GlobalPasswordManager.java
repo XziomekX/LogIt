@@ -49,6 +49,8 @@ public final class GlobalPasswordManager extends LogItCoreObject implements Runn
             if (e.getValue() <= 0)
             {
                 it.remove();
+                
+                continue;
             }
             
             e.setValue(e.getValue() - TASK_PERIOD);
