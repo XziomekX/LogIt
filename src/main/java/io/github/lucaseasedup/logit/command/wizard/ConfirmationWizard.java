@@ -46,6 +46,7 @@ public final class ConfirmationWizard extends Wizard
     @Override
     protected void onCreate()
     {
+        // Left for optional implementation by extending classes. 
     }
     
     @Override
