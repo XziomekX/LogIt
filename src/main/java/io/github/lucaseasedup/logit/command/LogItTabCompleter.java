@@ -85,5 +85,5 @@ public final class LogItTabCompleter extends LogItCoreObject
         return suggestions;
     }
     
-    private static final int MAX_SUGGESTIONS = 8;
+    private static final int MAX_SUGGESTIONS = 16;
 }
