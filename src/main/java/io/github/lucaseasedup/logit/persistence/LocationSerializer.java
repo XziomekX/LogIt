@@ -45,29 +45,29 @@ public final class LocationSerializer extends LogItCoreObject implements Persist
         {
             final Location waitingRoomLocation = getWaitingRoomLocation();
             
-            // First teleport attempt is not delayed.
             player.teleport(waitingRoomLocation);
             
-            // And make sure no plugin teleports the player away.
+            final int teleportPasses = getConfig("secret.yml")
+                    .getInt("location-serializer.teleport-check.passes");
+            final double dislocationRadius = getConfig("secret.yml")
+                    .getDouble("location-serializer.teleport-check.dislocation-radius");
+            
+            // Make sure that no other plugin teleported the player away.
             new BukkitRunnable()
             {
                 @Override
                 public void run()
                 {
-                    if (++passes > MAX_PASSES)
+                    if (++passes > teleportPasses)
                     {
                         cancel();
                     }
-                    else if (!PlayerUtils.isPlayerAt(player, waitingRoomLocation, 0.5, 0.5, 0.5))
+                    else if (!PlayerUtils.isPlayerAt(player, waitingRoomLocation,
+                            dislocationRadius, dislocationRadius, dislocationRadius))
                     {
                         player.teleport(waitingRoomLocation);
                     }
                 }
-                
-                /**
-                 * Tells how many times the location will be checked.
-                 */
-                private final int MAX_PASSES = 2;
                 
                 /**
                  * Tells how many checks has been done so far.
