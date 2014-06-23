@@ -111,6 +111,7 @@ public final class LogItCore
      * 
      * @throws FatalReportedException if a critical error occurred
      *                                and LogIt could not start.
+     *                                
      * @throws IllegalStateException  if the LogIt core is already running.
      * 
      * @see #isStarted()
@@ -125,6 +126,53 @@ public final class LogItCore
         
         firstRun = !getDataFile("config.yml").exists();
         
+        setUpConfiguration();
+        
+        if (getConfig("config.yml").getBoolean("logging.file.enabled"))
+        {
+            openLogFile(getConfig("config.yml").getString("logging.file.filename"));
+        }
+        
+        if (isFirstRun())
+        {
+            doFirstRunStuff();
+        }
+        
+        checkForUpdate();
+        setUpLocaleManager();
+        setUpAccountManager();
+        setUpPersistenceManager();
+        
+        backupManager = new BackupManager(accountManager);
+        sessionManager = new SessionManager();
+        messageDispatcher = new LogItMessageDispatcher();
+        tabCompleter = new LogItTabCompleter();
+        
+        if (getConfig("config.yml").getBoolean("profiles.enabled"))
+        {
+            setUpProfileManager();
+        }
+        
+        globalPasswordManager = new GlobalPasswordManager();
+        cooldownManager = new CooldownManager();
+        accountWatcher = new AccountWatcher();
+        
+        startTasks();
+        enableCommands();
+        registerEvents();
+        
+        started = true;
+        
+        log(Level.FINE, _("startPlugin.success"));
+        
+        if (isFirstRun())
+        {
+            log(Level.INFO, _("firstRun"));
+        }
+    }
+    
+    private void setUpConfiguration() throws FatalReportedException
+    {
         String configHeader = "# # # # # # # # # # # # # # #\n"
                             + " LogIt Configuration File   #\n"
                             + "# # # # # # # # # # # # # # #\n";
@@ -163,34 +211,32 @@ public final class LogItCore
             
             FatalReportedException.throwNew(ex);
         }
+    }
+    
+    private void doFirstRunStuff()
+    {
+        getDataFile("backup").mkdir();
+        getDataFile("mail").mkdir();
+        getDataFile("lang").mkdir();
         
-        if (getConfig("config.yml").getBoolean("logging.file.enabled"))
-        {
-            openLogFile(getConfig("config.yml").getString("logging.file.filename"));
-        }
+        File passwordRecoveryTemplateFile = getDataFile("mail/password-recovery.html");
         
-        if (firstRun)
+        if (!passwordRecoveryTemplateFile.exists())
         {
-            getDataFile("backup").mkdir();
-            getDataFile("mail").mkdir();
-            getDataFile("lang").mkdir();
-            
-            File passwordRecoveryTemplateFile = getDataFile("mail/password-recovery.html");
-            
-            if (!passwordRecoveryTemplateFile.exists())
+            try
             {
-                try
-                {
-                    IoUtils.extractResource("password-recovery.html",
-                            passwordRecoveryTemplateFile);
-                }
-                catch (IOException ex)
-                {
-                    log(Level.WARNING, "Could not copy resource: password-recovery.html", ex);
-                }
+                IoUtils.extractResource("password-recovery.html",
+                        passwordRecoveryTemplateFile);
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, "Could not copy resource: password-recovery.html", ex);
             }
         }
-        
+    }
+    
+    private void checkForUpdate()
+    {
         try
         {
             String updateVersion = LogItUpdateChecker.checkForUpdate(
@@ -214,14 +260,20 @@ public final class LogItCore
         {
             log(Level.WARNING, ex);
         }
-        
+    }
+    
+    private void setUpLocaleManager()
+    {
         localeManager = new LocaleManager();
         localeManager.registerLocale(EnglishLocale.getInstance());
         localeManager.registerLocale(PolishLocale.getInstance());
         localeManager.registerLocale(GermanLocale.getInstance());
         localeManager.setFallbackLocale(EnglishLocale.class);
         localeManager.switchActiveLocale(getConfig("config.yml").getString("locale"));
-        
+    }
+    
+    private void setUpAccountManager() throws FatalReportedException
+    {
         StorageType leadingStorageType = StorageType.decode(
                 getConfig("config.yml").getString("storage.accounts.leading.storage-type")
         );
@@ -334,6 +386,10 @@ public final class LogItCore
         }
         
         accountManager = new AccountManager(accountStorage, accountsUnit, accountKeys);
+    }
+    
+    private void setUpPersistenceManager() throws FatalReportedException
+    {
         persistenceManager = new PersistenceManager();
         
         setSerializerEnabled(LocationSerializer.class,
@@ -346,30 +402,62 @@ public final class LogItCore
                 getConfig("config.yml").getBoolean("force-login.obfuscate-bars.experience"));
         setSerializerEnabled(HungerBarSerializer.class,
                 getConfig("config.yml").getBoolean("force-login.obfuscate-bars.hunger"));
-        
-        backupManager = new BackupManager(accountManager);
-        sessionManager = new SessionManager();
-        messageDispatcher = new LogItMessageDispatcher();
-        tabCompleter = new LogItTabCompleter();
-        
-        if (getConfig("config.yml").getBoolean("profiles.enabled"))
+    }
+    
+    private void setSerializerEnabled(Class<? extends PersistenceSerializer> clazz, boolean status)
+            throws FatalReportedException
+    {
+        if (status)
         {
-            File profilesPath = getDataFile(getConfig("config.yml").getString("profiles.path"));
-            
-            if (!profilesPath.exists())
+            try
             {
-                profilesPath.getParentFile().mkdirs();
-                profilesPath.mkdir();
+                persistenceManager.registerSerializer(clazz);
             }
+            catch (ReflectiveOperationException ex)
+            {
+                log(Level.SEVERE,
+                        "Could not register persistence serializer: " + clazz.getSimpleName());
+                
+                FatalReportedException.throwNew(ex);
+            }
+        }
+        else
+        {
+            AccountKeys keys = getAccountManager().getKeys();
             
-            profileManager = new ProfileManager(profilesPath,
-                    getConfig("config.yml").getValues("profiles.fields"));
+            for (Player player : Bukkit.getOnlinePlayers())
+            {
+                Account account = getAccountManager().selectAccount(player.getName(),
+                        Arrays.asList(
+                                keys.username(),
+                                keys.persistence()
+                        )
+                );
+                
+                if (account != null)
+                {
+                    persistenceManager.unserializeUsing(account, player, clazz);
+                }
+            }
+        }
+    }
+    
+    private void setUpProfileManager()
+    {
+        File profilesPath = getDataFile(getConfig("config.yml").getString("profiles.path"));
+        
+        if (!profilesPath.exists())
+        {
+            profilesPath.getParentFile().mkdirs();
+            profilesPath.mkdir();
         }
         
-        globalPasswordManager = new GlobalPasswordManager();
-        cooldownManager = new CooldownManager();
-        accountWatcher = new AccountWatcher();
-        
+        profileManager = new ProfileManager(profilesPath,
+                getConfig("config.yml").getValues("profiles.fields"));
+    }
+    
+    private void startTasks()
+    {
         accountManagerTask = Bukkit.getScheduler().runTaskTimer(plugin,
                 accountManager, 0L,
                 getConfig("secret.yml").getTime("buffer-flush-interval", TimeUnit.TICKS));
@@ -385,18 +473,57 @@ public final class LogItCore
         accountWatcherTask = Bukkit.getScheduler().runTaskTimer(plugin,
                 accountWatcher, 0L,
                 AccountWatcher.TASK_PERIOD);
-        
-        enableCommands();
-        registerEvents();
-        
-        started = true;
-        
-        log(Level.FINE, _("startPlugin.success"));
-        
-        if (isFirstRun())
+    }
+    
+    private void enableCommands()
+    {
+        enableCommand("login", new LoginCommand());
+        enableCommand("logout", new LogoutCommand());
+        enableCommand("remember", new RememberCommand(),
+                getConfig("config.yml").getBoolean("login-sessions.enabled"));
+        enableCommand("register", new RegisterCommand());
+        enableCommand("unregister", new UnregisterCommand());
+        enableCommand("changepass", new ChangePassCommand(),
+                !getConfig("config.yml").getBoolean("password.disable-passwords"));
+        enableCommand("changeemail", new ChangeEmailCommand());
+        enableCommand("recoverpass", new RecoverPassCommand(),
+                getConfig("config.yml").getBoolean("password-recovery.enabled"));
+        enableCommand("profile", new ProfileCommand(),
+                getConfig("config.yml").getBoolean("profiles.enabled"));
+        enableCommand("acclock", new AcclockCommand());
+        enableCommand("accunlock", new AccunlockCommand());
+        enableCommand("loginhistory", new LoginHistoryCommand(),
+                getConfig("config.yml").getBoolean("login-history.enabled"));
+        enableCommand("$logit-nop-command", new NopCommandExecutor());
+    }
+    
+    private void enableCommand(String command, CommandExecutor executor, boolean enabled)
+    {
+        if (enabled)
         {
-            log(Level.INFO, _("firstRun"));
+            plugin.getCommand(command).setExecutor(executor);
         }
+        else
+        {
+            disableCommand(command);
+        }
+    }
+    
+    private void enableCommand(String command, CommandExecutor executor)
+    {
+        enableCommand(command, executor, true);
+    }
+    
+    private void registerEvents()
+    {
+        Bukkit.getPluginManager().registerEvents(messageDispatcher, plugin);
+        Bukkit.getPluginManager().registerEvents(cooldownManager, plugin);
+        Bukkit.getPluginManager().registerEvents(new ServerEventListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new BlockEventListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new EntityEventListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new PlayerEventListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new InventoryEventListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new SessionEventListener(), plugin);
     }
     
     /**
@@ -456,6 +583,28 @@ public final class LogItCore
         dispose();
         
         log(Level.FINE, _("stopPlugin.success"));
+    }
+    
+    private void disableCommands()
+    {
+        disableCommand("login");
+        disableCommand("logout");
+        disableCommand("remember");
+        disableCommand("register");
+        disableCommand("unregister");
+        disableCommand("changepass");
+        disableCommand("changeemail");
+        disableCommand("recoverpass");
+        disableCommand("profile");
+        disableCommand("acclock");
+        disableCommand("accunlock");
+        disableCommand("loginhistory");
+        disableCommand("$logit-nop-command");
+    }
+    
+    private void disableCommand(String command)
+    {
+        plugin.getCommand(command).setExecutor(new DisabledCommandExecutor());
     }
     
     /**
@@ -910,110 +1059,6 @@ public final class LogItCore
         {
             plugin.getLogger().log(Level.WARNING, "Could not open log file for writing.", ex);
         }
-    }
-    
-    private void setSerializerEnabled(Class<? extends PersistenceSerializer> clazz, boolean status)
-            throws FatalReportedException
-    {
-        if (status)
-        {
-            try
-            {
-                persistenceManager.registerSerializer(clazz);
-            }
-            catch (ReflectiveOperationException ex)
-            {
-                log(Level.SEVERE,
-                        "Could not register persistence serializer: " + clazz.getSimpleName());
-                
-                FatalReportedException.throwNew(ex);
-            }
-        }
-        else for (Player player : Bukkit.getOnlinePlayers())
-        {
-            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
-                    getAccountManager().getKeys().username(),
-                    getAccountManager().getKeys().persistence()
-            ));
-            
-            if (account != null)
-            {
-                persistenceManager.unserializeUsing(account, player, clazz);
-            }
-        }
-    }
-    
-    private void enableCommands()
-    {
-        enableCommand("login", new LoginCommand());
-        enableCommand("logout", new LogoutCommand());
-        enableCommand("remember", new RememberCommand(),
-                getConfig("config.yml").getBoolean("login-sessions.enabled"));
-        enableCommand("register", new RegisterCommand());
-        enableCommand("unregister", new UnregisterCommand());
-        enableCommand("changepass", new ChangePassCommand(),
-                !getConfig("config.yml").getBoolean("password.disable-passwords"));
-        enableCommand("changeemail", new ChangeEmailCommand());
-        enableCommand("recoverpass", new RecoverPassCommand(),
-                getConfig("config.yml").getBoolean("password-recovery.enabled"));
-        enableCommand("profile", new ProfileCommand(),
-                getConfig("config.yml").getBoolean("profiles.enabled"));
-        enableCommand("acclock", new AcclockCommand());
-        enableCommand("accunlock", new AccunlockCommand());
-        enableCommand("loginhistory", new LoginHistoryCommand(),
-                getConfig("config.yml").getBoolean("login-history.enabled"));
-        enableCommand("$logit-nop-command", new NopCommandExecutor());
-    }
-    
-    private void disableCommands()
-    {
-        disableCommand("login");
-        disableCommand("logout");
-        disableCommand("remember");
-        disableCommand("register");
-        disableCommand("unregister");
-        disableCommand("changepass");
-        disableCommand("changeemail");
-        disableCommand("recoverpass");
-        disableCommand("profile");
-        disableCommand("acclock");
-        disableCommand("accunlock");
-        disableCommand("loginhistory");
-        disableCommand("$logit-nop-command");
-    }
-    
-    private void disableCommand(String command)
-    {
-        plugin.getCommand(command).setExecutor(new DisabledCommandExecutor());
-    }
-    
-    private void enableCommand(String command, CommandExecutor executor, boolean enabled)
-    {
-        if (enabled)
-        {
-            plugin.getCommand(command).setExecutor(executor);
-        }
-        else
-        {
-            disableCommand(command);
-        }
-    }
-    
-    private void enableCommand(String command, CommandExecutor executor)
-    {
-        enableCommand(command, executor, true);
-    }
-    
-    private void registerEvents()
-    {
-        Bukkit.getPluginManager().registerEvents(messageDispatcher, plugin);
-        Bukkit.getPluginManager().registerEvents(cooldownManager, plugin);
-        Bukkit.getPluginManager().registerEvents(new ServerEventListener(), plugin);
-        Bukkit.getPluginManager().registerEvents(new BlockEventListener(), plugin);
-        Bukkit.getPluginManager().registerEvents(new EntityEventListener(), plugin);
-        Bukkit.getPluginManager().registerEvents(new PlayerEventListener(), plugin);
-        Bukkit.getPluginManager().registerEvents(new InventoryEventListener(), plugin);
-        Bukkit.getPluginManager().registerEvents(new SessionEventListener(), plugin);
     }
     
     /**
