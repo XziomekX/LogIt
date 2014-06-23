@@ -200,6 +200,9 @@ public final class LogItPlugin extends JavaPlugin
     
     public static String getMessage(String label)
     {
+        if (getInstance() == null)
+            throw new IllegalStateException("LogIt not enabled.");
+        
         if (getInstance().messages == null)
             throw new IllegalStateException("No messages have been loaded.");
         
