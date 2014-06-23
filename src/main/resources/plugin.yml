@@ -8,7 +8,7 @@ loadbefore: [LogItH2Helper, LogItPostgreSQLHelper]
 commands:
   logit:
     description: LogIt generic command.
-    usage: /<command> [help|version|start|stop|reload|backup <force|restore <|file <filename>|time <time>>|remove <amount>>|gotowr|globalpass|account <status <username>|info <username>|rename <username> <newUsername>>|ipcount <ip>|config <get <path>|set <path> <value>|list [page]|reload>|convert|stats|import authme]
+    usage: /<command> [help|version|start|stop|reload|backup <force|restore <file <filename>|time <time>>|remove <amount>>|gotowr|globalpass|account <status <username>|info <username>|rename <username> <newUsername>>|ipcount <ip>|config <get <path>|set <path> <value>|list [page]|reload>|convert|stats|import authme]
 
   login:
     description: Logs you in.
