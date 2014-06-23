@@ -23,6 +23,7 @@ import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.command.hub.HubCommand;
 import io.github.lucaseasedup.logit.command.hub.HubCommands;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import org.bukkit.command.Command;
@@ -103,7 +104,17 @@ public final class LogItCommand extends LogItCoreObject implements TabExecutor
         
         if (hubCommand != null)
         {
-            String[] hubCommandArgs = translateHubCommandArgs(hubCommand, args);
+            String[] subcommandWords = hubCommand.getSubcommand().split("\\s+");
+            String[] hubCommandArgs;
+            
+            if (subcommandWords.length <= args.length - 1)
+            {
+                hubCommandArgs = Arrays.copyOfRange(args, subcommandWords.length, args.length);
+            }
+            else
+            {
+                hubCommandArgs = new String[0];
+            }
             
             return hubCommand.complete(sender, hubCommandArgs);
         }
@@ -136,14 +147,15 @@ public final class LogItCommand extends LogItCoreObject implements TabExecutor
         return null;
     }
     
+    /**
+     * This method requires that there are enough elements in {@code args},
+     * otherwise it will throw {@code IndexOutOfBoundsException}.
+     */
     private String[] translateHubCommandArgs(HubCommand hubCommand, String[] args)
     {
         List<String> params = hubCommand.getParams();
         String[] subcommandWords = hubCommand.getSubcommand().split("\\s+");
         String[] hubCommandArgs = new String[params.size()];
-        
-        if (args.length <= subcommandWords.length)
-            return new String[0];
         
         System.arraycopy(args, subcommandWords.length, hubCommandArgs, 0, params.size());
         
