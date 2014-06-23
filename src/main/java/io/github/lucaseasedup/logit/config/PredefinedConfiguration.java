@@ -20,7 +20,6 @@ package io.github.lucaseasedup.logit.config;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import com.google.common.collect.ImmutableMap;
-import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.TimeString;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.util.IniUtils;
@@ -50,9 +49,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-public final class PredefinedConfiguration
-        extends PropertyObserver
-        implements PropertyHolder, Disposable
+public final class PredefinedConfiguration extends PropertyObserver implements PropertyHolder
 {
     public PredefinedConfiguration(String filename,
                                    String userConfigDef,

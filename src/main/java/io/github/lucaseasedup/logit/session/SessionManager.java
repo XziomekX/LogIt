@@ -23,7 +23,6 @@ import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import io.github.lucaseasedup.logit.CancelledState;
-import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
@@ -45,7 +44,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public final class SessionManager extends LogItCoreObject
-        implements Iterable<Entry<String, Session>>, Runnable, Disposable
+        implements Iterable<Entry<String, Session>>, Runnable
 {
     @Override
     public void dispose()

@@ -19,7 +19,6 @@
 package io.github.lucaseasedup.logit.backup;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
-import io.github.lucaseasedup.logit.Disposable;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.TimeUnit;
@@ -40,7 +39,7 @@ import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public final class BackupManager extends LogItCoreObject implements Runnable, Disposable
+public final class BackupManager extends LogItCoreObject implements Runnable
 {
     /**
      * Creates a new {@code BackupManager}.

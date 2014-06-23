@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public final class GlobalPasswordManager extends LogItCoreObject implements Runnable, Disposable
+public final class GlobalPasswordManager extends LogItCoreObject implements Runnable
 {
     @Override
     public void dispose()

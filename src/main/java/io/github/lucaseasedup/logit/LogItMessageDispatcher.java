@@ -35,7 +35,7 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public final class LogItMessageDispatcher extends LogItCoreObject implements Listener, Disposable
+public final class LogItMessageDispatcher extends LogItCoreObject implements Listener
 {
     @Override
     public void dispose()
