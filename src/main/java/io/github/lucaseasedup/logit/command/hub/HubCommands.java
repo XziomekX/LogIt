@@ -64,7 +64,6 @@ public final class HubCommands
         hubCommands.add(new StopHubCommand());
         hubCommands.add(new ReloadHubCommand());
         hubCommands.add(new BackupForceHubCommand());
-        hubCommands.add(new BackupRestoreHubCommand());
         hubCommands.add(new BackupRestoreFileHubCommand());
         hubCommands.add(new BackupRestoreTimeHubCommand());
         hubCommands.add(new BackupRemoveHubCommand());
