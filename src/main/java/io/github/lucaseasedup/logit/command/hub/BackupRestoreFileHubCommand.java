@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -114,5 +115,16 @@ public final class BackupRestoreFileHubCommand extends HubCommand
                 }
             }
         }).createWizard();
+    }
+    
+    @Override
+    public List<String> complete(CommandSender sender, String[] args)
+    {
+        if (args.length == 1)
+        {
+            return getTabCompleter().completeBackupFilename(args[0]);
+        }
+        
+        return null;
     }
 }
