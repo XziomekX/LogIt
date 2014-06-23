@@ -74,6 +74,7 @@ import io.github.lucaseasedup.logit.storage.StorageFactory;
 import io.github.lucaseasedup.logit.storage.StorageType;
 import io.github.lucaseasedup.logit.storage.WrapperStorage;
 import io.github.lucaseasedup.logit.util.IoUtils;
+import io.github.lucaseasedup.logit.util.VaultHook;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -87,7 +88,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
@@ -370,12 +370,6 @@ public final class LogItCore
         cooldownManager = new CooldownManager();
         accountWatcher = new AccountWatcher();
         
-        if (Bukkit.getPluginManager().isPluginEnabled("Vault"))
-        {
-            vaultPermissions =
-                    Bukkit.getServicesManager().getRegistration(Permission.class).getProvider();
-        }
-        
         accountManagerTask = Bukkit.getScheduler().runTaskTimer(plugin,
                 accountManager, 0L,
                 getConfig("secret.yml").getTime("buffer-flush-interval", TimeUnit.TICKS));
@@ -541,8 +535,6 @@ public final class LogItCore
         }
         
         accountWatcher = null;
-        vaultPermissions = null;
-        
         logFileWriter = null;
     }
     
@@ -757,36 +749,36 @@ public final class LogItCore
      */
     public void updatePlayerGroup(Player player)
     {
-        if (!isLinkedToVault())
+        if (!VaultHook.isVaultEnabled())
             return;
         
         if (accountManager.isRegistered(player.getName()))
         {
-            vaultPermissions.playerRemoveGroup(player,
+            VaultHook.playerRemoveGroup(player,
                     getConfig("config.yml").getString("groups.unregistered"));
-            vaultPermissions.playerAddGroup(player,
+            VaultHook.playerAddGroup(player,
                     getConfig("config.yml").getString("groups.registered"));
         }
         else
         {
-            vaultPermissions.playerRemoveGroup(player,
+            VaultHook.playerRemoveGroup(player,
                     getConfig("config.yml").getString("groups.registered"));
-            vaultPermissions.playerAddGroup(player,
+            VaultHook.playerAddGroup(player,
                     getConfig("config.yml").getString("groups.unregistered"));
         }
         
         if (sessionManager.isSessionAlive(player))
         {
-            vaultPermissions.playerRemoveGroup(player,
+            VaultHook.playerRemoveGroup(player,
                     getConfig("config.yml").getString("groups.logged-out"));
-            vaultPermissions.playerAddGroup(player,
+            VaultHook.playerAddGroup(player,
                     getConfig("config.yml").getString("groups.logged-in"));
         }
         else
         {
-            vaultPermissions.playerRemoveGroup(player,
+            VaultHook.playerRemoveGroup(player,
                     getConfig("config.yml").getString("groups.logged-in"));
-            vaultPermissions.playerAddGroup(player,
+            VaultHook.playerAddGroup(player,
                     getConfig("config.yml").getString("groups.logged-out"));
         }
     }
@@ -1165,18 +1157,6 @@ public final class LogItCore
     }
     
     /**
-     * Checks if LogIt is linked to the Vault plugin
-     * (e.i. Vault is enabled on this server and LogIt has successfully
-     * obtained the Vault permission provider when it was starting up).
-     * 
-     * @return {@code true} if LogIt is linked to Vault; {@code false} otherwise.
-     */
-    public boolean isLinkedToVault()
-    {
-        return vaultPermissions != null;
-    }
-    
-    /**
      * The preferred way to obtain the instance of {@code LogItCore}.
      * 
      * @return the instance of {@code LogItCore}.
@@ -1209,7 +1189,6 @@ public final class LogItCore
     private GlobalPasswordManager globalPasswordManager;
     private CooldownManager cooldownManager;
     private AccountWatcher accountWatcher;
-    private Permission vaultPermissions;
     
     private BukkitTask accountManagerTask;
     private BukkitTask backupManagerTask;
