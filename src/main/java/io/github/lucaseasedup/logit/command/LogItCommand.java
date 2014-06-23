@@ -52,28 +52,16 @@ public final class LogItCommand extends LogItCoreObject implements TabExecutor
             return true;
         }
         
-        List<String> params = hubCommand.getParams();
-        String[] subcommandWords = hubCommand.getSubcommand().split("\\s+");
-        
-        for (int i = params.size() - 1; i >= 0; i--)
+        if (sender instanceof Player)
         {
-            if (args.length < subcommandWords.length + i + 1)
+            if (!sender.hasPermission(hubCommand.getPermission()))
             {
-                sendMsg(sender, _("paramMissing")
-                        .replace("{0}", params.get(i)));
+                sendMsg(sender, _("noPerms"));
                 
                 return true;
             }
         }
-        
-        if (sender instanceof Player && !sender.hasPermission(hubCommand.getPermission()))
-        {
-            sendMsg(sender, _("noPerms"));
-            
-            return true;
-        }
-        
-        if (hubCommand.isPlayerOnly() && !(sender instanceof Player))
+        else if (hubCommand.isPlayerOnly())
         {
             sendMsg(sender, _("onlyForPlayers"));
             
@@ -83,6 +71,42 @@ public final class LogItCommand extends LogItCoreObject implements TabExecutor
         if (hubCommand.requiresRunningCore() && !isCoreStarted())
         {
             sendMsg(sender, _("coreNotStarted"));
+            
+            return true;
+        }
+        
+        String[] subcommandWords = hubCommand.getSubcommand().split("\\s+");
+        
+        if (args.length < subcommandWords.length + hubCommand.getParams().size())
+        {
+            StringBuilder usageParams = new StringBuilder();
+            List<String> params = hubCommand.getParams();
+            
+            for (int i = 0; i < params.size(); i++)
+            {
+                if (args.length - subcommandWords.length > i)
+                {
+                    usageParams.append(_("cmdUsage.param")
+                            .replace("{0}", params.get(i)));
+                }
+                else
+                {
+                    usageParams.append(_("cmdUsage.missingParam")
+                            .replace("{0}", params.get(i)));
+                }
+            }
+            
+            CommandHelpLine helpLine = hubCommand.getHelpLine();
+            
+            if (helpLine.hasOptionalParam())
+            {
+                usageParams.append(_("cmdUsage.optionalParam")
+                        .replace("{0}", helpLine.getOptionalParam()));
+            }
+            
+            sendMsg(sender, _("cmdUsage")
+                    .replace("{0}", helpLine.getCommand())
+                    .replace("{1}", usageParams.toString()));
             
             return true;
         }
