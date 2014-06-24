@@ -154,7 +154,6 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 return true;
             }
             
-            String username = player.getName().toLowerCase();
             String playerIp = getPlayerIp(player);
             
             long currentTimeSecs = System.currentTimeMillis() / 1000L;
@@ -193,6 +192,8 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 }
             }
             
+            failedLogins.remove(player);
+            
             if (getSessionManager().getSession(player) == null)
             {
                 getSessionManager().createSession(player);
@@ -200,8 +201,6 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             if (!getSessionManager().startSession(player).isCancelled())
             {
-                failedLogins.remove(player);
-                
                 sendMsg(sender, _("startSession.success.self"));
                 
                 getConfig("stats.yml").set("logins", getConfig("stats.yml").getInt("logins") + 1);
