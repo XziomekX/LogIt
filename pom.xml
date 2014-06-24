@@ -137,6 +137,12 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
+            <resource>
+                <directory>.</directory>
+                <includes>
+                    <include>README.md</include>
+                </includes>
+            </resource>
         </resources>
     </build>
     
