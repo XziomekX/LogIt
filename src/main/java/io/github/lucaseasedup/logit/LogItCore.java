@@ -516,6 +516,8 @@ public final class LogItCore
     
     private void registerEvents()
     {
+        PlayerCollections.registerListener(plugin);
+        
         Bukkit.getPluginManager().registerEvents(messageDispatcher, plugin);
         Bukkit.getPluginManager().registerEvents(cooldownManager, plugin);
         Bukkit.getPluginManager().registerEvents(new ServerEventListener(), plugin);

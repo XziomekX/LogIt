@@ -23,6 +23,7 @@ import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.PlayerCollections;
 import io.github.lucaseasedup.logit.account.Account;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -164,27 +165,27 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 {
                     sendMsg(player, _("incorrectPassword"));
                     
-                    Integer currentFailedLoginsToKick = failedLoginsToKick.get(username);
-                    Integer currentFailedLoginsToBan = failedLoginsToBan.get(username);
+                    Integer currentFailedLoginsToKick = failedLoginsToKick.get(player);
+                    Integer currentFailedLoginsToBan = failedLoginsToBan.get(player);
                     
-                    failedLoginsToKick.put(username,
+                    failedLoginsToKick.put(player,
                             currentFailedLoginsToKick != null ? currentFailedLoginsToKick + 1 : 1);
-                    failedLoginsToBan.put(username,
+                    failedLoginsToBan.put(player,
                             currentFailedLoginsToBan != null ? currentFailedLoginsToBan + 1 : 1);
                     
-                    if (failedLoginsToBan.get(username) >= failsToBan && failsToBan > 0)
+                    if (failedLoginsToBan.get(player) >= failsToBan && failsToBan > 0)
                     {
                         Bukkit.banIP(playerIp);
                         player.kickPlayer(_("tooManyLoginFails.ban"));
                         
-                        failedLoginsToKick.remove(username);
-                        failedLoginsToBan.remove(username);
+                        failedLoginsToKick.remove(player);
+                        failedLoginsToBan.remove(player);
                     }
-                    else if (failedLoginsToKick.get(username) >= failsToKick && failsToKick > 0)
+                    else if (failedLoginsToKick.get(player) >= failsToKick && failsToKick > 0)
                     {
                         player.kickPlayer(_("tooManyLoginFails.kick"));
                         
-                        failedLoginsToKick.remove(username);
+                        failedLoginsToKick.remove(player);
                     }
                     
                     if (getConfig("config.yml").getBoolean("login-history.enabled"))
@@ -203,8 +204,8 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             if (!getSessionManager().startSession(player).isCancelled())
             {
-                failedLoginsToKick.remove(username);
-                failedLoginsToBan.remove(username);
+                failedLoginsToKick.remove(player);
+                failedLoginsToBan.remove(player);
                 
                 sendMsg(sender, _("startSession.success.self"));
                 
@@ -234,6 +235,8 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
         return true;
     }
     
-    private final Map<String, Integer> failedLoginsToKick = new HashMap<>();
-    private final Map<String, Integer> failedLoginsToBan = new HashMap<>();
+    private final Map<Player, Integer> failedLoginsToKick =
+            PlayerCollections.monitoredMap(new HashMap<Player, Integer>());
+    private final Map<Player, Integer> failedLoginsToBan =
+            PlayerCollections.monitoredMap(new HashMap<Player, Integer>());
 }
