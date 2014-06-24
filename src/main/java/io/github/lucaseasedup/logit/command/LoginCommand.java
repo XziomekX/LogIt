@@ -165,27 +165,23 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 {
                     sendMsg(player, _("incorrectPassword"));
                     
-                    Integer currentFailedLoginsToKick = failedLoginsToKick.get(player);
-                    Integer currentFailedLoginsToBan = failedLoginsToBan.get(player);
+                    Integer currentFailedLogins = failedLogins.get(player);
                     
-                    failedLoginsToKick.put(player,
-                            currentFailedLoginsToKick != null ? currentFailedLoginsToKick + 1 : 1);
-                    failedLoginsToBan.put(player,
-                            currentFailedLoginsToBan != null ? currentFailedLoginsToBan + 1 : 1);
+                    failedLogins.put(player,
+                            currentFailedLogins != null ? currentFailedLogins + 1 : 1);
                     
-                    if (failedLoginsToBan.get(player) >= failsToBan && failsToBan > 0)
+                    if (failedLogins.get(player) >= failsToBan && failsToBan > 0)
                     {
                         Bukkit.banIP(playerIp);
                         player.kickPlayer(_("tooManyLoginFails.ban"));
                         
-                        failedLoginsToKick.remove(player);
-                        failedLoginsToBan.remove(player);
+                        failedLogins.remove(player);
                     }
-                    else if (failedLoginsToKick.get(player) >= failsToKick && failsToKick > 0)
+                    else if (failedLogins.get(player) >= failsToKick && failsToKick > 0)
                     {
                         player.kickPlayer(_("tooManyLoginFails.kick"));
                         
-                        failedLoginsToKick.remove(player);
+                        failedLogins.remove(player);
                     }
                     
                     if (getConfig("config.yml").getBoolean("login-history.enabled"))
@@ -204,8 +200,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             if (!getSessionManager().startSession(player).isCancelled())
             {
-                failedLoginsToKick.remove(player);
-                failedLoginsToBan.remove(player);
+                failedLogins.remove(player);
                 
                 sendMsg(sender, _("startSession.success.self"));
                 
@@ -235,8 +230,6 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
         return true;
     }
     
-    private final Map<Player, Integer> failedLoginsToKick =
-            PlayerCollections.monitoredMap(new HashMap<Player, Integer>());
-    private final Map<Player, Integer> failedLoginsToBan =
+    private final Map<Player, Integer> failedLogins =
             PlayerCollections.monitoredMap(new HashMap<Player, Integer>());
 }
