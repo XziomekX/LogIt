@@ -181,6 +181,9 @@ public final class ChangeEmailCommand extends LogItCoreObject implements TabExec
                                       String label,
                                       String[] args)
     {
+        if (!getConfig("secret.yml").getBoolean("tab-completion"))
+            return null;
+        
         if (args.length == 2 && args[0].equals("-x"))
         {
             if (sender instanceof Player

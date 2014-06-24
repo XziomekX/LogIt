@@ -71,6 +71,9 @@ public final class AccountStatusHubCommand extends HubCommand
     @Override
     public List<String> complete(CommandSender sender, String[] args)
     {
+        if (!getConfig("secret.yml").getBoolean("tab-completion"))
+            return null;
+        
         if (args.length == 1)
         {
             return getTabCompleter().completeUsername(args[0]);

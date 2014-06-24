@@ -103,6 +103,9 @@ public final class AcclockCommand extends LogItCoreObject implements TabExecutor
                                       String label,
                                       String[] args)
     {
+        if (!getConfig("secret.yml").getBoolean("tab-completion"))
+            return null;
+        
         if (args.length == 1)
         {
             if (sender instanceof Player
