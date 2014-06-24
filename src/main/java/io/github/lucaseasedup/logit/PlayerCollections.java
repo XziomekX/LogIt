@@ -91,7 +91,7 @@ public final class PlayerCollections implements Listener
         }
     }
     
-    public static synchronized <T> Map<Player, T> monitoredMap(Map<Player, T> map)
+    public static synchronized <T extends Map<Player, U>, U> T monitoredMap(T map)
     {
         if (map == null)
             throw new IllegalArgumentException();
@@ -101,7 +101,8 @@ public final class PlayerCollections implements Listener
         return map;
     }
     
-    public static synchronized Collection<Player> monitoredCollection(Collection<Player> collection)
+    public static synchronized
+            <T extends Collection<Player>> T monitoredCollection(T collection)
     {
         if (collection == null)
             throw new IllegalArgumentException();
