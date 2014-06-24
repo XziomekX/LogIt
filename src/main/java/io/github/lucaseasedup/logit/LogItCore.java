@@ -685,7 +685,12 @@ public final class LogItCore
             cooldownManager = null;
         }
         
-        accountWatcher = null;
+        if (accountWatcher != null)
+        {
+            accountWatcher.dispose();
+            accountWatcher = null;
+        }
+        
         logFileWriter = null;
     }
     
