@@ -24,7 +24,9 @@ import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.PlayerCollections;
+import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.account.Account;
+import io.github.lucaseasedup.logit.locale.Locale;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -105,9 +107,6 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
         }
         else if ((args.length == 0 && disablePasswords) || (args.length <= 1 && !disablePasswords))
         {
-            int failsToKick = getConfig("config.yml").getInt("login-fails-to-kick");
-            int failsToBan = getConfig("config.yml").getInt("login-fails-to-ban");
-            
             if (player == null)
             {
                 sendMsg(sender, _("onlyForPlayers"));
@@ -137,6 +136,27 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 return true;
             }
             
+            if (loginBlockade.containsKey(player))
+            {
+                long blockadeExpirationTimeMillis = loginBlockade.get(player);
+                Locale locale = getLocaleManager().getActiveLocale();
+                
+                if (blockadeExpirationTimeMillis - 1000L > System.currentTimeMillis())
+                {
+                    long blockageTimeSecs = TimeUnit.MILLISECONDS.convert(
+                            blockadeExpirationTimeMillis - System.currentTimeMillis(),
+                            TimeUnit.SECONDS
+                    );
+                    
+                    sendMsg(player, _("tooManyLoginFails.blockLoggingIn")
+                            .replace("{0}", locale.stringifySeconds(blockageTimeSecs)));
+                    
+                    return true;
+                }
+                
+                loginBlockade.remove(player);
+            }
+            
             Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
                     keys().username(),
                     keys().salt(),
@@ -164,21 +184,59 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 {
                     sendMsg(player, _("incorrectPassword"));
                     
+                    int failsToBlockLoggingIn = getConfig("config.yml")
+                            .getInt("brute-force-prevention"
+                                  + ".block-logging-in"
+                                  + ".login-attempts");
+                    
+                    int failsToKick = getConfig("config.yml")
+                            .getInt("brute-force-prevention"
+                                  + ".kick"
+                                  + ".login-attempts");
+                    
+                    int failsToBan = getConfig("config.yml")
+                            .getInt("brute-force-prevention"
+                                  + ".ban"
+                                  + ".login-attempts");
+                    
                     Integer currentFailedLogins = failedLogins.get(player);
                     
                     failedLogins.put(player,
                             currentFailedLogins != null ? currentFailedLogins + 1 : 1);
                     
-                    if (failedLogins.get(player) >= failsToBan && failsToBan > 0)
+                    if (failsToBan > 0 && failedLogins.get(player) >= failsToBan)
                     {
                         Bukkit.banIP(playerIp);
+                        
                         player.kickPlayer(_("tooManyLoginFails.ban"));
                         
                         failedLogins.remove(player);
                     }
-                    else if (failedLogins.get(player) >= failsToKick && failsToKick > 0)
+                    else if (failsToKick > 0 && failedLogins.get(player) >= failsToKick)
                     {
                         player.kickPlayer(_("tooManyLoginFails.kick"));
+                        
+                        failedLogins.remove(player);
+                    }
+                    else if (failsToBlockLoggingIn > 0
+                            && failedLogins.get(player) >= failsToBlockLoggingIn)
+                    {
+                        long loginBlockadeTimeMillis = getConfig("config.yml")
+                                .getTime("brute-force-prevention"
+                                       + ".block-logging-in"
+                                       + ".for-time", TimeUnit.MILLISECONDS);
+                        
+                        long loginBlockadeTimeSecs =
+                                TimeUnit.MILLISECONDS.convert(loginBlockadeTimeMillis,
+                                        TimeUnit.SECONDS);
+                        
+                        Locale locale = getLocaleManager().getActiveLocale();
+                        
+                        loginBlockade.put(player,
+                                System.currentTimeMillis() + loginBlockadeTimeMillis);
+                        
+                        sendMsg(player, _("tooManyLoginFails.blockLoggingIn")
+                                .replace("{0}", locale.stringifySeconds(loginBlockadeTimeSecs)));
                         
                         failedLogins.remove(player);
                     }
@@ -231,4 +289,6 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
     
     private final Map<Player, Integer> failedLogins =
             PlayerCollections.monitoredMap(new HashMap<Player, Integer>());
+    private final Map<Player, Long> loginBlockade =
+            PlayerCollections.monitoredMap(new HashMap<Player, Long>());
 }
