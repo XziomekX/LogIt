@@ -345,8 +345,13 @@ public final class SqlUtils
         return sb.toString();
     }
     
-    public static String translateKeyTypeList(Hashtable<String, DataType> keys, String columnQuote)
+    public static String translateKeyTypeList(Hashtable<String, DataType> keys,
+                                              String primaryKey,
+                                              String columnQuote)
     {
+        if (primaryKey != null && !keys.containsKey(primaryKey))
+            throw new IllegalArgumentException("Cannot create index on a non-existing key");
+        
         StringBuilder sb = new StringBuilder();
         
         for (Map.Entry<String, DataType> e : keys.entrySet())
@@ -361,6 +366,11 @@ public final class SqlUtils
             sb.append(columnQuote);
             sb.append(" ");
             sb.append(encodeType(e.getValue()));
+            
+            if (primaryKey != null && primaryKey.equals(e.getKey()))
+            {
+                sb.append(" PRIMARY KEY");
+            }
         }
         
         return sb.toString();

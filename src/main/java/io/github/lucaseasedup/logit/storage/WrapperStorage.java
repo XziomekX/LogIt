@@ -36,17 +36,12 @@ import java.util.logging.Level;
 
 public final class WrapperStorage extends Storage
 {
-    private WrapperStorage(Storage leading,
-                           List<String> keys,
-                           String primaryKey,
-                           CacheType cacheType)
+    private WrapperStorage(Storage leading, CacheType cacheType)
     {
-        if (leading == null || keys == null || primaryKey == null || cacheType == null)
+        if (leading == null || cacheType == null)
             throw new IllegalArgumentException();
         
         this.leading = leading;
-        this.keys = keys;
-        this.primaryKey = primaryKey;
         this.cacheType = cacheType;
         
         if (cacheType == CacheType.PRELOADED)
@@ -116,6 +111,14 @@ public final class WrapperStorage extends Storage
         log(CustomLevel.INTERNAL, "WrapperStorage#getKeys(\"" + unit + "\")");
         
         return leading.getKeys(unit);
+    }
+    
+    @Override
+    public String getPrimaryKey(String unit) throws IOException
+    {
+        log(CustomLevel.INTERNAL, "WrapperStorage#getPrimaryKey(\"" + unit + "\")");
+        
+        return leading.getPrimaryKey(unit);
     }
     
     @Override
@@ -239,7 +242,8 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void createUnit(String unit, Hashtable<String, DataType> keys) throws IOException
+    public void createUnit(String unit, Hashtable<String, DataType> keys, String primaryKey)
+            throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#createUnit("
                                 + "\"" + unit + "\", "
@@ -247,13 +251,13 @@ public final class WrapperStorage extends Storage
                                         + CollectionUtils.toString(keys.keys())
                                 + "]})");
         
-        leading.createUnit(unit, keys);
+        leading.createUnit(unit, keys, primaryKey);
         
         for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
-            e.getKey().createUnit(unitMapping, keys);
+            e.getKey().createUnit(unitMapping, keys, primaryKey);
         }
         
         if (cacheType == CacheType.PRELOADED)
@@ -651,7 +655,7 @@ public final class WrapperStorage extends Storage
     {
         public WrapperStorage build()
         {
-            return new WrapperStorage(leading, keys, primaryKey, cacheType);
+            return new WrapperStorage(leading, cacheType);
         }
         
         public Builder leading(Storage leading)
@@ -660,32 +664,6 @@ public final class WrapperStorage extends Storage
                 throw new IllegalArgumentException();
             
             this.leading = leading;
-            
-            return this;
-        }
-        
-        public Builder keys(List<String> keys)
-        {
-            if (keys == null)
-                throw new IllegalArgumentException();
-            
-            if (CollectionUtils.containsDuplicates(keys))
-                throw new IllegalArgumentException("All keys must be unique.");
-            
-            this.keys = keys;
-            
-            return this;
-        }
-        
-        public Builder primaryKey(String primaryKey)
-        {
-            if (keys == null)
-                throw new IllegalStateException("No keys defined.");
-            
-            if (primaryKey != null && !keys.contains(primaryKey))
-                throw new IllegalArgumentException("Primary key not found.");
-            
-            this.primaryKey = primaryKey;
             
             return this;
         }
@@ -701,14 +679,10 @@ public final class WrapperStorage extends Storage
         }
         
         private Storage leading;
-        private List<String> keys;
-        private String primaryKey;
         private CacheType cacheType;
     }
     
     private final Storage leading;
-    private final List<String> keys;
-    private final String primaryKey;
     private final CacheType cacheType;
     
     private final Set<Storage> mirrors = new HashSet<>();

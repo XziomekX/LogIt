@@ -314,8 +314,6 @@ public final class LogItCore
         @SuppressWarnings("resource")
         WrapperStorage accountStorage = new WrapperStorage.Builder()
                 .leading(leadingAccountStorage)
-                .keys(accountKeys.getNames())
-                .primaryKey(accountKeys.username())
                 .cacheType(accountCacheType)
                 .build();
         accountStorage.mirrorStorage(mirrorAccountStorage, new Hashtable<String, String>()
@@ -337,7 +335,7 @@ public final class LogItCore
         
         try
         {
-            accountStorage.createUnit(accountsUnit, accountKeys);
+            accountStorage.createUnit(accountsUnit, accountKeys, accountKeys.username());
         }
         catch (IOException ex)
         {

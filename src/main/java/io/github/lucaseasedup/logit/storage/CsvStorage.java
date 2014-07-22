@@ -114,6 +114,12 @@ public final class CsvStorage extends Storage
     }
     
     @Override
+    public String getPrimaryKey(String unit) throws IOException
+    {
+        return null;
+    }
+    
+    @Override
     public List<Storage.Entry> selectEntries(String unit) throws IOException
     {
         return selectEntries(unit, null, new SelectorConstant(true));
@@ -191,10 +197,14 @@ public final class CsvStorage extends Storage
     }
     
     @Override
-    public void createUnit(String unit, Hashtable<String, DataType> keys) throws IOException
+    public void createUnit(String unit, Hashtable<String, DataType> keys, String primaryKey)
+            throws IOException
     {
         if (!connected)
             throw new IOException("Database closed.");
+        
+        if (primaryKey != null && !keys.containsKey(primaryKey))
+            throw new IllegalArgumentException("Cannot create index on a non-existing key");
         
         File file = new File(dir, unit);
         
@@ -262,6 +272,7 @@ public final class CsvStorage extends Storage
             throw new IOException("Database closed.");
         
         Hashtable<String, DataType> keys = getKeys(unit);
+        String primaryKey = getPrimaryKey(unit);
         
         if (keys.containsKey(key))
             throw new IOException("Key with this name already exists: " + key);
@@ -270,7 +281,7 @@ public final class CsvStorage extends Storage
         
         keys.put(key, type);
         removeUnit(unit);
-        createUnit(unit, keys);
+        createUnit(unit, keys, primaryKey);
         
         for (Storage.Entry entry : entries)
         {
@@ -320,10 +331,12 @@ public final class CsvStorage extends Storage
             throw new IOException("Database closed.");
         
         Hashtable<String, DataType> keys = getKeys(unit);
+        String primaryKey = getPrimaryKey(unit);
+        
         List<Storage.Entry> entries = selectEntries(unit);
         
         removeUnit(unit);
-        createUnit(unit, keys);
+        createUnit(unit, keys, primaryKey);
         
         for (Storage.Entry entry : entries)
         {
@@ -346,10 +359,12 @@ public final class CsvStorage extends Storage
             throw new IOException("Database closed.");
         
         Hashtable<String, DataType> keys = getKeys(unit);
+        String primaryKey = getPrimaryKey(unit);
+        
         List<Storage.Entry> entries = selectEntries(unit);
         
         removeUnit(unit);
-        createUnit(unit, keys);
+        createUnit(unit, keys, primaryKey);
         
         for (Storage.Entry entry : entries)
         {

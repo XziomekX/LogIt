@@ -149,6 +149,29 @@ public final class MySqlStorage extends Storage
     }
     
     @Override
+    public String getPrimaryKey(String unit) throws IOException
+    {
+        String sql = "DESCRIBE `" + SqlUtils.escapeQuotes(unit, "`", true) + "`;";
+        
+        try (ResultSet rs = executeQuery(sql))
+        {
+            while (rs.next())
+            {
+                if ("PRI".equals(rs.getString("Key")))
+                {
+                    return rs.getString("Field");
+                }
+            }
+        }
+        catch (SQLException ex)
+        {
+            throw new IOException(ex);
+        }
+        
+        return null;
+    }
+    
+    @Override
     public List<Storage.Entry> selectEntries(String unit) throws IOException
     {
         String sql = "SELECT * FROM `" + SqlUtils.escapeQuotes(unit, "`", true) + "`;";
@@ -215,10 +238,11 @@ public final class MySqlStorage extends Storage
     }
     
     @Override
-    public void createUnit(String unit, Hashtable<String, DataType> keys) throws IOException
+    public void createUnit(String unit, Hashtable<String, DataType> keys, String primaryKey)
+            throws IOException
     {
         String sql = "CREATE TABLE IF NOT EXISTS `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
-                   + " (" + SqlUtils.translateKeyTypeList(keys, "`") + ");";
+                   + " (" + SqlUtils.translateKeyTypeList(keys, primaryKey, "`") + ");";
         
         try
         {

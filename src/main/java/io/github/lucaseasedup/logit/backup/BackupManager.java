@@ -164,13 +164,15 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     {
         Hashtable<String, DataType> keys =
                 accountManager.getStorage().getKeys(accountManager.getUnit());
+        String primaryKey =
+                accountManager.getStorage().getPrimaryKey(accountManager.getUnit());
         List<Storage.Entry> entries =
                 accountManager.getStorage().selectEntries(accountManager.getUnit());
         
         try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
         {
             backupStorage.connect();
-            backupStorage.createUnit("accounts", keys);
+            backupStorage.createUnit("accounts", keys, primaryKey);
             
             try
             {

@@ -152,6 +152,27 @@ public final class PostgreSqlStorage extends Storage
     }
     
     @Override
+    public String getPrimaryKey(String unit) throws IOException
+    {
+        String sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE"
+                   + " WHERE TABLE_NAME = '" + SqlUtils.escapeQuotes(unit, "'", true) + "';";
+        
+        try (ResultSet rs = executeQuery(sql))
+        {
+            if (rs.next())
+            {
+                return rs.getString("COLUMN_NAME");
+            }
+        }
+        catch (SQLException ex)
+        {
+            throw new IOException(ex);
+        }
+        
+        return null;
+    }
+    
+    @Override
     public List<Storage.Entry> selectEntries(String unit) throws IOException
     {
         String sql = "SELECT * FROM \"" + SqlUtils.escapeQuotes(unit, "\"", true) + "\";";
@@ -218,11 +239,12 @@ public final class PostgreSqlStorage extends Storage
     }
     
     @Override
-    public void createUnit(String unit, Hashtable<String, DataType> keys) throws IOException
+    public void createUnit(String unit, Hashtable<String, DataType> keys, String primaryKey)
+            throws IOException
     {
         String sql = "CREATE TABLE IF NOT EXISTS"
                    + " \"" + SqlUtils.escapeQuotes(unit, "\"", true) + "\""
-                   + " (" + SqlUtils.translateKeyTypeList(keys, "\"") + ");";
+                   + " (" + SqlUtils.translateKeyTypeList(keys, primaryKey, "\"") + ");";
         
         try
         {

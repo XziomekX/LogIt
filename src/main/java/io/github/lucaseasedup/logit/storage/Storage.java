@@ -38,6 +38,7 @@ public abstract class Storage implements AutoCloseable
     
     public abstract List<String> getUnitNames() throws IOException;
     public abstract Hashtable<String, DataType> getKeys(String unit) throws IOException;
+    public abstract String getPrimaryKey(String unit) throws IOException;
     
     public abstract List<Storage.Entry> selectEntries(String unit) throws IOException;
     public abstract List<Storage.Entry> selectEntries(String unit,
@@ -48,8 +49,9 @@ public abstract class Storage implements AutoCloseable
                                                       List<String> keys,
                                                       Selector selector) throws IOException;
     
-    public abstract void createUnit(String unit, Hashtable<String, DataType> keys)
-            throws IOException;
+    public abstract void createUnit(String unit,
+                                    Hashtable<String, DataType> keys,
+                                    String primaryKey) throws IOException;
     public abstract void renameUnit(String unit, String newName) throws IOException;
     public abstract void eraseUnit(String unit) throws IOException;
     public abstract void removeUnit(String unit) throws IOException;

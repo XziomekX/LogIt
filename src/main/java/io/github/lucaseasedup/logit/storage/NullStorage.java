@@ -59,6 +59,12 @@ public final class NullStorage extends Storage
     }
     
     @Override
+    public String getPrimaryKey(String unit) throws IOException
+    {
+        return null;
+    }
+    
+    @Override
     public List<Storage.Entry> selectEntries(String unit) throws IOException
     {
         return new ArrayList<>();
@@ -84,7 +90,8 @@ public final class NullStorage extends Storage
     }
     
     @Override
-    public void createUnit(String unit, Hashtable<String, DataType> keys) throws IOException
+    public void createUnit(String unit, Hashtable<String, DataType> keys, String primaryKey)
+            throws IOException
     {
     }
     

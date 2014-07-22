@@ -558,7 +558,7 @@ public final class SessionManager extends LogItCoreObject
                     put("username", DataType.TINYTEXT);
                     put("status", DataType.INTEGER);
                     put("ip", DataType.TINYTEXT);
-                }});
+                }}, "username");
             sessionsStorage.setAutobatchEnabled(true);
             
             for (Entry<String, Session> e : sessions.entrySet())
