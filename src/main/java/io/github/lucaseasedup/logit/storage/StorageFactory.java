@@ -51,8 +51,8 @@ public final class StorageFactory
                     configuration.getString(path + ".mysql.database"));
             
         case H2:
-            return new H2Storage("jdbc:h2:" + core.getDataFolder()
-                    + "/" + configuration.getString(path + ".h2.filename"));
+            return new H2Storage("jdbc:h2:" + new File(core.getDataFolder(),
+                    configuration.getString(path + ".h2.filename")).getAbsolutePath());
             
         case POSTGRESQL:
             return new PostgreSqlStorage(
