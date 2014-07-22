@@ -38,15 +38,15 @@ public final class WrapperStorage extends Storage
 {
     private WrapperStorage(Storage leading,
                            List<String> keys,
-                           String indexKey,
+                           String primaryKey,
                            CacheType cacheType)
     {
-        if (leading == null || keys == null || indexKey == null || cacheType == null)
+        if (leading == null || keys == null || primaryKey == null || cacheType == null)
             throw new IllegalArgumentException();
         
         this.leading = leading;
         this.keys = keys;
-        this.indexKey = indexKey;
+        this.primaryKey = primaryKey;
         this.cacheType = cacheType;
         
         if (cacheType == CacheType.PRELOADED)
@@ -651,7 +651,7 @@ public final class WrapperStorage extends Storage
     {
         public WrapperStorage build()
         {
-            return new WrapperStorage(leading, keys, indexKey, cacheType);
+            return new WrapperStorage(leading, keys, primaryKey, cacheType);
         }
         
         public Builder leading(Storage leading)
@@ -677,15 +677,15 @@ public final class WrapperStorage extends Storage
             return this;
         }
         
-        public Builder indexKey(String indexKey)
+        public Builder primaryKey(String primaryKey)
         {
             if (keys == null)
                 throw new IllegalStateException("No keys defined.");
             
-            if (indexKey != null && !keys.contains(indexKey))
-                throw new IllegalArgumentException("Index key not found.");
+            if (primaryKey != null && !keys.contains(primaryKey))
+                throw new IllegalArgumentException("Primary key not found.");
             
-            this.indexKey = indexKey;
+            this.primaryKey = primaryKey;
             
             return this;
         }
@@ -702,13 +702,13 @@ public final class WrapperStorage extends Storage
         
         private Storage leading;
         private List<String> keys;
-        private String indexKey;
+        private String primaryKey;
         private CacheType cacheType;
     }
     
     private final Storage leading;
     private final List<String> keys;
-    private final String indexKey;
+    private final String primaryKey;
     private final CacheType cacheType;
     
     private final Set<Storage> mirrors = new HashSet<>();
