@@ -642,6 +642,16 @@ public final class WrapperStorage extends Storage
         }
     }
     
+    private void log(Level level, Throwable throwable)
+    {
+        LogItCore logItCore = LogItCore.getInstance();
+        
+        if (logItCore != null)
+        {
+            logItCore.log(level, throwable);
+        }
+    }
+    
     public static final class Builder
     {
         public WrapperStorage build()
