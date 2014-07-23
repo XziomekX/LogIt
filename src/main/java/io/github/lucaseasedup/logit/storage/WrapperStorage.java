@@ -30,6 +30,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
 public final class WrapperStorage extends Storage
@@ -39,6 +41,7 @@ public final class WrapperStorage extends Storage
         if (leading == null || cacheType == null)
             throw new IllegalArgumentException();
         
+        this.executorService = Executors.newSingleThreadExecutor();
         this.leading = leading;
         this.cacheType = cacheType;
         
@@ -74,12 +77,33 @@ public final class WrapperStorage extends Storage
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#ping()");
         
-        leading.ping();
-        
-        for (Storage mirror : mirrors)
+        executorService.submit(new Runnable()
         {
-            mirror.ping();
-        }
+            @Override
+            public void run()
+            {
+                try
+                {
+                    leading.ping();
+                }
+                catch (IOException ex)
+                {
+                    log(Level.WARNING, ex);
+                }
+                
+                for (Storage mirror : mirrors.keySet())
+                {
+                    try
+                    {
+                        mirror.ping();
+                    }
+                    catch (IOException ex)
+                    {
+                        log(Level.WARNING, ex);
+                    }
+                }
+            }
+        });
     }
     
     @Override
@@ -240,7 +264,9 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void createUnit(String unit, Hashtable<String, DataType> keys, String primaryKey)
+    public void createUnit(final String unit,
+                           final Hashtable<String, DataType> keys,
+                           final String primaryKey)
             throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#createUnit("
@@ -251,12 +277,14 @@ public final class WrapperStorage extends Storage
         
         leading.createUnit(unit, keys, primaryKey);
         
-        for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
+        walkMirrors(new UnitWalker()
         {
-            String unitMapping = getUnitMapping(e.getValue(), unit);
-            
-            e.getKey().createUnit(unitMapping, keys, primaryKey);
-        }
+            @Override
+            public void walk(Storage storage, String unit) throws IOException
+            {
+                storage.createUnit(unit, keys, primaryKey);
+            }
+        }, unit);
         
         if (cacheType == CacheType.PRELOADED)
         {
@@ -286,7 +314,12 @@ public final class WrapperStorage extends Storage
         
         for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
         {
-            String unitMapping = getUnitMapping(e.getValue(), unit);
+            String unitMapping = e.getValue().get(unit);
+            
+            if (unitMapping == null)
+            {
+                unitMapping = unit;
+            }
             
             e.getValue().remove(unit);
             e.getValue().put(newName, unitMapping);
@@ -307,19 +340,21 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void eraseUnit(String unit) throws IOException
+    public void eraseUnit(final String unit) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#eraseUnit("
                                 + "\"" + unit + "\")");
         
         leading.eraseUnit(unit);
         
-        for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
+        walkMirrors(new UnitWalker()
         {
-            String unitMapping = getUnitMapping(e.getValue(), unit);
-            
-            e.getKey().eraseUnit(unitMapping);
-        }
+            @Override
+            public void walk(Storage storage, String unit) throws IOException
+            {
+                storage.eraseUnit(unit);
+            }
+        }, unit);
         
         if (cacheType == CacheType.PRELOADED)
         {
@@ -336,19 +371,21 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void removeUnit(String unit) throws IOException
+    public void removeUnit(final String unit) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#removeUnit("
                                 + "\"" + unit + "\")");
         
         leading.removeUnit(unit);
         
-        for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
+        walkMirrors(new UnitWalker()
         {
-            String unitMapping = getUnitMapping(e.getValue(), unit);
-            
-            e.getKey().removeUnit(unitMapping);
-        }
+            @Override
+            public void walk(Storage storage, String unit) throws IOException
+            {
+                storage.removeUnit(unit);
+            }
+        }, unit);
         
         if (cacheType == CacheType.PRELOADED)
         {
@@ -365,7 +402,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void addKey(String unit, String key, DataType type) throws IOException
+    public void addKey(final String unit, final String key, final DataType type) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#addKey("
                                 + "\"" + unit + "\", "
@@ -374,12 +411,14 @@ public final class WrapperStorage extends Storage
         
         leading.addKey(unit, key, type);
         
-        for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
+        walkMirrors(new UnitWalker()
         {
-            String unitMapping = getUnitMapping(e.getValue(), unit);
-            
-            e.getKey().addKey(unitMapping, key, type);
-        }
+            @Override
+            public void walk(Storage storage, String unit) throws IOException
+            {
+                storage.addKey(unit, key, type);
+            }
+        }, unit);
         
         if (cacheType == CacheType.PRELOADED)
         {
@@ -399,7 +438,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void addEntry(String unit, Storage.Entry entry) throws IOException
+    public void addEntry(final String unit, final Storage.Entry entry) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#addEntry("
                                 + "\"" + unit + "\", "
@@ -407,12 +446,14 @@ public final class WrapperStorage extends Storage
         
         leading.addEntry(unit, entry);
         
-        for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
+        walkMirrors(new UnitWalker()
         {
-            String unitMapping = getUnitMapping(e.getValue(), unit);
-            
-            e.getKey().addEntry(unitMapping, entry);
-        }
+            @Override
+            public void walk(Storage storage, String unit) throws IOException
+            {
+                storage.addEntry(unit, entry);
+            }
+        }, unit);
         
         if (cacheType == CacheType.PRELOADED)
         {
@@ -429,7 +470,9 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void updateEntries(String unit, Storage.Entry entrySubset, Selector selector)
+    public void updateEntries(final String unit,
+                              final Storage.Entry entrySubset,
+                              final Selector selector)
             throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#updateEntries("
@@ -439,12 +482,14 @@ public final class WrapperStorage extends Storage
         
         leading.updateEntries(unit, entrySubset, selector);
         
-        for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
+        walkMirrors(new UnitWalker()
         {
-            String unitMapping = getUnitMapping(e.getValue(), unit);
-            
-            e.getKey().updateEntries(unitMapping, entrySubset, selector);
-        }
+            @Override
+            public void walk(Storage storage, String unit) throws IOException
+            {
+                storage.updateEntries(unit, entrySubset, selector);
+            }
+        }, unit);
         
         if (cacheType == CacheType.PRELOADED)
         {
@@ -470,7 +515,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void removeEntries(String unit, Selector selector) throws IOException
+    public void removeEntries(final String unit, final Selector selector) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#removeEntries("
                                 + "\"" + unit + "\", "
@@ -478,12 +523,14 @@ public final class WrapperStorage extends Storage
         
         leading.removeEntries(unit, selector);
         
-        for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
+        walkMirrors(new UnitWalker()
         {
-            String unitMapping = getUnitMapping(e.getValue(), unit);
-            
-            e.getKey().removeEntries(unitMapping, selector);
-        }
+            @Override
+            public void walk(Storage storage, String unit) throws IOException
+            {
+                storage.removeEntries(unit, selector);
+            }
+        }, unit);
         
         if (cacheType == CacheType.PRELOADED)
         {
@@ -514,10 +561,24 @@ public final class WrapperStorage extends Storage
     {
         leading.executeBatch();
         
-        for (Storage mirror : mirrors.keySet())
+        executorService.submit(new Runnable()
         {
-            mirror.executeBatch();
-        }
+            @Override
+            public void run()
+            {
+                for (Storage mirror : mirrors.keySet())
+                {
+                    try
+                    {
+                        mirror.executeBatch();
+                    }
+                    catch (IOException ex)
+                    {
+                        log(Level.WARNING, ex);
+                    }
+                }
+            }
+        });
     }
     
     @Override
@@ -600,14 +661,33 @@ public final class WrapperStorage extends Storage
         return leading;
     }
     
-    private String getUnitMapping(Hashtable<String, String> mappings, String unit)
+    private void walkMirrors(final UnitWalker walker, final String unit)
     {
-        String unitMapping = mappings.get(unit);
-        
-        if (unitMapping == null)
-            return unit;
-        
-        return unitMapping;
+        executorService.submit(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
+                {
+                    String unitMapping = e.getValue().get(unit);
+                    
+                    if (unitMapping == null)
+                    {
+                        unitMapping = unit;
+                    }
+                    
+                    try
+                    {
+                        walker.walk(e.getKey(), unitMapping);
+                    }
+                    catch (IOException ex)
+                    {
+                        log(Level.WARNING, ex);
+                    }
+                }
+            }
+        });
     }
     
     private List<Storage.Entry> copyEntries(List<Storage.Entry> entries,
@@ -688,6 +768,12 @@ public final class WrapperStorage extends Storage
         private CacheType cacheType;
     }
     
+    private static interface UnitWalker
+    {
+        public void walk(Storage storage, String unit) throws IOException;
+    }
+    
+    private final ExecutorService executorService;
     private final Storage leading;
     private final CacheType cacheType;
     
