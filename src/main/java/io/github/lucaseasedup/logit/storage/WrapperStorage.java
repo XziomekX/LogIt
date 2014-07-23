@@ -554,6 +554,11 @@ public final class WrapperStorage extends Storage
         }
     }
     
+    public void mirrorStorage(Storage storage)
+    {
+        mirrorStorage(storage, new Hashtable<String, String>());
+    }
+    
     public void unmirrorStorage(Storage o)
     {
         mirrors.remove(o);
