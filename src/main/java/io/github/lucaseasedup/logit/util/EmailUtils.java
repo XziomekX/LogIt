@@ -28,6 +28,9 @@ public final class EmailUtils
     
     public static boolean validateEmail(String email)
     {
+        if (email == null)
+            throw new IllegalArgumentException();
+        
         return EMAIL_PATTERN.matcher(email).matches();
     }
     

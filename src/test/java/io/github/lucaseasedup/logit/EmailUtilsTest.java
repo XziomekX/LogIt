@@ -39,7 +39,7 @@ public class EmailUtilsTest
         assertFalse(EmailUtils.validateEmail("example@website.com "));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testValidationNullEmail()
     {
         EmailUtils.validateEmail(null);
