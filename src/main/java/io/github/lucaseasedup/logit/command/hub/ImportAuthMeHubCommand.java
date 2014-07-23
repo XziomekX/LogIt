@@ -308,8 +308,8 @@ public final class ImportAuthMeHubCommand extends HubCommand
                         
                         if (split.length >= 4)
                         {
-                            logItEntryBuilder.put(keys().login_session(),
-                                    split[2] + ";" + Long.parseLong(split[3]));
+                            logItEntryBuilder.put(keys().last_active_date(),
+                                    String.valueOf(Long.parseLong(split[3]) / 1000));
                         }
                         
                         if (split.length >= 8 && !split[5].equals("0.0"))
