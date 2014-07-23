@@ -24,13 +24,11 @@ import io.github.lucaseasedup.logit.util.CollectionUtils;
 import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
 
@@ -57,7 +55,7 @@ public final class WrapperStorage extends Storage
         
         leading.connect();
         
-        for (Storage mirror : mirrors)
+        for (Storage mirror : mirrors.keySet())
         {
             mirror.connect();
         }
@@ -91,7 +89,7 @@ public final class WrapperStorage extends Storage
         
         leading.close();
         
-        for (Storage mirror : mirrors)
+        for (Storage mirror : mirrors.keySet())
         {
             mirror.close();
         }
@@ -253,7 +251,7 @@ public final class WrapperStorage extends Storage
         
         leading.createUnit(unit, keys, primaryKey);
         
-        for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
+        for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
@@ -286,7 +284,7 @@ public final class WrapperStorage extends Storage
         
         leading.renameUnit(unit, newName);
         
-        for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
+        for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
@@ -316,7 +314,7 @@ public final class WrapperStorage extends Storage
         
         leading.eraseUnit(unit);
         
-        for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
+        for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
@@ -345,7 +343,7 @@ public final class WrapperStorage extends Storage
         
         leading.removeUnit(unit);
         
-        for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
+        for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
@@ -376,7 +374,7 @@ public final class WrapperStorage extends Storage
         
         leading.addKey(unit, key, type);
         
-        for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
+        for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
@@ -409,7 +407,7 @@ public final class WrapperStorage extends Storage
         
         leading.addEntry(unit, entry);
         
-        for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
+        for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
@@ -441,7 +439,7 @@ public final class WrapperStorage extends Storage
         
         leading.updateEntries(unit, entrySubset, selector);
         
-        for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
+        for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
@@ -480,7 +478,7 @@ public final class WrapperStorage extends Storage
         
         leading.removeEntries(unit, selector);
         
-        for (Map.Entry<Storage, Hashtable<String, String>> e : unitMappings.entrySet())
+        for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
         {
             String unitMapping = getUnitMapping(e.getValue(), unit);
             
@@ -516,7 +514,7 @@ public final class WrapperStorage extends Storage
     {
         leading.executeBatch();
         
-        for (Storage mirror : mirrors)
+        for (Storage mirror : mirrors.keySet())
         {
             mirror.executeBatch();
         }
@@ -527,7 +525,7 @@ public final class WrapperStorage extends Storage
     {
         leading.clearBatch();
         
-        for (Storage mirror : mirrors)
+        for (Storage mirror : mirrors.keySet())
         {
             mirror.clearBatch();
         }
@@ -539,7 +537,7 @@ public final class WrapperStorage extends Storage
         super.setAutobatchEnabled(status);
         leading.setAutobatchEnabled(status);
         
-        for (Storage mirror : mirrors)
+        for (Storage mirror : mirrors.keySet())
         {
             mirror.setAutobatchEnabled(status);
         }
@@ -547,30 +545,23 @@ public final class WrapperStorage extends Storage
     
     public void mirrorStorage(Storage storage, Hashtable<String, String> unitMappings)
     {
-        if (storage == null)
+        if (storage == null || unitMappings == null)
             throw new IllegalArgumentException();
         
         if (!mirrors.contains(storage))
         {
-            mirrors.add(storage);
-        }
-        
-        if (!this.unitMappings.containsKey(storage))
-        {
-            this.unitMappings.put(storage, unitMappings);
+            mirrors.put(storage, unitMappings);
         }
     }
     
     public void unmirrorStorage(Storage o)
     {
         mirrors.remove(o);
-        unitMappings.remove(o);
     }
     
     public void unmirrorAll()
     {
         mirrors.clear();
-        unitMappings.clear();
     }
     
     public void addObserver(StorageObserver o)
@@ -685,8 +676,7 @@ public final class WrapperStorage extends Storage
     private final Storage leading;
     private final CacheType cacheType;
     
-    private final Set<Storage> mirrors = new HashSet<>();
-    private final Hashtable<Storage, Hashtable<String, String>> unitMappings = new Hashtable<>();
+    private final Hashtable<Storage, Hashtable<String, String>> mirrors = new Hashtable<>();
     private final Vector<StorageObserver> obs = new Vector<>();
     
     private Hashtable<String, List<Storage.Entry>> preloadedCache;
