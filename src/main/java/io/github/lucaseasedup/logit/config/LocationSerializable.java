@@ -29,6 +29,9 @@ public final class LocationSerializable implements Cloneable, ConfigurationSeria
 {
     public LocationSerializable(String world, double x, double y, double z, float yaw, float pitch)
     {
+        if (world == null)
+            throw new IllegalArgumentException();
+        
         this.world = world;
         this.x = x;
         this.y = y;

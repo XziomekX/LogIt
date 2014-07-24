@@ -30,6 +30,9 @@ public final class VanishNoPacketHook
     
     public static boolean isVanished(Player player)
     {
+        if (player == null)
+            throw new IllegalArgumentException();
+        
         if (!Bukkit.getPluginManager().isPluginEnabled("VanishNoPacket"))
             return false;
         

@@ -297,7 +297,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 
                 if (!getAccountManager().insertAccount(account).isCancelled())
                 {
-                    LogItCooldowns.activate(LogItCooldowns.REGISTER, player);
+                    LogItCooldowns.activate(player, LogItCooldowns.REGISTER);
                     
                     sendMsg(sender, _("createAccount.success.self"));
                     

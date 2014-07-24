@@ -46,9 +46,15 @@ public final class LogItUpdateChecker
      * @return the latest LogIt build version string available,
      *         or {@code null} if no update is available.
      * 
-     * @throws IOException          if an I/O error occurred while downloading the RSS.
-     * @throws ParseException       if the RSS could not be parsed.
-     * @throws UnknownHostException if a connection to the remote host could not be established.
+     * @throws IllegalArgumentException if {@code currentFullName} is {@code null}.
+     * 
+     * @throws IOException              if an I/O error occurred
+     *                                  while downloading the RSS file.
+     *                                  
+     * @throws ParseException           if the RSS file could not be parsed.
+     * 
+     * @throws UnknownHostException     if a connection to the remote host
+     *                                  could not be established.
      */
     public static String checkForUpdate(String currentFullName)
             throws IOException, ParseException

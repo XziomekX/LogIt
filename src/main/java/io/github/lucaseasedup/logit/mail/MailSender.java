@@ -34,6 +34,9 @@ public final class MailSender
 {
     private MailSender(String host, int port, String user, String password)
     {
+        if (host == null || port < 0 || user == null || password == null)
+            throw new IllegalArgumentException();
+        
         this.host = host;
         this.port = port;
         this.user = user;
@@ -57,6 +60,9 @@ public final class MailSender
                          String body,
                          boolean html) throws MessagingException
     {
+        if (to == null || from == null || subject == null || body == null)
+            throw new IllegalArgumentException();
+        
         Properties properties = new Properties();
         
         properties.setProperty("mail.smtp.host", host);

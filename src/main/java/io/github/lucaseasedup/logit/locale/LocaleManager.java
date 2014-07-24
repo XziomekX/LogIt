@@ -45,6 +45,9 @@ public final class LocaleManager extends LogItCoreObject
     
     public void switchActiveLocale(Class<? extends Locale> locale)
     {
+        if (locale == null)
+            throw new IllegalArgumentException();
+        
         Locale localeObj = locales.get(locale);
         
         if (localeObj == null)
@@ -60,6 +63,9 @@ public final class LocaleManager extends LogItCoreObject
     
     public void switchActiveLocale(String prefix)
     {
+        if (prefix == null)
+            throw new IllegalArgumentException();
+        
         Locale localeObj = getLocaleByPrefix(prefix);
         
         if (localeObj == null)
@@ -86,6 +92,9 @@ public final class LocaleManager extends LogItCoreObject
      */
     public void setFallbackLocale(Class<? extends Locale> fallbackLocale)
     {
+        if (fallbackLocale == null)
+            throw new IllegalArgumentException();
+        
         Locale fallbackLocaleObj = locales.get(fallbackLocale);
         
         if (fallbackLocaleObj == null)
@@ -96,6 +105,9 @@ public final class LocaleManager extends LogItCoreObject
     
     public void registerLocale(Locale localeObj)
     {
+        if (localeObj == null)
+            throw new IllegalArgumentException();
+        
         if (localeObj.getClass().getAnnotation(LocalePrefix.class) == null)
             throw new RuntimeException("LocalePrefix not found.");
         
@@ -107,6 +119,9 @@ public final class LocaleManager extends LogItCoreObject
     
     public void unregisterLocale(Class<? extends Locale> locale)
     {
+        if (locale == null)
+            throw new IllegalArgumentException();
+        
         if (!locales.containsKey(locale))
             throw new RuntimeException("Locale not registered.");
         
@@ -122,6 +137,9 @@ public final class LocaleManager extends LogItCoreObject
      */
     public Locale getLocaleByPrefix(String prefix)
     {
+        if (prefix == null)
+            throw new IllegalArgumentException();
+        
         for (Entry<Class<? extends Locale>, Locale> e : locales.entrySet())
         {
             if (getLocalePrefix(e.getKey()).equals(prefix))
@@ -135,6 +153,9 @@ public final class LocaleManager extends LogItCoreObject
     
     public static String getLocalePrefix(Class<? extends Locale> locale)
     {
+        if (locale == null)
+            throw new IllegalArgumentException();
+        
         return locale.getAnnotation(LocalePrefix.class).value();
     }
     

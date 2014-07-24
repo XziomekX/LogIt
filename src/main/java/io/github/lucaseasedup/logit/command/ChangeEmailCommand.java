@@ -165,7 +165,7 @@ public final class ChangeEmailCommand extends LogItCoreObject implements TabExec
             sendMsg(sender, _("changeEmail.success.self")
                     .replace("{0}", args[0].toLowerCase()));
             
-            LogItCooldowns.activate(LogItCooldowns.CHANGEEMAIL, player);
+            LogItCooldowns.activate(player, LogItCooldowns.CHANGEEMAIL);
         }
         else
         {

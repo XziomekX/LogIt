@@ -22,7 +22,7 @@ public final class Cooldown
 {
     public Cooldown(String name)
     {
-        if (name == null)
+        if (name == null || name.isEmpty())
             throw new IllegalArgumentException();
         
         this.name = name;

@@ -199,11 +199,17 @@ public abstract class Storage implements AutoCloseable
         
         public boolean isKeyDirty(String key)
         {
+            if (key == null)
+                throw new IllegalArgumentException();
+            
             return dirtyKeys.contains(key);
         }
         
         public void clearKeyDirty(String key)
         {
+            if (key == null)
+                throw new IllegalArgumentException();
+            
             dirtyKeys.remove(key);
         }
         

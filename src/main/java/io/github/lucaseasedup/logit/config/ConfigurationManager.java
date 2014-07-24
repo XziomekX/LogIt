@@ -46,8 +46,11 @@ public final class ConfigurationManager extends LogItCoreObject
                                       String packageConfigDef,
                                       String header)
     {
-        if (filename == null || userConfigDef == null || packageConfigDef == null)
+        if (filename == null || filename.isEmpty()
+                || userConfigDef == null || packageConfigDef == null)
+        {
             throw new IllegalArgumentException();
+        }
         
         if (registrations.containsKey(filename))
             throw new RuntimeException("Configuration already registered: " + filename);
@@ -58,6 +61,9 @@ public final class ConfigurationManager extends LogItCoreObject
     
     public void unregisterConfiguration(String filename)
     {
+        if (filename == null)
+            throw new IllegalArgumentException();
+        
         registrations.remove(filename);
     }
     
@@ -78,6 +84,9 @@ public final class ConfigurationManager extends LogItCoreObject
     
     public PredefinedConfiguration getConfiguration(String filename)
     {
+        if (filename == null)
+            throw new IllegalArgumentException();
+        
         return registrations.get(filename);
     }
     

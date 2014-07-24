@@ -29,6 +29,9 @@ public final class TimeString
     
     public static long decode(String string, TimeUnit convertTo)
     {
+        if (string == null || convertTo == null)
+            throw new IllegalArgumentException();
+        
         Matcher matcher = TimeStringValidator.PATTERN.matcher(string);
         long time = 0;
         

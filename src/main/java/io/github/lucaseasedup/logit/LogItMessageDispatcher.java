@@ -49,7 +49,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
     
     public void dispatchMessage(final String username, final String message, long delay)
     {
-        if (username == null || message == null)
+        if (username == null || message == null || delay < 0)
             throw new IllegalArgumentException();
         
         new BukkitRunnable()
@@ -73,9 +73,14 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
      * <p> This method's behavior may be altered by the configuration file.
      * 
      * @param player the player to whom the message will be sent.
+     * 
+     * @throws IllegalArgumentException if {@code player} is {@code null}.
      */
     public void sendForceLoginMessage(Player player)
     {
+        if (player == null)
+            throw new IllegalArgumentException();
+        
         long minInterval = getConfig("config.yml")
                 .getTime("force-login.prompt.min-interval", TimeUnit.MILLISECONDS);
         
@@ -122,7 +127,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
     
     public void dispatchForceLoginPrompter(String username, long delay)
     {
-        if (username == null)
+        if (username == null || delay < 0)
             throw new IllegalArgumentException();
         
         new ForceLoginPrompter(username).runTaskLater(getPlugin(), delay);
@@ -130,7 +135,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
     
     public void dispatchRepeatingForceLoginPrompter(String username, long delay, long period)
     {
-        if (username == null)
+        if (username == null || delay < 0 || period <= 0)
             throw new IllegalArgumentException();
         
         new ForceLoginPrompter(username).runTaskTimer(getPlugin(), delay, period);

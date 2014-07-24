@@ -204,7 +204,7 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             
             sendMsg(sender, _("changePassword.success.self"));
             
-            LogItCooldowns.activate(LogItCooldowns.CHANGEPASS, player);
+            LogItCooldowns.activate(player, LogItCooldowns.CHANGEPASS);
             
             getConfig("stats.yml").set("password-changes",
                     getConfig("stats.yml").getInt("password-changes") + 1);

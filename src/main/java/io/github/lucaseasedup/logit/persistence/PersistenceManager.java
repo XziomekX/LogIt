@@ -69,7 +69,7 @@ public final class PersistenceManager extends LogItCoreObject
                                Player player,
                                Class<? extends PersistenceSerializer> clazz)
     {
-        if (player == null || clazz == null)
+        if (account == null || player == null || clazz == null)
             throw new IllegalArgumentException();
         
         PersistenceSerializer serializer = getSerializer(clazz);

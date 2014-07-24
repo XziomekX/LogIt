@@ -57,6 +57,18 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         if (storage == null || unit == null || keys == null)
             throw new IllegalArgumentException();
         
+        try
+        {
+            if (!storage.isConnected())
+            {
+                throw new IllegalStateException("isConnected() returned false");
+            }
+        }
+        catch (IOException ex)
+        {
+            throw new RuntimeException(ex);
+        }
+        
         this.storage = storage;
         this.unit = unit;
         this.keys = keys;
@@ -231,7 +243,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     
     public boolean isRegistered(String username)
     {
-        if (username == null)
+        if (username == null || username.isEmpty())
             throw new IllegalArgumentException();
         
         return selectAccount(username, Arrays.asList(keys.username())) != null;
@@ -239,7 +251,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     
     public List<Account> selectAccounts(List<String> queryKeys, Selector selector)
     {
-        if (selector == null || queryKeys == null)
+        if (queryKeys == null || selector == null)
             throw new IllegalArgumentException();
         
         if (!queryKeys.contains(keys.username()))
@@ -355,8 +367,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     
     public void renameAccount(String username, String newUsername)
     {
-        if (username == null || newUsername == null || newUsername.isEmpty())
+        if (username == null || username.isEmpty()
+                || newUsername == null || newUsername.isEmpty())
+        {
             throw new IllegalArgumentException();
+        }
         
         username = username.toLowerCase();
         newUsername = newUsername.toLowerCase();
@@ -397,14 +412,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @return a {@code CancellableState} indicating whether this operation
      *         has been cancelled by one of the {@code AccountRemoveEvent} handlers.
      * 
-     * @throws IllegalArgumentException if {@code username} is {@code null}.
+     * @throws IllegalArgumentException if {@code username} is {@code null} or empty.
      * 
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public CancelledState removeAccount(String username)
     {
-        if (username == null)
+        if (username == null || username.isEmpty())
             throw new IllegalArgumentException();
         
         username = username.toLowerCase();

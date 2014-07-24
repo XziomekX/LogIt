@@ -189,7 +189,7 @@ public final class UnregisterCommand extends LogItCoreObject implements TabExecu
                 {
                     sendMsg(sender, _("removeAccount.success.self"));
                     
-                    LogItCooldowns.activate(LogItCooldowns.UNREGISTER, player);
+                    LogItCooldowns.activate(player, LogItCooldowns.UNREGISTER);
                 }
             }
             catch (ReportedException ex)

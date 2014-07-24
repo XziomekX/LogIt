@@ -138,6 +138,9 @@ public final class LogItPlugin extends JavaPlugin
     
     private void loadMessages(String prefix) throws FileNotFoundException, IOException
     {
+        if (prefix == null)
+            throw new IllegalArgumentException();
+        
         messages = null;
         
         try (JarFile jarFile = new JarFile(getFile()))
@@ -200,6 +203,9 @@ public final class LogItPlugin extends JavaPlugin
     
     public static String getMessage(String label)
     {
+        if (label == null)
+            throw new IllegalArgumentException();
+        
         if (getInstance() == null)
             throw new IllegalStateException("LogIt not enabled.");
         

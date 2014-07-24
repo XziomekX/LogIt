@@ -162,6 +162,9 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     
     private void copyAccounts(File backupFile) throws IOException
     {
+        if (backupFile == null)
+            throw new IllegalArgumentException();
+        
         Hashtable<String, DataType> keys =
                 accountManager.getStorage().getKeys(accountManager.getUnit());
         String primaryKey =
@@ -199,13 +202,13 @@ public final class BackupManager extends LogItCoreObject implements Runnable
      * @param filename the backup filename.
      * 
      * @throws FileNotFoundException    if no such backup exists.
-     * @throws IllegalArgumentException if {@code filename} is {@code null}.
+     * @throws IllegalArgumentException if {@code filename} is {@code null} or empty.
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public void restoreBackup(String filename) throws FileNotFoundException
     {
-        if (filename == null)
+        if (filename == null || filename.isEmpty())
             throw new IllegalArgumentException();
         
         File backupFile = getBackupFile(filename);
@@ -258,6 +261,9 @@ public final class BackupManager extends LogItCoreObject implements Runnable
      */
     public int removeBackups(int amount)
     {
+        if (amount < 0)
+            throw new IllegalArgumentException();
+        
         File[] backupFiles = getBackups(true);
         int effectiveAmount = 0;
         
@@ -311,11 +317,11 @@ public final class BackupManager extends LogItCoreObject implements Runnable
      * @return the backup file, or {@code null} if a backup
      *         with the given filename does not exist.
      * 
-     * @throws IllegalArgumentException if {@code filename} is {@code null}.
+     * @throws IllegalArgumentException if {@code filename} is {@code null} or empty.
      */
     public File getBackupFile(String filename)
     {
-        if (filename == null)
+        if (filename == null || filename.isEmpty())
             throw new IllegalArgumentException();
         
         File backupDir = getDataFile(getConfig("config.yml").getString("backup.path"));
@@ -329,7 +335,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     
     public Date parseBackupFilename(String filename) throws ParseException
     {
-        if (filename == null)
+        if (filename == null || filename.isEmpty())
             throw new IllegalArgumentException();
         
         return buildDateFormat().parse(filename);

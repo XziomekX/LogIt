@@ -44,6 +44,9 @@ public final class CooldownManager extends LogItCoreObject implements Listener
     
     public boolean isCooldownActive(Player player, Cooldown cooldown)
     {
+        if (player == null || cooldown == null)
+            throw new IllegalArgumentException();
+        
         Map<Cooldown, Long> playerCooldowns = cooldowns.get(player);
         
         if (playerCooldowns == null)
@@ -76,6 +79,9 @@ public final class CooldownManager extends LogItCoreObject implements Listener
      */
     public long getCooldownMillis(Player player, Cooldown cooldown)
     {
+        if (player == null || cooldown == null)
+            throw new IllegalArgumentException();
+        
         Map<Cooldown, Long> playerCooldowns = cooldowns.get(player);
         
         if (playerCooldowns == null)
@@ -91,6 +97,9 @@ public final class CooldownManager extends LogItCoreObject implements Listener
     
     public void activateCooldown(Player player, Cooldown cooldown, long cooldownMillis)
     {
+        if (player == null || cooldown == null || cooldownMillis < 0)
+            throw new IllegalArgumentException();
+        
         if (!cooldowns.containsKey(player))
         {
             cooldowns.put(player, new HashMap<Cooldown, Long>());
@@ -101,6 +110,9 @@ public final class CooldownManager extends LogItCoreObject implements Listener
     
     public void deactivateCooldown(Player player, Cooldown cooldown)
     {
+        if (player == null || cooldown == null)
+            throw new IllegalArgumentException();
+        
         if (!cooldowns.containsKey(player))
             return;
         

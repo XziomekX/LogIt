@@ -103,6 +103,8 @@ public final class LogItCore
 {
     private LogItCore(LogItPlugin plugin)
     {
+        assert plugin != null;
+        
         this.plugin = plugin;
     }
     
@@ -761,12 +763,17 @@ public final class LogItCore
      * 
      * @return {@code true} if passwords match; {@code false} otherwise.
      * 
+     * @throws IllegalArgumentException if {@code password}, {@code hashedPassword}
+     *                                  or {@code hashingAlgorithm} is {@code null}.
+     * 
      * @see #checkPassword(String, String, String, String)
      */
     public boolean checkPassword(String password, String hashedPassword, String hashingAlgorithm)
     {
-        if (hashingAlgorithm == null
-                || getConfig("secret.yml").getBoolean("force-hashing-algorithm"))
+        if (password == null || hashedPassword == null || hashingAlgorithm == null)
+            throw new IllegalArgumentException();
+        
+        if (getConfig("secret.yml").getBoolean("force-hashing-algorithm"))
         {
             hashingAlgorithm = getDefaultHashingAlgorithm().name();
         }
@@ -804,6 +811,10 @@ public final class LogItCore
      * 
      * @return {@code true} if passwords match; {@code false} otherwise.
      * 
+     * @throws IllegalArgumentException if {@code password}, {@code hashedPassword},
+     *                                  {@code salt} or {@code hashingAlgorithm} is
+     *                                  {@code null}.
+     * 
      * @see #checkPassword(String, String, String)
      */
     public boolean checkPassword(String password,
@@ -811,11 +822,10 @@ public final class LogItCore
                                  String salt,
                                  String hashingAlgorithm)
     {
-        if (hashedPassword == null || hashedPassword.isEmpty())
-            return false;
+        if (password == null || hashedPassword == null || salt == null || hashingAlgorithm == null)
+            throw new IllegalArgumentException();
         
-        if (hashingAlgorithm == null
-                || getConfig("secret.yml").getBoolean("force-hashing-algorithm"))
+        if (getConfig("secret.yml").getBoolean("force-hashing-algorithm"))
         {
             hashingAlgorithm = getDefaultHashingAlgorithm().name();
         }
@@ -900,9 +910,14 @@ public final class LogItCore
      * <p> Exact group names will be read from the configuration file.
      * 
      * @param player the player whose permission groups should be updated.
+     * 
+     * @throws IllegalArgumentException if {@code player} is {@code null}.
      */
     public void updatePlayerGroup(Player player)
     {
+        if (player == null)
+            throw new IllegalArgumentException();
+        
         if (!VaultHook.isVaultEnabled())
             return;
         
@@ -946,11 +961,14 @@ public final class LogItCore
      * @param level   the message level.
      * @param message the message to be logged.
      * 
+     * @throws IllegalArgumentException if {@code level} or {@code message}
+     *                                  is {@code null}.
+     * 
      * @see #log(Level, String, Throwable)
      */
     public void log(Level level, String message)
     {
-        if (level == null)
+        if (level == null || message == null)
             throw new IllegalArgumentException();
         
         if (getConfig("config.yml") != null && getConfig("config.yml").isLoaded())
@@ -1131,6 +1149,9 @@ public final class LogItCore
     
     public PredefinedConfiguration getConfig(String filename)
     {
+        if (filename == null)
+            throw new IllegalArgumentException();
+        
         if (configurationManager == null)
             return null;
         

@@ -38,7 +38,7 @@ public enum TimeUnit
     
     public long convert(long value, TimeUnit to)
     {
-        if (to == null || value < 0)
+        if (value < 0 || to == null)
             throw new IllegalArgumentException();
         
         if (value == 0)

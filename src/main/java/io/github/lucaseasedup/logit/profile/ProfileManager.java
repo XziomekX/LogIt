@@ -92,6 +92,9 @@ public final class ProfileManager extends LogItCoreObject
     
     public boolean containsProfile(String playerName)
     {
+        if (playerName == null || playerName.isEmpty())
+            throw new IllegalArgumentException();
+        
         return new File(path, playerName.toLowerCase() + ".yml").exists();
     }
     
@@ -104,6 +107,9 @@ public final class ProfileManager extends LogItCoreObject
      */
     public Field getField(String fieldName)
     {
+        if (fieldName == null || fieldName.isEmpty())
+            throw new IllegalArgumentException();
+        
         for (Field field : definedFields)
         {
             if (field.getName().equals(fieldName))
@@ -122,6 +128,9 @@ public final class ProfileManager extends LogItCoreObject
     
     public boolean isFieldDefined(String fieldName)
     {
+        if (fieldName == null || fieldName.isEmpty())
+            throw new IllegalArgumentException();
+        
         for (Field field : definedFields)
         {
             if (field.getName().equals(fieldName))
@@ -155,6 +164,13 @@ public final class ProfileManager extends LogItCoreObject
     
     public void setProfileString(String playerName, String fieldName, String value)
     {
+        if (playerName == null || playerName.isEmpty()
+                || fieldName == null || fieldName.isEmpty()
+                || value == null)
+        {
+            throw new IllegalArgumentException();
+        }
+        
         Field field = getField(fieldName);
         
         if (field instanceof StringField)
@@ -163,14 +179,18 @@ public final class ProfileManager extends LogItCoreObject
             
             if (value.length() < stringField.getMinLength()
                     || value.length() > stringField.getMaxLength())
+            {
                 throw new IllegalArgumentException();
+            }
         }
         else if (field instanceof SetField)
         {
             SetField setField = (SetField) field;
             
             if (!setField.isAccepted(value))
+            {
                 throw new IllegalArgumentException();
+            }
         }
         else
         {
@@ -184,17 +204,27 @@ public final class ProfileManager extends LogItCoreObject
     
     public void setProfileInteger(String playerName, String fieldName, int value)
     {
+        if (playerName == null || playerName.isEmpty()
+                || fieldName == null || fieldName.isEmpty())
+        {
+            throw new IllegalArgumentException();
+        }
+        
         Field field = getField(fieldName);
         
         if (!(field instanceof IntegerField))
+        {
             throw new RuntimeException("Incompatible field type: "
                                        + field.getClass().getSimpleName());
+        }
         
         IntegerField integerField = (IntegerField) field;
         
         if (value < integerField.getMinValue()
                 || value > integerField.getMaxValue())
+        {
             throw new IllegalArgumentException();
+        }
         
         getProfileConfiguration(playerName).set(fieldName, value);
         saveProfileConfiguration(playerName);
@@ -202,17 +232,27 @@ public final class ProfileManager extends LogItCoreObject
     
     public void setProfileFloat(String playerName, String fieldName, double value)
     {
+        if (playerName == null || playerName.isEmpty()
+                || fieldName == null || fieldName.isEmpty())
+        {
+            throw new IllegalArgumentException();
+        }
+        
         Field field = getField(fieldName);
         
         if (!(field instanceof FloatField))
+        {
             throw new RuntimeException("Incompatible field type: "
                                        + field.getClass().getSimpleName());
+        }
         
         FloatField floatField = (FloatField) field;
         
         if (value < floatField.getMinValue()
                 || value > floatField.getMaxValue())
+        {
             throw new IllegalArgumentException();
+        }
         
         getProfileConfiguration(playerName).set(fieldName, value);
         saveProfileConfiguration(playerName);
@@ -220,6 +260,12 @@ public final class ProfileManager extends LogItCoreObject
     
     public void removeProfileObject(String playerName, String fieldName)
     {
+        if (playerName == null || playerName.isEmpty()
+                || fieldName == null || fieldName.isEmpty())
+        {
+            throw new IllegalArgumentException();
+        }
+        
         getProfileConfiguration(playerName).set(fieldName, null);
         saveProfileConfiguration(playerName);
     }
@@ -243,6 +289,11 @@ public final class ProfileManager extends LogItCoreObject
     
     private YamlConfiguration getProfileConfiguration(String playerName)
     {
+        if (playerName == null || playerName.isEmpty())
+        {
+            throw new IllegalArgumentException();
+        }
+        
         File profileFile = fileCache.get(playerName);
         
         if (profileFile == null)
@@ -264,6 +315,11 @@ public final class ProfileManager extends LogItCoreObject
     
     private void saveProfileConfiguration(String playerName)
     {
+        if (playerName == null || playerName.isEmpty())
+        {
+            throw new IllegalArgumentException();
+        }
+        
         YamlConfiguration configuration = getProfileConfiguration(playerName);
         
         try
@@ -279,6 +335,12 @@ public final class ProfileManager extends LogItCoreObject
     
     private Field newField(String fieldName, String definitionString)
     {
+        if (fieldName == null || fieldName.isEmpty()
+                || definitionString == null || definitionString.isEmpty())
+        {
+            throw new IllegalArgumentException();
+        }
+        
         Matcher definitionMatcher = FIELD_DEFINITION_PATTERN.matcher(definitionString);
         
         if (definitionMatcher.find())

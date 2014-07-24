@@ -22,7 +22,7 @@ public abstract class Field
 {
     public Field(String name)
     {
-        if (name == null)
+        if (name == null || name.isEmpty())
             throw new IllegalArgumentException();
         
         this.name = name;

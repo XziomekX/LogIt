@@ -56,6 +56,12 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
                                    String packageConfigDef,
                                    String header)
     {
+        if (filename == null || filename.isEmpty()
+                || userConfigDef == null || packageConfigDef == null)
+        {
+            throw new IllegalArgumentException();
+        }
+        
         this.file = getDataFile(filename);
         this.configuration = YamlConfiguration.loadConfiguration(file);
         this.userConfigDef = userConfigDef;

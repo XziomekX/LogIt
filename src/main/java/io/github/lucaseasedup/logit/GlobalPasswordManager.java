@@ -59,6 +59,9 @@ public final class GlobalPasswordManager extends LogItCoreObject implements Runn
     
     public boolean checkPassword(String password)
     {
+        if (password == null)
+            throw new IllegalArgumentException();
+        
         for (Entry<String, Long> e : passwords.entrySet())
         {
             if (e.getKey().equals(password) && e.getValue() > 0)

@@ -28,8 +28,11 @@ public final class LogItCooldowns
     {
     }
     
-    public static void activate(Cooldown cooldown, Player player)
+    public static void activate(Player player, Cooldown cooldown)
     {
+        if (player == null || cooldown == null)
+            throw new IllegalArgumentException();
+        
         LogItCore logItCore = LogItCore.getInstance();
         
         if (logItCore == null)

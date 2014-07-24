@@ -172,7 +172,7 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                                 .replace("%player%", playerName)
                                 .replace("%password%", newPassword);
                         
-                        LogItCooldowns.activate(LogItCooldowns.RECOVERPASS, player);
+                        LogItCooldowns.activate(player, LogItCooldowns.RECOVERPASS);
                         
                         MailSender.from(smtpHost, smtpPort, smtpUser, smtpPassword)
                                 .sendMail(Arrays.asList(to),from, subject, body, htmlEnabled);

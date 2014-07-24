@@ -46,9 +46,14 @@ public enum IntegrationType
      * 
      * @return the corresponding {@code IntegrationType},
      *         or {@code null} if no {@code IntegrationType} was found for the given string.
+     * 
+     * @throws IllegalArgumentException if {@code name} is {@code null}.
      */
     public static IntegrationType decode(String name)
     {
+        if (name == null)
+            throw new IllegalArgumentException();
+        
         for (IntegrationType value : values())
         {
             if (value.encode().equals(name))

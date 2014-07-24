@@ -40,6 +40,24 @@ public final class AccountKeys extends LinkedHashtable<String, DataType>
                        String display_name,
                        String persistence)
     {
+        if (       username == null
+                || uuid == null
+                || salt == null
+                || password == null
+                || hashing_algorithm == null
+                || ip == null
+                || login_session == null
+                || email == null
+                || last_active_date == null
+                || reg_date == null
+                || is_locked == null
+                || login_history == null
+                || display_name == null
+                || persistence == null)
+        {
+            throw new IllegalArgumentException();
+        }
+        
         put(username,          DataType.TINYTEXT);
         put(uuid,              DataType.TINYTEXT);
         put(salt,              DataType.TINYTEXT);
