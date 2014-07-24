@@ -3,7 +3,6 @@ version: ${project.version}
 author: LucasEasedUp
 main: io.github.lucaseasedup.logit.LogItPlugin
 softdepend: [Multiverse-Core, Vault]
-loadbefore: [LogItH2Helper, LogItPostgreSQLHelper]
 
 commands:
   logit:
