@@ -180,6 +180,23 @@ public final class AccountKeys extends LinkedHashtable<String, DataType>
         return names;
     }
     
+    public static final AccountKeys DEFAULT = new AccountKeys(
+            "username",
+            "uuid",
+            "salt",
+            "password",
+            "hashing_algorithm",
+            "ip",
+            "login_session",
+            "email",
+            "last_active_date",
+            "reg_date",
+            "is_locked",
+            "login_history",
+            "display_name",
+            "persistence"
+    );
+    
     private static final long serialVersionUID = 1L;
     
     private final List<String> names;
