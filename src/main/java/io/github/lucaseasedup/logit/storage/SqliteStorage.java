@@ -95,6 +95,22 @@ public final class SqliteStorage extends Storage
                 connection = null;
             }
         }
+        
+        if (statement != null)
+        {
+            try
+            {
+                statement.close();
+            }
+            catch (SQLException ex)
+            {
+                throw new IOException(ex);
+            }
+            finally
+            {
+                statement = null;
+            }
+        }
     }
     
     @Override
