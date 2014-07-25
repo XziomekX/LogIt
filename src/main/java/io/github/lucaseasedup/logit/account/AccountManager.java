@@ -233,7 +233,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         // create a new Account object for it and put it into the buffer.
         if (!buffer.containsKey(username))
         {
-            cachedAccount = new Account(entries.get(0));
+            cachedAccount = new Account(entries.get(0), false);
             
             buffer.put(username, cachedAccount);
         }
@@ -287,7 +287,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
                 }
             }
             
-            Account account = new Account(entry);
+            Account account = new Account(entry, false);
             
             if (buffer.get(username) == null)
             {

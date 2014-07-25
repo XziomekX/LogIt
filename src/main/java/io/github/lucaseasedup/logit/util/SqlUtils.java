@@ -366,6 +366,7 @@ public final class SqlUtils
             sb.append(columnQuote);
             sb.append(" ");
             sb.append(encodeType(e.getValue()));
+            sb.append(" NOT NULL");
             
             if (primaryKey != null && primaryKey.equals(e.getKey()))
             {

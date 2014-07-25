@@ -87,15 +87,33 @@ public final class AccountInfoHubCommand extends HubCommand
         if (!(sender instanceof Player)
                 || sender.hasPermission("logit.account.info.lastactivedate"))
         {
-            sendMsg(sender, _("accountInfo.lastActiveDate")
-                    .replace("{0}", new Date(account.getLastActiveDate() * 1000L).toString()));
+            long lastActiveDate = account.getLastActiveDate();
+            
+            if (lastActiveDate < 0)
+            {
+                sendMsg(sender, _("accountInfo.lastActiveDate.never"));
+            }
+            else
+            {
+                sendMsg(sender, _("accountInfo.lastActiveDate")
+                        .replace("{0}", new Date(account.getLastActiveDate() * 1000L).toString()));
+            }
         }
         
         if (!(sender instanceof Player)
                 || sender.hasPermission("logit.account.info.regdate"))
         {
-            sendMsg(sender, _("accountInfo.registrationDate")
-                    .replace("{0}", new Date(account.getRegistrationDate() * 1000L).toString()));
+            long registrationDate = account.getRegistrationDate();
+            
+            if (registrationDate < 0)
+            {
+                sendMsg(sender, _("accountInfo.registrationDate.never"));
+            }
+            else
+            {
+                sendMsg(sender, _("accountInfo.registrationDate")
+                        .replace("{0}", new Date(account.getRegistrationDate() * 1000L).toString()));
+            }
         }
         
         if (!(sender instanceof Player)

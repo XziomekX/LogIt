@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit.account;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.storage.Infix;
+import io.github.lucaseasedup.logit.storage.SelectorBinary;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.SelectorNegation;
 import java.util.ArrayList;
@@ -48,11 +49,21 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
         
         List<Account> accounts = getAccountManager().selectAccounts(
                 Arrays.asList(keys().username(), keys().last_active_date()),
-                new SelectorNegation(new SelectorCondition(
+                new SelectorBinary(
+                    new SelectorCondition(
                         keys().last_active_date(),
                         Infix.GREATER_THAN,
-                        String.valueOf(now - inactivityTime)
-                ))
+                        "0"
+                    ),
+                    Infix.AND,
+                    new SelectorNegation(
+                        new SelectorCondition(
+                            keys().last_active_date(),
+                            Infix.GREATER_THAN,
+                            String.valueOf(now - inactivityTime)
+                        )
+                    )
+                )
         );
         
         if (!accounts.isEmpty())

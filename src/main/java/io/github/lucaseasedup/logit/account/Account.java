@@ -42,13 +42,7 @@ public final class Account extends LogItCoreObject
 {
     public Account(Storage.Entry entry)
     {
-        if (entry == null)
-            throw new IllegalArgumentException();
-        
-        if (!entry.containsKey(keys().username()))
-            throw new IllegalArgumentException("Missing key: username");
-        
-        this.entry = entry;
+        this(entry, true);
     }
     
     public Account(String username, Storage.Entry entry)
@@ -59,6 +53,24 @@ public final class Account extends LogItCoreObject
         entry.put(keys().username(), username.toLowerCase());
         
         this.entry = entry;
+        
+        fillWithDefaults();
+    }
+    
+    /* package */ Account(Storage.Entry entry, boolean fillWithDefaults)
+    {
+        if (entry == null)
+            throw new IllegalArgumentException();
+        
+        if (!entry.containsKey(keys().username()))
+            throw new IllegalArgumentException("Missing key: username");
+        
+        this.entry = entry;
+        
+        if (fillWithDefaults)
+        {
+            fillWithDefaults();
+        }
     }
     
     public String getUsername()
@@ -465,9 +477,26 @@ public final class Account extends LogItCoreObject
         entryClone.put(keys().username(), username.toLowerCase());
         entryClone.clearKeyDirty(keys().username());
         
-        Account accountClone = new Account(entryClone);
+        Account accountClone = new Account(entryClone, false);
         
         return accountClone;
+    }
+    
+    private void fillWithDefaults()
+    {
+        entry.put(keys().uuid(), "");
+        entry.put(keys().salt(), "");
+        entry.put(keys().password(), "");
+        entry.put(keys().hashing_algorithm(), "");
+        entry.put(keys().ip(), "");
+        entry.put(keys().login_session(), "");
+        entry.put(keys().email(), "");
+        entry.put(keys().last_active_date(), "-1");
+        entry.put(keys().reg_date(), "-1");
+        entry.put(keys().is_locked(), "0");
+        entry.put(keys().login_history(), "");
+        entry.put(keys().display_name(), "");
+        entry.put(keys().persistence(), "");
     }
     
     /* package */ Storage.Entry getEntry()
