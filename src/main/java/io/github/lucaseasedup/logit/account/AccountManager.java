@@ -312,11 +312,19 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         if (event.isCancelled())
             return CancelledState.CANCELLED;
         
-        buffer.remove(account.getUsername());
-        
         try
         {
-            storage.addEntry(unit, account.getEntry());
+            Storage.Entry entry = account.getEntry();
+            
+            storage.addEntry(unit, entry);
+            
+            for (Datum datum : entry)
+            {
+                entry.clearKeyDirty(datum.getKey());
+            }
+            
+            buffer.remove(account.getUsername());
+            buffer.put(account.getUsername(), account);
             
             log(Level.WARNING, _("createAccount.success.log")
                     .replace("{0}", account.getUsername()));
