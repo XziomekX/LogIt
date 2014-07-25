@@ -73,6 +73,7 @@ import io.github.lucaseasedup.logit.storage.Storage.DataType;
 import io.github.lucaseasedup.logit.storage.StorageFactory;
 import io.github.lucaseasedup.logit.storage.StorageType;
 import io.github.lucaseasedup.logit.storage.WrapperStorage;
+import io.github.lucaseasedup.logit.tabapi.TabAPI;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import io.github.lucaseasedup.logit.util.VaultHook;
 import java.io.File;
@@ -94,6 +95,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 /**
@@ -158,6 +160,19 @@ public final class LogItCore
         globalPasswordManager = new GlobalPasswordManager();
         cooldownManager = new CooldownManager();
         accountWatcher = new AccountWatcher();
+        
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null)
+                {
+                    tabApi = new TabAPI();
+                    tabApi.onEnable();
+                }
+            }
+        }.runTaskLater(getPlugin(), 1L);
         
         startTasks();
         enableCommands();
@@ -691,6 +706,12 @@ public final class LogItCore
             accountWatcher = null;
         }
         
+        if (tabApi != null)
+        {
+            tabApi.onDisable();
+            tabApi = null;
+        }
+        
         logFileWriter = null;
     }
     
@@ -950,6 +971,57 @@ public final class LogItCore
             VaultHook.playerAddGroup(player,
                     getConfig("config.yml").getString("groups.logged-out"));
         }
+    }
+    
+    public void updateAllTabLists()
+    {
+        for (Player player : Bukkit.getOnlinePlayers())
+        {
+            updateTabList(player);
+        }
+    }
+    
+    private void updateTabList(Player player)
+    {
+        if (player == null)
+            throw new IllegalArgumentException();
+        
+        if (tabApi == null)
+            return;
+        
+        tabApi.clearTab(player);
+        
+        int horizSize = tabApi.getHorizSize();
+        int vertSize = tabApi.getVertSize();
+        int i = 0;
+        int j = 0;
+        
+        for (Player p : Bukkit.getOnlinePlayers())
+        {
+            if (!getSessionManager().isSessionAlive(p) && !p.equals(player)
+                    && getConfig("config.yml").getBoolean("force-login.hide-from-tab-list"))
+            {
+                continue;
+            }
+            
+            tabApi.setTabString(player, j, i, p.getPlayerListName());
+            
+            i++;
+            
+            if (i >= horizSize)
+            {
+                i = 0;
+                j++;
+            }
+            
+            if (j >= vertSize)
+            {
+                break;
+            }
+        }
+        
+        tabApi.updatePlayer(player);
+        tabApi.setPriority(player, 1);
     }
     
     /**
@@ -1260,6 +1332,7 @@ public final class LogItCore
     private GlobalPasswordManager globalPasswordManager;
     private CooldownManager cooldownManager;
     private AccountWatcher accountWatcher;
+    private TabAPI tabApi;
     
     private BukkitTask accountManagerTask;
     private BukkitTask backupManagerTask;

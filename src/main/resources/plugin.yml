@@ -2,7 +2,7 @@ name: LogIt
 version: ${project.version}
 author: LucasEasedUp
 main: io.github.lucaseasedup.logit.LogItPlugin
-softdepend: [Multiverse-Core, Vault]
+softdepend: [Multiverse-Core, Vault, ProtocolLib]
 
 commands:
   logit:

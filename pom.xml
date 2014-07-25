@@ -39,6 +39,11 @@
             <id>VanishNoPacketRepo</id>
             <url>http://repo.kitteh.org/content/repositories/releases/</url>
         </repository>
+        <repository>
+            <id>comphenix-rep</id>
+            <name>Comphenix Repository</name>
+            <url>http://repo.comphenix.net/content/groups/public</url>
+        </repository>
     </repositories>
     
     <dependencies>
@@ -101,6 +106,11 @@
             <artifactId>VanishNoPacket</artifactId>
             <version>3.19.1</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>3.4.0</version>
         </dependency>
     </dependencies>
     

@@ -63,6 +63,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public final class PlayerEventListener extends LogItCoreObject implements Listener
 {
@@ -169,7 +170,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.LOW)
     private void onJoin(PlayerJoinEvent event)
     {
-        Player player = event.getPlayer();
+        final Player player = event.getPlayer();
         String username = player.getName().toLowerCase();
         String ip = getPlayerIp(player);
         UUID uuid = player.getUniqueId();
@@ -320,6 +321,15 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             getCore().updatePlayerGroup(player);
         }
+        
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                getCore().updateAllTabLists();
+            }
+        }.runTaskLater(getPlugin(), 1L);
     }
     
     @EventHandler(priority = EventPriority.LOW)
@@ -350,6 +360,15 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             event.setQuitMessage(null);
         }
+        
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                getCore().updateAllTabLists();
+            }
+        }.runTaskLater(getPlugin(), 1L);
     }
     
     @EventHandler(priority = EventPriority.NORMAL)
