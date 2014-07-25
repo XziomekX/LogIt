@@ -129,6 +129,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 {
                     Player paramPlayer = PlayerUtils.getPlayer(args[1]);
                     
+                    account.setUuid(paramPlayer.getUniqueId());
                     account.setIp(PlayerUtils.getPlayerIp(paramPlayer));
                     account.setDisplayName(paramPlayer.getName());
                 }
@@ -289,6 +290,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 ReportedException.incrementRequestCount();
                 
                 Account account = new Account(username, new Storage.Entry());
+                account.setUuid(player.getUniqueId());
                 account.changePassword(password);
                 account.setIp(PlayerUtils.getPlayerIp(player));
                 account.setLastActiveDate(System.currentTimeMillis() / 1000L);
