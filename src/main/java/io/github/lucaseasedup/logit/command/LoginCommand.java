@@ -26,6 +26,7 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.PlayerCollections;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.account.Account;
+import io.github.lucaseasedup.logit.hooks.BukkitSmerfHook;
 import io.github.lucaseasedup.logit.locale.Locale;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,17 +36,22 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public final class LoginCommand extends LogItCoreObject implements CommandExecutor
 {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        Player player = null;
+        final Player player;
         
         if (sender instanceof Player)
         {
             player = (Player) sender;
+        }
+        else
+        {
+            player = null;
         }
         
         boolean disablePasswords = getConfig("config.yml")
@@ -244,6 +250,27 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     if (getConfig("config.yml").getBoolean("login-history.enabled"))
                     {
                         account.recordLogin(currentTimeSecs, playerIp, false);
+                    }
+                    
+                    boolean isPremium = BukkitSmerfHook.isPremium(player);
+                    boolean premiumTakeoverEnabled = getConfig("config.yml")
+                            .getBoolean("premium-takeover.enabled");
+                    String promptOn = getConfig("config.yml")
+                            .getString("premium-takeover.prompt-on");
+                    
+                    if (isPremium && premiumTakeoverEnabled && promptOn.equals("failed-login"))
+                    {
+                        new BukkitRunnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                if (!getSessionManager().isSessionAlive(player))
+                                {
+                                    sendMsg(player, _("takeover.prompt"));
+                                }
+                            }
+                        }.runTaskLater(getPlugin(), 20L);
                     }
                     
                     return true;

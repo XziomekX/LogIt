@@ -35,6 +35,7 @@ import io.github.lucaseasedup.logit.util.CollectionUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -499,6 +500,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         if (buffer == null || buffer.isEmpty())
             return;
         
+        Map<String, Account> dirtyAccounts = new HashMap<>();
         QueuedMap<String, Storage.Entry> dirtyEntries = new QueuedMap<>();
         
         while (!buffer.isEmpty())
@@ -512,6 +514,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             
             if (!dirtyEntry.getKeys().isEmpty())
             {
+                dirtyAccounts.put(e.getKey(), e.getValue());
                 dirtyEntries.put(e.getKey(), dirtyEntry);
             }
         }
@@ -535,10 +538,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable
                             Infix.EQUALS,
                             e.getKey().toLowerCase()
                     ));
+                    
+                    dirtyAccounts.get(e.getKey()).runSaveCallbacks(true);
                 }
                 catch (IOException ex)
                 {
                     log(Level.WARNING, ex);
+                    
+                    dirtyAccounts.get(e.getKey()).runSaveCallbacks(false);
                 }
             }
             

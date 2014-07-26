@@ -26,6 +26,7 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
+import io.github.lucaseasedup.logit.hooks.BukkitSmerfHook;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.Storage;
@@ -41,13 +42,17 @@ import org.bukkit.entity.Player;
 public final class RegisterCommand extends LogItCoreObject implements CommandExecutor
 {
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+    public boolean onCommand(final CommandSender sender, Command cmd, String label, String[] args)
     {
-        Player player = null;
+        final Player player;
         
         if (sender instanceof Player)
         {
             player = (Player) sender;
+        }
+        else
+        {
+            player = null;
         }
         
         int minPasswordLength = getConfig("config.yml").getInt("password.min-length");
@@ -225,7 +230,14 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 return true;
             }
             
-            if (getAccountManager().isRegistered(player.getName()))
+            boolean takeoverEnabled = getConfig("config.yml")
+                    .getBoolean("premium-takeover.enabled");
+            boolean isPremium = BukkitSmerfHook.isPremium(player);
+            boolean canTakeOver = takeoverEnabled && isPremium;
+            boolean isRegistered = getAccountManager().isRegistered(player.getName());
+            boolean isTakingOver = canTakeOver && isRegistered;
+            
+            if (isRegistered && !canTakeOver)
             {
                 sendMsg(player, _("alreadyRegistered.self"));
                 
@@ -257,7 +269,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             
             int accountsPerIp = getConfig("config.yml").getInt("accounts-per-ip.amount");
             
-            if (accountsPerIp >= 0)
+            if (accountsPerIp >= 0 && !isTakingOver)
             {
                 int accountsWithIp = getAccountManager().selectAccounts(
                         Arrays.asList(keys().username(), keys().ip()),
@@ -285,61 +297,105 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             
             String username = player.getName().toLowerCase();
             
-            try
+            if (isTakingOver)
             {
-                ReportedException.incrementRequestCount();
-                
-                Account account = new Account(username, new Storage.Entry());
-                account.setUuid(player.getUniqueId());
-                account.changePassword(password);
-                account.setIp(PlayerUtils.getPlayerIp(player));
-                account.setLastActiveDate(System.currentTimeMillis() / 1000L);
-                account.setRegistrationDate(System.currentTimeMillis() / 1000L);
-                account.setDisplayName(player.getName());
-                
-                if (!getAccountManager().insertAccount(account).isCancelled())
+                try
                 {
-                    LogItCooldowns.activate(player, LogItCooldowns.REGISTER);
+                    ReportedException.incrementRequestCount();
                     
-                    sendMsg(sender, _("createAccount.success.self"));
+                    Account account = getAccountManager().selectAccount(username, Arrays.asList(
+                            keys().username()
+                    ));
                     
-                    if (!getSessionManager().startSession(player).isCancelled())
+                    account.changePassword(password);
+                    account.enqueueSaveCallback(new Account.SaveCallback()
                     {
-                        sendMsg(sender, _("startSession.success.self"));
-                    }
-                    
-                    boolean newbieTeleportEnabled = getConfig("config.yml")
-                            .getBoolean("waiting-room.newbie-teleport.enabled");
-                    
-                    if (getConfig("config.yml").getBoolean("waiting-room.enabled")
-                            && newbieTeleportEnabled)
-                    {
-                        Location newbieTeleportLocation = getConfig("config.yml")
-                                .getLocation("waiting-room.newbie-teleport.location")
-                                .toBukkitLocation();
-                        
-                        player.teleport(newbieTeleportLocation);
-                    }
-                    
-                    if (getConfig("config.yml").getBoolean("login-sessions.enabled"))
-                    {
-                        sendMsg(sender, _("rememberLogin.prompt"));
-                    }
-                    
-                    if (getConfig("config.yml").getBoolean("password-recovery.prompt-to-add-email")
-                            && getConfig("config.yml").getBoolean("password-recovery.enabled"))
-                    {
-                        sendMsg(sender, _("noEmailSet"));
-                    }
+                        @Override
+                        public void onSave(boolean success)
+                        {
+                            if (success)
+                            {
+                                sendMsg(sender, _("takeover.success"));
+                                
+                                if (!getSessionManager().startSession(player).isCancelled())
+                                {
+                                    sendMsg(sender, _("startSession.success.self"));
+                                }
+                            }
+                            else
+                            {
+                                sendMsg(sender, _("takeover.fail"));
+                            }
+                        }
+                    });
+                }
+                catch (ReportedException ex)
+                {
+                    sendMsg(sender, _("takeover.fail"));
+                }
+                finally
+                {
+                    ReportedException.decrementRequestCount();
                 }
             }
-            catch (ReportedException ex)
+            else
             {
-                sendMsg(sender, _("createAccount.fail.self"));
-            }
-            finally
-            {
-                ReportedException.decrementRequestCount();
+                try
+                {
+                    ReportedException.incrementRequestCount();
+                    
+                    Account account = new Account(username, new Storage.Entry());
+                    account.setUuid(player.getUniqueId());
+                    account.changePassword(password);
+                    account.setIp(PlayerUtils.getPlayerIp(player));
+                    account.setLastActiveDate(System.currentTimeMillis() / 1000L);
+                    account.setRegistrationDate(System.currentTimeMillis() / 1000L);
+                    account.setDisplayName(player.getName());
+                    
+                    if (!getAccountManager().insertAccount(account).isCancelled())
+                    {
+                        LogItCooldowns.activate(player, LogItCooldowns.REGISTER);
+                        
+                        sendMsg(sender, _("createAccount.success.self"));
+                        
+                        if (!getSessionManager().startSession(player).isCancelled())
+                        {
+                            sendMsg(sender, _("startSession.success.self"));
+                        }
+                        
+                        boolean newbieTeleportEnabled = getConfig("config.yml")
+                                .getBoolean("waiting-room.newbie-teleport.enabled");
+                        
+                        if (getConfig("config.yml").getBoolean("waiting-room.enabled")
+                                && newbieTeleportEnabled)
+                        {
+                            Location newbieTeleportLocation = getConfig("config.yml")
+                                    .getLocation("waiting-room.newbie-teleport.location")
+                                    .toBukkitLocation();
+                            
+                            player.teleport(newbieTeleportLocation);
+                        }
+                        
+                        if (getConfig("config.yml").getBoolean("login-sessions.enabled"))
+                        {
+                            sendMsg(sender, _("rememberLogin.prompt"));
+                        }
+                        
+                        if (getConfig("config.yml").getBoolean("password-recovery.prompt-to-add-email")
+                                && getConfig("config.yml").getBoolean("password-recovery.enabled"))
+                        {
+                            sendMsg(sender, _("noEmailSet"));
+                        }
+                    }
+                }
+                catch (ReportedException ex)
+                {
+                    sendMsg(sender, _("createAccount.fail.self"));
+                }
+                finally
+                {
+                    ReportedException.decrementRequestCount();
+                }
             }
         }
         else

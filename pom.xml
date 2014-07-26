@@ -149,6 +149,13 @@
             <artifactId>ProtocolLib</artifactId>
             <version>3.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.gmail.bukkitsmerf</groupId>
+            <artifactId>BukkitSmerf</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/BukkitSmerf.jar</systemPath>
+        </dependency>
     </dependencies>
     
     <build>

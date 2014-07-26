@@ -32,8 +32,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.UUID;
 import java.util.logging.Level;
 import javax.xml.bind.DatatypeConverter;
@@ -482,6 +484,19 @@ public final class Account extends LogItCoreObject
         return accountClone;
     }
     
+    public void enqueueSaveCallback(SaveCallback callback)
+    {
+        saveCallbacks.add(callback);
+    }
+    
+    /* package */ void runSaveCallbacks(boolean success)
+    {
+        while (!saveCallbacks.isEmpty())
+        {
+            saveCallbacks.remove().onSave(success);
+        }
+    }
+    
     private void fillWithDefaults()
     {
         entry.put(keys().uuid(), "");
@@ -504,5 +519,11 @@ public final class Account extends LogItCoreObject
         return entry;
     }
     
+    public static interface SaveCallback
+    {
+        public void onSave(boolean success);
+    }
+    
     private final Storage.Entry entry;
+    private final Queue<SaveCallback> saveCallbacks = new LinkedList<>();
 }

@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.listener;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
@@ -26,6 +27,7 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
+import io.github.lucaseasedup.logit.hooks.BukkitSmerfHook;
 import io.github.lucaseasedup.logit.hooks.VanishNoPacketHook;
 import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.session.Session;
@@ -271,6 +273,27 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             {
                 getMessageDispatcher().dispatchMessage(username, _("usernameCaseMismatch.warning")
                         .replace("{0}", displayName), 4L);
+            }
+            
+            boolean isPremium = BukkitSmerfHook.isPremium(player);
+            boolean premiumTakeoverEnabled = getConfig("config.yml")
+                    .getBoolean("premium-takeover.enabled");
+            String promptOn = getConfig("config.yml")
+                    .getString("premium-takeover.prompt-on");
+            
+            if (isPremium && premiumTakeoverEnabled && promptOn.equals("join"))
+            {
+                new BukkitRunnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        if (!getSessionManager().isSessionAlive(player))
+                        {
+                            sendMsg(player, _("takeover.prompt"));
+                        }
+                    }
+                }.runTaskLater(getPlugin(), 140L);
             }
         }
         
