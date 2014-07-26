@@ -91,7 +91,7 @@ public final class UnregisterCommand extends LogItCoreObject implements TabExecu
                 {
                     if (!getSessionManager().endSession(paramPlayer).isCancelled())
                     {
-                        sendMsg(paramPlayer, _("endSession.success.self"));
+                        sendMsg(paramPlayer, _("removeAccount.sessionEnded"));
                         sendMsg(sender, _("endSession.success.others")
                                 .replace("{0}", paramPlayer.getName()));
                     }
@@ -177,7 +177,7 @@ public final class UnregisterCommand extends LogItCoreObject implements TabExecu
             {
                 if (!getSessionManager().endSession(player).isCancelled())
                 {
-                    sendMsg(sender, _("endSession.success.self"));
+                    sendMsg(sender, _("removeAccount.sessionEnded"));
                 }
             }
             
