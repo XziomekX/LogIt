@@ -60,17 +60,17 @@ public abstract class LogItCoreObject implements Disposable
     
     protected final void log(Level level, String msg)
     {
-        core.log(level, msg);
+        getCore().log(level, msg);
     }
     
     protected final void log(Level level, String msg, Throwable throwable)
     {
-        core.log(level, msg, throwable);
+        getCore().log(level, msg, throwable);
     }
     
     protected final void log(Level level, Throwable throwable)
     {
-        core.log(level, throwable);
+        getCore().log(level, throwable);
     }
     
     protected final LogItCore getCore()
@@ -80,87 +80,87 @@ public abstract class LogItCoreObject implements Disposable
     
     protected final LogItPlugin getPlugin()
     {
-        return core.getPlugin();
+        return getCore().getPlugin();
     }
     
     protected final boolean isCoreStarted()
     {
-        return core.isStarted();
+        return getCore().isStarted();
     }
     
     protected final File getDataFolder()
     {
-        return core.getPlugin().getDataFolder();
+        return getCore().getPlugin().getDataFolder();
     }
     
     protected final File getDataFile(String path)
     {
-        return core.getDataFile(path);
+        return getCore().getDataFile(path);
     }
     
     protected final ConfigurationManager getConfigurationManager()
     {
-        return core.getConfigurationManager();
+        return getCore().getConfigurationManager();
     }
     
     protected final PredefinedConfiguration getConfig(String filename)
     {
-        return core.getConfig(filename);
+        return getCore().getConfig(filename);
     }
     
     protected final LocaleManager getLocaleManager()
     {
-        return core.getLocaleManager();
+        return getCore().getLocaleManager();
     }
     
     protected final AccountManager getAccountManager()
     {
-        return core.getAccountManager();
+        return getCore().getAccountManager();
     }
     
     protected final AccountKeys keys()
     {
-        return core.getAccountManager().getKeys();
+        return getCore().getAccountManager().getKeys();
     }
     
     protected final PersistenceManager getPersistenceManager()
     {
-        return core.getPersistenceManager();
+        return getCore().getPersistenceManager();
     }
     
     protected final BackupManager getBackupManager()
     {
-        return core.getBackupManager();
+        return getCore().getBackupManager();
     }
     
     protected final SessionManager getSessionManager()
     {
-        return core.getSessionManager();
+        return getCore().getSessionManager();
     }
     
     protected final LogItMessageDispatcher getMessageDispatcher()
     {
-        return core.getMessageDispatcher();
+        return getCore().getMessageDispatcher();
     }
     
     protected final LogItTabCompleter getTabCompleter()
     {
-        return core.getTabCompleter();
+        return getCore().getTabCompleter();
     }
     
     protected final ProfileManager getProfileManager()
     {
-        return core.getProfileManager();
+        return getCore().getProfileManager();
     }
     
     protected final GlobalPasswordManager getGlobalPasswordManager()
     {
-        return core.getGlobalPasswordManager();
+        return getCore().getGlobalPasswordManager();
     }
     
     protected final CooldownManager getCooldownManager()
     {
-        return core.getCooldownManager();
+        return getCore().getCooldownManager();
     }
     
     private final LogItCore core;

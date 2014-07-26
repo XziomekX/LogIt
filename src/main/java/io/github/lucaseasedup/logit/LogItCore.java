@@ -151,7 +151,7 @@ public final class LogItCore
         setUpAccountManager();
         setUpPersistenceManager();
         
-        backupManager = new BackupManager(accountManager);
+        backupManager = new BackupManager(getAccountManager());
         sessionManager = new SessionManager();
         messageDispatcher = new LogItMessageDispatcher();
         tabCompleter = new LogItTabCompleter();
@@ -462,7 +462,7 @@ public final class LogItCore
         {
             try
             {
-                persistenceManager.registerSerializer(clazz);
+                getPersistenceManager().registerSerializer(clazz);
             }
             catch (ReflectiveOperationException ex)
             {
@@ -487,7 +487,7 @@ public final class LogItCore
                 
                 if (account != null)
                 {
-                    persistenceManager.unserializeUsing(account, player, clazz);
+                    getPersistenceManager().unserializeUsing(account, player, clazz);
                 }
             }
         }
@@ -509,20 +509,20 @@ public final class LogItCore
     
     private void startTasks()
     {
-        accountManagerTask = Bukkit.getScheduler().runTaskTimer(plugin,
-                accountManager, 0L,
+        accountManagerTask = Bukkit.getScheduler().runTaskTimer(getPlugin(),
+                getAccountManager(), 0L,
                 getConfig("secret.yml").getTime("buffer-flush-interval", TimeUnit.TICKS));
-        backupManagerTask = Bukkit.getScheduler().runTaskTimer(plugin,
-                backupManager, 0L,
+        backupManagerTask = Bukkit.getScheduler().runTaskTimer(getPlugin(),
+                getBackupManager(), 0L,
                 BackupManager.TASK_PERIOD);
-        sessionManagerTask = Bukkit.getScheduler().runTaskTimer(plugin,
-                sessionManager, 0L,
+        sessionManagerTask = Bukkit.getScheduler().runTaskTimer(getPlugin(),
+                getSessionManager(), 0L,
                 SessionManager.TASK_PERIOD);
-        globalPasswordManagerTask = Bukkit.getScheduler().runTaskTimer(plugin,
-                globalPasswordManager, 0L,
+        globalPasswordManagerTask = Bukkit.getScheduler().runTaskTimer(getPlugin(),
+                getGlobalPasswordManager(), 0L,
                 GlobalPasswordManager.TASK_PERIOD);
-        accountWatcherTask = Bukkit.getScheduler().runTaskTimer(plugin,
-                accountWatcher, 0L,
+        accountWatcherTask = Bukkit.getScheduler().runTaskTimer(getPlugin(),
+                getAccountWatcher(), 0L,
                 AccountWatcher.TASK_PERIOD);
     }
     
@@ -552,7 +552,7 @@ public final class LogItCore
     {
         if (enabled)
         {
-            plugin.getCommand(command).setExecutor(executor);
+            getPlugin().getCommand(command).setExecutor(executor);
         }
         else
         {
@@ -567,16 +567,16 @@ public final class LogItCore
     
     private void registerEvents()
     {
-        PlayerCollections.registerListener(plugin);
+        PlayerCollections.registerListener(getPlugin());
         
-        Bukkit.getPluginManager().registerEvents(messageDispatcher, plugin);
-        Bukkit.getPluginManager().registerEvents(cooldownManager, plugin);
-        Bukkit.getPluginManager().registerEvents(new ServerEventListener(), plugin);
-        Bukkit.getPluginManager().registerEvents(new BlockEventListener(), plugin);
-        Bukkit.getPluginManager().registerEvents(new EntityEventListener(), plugin);
-        Bukkit.getPluginManager().registerEvents(new PlayerEventListener(), plugin);
-        Bukkit.getPluginManager().registerEvents(new InventoryEventListener(), plugin);
-        Bukkit.getPluginManager().registerEvents(new SessionEventListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(getMessageDispatcher(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(getCooldownManager(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new ServerEventListener(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new BlockEventListener(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new EntityEventListener(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new PlayerEventListener(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new InventoryEventListener(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new SessionEventListener(), getPlugin());
     }
     
     /**
@@ -594,16 +594,16 @@ public final class LogItCore
         
         disableCommands();
         
-        persistenceManager.unregisterSerializer(LocationSerializer.class);
-        persistenceManager.unregisterSerializer(AirBarSerializer.class);
-        persistenceManager.unregisterSerializer(HealthBarSerializer.class);
-        persistenceManager.unregisterSerializer(ExperienceSerializer.class);
-        persistenceManager.unregisterSerializer(HungerBarSerializer.class);
+        getPersistenceManager().unregisterSerializer(LocationSerializer.class);
+        getPersistenceManager().unregisterSerializer(AirBarSerializer.class);
+        getPersistenceManager().unregisterSerializer(HealthBarSerializer.class);
+        getPersistenceManager().unregisterSerializer(ExperienceSerializer.class);
+        getPersistenceManager().unregisterSerializer(HungerBarSerializer.class);
         
         try
         {
-            accountManager.flushBuffer();
-            accountManager.getStorage().close();
+            getAccountManager().flushBuffer();
+            getAccountManager().getStorage().close();
         }
         catch (IOException ex)
         {
@@ -613,7 +613,7 @@ public final class LogItCore
         Bukkit.getScheduler().cancelTasks(getPlugin());
         
         // Unregister all event listeners.
-        HandlerList.unregisterAll(plugin);
+        HandlerList.unregisterAll(getPlugin());
         
         if (logFileWriter != null)
         {
@@ -653,7 +653,7 @@ public final class LogItCore
     
     private void disableCommand(String command)
     {
-        plugin.getCommand(command).setExecutor(new DisabledCommandExecutor());
+        getPlugin().getCommand(command).setExecutor(new DisabledCommandExecutor());
     }
     
     /**
@@ -778,7 +778,7 @@ public final class LogItCore
         
         try
         {
-            plugin.reloadMessages(getConfig("config.yml").getString("locale"));
+            getPlugin().reloadMessages(getConfig("config.yml").getString("locale"));
         }
         catch (IOException ex)
         {
@@ -974,7 +974,7 @@ public final class LogItCore
         if (!VaultHook.isVaultEnabled())
             return;
         
-        if (accountManager.isRegistered(player.getName()))
+        if (getAccountManager().isRegistered(player.getName()))
         {
             VaultHook.playerRemoveGroup(player,
                     getConfig("config.yml").getString("groups.unregistered"));
@@ -989,7 +989,7 @@ public final class LogItCore
                     getConfig("config.yml").getString("groups.unregistered"));
         }
         
-        if (sessionManager.isSessionAlive(player))
+        if (getSessionManager().isSessionAlive(player))
         {
             VaultHook.playerRemoveGroup(player,
                     getConfig("config.yml").getString("groups.logged-out"));
@@ -1018,13 +1018,13 @@ public final class LogItCore
         if (player == null)
             throw new IllegalArgumentException();
         
-        if (tabApi == null)
+        if (getTabApi() == null)
             return;
         
-        tabApi.clearTab(player);
+        getTabApi().clearTab(player);
         
-        int horizSize = tabApi.getHorizSize();
-        int vertSize = tabApi.getVertSize();
+        int horizSize = getTabApi().getHorizSize();
+        int vertSize = getTabApi().getVertSize();
         int i = 0;
         int j = 0;
         
@@ -1050,7 +1050,7 @@ public final class LogItCore
                 ping = entityPlayer.getPing();
             }
             
-            tabApi.setTabString(player, j, i, p.getPlayerListName(), ping);
+            getTabApi().setTabString(player, j, i, p.getPlayerListName(), ping);
             
             i++;
             
@@ -1066,8 +1066,8 @@ public final class LogItCore
             }
         }
         
-        tabApi.updatePlayer(player);
-        tabApi.setPriority(player, 1);
+        getTabApi().updatePlayer(player);
+        getTabApi().setPriority(player, 1);
     }
     
     /**
@@ -1111,7 +1111,7 @@ public final class LogItCore
                 }
                 catch (IOException ex)
                 {
-                    plugin.getLogger().log(Level.WARNING, "Could not log to file.", ex);
+                    getPlugin().getLogger().log(Level.WARNING, "Could not log to file.", ex);
                 }
             }
             
@@ -1123,7 +1123,7 @@ public final class LogItCore
             }
         }
         
-        plugin.getLogger().log(level, ChatColor.stripColor(message));
+        getPlugin().getLogger().log(level, ChatColor.stripColor(message));
     }
     
     /**
@@ -1198,7 +1198,8 @@ public final class LogItCore
         }
         catch (IOException ex)
         {
-            plugin.getLogger().log(Level.WARNING, "Could not open log file for writing.", ex);
+            getPlugin().getLogger().log(Level.WARNING,
+                    "Could not open log file for writing.", ex);
         }
     }
     
@@ -1223,7 +1224,7 @@ public final class LogItCore
      */
     public File getDataFolder()
     {
-        return plugin.getDataFolder();
+        return getPlugin().getDataFolder();
     }
     
     /**
@@ -1270,10 +1271,10 @@ public final class LogItCore
         if (filename == null)
             throw new IllegalArgumentException();
         
-        if (configurationManager == null)
+        if (getConfigurationManager() == null)
             return null;
         
-        return configurationManager.getConfiguration(filename);
+        return getConfigurationManager().getConfiguration(filename);
     }
     
     /**
@@ -1348,6 +1349,16 @@ public final class LogItCore
     public CooldownManager getCooldownManager()
     {
         return cooldownManager;
+    }
+    
+    private AccountWatcher getAccountWatcher()
+    {
+        return accountWatcher;
+    }
+    
+    private TabAPI getTabApi()
+    {
+        return tabApi;
     }
     
     /**
