@@ -20,11 +20,11 @@ package io.github.lucaseasedup.logit.account;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import io.github.lucaseasedup.logit.CancelledState;
-import io.github.lucaseasedup.logit.CustomLevel;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.QueuedMap;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.logging.CustomLevel;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.Selector;

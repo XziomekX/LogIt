@@ -57,6 +57,7 @@ import io.github.lucaseasedup.logit.locale.EnglishLocale;
 import io.github.lucaseasedup.logit.locale.GermanLocale;
 import io.github.lucaseasedup.logit.locale.LocaleManager;
 import io.github.lucaseasedup.logit.locale.PolishLocale;
+import io.github.lucaseasedup.logit.logging.LogItCoreLogger;
 import io.github.lucaseasedup.logit.persistence.AirBarSerializer;
 import io.github.lucaseasedup.logit.persistence.ExperienceSerializer;
 import io.github.lucaseasedup.logit.persistence.HealthBarSerializer;
@@ -80,20 +81,14 @@ import io.github.lucaseasedup.logit.tabapi.TabAPI;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import io.github.lucaseasedup.logit.util.VaultHook;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
@@ -134,11 +129,7 @@ public final class LogItCore
         firstRun = !getDataFile("config.yml").exists();
         
         setUpConfiguration();
-        
-        if (getConfig("config.yml").getBoolean("logging.file.enabled"))
-        {
-            openLogFile(getConfig("config.yml").getString("logging.file.filename"));
-        }
+        setUpLogger();
         
         if (isFirstRun())
         {
@@ -241,6 +232,12 @@ public final class LogItCore
             
             FatalReportedException.throwNew(ex);
         }
+    }
+    
+    private void setUpLogger()
+    {
+        logger = new LogItCoreLogger(this);
+        logger.open();
     }
     
     private void doFirstRunStuff()
@@ -615,18 +612,6 @@ public final class LogItCore
         // Unregister all event listeners.
         HandlerList.unregisterAll(getPlugin());
         
-        if (logFileWriter != null)
-        {
-            try
-            {
-                logFileWriter.close();
-            }
-            catch (IOException ex)
-            {
-                log(Level.WARNING, "Could not close log file.", ex);
-            }
-        }
-        
         started = false;
         
         dispose();
@@ -670,6 +655,12 @@ public final class LogItCore
         {
             configurationManager.dispose();
             configurationManager = null;
+        }
+        
+        if (logger != null)
+        {
+            logger.close();
+            logger = null;
         }
         
         if (localeManager != null)
@@ -743,8 +734,6 @@ public final class LogItCore
             tabApi.onDisable();
             tabApi = null;
         }
-        
-        logFileWriter = null;
     }
     
     /**
@@ -1070,137 +1059,19 @@ public final class LogItCore
         getTabApi().setPriority(player, 1);
     }
     
-    /**
-     * Logs a message in the name of LogIt.
-     * 
-     * <p> The logger message will be saved in a log file if doing so is permitted
-     * by the appropriate configuration setting.
-     * 
-     * @param level   the message level.
-     * @param message the message to be logged.
-     * 
-     * @throws IllegalArgumentException if {@code level} or {@code message}
-     *                                  is {@code null}.
-     * 
-     * @see #log(Level, String, Throwable)
-     */
-    public void log(Level level, String message)
+    public void log(Level level, String msg)
     {
-        if (level == null || message == null)
-            throw new IllegalArgumentException();
-        
-        if (getConfig("config.yml") != null && getConfig("config.yml").isLoaded())
-        {
-            if (getConfig("config.yml").getBoolean("logging.file.enabled")
-                    && level.intValue() >= getConfig("config.yml").getInt("logging.file.level"))
-            {
-                if (logFileWriter == null)
-                {
-                    openLogFile(getConfig("config.yml").getString("logging.file.filename"));
-                }
-                
-                try
-                {
-                    logFileWriter.write(logDateFormat.format(new Date()));
-                    logFileWriter.write(" [");
-                    logFileWriter.write(level.getName());
-                    logFileWriter.write("] ");
-                    logFileWriter.write(ChatColor.stripColor(message));
-                    logFileWriter.write("\n");
-                    logFileWriter.flush();
-                }
-                catch (IOException ex)
-                {
-                    getPlugin().getLogger().log(Level.WARNING, "Could not log to file.", ex);
-                }
-            }
-            
-            if (getConfig("config.yml").getBoolean("logging.verbose-console"))
-            {
-                System.out.println("[" + level + "] " + ChatColor.stripColor(message));
-                
-                return;
-            }
-        }
-        
-        getPlugin().getLogger().log(level, ChatColor.stripColor(message));
+        getLogger().log(level, msg);
     }
     
-    /**
-     * Logs a message with a {@code Throwable} in the name of LogIt.
-     * 
-     * <p> The logger message will be saved in a log file if doing so is permitted
-     * by the appropriate configuration setting.
-     * 
-     * @param level     the message level.
-     * @param message   the message to be logged.
-     * @param throwable the throwable whose stack trace should be appended to the log.
-     * 
-     * @see #log(Level, String)
-     */
-    public void log(Level level, String message, Throwable throwable)
+    public void log(Level level, String msg, Throwable throwable)
     {
-        StringWriter sw = new StringWriter();
-        
-        try (PrintWriter pw = new PrintWriter(sw))
-        {
-            throwable.printStackTrace(pw);
-        }
-        
-        log(level, message + " [Exception stack trace:\n" + sw.toString() + "]");
+        getLogger().log(level, msg, throwable);
     }
     
-    /**
-     * Logs a {@code Throwable} in the name of LogIt.
-     * 
-     * <p> The logger message will be saved in a log file if doing so is permitted
-     * by the appropriate configuration setting.
-     * 
-     * @param level     the logging level.
-     * @param throwable the throwable to be logged.
-     * 
-     * @see #log(Level, String, Throwable)
-     */
     public void log(Level level, Throwable throwable)
     {
-        StringWriter sw = new StringWriter();
-        
-        try (PrintWriter pw = new PrintWriter(sw))
-        {
-            throwable.printStackTrace(pw);
-        }
-        
-        log(level, "Caught exception:\n" + sw.toString());
-    }
-    
-    private void openLogFile(String filename)
-    {
-        File logFile = getDataFile(filename);
-        
-        if (logFile.length() > 300000)
-        {
-            int suffix = 0;
-            File nextLogFile;
-            
-            do
-            {
-                suffix++;
-                nextLogFile = getDataFile(filename + "." + suffix);
-            }
-            while (nextLogFile.exists());
-            
-            logFile.renameTo(nextLogFile);
-        }
-        
-        try
-        {
-            logFileWriter = new FileWriter(logFile, true);
-        }
-        catch (IOException ex)
-        {
-            getPlugin().getLogger().log(Level.WARNING,
-                    "Could not open log file for writing.", ex);
-        }
+        getLogger().log(level, throwable);
     }
     
     /**
@@ -1296,6 +1167,11 @@ public final class LogItCore
         );
     }
     
+    public LogItCoreLogger getLogger()
+    {
+        return logger;
+    }
+    
     protected CraftReflect getCraftReflect()
     {
         return craftReflect;
@@ -1383,6 +1259,7 @@ public final class LogItCore
     private boolean started = false;
     
     private ConfigurationManager configurationManager;
+    private LogItCoreLogger logger;
     private CraftReflect craftReflect;
     private LocaleManager localeManager;
     private AccountManager accountManager;
@@ -1403,7 +1280,4 @@ public final class LogItCore
     private BukkitTask sessionManagerTask;
     private BukkitTask globalPasswordManagerTask;
     private BukkitTask accountWatcherTask;
-    
-    private FileWriter logFileWriter;
-    private final SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 }
