@@ -453,6 +453,9 @@ public final class Account extends LogItCoreObject
         if (persistence == null)
             throw new IllegalArgumentException();
         
+        if (!getConfig("secret.yml").getBoolean("debug.write-persistence"))
+            return;
+        
         Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
         
         persistenceIni.put("persistence", persistence);
