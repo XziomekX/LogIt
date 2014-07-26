@@ -151,8 +151,6 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                     {
                         Player paramPlayer = PlayerUtils.getPlayer(args[1]);
                         
-                        sendMsg(paramPlayer, _("createAccount.success.self"));
-                        
                         if (getSessionManager().getSession(paramPlayer) == null)
                         {
                             getSessionManager().createSession(paramPlayer);
@@ -160,9 +158,13 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         
                         if (!getSessionManager().startSession(paramPlayer).isCancelled())
                         {
-                            sendMsg(paramPlayer, _("startSession.success.self"));
+                            sendMsg(paramPlayer, _("createAccount.successAndLogin.self"));
                             sendMsg(sender, _("startSession.success.others")
                                     .replace("{0}", paramPlayer.getName()));
+                        }
+                        else
+                        {
+                            sendMsg(paramPlayer, _("createAccount.success.self"));
                         }
                         
                         boolean newbieTeleportEnabled = getConfig("config.yml")
@@ -356,11 +358,13 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                     {
                         LogItCooldowns.activate(player, LogItCooldowns.REGISTER);
                         
-                        sendMsg(sender, _("createAccount.success.self"));
-                        
                         if (!getSessionManager().startSession(player).isCancelled())
                         {
-                            sendMsg(sender, _("startSession.success.self"));
+                            sendMsg(sender, _("createAccount.successAndLogin.self"));
+                        }
+                        else
+                        {
+                            sendMsg(sender, _("createAccount.success.self"));
                         }
                         
                         boolean newbieTeleportEnabled = getConfig("config.yml")
