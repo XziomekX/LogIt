@@ -232,9 +232,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             }
         }
         
-        if (getConfig("config.yml").getBoolean("login-sessions.enabled") && validnessTime > 0)
+        if (account != null)
         {
-            if (account != null)
+            if (getConfig("config.yml").getBoolean("login-sessions.enabled") && validnessTime > 0)
             {
                 String loginSession = account.getLoginSession();
                 
@@ -256,17 +256,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                     }
                 }
             }
-            else if (getConfig("config.yml").getBoolean("waiting-room.enabled"))
-            {
-                LocationSerializable waitingRoomLocationSerializable =
-                        getConfig("config.yml").getLocation("waiting-room.location");
-                
-                player.teleport(waitingRoomLocationSerializable.toBukkitLocation());
-            }
-        }
-        
-        if (account != null)
-        {
+            
             String displayName = account.getDisplayName();
             
             if (!displayName.isEmpty() && !player.getName().equals(displayName)
@@ -295,6 +285,16 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                         }
                     }
                 }.runTaskLater(getPlugin(), 140L);
+            }
+        }
+        else
+        {
+            if (getConfig("config.yml").getBoolean("waiting-room.enabled"))
+            {
+                LocationSerializable waitingRoomLocationSerializable =
+                        getConfig("config.yml").getLocation("waiting-room.location");
+                
+                player.teleport(waitingRoomLocationSerializable.toBukkitLocation());
             }
         }
         
