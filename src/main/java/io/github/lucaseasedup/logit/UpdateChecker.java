@@ -1,5 +1,5 @@
 /*
- * LogItUpdateChecker.java
+ * UpdateChecker.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -31,9 +31,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public final class LogItUpdateChecker
+public final class UpdateChecker
 {
-    private LogItUpdateChecker()
+    private UpdateChecker()
     {
     }
     
