@@ -89,6 +89,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
@@ -617,6 +618,12 @@ public final class LogItCore
         dispose();
         
         log(Level.FINE, _("stopPlugin.success"));
+        
+        if (logger != null)
+        {
+            logger.close();
+            logger = null;
+        }
     }
     
     private void disableCommands()
@@ -655,12 +662,6 @@ public final class LogItCore
         {
             configurationManager.dispose();
             configurationManager = null;
-        }
-        
-        if (logger != null)
-        {
-            logger.close();
-            logger = null;
         }
         
         if (localeManager != null)
@@ -1061,17 +1062,38 @@ public final class LogItCore
     
     public void log(Level level, String msg)
     {
-        getLogger().log(level, msg);
+        if (getLogger() == null)
+        {
+            getPlugin().getLogger().log(level, ChatColor.stripColor(msg));
+        }
+        else
+        {
+            getLogger().log(level, msg);
+        }
     }
     
     public void log(Level level, String msg, Throwable throwable)
     {
-        getLogger().log(level, msg, throwable);
+        if (getLogger() == null)
+        {
+            getPlugin().getLogger().log(level, ChatColor.stripColor(msg), throwable);
+        }
+        else
+        {
+            getLogger().log(level, msg, throwable);
+        }
     }
     
     public void log(Level level, Throwable throwable)
     {
-        getLogger().log(level, throwable);
+        if (getLogger() == null)
+        {
+            getPlugin().getLogger().log(level, null, throwable);
+        }
+        else
+        {
+            getLogger().log(level, throwable);
+        }
     }
     
     /**
@@ -1167,7 +1189,7 @@ public final class LogItCore
         );
     }
     
-    public LogItCoreLogger getLogger()
+    private LogItCoreLogger getLogger()
     {
         return logger;
     }

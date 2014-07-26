@@ -65,17 +65,17 @@ public abstract class LogItCoreObject implements Disposable
     
     protected final void log(Level level, String msg)
     {
-        getCore().getLogger().log(level, msg);
+        getCore().log(level, msg);
     }
     
     protected final void log(Level level, String msg, Throwable throwable)
     {
-        getCore().getLogger().log(level, msg, throwable);
+        getCore().log(level, msg, throwable);
     }
     
     protected final void log(Level level, Throwable throwable)
     {
-        getCore().getLogger().log(level, throwable);
+        getCore().log(level, throwable);
     }
     
     protected final LogItPlugin getPlugin()
