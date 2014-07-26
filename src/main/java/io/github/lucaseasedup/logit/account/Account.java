@@ -408,12 +408,15 @@ public final class Account extends LogItCoreObject
         if (!entry.containsKey(keys().persistence()))
             throw new IllegalArgumentException("Missing key: persistence");
         
-        String persistenceBase64String = entry.get(keys().persistence());
+        String persistenceString = entry.get(keys().persistence());
         Map<String, String> persistence = new LinkedHashMap<>();
         
-        if (persistenceBase64String != null)
+        if (persistenceString != null)
         {
-            String persistenceString = Base64.decode(persistenceBase64String);
+            if (getConfig("secret.yml").getBoolean("debug.encode-persistence"))
+            {
+                persistenceString = Base64.decode(persistenceString);
+            }
             
             try
             {
@@ -462,7 +465,14 @@ public final class Account extends LogItCoreObject
         
         try
         {
-            entry.put(keys().persistence(), Base64.encode(IniUtils.serialize(persistenceIni)));
+            String persistenceString = IniUtils.serialize(persistenceIni);
+            
+            if (getConfig("secret.yml").getBoolean("debug.encode-persistence"))
+            {
+                persistenceString = Base64.encode(persistenceString);
+            }
+            
+            entry.put(keys().persistence(), persistenceString);
         }
         catch (IOException ex)
         {

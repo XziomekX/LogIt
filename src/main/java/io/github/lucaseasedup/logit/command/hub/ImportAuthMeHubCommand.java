@@ -252,8 +252,14 @@ public final class ImportAuthMeHubCommand extends HubCommand
                             
                             persistenceIni.put("persistence", persistence);
                             
-                            logItEntryBuilder.put(keys().persistence(),
-                                    Base64.encode(IniUtils.serialize(persistenceIni)));
+                            String persistenceString = IniUtils.serialize(persistenceIni);
+                            
+                            if (getConfig("secret.yml").getBoolean("debug.encode-persistence"))
+                            {
+                                persistenceString = Base64.encode(persistenceString);
+                            }
+                            
+                            logItEntryBuilder.put(keys().persistence(), persistenceString);
                         }
                         
                         logItEntries.add(logItEntryBuilder.build());
