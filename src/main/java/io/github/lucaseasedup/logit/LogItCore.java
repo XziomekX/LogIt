@@ -794,7 +794,7 @@ public final class LogItCore
     /**
      * Checks if a password is equal, after hashing, to {@code hashedPassword}.
      * 
-     * <p> If the <i>force-hashing-algorithm</i>
+     * <p> If the <i>debug.force-hashing-algorithm</i>
      * secret setting is set to <i>true</i>,
      * the global hashing algorithm (specified in the config file)
      * will be used instead of the provided {@code hashingAlgorithm}.
@@ -815,7 +815,7 @@ public final class LogItCore
         if (password == null || hashedPassword == null || hashingAlgorithm == null)
             throw new IllegalArgumentException();
         
-        if (getConfig("secret.yml").getBoolean("force-hashing-algorithm"))
+        if (getConfig("secret.yml").getBoolean("debug.force-hashing-algorithm"))
         {
             hashingAlgorithm = getDefaultHashingAlgorithm().name();
         }
@@ -841,7 +841,7 @@ public final class LogItCore
      * Checks if a password (with a salt appended) is equal,
      * after hashing, to {@code hashedPassword}.
      * 
-     * <p> If the <i>force-hashing-algorithm</i>
+     * <p> If the <i>debug.force-hashing-algorithm</i>
      * secret setting is set to <i>true</i>,
      * the global hashing algorithm (specified in the config file)
      * will be used instead of the provided {@code hashingAlgorithm}.
@@ -867,7 +867,7 @@ public final class LogItCore
         if (password == null || hashedPassword == null || salt == null || hashingAlgorithm == null)
             throw new IllegalArgumentException();
         
-        if (getConfig("secret.yml").getBoolean("force-hashing-algorithm"))
+        if (getConfig("secret.yml").getBoolean("debug.force-hashing-algorithm"))
         {
             hashingAlgorithm = getDefaultHashingAlgorithm().name();
         }

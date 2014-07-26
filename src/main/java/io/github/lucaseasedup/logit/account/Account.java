@@ -138,7 +138,7 @@ public final class Account extends LogItCoreObject
         String actualHashedPassword = entry.get(keys().password());
         String hashingAlgorithm = getCore().getDefaultHashingAlgorithm().name();
         
-        if (!getConfig("secret.yml").getBoolean("force-hashing-algorithm"))
+        if (!getConfig("secret.yml").getBoolean("debug.force-hashing-algorithm"))
         {
             String userHashingAlgorithm = entry.get(keys().hashing_algorithm());
             
