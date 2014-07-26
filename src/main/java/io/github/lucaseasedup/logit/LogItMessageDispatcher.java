@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.broadcastMsgExcept;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import io.github.lucaseasedup.logit.hooks.EssentialsHook;
 import io.github.lucaseasedup.logit.hooks.VanishNoPacketHook;
 import io.github.lucaseasedup.logit.locale.Locale;
 import io.github.lucaseasedup.logit.util.JoinMessageGenerator;
@@ -159,6 +160,9 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         if (VanishNoPacketHook.isVanished(player))
             return;
         
+        if (EssentialsHook.isVanished(player))
+            return;
+        
         String joinMessage = JoinMessageGenerator.generate(player,
                 getConfig("config.yml").getBoolean("messages.join.show-world"));
         
@@ -176,6 +180,9 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
             throw new IllegalArgumentException();
         
         if (VanishNoPacketHook.isVanished(player))
+            return;
+        
+        if (EssentialsHook.isVanished(player))
             return;
         
         String quitMessage = QuitMessageGenerator.generate(player);

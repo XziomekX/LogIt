@@ -44,6 +44,10 @@
             <name>Comphenix Repository</name>
             <url>http://repo.comphenix.net/content/groups/public</url>
         </repository>
+        <repository>
+            <id>ess-repo</id>
+            <url>http://repo.ess3.net/content/groups/essentials</url>
+        </repository>
     </repositories>
     
     <dependencies>
@@ -155,6 +159,11 @@
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>${basedir}/lib/BukkitSmerf.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>net.ess3</groupId>
+            <artifactId>Essentials</artifactId>
+            <version>2.13.1</version>
         </dependency>
     </dependencies>
     
