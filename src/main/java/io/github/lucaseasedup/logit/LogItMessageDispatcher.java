@@ -67,6 +67,11 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         }.runTaskLater(getPlugin(), delay);
     }
     
+    public void dispatchMessage(Player player, String message, long delay)
+    {
+        dispatchMessage(player.getName(), message, delay);
+    }
+    
     /**
      * Sends a message to the given player telling them either to log in or to register.
      * 
