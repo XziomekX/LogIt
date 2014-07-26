@@ -41,6 +41,7 @@ import io.github.lucaseasedup.logit.util.JoinMessageGenerator;
 import io.github.lucaseasedup.logit.util.QuitMessageGenerator;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -450,7 +451,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     }
     
     @EventHandler(priority = EventPriority.NORMAL)
-    private void onChat(AsyncPlayerChatEvent event)
+    private void onChat_NORMAL(AsyncPlayerChatEvent event)
     {
         if (!isCoreStarted())
             return;
@@ -469,6 +470,29 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             event.setCancelled(true);
             getMessageDispatcher().sendForceLoginMessage(player);
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    private void onChat_MONITOR(AsyncPlayerChatEvent event)
+    {
+        if (!isCoreStarted())
+            return;
+        
+        if (!getConfig("config.yml").getBoolean("force-login.hide-chat-messages"))
+            return;
+        
+        Iterator<Player> recipients = event.getRecipients().iterator();
+        
+        while (recipients.hasNext())
+        {
+            Player recipient = recipients.next();
+            
+            if (!getSessionManager().isSessionAlive(recipient)
+                    && getCore().isPlayerForcedToLogIn(recipient))
+            {
+                recipients.remove();
+            }
         }
     }
     
