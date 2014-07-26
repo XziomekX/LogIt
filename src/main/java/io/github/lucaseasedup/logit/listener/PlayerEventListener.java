@@ -35,6 +35,7 @@ import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorBinary;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.SelectorNegation;
+import io.github.lucaseasedup.logit.util.BlockUtils;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
 import io.github.lucaseasedup.logit.util.JoinMessageGenerator;
 import io.github.lucaseasedup.logit.util.QuitMessageGenerator;
@@ -311,6 +312,22 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             if (account != null)
             {
                 getCore().getPersistenceManager().serialize(account, player);
+            }
+            
+            if (!getConfig("config.yml").getBoolean("waiting-room.enabled"))
+            {
+                Location playerLocation = player.getLocation();
+                Block nearestBlockBelow = BlockUtils.getNearestBlockBelow(playerLocation);
+                
+                if (nearestBlockBelow.getType().equals(Material.PORTAL))
+                {
+                    playerLocation = BlockUtils.getNearestSafeSpace(playerLocation, 1000);
+                    
+                    if (playerLocation != null)
+                    {
+                        player.teleport(playerLocation);
+                    }
+                }
             }
             
             long promptPeriod = getConfig("config.yml")
