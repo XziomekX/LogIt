@@ -137,7 +137,11 @@ public final class LogItCore
             doFirstRunStuff();
         }
         
-        checkForUpdate();
+        if (getConfig("config.yml").getBoolean("check-for-updates"))
+        {
+            checkForUpdate();
+        }
+        
         setUpCraftReflect();
         setUpLocaleManager();
         setUpAccountManager();
