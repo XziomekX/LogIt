@@ -44,6 +44,9 @@ import io.github.lucaseasedup.logit.config.ConfigurationManager;
 import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
 import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
 import io.github.lucaseasedup.logit.cooldown.CooldownManager;
+import io.github.lucaseasedup.logit.craftreflect.CraftPlayer;
+import io.github.lucaseasedup.logit.craftreflect.CraftReflect;
+import io.github.lucaseasedup.logit.craftreflect.EntityPlayer;
 import io.github.lucaseasedup.logit.listener.BlockEventListener;
 import io.github.lucaseasedup.logit.listener.EntityEventListener;
 import io.github.lucaseasedup.logit.listener.InventoryEventListener;
@@ -143,6 +146,7 @@ public final class LogItCore
         }
         
         checkForUpdate();
+        setUpCraftReflect();
         setUpLocaleManager();
         setUpAccountManager();
         setUpPersistenceManager();
@@ -170,6 +174,15 @@ public final class LogItCore
                 {
                     tabApi = new TabAPI();
                     tabApi.onEnable();
+                    
+                    tabListUpdater = new BukkitRunnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            updateAllTabLists();
+                        }
+                    }.runTaskTimer(getPlugin(), 20L, 40L);
                 }
             }
         }.runTaskLater(getPlugin(), 1L);
@@ -276,6 +289,29 @@ public final class LogItCore
         catch (ParseException ex)
         {
             log(Level.WARNING, ex);
+        }
+    }
+    
+    private void setUpCraftReflect()
+    {
+        try
+        {
+            String version = LogItPlugin.getCraftBukkitVersion();
+            String craftClassName =
+                    "io.github.lucaseasedup.logit.craftreflect." + version + ".CraftReflect";
+            Class<?> craftClass = Class.forName(craftClassName);
+            
+            craftReflect = (CraftReflect) craftClass.getConstructor().newInstance();
+        }
+        catch (ClassNotFoundException ex)
+        {
+            log(Level.WARNING, "LogIt does not support this version of Bukkit."
+                    + " Some features may not work.");
+        }
+        catch (ReflectiveOperationException ex)
+        {
+            log(Level.WARNING, "Could not set up CraftBukkit reflection."
+                    + " Some features may not work.", ex);
         }
     }
     
@@ -574,11 +610,7 @@ public final class LogItCore
             log(Level.WARNING, "Could not close database connection.", ex);
         }
         
-        accountManagerTask.cancel();
-        sessionManagerTask.cancel();
-        accountWatcherTask.cancel();
-        globalPasswordManagerTask.cancel();
-        backupManagerTask.cancel();
+        Bukkit.getScheduler().cancelTasks(getPlugin());
         
         // Unregister all event listeners.
         HandlerList.unregisterAll(plugin);
@@ -1004,7 +1036,21 @@ public final class LogItCore
                 continue;
             }
             
-            tabApi.setTabString(player, j, i, p.getPlayerListName());
+            int ping;
+            
+            if (getCraftReflect() == null)
+            {
+                ping = 0;
+            }
+            else
+            {
+                CraftPlayer craftPlayer = getCraftReflect().getCraftPlayer(p);
+                EntityPlayer entityPlayer = craftPlayer.getHandle();
+                
+                ping = entityPlayer.getPing();
+            }
+            
+            tabApi.setTabString(player, j, i, p.getPlayerListName(), ping);
             
             i++;
             
@@ -1249,6 +1295,11 @@ public final class LogItCore
         );
     }
     
+    protected CraftReflect getCraftReflect()
+    {
+        return craftReflect;
+    }
+    
     public LocaleManager getLocaleManager()
     {
         return localeManager;
@@ -1321,6 +1372,7 @@ public final class LogItCore
     private boolean started = false;
     
     private ConfigurationManager configurationManager;
+    private CraftReflect craftReflect;
     private LocaleManager localeManager;
     private AccountManager accountManager;
     private PersistenceManager persistenceManager;
@@ -1334,6 +1386,7 @@ public final class LogItCore
     private AccountWatcher accountWatcher;
     private TabAPI tabApi;
     
+    private BukkitTask tabListUpdater;
     private BukkitTask accountManagerTask;
     private BukkitTask backupManagerTask;
     private BukkitTask sessionManagerTask;

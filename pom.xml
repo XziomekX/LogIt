@@ -59,12 +59,49 @@
             <version>1.7.9-R0.2</version>
             <scope>compile</scope>
         </dependency>
+        
+        <!--
+             <CraftBukkit>
+        -->
         <dependency>
             <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>1.7.9-R0.2-SNAPSHOT</version>
-            <scope>compile</scope>
+            <artifactId>craftbukkit-1.7.10-R0.1-20140716.024944-5</artifactId>
+            <version>1.7.10-R0.1-20140716.024944-5</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/craftbukkit-1.7.10-R0.1-20140716.024944-5.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit-1.7.9-R0.2</artifactId>
+            <version>1.7.9-R0.2</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/craftbukkit-1.7.9-R0.2.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit-1.7.5-R0.1-20140408.020329-16</artifactId>
+            <version>1.7.5-R0.1-20140408.020329-16</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/craftbukkit-1.7.5-R0.1-20140408.020329-16.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit-1.7.2-R0.3</artifactId>
+            <version>1.7.2-R0.3</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/craftbukkit-1.7.2-R0.3.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit-1.6.4-R2.0</artifactId>
+            <version>1.6.4-R2.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/craftbukkit-1.6.4-R2.0.jar</systemPath>
+        </dependency>
+        <!--
+             </CraftBukkit>
+        -->
+        
         <dependency>
             <groupId>org.mcstats.bukkit</groupId>
             <artifactId>metrics-lite</artifactId>
