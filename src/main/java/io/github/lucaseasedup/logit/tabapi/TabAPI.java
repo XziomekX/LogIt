@@ -239,9 +239,6 @@ public final class TabAPI implements Listener
         if (!player.isOnline())
             return;
         
-        r = 0;
-        e = 0;
-        
         TabObject tabObj = tabObjects.get(player.getName());
         
         if (tabObj == null)
@@ -356,7 +353,4 @@ public final class TabAPI implements Listener
     
     private final Map<Player, List<PacketContainer>> cachedPackets = new HashMap<>();
     private final Map<Player, Integer> updateSchedules = new HashMap<>();
-    
-    private int e = 0;
-    private int r = 0;
 }
