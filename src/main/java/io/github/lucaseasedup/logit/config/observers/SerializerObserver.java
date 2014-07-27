@@ -64,55 +64,60 @@ public final class SerializerObserver extends PropertyObserver
         
         if (clazz != null)
         {
-            update(clazz, p.getBoolean());
+            if (p.getBoolean())
+            {
+                enableSerializer(clazz);
+            }
+            else
+            {
+                disableSerializer(clazz);
+            }
         }
     }
     
-    private void update(Class<? extends PersistenceSerializer> clazz, boolean status)
+    private void enableSerializer(Class<? extends PersistenceSerializer> clazz)
     {
-        if (status)
+        for (Player player : Bukkit.getOnlinePlayers())
         {
-            for (Player player : Bukkit.getOnlinePlayers())
-            {
-                if (getSessionManager().isSessionAlive(player))
-                    continue;
-                
-                Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
-                        keys().username(),
-                        keys().persistence()
-                ));
-                
-                if (account != null)
-                {
-                    getPersistenceManager().serializeUsing(account, player, clazz);
-                }
-            }
+            if (getSessionManager().isSessionAlive(player))
+                continue;
             
-            try
+            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
+                    keys().username(),
+                    keys().persistence()
+            ));
+            
+            if (account != null)
             {
-                getPersistenceManager().registerSerializer(clazz);
-            }
-            catch (ReflectiveOperationException ex)
-            {
-                log(Level.WARNING, "Could not register serializer: " + clazz.getSimpleName(), ex);
+                getPersistenceManager().serializeUsing(account, player, clazz);
             }
         }
-        else
+        
+        try
         {
-            for (Player player : Bukkit.getOnlinePlayers())
-            {
-                Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
-                        keys().username(),
-                        keys().persistence()
-                ));
-                
-                if (account != null)
-                {
-                    getPersistenceManager().unserializeUsing(account, player, clazz);
-                }
-            }
-            
-            getPersistenceManager().unregisterSerializer(clazz);
+            getPersistenceManager().registerSerializer(clazz);
         }
+        catch (ReflectiveOperationException ex)
+        {
+            log(Level.WARNING, "Could not register serializer: " + clazz.getSimpleName(), ex);
+        }
+    }
+    
+    private void disableSerializer(Class<? extends PersistenceSerializer> clazz)
+    {
+        for (Player player : Bukkit.getOnlinePlayers())
+        {
+            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
+                    keys().username(),
+                    keys().persistence()
+            ));
+            
+            if (account != null)
+            {
+                getPersistenceManager().unserializeUsing(account, player, clazz);
+            }
+        }
+        
+        getPersistenceManager().unregisterSerializer(clazz);
     }
 }
