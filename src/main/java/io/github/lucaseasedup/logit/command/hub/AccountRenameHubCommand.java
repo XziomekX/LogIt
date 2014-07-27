@@ -76,6 +76,13 @@ public final class AccountRenameHubCommand extends HubCommand
             return;
         }
         
+        if (!args[1].matches(getConfig("secret.yml").getString("username.regex")))
+        {
+            sendMsg(sender, _("accountRename.usernameInvalid"));
+            
+            return;
+        }
+        
         if (CollectionUtils.containsIgnoreCase(args[1],
                 getConfig("config.yml").getStringList("prohibitedUsernames")))
         {
