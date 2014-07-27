@@ -136,7 +136,7 @@ public final class Account extends LogItCoreObject
             throw new IllegalArgumentException("Missing key: hashing_algorithm");
         
         String actualHashedPassword = entry.get(keys().password());
-        String hashingAlgorithm = getCore().getDefaultHashingAlgorithm().name();
+        String hashingAlgorithm = getSecurityHelper().getDefaultHashingAlgorithm().name();
         
         if (!getConfig("secret.yml").getBoolean("debug.forceHashingAlgorithm"))
         {
@@ -152,12 +152,12 @@ public final class Account extends LogItCoreObject
         {
             String actualSalt = entry.get(keys().salt());
             
-            return getCore().checkPassword(password, actualHashedPassword,
+            return getSecurityHelper().checkPassword(password, actualHashedPassword,
                     actualSalt, hashingAlgorithm);
         }
         else
         {
-            return getCore().checkPassword(password, actualHashedPassword,
+            return getSecurityHelper().checkPassword(password, actualHashedPassword,
                     hashingAlgorithm);
         }
     }
@@ -183,7 +183,7 @@ public final class Account extends LogItCoreObject
         if (getConfig("config.yml").getBoolean("passwords.disable"))
             return;
         
-        HashingAlgorithm hashingAlgorithm = getCore().getDefaultHashingAlgorithm();
+        HashingAlgorithm hashingAlgorithm = getSecurityHelper().getDefaultHashingAlgorithm();
         String newHash;
         
         if (getConfig("config.yml").getBoolean("passwords.useSalt"))

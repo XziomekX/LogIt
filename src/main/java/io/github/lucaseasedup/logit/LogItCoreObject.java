@@ -28,6 +28,7 @@ import io.github.lucaseasedup.logit.cooldown.CooldownManager;
 import io.github.lucaseasedup.logit.locale.LocaleManager;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.profile.ProfileManager;
+import io.github.lucaseasedup.logit.security.SecurityHelper;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import java.io.File;
 import java.util.logging.Level;
@@ -126,6 +127,11 @@ public abstract class LogItCoreObject implements Disposable
     protected final PersistenceManager getPersistenceManager()
     {
         return getCore().getPersistenceManager();
+    }
+    
+    protected final SecurityHelper getSecurityHelper()
+    {
+        return getCore().getSecurityHelper();
     }
     
     protected final BackupManager getBackupManager()

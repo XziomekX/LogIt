@@ -67,9 +67,6 @@ import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
 import io.github.lucaseasedup.logit.profile.ProfileManager;
-import io.github.lucaseasedup.logit.security.AuthMePasswordHelper;
-import io.github.lucaseasedup.logit.security.BCrypt;
-import io.github.lucaseasedup.logit.security.HashingAlgorithm;
 import io.github.lucaseasedup.logit.security.SecurityHelper;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.storage.CacheType;
@@ -148,6 +145,7 @@ public final class LogItCore
         setUpAccountManager();
         setUpPersistenceManager();
         
+        securityHelper = new SecurityHelper();
         backupManager = new BackupManager(getAccountManager());
         sessionManager = new SessionManager();
         messageDispatcher = new LogItMessageDispatcher();
@@ -686,6 +684,8 @@ public final class LogItCore
             persistenceManager = null;
         }
         
+        securityHelper = null;
+        
         if (backupManager != null)
         {
             backupManager.dispose();
@@ -794,122 +794,6 @@ public final class LogItCore
         }
         
         log(Level.INFO, _("reloadPlugin.success"));
-    }
-    
-    /**
-     * Checks if a password is equal, after hashing, to {@code hashedPassword}.
-     * 
-     * <p> If the <i>debug.forceHashingAlgorithm</i>
-     * secret setting is set to <i>true</i>,
-     * the global hashing algorithm (specified in the config file)
-     * will be used instead of the provided {@code hashingAlgorithm}.
-     * 
-     * @param password         the password to be checked.
-     * @param hashedPassword   the hashed password.
-     * @param hashingAlgorithm the algorithm used when hashing {@code hashedPassword}.
-     * 
-     * @return {@code true} if passwords match; {@code false} otherwise.
-     * 
-     * @throws IllegalArgumentException if {@code password}, {@code hashedPassword}
-     *                                  or {@code hashingAlgorithm} is {@code null}.
-     * 
-     * @see #checkPassword(String, String, String, String)
-     */
-    public boolean checkPassword(String password, String hashedPassword, String hashingAlgorithm)
-    {
-        if (password == null || hashedPassword == null || hashingAlgorithm == null)
-            throw new IllegalArgumentException();
-        
-        if (getConfig("secret.yml").getBoolean("debug.forceHashingAlgorithm"))
-        {
-            hashingAlgorithm = getDefaultHashingAlgorithm().name();
-        }
-        
-        HashingAlgorithm algorithmType = HashingAlgorithm.decode(hashingAlgorithm);
-        
-        if (algorithmType == HashingAlgorithm.BCRYPT)
-        {
-            return BCrypt.checkpw(password, hashedPassword);
-        }
-        else if (algorithmType == HashingAlgorithm.AUTHME)
-        {
-            return AuthMePasswordHelper.comparePasswordWithHash(password, hashedPassword,
-                    hashingAlgorithm.replaceAll("^authme:", ""));
-        }
-        else
-        {
-            return hashedPassword.equals(SecurityHelper.hash(password, algorithmType));
-        }
-    }
-    
-    /**
-     * Checks if a password (with a salt appended) is equal,
-     * after hashing, to {@code hashedPassword}.
-     * 
-     * <p> If the <i>debug.forceHashingAlgorithm</i>
-     * secret setting is set to <i>true</i>,
-     * the global hashing algorithm (specified in the config file)
-     * will be used instead of the provided {@code hashingAlgorithm}.
-     * 
-     * @param password         the password to be checked.
-     * @param hashedPassword   the hashed password.
-     * @param salt             the salt for the passwords.
-     * @param hashingAlgorithm the algorithm used when hashing {@code hashedPassword}.
-     * 
-     * @return {@code true} if passwords match; {@code false} otherwise.
-     * 
-     * @throws IllegalArgumentException if {@code password}, {@code hashedPassword},
-     *                                  {@code salt} or {@code hashingAlgorithm} is
-     *                                  {@code null}.
-     * 
-     * @see #checkPassword(String, String, String)
-     */
-    public boolean checkPassword(String password,
-                                 String hashedPassword,
-                                 String salt,
-                                 String hashingAlgorithm)
-    {
-        if (password == null || hashedPassword == null || salt == null || hashingAlgorithm == null)
-            throw new IllegalArgumentException();
-        
-        if (getConfig("secret.yml").getBoolean("debug.forceHashingAlgorithm"))
-        {
-            hashingAlgorithm = getDefaultHashingAlgorithm().name();
-        }
-        
-        HashingAlgorithm algorithmType = HashingAlgorithm.decode(hashingAlgorithm);
-        
-        if (algorithmType == HashingAlgorithm.BCRYPT)
-        {
-            try
-            {
-                return BCrypt.checkpw(password, hashedPassword);
-            }
-            catch (IllegalArgumentException ex)
-            {
-                return false;
-            }
-        }
-        else if (algorithmType == HashingAlgorithm.AUTHME)
-        {
-            return AuthMePasswordHelper.comparePasswordWithHash(password, hashedPassword,
-                    hashingAlgorithm.replaceAll("^authme:", ""));
-        }
-        else
-        {
-            if (getConfig("config.yml").getBoolean("passwords.useSalt"))
-            {
-                return hashedPassword.equals(
-                        SecurityHelper.hash(password, salt, algorithmType)
-                );
-            }
-            else
-            {
-                return hashedPassword.equals(
-                        SecurityHelper.hash(password, algorithmType)
-                );
-            }
-        }
     }
     
     /**
@@ -1174,18 +1058,6 @@ public final class LogItCore
         return getConfigurationManager().getConfiguration(filename);
     }
     
-    /**
-     * Returns the default hashing algorithm specified in the config file.
-     * 
-     * @return the default hashing algorithm.
-     */
-    public HashingAlgorithm getDefaultHashingAlgorithm()
-    {
-        return HashingAlgorithm.decode(
-                getConfig("config.yml").getString("passwords.hashingAlgorithm")
-        );
-    }
-    
     public Location getWaitingRoomLocation()
     {
         return getConfig("config.yml").getLocation("waitingRoom.location").toBukkitLocation();
@@ -1221,6 +1093,11 @@ public final class LogItCore
     public PersistenceManager getPersistenceManager()
     {
         return persistenceManager;
+    }
+    
+    public SecurityHelper getSecurityHelper()
+    {
+        return securityHelper;
     }
     
     public BackupManager getBackupManager()
@@ -1295,6 +1172,7 @@ public final class LogItCore
     private LocaleManager localeManager;
     private AccountManager accountManager;
     private PersistenceManager persistenceManager;
+    private SecurityHelper securityHelper;
     private BackupManager backupManager;
     private SessionManager sessionManager;
     private LogItMessageDispatcher messageDispatcher;
