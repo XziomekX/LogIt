@@ -604,7 +604,6 @@ public final class LogItCore
         
         try
         {
-            getAccountManager().flushBuffer();
             getAccountManager().getStorage().close();
         }
         catch (IOException ex)

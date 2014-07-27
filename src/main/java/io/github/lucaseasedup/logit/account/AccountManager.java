@@ -19,6 +19,9 @@
 package io.github.lucaseasedup.logit.account;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import io.github.lucaseasedup.logit.storage.StorageObserver;
+import io.github.lucaseasedup.logit.storage.StorageObserver;
+import io.github.lucaseasedup.logit.storage.WrapperStorage;
 import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.QueuedMap;
@@ -53,7 +56,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @param unit    the name of a unit eligible for account storage.
      * @param keys    the account keys present in the specified unit.
      */
-    public AccountManager(Storage storage, String unit, AccountKeys keys)
+    public AccountManager(WrapperStorage storage, String unit, AccountKeys keys)
     {
         if (storage == null || unit == null || keys == null)
             throw new IllegalArgumentException();
@@ -69,6 +72,15 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         {
             throw new RuntimeException(ex);
         }
+        
+        storage.addObserver(new StorageObserver()
+        {
+            @Override
+            public void beforeClose()
+            {
+                flushBuffer();
+            }
+        });
         
         this.storage = storage;
         this.unit = unit;
@@ -495,9 +507,12 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         }
     }
     
-    public void flushBuffer()
+    private void flushBuffer()
     {
         if (buffer == null || buffer.isEmpty())
+            return;
+        
+        if (storage == null)
             return;
         
         Map<String, Account> dirtyAccounts = new HashMap<>();

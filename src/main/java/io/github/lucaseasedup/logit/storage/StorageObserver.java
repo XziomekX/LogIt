@@ -3,15 +3,41 @@ package io.github.lucaseasedup.logit.storage;
 import io.github.lucaseasedup.logit.storage.Storage.DataType;
 import java.util.Hashtable;
 
-public interface StorageObserver
+public abstract class StorageObserver
 {
-    public abstract void createUnit(String unit, Hashtable<String, DataType> keys);
-    public abstract void renameUnit(String unit, String newName);
-    public abstract void eraseUnit(String unit);
-    public abstract void removeUnit(String unit);
+    public void beforeClose()
+    {
+    }
     
-    public abstract void addKey(String unit, String key, DataType type);
-    public abstract void addEntry(String unit, Storage.Entry entry);
-    public abstract void updateEntries(String unit, Storage.Entry entrySubset, Selector selector);
-    public abstract void removeEntries(String unit, Selector selector);
+    public void afterCreateUnit(String unit, Hashtable<String, DataType> keys)
+    {
+    }
+    
+    public void afterRenameUnit(String unit, String newName)
+    {
+    }
+    
+    public void afterEraseUnit(String unit)
+    {
+    }
+    
+    public void afterRemoveUnit(String unit)
+    {
+    }
+    
+    public void afterAddKey(String unit, String key, DataType type)
+    {
+    }
+    
+    public void afterAddEntry(String unit, Storage.Entry entry)
+    {
+    }
+    
+    public void afterUpdateEntries(String unit, Storage.Entry entrySubset, Selector selector)
+    {
+    }
+    
+    public void afterRemoveEntries(String unit, Selector selector)
+    {
+    }
 }

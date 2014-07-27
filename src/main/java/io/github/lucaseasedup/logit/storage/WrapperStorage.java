@@ -109,6 +109,11 @@ public final class WrapperStorage extends Storage
     @Override
     public void close() throws IOException
     {
+        for (StorageObserver o : obs)
+        {
+            o.beforeClose();
+        }
+        
         log(CustomLevel.INTERNAL, "WrapperStorage#close()");
         
         leading.close();
@@ -296,7 +301,7 @@ public final class WrapperStorage extends Storage
         
         for (StorageObserver o : obs)
         {
-            o.createUnit(unit, keys);
+            o.afterCreateUnit(unit, keys);
         }
     }
     
@@ -335,7 +340,7 @@ public final class WrapperStorage extends Storage
         
         for (StorageObserver o : obs)
         {
-            o.renameUnit(unit, newName);
+            o.afterRenameUnit(unit, newName);
         }
     }
     
@@ -366,7 +371,7 @@ public final class WrapperStorage extends Storage
         
         for (StorageObserver o : obs)
         {
-            o.eraseUnit(unit);
+            o.afterEraseUnit(unit);
         }
     }
     
@@ -397,7 +402,7 @@ public final class WrapperStorage extends Storage
         
         for (StorageObserver o : obs)
         {
-            o.removeUnit(unit);
+            o.afterRemoveUnit(unit);
         }
     }
     
@@ -433,7 +438,7 @@ public final class WrapperStorage extends Storage
         
         for (StorageObserver o : obs)
         {
-            o.addKey(unit, key, type);
+            o.afterAddKey(unit, key, type);
         }
     }
     
@@ -465,7 +470,7 @@ public final class WrapperStorage extends Storage
         
         for (StorageObserver o : obs)
         {
-            o.addEntry(unit, entry);
+            o.afterAddEntry(unit, entry);
         }
     }
     
@@ -510,7 +515,7 @@ public final class WrapperStorage extends Storage
         
         for (StorageObserver o : obs)
         {
-            o.updateEntries(unit, entrySubset, selector);
+            o.afterUpdateEntries(unit, entrySubset, selector);
         }
     }
     
@@ -552,7 +557,7 @@ public final class WrapperStorage extends Storage
         
         for (StorageObserver o : obs)
         {
-            o.removeEntries(unit, selector);
+            o.afterRemoveEntries(unit, selector);
         }
     }
     
