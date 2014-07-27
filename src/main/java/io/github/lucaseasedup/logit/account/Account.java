@@ -225,7 +225,7 @@ public final class Account extends LogItCoreObject
         
         try
         {
-            if (getCore().getIntegration() == IntegrationType.PHPBB2)
+            if (getCore().getIntegrationType() == IntegrationType.PHPBB2)
             {
                 byte[] rawAddress = InetAddress.getByName(ip).getAddress();
                 

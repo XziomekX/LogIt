@@ -1063,7 +1063,7 @@ public final class LogItCore
         return getConfig("config.yml").getLocation("waitingRoom.location").toBukkitLocation();
     }
     
-    public IntegrationType getIntegration()
+    public IntegrationType getIntegrationType()
     {
         return IntegrationType.decode(
                 getConfig("config.yml").getString("integration")
