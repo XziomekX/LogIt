@@ -542,6 +542,9 @@ public final class Account extends LogItCoreObject
         public void onSave(boolean success);
     }
     
+    public static final boolean LOGIN_SUCCESS = true;
+    public static final boolean LOGIN_FAIL = false;
+    
     private final Storage.Entry entry;
     private final Queue<SaveCallback> saveCallbacks = new LinkedList<>();
 }

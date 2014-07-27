@@ -241,7 +241,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     
                     if (getConfig("config.yml").getBoolean("loginHistory.enabled"))
                     {
-                        account.recordLogin(currentTimeSecs, playerIp, false);
+                        account.recordLogin(currentTimeSecs, playerIp, Account.LOGIN_FAIL);
                     }
                     
                     boolean isPremium = BukkitSmerfHook.isPremium(player);
@@ -289,7 +289,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 
                 if (getConfig("config.yml").getBoolean("loginHistory.enabled"))
                 {
-                    account.recordLogin(currentTimeSecs, playerIp, true);
+                    account.recordLogin(currentTimeSecs, playerIp, Account.LOGIN_SUCCESS);
                 }
                 
                 if (account.getIp().trim().isEmpty())
