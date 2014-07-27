@@ -44,9 +44,7 @@ import io.github.lucaseasedup.logit.config.ConfigurationManager;
 import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
 import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
 import io.github.lucaseasedup.logit.cooldown.CooldownManager;
-import io.github.lucaseasedup.logit.craftreflect.CraftPlayer;
 import io.github.lucaseasedup.logit.craftreflect.CraftReflect;
-import io.github.lucaseasedup.logit.craftreflect.EntityPlayer;
 import io.github.lucaseasedup.logit.hooks.VaultHook;
 import io.github.lucaseasedup.logit.listener.BlockEventListener;
 import io.github.lucaseasedup.logit.listener.EntityEventListener;
@@ -169,18 +167,11 @@ public final class LogItCore
                 {
                     tabApi = new TabAPI();
                     tabApi.onEnable();
-                    
-                    tabListUpdater = new BukkitRunnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            updateAllTabLists();
-                        }
-                    }.runTaskTimer(getPlugin(), 20L, 40L);
                 }
             }
         }.runTaskLater(getPlugin(), 1L);
+        
+        tabListUpdater = new TabListUpdater();
         
         startTasks();
         enableCommands();
@@ -525,6 +516,9 @@ public final class LogItCore
         accountWatcherTask = Bukkit.getScheduler().runTaskTimer(getPlugin(),
                 getAccountWatcher(), 0L,
                 AccountWatcher.TASK_PERIOD);
+        tabListUpdaterTask = Bukkit.getScheduler().runTaskTimer(getPlugin(),
+                tabListUpdater, 20L,
+                TabListUpdater.TASK_PERIOD);
     }
     
     private void enableCommands()
@@ -572,6 +566,7 @@ public final class LogItCore
         
         Bukkit.getPluginManager().registerEvents(getMessageDispatcher(), getPlugin());
         Bukkit.getPluginManager().registerEvents(getCooldownManager(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(getTabListUpdater(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new ServerEventListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new BlockEventListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new EntityEventListener(), getPlugin());
@@ -739,6 +734,8 @@ public final class LogItCore
             tabApi.onDisable();
             tabApi = null;
         }
+        
+        tabListUpdater = null;
     }
     
     /**
@@ -881,71 +878,6 @@ public final class LogItCore
             VaultHook.playerAddGroup(player,
                     getConfig("config.yml").getString("groups.loggedOut"));
         }
-    }
-    
-    public void updateAllTabLists()
-    {
-        for (Player player : Bukkit.getOnlinePlayers())
-        {
-            updateTabList(player);
-        }
-    }
-    
-    private void updateTabList(Player player)
-    {
-        if (player == null)
-            throw new IllegalArgumentException();
-        
-        if (getTabApi() == null)
-            return;
-        
-        getTabApi().clearTab(player);
-        
-        int horizSize = getTabApi().getHorizSize();
-        int vertSize = getTabApi().getVertSize();
-        int i = 0;
-        int j = 0;
-        
-        for (Player p : Bukkit.getOnlinePlayers())
-        {
-            if (!getSessionManager().isSessionAlive(p) && !p.equals(player)
-                    && getConfig("config.yml").getBoolean("forceLogin.hideFromTabList"))
-            {
-                continue;
-            }
-            
-            int ping;
-            
-            if (getCraftReflect() == null)
-            {
-                ping = 0;
-            }
-            else
-            {
-                CraftPlayer craftPlayer = getCraftReflect().getCraftPlayer(p);
-                EntityPlayer entityPlayer = craftPlayer.getHandle();
-                
-                ping = entityPlayer.getPing();
-            }
-            
-            getTabApi().setTabString(player, j, i, p.getPlayerListName(), ping);
-            
-            i++;
-            
-            if (i >= horizSize)
-            {
-                i = 0;
-                j++;
-            }
-            
-            if (j >= vertSize)
-            {
-                break;
-            }
-        }
-        
-        getTabApi().updatePlayer(player);
-        getTabApi().setPriority(player, 1);
     }
     
     public void log(Level level, String msg)
@@ -1140,9 +1072,14 @@ public final class LogItCore
         return accountWatcher;
     }
     
-    private TabAPI getTabApi()
+    /* package */ TabAPI getTabApi()
     {
         return tabApi;
+    }
+    
+    public TabListUpdater getTabListUpdater()
+    {
+        return tabListUpdater;
     }
     
     /**
@@ -1182,8 +1119,9 @@ public final class LogItCore
     private CooldownManager cooldownManager;
     private AccountWatcher accountWatcher;
     private TabAPI tabApi;
+    private TabListUpdater tabListUpdater;
     
-    private BukkitTask tabListUpdater;
+    private BukkitTask tabListUpdaterTask;
     private BukkitTask accountManagerTask;
     private BukkitTask backupManagerTask;
     private BukkitTask sessionManagerTask;

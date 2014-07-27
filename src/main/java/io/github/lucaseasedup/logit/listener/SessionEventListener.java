@@ -69,8 +69,6 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
                 {
                     getMessageDispatcher().broadcastJoinMessage(player);
                 }
-                
-                getCore().updateAllTabLists();
             }
         }.runTaskLater(getPlugin(), 1L);
         

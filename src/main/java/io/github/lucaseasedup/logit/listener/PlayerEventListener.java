@@ -358,15 +358,6 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             getCore().updatePlayerGroup(player);
         }
-        
-        new BukkitRunnable()
-        {
-            @Override
-            public void run()
-            {
-                getCore().updateAllTabLists();
-            }
-        }.runTaskLater(getPlugin(), 1L);
     }
     
     @EventHandler(priority = EventPriority.LOW)
@@ -397,15 +388,6 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             event.setQuitMessage(null);
         }
-        
-        new BukkitRunnable()
-        {
-            @Override
-            public void run()
-            {
-                getCore().updateAllTabLists();
-            }
-        }.runTaskLater(getPlugin(), 1L);
     }
     
     @EventHandler(priority = EventPriority.NORMAL)

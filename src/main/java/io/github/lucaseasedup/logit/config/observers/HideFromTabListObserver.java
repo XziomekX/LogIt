@@ -26,6 +26,6 @@ public final class HideFromTabListObserver extends PropertyObserver
     @Override
     public void update(Property p)
     {
-        getCore().updateAllTabLists();
+        getCore().getTabListUpdater().updateAllTabLists();
     }
 }
