@@ -113,19 +113,19 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
             );
             
             final String from = getConfig("config.yml")
-                    .getString("mail.sending.emailAddress");
+                    .getString("mailSending.emailAddress");
             
             final String smtpHost = getConfig("config.yml")
-                    .getString("mail.sending.smtpHost");
+                    .getString("mailSending.smtp.host");
             
             final int smtpPort = getConfig("config.yml")
-                    .getInt("mail.sending.smtpPort");
+                    .getInt("mailSending.smtp.port");
             
             final String smtpUser = getConfig("config.yml")
-                    .getString("mail.sending.smtpUser");
+                    .getString("mailSending.smtp.user");
             
             final String smtpPassword = getConfig("config.yml")
-                    .getString("mail.sending.smtpPassword");
+                    .getString("mailSending.smtp.password");
             
             final String subject = getConfig("config.yml")
                     .getString("passwordRecovery.subject")
