@@ -201,11 +201,6 @@ public final class TabAPI implements Listener
         getTab(player).setPriority(this, priority);
     }
     
-    public void setTabString(Player player, int x, int y, String msg)
-    {
-        setTabString(player, x, y, msg, 0);
-    }
-    
     /**
      * Set the tab for a player. 
      * 
@@ -220,11 +215,19 @@ public final class TabAPI implements Listener
      */
     public void setTabString(Player player, int x, int y, String msg, int ping)
     {
+        if (!player.isOnline())
+            return;
+        
         TabObject tabObj = getTab(player);
         
         tabObj.setTab(this, x, y, msg, ping);
         
         tabObjects.put(player.getName(), tabObj);
+    }
+    
+    public void setTabString(Player player, int x, int y, String msg)
+    {
+        setTabString(player, x, y, msg, 0);
     }
     
     /**
