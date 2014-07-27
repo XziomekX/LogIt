@@ -115,10 +115,6 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             event.disallow(KICK_OTHER, _("usernameBlank"));
         }
-        else if (!player.getName().matches(getConfig("secret.yml").getString("username.regex")))
-        {
-            event.disallow(KICK_OTHER, _("usernameInvalid"));
-        }
         else if (username.length() < minUsernameLength)
         {
             event.disallow(KICK_OTHER, _("usernameTooShort")
@@ -128,6 +124,10 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             event.disallow(KICK_OTHER, _("usernameTooLong")
                     .replace("{0}", String.valueOf(maxUsernameLength)));
+        }
+        else if (!player.getName().matches(getConfig("secret.yml").getString("username.regex")))
+        {
+            event.disallow(KICK_OTHER, _("usernameInvalid"));
         }
         else if (CollectionUtils.containsIgnoreCase(username,
                 getConfig("config.yml").getStringList("prohibitedUsernames")))
