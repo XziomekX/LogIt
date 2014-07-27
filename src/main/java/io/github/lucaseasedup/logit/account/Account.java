@@ -123,7 +123,7 @@ public final class Account extends LogItCoreObject
         if (password == null)
             throw new IllegalArgumentException();
         
-        if (getConfig("config.yml").getBoolean("password.disable-passwords"))
+        if (getConfig("config.yml").getBoolean("passwords.disable"))
             return true;
         
         if (!entry.containsKey(keys().salt()))
@@ -148,7 +148,7 @@ public final class Account extends LogItCoreObject
             }
         }
         
-        if (getConfig("config.yml").getBoolean("password.use-salt"))
+        if (getConfig("config.yml").getBoolean("passwords.use-salt"))
         {
             String actualSalt = entry.get(keys().salt());
             
@@ -180,13 +180,13 @@ public final class Account extends LogItCoreObject
         if (newPassword == null)
             throw new IllegalArgumentException();
         
-        if (getConfig("config.yml").getBoolean("password.disable-passwords"))
+        if (getConfig("config.yml").getBoolean("passwords.disable"))
             return;
         
         HashingAlgorithm hashingAlgorithm = getCore().getDefaultHashingAlgorithm();
         String newHash;
         
-        if (getConfig("config.yml").getBoolean("password.use-salt"))
+        if (getConfig("config.yml").getBoolean("passwords.use-salt"))
         {
             String newSalt = SecurityHelper.generateSalt(hashingAlgorithm);
             

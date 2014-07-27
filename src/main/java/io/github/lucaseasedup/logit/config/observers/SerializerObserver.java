@@ -45,19 +45,19 @@ public final class SerializerObserver extends PropertyObserver
             clazz = LocationSerializer.class;
             break;
             
-        case "force-login.obfuscate-bars.air":
+        case "force-login.obfuscate.air":
             clazz = AirBarSerializer.class;
             break;
 
-        case "force-login.obfuscate-bars.health":
+        case "force-login.obfuscate.health":
             clazz = HealthBarSerializer.class;
             break;
             
-        case "force-login.obfuscate-bars.experience":
+        case "force-login.obfuscate.experience":
             clazz = ExperienceSerializer.class;
             break;
 
-        case "force-login.obfuscate-bars.hunger":
+        case "force-login.obfuscate.hunger":
             clazz = HungerBarSerializer.class;
             break;
         }

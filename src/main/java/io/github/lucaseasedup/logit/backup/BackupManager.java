@@ -351,7 +351,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     
     private SimpleDateFormat buildDateFormat()
     {
-        String backupFilenameFormat = getConfig("config.yml").getString("backup.filename-format");
+        String backupFilenameFormat = getConfig("config.yml").getString("backup.filename");
         SimpleDateFormat dateFormat = new SimpleDateFormat(backupFilenameFormat);
         
         return dateFormat;

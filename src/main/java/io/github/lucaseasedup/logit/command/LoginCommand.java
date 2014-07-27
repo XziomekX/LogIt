@@ -54,8 +54,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             player = null;
         }
         
-        boolean disablePasswords = getConfig("config.yml")
-                .getBoolean("password.disable-passwords");
+        boolean disablePasswords = getConfig("config.yml").getBoolean("passwords.disable");
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 2)
         {
@@ -191,19 +190,13 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     sendMsg(player, _("incorrectPassword"));
                     
                     int failsToBlockLoggingIn = getConfig("config.yml")
-                            .getInt("brute-force-prevention"
-                                  + ".block-logging-in"
-                                  + ".login-attempts");
+                            .getInt("brute-force.block-login.attempts");
                     
                     int failsToKick = getConfig("config.yml")
-                            .getInt("brute-force-prevention"
-                                  + ".kick"
-                                  + ".login-attempts");
+                            .getInt("brute-force.kick.attempts");
                     
                     int failsToBan = getConfig("config.yml")
-                            .getInt("brute-force-prevention"
-                                  + ".ban"
-                                  + ".login-attempts");
+                            .getInt("brute-force.ban.attempts");
                     
                     Integer currentFailedLogins = failedLogins.get(player);
                     
@@ -228,9 +221,8 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                             && failedLogins.get(player) >= failsToBlockLoggingIn)
                     {
                         long loginBlockadeTimeMillis = getConfig("config.yml")
-                                .getTime("brute-force-prevention"
-                                       + ".block-logging-in"
-                                       + ".for-time", TimeUnit.MILLISECONDS);
+                                .getTime("brute-force.block-login.for-time",
+                                        TimeUnit.MILLISECONDS);
                         
                         long loginBlockadeTimeSecs =
                                 TimeUnit.MILLISECONDS.convert(loginBlockadeTimeMillis,

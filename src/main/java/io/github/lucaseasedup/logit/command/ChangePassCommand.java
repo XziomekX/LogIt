@@ -43,8 +43,8 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             player = (Player) sender;
         }
         
-        int minPasswordLength = getConfig("config.yml").getInt("password.min-length");
-        int maxPasswordLength = getConfig("config.yml").getInt("password.max-length");
+        int minPasswordLength = getConfig("config.yml").getInt("passwords.min-length");
+        int maxPasswordLength = getConfig("config.yml").getInt("passwords.max-length");
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 3)
         {

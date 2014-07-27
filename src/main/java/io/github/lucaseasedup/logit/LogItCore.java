@@ -448,13 +448,13 @@ public final class LogItCore
         setSerializerEnabled(LocationSerializer.class,
                 getConfig("config.yml").getBoolean("waiting-room.enabled"));
         setSerializerEnabled(AirBarSerializer.class,
-                getConfig("config.yml").getBoolean("force-login.obfuscate-bars.air"));
+                getConfig("config.yml").getBoolean("force-login.obfuscate.air"));
         setSerializerEnabled(HealthBarSerializer.class,
-                getConfig("config.yml").getBoolean("force-login.obfuscate-bars.health"));
+                getConfig("config.yml").getBoolean("force-login.obfuscate.health"));
         setSerializerEnabled(ExperienceSerializer.class,
-                getConfig("config.yml").getBoolean("force-login.obfuscate-bars.experience"));
+                getConfig("config.yml").getBoolean("force-login.obfuscate.experience"));
         setSerializerEnabled(HungerBarSerializer.class,
-                getConfig("config.yml").getBoolean("force-login.obfuscate-bars.hunger"));
+                getConfig("config.yml").getBoolean("force-login.obfuscate.hunger"));
     }
     
     private void setSerializerEnabled(Class<? extends PersistenceSerializer> clazz, boolean status)
@@ -537,7 +537,7 @@ public final class LogItCore
         enableCommand("register", new RegisterCommand());
         enableCommand("unregister", new UnregisterCommand());
         enableCommand("changepass", new ChangePassCommand(),
-                !getConfig("config.yml").getBoolean("password.disable-passwords"));
+                !getConfig("config.yml").getBoolean("passwords.disable"));
         enableCommand("changeemail", new ChangeEmailCommand());
         enableCommand("recoverpass", new RecoverPassCommand(),
                 getConfig("config.yml").getBoolean("password-recovery.enabled"));
@@ -896,7 +896,7 @@ public final class LogItCore
         }
         else
         {
-            if (getConfig("config.yml").getBoolean("password.use-salt"))
+            if (getConfig("config.yml").getBoolean("passwords.use-salt"))
             {
                 return hashedPassword.equals(
                         SecurityHelper.hash(password, salt, algorithmType)
@@ -1181,7 +1181,7 @@ public final class LogItCore
     public HashingAlgorithm getDefaultHashingAlgorithm()
     {
         return HashingAlgorithm.decode(
-                getConfig("config.yml").getString("password.hashing-algorithm")
+                getConfig("config.yml").getString("passwords.hashing-algorithm")
         );
     }
     

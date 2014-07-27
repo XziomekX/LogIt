@@ -55,11 +55,9 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             player = null;
         }
         
-        int minPasswordLength = getConfig("config.yml").getInt("password.min-length");
-        int maxPasswordLength = getConfig("config.yml").getInt("password.max-length");
-        
-        boolean disablePasswords = getConfig("config.yml")
-                .getBoolean("password.disable-passwords");
+        int minPasswordLength = getConfig("config.yml").getInt("passwords.min-length");
+        int maxPasswordLength = getConfig("config.yml").getInt("passwords.max-length");
+        boolean disablePasswords = getConfig("config.yml").getBoolean("passwords.disable");
         
         if (args.length > 0 && args[0].equals("-x")
                 && ((args.length <= 2 && disablePasswords)
@@ -168,13 +166,13 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         }
                         
                         boolean newbieTeleportEnabled = getConfig("config.yml")
-                                .getBoolean("waiting-room.newbie-teleport.enabled");
+                                .getBoolean("newbie-teleport.enabled");
                         
                         if (getConfig("config.yml").getBoolean("waiting-room.enabled")
                                 && newbieTeleportEnabled)
                         {
                             Location newbieTeleportLocation = getConfig("config.yml")
-                                    .getLocation("waiting-room.newbie-teleport.location")
+                                    .getLocation("newbie-teleport.location")
                                     .toBukkitLocation();
                             
                             paramPlayer.teleport(newbieTeleportLocation);
@@ -368,13 +366,13 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         }
                         
                         boolean newbieTeleportEnabled = getConfig("config.yml")
-                                .getBoolean("waiting-room.newbie-teleport.enabled");
+                                .getBoolean("newbie-teleport.enabled");
                         
                         if (getConfig("config.yml").getBoolean("waiting-room.enabled")
                                 && newbieTeleportEnabled)
                         {
                             Location newbieTeleportLocation = getConfig("config.yml")
-                                    .getLocation("waiting-room.newbie-teleport.location")
+                                    .getLocation("newbie-teleport.location")
                                     .toBukkitLocation();
                             
                             player.teleport(newbieTeleportLocation);
