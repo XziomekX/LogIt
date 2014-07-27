@@ -43,7 +43,7 @@ public final class LocationSerializer extends LogItCoreObject implements Persist
         
         if (player.isOnline())
         {
-            final Location waitingRoomLocation = getWaitingRoomLocation();
+            final Location waitingRoomLocation = getCore().getWaitingRoomLocation();
             
             player.teleport(waitingRoomLocation);
             
@@ -84,11 +84,6 @@ public final class LocationSerializer extends LogItCoreObject implements Persist
         {
             player.teleport(unserialize(data));
         }
-    }
-    
-    private org.bukkit.Location getWaitingRoomLocation()
-    {
-        return getConfig("config.yml").getLocation("waitingRoom.location").toBukkitLocation();
     }
     
     private static void serialize(Map<String, String> data, org.bukkit.Location location)

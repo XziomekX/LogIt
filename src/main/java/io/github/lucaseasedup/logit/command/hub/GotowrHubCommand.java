@@ -19,7 +19,6 @@
 package io.github.lucaseasedup.logit.command.hub;
 
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,9 +36,6 @@ public final class GotowrHubCommand extends HubCommand
     @Override
     public void execute(CommandSender sender, String[] args)
     {
-        Location waitingRoomLocation =
-                getConfig("config.yml").getLocation("waitingRoom.location").toBukkitLocation();
-        
-        ((Player) sender).teleport(waitingRoomLocation);
+        ((Player) sender).teleport(getCore().getWaitingRoomLocation());
     }
 }

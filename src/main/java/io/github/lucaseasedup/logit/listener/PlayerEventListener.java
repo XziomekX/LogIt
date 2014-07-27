@@ -26,7 +26,6 @@ import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.account.Account;
-import io.github.lucaseasedup.logit.config.LocationSerializable;
 import io.github.lucaseasedup.logit.hooks.BukkitSmerfHook;
 import io.github.lucaseasedup.logit.hooks.VanishNoPacketHook;
 import io.github.lucaseasedup.logit.persistence.LocationSerializer;
@@ -292,10 +291,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             if (getConfig("config.yml").getBoolean("waitingRoom.enabled"))
             {
-                LocationSerializable waitingRoomLocationSerializable =
-                        getConfig("config.yml").getLocation("waitingRoom.location");
-                
-                player.teleport(waitingRoomLocationSerializable.toBukkitLocation());
+                player.teleport(getCore().getWaitingRoomLocation());
             }
         }
         
@@ -698,10 +694,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 }
             }
             
-            LocationSerializable waitingRoomLocationSerializable =
-                    getConfig("config.yml").getLocation("waitingRoom.location");
-            
-            event.setRespawnLocation(waitingRoomLocationSerializable.toBukkitLocation());
+            event.setRespawnLocation(getCore().getWaitingRoomLocation());
         }
         
         if (playersDeadOnJoin.contains(player))

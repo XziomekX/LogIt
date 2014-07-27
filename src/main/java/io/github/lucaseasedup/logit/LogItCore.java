@@ -90,6 +90,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
@@ -1183,6 +1184,11 @@ public final class LogItCore
         return HashingAlgorithm.decode(
                 getConfig("config.yml").getString("passwords.hashingAlgorithm")
         );
+    }
+    
+    public Location getWaitingRoomLocation()
+    {
+        return getConfig("config.yml").getLocation("waitingRoom.location").toBukkitLocation();
     }
     
     public IntegrationType getIntegration()
