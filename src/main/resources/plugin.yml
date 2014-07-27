@@ -7,7 +7,7 @@ softdepend: [BukkitSmerf, Essentials, Multiverse-Core, ProtocolLib, Vault]
 commands:
   logit:
     description: LogIt generic command.
-    usage: /<command> [help|version|start|stop|reload|backup <force|restore <file <filename>|time <time>>|remove <amount>>|gotowr|globalpass|account <status <username>|info <username>|rename <username> <newUsername>>|ipcount <ip>|config <get <path>|set <path> <value>|list [page]|reload>|convert|stats|import authme]
+    usage: /<command> [help|version|start|stop|reload|backup <force|restore <file <filename>|time <time>>|remove <amount>>|gotowr|globalpass|account <status <username>|info <username>|rename <username> <newUsername>|datum <username> <key>>|ipcount <ip>|config <get <path>|set <path> <value>|list [page]|reload>|convert|stats|import authme]
 
   login:
     description: Logs you in.
@@ -111,6 +111,7 @@ permissions:
       logit.backup.*: true
       logit.globalpass.*: true
       logit.account.rename: true
+      logit.account.datum: true
       logit.ipcount: true
       logit.config.*: true
       logit.convert: true
@@ -177,6 +178,8 @@ permissions:
   logit.account.info.displayname:
     default: false
   logit.account.rename:
+    default: false
+  logit.account.datum:
     default: false
   logit.ipcount:
     default: false

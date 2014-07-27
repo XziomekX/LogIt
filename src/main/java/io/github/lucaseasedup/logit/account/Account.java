@@ -527,7 +527,12 @@ public final class Account extends LogItCoreObject
         entry.put(keys().persistence(), "");
     }
     
-    /* package */ Storage.Entry getEntry()
+    /**
+     * Do not use unless you know what you're doing!
+     * 
+     * @return the account entry.
+     */
+    public Storage.Entry getEntry()
     {
         return entry;
     }

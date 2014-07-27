@@ -72,6 +72,7 @@ public final class HubCommands
         hubCommands.add(new AccountStatusHubCommand());
         hubCommands.add(new AccountInfoHubCommand());
         hubCommands.add(new AccountRenameHubCommand());
+        hubCommands.add(new AccountDatumHubCommand());
         hubCommands.add(new IpcountHubCommand());
         hubCommands.add(new ConfigGetHubCommand());
         hubCommands.add(new ConfigSetHubCommand());
