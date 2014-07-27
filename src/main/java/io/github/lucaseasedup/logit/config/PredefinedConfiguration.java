@@ -43,6 +43,7 @@ import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.bukkit.Color;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -456,7 +457,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
             
             if (!newDef.containsKey(entry.getKey()))
             {
-                configuration.set(entry.getValue().get("path"), null);
+                removePath(entry.getValue().get("path"));
                 
                 it.remove();
             }
@@ -487,7 +488,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
                 String oldPath = oldDefSection.get("path");
                 Object oldValue = configuration.get(oldPath);
                 
-                configuration.set(oldPath, null);
+                removePath(oldPath);
                 configuration.set(newDefSection.get("path"), oldValue);
                 
                 oldDefSection.put("path", newDefSection.get("path"));
@@ -520,6 +521,32 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
         }
         
         os.write(encodeConfigDef(IniUtils.serialize(oldDef)).getBytes());
+    }
+    
+    private void removePath(String path)
+    {
+        configuration.set(path, null);
+        
+        if (!path.contains("."))
+        {
+            return;
+        }
+        
+        String parentPath = path.substring(path.lastIndexOf('.') + 1);
+        
+        if (properties.containsKey(parentPath))
+        {
+            return;
+        }
+        
+        ConfigurationSection parentSection = configuration.getConfigurationSection(parentPath);
+        
+        if (parentSection == null || !parentSection.getKeys(false).isEmpty())
+        {
+            return;
+        }
+        
+        removePath(parentPath);
     }
     
     private boolean compareSectionKeys(Map<String, String> oldDefSection,
