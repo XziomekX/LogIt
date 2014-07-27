@@ -33,10 +33,12 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
+import org.apache.commons.io.comparator.NameFileComparator;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public final class BackupManager extends LogItCoreObject implements Runnable
@@ -288,7 +290,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         if (amount < 0)
             throw new IllegalArgumentException();
         
-        File[] backupFiles = getBackups(true);
+        File[] backupFiles = getBackups(NameFileComparator.NAME_COMPARATOR);
         int effectiveAmount = 0;
         
         for (int i = 0; i < amount; i++)
@@ -311,12 +313,9 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     /**
      * Creates an array of all the backup files from the backup directory.
      * 
-     * @param sortAlphabetically whether to alphabetically sort the backups
-     *                           according to their filenames.
-     * 
      * @return an array of {@code File} objects, each representing a backup.
      */
-    public File[] getBackups(boolean sortAlphabetically)
+    public File[] getBackups()
     {
         File backupDir = getDataFile(getConfig("config.yml").getString("backup.path"));
         File[] backupFiles = backupDir.listFiles();
@@ -324,10 +323,17 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         if (backupFiles == null)
             return new File[0];
         
-        if (sortAlphabetically)
-        {
-            Arrays.sort(backupFiles);
-        }
+        return backupFiles;
+    }
+    
+    public File[] getBackups(Comparator<File> comparator)
+    {
+        if (comparator == null)
+            throw new IllegalArgumentException();
+        
+        File[] backupFiles = getBackups();
+        
+        Arrays.sort(backupFiles, comparator);
         
         return backupFiles;
     }

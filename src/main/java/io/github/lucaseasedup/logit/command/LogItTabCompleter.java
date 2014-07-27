@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.io.comparator.NameFileComparator;
 
 public final class LogItTabCompleter extends LogItCoreObject
 {
@@ -66,7 +67,7 @@ public final class LogItTabCompleter extends LogItCoreObject
         if (filename == null)
             throw new IllegalArgumentException();
         
-        File[] backups = getBackupManager().getBackups(true);
+        File[] backups = getBackupManager().getBackups(NameFileComparator.NAME_COMPARATOR);
         List<String> suggestions = new ArrayList<>();
         
         for (File backup : backups)

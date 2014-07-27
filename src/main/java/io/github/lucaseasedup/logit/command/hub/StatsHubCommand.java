@@ -75,7 +75,7 @@ public final class StatsHubCommand extends HubCommand
             }
         }
         
-        int backupCount = getBackupManager().getBackups(false).length;
+        int backupCount = getBackupManager().getBackups().length;
         int logins = getConfig("stats.yml").getInt("logins");
         int passwordChanges = getConfig("stats.yml").getInt("passwordChanges");
         
