@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit.command.hub;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.account.Account;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
@@ -32,7 +33,12 @@ public final class IpcountHubCommand extends HubCommand
 {
     public IpcountHubCommand()
     {
-        super("ipcount", new String[] {"ip"}, "logit.ipcount", false, true,
+        super("ipcount", new String[] {"ip"},
+                new CommandAccess.Builder()
+                        .permission("logit.ipcount")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit ipcount")
                         .descriptionLabel("subCmdDesc.ipcount")

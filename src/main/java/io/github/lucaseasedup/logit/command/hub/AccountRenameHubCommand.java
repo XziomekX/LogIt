@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit.command.hub;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.command.wizard.ConfirmationWizard;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
@@ -32,7 +33,11 @@ public final class AccountRenameHubCommand extends HubCommand
     public AccountRenameHubCommand()
     {
         super("account rename", new String[] {"username", "newUsername"},
-                "logit.account.rename", false, true,
+                new CommandAccess.Builder()
+                        .permission("logit.account.rename")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit account rename")
                         .descriptionLabel("subCmdDesc.account.rename")

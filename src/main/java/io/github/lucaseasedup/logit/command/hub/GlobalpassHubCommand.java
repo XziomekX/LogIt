@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit.command.hub;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.locale.Locale;
 import org.bukkit.command.CommandSender;
@@ -29,7 +30,12 @@ public final class GlobalpassHubCommand extends HubCommand
 {
     public GlobalpassHubCommand()
     {
-        super("globalpass", new String[] {}, "logit.globalpass.generate", false, true,
+        super("globalpass", new String[] {},
+                new CommandAccess.Builder()
+                        .permission("logit.globalpass.generate")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit globalpass")
                         .descriptionLabel("subCmdDesc.globalpass")

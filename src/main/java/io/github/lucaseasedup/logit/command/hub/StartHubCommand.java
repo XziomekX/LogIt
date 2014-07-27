@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit.command.hub;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.FatalReportedException;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import org.bukkit.command.CommandSender;
 
@@ -28,7 +29,12 @@ public final class StartHubCommand extends HubCommand
 {
     public StartHubCommand()
     {
-        super("start", new String[] {}, "logit.start", false, false,
+        super("start", new String[] {},
+                new CommandAccess.Builder()
+                        .permission("logit.start")
+                        .playerOnly(false)
+                        .runningCoreRequired(false)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit start")
                         .descriptionLabel("subCmdDesc.start")

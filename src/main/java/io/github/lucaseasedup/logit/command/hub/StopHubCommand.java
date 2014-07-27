@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.command.hub;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.command.wizard.ConfirmationWizard;
 import org.bukkit.command.CommandSender;
@@ -29,7 +30,12 @@ public final class StopHubCommand extends HubCommand
 {
     public StopHubCommand()
     {
-        super("stop", new String[] {}, "logit.stop", false, true,
+        super("stop", new String[] {},
+                new CommandAccess.Builder()
+                        .permission("logit.stop")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit stop")
                         .descriptionLabel("subCmdDesc.stop")

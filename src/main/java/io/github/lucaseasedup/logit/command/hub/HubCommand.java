@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.command.hub;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,19 +30,15 @@ public abstract class HubCommand extends LogItCoreObject
 {
     public HubCommand(String subcommand,
                       String[] params,
-                      String permission,
-                      boolean playerOnly,
-                      boolean requiresRunningCore,
+                      CommandAccess commandAccess,
                       CommandHelpLine helpLine)
     {
-        if (subcommand == null || params == null || permission == null || helpLine == null)
+        if (subcommand == null || params == null || commandAccess == null || helpLine == null)
             throw new IllegalArgumentException();
         
         this.subcommand = subcommand;
         this.params = Arrays.asList(params);
-        this.permission = permission;
-        this.playerOnly = playerOnly;
-        this.requiresRunningCore = requiresRunningCore;
+        this.commandAccess = commandAccess;
         this.helpLine = helpLine;
     }
     
@@ -65,17 +62,17 @@ public abstract class HubCommand extends LogItCoreObject
     
     public String getPermission()
     {
-        return permission;
+        return commandAccess.getPermission();
     }
     
     public boolean isPlayerOnly()
     {
-        return playerOnly;
+        return commandAccess.isPlayerOnly();
     }
     
-    public boolean requiresRunningCore()
+    public boolean isRunningCoreRequired()
     {
-        return requiresRunningCore;
+        return commandAccess.isRunningCoreRequired();
     }
     
     public CommandHelpLine getHelpLine()
@@ -85,8 +82,6 @@ public abstract class HubCommand extends LogItCoreObject
     
     private final String subcommand;
     private final List<String> params;
-    private final String permission;
-    private final boolean playerOnly;
-    private final boolean requiresRunningCore;
+    private final CommandAccess commandAccess;
     private final CommandHelpLine helpLine;
 }

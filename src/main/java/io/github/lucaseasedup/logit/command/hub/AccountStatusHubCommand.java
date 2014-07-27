@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.command.hub;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import java.util.List;
 import org.bukkit.command.CommandSender;
@@ -29,7 +30,12 @@ public final class AccountStatusHubCommand extends HubCommand
 {
     public AccountStatusHubCommand()
     {
-        super("account status", new String[] {"username"}, "logit.account.status", false, true,
+        super("account status", new String[] {"username"},
+                new CommandAccess.Builder()
+                        .permission("logit.account.status")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit account status")
                         .descriptionLabel("subCmdDesc.account.status")

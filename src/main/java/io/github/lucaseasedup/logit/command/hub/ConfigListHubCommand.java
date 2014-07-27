@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.command.hub;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.config.Property;
 import java.util.Map;
@@ -31,7 +32,12 @@ public final class ConfigListHubCommand extends HubCommand
 {
     public ConfigListHubCommand()
     {
-        super("config list", new String[] {}, "logit.config.list", false, true,
+        super("config list", new String[] {},
+                new CommandAccess.Builder()
+                        .permission("logit.config.list")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit config list")
                         .descriptionLabel("subCmdDesc.config.list")

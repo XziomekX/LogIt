@@ -21,15 +21,22 @@ package io.github.lucaseasedup.logit.command.hub;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.FatalReportedException;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public final class ReloadHubCommand extends HubCommand
 {
     public ReloadHubCommand()
     {
-        super("reload", new String[] {}, "logit.reload", false, true,
+        super("reload", new String[] {},
+                new CommandAccess.Builder()
+                        .permission("logit.reload")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit reload")
                         .descriptionLabel("subCmdDesc.reload")
@@ -42,6 +49,15 @@ public final class ReloadHubCommand extends HubCommand
         try
         {
             getCore().restart();
+            
+            new BukkitRunnable()
+            {
+                @Override
+                public void run()
+                {
+                    System.gc();
+                }
+            }.runTaskAsynchronously(getPlugin());
             
             if (sender instanceof Player)
             {

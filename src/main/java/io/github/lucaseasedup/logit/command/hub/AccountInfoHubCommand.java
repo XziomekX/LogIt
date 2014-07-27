@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit.command.hub;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.account.Account;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Arrays;
@@ -33,7 +34,12 @@ public final class AccountInfoHubCommand extends HubCommand
 {
     public AccountInfoHubCommand()
     {
-        super("account info", new String[] {"username"}, "logit.account.info", false, true,
+        super("account info", new String[] {"username"},
+                new CommandAccess.Builder()
+                        .permission("logit.account.info")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit account info")
                         .descriptionLabel("subCmdDesc.account.info")

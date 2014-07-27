@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit.command.hub;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.account.Account;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.storage.SelectorConstant;
 import java.util.Arrays;
@@ -34,7 +35,12 @@ public final class StatsHubCommand extends HubCommand
 {
     public StatsHubCommand()
     {
-        super("stats", new String[] {}, "logit.stats", false, true,
+        super("stats", new String[] {},
+                new CommandAccess.Builder()
+                        .permission("logit.stats")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit stats")
                         .descriptionLabel("subCmdDesc.stats")

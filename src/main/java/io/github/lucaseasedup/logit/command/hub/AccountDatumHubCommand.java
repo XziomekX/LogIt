@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit.command.hub;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.account.Account;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,17 +32,16 @@ public final class AccountDatumHubCommand extends HubCommand
 {
     public AccountDatumHubCommand()
     {
-        super(
-                "account datum",
-                new String[] {"username", "key"},
-                "logit.account.datum",
-                false,
-                true,
+        super("account datum", new String[] {"username", "key"},
+                new CommandAccess.Builder()
+                        .permission("logit.account.datum")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit account datum")
                         .descriptionLabel("subCmdDesc.account.datum")
-                        .build()
-        );
+                        .build());
     }
     
     @Override

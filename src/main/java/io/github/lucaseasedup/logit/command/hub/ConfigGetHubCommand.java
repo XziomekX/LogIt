@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.command.hub;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import org.bukkit.command.CommandSender;
 
@@ -27,7 +28,12 @@ public final class ConfigGetHubCommand extends HubCommand
 {
     public ConfigGetHubCommand()
     {
-        super("config get", new String[] {"path"}, "logit.config.get", false, true,
+        super("config get", new String[] {"path"},
+                new CommandAccess.Builder()
+                        .permission("logit.config.get")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit config get")
                         .descriptionLabel("subCmdDesc.config.get")

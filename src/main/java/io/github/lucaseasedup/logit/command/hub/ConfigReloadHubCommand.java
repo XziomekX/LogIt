@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.command.hub;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
 import java.io.IOException;
@@ -32,7 +33,12 @@ public final class ConfigReloadHubCommand extends HubCommand
 {
     public ConfigReloadHubCommand()
     {
-        super("config reload", new String[] {}, "logit.config.reload", false, true,
+        super("config reload", new String[] {},
+                new CommandAccess.Builder()
+                        .permission("logit.config.reload")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit config reload")
                         .descriptionLabel("subCmdDesc.config.reload")

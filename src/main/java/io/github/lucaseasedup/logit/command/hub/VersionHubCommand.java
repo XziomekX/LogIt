@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.command.hub;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,7 +29,12 @@ public final class VersionHubCommand extends HubCommand
 {
     public VersionHubCommand()
     {
-        super("version", new String[] {}, "logit.version", false, false,
+        super("version", new String[] {},
+                new CommandAccess.Builder()
+                        .permission("logit.version")
+                        .playerOnly(false)
+                        .runningCoreRequired(false)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit version")
                         .descriptionLabel("subCmdDesc.version")

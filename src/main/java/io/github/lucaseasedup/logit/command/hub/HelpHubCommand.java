@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.command.hub;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import java.util.Iterator;
 import org.bukkit.command.CommandSender;
@@ -29,7 +30,12 @@ public final class HelpHubCommand extends HubCommand
 {
     public HelpHubCommand()
     {
-        super("help", new String[] {}, "logit.help", false, false,
+        super("help", new String[] {},
+                new CommandAccess.Builder()
+                        .permission("logit.help")
+                        .playerOnly(false)
+                        .runningCoreRequired(false)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit help")
                         .descriptionLabel("subCmdDesc.help")
@@ -45,7 +51,7 @@ public final class HelpHubCommand extends HubCommand
             
             if ((!(sender instanceof Player) || sender.hasPermission(hubCommand.getPermission()))
                     && !(hubCommand.isPlayerOnly() && !(sender instanceof Player))
-                    && (getCore().isStarted() || !hubCommand.requiresRunningCore()))
+                    && (getCore().isStarted() || !hubCommand.isRunningCoreRequired()))
             {
                 StringBuilder params = new StringBuilder();
                 

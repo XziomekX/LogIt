@@ -21,6 +21,7 @@ package io.github.lucaseasedup.logit.command.hub;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.ReportedException;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.command.wizard.ConfirmationWizard;
 import java.io.File;
@@ -35,7 +36,12 @@ public final class BackupRestoreFileHubCommand extends HubCommand
 {
     public BackupRestoreFileHubCommand()
     {
-        super("backup restore file", new String[] {"filename"}, "logit.backup.restore", false, true,
+        super("backup restore file", new String[] {"filename"},
+                new CommandAccess.Builder()
+                        .permission("logit.backup.restore")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit backup restore file")
                         .descriptionLabel("subCmdDesc.backup.restore.filename")

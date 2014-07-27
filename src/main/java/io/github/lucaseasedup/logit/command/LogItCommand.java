@@ -68,7 +68,7 @@ public final class LogItCommand extends LogItCoreObject implements TabExecutor
             return true;
         }
         
-        if (hubCommand.requiresRunningCore() && !isCoreStarted())
+        if (hubCommand.isRunningCoreRequired() && !isCoreStarted())
         {
             sendMsg(sender, _("coreNotStarted"));
             

@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.command.hub;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
 import io.github.lucaseasedup.logit.config.PropertyType;
@@ -33,7 +34,12 @@ public final class ConfigSetHubCommand extends HubCommand
 {
     public ConfigSetHubCommand()
     {
-        super("config set", new String[] {"path", "value"}, "logit.config.set", false, true,
+        super("config set", new String[] {"path", "value"},
+                new CommandAccess.Builder()
+                        .permission("logit.config.set")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit config set")
                         .descriptionLabel("subCmdDesc.config.set")

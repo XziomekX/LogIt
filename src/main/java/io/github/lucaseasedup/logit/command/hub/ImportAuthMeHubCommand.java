@@ -22,6 +22,7 @@ import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.account.Account;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.command.wizard.ConfirmationWizard;
 import io.github.lucaseasedup.logit.security.AuthMePasswordHelper;
@@ -53,7 +54,12 @@ public final class ImportAuthMeHubCommand extends HubCommand
 {
     public ImportAuthMeHubCommand()
     {
-        super("import authme", new String[] {}, "logit.import", false, true,
+        super("import authme", new String[] {},
+                new CommandAccess.Builder()
+                        .permission("logit.import")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit import authme")
                         .descriptionLabel("subCmdDesc.import.authme")

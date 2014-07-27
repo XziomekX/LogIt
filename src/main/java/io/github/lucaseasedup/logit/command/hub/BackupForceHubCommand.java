@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.command.hub;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import java.io.File;
 import org.bukkit.command.CommandSender;
@@ -29,7 +30,12 @@ public final class BackupForceHubCommand extends HubCommand
 {
     public BackupForceHubCommand()
     {
-        super("backup force", new String[] {}, "logit.backup.force", false, true,
+        super("backup force", new String[] {},
+                new CommandAccess.Builder()
+                        .permission("logit.backup.force")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit backup force")
                         .descriptionLabel("subCmdDesc.backup.force")

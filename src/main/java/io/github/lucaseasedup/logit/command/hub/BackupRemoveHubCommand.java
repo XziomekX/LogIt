@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.command.hub;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,7 +29,12 @@ public final class BackupRemoveHubCommand extends HubCommand
 {
     public BackupRemoveHubCommand()
     {
-        super("backup remove", new String[] {"amount"}, "logit.backup.remove", false, true,
+        super("backup remove", new String[] {"amount"},
+                new CommandAccess.Builder()
+                        .permission("logit.backup.remove")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit backup remove")
                         .descriptionLabel("subCmdDesc.backup.remove")

@@ -22,6 +22,7 @@ import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.TimeString;
 import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import java.io.File;
 import java.text.ParseException;
@@ -32,7 +33,12 @@ public final class BackupRestoreTimeHubCommand extends HubCommand
 {
     public BackupRestoreTimeHubCommand()
     {
-        super("backup restore time", new String[] {"time"}, "logit.backup.restore", false, true,
+        super("backup restore time", new String[] {"time"},
+                new CommandAccess.Builder()
+                        .permission("logit.backup.restore")
+                        .playerOnly(false)
+                        .runningCoreRequired(true)
+                        .build(),
                 new CommandHelpLine.Builder()
                         .command("logit backup restore time")
                         .descriptionLabel("subCmdDesc.backup.restore.time")
