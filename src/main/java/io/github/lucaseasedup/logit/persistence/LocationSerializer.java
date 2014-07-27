@@ -48,9 +48,9 @@ public final class LocationSerializer extends LogItCoreObject implements Persist
             player.teleport(waitingRoomLocation);
             
             final int teleportPasses = getConfig("secret.yml")
-                    .getInt("location-serializer.teleport-check.passes");
+                    .getInt("locationSerializer.teleportCheck.passes");
             final double dislocationRadius = getConfig("secret.yml")
-                    .getDouble("location-serializer.teleport-check.dislocation-radius");
+                    .getDouble("locationSerializer.teleportCheck.dislocationRadius");
             
             // Make sure that no other plugin teleported the player away.
             new BukkitRunnable()
@@ -88,7 +88,7 @@ public final class LocationSerializer extends LogItCoreObject implements Persist
     
     private org.bukkit.Location getWaitingRoomLocation()
     {
-        return getConfig("config.yml").getLocation("waiting-room.location").toBukkitLocation();
+        return getConfig("config.yml").getLocation("waitingRoom.location").toBukkitLocation();
     }
     
     private static void serialize(Map<String, String> data, org.bukkit.Location location)

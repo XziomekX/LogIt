@@ -37,14 +37,14 @@ public final class AccountWatcher extends LogItCoreObject implements Runnable
     public void run()
     {
         boolean accountDeletionEnabled =
-                getConfig("config.yml").getBoolean("automatic-account-deletion.enabled");
+                getConfig("config.yml").getBoolean("automaticAccountDeletion.enabled");
         
         if (!accountDeletionEnabled)
             return;
         
         long now = System.currentTimeMillis() / 1000L;
         long inactivityTime =
-                getConfig("config.yml").getTime("automatic-account-deletion.inactivity-time",
+                getConfig("config.yml").getTime("automaticAccountDeletion.inactivityTime",
                         TimeUnit.SECONDS);
         
         List<Account> accounts = getAccountManager().selectAccounts(

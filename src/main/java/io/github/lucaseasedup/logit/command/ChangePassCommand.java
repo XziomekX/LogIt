@@ -43,8 +43,8 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             player = (Player) sender;
         }
         
-        int minPasswordLength = getConfig("config.yml").getInt("passwords.min-length");
-        int maxPasswordLength = getConfig("config.yml").getInt("passwords.max-length");
+        int minPasswordLength = getConfig("config.yml").getInt("passwords.minLength");
+        int maxPasswordLength = getConfig("config.yml").getInt("passwords.maxLength");
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 3)
         {
@@ -105,8 +105,8 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             sendMsg(sender, _("changePassword.success.others")
                     .replace("{0}", PlayerUtils.getPlayerRealName(args[1])));
             
-            getConfig("stats.yml").set("password-changes",
-                    getConfig("stats.yml").getInt("password-changes") + 1);
+            getConfig("stats.yml").set("passwordChanges",
+                    getConfig("stats.yml").getInt("passwordChanges") + 1);
         }
         else if (args.length <= 3)
         {
@@ -206,8 +206,8 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             
             LogItCooldowns.activate(player, LogItCooldowns.CHANGEPASS);
             
-            getConfig("stats.yml").set("password-changes",
-                    getConfig("stats.yml").getInt("password-changes") + 1);
+            getConfig("stats.yml").set("passwordChanges",
+                    getConfig("stats.yml").getInt("passwordChanges") + 1);
         }
         else
         {
@@ -223,7 +223,7 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
                                       String label,
                                       String[] args)
     {
-        if (!getConfig("secret.yml").getBoolean("tab-completion"))
+        if (!getConfig("secret.yml").getBoolean("tabCompletion"))
             return null;
         
         if (args.length == 2 && args[0].equals("-x"))

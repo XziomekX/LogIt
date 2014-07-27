@@ -80,7 +80,7 @@ public final class JoinMessageGenerator
         
         assert core != null;
         
-        if (!core.getConfig("config.yml").getBoolean("messages.multiverse-hook")
+        if (!core.getConfig("config.yml").getBoolean("messages.multiverseHook")
                 || !Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core"))
         {
             return world.getName();

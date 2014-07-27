@@ -254,7 +254,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
                             
                             String persistenceString = IniUtils.serialize(persistenceIni);
                             
-                            if (getConfig("secret.yml").getBoolean("debug.encode-persistence"))
+                            if (getConfig("secret.yml").getBoolean("debug.encodePersistence"))
                             {
                                 persistenceString = Base64.encode(persistenceString);
                             }

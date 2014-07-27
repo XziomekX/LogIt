@@ -55,8 +55,8 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             player = null;
         }
         
-        int minPasswordLength = getConfig("config.yml").getInt("passwords.min-length");
-        int maxPasswordLength = getConfig("config.yml").getInt("passwords.max-length");
+        int minPasswordLength = getConfig("config.yml").getInt("passwords.minLength");
+        int maxPasswordLength = getConfig("config.yml").getInt("passwords.maxLength");
         boolean disablePasswords = getConfig("config.yml").getBoolean("passwords.disable");
         
         if (args.length > 0 && args[0].equals("-x")
@@ -166,13 +166,13 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         }
                         
                         boolean newbieTeleportEnabled = getConfig("config.yml")
-                                .getBoolean("newbie-teleport.enabled");
+                                .getBoolean("newbieTeleport.enabled");
                         
-                        if (getConfig("config.yml").getBoolean("waiting-room.enabled")
+                        if (getConfig("config.yml").getBoolean("waitingRoom.enabled")
                                 && newbieTeleportEnabled)
                         {
                             Location newbieTeleportLocation = getConfig("config.yml")
-                                    .getLocation("newbie-teleport.location")
+                                    .getLocation("newbieTeleport.location")
                                     .toBukkitLocation();
                             
                             paramPlayer.teleport(newbieTeleportLocation);
@@ -231,7 +231,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             }
             
             boolean takeoverEnabled = getConfig("config.yml")
-                    .getBoolean("premium-takeover.enabled");
+                    .getBoolean("premiumTakeover.enabled");
             boolean isPremium = BukkitSmerfHook.isPremium(player);
             boolean canTakeOver = takeoverEnabled && isPremium;
             boolean isRegistered = getAccountManager().isRegistered(player.getName());
@@ -267,7 +267,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 return true;
             }
             
-            int accountsPerIp = getConfig("config.yml").getInt("accounts-per-ip.amount");
+            int accountsPerIp = getConfig("config.yml").getInt("accountsPerIp.amount");
             
             if (accountsPerIp >= 0 && !isTakingOver)
             {
@@ -277,7 +277,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 ).size();
                 
                 List<String> unrestrictedIps =
-                        getConfig("config.yml").getStringList("accounts-per-ip.unrestricted-ips");
+                        getConfig("config.yml").getStringList("accountsPerIp.unrestrictedIps");
                 
                 if (accountsWithIp >= accountsPerIp
                         && !unrestrictedIps.contains(getPlayerIp(player)))
@@ -366,25 +366,25 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         }
                         
                         boolean newbieTeleportEnabled = getConfig("config.yml")
-                                .getBoolean("newbie-teleport.enabled");
+                                .getBoolean("newbieTeleport.enabled");
                         
-                        if (getConfig("config.yml").getBoolean("waiting-room.enabled")
+                        if (getConfig("config.yml").getBoolean("waitingRoom.enabled")
                                 && newbieTeleportEnabled)
                         {
                             Location newbieTeleportLocation = getConfig("config.yml")
-                                    .getLocation("newbie-teleport.location")
+                                    .getLocation("newbieTeleport.location")
                                     .toBukkitLocation();
                             
                             player.teleport(newbieTeleportLocation);
                         }
                         
-                        if (getConfig("config.yml").getBoolean("login-sessions.enabled"))
+                        if (getConfig("config.yml").getBoolean("loginSessions.enabled"))
                         {
                             sendMsg(sender, _("rememberLogin.prompt"));
                         }
                         
-                        if (getConfig("config.yml").getBoolean("password-recovery.prompt-to-add-email")
-                                && getConfig("config.yml").getBoolean("password-recovery.enabled"))
+                        if (getConfig("config.yml").getBoolean("passwordRecovery.promptToAddEmail")
+                                && getConfig("config.yml").getBoolean("passwordRecovery.enabled"))
                         {
                             sendMsg(sender, _("noEmailSet"));
                         }

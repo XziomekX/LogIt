@@ -41,10 +41,11 @@ public final class BackupRemoveHubCommand extends HubCommand
         try
         {
             int amount = Integer.parseInt(args[0]);
+            int manualRemoveLimit = getConfig("config.yml").getInt("backup.manualRemoveLimit");
             
-            if (amount > getConfig("config.yml").getInt("backup.manual-remove-limit"))
+            if (amount > manualRemoveLimit)
             {
-                amount = getConfig("config.yml").getInt("backup.manual-remove-limit");
+                amount = manualRemoveLimit;
             }
             
             int effectiveAmount = getBackupManager().removeBackups(amount);

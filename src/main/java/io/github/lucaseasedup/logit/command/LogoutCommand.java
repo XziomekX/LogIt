@@ -116,7 +116,7 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
                 sendMsg(sender, _("endSession.success.self"));
                 
                 if (account != null
-                        && getConfig("config.yml").getBoolean("login-sessions.enabled"))
+                        && getConfig("config.yml").getBoolean("loginSessions.enabled"))
                 {
                     account.eraseLoginSession();
                 }

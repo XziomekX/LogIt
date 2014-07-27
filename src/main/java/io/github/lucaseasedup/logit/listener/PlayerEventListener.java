@@ -93,7 +93,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             String displayName = account.getDisplayName();
             
             if (!displayName.isEmpty() && !player.getName().equals(displayName)
-                    && getConfig("config.yml").getBoolean("username-case-mismatch.kick"))
+                    && getConfig("config.yml").getBoolean("usernameCaseMismatch.kick"))
             {
                 event.disallow(Result.KICK_OTHER, _("usernameCaseMismatch.kick")
                         .replace("{0}", displayName));
@@ -109,8 +109,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             }
         }
         
-        int minUsernameLength = getConfig("secret.yml").getInt("username.min-length");
-        int maxUsernameLength = getConfig("secret.yml").getInt("username.max-length");
+        int minUsernameLength = getConfig("secret.yml").getInt("username.minLength");
+        int maxUsernameLength = getConfig("secret.yml").getInt("username.maxLength");
         
         if (username.trim().isEmpty())
         {
@@ -131,7 +131,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                     .replace("{0}", String.valueOf(maxUsernameLength)));
         }
         else if (CollectionUtils.containsIgnoreCase(username,
-                getConfig("config.yml").getStringList("prohibited-usernames")))
+                getConfig("config.yml").getStringList("prohibitedUsernames")))
         {
             event.disallow(KICK_OTHER, _("usernameProhibited"));
         }
@@ -139,7 +139,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             event.disallow(KICK_OTHER, _("usernameAlreadyUsed"));
         }
-        else if (getConfig("config.yml").getBoolean("kick-unregistered") && account == null)
+        else if (getConfig("config.yml").getBoolean("kickUnregistered") && account == null)
         {
             event.disallow(KICK_OTHER, _("kickUnregistered"));
         }
@@ -147,7 +147,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             int freeSlots = Bukkit.getMaxPlayers() - Bukkit.getOnlinePlayers().length;
             List<String> reserveForPlayers =
-                    getConfig("config.yml").getStringList("reserve-slots.for-players");
+                    getConfig("config.yml").getStringList("reserveSlots.forPlayers");
             int reservedSlots = 0;
             
             // Calculate how many players for which slots should be reserved are online.
@@ -159,7 +159,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 }
             }
             
-            int maxReservedSlots = getConfig("config.yml").getInt("reserve-slots.amount");
+            int maxReservedSlots = getConfig("config.yml").getInt("reserveSlots.amount");
             int unusedReservedSlots = maxReservedSlots - reservedSlots;
             int actualFreeSlots = freeSlots - unusedReservedSlots;
             
@@ -187,7 +187,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
         
         long validnessTime = getConfig("config.yml")
-                .getTime("login-sessions.validness-time", TimeUnit.SECONDS);
+                .getTime("loginSessions.validnessTime", TimeUnit.SECONDS);
         
         List<Account> uuidMatchedAccounts = getAccountManager().selectAccounts(
                 keys().getNames(),
@@ -235,7 +235,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         if (account != null)
         {
-            if (getConfig("config.yml").getBoolean("login-sessions.enabled") && validnessTime > 0)
+            if (getConfig("config.yml").getBoolean("loginSessions.enabled") && validnessTime > 0)
             {
                 String loginSession = account.getLoginSession();
                 
@@ -261,7 +261,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             String displayName = account.getDisplayName();
             
             if (!displayName.isEmpty() && !player.getName().equals(displayName)
-                    && getConfig("config.yml").getBoolean("username-case-mismatch.warning"))
+                    && getConfig("config.yml").getBoolean("usernameCaseMismatch.warning"))
             {
                 getMessageDispatcher().dispatchMessage(username, _("usernameCaseMismatch.warning")
                         .replace("{0}", displayName), 4L);
@@ -269,9 +269,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             
             boolean isPremium = BukkitSmerfHook.isPremium(player);
             boolean premiumTakeoverEnabled = getConfig("config.yml")
-                    .getBoolean("premium-takeover.enabled");
+                    .getBoolean("premiumTakeover.enabled");
             String promptOn = getConfig("config.yml")
-                    .getString("premium-takeover.prompt-on");
+                    .getString("premiumTakeover.promptOn");
             
             if (isPremium && premiumTakeoverEnabled && promptOn.equals("join"))
             {
@@ -290,10 +290,10 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
         else
         {
-            if (getConfig("config.yml").getBoolean("waiting-room.enabled"))
+            if (getConfig("config.yml").getBoolean("waitingRoom.enabled"))
             {
                 LocationSerializable waitingRoomLocationSerializable =
-                        getConfig("config.yml").getLocation("waiting-room.location");
+                        getConfig("config.yml").getLocation("waitingRoom.location");
                 
                 player.teleport(waitingRoomLocationSerializable.toBukkitLocation());
             }
@@ -305,7 +305,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                     && !VanishNoPacketHook.isVanished(player))
             {
                 event.setJoinMessage(JoinMessageGenerator.generate(player,
-                        getConfig("config.yml").getBoolean("messages.join.show-world")));
+                        getConfig("config.yml").getBoolean("messages.join.showWorld")));
             }
         }
         else
@@ -315,7 +315,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 getCore().getPersistenceManager().serialize(account, player);
             }
             
-            if (!getConfig("config.yml").getBoolean("waiting-room.enabled"))
+            if (!getConfig("config.yml").getBoolean("waitingRoom.enabled"))
             {
                 Location playerLocation = player.getLocation();
                 Block nearestBlockBelow = BlockUtils.getNearestBlockBelow(playerLocation);
@@ -332,11 +332,11 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             }
             
             long promptPeriod = getConfig("config.yml")
-                    .getTime("force-login.periodical-prompt.period", TimeUnit.TICKS);
+                    .getTime("forceLogin.periodicalPrompt.period", TimeUnit.TICKS);
             
-            if (getConfig("config.yml").getBoolean("force-login.prompt-on.join"))
+            if (getConfig("config.yml").getBoolean("forceLogin.promptOn.join"))
             {
-                if (getConfig("config.yml").getBoolean("force-login.periodical-prompt.enabled"))
+                if (getConfig("config.yml").getBoolean("forceLogin.periodicalPrompt.enabled"))
                 {
                     getMessageDispatcher().dispatchRepeatingForceLoginPrompter(username,
                             TimeUnit.SECONDS.convert(1, TimeUnit.TICKS), promptPeriod);
@@ -346,7 +346,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                     getMessageDispatcher().dispatchForceLoginPrompter(username, 5L);
                 }
             }
-            else if (getConfig("config.yml").getBoolean("force-login.periodical-prompt.enabled"))
+            else if (getConfig("config.yml").getBoolean("forceLogin.periodicalPrompt.enabled"))
             {
                 getMessageDispatcher().dispatchRepeatingForceLoginPrompter(username,
                         TimeUnit.SECONDS.convert(1, TimeUnit.TICKS) + promptPeriod, promptPeriod);
@@ -423,7 +423,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             session.resetInactivityTime();
         }
         
-        if (getConfig("config.yml").getBoolean("force-login.prevent.move")
+        if (getConfig("config.yml").getBoolean("forceLogin.prevent.move")
                 && !getSessionManager().isSessionAlive(player)
                 && getCore().isPlayerForcedToLogIn(player))
         {
@@ -442,7 +442,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             session.resetInactivityTime();
         }
         
-        if (getConfig("config.yml").getBoolean("force-login.prevent.toggle-sneak")
+        if (getConfig("config.yml").getBoolean("forceLogin.prevent.toggleSneak")
                 && !getSessionManager().isSessionAlive(player)
                 && getCore().isPlayerForcedToLogIn(player))
         {
@@ -464,7 +464,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             session.resetInactivityTime();
         }
         
-        if (getConfig("config.yml").getBoolean("force-login.prevent.chat")
+        if (getConfig("config.yml").getBoolean("forceLogin.prevent.chat")
                 && !getSessionManager().isSessionAlive(player)
                 && getCore().isPlayerForcedToLogIn(player))
         {
@@ -479,7 +479,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         if (!isCoreStarted())
             return;
         
-        if (!getConfig("config.yml").getBoolean("force-login.hide-chat-messages"))
+        if (!getConfig("config.yml").getBoolean("forceLogin.hideChatMessages"))
             return;
         
         Iterator<Player> recipients = event.getRecipients().iterator();
@@ -510,7 +510,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             session.resetInactivityTime();
         }
         
-        if (!getConfig("config.yml").getBoolean("force-login.prevent.command-preprocess"))
+        if (!getConfig("config.yml").getBoolean("forceLogin.prevent.commandPreprocess"))
             return;
         
         String message = event.getMessage();
@@ -545,7 +545,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         }
         
         List<String> allowedCommands = getConfig("config.yml")
-                .getStringList("force-login.allowed-commands");
+                .getStringList("forceLogin.allowedCommands");
         
         // Check if the sent command is one of the allowed in the config.
         for (String command : allowedCommands)
@@ -576,7 +576,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             session.resetInactivityTime();
         }
         
-        if (getConfig("config.yml").getBoolean("force-login.prevent.interact")
+        if (getConfig("config.yml").getBoolean("forceLogin.prevent.interact")
                 && !getSessionManager().isSessionAlive(player)
                 && getCore().isPlayerForcedToLogIn(player))
         {
@@ -588,7 +588,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             if (clickedBlock == null || (clickedBlock.getType() != Material.WOOD_PLATE
                     && clickedBlock.getType() != Material.STONE_PLATE))
             {
-                if (getConfig("config.yml").getBoolean("force-login.prompt-on.interact"))
+                if (getConfig("config.yml").getBoolean("forceLogin.promptOn.interact"))
                 {
                     getMessageDispatcher().sendForceLoginMessage(player);
                 }
@@ -607,13 +607,13 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             session.resetInactivityTime();
         }
         
-        if (getConfig("config.yml").getBoolean("force-login.prevent.interact-entity")
+        if (getConfig("config.yml").getBoolean("forceLogin.prevent.interactEntity")
                 && !getSessionManager().isSessionAlive(player)
                 && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
             
-            if (getConfig("config.yml").getBoolean("force-login.prompt-on.interact-entity"))
+            if (getConfig("config.yml").getBoolean("forceLogin.promptOn.interactEntity"))
             {
                 getMessageDispatcher().sendForceLoginMessage(player);
             }
@@ -623,7 +623,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onPickupItem(PlayerPickupItemEvent event)
     {
-        if (!getConfig("config.yml").getBoolean("force-login.prevent.pickup-item"))
+        if (!getConfig("config.yml").getBoolean("forceLogin.prevent.pickupItem"))
             return;
         
         Player player = event.getPlayer();
@@ -646,13 +646,13 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             session.resetInactivityTime();
         }
         
-        if (getConfig("config.yml").getBoolean("force-login.prevent.drop-item")
+        if (getConfig("config.yml").getBoolean("forceLogin.prevent.dropItem")
                 && !getSessionManager().isSessionAlive(player)
                 && getCore().isPlayerForcedToLogIn(player))
         {
             event.setCancelled(true);
             
-            if (getConfig("config.yml").getBoolean("force-login.prompt-on.drop-item"))
+            if (getConfig("config.yml").getBoolean("forceLogin.promptOn.dropItem"))
             {
                 getMessageDispatcher().sendForceLoginMessage(player);
             }
@@ -676,7 +676,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     {
         Player player = event.getPlayer();
         
-        if (getConfig("config.yml").getBoolean("waiting-room.enabled")
+        if (getConfig("config.yml").getBoolean("waitingRoom.enabled")
                 && !getSessionManager().isSessionAlive(player)
                 && getCore().isPlayerForcedToLogIn(player))
         {
@@ -699,7 +699,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             }
             
             LocationSerializable waitingRoomLocationSerializable =
-                    getConfig("config.yml").getLocation("waiting-room.location");
+                    getConfig("config.yml").getLocation("waitingRoom.location");
             
             event.setRespawnLocation(waitingRoomLocationSerializable.toBukkitLocation());
         }

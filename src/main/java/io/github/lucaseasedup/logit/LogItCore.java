@@ -137,7 +137,7 @@ public final class LogItCore
             doFirstRunStuff();
         }
         
-        if (getConfig("config.yml").getBoolean("check-for-updates"))
+        if (getConfig("config.yml").getBoolean("checkForUpdates"))
         {
             checkForUpdate();
         }
@@ -330,10 +330,10 @@ public final class LogItCore
     private void setUpAccountManager() throws FatalReportedException
     {
         StorageType leadingStorageType = StorageType.decode(
-                getConfig("config.yml").getString("storage.accounts.leading.storage-type")
+                getConfig("config.yml").getString("storage.accounts.leading.storageType")
         );
         StorageType mirrorStorageType = StorageType.decode(
-                getConfig("config.yml").getString("storage.accounts.mirror.storage-type")
+                getConfig("config.yml").getString("storage.accounts.mirror.storageType")
         );
         
         String accountsUnit = getConfig("config.yml").getString("storage.accounts.leading.unit");
@@ -446,15 +446,15 @@ public final class LogItCore
         persistenceManager = new PersistenceManager();
         
         setSerializerEnabled(LocationSerializer.class,
-                getConfig("config.yml").getBoolean("waiting-room.enabled"));
+                getConfig("config.yml").getBoolean("waitingRoom.enabled"));
         setSerializerEnabled(AirBarSerializer.class,
-                getConfig("config.yml").getBoolean("force-login.obfuscate.air"));
+                getConfig("config.yml").getBoolean("forceLogin.obfuscate.air"));
         setSerializerEnabled(HealthBarSerializer.class,
-                getConfig("config.yml").getBoolean("force-login.obfuscate.health"));
+                getConfig("config.yml").getBoolean("forceLogin.obfuscate.health"));
         setSerializerEnabled(ExperienceSerializer.class,
-                getConfig("config.yml").getBoolean("force-login.obfuscate.experience"));
+                getConfig("config.yml").getBoolean("forceLogin.obfuscate.experience"));
         setSerializerEnabled(HungerBarSerializer.class,
-                getConfig("config.yml").getBoolean("force-login.obfuscate.hunger"));
+                getConfig("config.yml").getBoolean("forceLogin.obfuscate.hunger"));
     }
     
     private void setSerializerEnabled(Class<? extends PersistenceSerializer> clazz, boolean status)
@@ -513,7 +513,7 @@ public final class LogItCore
     {
         accountManagerTask = Bukkit.getScheduler().runTaskTimer(getPlugin(),
                 getAccountManager(), 0L,
-                getConfig("secret.yml").getTime("buffer-flush-interval", TimeUnit.TICKS));
+                getConfig("secret.yml").getTime("bufferFlushInterval", TimeUnit.TICKS));
         backupManagerTask = Bukkit.getScheduler().runTaskTimer(getPlugin(),
                 getBackupManager(), 0L,
                 BackupManager.TASK_PERIOD);
@@ -533,20 +533,20 @@ public final class LogItCore
         enableCommand("login", new LoginCommand());
         enableCommand("logout", new LogoutCommand());
         enableCommand("remember", new RememberCommand(),
-                getConfig("config.yml").getBoolean("login-sessions.enabled"));
+                getConfig("config.yml").getBoolean("loginSessions.enabled"));
         enableCommand("register", new RegisterCommand());
         enableCommand("unregister", new UnregisterCommand());
         enableCommand("changepass", new ChangePassCommand(),
                 !getConfig("config.yml").getBoolean("passwords.disable"));
         enableCommand("changeemail", new ChangeEmailCommand());
         enableCommand("recoverpass", new RecoverPassCommand(),
-                getConfig("config.yml").getBoolean("password-recovery.enabled"));
+                getConfig("config.yml").getBoolean("passwordRecovery.enabled"));
         enableCommand("profile", new ProfileCommand(),
                 getConfig("config.yml").getBoolean("profiles.enabled"));
         enableCommand("acclock", new AcclockCommand());
         enableCommand("accunlock", new AccunlockCommand());
         enableCommand("loginhistory", new LoginHistoryCommand(),
-                getConfig("config.yml").getBoolean("login-history.enabled"));
+                getConfig("config.yml").getBoolean("loginHistory.enabled"));
         enableCommand("$logit-nop-command", new NopCommandExecutor());
     }
     
@@ -798,7 +798,7 @@ public final class LogItCore
     /**
      * Checks if a password is equal, after hashing, to {@code hashedPassword}.
      * 
-     * <p> If the <i>debug.force-hashing-algorithm</i>
+     * <p> If the <i>debug.forceHashingAlgorithm</i>
      * secret setting is set to <i>true</i>,
      * the global hashing algorithm (specified in the config file)
      * will be used instead of the provided {@code hashingAlgorithm}.
@@ -819,7 +819,7 @@ public final class LogItCore
         if (password == null || hashedPassword == null || hashingAlgorithm == null)
             throw new IllegalArgumentException();
         
-        if (getConfig("secret.yml").getBoolean("debug.force-hashing-algorithm"))
+        if (getConfig("secret.yml").getBoolean("debug.forceHashingAlgorithm"))
         {
             hashingAlgorithm = getDefaultHashingAlgorithm().name();
         }
@@ -845,7 +845,7 @@ public final class LogItCore
      * Checks if a password (with a salt appended) is equal,
      * after hashing, to {@code hashedPassword}.
      * 
-     * <p> If the <i>debug.force-hashing-algorithm</i>
+     * <p> If the <i>debug.forceHashingAlgorithm</i>
      * secret setting is set to <i>true</i>,
      * the global hashing algorithm (specified in the config file)
      * will be used instead of the provided {@code hashingAlgorithm}.
@@ -871,7 +871,7 @@ public final class LogItCore
         if (password == null || hashedPassword == null || salt == null || hashingAlgorithm == null)
             throw new IllegalArgumentException();
         
-        if (getConfig("secret.yml").getBoolean("debug.force-hashing-algorithm"))
+        if (getConfig("secret.yml").getBoolean("debug.forceHashingAlgorithm"))
         {
             hashingAlgorithm = getDefaultHashingAlgorithm().name();
         }
@@ -896,7 +896,7 @@ public final class LogItCore
         }
         else
         {
-            if (getConfig("config.yml").getBoolean("passwords.use-salt"))
+            if (getConfig("config.yml").getBoolean("passwords.useSalt"))
             {
                 return hashedPassword.equals(
                         SecurityHelper.hash(password, salt, algorithmType)
@@ -914,10 +914,10 @@ public final class LogItCore
     /**
      * Checks if a player is forced to log in.
      * 
-     * <p> Returns {@code true} if the <i>force-login.global</i> config setting
+     * <p> Returns {@code true} if the <i>forceLogin.global</i> config setting
      * is set to <i>true</i>, or the player is in a world with forced login.
      * 
-     * <p> If the player name is contained in the <i>force-login.exempt-players</i>
+     * <p> If the player name is contained in the <i>forceLogin.exemptPlayers</i>
      * config property, it always returns {@code false} regardless of the above conditions.
      * 
      * <p> Note that this method does not check if the player is logged in.
@@ -933,11 +933,11 @@ public final class LogItCore
         String playerWorldName = player.getWorld().getName();
         
         boolean forcedLoginGlobal =
-                getConfig("config.yml").getBoolean("force-login.global");
+                getConfig("config.yml").getBoolean("forceLogin.global");
         List<String> exemptedWorlds =
-                getConfig("config.yml").getStringList("force-login.in-worlds");
+                getConfig("config.yml").getStringList("forceLogin.inWorlds");
         List<String> exemptedPlayers =
-                getConfig("config.yml").getStringList("force-login.exempt-players");
+                getConfig("config.yml").getStringList("forceLogin.exemptPlayers");
         
         return (forcedLoginGlobal || exemptedWorlds.contains(playerWorldName))
                 && !containsIgnoreCase(player.getName(), exemptedPlayers);
@@ -985,16 +985,16 @@ public final class LogItCore
         if (getSessionManager().isSessionAlive(player))
         {
             VaultHook.playerRemoveGroup(player,
-                    getConfig("config.yml").getString("groups.logged-out"));
+                    getConfig("config.yml").getString("groups.loggedOut"));
             VaultHook.playerAddGroup(player,
-                    getConfig("config.yml").getString("groups.logged-in"));
+                    getConfig("config.yml").getString("groups.loggedIn"));
         }
         else
         {
             VaultHook.playerRemoveGroup(player,
-                    getConfig("config.yml").getString("groups.logged-in"));
+                    getConfig("config.yml").getString("groups.loggedIn"));
             VaultHook.playerAddGroup(player,
-                    getConfig("config.yml").getString("groups.logged-out"));
+                    getConfig("config.yml").getString("groups.loggedOut"));
         }
     }
     
@@ -1024,7 +1024,7 @@ public final class LogItCore
         for (Player p : Bukkit.getOnlinePlayers())
         {
             if (!getSessionManager().isSessionAlive(p) && !p.equals(player)
-                    && getConfig("config.yml").getBoolean("force-login.hide-from-tab-list"))
+                    && getConfig("config.yml").getBoolean("forceLogin.hideFromTabList"))
             {
                 continue;
             }
@@ -1181,7 +1181,7 @@ public final class LogItCore
     public HashingAlgorithm getDefaultHashingAlgorithm()
     {
         return HashingAlgorithm.decode(
-                getConfig("config.yml").getString("passwords.hashing-algorithm")
+                getConfig("config.yml").getString("passwords.hashingAlgorithm")
         );
     }
     

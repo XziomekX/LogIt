@@ -107,7 +107,7 @@ public final class LogItCoreLogger
                 }
             }
             
-            if (core.getConfig("config.yml").getBoolean("logging.verbose-console"))
+            if (core.getConfig("config.yml").getBoolean("logging.verboseConsole"))
             {
                 System.out.println("[" + level + "] " + ChatColor.stripColor(message));
                 

@@ -153,7 +153,7 @@ public final class ChangeEmailCommand extends LogItCoreObject implements TabExec
                     new SelectorCondition(keys().email(), Infix.EQUALS, args[0].toLowerCase())
             ).size();
             
-            if (accountsWithEmail >= getConfig("config.yml").getInt("accounts-per-email"))
+            if (accountsWithEmail >= getConfig("config.yml").getInt("accountsPerEmail"))
             {
                 sendMsg(player, _("accountsPerEmailLimitReached"));
                 
@@ -181,7 +181,7 @@ public final class ChangeEmailCommand extends LogItCoreObject implements TabExec
                                       String label,
                                       String[] args)
     {
-        if (!getConfig("secret.yml").getBoolean("tab-completion"))
+        if (!getConfig("secret.yml").getBoolean("tabCompletion"))
             return null;
         
         if (args.length == 2 && args[0].equals("-x"))

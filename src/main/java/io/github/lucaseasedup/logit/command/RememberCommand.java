@@ -81,7 +81,7 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
                     System.currentTimeMillis() / 1000L);
             
             long validnessTime = getConfig("config.yml")
-                    .getTime("login-sessions.validness-time", TimeUnit.SECONDS);
+                    .getTime("loginSessions.validnessTime", TimeUnit.SECONDS);
             Locale activeLocale = getLocaleManager().getActiveLocale();
             
             sendMsg(sender, _("rememberLogin.success")

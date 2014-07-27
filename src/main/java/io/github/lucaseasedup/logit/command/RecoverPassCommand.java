@@ -108,36 +108,36 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
             final String paramEmail = args[0];
             
             final String newPassword = SecurityHelper.generatePassword(
-                    getConfig("config.yml").getInt("password-recovery.password-length"),
-                    getConfig("config.yml").getString("password-recovery.password-combination")
+                    getConfig("config.yml").getInt("passwordRecovery.passwordLength"),
+                    getConfig("config.yml").getString("passwordRecovery.passwordCombination")
             );
             
             final String from = getConfig("config.yml")
-                    .getString("mail.sending.email-address");
+                    .getString("mail.sending.emailAddress");
             
             final String smtpHost = getConfig("config.yml")
-                    .getString("mail.sending.smtp-host");
+                    .getString("mail.sending.smtpHost");
             
             final int smtpPort = getConfig("config.yml")
-                    .getInt("mail.sending.smtp-port");
+                    .getInt("mail.sending.smtpPort");
             
             final String smtpUser = getConfig("config.yml")
-                    .getString("mail.sending.smtp-user");
+                    .getString("mail.sending.smtpUser");
             
             final String smtpPassword = getConfig("config.yml")
-                    .getString("mail.sending.smtp-password");
+                    .getString("mail.sending.smtpPassword");
             
             final String subject = getConfig("config.yml")
-                    .getString("password-recovery.subject")
+                    .getString("passwordRecovery.subject")
                     .replace("%player%", player.getName());
             
             String bodyTemplateFilename = getConfig("config.yml")
-                    .getString("password-recovery.body-template");
+                    .getString("passwordRecovery.bodyTemplate");
             
             final File bodyTemplateFile = getDataFile(bodyTemplateFilename);
             
             final boolean htmlEnabled = getConfig("config.yml")
-                    .getBoolean("password-recovery.html-enabled");
+                    .getBoolean("passwordRecovery.htmlEnabled");
             
             playerLocks.add(username);
             

@@ -71,7 +71,7 @@ public final class ConvertWizard extends Wizard
         }
         else if (getCurrentStep() == Step.ENTER_DBTYPE)
         {
-            if (!new StorageTypeValidator().validate("storage.accounts.leading.storage-type",
+            if (!new StorageTypeValidator().validate("storage.accounts.leading.storageType",
                     PropertyType.STRING, message))
             {
                 sendMessage(_("wizard.convert.unknownStorageType")
@@ -207,7 +207,7 @@ public final class ConvertWizard extends Wizard
                 }
                 
                 getConfig("config.yml")
-                        .set("storage.accounts.leading.storage-type", dbtype);
+                        .set("storage.accounts.leading.storageType", dbtype);
                 
                 switch (dbtype)
                 {

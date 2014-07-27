@@ -128,10 +128,10 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
                 getPersistenceManager().serialize(account, player);
             }
             
-            if (getConfig("config.yml").getBoolean("force-login.periodical-prompt.enabled"))
+            if (getConfig("config.yml").getBoolean("forceLogin.periodicalPrompt.enabled"))
             {
                 long promptPeriod = getConfig("config.yml")
-                        .getTime("force-login.periodical-prompt.period", TimeUnit.TICKS);
+                        .getTime("forceLogin.periodicalPrompt.period", TimeUnit.TICKS);
                 
                 getMessageDispatcher()
                         .dispatchRepeatingForceLoginPrompter(username, promptPeriod, promptPeriod);

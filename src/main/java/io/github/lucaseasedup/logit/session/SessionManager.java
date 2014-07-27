@@ -63,19 +63,19 @@ public final class SessionManager extends LogItCoreObject
     public void run()
     {
         boolean timeoutEnabled = getConfig("config.yml")
-                .getBoolean("force-login.timeout.enabled");
+                .getBoolean("forceLogin.timeout.enabled");
         
         long timeoutValue = getConfig("config.yml")
-                .getTime("force-login.timeout.value", TimeUnit.TICKS);
+                .getTime("forceLogin.timeout.value", TimeUnit.TICKS);
         
         List<String> disableTimeoutForPlayers = getConfig("config.yml")
-                .getStringList("force-login.timeout.disable-for-players");
+                .getStringList("forceLogin.timeout.disableForPlayers");
         
         boolean automaticLogoutEnabled = getConfig("config.yml")
-                .getBoolean("automatic-logout.enabled");
+                .getBoolean("automaticLogout.enabled");
         
         long inactivityTimeToLogOut = getConfig("config.yml")
-                .getTime("automatic-logout.inactivity-time", TimeUnit.TICKS);
+                .getTime("automaticLogout.inactivityTime", TimeUnit.TICKS);
         
         for (Map.Entry<String, Session> entry : sessions.entrySet())
         {

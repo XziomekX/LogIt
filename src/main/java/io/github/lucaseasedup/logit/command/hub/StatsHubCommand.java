@@ -71,7 +71,7 @@ public final class StatsHubCommand extends HubCommand
         
         int backupCount = getBackupManager().getBackups(false).length;
         int logins = getConfig("stats.yml").getInt("logins");
-        int passwordChanges = getConfig("stats.yml").getInt("password-changes");
+        int passwordChanges = getConfig("stats.yml").getInt("passwordChanges");
         
         if (sender instanceof Player)
         {

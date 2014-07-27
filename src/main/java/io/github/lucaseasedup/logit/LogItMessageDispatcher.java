@@ -88,7 +88,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
             throw new IllegalArgumentException();
         
         long minInterval = getConfig("config.yml")
-                .getTime("force-login.prompt.min-interval", TimeUnit.MILLISECONDS);
+                .getTime("forceLogin.prompt.minInterval", TimeUnit.MILLISECONDS);
         
         if (minInterval > 0)
         {
@@ -103,7 +103,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         
         if (getAccountManager().isRegistered(player.getName()))
         {
-            if (getConfig("config.yml").getBoolean("force-login.prompt.login"))
+            if (getConfig("config.yml").getBoolean("forceLogin.prompt.login"))
             {
                 if (!getConfig("config.yml").getBoolean("passwords.disable"))
                 {
@@ -117,7 +117,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         }
         else
         {
-            if (getConfig("config.yml").getBoolean("force-login.prompt.register"))
+            if (getConfig("config.yml").getBoolean("forceLogin.prompt.register"))
             {
                 if (!getConfig("config.yml").getBoolean("passwords.disable"))
                 {
@@ -164,7 +164,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
             return;
         
         String joinMessage = JoinMessageGenerator.generate(player,
-                getConfig("config.yml").getBoolean("messages.join.show-world"));
+                getConfig("config.yml").getBoolean("messages.join.showWorld"));
         
         broadcastMsgExcept(joinMessage, Arrays.asList(player.getName()));
     }

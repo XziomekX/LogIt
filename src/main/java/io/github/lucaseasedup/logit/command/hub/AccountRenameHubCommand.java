@@ -57,8 +57,8 @@ public final class AccountRenameHubCommand extends HubCommand
             return;
         }
         
-        int minUsernameLength = getConfig("secret.yml").getInt("username.min-length");
-        int maxUsernameLength = getConfig("secret.yml").getInt("username.max-length");
+        int minUsernameLength = getConfig("secret.yml").getInt("username.minLength");
+        int maxUsernameLength = getConfig("secret.yml").getInt("username.maxLength");
         
         if (args[1].length() < minUsernameLength)
         {
@@ -77,7 +77,7 @@ public final class AccountRenameHubCommand extends HubCommand
         }
         
         if (CollectionUtils.containsIgnoreCase(args[1],
-                getConfig("config.yml").getStringList("prohibited-usernames")))
+                getConfig("config.yml").getStringList("prohibitedUsernames")))
         {
             sendMsg(sender, _("accountRename.usernameProhibited"));
             
@@ -120,7 +120,7 @@ public final class AccountRenameHubCommand extends HubCommand
     @Override
     public List<String> complete(CommandSender sender, String[] args)
     {
-        if (!getConfig("secret.yml").getBoolean("tab-completion"))
+        if (!getConfig("secret.yml").getBoolean("tabCompletion"))
             return null;
         
         if (args.length == 1)

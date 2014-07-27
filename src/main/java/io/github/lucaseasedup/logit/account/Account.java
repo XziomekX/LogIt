@@ -138,7 +138,7 @@ public final class Account extends LogItCoreObject
         String actualHashedPassword = entry.get(keys().password());
         String hashingAlgorithm = getCore().getDefaultHashingAlgorithm().name();
         
-        if (!getConfig("secret.yml").getBoolean("debug.force-hashing-algorithm"))
+        if (!getConfig("secret.yml").getBoolean("debug.forceHashingAlgorithm"))
         {
             String userHashingAlgorithm = entry.get(keys().hashing_algorithm());
             
@@ -148,7 +148,7 @@ public final class Account extends LogItCoreObject
             }
         }
         
-        if (getConfig("config.yml").getBoolean("passwords.use-salt"))
+        if (getConfig("config.yml").getBoolean("passwords.useSalt"))
         {
             String actualSalt = entry.get(keys().salt());
             
@@ -186,7 +186,7 @@ public final class Account extends LogItCoreObject
         HashingAlgorithm hashingAlgorithm = getCore().getDefaultHashingAlgorithm();
         String newHash;
         
-        if (getConfig("config.yml").getBoolean("passwords.use-salt"))
+        if (getConfig("config.yml").getBoolean("passwords.useSalt"))
         {
             String newSalt = SecurityHelper.generateSalt(hashingAlgorithm);
             
@@ -354,7 +354,7 @@ public final class Account extends LogItCoreObject
         
         String historyString = entry.get(keys().login_history());
         List<String> records = new ArrayList<>(Arrays.asList(historyString.split("\\|")));
-        int recordsToKeep = getConfig("config.yml").getInt("login-history.records-to-keep");
+        int recordsToKeep = getConfig("config.yml").getInt("loginHistory.recordsToKeep");
         
         for (int i = 0, n = records.size() - recordsToKeep + 1;  i < n; i++)
         {
@@ -413,7 +413,7 @@ public final class Account extends LogItCoreObject
         
         if (persistenceString != null)
         {
-            if (getConfig("secret.yml").getBoolean("debug.encode-persistence"))
+            if (getConfig("secret.yml").getBoolean("debug.encodePersistence"))
             {
                 persistenceString = Base64.decode(persistenceString);
             }
@@ -456,7 +456,7 @@ public final class Account extends LogItCoreObject
         if (persistence == null)
             throw new IllegalArgumentException();
         
-        if (!getConfig("secret.yml").getBoolean("debug.write-persistence"))
+        if (!getConfig("secret.yml").getBoolean("debug.writePersistence"))
             return;
         
         Map<String, Map<String, String>> persistenceIni = new HashMap<>(1);
@@ -467,7 +467,7 @@ public final class Account extends LogItCoreObject
         {
             String persistenceString = IniUtils.serialize(persistenceIni);
             
-            if (getConfig("secret.yml").getBoolean("debug.encode-persistence"))
+            if (getConfig("secret.yml").getBoolean("debug.encodePersistence"))
             {
                 persistenceString = Base64.encode(persistenceString);
             }

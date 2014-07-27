@@ -120,7 +120,7 @@ public final class BackupRestoreFileHubCommand extends HubCommand
     @Override
     public List<String> complete(CommandSender sender, String[] args)
     {
-        if (!getConfig("secret.yml").getBoolean("tab-completion"))
+        if (!getConfig("secret.yml").getBoolean("tabCompletion"))
             return null;
         
         if (args.length == 1)

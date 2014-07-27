@@ -41,23 +41,23 @@ public final class SerializerObserver extends PropertyObserver
         
         switch (p.getPath().toLowerCase())
         {
-        case "waiting-room.enabled":
+        case "waitingRoom.enabled":
             clazz = LocationSerializer.class;
             break;
             
-        case "force-login.obfuscate.air":
+        case "forceLogin.obfuscate.air":
             clazz = AirBarSerializer.class;
             break;
 
-        case "force-login.obfuscate.health":
+        case "forceLogin.obfuscate.health":
             clazz = HealthBarSerializer.class;
             break;
             
-        case "force-login.obfuscate.experience":
+        case "forceLogin.obfuscate.experience":
             clazz = ExperienceSerializer.class;
             break;
 
-        case "force-login.obfuscate.hunger":
+        case "forceLogin.obfuscate.hunger":
             clazz = HungerBarSerializer.class;
             break;
         }

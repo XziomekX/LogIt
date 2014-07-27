@@ -99,7 +99,7 @@ public final class AccunlockCommand extends LogItCoreObject implements TabExecut
                                       String label,
                                       String[] args)
     {
-        if (!getConfig("secret.yml").getBoolean("tab-completion"))
+        if (!getConfig("secret.yml").getBoolean("tabCompletion"))
             return null;
         
         if (args.length == 1)

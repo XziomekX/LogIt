@@ -190,13 +190,13 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     sendMsg(player, _("incorrectPassword"));
                     
                     int failsToBlockLoggingIn = getConfig("config.yml")
-                            .getInt("brute-force.block-login.attempts");
+                            .getInt("bruteForce.blockLogin.attempts");
                     
                     int failsToKick = getConfig("config.yml")
-                            .getInt("brute-force.kick.attempts");
+                            .getInt("bruteForce.kick.attempts");
                     
                     int failsToBan = getConfig("config.yml")
-                            .getInt("brute-force.ban.attempts");
+                            .getInt("bruteForce.ban.attempts");
                     
                     Integer currentFailedLogins = failedLogins.get(player);
                     
@@ -221,7 +221,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                             && failedLogins.get(player) >= failsToBlockLoggingIn)
                     {
                         long loginBlockadeTimeMillis = getConfig("config.yml")
-                                .getTime("brute-force.block-login.for-time",
+                                .getTime("bruteForce.blockLogin.forTime",
                                         TimeUnit.MILLISECONDS);
                         
                         long loginBlockadeTimeSecs =
@@ -239,16 +239,16 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                         failedLogins.remove(player);
                     }
                     
-                    if (getConfig("config.yml").getBoolean("login-history.enabled"))
+                    if (getConfig("config.yml").getBoolean("loginHistory.enabled"))
                     {
                         account.recordLogin(currentTimeSecs, playerIp, false);
                     }
                     
                     boolean isPremium = BukkitSmerfHook.isPremium(player);
                     boolean premiumTakeoverEnabled = getConfig("config.yml")
-                            .getBoolean("premium-takeover.enabled");
+                            .getBoolean("premiumTakeover.enabled");
                     String promptOn = getConfig("config.yml")
-                            .getString("premium-takeover.prompt-on");
+                            .getString("premiumTakeover.promptOn");
                     
                     if (isPremium && premiumTakeoverEnabled && promptOn.equals("failed-login"))
                     {
@@ -282,12 +282,12 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 
                 getConfig("stats.yml").set("logins", getConfig("stats.yml").getInt("logins") + 1);
                 
-                if (getConfig("config.yml").getBoolean("login-sessions.enabled"))
+                if (getConfig("config.yml").getBoolean("loginSessions.enabled"))
                 {
                     sendMsg(sender, _("rememberLogin.prompt"));
                 }
                 
-                if (getConfig("config.yml").getBoolean("login-history.enabled"))
+                if (getConfig("config.yml").getBoolean("loginHistory.enabled"))
                 {
                     account.recordLogin(currentTimeSecs, playerIp, true);
                 }
