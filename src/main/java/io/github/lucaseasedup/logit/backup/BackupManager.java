@@ -83,28 +83,26 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         
         if (timer.getElapsed() >= interval)
         {
-            createBackup(true);
+            createBackupAsynchronously();
             
             timer.reset();
         }
     }
     
     /**
-     * Creates a new backup of all the accounts stored in the underlying {@code AccountManager}.
+     * Creates a new backup of all the accounts stored
+     * in the underlying {@code AccountManager}.
      * 
      * <p> If this method was called with the {@code asynchronously}
-     * parameter set to {@code true}, a {@code ReportedException} will not be thrown
-     * even if an I/O error occurred.
-     * 
-     * @param asynchronously if {@code true}, the backup will be created
-     *                       asynchronously in a separate thread.
+     * parameter set to {@code true}, a {@code ReportedException}
+     * will not be thrown even if an I/O error occurred.
      * 
      * @return the created backup file.
      * 
      * @throws ReportedException if an I/O error occurred,
      *                           and it was reported to the logger.
      */
-    public File createBackup(boolean asynchronously)
+    public File createBackup()
     {
         File backupDir = getDataFile(getConfig("config.yml").getString("backup.path"));
         final File backupFile = new File(backupDir, formatBackupFilename(new Date()));
@@ -119,43 +117,69 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         
         log(Level.INFO, _("createBackup.creating"));
         
-        if (!asynchronously)
+        try
         {
-            try
-            {
-                copyAccounts(backupFile);
-                
-                log(Level.INFO, _("createBackup.success.log")
-                        .replace("{0}", backupFile.getName()));
-            }
-            catch (IOException ex)
-            {
-                log(Level.WARNING, _("createBackup.fail.log"), ex);
-                
-                ReportedException.throwNew(ex);
-            }
+            copyAccounts(backupFile);
+            
+            log(Level.INFO, _("createBackup.success.log")
+                    .replace("{0}", backupFile.getName()));
         }
-        else
+        catch (IOException ex)
         {
-            new BukkitRunnable()
+            log(Level.WARNING, _("createBackup.fail.log"), ex);
+            
+            ReportedException.throwNew(ex);
+        }
+        
+        return backupFile;
+    }
+    
+    /**
+     * Asynchronously creates a new backup of all the accounts stored
+     * in the underlying {@code AccountManager}.
+     * 
+     * <p> If this method was called with the {@code asynchronously}
+     * parameter set to {@code true}, a {@code ReportedException}
+     * will not be thrown even if an I/O error occurred.
+     * 
+     * @return the created backup file.
+     * 
+     * @throws ReportedException if an I/O error occurred,
+     *                           and it was reported to the logger.
+     */
+    public File createBackupAsynchronously()
+    {
+        File backupDir = getDataFile(getConfig("config.yml").getString("backup.path"));
+        final File backupFile = new File(backupDir, formatBackupFilename(new Date()));
+        
+        backupDir.getParentFile().mkdirs();
+        backupDir.mkdir();
+        
+        if (backupFile.exists())
+        {
+            backupFile.delete();
+        }
+        
+        log(Level.INFO, _("createBackup.creating"));
+        
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
             {
-                @Override
-                public void run()
+                try
                 {
-                    try
-                    {
-                        copyAccounts(backupFile);
-                        
-                        log(Level.INFO, _("createBackup.success.log")
-                                .replace("{0}", backupFile.getName()));
-                    }
-                    catch (IOException ex)
-                    {
-                        log(Level.WARNING, _("createBackup.fail.log"), ex);
-                    }
+                    copyAccounts(backupFile);
+                    
+                    log(Level.INFO, _("createBackup.success.log")
+                            .replace("{0}", backupFile.getName()));
                 }
-            }.runTaskLaterAsynchronously(getPlugin(), 0L);
-        }
+                catch (IOException ex)
+                {
+                    log(Level.WARNING, _("createBackup.fail.log"), ex);
+                }
+            }
+        }.runTaskAsynchronously(getPlugin());
         
         return backupFile;
     }

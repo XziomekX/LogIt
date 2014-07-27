@@ -45,7 +45,7 @@ public final class BackupForceHubCommand extends HubCommand
     @Override
     public void execute(CommandSender sender, String[] args)
     {
-        File backupFile = getBackupManager().createBackup(true);
+        File backupFile = getBackupManager().createBackupAsynchronously();
         
         if (sender instanceof Player)
         {
