@@ -31,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -44,7 +45,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.bukkit.Color;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -64,7 +64,6 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
         }
         
         this.file = getDataFile(filename);
-        this.configuration = YamlConfiguration.loadConfiguration(file);
         this.userConfigDef = userConfigDef;
         this.packageConfigDef = packageConfigDef;
         this.header = header;
@@ -73,6 +72,8 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
     @Override
     public void dispose()
     {
+        configuration = null;
+        
         if (properties != null)
         {
             for (Property property : properties.values())
@@ -85,22 +86,9 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
         }
     }
     
-    public void load() throws IOException,
-                              InvalidConfigurationException,
-                              InvalidPropertyValueException
+    public void load() throws IOException, InvalidPropertyValueException
     {
-        if (!file.exists())
-        {
-            file.getParentFile().mkdirs();
-            file.createNewFile();
-        }
-        
-        configuration.load(file);
-        
-        if (header != null)
-        {
-            configuration.options().header(header);
-        }
+        reopen();
         
         String jarUrlPath =
                 getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
@@ -144,6 +132,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
                     try (OutputStream userDefOutputStream = new FileOutputStream(userDefFile))
                     {
                         updateConfigDef(userDef, packageDef, userDefOutputStream);
+                        sortPathsByDef(userDef);
                     }
                 }
                 
@@ -153,6 +142,23 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
         }
         
         loaded = true;
+    }
+    
+    private void reopen() throws IOException
+    {
+        if (!file.exists())
+        {
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+        }
+        
+        configuration = YamlConfiguration.loadConfiguration(file);
+        
+        if (header != null)
+        {
+            configuration.options().header(header);
+        }
+        
     }
     
     /**
@@ -556,6 +562,47 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
         return oldDefSection.get(key).equals(newDefSection.get(key));
     }
     
+    private void sortPathsByDef(Map<String, Map<String, String>> def)
+    {
+        Map<String, Object> backup = new LinkedHashMap<>();
+        
+        for (String path : configuration.getKeys(true))
+        {
+            backup.put(path, configuration.get(path));
+            
+            // Set this path to null in case we're not
+            // able to completely erase the config file
+            configuration.set(path, null);
+        }
+        
+        /* Try to completely erase the config file */
+        try
+        {
+            try (RandomAccessFile raf = new RandomAccessFile(file, "rw"))
+            {
+                raf.setLength(0);
+            }
+            
+            reopen();
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, ex);
+        }
+        
+        for (Map<String, String> section : def.values())
+        {
+            String path = section.get("path");
+            
+            configuration.set(path, backup.remove(path));
+        }
+        
+        for (Map.Entry<String, Object> e : backup.entrySet())
+        {
+            configuration.set(e.getKey(), e.getValue());
+        }
+    }
+    
     private void loadConfigDef(Map<String, Map<String, String>> def)
             throws InvalidPropertyValueException
     {
@@ -762,7 +809,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
     }
     
     private final File file;
-    private final FileConfiguration configuration;
+    private FileConfiguration configuration;
     private final String userConfigDef;
     private final String packageConfigDef;
     private final String header;
