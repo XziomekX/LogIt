@@ -598,8 +598,14 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
                 
                 break;
             }
-            case OBJECT:  defaultValue = null;                                break;
-            case BOOLEAN: defaultValue = Boolean.valueOf(defaultValueString); break;
+            case OBJECT:
+                defaultValue = null;
+                break;
+                
+            case BOOLEAN:
+                defaultValue = Boolean.valueOf(defaultValueString);
+                break;
+                
             case COLOR:
             {
                 switch (defaultValueString.toLowerCase())
@@ -622,31 +628,45 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
                 case "white":   defaultValue = Color.WHITE;   break;
                 case "yellow":  defaultValue = Color.YELLOW;  break;
                 default:
+                {
+                    String[] rgb = defaultValueString.split(" ");
+                    
+                    if (rgb.length == 3)
                     {
-                        String[] rgb = defaultValueString.split(" ");
-                        
-                        if (rgb.length == 3)
-                        {
-                            defaultValue = Color.fromRGB(Integer.parseInt(rgb[0]),
-                                                         Integer.parseInt(rgb[1]),
-                                                         Integer.parseInt(rgb[2]));
-                        }
-                        else
-                        {
-                            defaultValue = Color.BLACK;
-                        }
-                        
-                        break;
+                        defaultValue = Color.fromRGB(Integer.parseInt(rgb[0]),
+                                                     Integer.parseInt(rgb[1]),
+                                                     Integer.parseInt(rgb[2]));
                     }
+                    else
+                    {
+                        defaultValue = Color.BLACK;
+                    }
+                    
+                    break;
+                }
                 }
                 
                 break;
             }
-            case DOUBLE:     defaultValue = Double.valueOf(defaultValueString);  break;
-            case INT:        defaultValue = Integer.valueOf(defaultValueString); break;
-            case ITEM_STACK: defaultValue = null;                                break;
-            case LONG:       defaultValue = Long.valueOf(defaultValueString);    break;
-            case STRING:     defaultValue = defaultValueString;                  break;
+            case DOUBLE:
+                defaultValue = Double.valueOf(defaultValueString);
+                break;
+                
+            case INT:
+                defaultValue = Integer.valueOf(defaultValueString);
+                break;
+            case ITEM_STACK:
+                defaultValue = null;
+                break;
+                
+            case LONG:
+                defaultValue = Long.valueOf(defaultValueString);
+                break;
+                
+            case STRING:
+                defaultValue = defaultValueString;
+                break;
+                
             case VECTOR:
             {
                 String[] axes = defaultValueString.split(" ");
@@ -675,9 +695,13 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
             case MAP_LIST:
             case SHORT_LIST:
             case STRING_LIST:
-                defaultValue = new ArrayList<>(0); break;
+                defaultValue = new ArrayList<>(0);
+                break;
+                
             case LOCATION:
-                defaultValue = new LocationSerializable("world", 0, 0, 0, 0, 0); break;
+                defaultValue = new LocationSerializable("world", 0, 0, 0, 0, 0);
+                break;
+                
             default:
                 throw new RuntimeException("Unknown property type: " + type.toString());
             }
