@@ -59,9 +59,18 @@ public final class ProfileManager extends LogItCoreObject
             }
             catch (RuntimeException ex)
             {
+                String exMsg = ex.getMessage();
+                
+                if (exMsg == null)
+                {
+                    exMsg = ex.getClass().getSimpleName();
+                    
+                    log(Level.WARNING, ex);
+                }
+                
                 log(Level.WARNING, "Invalid field definition."
                         + " Field name: " + fieldName + "."
-                        + " Cause: " + ex.getMessage());
+                        + " Cause: " + exMsg);
             }
         }
     }
