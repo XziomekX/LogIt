@@ -361,11 +361,17 @@ public final class LogItCore
                 .leading(leadingAccountStorage)
                 .cacheType(accountCacheType)
                 .build();
-        accountStorage.mirrorStorage(mirrorAccountStorage, new Hashtable<String, String>()
-            {{
-                put(getConfig("config.yml").getString("storage.accounts.leading.unit"),
-                    getConfig("config.yml").getString("storage.accounts.mirror.unit"));
-            }});
+        accountStorage.mirrorStorage(mirrorAccountStorage,
+                new Hashtable<String, String>()
+                {
+                    private static final long serialVersionUID = 1L;
+                    
+                    {
+                        put(getConfig("config.yml").getString("storage.accounts.leading.unit"),
+                            getConfig("config.yml").getString("storage.accounts.mirror.unit"));
+                    }
+                }
+        );
         
         try
         {
