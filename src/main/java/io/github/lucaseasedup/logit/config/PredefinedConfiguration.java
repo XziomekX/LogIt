@@ -158,7 +158,6 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
         {
             configuration.options().header(header);
         }
-        
     }
     
     /**
@@ -476,15 +475,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
             
             if (oldDefSection == null)
             {
-                oldDef.put(entry.getKey(), new LinkedHashMap<String, String>()
-                {{
-                    put("path",             newDefSection.get("path"));
-                    put("type",             newDefSection.get("type"));
-                    put("requires_restart", newDefSection.get("requires_restart"));
-                    put("default_value",    newDefSection.get("default_value"));
-                    put("validator",        newDefSection.get("validator"));
-                    put("observer",         newDefSection.get("observer"));
-                }});
+                oldDef.put(entry.getKey(), new LinkedHashMap<>(newDefSection));
                 
                 continue;
             }
