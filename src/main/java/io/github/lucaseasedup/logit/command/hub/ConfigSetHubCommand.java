@@ -23,7 +23,9 @@ import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
-import io.github.lucaseasedup.logit.config.PropertyType;
+import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
+import io.github.lucaseasedup.logit.config.Property;
+import java.util.logging.Level;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -49,21 +51,35 @@ public final class ConfigSetHubCommand extends HubCommand
     @Override
     public void execute(CommandSender sender, String[] args)
     {
-        if (!getConfig("config.yml").contains(args[0]))
+        String hyphenatedPath = args[0];
+        String camelCasePath = PredefinedConfiguration.getCamelCasePath(hyphenatedPath);
+        Property property;
+        
+        if (!getConfig("config.yml").contains(hyphenatedPath))
         {
-            sendMsg(sender, _("config.propertyNotFound")
-                    .replace("{0}", args[0]));
-            
-            return;
+            if (!getConfig("config.yml").contains(camelCasePath))
+            {
+                sendMsg(sender, _("config.propertyNotFound")
+                        .replace("{0}", hyphenatedPath));
+                
+                return;
+            }
+            else
+            {
+                property = getConfig("config.yml").getProperty(camelCasePath);
+            }
+        }
+        else
+        {
+            property = getConfig("config.yml").getProperty(hyphenatedPath);
         }
         
-        PropertyType type = getConfig("config.yml").getProperty(args[0]).getType();
         String inputValue = args[1];
         Object outputValue = null;
         
         try
         {
-            switch (type)
+            switch (property.getType())
             {
             case CONFIGURATION_SECTION:
             case OBJECT:
@@ -215,16 +231,16 @@ public final class ConfigSetHubCommand extends HubCommand
                 throw new RuntimeException("Unknown property type.");
             }
             
-            getConfig("config.yml").set(args[0], outputValue);
+            property.set(outputValue);
             
             if (sender instanceof Player)
             {
                 sendMsg(sender, _("config.set.success")
-                        .replace("{0}", args[0])
-                        .replace("{1}", getConfig("config.yml").get(args[0]).toString()));
+                        .replace("{0}", property.getPath())
+                        .replace("{1}", property.getValue().toString()));
             }
             
-            if (getConfig("config.yml").getProperty(args[0]).requiresRestart())
+            if (property.requiresRestart())
             {
                 sendMsg(sender, _("config.set.reloadPlugin"));
             }
@@ -241,7 +257,7 @@ public final class ConfigSetHubCommand extends HubCommand
             }
             
             sendMsg(sender, _("config.set.fail")
-                    .replace("{0}", args[0])
+                    .replace("{0}", property.getPath())
                     .replace("{1}", exMsg));
         }
     }

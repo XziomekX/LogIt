@@ -41,6 +41,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.bukkit.Color;
@@ -798,6 +800,35 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
     {
         return Base64.decode(input);
     }
+    
+    /**
+     * Converts a hyphenated path (example-path.secret-setting)
+     * to a camelCase path (examplePath.secretSetting).
+     * 
+     * @param hyphenatedPath the hyphenated path.
+     * 
+     * @return the camelCase equivalent of the provided hyphenated path.
+     */
+    public static String getCamelCasePath(String hyphenatedPath)
+    {
+        Matcher matcher = HYPHENATED_PATH_PATTERN.matcher(hyphenatedPath);
+        StringBuilder sb = new StringBuilder();
+        int last = 0;
+        
+        while (matcher.find())
+        {
+            sb.append(hyphenatedPath.substring(last, matcher.start()));
+            sb.append(matcher.group(1).toUpperCase());
+            
+            last = matcher.end();
+        }
+        
+        sb.append(hyphenatedPath.substring(last));
+        
+        return sb.toString();
+    }
+    
+    private static final Pattern HYPHENATED_PATH_PATTERN = Pattern.compile("\\-([a-z])");
     
     private final File file;
     private FileConfiguration configuration;

@@ -22,6 +22,8 @@ import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
+import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
+import io.github.lucaseasedup.logit.config.Property;
 import org.bukkit.command.CommandSender;
 
 public final class ConfigGetHubCommand extends HubCommand
@@ -43,16 +45,31 @@ public final class ConfigGetHubCommand extends HubCommand
     @Override
     public void execute(CommandSender sender, String[] args)
     {
-        if (!getConfig("config.yml").contains(args[0]))
+        String hyphenatedPath = args[0];
+        String camelCasePath = PredefinedConfiguration.getCamelCasePath(hyphenatedPath);
+        Property property;
+        
+        if (!getConfig("config.yml").contains(hyphenatedPath))
         {
-            sendMsg(sender, _("config.propertyNotFound")
-                    .replace("{0}", args[0]));
-            
-            return;
+            if (!getConfig("config.yml").contains(camelCasePath))
+            {
+                sendMsg(sender, _("config.propertyNotFound")
+                        .replace("{0}", hyphenatedPath));
+                
+                return;
+            }
+            else
+            {
+                property = getConfig("config.yml").getProperty(camelCasePath);
+            }
+        }
+        else
+        {
+            property = getConfig("config.yml").getProperty(hyphenatedPath);
         }
         
         sendMsg(sender, _("config.get.property")
-                .replace("{0}", args[0])
-                .replace("{1}", getConfig("config.yml").get(args[0]).toString()));
+                .replace("{0}", property.getPath())
+                .replace("{1}", property.getValue().toString()));
     }
 }
