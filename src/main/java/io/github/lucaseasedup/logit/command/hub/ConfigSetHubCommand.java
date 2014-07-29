@@ -67,7 +67,7 @@ public final class ConfigSetHubCommand extends HubCommand
             {
             case CONFIGURATION_SECTION:
             case OBJECT:
-                throw new Exception("Unsupported property type conversion.");
+                throw new RuntimeException("Unsupported property type conversion.");
                 
             case BOOLEAN:
                 outputValue = Boolean.valueOf(inputValue);
@@ -99,7 +99,7 @@ public final class ConfigSetHubCommand extends HubCommand
                     String[] rgb = inputValue.split(" ");
                     
                     if (rgb.length != 3)
-                        throw new Exception("Malformed color representation.");
+                        throw new RuntimeException("Malformed color representation.");
                     
                     try
                     {
@@ -129,7 +129,7 @@ public final class ConfigSetHubCommand extends HubCommand
                 break;
                 
             case ITEM_STACK:
-                throw new Exception("Unsupported property type conversion.");
+                throw new RuntimeException("Unsupported property type conversion.");
                 
             case LONG:
                 outputValue = Long.valueOf(inputValue);
@@ -144,7 +144,7 @@ public final class ConfigSetHubCommand extends HubCommand
                 if ("$".equals(inputValue))
                 {
                     if (!(sender instanceof Player))
-                        throw new Exception(_("onlyForPlayers"));
+                        throw new RuntimeException(_("onlyForPlayers"));
                     
                     Player player = ((Player) sender);
                     
@@ -157,7 +157,7 @@ public final class ConfigSetHubCommand extends HubCommand
                     String[] axes = inputValue.split(" ");
                     
                     if (axes.length != 3)
-                        throw new Exception("Malformed vector representation.");
+                        throw new RuntimeException("Malformed vector representation.");
                     
                     try
                     {
@@ -188,14 +188,14 @@ public final class ConfigSetHubCommand extends HubCommand
             case MAP_LIST:
             case SHORT_LIST:
             case STRING_LIST:
-                throw new Exception("Unsupported property type conversion.");
+                throw new RuntimeException("Unsupported property type conversion.");
                 
             case LOCATION:
             {
                 if ("$".equals(inputValue))
                 {
                     if (!(sender instanceof Player))
-                        throw new Exception(_("onlyForPlayers"));
+                        throw new RuntimeException(_("onlyForPlayers"));
                     
                     Location loc = ((Player) sender).getLocation();
                     
@@ -205,14 +205,14 @@ public final class ConfigSetHubCommand extends HubCommand
                 }
                 else
                 {
-                    throw new Exception("Unsupported property type conversion.");
+                    throw new RuntimeException("Unsupported property type conversion.");
                 }
                 
                 break;
             }
             
             default:
-                throw new Exception("Unknown property type.");
+                throw new RuntimeException("Unknown property type.");
             }
             
             getConfig("config.yml").set(args[0], outputValue);
@@ -229,11 +229,20 @@ public final class ConfigSetHubCommand extends HubCommand
                 sendMsg(sender, _("config.set.reloadPlugin"));
             }
         }
-        catch (Exception ex)
+        catch (RuntimeException ex)
         {
+            String exMsg = ex.getMessage();
+            
+            if (exMsg == null)
+            {
+                exMsg = ex.getClass().getSimpleName();
+                
+                log(Level.WARNING, ex);
+            }
+            
             sendMsg(sender, _("config.set.fail")
                     .replace("{0}", args[0])
-                    .replace("{1}", ex.getMessage()));
+                    .replace("{1}", exMsg));
         }
     }
 }
