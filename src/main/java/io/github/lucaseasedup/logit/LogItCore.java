@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit;
 
 import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import com.google.common.io.Files;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.account.AccountManager;
@@ -202,6 +203,27 @@ public final class LogItCore
                             + "                                                      #\n"
                             + " Do not touch unless you are 100% what you're doing!  #\n"
                             + "# # # # # # # # # # # # # # # # # # # # # # # # # # # #\n";
+        
+        File oldConfigDefFile = getDataFile("config-def.b64");
+        
+        if (oldConfigDefFile.exists())
+        {
+            File newConfigDefFile = getDataFile(".doNotTouch/config-def.b64");
+            
+            try
+            {
+                newConfigDefFile.getParentFile().mkdirs();
+                newConfigDefFile.createNewFile();
+                
+                Files.copy(oldConfigDefFile, newConfigDefFile);
+                
+                oldConfigDefFile.delete();
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, ex);
+            }
+        }
         
         configurationManager = new ConfigurationManager();
         configurationManager.registerConfiguration("config.yml",
