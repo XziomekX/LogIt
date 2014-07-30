@@ -30,6 +30,7 @@ import io.github.lucaseasedup.logit.storage.Storage.DataType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -379,10 +380,10 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         return buildDateFormat().format(date);
     }
     
-    private SimpleDateFormat buildDateFormat()
+    private DateFormat buildDateFormat()
     {
         String backupFilenameFormat = getConfig("config.yml").getString("backup.filename");
-        SimpleDateFormat dateFormat = new SimpleDateFormat(backupFilenameFormat);
+        DateFormat dateFormat = new SimpleDateFormat(backupFilenameFormat);
         
         return dateFormat;
     }

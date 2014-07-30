@@ -24,6 +24,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
@@ -203,8 +204,7 @@ public final class LogItCoreLogger
         return logFileWriter;
     }
     
-    private static final SimpleDateFormat LOG_DATE_FORMAT =
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final DateFormat LOG_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
     private final LogItCore core;
     private FileWriter logFileWriter;
