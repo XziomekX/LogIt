@@ -142,7 +142,7 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Returns a session associated with the given username.
+     * Returns a session associated with a username.
      * 
      * @param username the username.
      * 
@@ -155,7 +155,7 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Returns a session associated with a player's name.
+     * Returns a session associated with a player.
      * 
      * @param player the player.
      * 
@@ -168,7 +168,7 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Checks whether a session associated with the given username is alive.
+     * Checks whether a session associated with a username is alive.
      * 
      * <p> Returns {@code true} if such session exists, is alive and,
      * if a player with this username is online, player IP matches session IP;
@@ -176,7 +176,7 @@ public final class SessionManager extends LogItCoreObject
      * 
      * @param username the username.
      * 
-     * @return {@code true} if the session is alive; {@code false} otherwise.
+     * @return {@code true} if such session is alive; {@code false} otherwise.
      * 
      * @throws IllegalArgumentException if {@code username} is {@code null}.
      */
@@ -204,7 +204,7 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Checks if a session associated with a player's name is alive.
+     * Checks if a session associated with a player is alive.
      * 
      * <p> Returns {@code true} if such session exists, is alive
      * and player IP matches session IP; {@code false} otherwise.
@@ -219,7 +219,7 @@ public final class SessionManager extends LogItCoreObject
         if (player == null)
             return false;
         
-        Session session = getSession(player.getName());
+        Session session = getSession(player);
         
         if (session == null)
             return false;
@@ -230,51 +230,9 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Creates a new session and associates it with the given username.
+     * Creates a new session and associates it with a player.
      * 
-     * <p> If a session with this username already exists,
-     * no action will be taken.
-     * 
-     * <p> This method emits the {@code SessionCreateEvent} event.
-     * 
-     * @param username the username.
-     * @param ip       the player IP address.
-     * 
-     * @return a {@code CancellableState} indicating whether this operation
-     *         has been cancelled by one of the {@code SessionCreateEvent} handlers.
-     * 
-     * @throws IllegalArgumentException if {@code username} or {@code ip} is {@code null}.
-     */
-    public CancelledState createSession(String username, String ip)
-    {
-        if (username == null || ip == null)
-            throw new IllegalArgumentException();
-        
-        if (getSession(username) != null)
-            return CancelledState.NOT_CANCELLED;
-        
-        SessionEvent evt = new SessionCreateEvent(username);
-        
-        Bukkit.getPluginManager().callEvent(evt);
-        
-        if (evt.isCancelled())
-            return CancelledState.CANCELLED;
-        
-        // Create session.
-        Session session = new Session(ip);
-        sessions.put(username.toLowerCase(), session);
-        
-        log(Level.FINE, _("createSession.success.log")
-                .replace("{0}", username.toLowerCase()));
-        
-        return CancelledState.NOT_CANCELLED;
-    }
-    
-    /**
-     * Creates a new session and associates it with a player's name.
-     * 
-     * <p> If a session with a username equal to the player's name
-     * already exists, no action will be taken.
+     * <p> If a session for this player already exists, no action will be taken.
      * 
      * <p> This method emits the {@code SessionCreateEvent} event.
      * 
@@ -290,21 +248,43 @@ public final class SessionManager extends LogItCoreObject
         if (player == null)
             throw new IllegalArgumentException();
         
-        return createSession(player.getName(), getPlayerIp(player));
+        String username = player.getName().toLowerCase();
+        String ip = getPlayerIp(player);
+        
+        if (getSession(player) != null)
+            return CancelledState.NOT_CANCELLED;
+        
+        SessionEvent evt = new SessionCreateEvent(username);
+        
+        Bukkit.getPluginManager().callEvent(evt);
+        
+        if (evt.isCancelled())
+            return CancelledState.CANCELLED;
+        
+        // Create session.
+        Session session = new Session(ip);
+        sessions.put(username, session);
+        
+        log(Level.FINE, _("createSession.success.log")
+                .replace("{0}", username));
+        
+        return CancelledState.NOT_CANCELLED;
     }
     
     /**
      * Destroys a session associated with the given username.
      * 
-     * <p> If a session with this username does not exist, no action will be taken.
-     * If the session exists and is alive, this method will try to end it before proceeding.
+     * <p> If no session for this username exists, no action will be taken.
+     * If the session exists and is alive, this method will try to end it
+     * before proceeding.
      * 
      * <p> This method emits the {@code SessionDestroyEvent} event.
      * 
      * @param username the username.
      * 
      * @return a {@code CancellableState} indicating whether this operation
-     *         has been cancelled by one of the {@code SessionDestroyEvent} handlers.
+     *         has been cancelled by one of the {@code SessionDestroyEvent}
+     *         handlers.
      * 
      * @throws IllegalArgumentException if {@code username} is {@code null}.
      */
@@ -339,9 +319,9 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Destroys a session associated with a player's name,
+     * Destroys a session associated with a player.
      * 
-     * <p> If a session with this player's name does not exist, no action will be taken.
+     * <p> If no session for this player exists, no action will be taken.
      * If the session exists and is alive, this method will try to end it before proceeding.
      * 
      * <p> This method emits the {@code SessionDestroyEvent} event.
@@ -362,29 +342,34 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Starts a session associated with the given username.
+     * Starts a session associated with a player.
      * 
      * <p> If the session has already been started (e.i. is alive), no action will be taken.
+     * If no session exists for this player, it will be created.
      * 
      * <p> This method emits the {@code SessionStartEvent} event.
      * 
-     * @param username the username.
+     * @param player the player.
      * 
      * @return a {@code CancellableState} indicating whether this operation
      *         has been cancelled by one of the {@code SessionStartEvent} handlers.
      * 
-     * @throws SessionNotFoundException if no such session exists.
-     * @throws IllegalArgumentException if {@code username} is {@code null}.
+     * @throws IllegalArgumentException if {@code player} is {@code null}.
      */
-    public CancelledState startSession(String username)
+    public CancelledState startSession(Player player)
     {
-        if (username == null)
+        if (player == null)
             throw new IllegalArgumentException();
         
-        Session session = getSession(username);
+        String username = player.getName().toLowerCase();
+        Session session = getSession(player);
         
         if (session == null)
-            throw new SessionNotFoundException(username);
+        {
+            createSession(player);
+            
+            session = getSession(player);
+        }
         
         if (session.isAlive())
             return CancelledState.NOT_CANCELLED;
@@ -400,38 +385,16 @@ public final class SessionManager extends LogItCoreObject
         session.setStatus(0L);
         
         log(Level.FINE, _("startSession.success.log")
-                .replace("{0}", username.toLowerCase()));
+                .replace("{0}", username));
         
         return CancelledState.NOT_CANCELLED;
     }
     
     /**
-     * Starts a session associated with a player's name.
+     * Ends a session associated with a username.
      * 
-     * <p> If the session has already been started (e.i. is alive), no action will be taken.
-     * 
-     * <p> This method emits the {@code SessionStartEvent} event.
-     * 
-     * @param player the player.
-     * 
-     * @return a {@code CancellableState} indicating whether this operation
-     *         has been cancelled by one of the {@code SessionStartEvent} handlers.
-     * 
-     * @throws SessionNotFoundException if no such session exists.
-     * @throws IllegalArgumentException if {@code player} is {@code null}.
-     */
-    public CancelledState startSession(Player player)
-    {
-        if (player == null)
-            throw new IllegalArgumentException();
-        
-        return startSession(player.getName());
-    }
-    
-    /**
-     * Ends a session associated with the given username.
-     * 
-     * <p> If the session is not alive, no action will be taken.
+     * <p> If the session is not alive or does not exist,
+     * no action will be taken.
      * 
      * <p> This method emits the {@code SessionEndEvent} event.
      * 
@@ -440,7 +403,6 @@ public final class SessionManager extends LogItCoreObject
      * @return a {@code CancellableState} indicating whether this operation
      *         has been cancelled by one of the {@code SessionEndEvent} handlers.
      * 
-     * @throws SessionNotFoundException if no such session exists.
      * @throws IllegalArgumentException if {@code username} is {@code null}.
      */
     public CancelledState endSession(String username)
@@ -451,7 +413,7 @@ public final class SessionManager extends LogItCoreObject
         Session session = getSession(username);
         
         if (session == null)
-            throw new SessionNotFoundException(username);
+            return CancelledState.NOT_CANCELLED;
         
         if (!session.isAlive())
             return CancelledState.NOT_CANCELLED;
@@ -473,9 +435,10 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Ends a session associated with a player's name.
+     * Ends a session associated with a player.
      * 
-     * <p> If the session is not alive, no action will be taken.
+     * <p> If the session is not alive or does not exist,
+     * no action will be taken.
      * 
      * <p> This method emits the {@code SessionEndEvent} event.
      * 
@@ -484,7 +447,6 @@ public final class SessionManager extends LogItCoreObject
      * @return a {@code CancellableState} indicating whether this operation
      *         has been cancelled by one of the {@code SessionEndEvent} handlers.
      * 
-     * @throws SessionNotFoundException if no such session exists.
      * @throws IllegalArgumentException if {@code player} is {@code null}.
      */
     public CancelledState endSession(Player player)
@@ -553,12 +515,18 @@ public final class SessionManager extends LogItCoreObject
         try (Storage sessionsStorage = new SqliteStorage("jdbc:sqlite:" + file))
         {
             sessionsStorage.connect();
-            sessionsStorage.createUnit("sessions", new Hashtable<String, DataType>()
-                {{
-                    put("username", DataType.TINYTEXT);
-                    put("status", DataType.INTEGER);
-                    put("ip", DataType.TINYTEXT);
-                }}, "username");
+            sessionsStorage.createUnit("sessions",
+                    new Hashtable<String, DataType>()
+                    {
+                        private static final long serialVersionUID = 1L;
+                        
+                        {
+                            put("username", DataType.TINYTEXT);
+                            put("status", DataType.INTEGER);
+                            put("ip", DataType.TINYTEXT);
+                        }
+                    }, "username"
+            );
             sessionsStorage.setAutobatchEnabled(true);
             
             for (Entry<String, Session> e : sessions.entrySet())
@@ -611,9 +579,9 @@ public final class SessionManager extends LogItCoreObject
                     String ip = entry.get("ip");
                     long status = Long.parseLong(entry.get("status"));
                     
-                    createSession(username, ip);
-                    
-                    getSession(username).setStatus(status);
+                    Session session = new Session(ip);
+                    session.setStatus(status);
+                    sessions.put(username, session);
                 }
             }
         }

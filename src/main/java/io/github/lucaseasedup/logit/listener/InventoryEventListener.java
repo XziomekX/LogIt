@@ -36,7 +36,7 @@ public final class InventoryEventListener extends LogItCoreObject implements Lis
             return;
         
         Player player = (Player) event.getWhoClicked();
-        Session session = getSessionManager().getSession(player.getName());
+        Session session = getSessionManager().getSession(player);
         
         if (session != null)
         {
@@ -58,7 +58,7 @@ public final class InventoryEventListener extends LogItCoreObject implements Lis
             return;
         
         Player player = (Player) event.getPlayer();
-        Session session = getSessionManager().getSession(player.getName());
+        Session session = getSessionManager().getSession(player);
         
         if (session != null)
         {

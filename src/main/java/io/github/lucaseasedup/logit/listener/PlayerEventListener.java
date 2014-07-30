@@ -180,9 +180,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         event.setJoinMessage(null);
         
-        if (getSessionManager().getSession(username) == null)
+        if (getSessionManager().getSession(player) == null)
         {
-            getSessionManager().createSession(username, ip);
+            getSessionManager().createSession(player);
         }
         
         long validnessTime = getConfig("config.yml")
@@ -251,7 +251,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                         if (ip.equals(loginIp) && currentTime - loginTime < validnessTime
                                 && !getSessionManager().isSessionAlive(username))
                         {
-                            getSessionManager().startSession(username);
+                            getSessionManager().startSession(player);
                         }
                     }
                 }
@@ -394,7 +394,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     private void onMove(PlayerMoveEvent event)
     {
         Player player = event.getPlayer();
-        Session session = getSessionManager().getSession(player.getName());
+        Session session = getSessionManager().getSession(player);
         
         if (session != null)
         {
@@ -413,7 +413,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     private void onToggleSneak(PlayerToggleSneakEvent event)
     {
         Player player = event.getPlayer();
-        Session session = getSessionManager().getSession(player.getName());
+        Session session = getSessionManager().getSession(player);
         
         if (session != null)
         {
@@ -435,7 +435,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             return;
         
         Player player = event.getPlayer();
-        Session session = getSessionManager().getSession(player.getName());
+        Session session = getSessionManager().getSession(player);
         
         if (session != null)
         {
@@ -481,7 +481,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             return;
         
         Player player = event.getPlayer();
-        Session session = getSessionManager().getSession(player.getName());
+        Session session = getSessionManager().getSession(player);
         
         if (session != null)
         {
@@ -547,7 +547,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     private void onInteract(PlayerInteractEvent event)
     {
         Player player = event.getPlayer();
-        Session session = getSessionManager().getSession(player.getName());
+        Session session = getSessionManager().getSession(player);
         
         if (session != null)
         {
@@ -578,7 +578,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     private void onInteractEntity(PlayerInteractEntityEvent event)
     {
         Player player = event.getPlayer();
-        Session session = getSessionManager().getSession(player.getName());
+        Session session = getSessionManager().getSession(player);
         
         if (session != null)
         {
@@ -617,7 +617,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     private void onDropItem(PlayerDropItemEvent event)
     {
         Player player = event.getPlayer();
-        Session session = getSessionManager().getSession(player.getName());
+        Session session = getSessionManager().getSession(player);
         
         if (session != null)
         {

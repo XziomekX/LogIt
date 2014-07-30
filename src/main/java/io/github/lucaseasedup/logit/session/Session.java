@@ -18,6 +18,8 @@
  */
 package io.github.lucaseasedup.logit.session;
 
+import io.github.lucaseasedup.logit.util.Validators;
+
 /**
  * Represents a player session. It holds a time-based status,
  * a player IP address and inactivity time of the player.
@@ -29,22 +31,15 @@ public final class Session
      * 
      * @param ip an IP address of this session.
      * 
-     * @throws IllegalArgumentException if {@code ip} is {@code null}.
+     * @throws IllegalArgumentException if {@code ip} is {@code null}
+     *                                  or not a valid IPv4/6 address.
      */
     public Session(String ip)
     {
-        if (ip == null)
+        if (!Validators.validateIp(ip))
             throw new IllegalArgumentException();
         
         this.ip = ip;
-    }
-    
-    /**
-     * Creates a new {@code Session} object with a new status equal to {@code -1L}.
-     */
-    public Session()
-    {
-        this("");
     }
     
     /**
@@ -62,11 +57,12 @@ public final class Session
      * 
      * @param ip new IP address.
      * 
-     * @throws IllegalArgumentException if {@code ip} is {@code null}.
+     * @throws IllegalArgumentException if {@code ip} is {@code null}
+     *                                  or not a valid IPv4/6 address.
      */
     public void setIp(String ip)
     {
-        if (ip == null)
+        if (!Validators.validateIp(ip))
             throw new IllegalArgumentException();
         
         this.ip = ip;
