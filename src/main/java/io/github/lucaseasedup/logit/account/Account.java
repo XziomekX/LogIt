@@ -217,11 +217,12 @@ public final class Account extends LogItCoreObject
      * 
      * @param ip the IP address to be attached.
      * 
-     * @throws IllegalArgumentException if {@code ip} is {@code null}.
+     * @throws IllegalArgumentException if {@code ip} is {@code null}
+     *                                  or not a valid IPv4/6 address.
      */
     public void setIp(String ip)
     {
-        if (ip == null)
+        if (!Validators.validateIp(ip))
             throw new IllegalArgumentException();
         
         try
@@ -254,7 +255,8 @@ public final class Account extends LogItCoreObject
      * @param ip   the player IP address.
      * @param time the UNIX time of when the login session was saved.
      * 
-     * @throws IllegalArgumentException if {@code ip} is {@code null},
+     * @throws IllegalArgumentException if {@code ip} is {@code null}
+     *                                  or not a valid IPv4/6 address,
      *                                  or {@code time} is negative.
      *                                  
      * @throws ReportedException        if an I/O error occurred,
@@ -262,7 +264,7 @@ public final class Account extends LogItCoreObject
      */
     public void saveLoginSession(String ip, long time)
     {
-        if (ip == null || time < 0)
+        if (!Validators.validateIp(ip) || time < 0)
             throw new IllegalArgumentException();
         
         entry.put(keys().login_session(), ip + ";" + time);
@@ -350,7 +352,7 @@ public final class Account extends LogItCoreObject
     
     public void recordLogin(long unixTime, String ip, boolean succeeded)
     {
-        if (unixTime < 0 || ip == null)
+        if (unixTime < 0 || !Validators.validateIp(ip))
             throw new IllegalArgumentException();
         
         if (!entry.containsKey(keys().login_history()))

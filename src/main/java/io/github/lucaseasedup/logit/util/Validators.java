@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.util;
 
 import java.util.regex.Pattern;
+import org.apache.http.conn.util.InetAddressUtils;
 
 public final class Validators
 {
@@ -32,6 +33,14 @@ public final class Validators
             throw new IllegalArgumentException();
         
         return EMAIL_PATTERN.matcher(email).matches();
+    }
+    
+    public static boolean validateIp(String ip)
+    {
+        if (ip == null || ip.trim().isEmpty())
+            return false;
+        
+        return InetAddressUtils.isIPv4Address(ip) || InetAddressUtils.isIPv6Address(ip);
     }
     
     public static final Pattern EMAIL_PATTERN = Pattern.compile(
