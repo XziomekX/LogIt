@@ -241,6 +241,11 @@ public final class Account extends LogItCoreObject
         }
     }
     
+    public void removeIp()
+    {
+        entry.put(keys().ip(), "");
+    }
+    
     public String getLoginSession()
     {
         if (!entry.containsKey(keys().login_session()))
@@ -295,6 +300,11 @@ public final class Account extends LogItCoreObject
             throw new IllegalArgumentException();
         
         entry.put(keys().email(), email.toLowerCase());
+    }
+    
+    public void removeEmail()
+    {
+        entry.put(keys().email(), "");
     }
     
     public long getLastActiveDate()
