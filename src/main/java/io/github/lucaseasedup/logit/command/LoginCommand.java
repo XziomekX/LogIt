@@ -106,8 +106,11 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 sendMsg(sender, _("startSession.success.others")
                         .replace("{0}", paramPlayer.getName()));
                 
-                getConfig("stats.yml").set("logins",
-                        getConfig("stats.yml").getInt("logins") + 1);
+                if (getConfig("config.yml").getBoolean("stats.enabled"))
+                {
+                    getConfig("stats.yml").set("logins",
+                            getConfig("stats.yml").getInt("logins") + 1);
+                }
             }
         }
         else if ((args.length == 0 && disablePasswords) || (args.length <= 1 && !disablePasswords))
@@ -279,8 +282,12 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             if (!getSessionManager().startSession(player).isCancelled())
             {
                 sendMsg(sender, _("startSession.success.self"));
-                
-                getConfig("stats.yml").set("logins", getConfig("stats.yml").getInt("logins") + 1);
+
+                if (getConfig("config.yml").getBoolean("stats.enabled"))
+                {
+                    getConfig("stats.yml").set("logins",
+                            getConfig("stats.yml").getInt("logins") + 1);
+                }
                 
                 if (getConfig("config.yml").getBoolean("loginSessions.enabled"))
                 {

@@ -105,8 +105,11 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             sendMsg(sender, _("changePassword.success.others")
                     .replace("{0}", PlayerUtils.getPlayerRealName(args[1])));
             
-            getConfig("stats.yml").set("passwordChanges",
-                    getConfig("stats.yml").getInt("passwordChanges") + 1);
+            if (getConfig("config.yml").getBoolean("stats.enabled"))
+            {
+                getConfig("stats.yml").set("passwordChanges",
+                        getConfig("stats.yml").getInt("passwordChanges") + 1);
+            }
         }
         else if (args.length <= 3)
         {
@@ -206,8 +209,11 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             
             LogItCooldowns.activate(player, LogItCooldowns.CHANGEPASS);
             
-            getConfig("stats.yml").set("passwordChanges",
-                    getConfig("stats.yml").getInt("passwordChanges") + 1);
+            if (getConfig("config.yml").getBoolean("stats.enabled"))
+            {
+                getConfig("stats.yml").set("passwordChanges",
+                        getConfig("stats.yml").getInt("passwordChanges") + 1);
+            }
         }
         else
         {
