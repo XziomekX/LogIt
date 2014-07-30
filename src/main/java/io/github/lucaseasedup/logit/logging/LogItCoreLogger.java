@@ -77,7 +77,7 @@ public final class LogItCoreLogger
      * 
      * @see #log(Level, String, Throwable)
      */
-    public void log(Level level, String message)
+    public synchronized void log(Level level, String message)
     {
         if (level == null || message == null)
             throw new IllegalArgumentException();
@@ -130,7 +130,7 @@ public final class LogItCoreLogger
      * 
      * @see #log(Level, String)
      */
-    public void log(Level level, String message, Throwable throwable)
+    public synchronized void log(Level level, String message, Throwable throwable)
     {
         StringWriter sw = new StringWriter();
         
@@ -153,7 +153,7 @@ public final class LogItCoreLogger
      * 
      * @see #log(Level, String, Throwable)
      */
-    public void log(Level level, Throwable throwable)
+    public synchronized void log(Level level, Throwable throwable)
     {
         StringWriter sw = new StringWriter();
         
