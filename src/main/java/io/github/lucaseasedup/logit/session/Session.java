@@ -128,7 +128,7 @@ public final class Session
      * 
      * @param delta a value in server ticks by which the inactivity time will be changed.
      */
-    public void updateInactivityTime(long delta)
+    public void advanceInactivityTime(long delta)
     {
         inactivityTime += delta;
     }

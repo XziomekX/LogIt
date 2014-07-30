@@ -108,7 +108,7 @@ public final class SessionManager extends LogItCoreObject
                         }
                         else
                         {
-                            session.updateInactivityTime(TASK_PERIOD);
+                            session.advanceInactivityTime(TASK_PERIOD);
                         }
                     }
                 }
