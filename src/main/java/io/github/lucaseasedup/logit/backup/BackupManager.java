@@ -39,7 +39,6 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
-import org.apache.commons.io.comparator.NameFileComparator;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public final class BackupManager extends LogItCoreObject implements Runnable
@@ -291,7 +290,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         if (amount < 0)
             throw new IllegalArgumentException();
         
-        File[] backupFiles = getBackups(NameFileComparator.NAME_COMPARATOR);
+        File[] backupFiles = getBackups();
         int effectiveAmount = 0;
         
         for (int i = 0; i < amount; i++)
@@ -323,6 +322,8 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         
         if (backupFiles == null)
             return new File[0];
+        
+        Arrays.sort(backupFiles);
         
         return backupFiles;
     }

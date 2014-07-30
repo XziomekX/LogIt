@@ -27,7 +27,6 @@ import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import java.io.File;
 import java.text.ParseException;
 import java.util.Date;
-import org.apache.commons.io.comparator.NameFileComparator;
 import org.bukkit.command.CommandSender;
 
 public final class BackupRestoreTimeHubCommand extends HubCommand
@@ -49,7 +48,7 @@ public final class BackupRestoreTimeHubCommand extends HubCommand
     @Override
     public void execute(CommandSender sender, String[] args)
     {
-        File[] backups = getBackupManager().getBackups(NameFileComparator.NAME_COMPARATOR);
+        File[] backups = getBackupManager().getBackups();
         
         long currentTimeMillis = System.currentTimeMillis();
         long desiredDeltaTimeMillis = TimeString.decode(args[0], TimeUnit.MILLISECONDS);
