@@ -578,7 +578,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         log(CustomLevel.INTERNAL, "end-of #flushBuffer()");
     }
     
-    public void discardBuffer()
+    private void discardBuffer()
     {
         buffer.clear();
     }
