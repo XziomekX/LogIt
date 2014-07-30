@@ -179,13 +179,17 @@ public final class Property extends Observable implements Disposable
     
     public void set(Object value) throws InvalidPropertyValueException
     {
+        setSilently(value);
+        setChanged();
+        notifyObservers();
+    }
+    
+    /* package */ void setSilently(Object value) throws InvalidPropertyValueException
+    {
         if (validator != null && !validator.validate(path, type, value))
             throw new InvalidPropertyValueException(path);
         
         this.value = value;
-        
-        setChanged();
-        notifyObservers();
     }
     
     private String path;

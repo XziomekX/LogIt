@@ -187,7 +187,11 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
                 /* Restore user-specified value */
                 if (backup.contains(oldPath))
                 {
-                    configuration.set(newPath, backup.get(oldPath));
+                    Object backupValue = backup.get(oldPath);
+                    
+                    configuration.set(newPath, backupValue);
+                    properties.get(newPath).setSilently(backupValue);
+                    
                     removePath(backup, oldPath);
                 }
             }
@@ -530,11 +534,11 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
     }
     
     private void registerProperty(String path,
-                             PropertyType type,
-                             boolean requiresRestart,
-                             Object defaultValue,
-                             PropertyValidator validator,
-                             PropertyObserver obs)
+                                  PropertyType type,
+                                  boolean requiresRestart,
+                                  Object defaultValue,
+                                  PropertyValidator validator,
+                                  PropertyObserver obs)
             throws InvalidPropertyValueException
     {
         Object existingValue = configuration.get(path, defaultValue);
