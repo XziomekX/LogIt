@@ -136,7 +136,14 @@ public final class LogItCore
         
         if (getConfig("config.yml").getBoolean("checkForUpdates"))
         {
-            checkForUpdate();
+            new BukkitRunnable()
+            {
+                @Override
+                public void run()
+                {
+                    checkForUpdate();
+                }
+            }.runTaskLater(getPlugin(), 1L);
         }
         
         setUpCraftReflect();
