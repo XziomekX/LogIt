@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit.config;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Files;
 import io.github.lucaseasedup.logit.TimeString;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.util.IniUtils;
@@ -31,14 +32,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -55,19 +54,19 @@ import org.bukkit.util.Vector;
 public final class PredefinedConfiguration extends PropertyObserver implements PropertyHolder
 {
     public PredefinedConfiguration(String filename,
-                                   String userConfigDef,
-                                   String packageConfigDef,
+                                   String userDefPathname,
+                                   String packageDefPathname,
                                    String header)
     {
         if (filename == null || filename.isEmpty()
-                || userConfigDef == null || packageConfigDef == null)
+                || userDefPathname == null || packageDefPathname == null)
         {
             throw new IllegalArgumentException();
         }
         
         this.file = getDataFile(filename);
-        this.userConfigDef = userConfigDef;
-        this.packageConfigDef = packageConfigDef;
+        this.userDefPathname = userDefPathname;
+        this.packageDefPathname = packageDefPathname;
         this.header = header;
     }
     
@@ -92,58 +91,147 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
     {
         reopen();
         
+        File backupFile = new File(file.getCanonicalPath() + ".bak");
+        Files.copy(file, backupFile);
+        
+        String packageDefString = readPackageDefString();
+        String userDefString;
+        
+        Map<String, Map<String, String>> packageDef = IniUtils.unserialize(packageDefString);
+        Map<String, Map<String, String>> userDef;
+        
+        File userDefFile = getDataFile(userDefPathname);
+        boolean userDefChanged = false;
+        
+        if (!userDefFile.exists())
+        {
+            userDefFile.getParentFile().mkdirs();
+            userDefString = packageDefString;
+            userDef = IoUtils.deepCopy(packageDef);
+            
+            for (Map<String, String> userDefSection : userDef.values())
+            {
+                registerProperty(userDefSection);
+            }
+            
+            userDefChanged = true;
+        }
+        else
+        {
+            userDefString = readUserDefString();
+            userDef = IniUtils.unserialize(userDefString);
+            
+            // Backup all user-specified values
+            YamlConfiguration backup = YamlConfiguration.loadConfiguration(file);
+            
+            // Clear the config
+            for (String path : configuration.getKeys(true))
+            {
+                removePath(configuration, path);
+            }
+            
+            /* Remove all unused sections from the user def */
+            Iterator<Map.Entry<String, Map<String, String>>> it =
+                    userDef.entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+                Map.Entry<String, Map<String, String>> section = it.next();
+                
+                if (!packageDef.containsKey(section.getKey()))
+                {
+                    removePath(backup, section.getValue().get("path"));
+                    
+                    it.remove();
+                    
+                    userDefChanged = true;
+                }
+            }
+            
+            /* Iterate through the package def to update the user def and config file */
+            for (Map.Entry<String, Map<String, String>> section : packageDef.entrySet())
+            {
+                String guid = section.getKey();
+                Map<String, String> packageDefSection = section.getValue();
+                Map<String, String> userDefSection = userDef.get(guid);
+                
+                String newPath = packageDefSection.get("path");
+                String oldPath;
+                
+                if (userDefSection == null)
+                {
+                    oldPath = newPath;
+                    
+                    userDefSection = new LinkedHashMap<>(packageDefSection);
+                    userDef.put(guid, userDefSection);
+                    userDefChanged = true;
+                }
+                else
+                {
+                    oldPath = userDefSection.get("path");
+                    
+                    for (Map.Entry<String, String> property : packageDefSection.entrySet())
+                    {
+                        String key = property.getKey();
+                        
+                        if (!property.getValue().equals(userDefSection.get(key)))
+                        {
+                            userDefSection.put(key, property.getValue());
+                            userDefChanged = true;
+                        }
+                    }
+                }
+                
+                registerProperty(userDefSection);
+                
+                /* Restore user-specified value */
+                if (backup.contains(oldPath))
+                {
+                    configuration.set(newPath, backup.get(oldPath));
+                    removePath(backup, oldPath);
+                }
+            }
+            
+            userDefString = IniUtils.serialize(userDef);
+        }
+        
+        if (userDefChanged)
+        {
+            try (OutputStream userDefOutputStream = new FileOutputStream(userDefFile))
+            {
+                userDefOutputStream.write(encodeUserDef(userDefString).getBytes());
+            }
+        }
+        
+        save();
+        backupFile.delete();
+        
+        loaded = true;
+    }
+    
+    private String readPackageDefString() throws IOException
+    {
         String jarUrlPath =
                 getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         String jarPath = URLDecoder.decode(jarUrlPath, "UTF-8");
         
         try (ZipFile jarZipFile = new ZipFile(jarPath))
         {
-            ZipEntry packageDefEntry = jarZipFile.getEntry(packageConfigDef);
+            ZipEntry packageDefEntry = jarZipFile.getEntry(packageDefPathname);
             
             try (InputStream packageDefInputStream = jarZipFile.getInputStream(packageDefEntry))
             {
-                String packageDefString = IoUtils.toString(packageDefInputStream);
-                
-                File userDefFile = getDataFile(userConfigDef);
-                
-                if (!userDefFile.exists())
-                {
-                    userDefFile.getParentFile().mkdirs();
-                    
-                    try (OutputStream userDefOutputStream = new FileOutputStream(userDefFile))
-                    {
-                        userDefOutputStream.write(encodeConfigDef(packageDefString).getBytes());
-                    }
-                }
-                
-                String userDefBase64String;
-                
-                try (InputStream userDefInputStream = new FileInputStream(userDefFile))
-                {
-                    userDefBase64String = IoUtils.toString(userDefInputStream);
-                }
-                
-                String userDefString = decodeConfigDef(userDefBase64String);
-                Map<String, Map<String, String>> userDef = IniUtils.unserialize(userDefString);
-                
-                if (!userDefString.equals(packageDefString))
-                {
-                    Map<String, Map<String, String>> packageDef =
-                            IniUtils.unserialize(packageDefString);
-                    
-                    try (OutputStream userDefOutputStream = new FileOutputStream(userDefFile))
-                    {
-                        updateConfigDef(userDef, packageDef, userDefOutputStream);
-                        sortPathsByDef(userDef);
-                    }
-                }
-                
-                loadConfigDef(userDef);
-                save();
+                return IoUtils.toString(packageDefInputStream);
             }
         }
-        
-        loaded = true;
+    }
+    
+    private String readUserDefString() throws IOException
+    {
+        try (InputStream userDefInputStream = new FileInputStream(getDataFile(userDefPathname)))
+        {
+            return decodeConfigDef(IoUtils.toString(userDefInputStream));
+        }
     }
     
     private void reopen() throws IOException
@@ -415,12 +503,39 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
         return loaded;
     }
     
-    private void addProperty(String path,
+    private void removePath(ConfigurationSection section, String path)
+    {
+        section.set(path, null);
+        
+        if (!path.contains("."))
+        {
+            return;
+        }
+        
+        String parentPath = path.substring(0, path.lastIndexOf('.'));
+        
+        if (properties.containsKey(parentPath))
+        {
+            return;
+        }
+        
+        ConfigurationSection parentSection = section.getConfigurationSection(parentPath);
+        
+        if (parentSection == null || !parentSection.getKeys(false).isEmpty())
+        {
+            return;
+        }
+        
+        removePath(section, parentPath);
+    }
+    
+    private void registerProperty(String path,
                              PropertyType type,
                              boolean requiresRestart,
                              Object defaultValue,
                              PropertyValidator validator,
-                             PropertyObserver obs) throws InvalidPropertyValueException
+                             PropertyObserver obs)
+            throws InvalidPropertyValueException
     {
         Object existingValue = configuration.get(path, defaultValue);
         Property property = new Property(path, type, requiresRestart, existingValue, validator);
@@ -452,346 +567,197 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
         properties.put(property.getPath(), property);
     }
     
-    private void updateConfigDef(Map<String, Map<String, String>> oldDef,
-                                 Map<String, Map<String, String>> newDef,
-                                 OutputStream os) throws IOException
-    {
-        Iterator<Entry<String, Map<String, String>>> it = oldDef.entrySet().iterator();
-        
-        while (it.hasNext())
-        {
-            Entry<String, Map<String, String>> entry = it.next();
-            
-            if (!newDef.containsKey(entry.getKey()))
-            {
-                removePath(entry.getValue().get("path"));
-                
-                it.remove();
-            }
-        }
-        
-        for (Entry<String, Map<String, String>> entry : newDef.entrySet())
-        {
-            final Map<String, String> newDefSection = entry.getValue();
-            Map<String, String> oldDefSection = oldDef.get(entry.getKey());
-            
-            if (oldDefSection == null)
-            {
-                oldDef.put(entry.getKey(), new LinkedHashMap<>(newDefSection));
-                
-                continue;
-            }
-            
-            if (!oldDefSection.get("path").equals(newDefSection.get("path")))
-            {
-                String oldPath = oldDefSection.get("path");
-                Object oldValue = configuration.get(oldPath);
-                
-                removePath(oldPath);
-                configuration.set(newDefSection.get("path"), oldValue);
-                
-                oldDefSection.put("path", newDefSection.get("path"));
-            }
-            
-            if (!compareSectionKeys(oldDefSection, newDefSection, "type"))
-            {
-                oldDefSection.put("type", newDefSection.get("type"));
-            }
-            
-            if (!compareSectionKeys(oldDefSection, newDefSection, "requires_restart"))
-            {
-                oldDefSection.put("requires_restart", newDefSection.get("requires_restart"));
-            }
-            
-            if (!compareSectionKeys(oldDefSection, newDefSection, "default_value"))
-            {
-                oldDefSection.put("default_value", newDefSection.get("default_value"));
-            }
-            
-            if (!compareSectionKeys(oldDefSection, newDefSection, "validator"))
-            {
-                oldDefSection.put("validator", newDefSection.get("validator"));
-            }
-            
-            if (!compareSectionKeys(oldDefSection, newDefSection, "observer"))
-            {
-                oldDefSection.put("observer", newDefSection.get("observer"));
-            }
-        }
-        
-        os.write(encodeConfigDef(IniUtils.serialize(oldDef)).getBytes());
-    }
-    
-    private void removePath(String path)
-    {
-        configuration.set(path, null);
-        
-        if (!path.contains("."))
-        {
-            return;
-        }
-        
-        String parentPath = path.substring(0, path.lastIndexOf('.'));
-        
-        if (properties.containsKey(parentPath))
-        {
-            return;
-        }
-        
-        ConfigurationSection parentSection = configuration.getConfigurationSection(parentPath);
-        
-        if (parentSection == null || !parentSection.getKeys(false).isEmpty())
-        {
-            return;
-        }
-        
-        removePath(parentPath);
-    }
-    
-    private boolean compareSectionKeys(Map<String, String> oldDefSection,
-                                       Map<String, String> newDefSection,
-                                       String key)
-    {
-        return oldDefSection.get(key).equals(newDefSection.get(key));
-    }
-    
-    private void sortPathsByDef(Map<String, Map<String, String>> def)
-    {
-        Map<String, Object> backup = new LinkedHashMap<>();
-        
-        for (String path : configuration.getKeys(true))
-        {
-            backup.put(path, configuration.get(path));
-            
-            // Set this path to null in case we're not
-            // able to completely erase the config file
-            configuration.set(path, null);
-        }
-        
-        /* Try to completely erase the config file */
-        try
-        {
-            try (RandomAccessFile raf = new RandomAccessFile(file, "rw"))
-            {
-                raf.setLength(0);
-            }
-            
-            reopen();
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, ex);
-        }
-        
-        for (Map<String, String> section : def.values())
-        {
-            String path = section.get("path");
-            
-            configuration.set(path, backup.remove(path));
-        }
-        
-        for (Map.Entry<String, Object> e : backup.entrySet())
-        {
-            configuration.set(e.getKey(), e.getValue());
-        }
-    }
-    
-    private void loadConfigDef(Map<String, Map<String, String>> def)
+    private void registerProperty(Map<String, String> defSection)
             throws InvalidPropertyValueException
     {
-        for (Entry<String, Map<String, String>> entry : def.entrySet())
+        String path = defSection.get("path");
+        PropertyType type;
+        boolean requiresRestart = Boolean.valueOf(defSection.get("requires_restart"));
+        Object defaultValue;
+        PropertyValidator validator = null;
+        PropertyObserver observer = null;
+        
+        String typeString = defSection.get("type");
+        
+        try
         {
-            final Map<String, String> defSection = entry.getValue();
+            type = PropertyType.valueOf(typeString);
+        }
+        catch (IllegalArgumentException ex)
+        {
+            log(Level.WARNING, "Unknown property type: " + typeString);
             
-            String path = defSection.get("path");
-            PropertyType type;
-            boolean requiresRestart = Boolean.valueOf(defSection.get("requires_restart"));
-            Object defaultValue;
-            PropertyValidator validator = null;
-            PropertyObserver observer = null;
+            return;
+        }
+        
+        String defaultValueString = defSection.get("default_value");
+        
+        switch (type)
+        {
+        case CONFIGURATION_SECTION:
+        {
+            defaultValue = configuration.getConfigurationSection(path);
             
-            String typeString = defSection.get("type");
-            
-            try
+            if (defaultValue == null)
             {
-                type = PropertyType.valueOf(typeString);
+                defaultValue = configuration.createSection(path);
             }
-            catch (IllegalArgumentException ex)
-            {
-                log(Level.WARNING, "Unknown property type: " + typeString);
-                
-                continue;
-            }
             
-            String defaultValueString = defSection.get("default_value");
+            break;
+        }
+        case OBJECT:
+            defaultValue = null;
+            break;
             
-            switch (type)
+        case BOOLEAN:
+            defaultValue = Boolean.valueOf(defaultValueString);
+            break;
+            
+        case COLOR:
+        {
+            switch (defaultValueString.toLowerCase())
             {
-            case CONFIGURATION_SECTION:
+            case "aqua":    defaultValue = Color.AQUA;    break;
+            case "black":   defaultValue = Color.BLACK;   break;
+            case "blue":    defaultValue = Color.BLUE;    break;
+            case "fuchsia": defaultValue = Color.FUCHSIA; break;
+            case "gray":    defaultValue = Color.GRAY;    break;
+            case "green":   defaultValue = Color.GREEN;   break;
+            case "lime":    defaultValue = Color.LIME;    break;
+            case "maroon":  defaultValue = Color.MAROON;  break;
+            case "navy":    defaultValue = Color.NAVY;    break;
+            case "olive":   defaultValue = Color.OLIVE;   break;
+            case "orange":  defaultValue = Color.ORANGE;  break;
+            case "purple":  defaultValue = Color.PURPLE;  break;
+            case "red":     defaultValue = Color.RED;     break;
+            case "silver":  defaultValue = Color.SILVER;  break;
+            case "teal":    defaultValue = Color.TEAL;    break;
+            case "white":   defaultValue = Color.WHITE;   break;
+            case "yellow":  defaultValue = Color.YELLOW;  break;
+            default:
             {
-                defaultValue = configuration.getConfigurationSection(path);
+                String[] rgb = defaultValueString.split(" ");
                 
-                if (defaultValue == null)
+                if (rgb.length == 3)
                 {
-                    defaultValue = configuration.createSection(path);
-                }
-                
-                break;
-            }
-            case OBJECT:
-                defaultValue = null;
-                break;
-                
-            case BOOLEAN:
-                defaultValue = Boolean.valueOf(defaultValueString);
-                break;
-                
-            case COLOR:
-            {
-                switch (defaultValueString.toLowerCase())
-                {
-                case "aqua":    defaultValue = Color.AQUA;    break;
-                case "black":   defaultValue = Color.BLACK;   break;
-                case "blue":    defaultValue = Color.BLUE;    break;
-                case "fuchsia": defaultValue = Color.FUCHSIA; break;
-                case "gray":    defaultValue = Color.GRAY;    break;
-                case "green":   defaultValue = Color.GREEN;   break;
-                case "lime":    defaultValue = Color.LIME;    break;
-                case "maroon":  defaultValue = Color.MAROON;  break;
-                case "navy":    defaultValue = Color.NAVY;    break;
-                case "olive":   defaultValue = Color.OLIVE;   break;
-                case "orange":  defaultValue = Color.ORANGE;  break;
-                case "purple":  defaultValue = Color.PURPLE;  break;
-                case "red":     defaultValue = Color.RED;     break;
-                case "silver":  defaultValue = Color.SILVER;  break;
-                case "teal":    defaultValue = Color.TEAL;    break;
-                case "white":   defaultValue = Color.WHITE;   break;
-                case "yellow":  defaultValue = Color.YELLOW;  break;
-                default:
-                {
-                    String[] rgb = defaultValueString.split(" ");
-                    
-                    if (rgb.length == 3)
-                    {
-                        defaultValue = Color.fromRGB(Integer.parseInt(rgb[0]),
-                                                     Integer.parseInt(rgb[1]),
-                                                     Integer.parseInt(rgb[2]));
-                    }
-                    else
-                    {
-                        defaultValue = Color.BLACK;
-                    }
-                    
-                    break;
-                }
-                }
-                
-                break;
-            }
-            case DOUBLE:
-                defaultValue = Double.valueOf(defaultValueString);
-                break;
-                
-            case INT:
-                defaultValue = Integer.valueOf(defaultValueString);
-                break;
-            case ITEM_STACK:
-                defaultValue = null;
-                break;
-                
-            case LONG:
-                defaultValue = Long.valueOf(defaultValueString);
-                break;
-                
-            case STRING:
-                defaultValue = defaultValueString;
-                break;
-                
-            case VECTOR:
-            {
-                String[] axes = defaultValueString.split(" ");
-                
-                if (axes.length == 3)
-                {
-                    defaultValue = new Vector(Double.valueOf(axes[0]),
-                                              Double.valueOf(axes[1]),
-                                              Double.valueOf(axes[2]));
+                    defaultValue = Color.fromRGB(Integer.parseInt(rgb[0]),
+                                                 Integer.parseInt(rgb[1]),
+                                                 Integer.parseInt(rgb[2]));
                 }
                 else
                 {
-                    defaultValue = new Vector(0, 0, 0);
+                    defaultValue = Color.BLACK;
                 }
                 
                 break;
             }
-            case LIST:
-            case BOOLEAN_LIST:
-            case BYTE_LIST:
-            case CHARACTER_LIST:
-            case DOUBLE_LIST:
-            case FLOAT_LIST:
-            case INTEGER_LIST:
-            case LONG_LIST:
-            case MAP_LIST:
-            case SHORT_LIST:
-            case STRING_LIST:
-                defaultValue = new ArrayList<>(0);
-                break;
-                
-            case LOCATION:
-                defaultValue = new LocationSerializable("world", 0, 0, 0, 0, 0);
-                break;
-                
-            default:
-                throw new RuntimeException("Unknown property type: " + type.toString());
             }
             
-            String validatorClassName = defSection.get("validator");
+            break;
+        }
+        case DOUBLE:
+            defaultValue = Double.valueOf(defaultValueString);
+            break;
             
+        case INT:
+            defaultValue = Integer.valueOf(defaultValueString);
+            break;
+            
+        case ITEM_STACK:
+            defaultValue = null;
+            break;
+            
+        case LONG:
+            defaultValue = Long.valueOf(defaultValueString);
+            break;
+            
+        case STRING:
+            defaultValue = defaultValueString;
+            break;
+            
+        case VECTOR:
+        {
+            String[] axes = defaultValueString.split(" ");
+            
+            if (axes.length == 3)
+            {
+                defaultValue = new Vector(Double.valueOf(axes[0]),
+                                          Double.valueOf(axes[1]),
+                                          Double.valueOf(axes[2]));
+            }
+            else
+            {
+                defaultValue = new Vector(0, 0, 0);
+            }
+            
+            break;
+        }
+        case LIST:
+        case BOOLEAN_LIST:
+        case BYTE_LIST:
+        case CHARACTER_LIST:
+        case DOUBLE_LIST:
+        case FLOAT_LIST:
+        case INTEGER_LIST:
+        case LONG_LIST:
+        case MAP_LIST:
+        case SHORT_LIST:
+        case STRING_LIST:
+            defaultValue = new ArrayList<>(0);
+            break;
+            
+        case LOCATION:
+            defaultValue = new LocationSerializable("world", 0, 0, 0, 0, 0);
+            break;
+            
+        default:
+            throw new RuntimeException("Unknown property type: " + type.toString());
+        }
+        
+        String validatorClassName = defSection.get("validator");
+        
+        if (validatorClassName != null && !validatorClassName.isEmpty())
+        {
             try
             {
-                if (validatorClassName != null && !validatorClassName.isEmpty())
-                {
-                    @SuppressWarnings("unchecked")
-                    Class<PropertyValidator> validatorClass =
-                            (Class<PropertyValidator>) Class.forName(validatorClassName);
-                    
-                    validator = validatorClass.getConstructor().newInstance();
-                }
-
+                @SuppressWarnings("unchecked")
+                Class<PropertyValidator> validatorClass =
+                        (Class<PropertyValidator>) Class.forName(validatorClassName);
+                
+                validator = validatorClass.getConstructor().newInstance();
             }
             catch (ReflectiveOperationException ex)
             {
                 log(Level.WARNING, "Invalid property validator: " + validatorClassName + ".", ex);
                 
-                continue;
+                return;
             }
-            
-            String observerClassName = defSection.get("observer");
-            
+        }
+        
+        String observerClassName = defSection.get("observer");
+        
+        if (observerClassName != null && !observerClassName.isEmpty())
+        {
             try
             {
-                if (observerClassName != null && !observerClassName.isEmpty())
-                {
-                    @SuppressWarnings("unchecked")
-                    Class<PropertyObserver> observerClass =
-                            (Class<PropertyObserver>) Class.forName(observerClassName);
-                    
-                    observer = observerClass.getConstructor().newInstance();
-                }
+                @SuppressWarnings("unchecked")
+                Class<PropertyObserver> observerClass =
+                        (Class<PropertyObserver>) Class.forName(observerClassName);
+                
+                observer = observerClass.getConstructor().newInstance();
             }
             catch (ReflectiveOperationException ex)
             {
                 log(Level.WARNING, "Invalid property observer: " + observerClassName + ".", ex);
                 
-                continue;
+                return;
             }
-            
-            addProperty(path, type, requiresRestart, defaultValue, validator, observer);
         }
+        
+        registerProperty(path, type, requiresRestart, defaultValue, validator, observer);
     }
     
-    private String encodeConfigDef(String input)
+    private String encodeUserDef(String input)
     {
         return Base64.encode(input);
     }
@@ -832,8 +798,8 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
     
     private final File file;
     private FileConfiguration configuration;
-    private final String userConfigDef;
-    private final String packageConfigDef;
+    private final String userDefPathname;
+    private final String packageDefPathname;
     private final String header;
     private boolean loaded = false;
     private Map<String, Property> properties = new LinkedHashMap<>();
