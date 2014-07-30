@@ -74,11 +74,7 @@ public final class ConfigListHubCommand extends HubCommand
             page = 1;
         }
         
-        if (sender instanceof Player)
-        {
-            sendMsg(sender, "");
-        }
-        
+        sendMsg(sender, "");
         sendMsg(sender, _("config.list.header1")
                 .replace("{0}", String.valueOf(page))
                 .replace("{1}", String.valueOf(pages)));
