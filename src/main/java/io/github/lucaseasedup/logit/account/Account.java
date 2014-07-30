@@ -100,6 +100,11 @@ public final class Account extends LogItCoreObject
         entry.put(keys().uuid(), uuid.toString());
     }
     
+    public void removeUuid()
+    {
+        entry.put(keys().uuid(), "");
+    }
+    
     /**
      * Checks if a password is equal, after hashing,
      * to this password of this account.
