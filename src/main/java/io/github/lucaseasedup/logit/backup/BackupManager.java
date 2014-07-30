@@ -372,7 +372,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         return buildDateFormat().parse(filename);
     }
     
-    public String formatBackupFilename(Date date)
+    private String formatBackupFilename(Date date)
     {
         if (date == null)
             throw new IllegalArgumentException();
