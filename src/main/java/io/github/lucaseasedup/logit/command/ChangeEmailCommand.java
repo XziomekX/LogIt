@@ -25,8 +25,8 @@ import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
-import io.github.lucaseasedup.logit.util.EmailUtils;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
+import io.github.lucaseasedup.logit.util.Validators;
 import java.util.Arrays;
 import java.util.List;
 import org.bukkit.command.Command;
@@ -71,7 +71,7 @@ public final class ChangeEmailCommand extends LogItCoreObject implements TabExec
                 return true;
             }
             
-            if (!EmailUtils.validateEmail(args[2]))
+            if (!Validators.validateEmail(args[2]))
             {
                 sendMsg(sender, _("changeEmail.invalidEmailAddress"));
                 
@@ -130,7 +130,7 @@ public final class ChangeEmailCommand extends LogItCoreObject implements TabExec
                 return true;
             }
             
-            if (!EmailUtils.validateEmail(args[0]))
+            if (!Validators.validateEmail(args[0]))
             {
                 sendMsg(player, _("changeEmail.invalidEmailAddress"));
                 

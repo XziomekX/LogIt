@@ -1,5 +1,5 @@
 /*
- * EmailUtils.java
+ * Validators.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -20,9 +20,9 @@ package io.github.lucaseasedup.logit.util;
 
 import java.util.regex.Pattern;
 
-public final class EmailUtils
+public final class Validators
 {
-    private EmailUtils()
+    private Validators()
     {
     }
     

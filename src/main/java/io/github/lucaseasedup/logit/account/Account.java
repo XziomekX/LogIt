@@ -24,8 +24,8 @@ import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.security.HashingAlgorithm;
 import io.github.lucaseasedup.logit.security.SecurityHelper;
 import io.github.lucaseasedup.logit.storage.Storage;
-import io.github.lucaseasedup.logit.util.EmailUtils;
 import io.github.lucaseasedup.logit.util.IniUtils;
+import io.github.lucaseasedup.logit.util.Validators;
 import it.sauronsoftware.base64.Base64;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -289,7 +289,7 @@ public final class Account extends LogItCoreObject
         if (email == null)
             throw new IllegalArgumentException();
         
-        if (!EmailUtils.validateEmail(email))
+        if (!Validators.validateEmail(email))
             throw new IllegalArgumentException();
         
         entry.put(keys().email(), email.toLowerCase());
