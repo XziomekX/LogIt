@@ -26,7 +26,6 @@ import io.github.lucaseasedup.logit.config.Property;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public final class ConfigListHubCommand extends HubCommand
 {
