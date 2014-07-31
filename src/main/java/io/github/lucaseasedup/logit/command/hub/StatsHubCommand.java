@@ -77,8 +77,6 @@ public final class StatsHubCommand extends HubCommand
         }
         
         int backupCount = getBackupManager().getBackups().length;
-        int logins = getConfig("stats.yml").getInt("logins");
-        int passwordChanges = getConfig("stats.yml").getInt("passwordChanges");
         
         if (sender instanceof Player)
         {
@@ -92,11 +90,18 @@ public final class StatsHubCommand extends HubCommand
                 .replace("{0}", (uniqueIps != null) ? String.valueOf(uniqueIps.size()) : "?"));
         sendMsg(sender, _("stats.backupCount")
                 .replace("{0}", String.valueOf(backupCount)));
-        sendMsg(sender, "");
-        sendMsg(sender, _("stats.logins")
-                .replace("{0}", String.valueOf(logins)));
-        sendMsg(sender, _("stats.passwordChanges")
-                .replace("{0}", String.valueOf(passwordChanges)));
+        
+        if (getConfig("config.yml").getBoolean("stats.enabled"))
+        {
+            int logins = getConfig("stats.yml").getInt("logins");
+            int passwordChanges = getConfig("stats.yml").getInt("passwordChanges");
+            
+            sendMsg(sender, "");
+            sendMsg(sender, _("stats.logins")
+                    .replace("{0}", String.valueOf(logins)));
+            sendMsg(sender, _("stats.passwordChanges")
+                    .replace("{0}", String.valueOf(passwordChanges)));
+        }
         
         if (sender instanceof Player)
         {
