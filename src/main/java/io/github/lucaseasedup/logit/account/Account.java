@@ -43,19 +43,13 @@ import javax.xml.bind.DatatypeConverter;
 
 public final class Account extends LogItCoreObject
 {
-    public Account(Storage.Entry entry)
+    public Account(String username)
     {
-        this(entry, true);
-    }
-    
-    public Account(String username, Storage.Entry entry)
-    {
-        if (username == null || username.isEmpty() || entry == null)
+        if (username == null || username.trim().isEmpty())
             throw new IllegalArgumentException();
         
-        entry.put(keys().username(), username.toLowerCase());
-        
-        this.entry = entry;
+        this.entry = new Storage.Entry();
+        this.entry.put(keys().username(), username.toLowerCase());
         
         fillWithDefaults();
     }
@@ -74,6 +68,11 @@ public final class Account extends LogItCoreObject
         {
             fillWithDefaults();
         }
+    }
+    
+    public Account(Storage.Entry entry)
+    {
+        this(entry, true);
     }
     
     public String getUsername()

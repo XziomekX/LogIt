@@ -29,7 +29,6 @@ import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
 import io.github.lucaseasedup.logit.hooks.BukkitSmerfHook;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
-import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Arrays;
 import java.util.List;
@@ -125,7 +124,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             {
                 ReportedException.incrementRequestCount();
                 
-                Account account = new Account(args[1], new Storage.Entry());
+                Account account = new Account(args[1]);
                 account.changePassword(password);
                 
                 if (isPlayerOnline(args[1]))
@@ -344,7 +343,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 {
                     ReportedException.incrementRequestCount();
                     
-                    Account account = new Account(username, new Storage.Entry());
+                    Account account = new Account(username);
                     account.setUuid(player.getUniqueId());
                     account.changePassword(password);
                     account.setIp(PlayerUtils.getPlayerIp(player));
