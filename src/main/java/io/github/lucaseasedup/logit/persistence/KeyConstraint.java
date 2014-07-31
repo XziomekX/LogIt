@@ -34,4 +34,10 @@ public enum KeyConstraint
      * Null and empty strings are considered null.
      */
     NOT_EMPTY,
+    
+    /**
+     * Null and blank (empty or consisting only of whitespace)
+     * strings are considered null.
+     */
+    NOT_BLANK,
 }

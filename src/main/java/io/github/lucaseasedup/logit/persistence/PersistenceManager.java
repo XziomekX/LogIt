@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import net.minecraft.util.org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.Player;
 
 /**
@@ -335,6 +336,15 @@ public final class PersistenceManager extends LogItCoreObject
             case NOT_EMPTY:
             {
                 if (value == null || value.isEmpty())
+                {
+                    return false;
+                }
+                
+                break;
+            }
+            case NOT_BLANK:
+            {
+                if (StringUtils.isBlank(value))
                 {
                     return false;
                 }
