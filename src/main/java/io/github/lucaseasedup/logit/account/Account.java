@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import io.github.lucaseasedup.logit.IntegrationType;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.security.HashingAlgorithm;
@@ -28,7 +27,6 @@ import io.github.lucaseasedup.logit.util.IniUtils;
 import io.github.lucaseasedup.logit.util.Validators;
 import it.sauronsoftware.base64.Base64;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,7 +37,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.logging.Level;
-import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.lang.StringUtils;
 
 public final class Account extends LogItCoreObject
@@ -230,20 +227,7 @@ public final class Account extends LogItCoreObject
         if (!Validators.validateIp(ip))
             throw new IllegalArgumentException();
         
-        try
-        {
-            if (getCore().getIntegrationType() == IntegrationType.PHPBB2)
-            {
-                byte[] rawAddress = InetAddress.getByName(ip).getAddress();
-                
-                ip = DatatypeConverter.printHexBinary(rawAddress).toLowerCase();
-            }
-            
-            entry.put(keys().ip(), ip);
-        }
-        catch (IOException ex)
-        {
-        }
+        entry.put(keys().ip(), ip);
     }
     
     public void removeIp()
