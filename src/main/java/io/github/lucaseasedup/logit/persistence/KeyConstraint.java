@@ -21,7 +21,7 @@ package io.github.lucaseasedup.logit.persistence;
 public enum KeyConstraint
 {
     /**
-     * All values are considered null.
+     * All values are considered non-null.
      */
     NONE,
     
