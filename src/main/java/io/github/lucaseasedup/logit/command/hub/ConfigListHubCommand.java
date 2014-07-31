@@ -24,7 +24,6 @@ import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.config.Property;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.bukkit.command.CommandSender;
 
 public final class ConfigListHubCommand extends HubCommand
@@ -80,7 +79,7 @@ public final class ConfigListHubCommand extends HubCommand
         sendMsg(sender, _("config.list.header2"));
         sendMsg(sender, _("config.list.header3"));
         
-        for (Entry<String, Property> e : properties.entrySet())
+        for (Map.Entry<String, Property> e : properties.entrySet())
         {
             if ((i > ((PROPERTIES_PER_PAGE * (page - 1)) - 1)) && (j < PROPERTIES_PER_PAGE))
             {

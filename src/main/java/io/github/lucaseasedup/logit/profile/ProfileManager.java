@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,7 +48,7 @@ public final class ProfileManager extends LogItCoreObject
         
         this.path = path;
         
-        for (Entry<String, Object> e : fields.entrySet())
+        for (Map.Entry<String, Object> e : fields.entrySet())
         {
             String fieldName = e.getKey();
             String fieldDefinition = e.getValue().toString();

@@ -21,7 +21,6 @@ package io.github.lucaseasedup.logit.locale;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public final class LocaleManager extends LogItCoreObject
 {
@@ -140,7 +139,7 @@ public final class LocaleManager extends LogItCoreObject
         if (prefix == null)
             throw new IllegalArgumentException();
         
-        for (Entry<Class<? extends Locale>, Locale> e : locales.entrySet())
+        for (Map.Entry<Class<? extends Locale>, Locale> e : locales.entrySet())
         {
             if (getLocalePrefix(e.getKey()).equals(prefix))
             {

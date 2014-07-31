@@ -37,14 +37,13 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public final class SessionManager extends LogItCoreObject
-        implements Iterable<Entry<String, Session>>, Runnable
+        implements Iterable<Map.Entry<String, Session>>, Runnable
 {
     @Override
     public void dispose()
@@ -464,14 +463,14 @@ public final class SessionManager extends LogItCoreObject
      * @return the session iterator.
      */
     @Override
-    public Iterator<Entry<String, Session>> iterator()
+    public Iterator<Map.Entry<String, Session>> iterator()
     {
         return newSessionIterator();
     }
     
-    private Iterator<Entry<String, Session>> newSessionIterator()
+    private Iterator<Map.Entry<String, Session>> newSessionIterator()
     {
-        return new Iterator<Entry<String, Session>>()
+        return new Iterator<Map.Entry<String, Session>>()
         {
             @Override
             public void remove()
@@ -480,7 +479,7 @@ public final class SessionManager extends LogItCoreObject
             }
             
             @Override
-            public Entry<String, Session> next()
+            public Map.Entry<String, Session> next()
             {
                 return it.next();
             }
@@ -491,7 +490,8 @@ public final class SessionManager extends LogItCoreObject
                 return it.hasNext();
             }
             
-            private final Iterator<Entry<String, Session>> it = sessions.entrySet().iterator();
+            private final Iterator<Map.Entry<String, Session>> it =
+                    sessions.entrySet().iterator();
         };
     }
     
@@ -529,7 +529,7 @@ public final class SessionManager extends LogItCoreObject
             );
             sessionsStorage.setAutobatchEnabled(true);
             
-            for (Entry<String, Session> e : sessions.entrySet())
+            for (Map.Entry<String, Session> e : sessions.entrySet())
             {
                 sessionsStorage.addEntry("sessions", new Storage.Entry.Builder()
                         .put("username", e.getKey())

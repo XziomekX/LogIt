@@ -29,7 +29,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,14 +85,14 @@ public final class IniUtils
     {
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out)))
         {
-            for (Entry<String, Map<String, String>> section : in.entrySet())
+            for (Map.Entry<String, Map<String, String>> section : in.entrySet())
             {
                 bw.write("[");
                 bw.write(section.getKey());
                 bw.write("]");
                 bw.newLine();
                 
-                for (Entry<String, String> kv : section.getValue().entrySet())
+                for (Map.Entry<String, String> kv : section.getValue().entrySet())
                 {
                     if (kv.getValue() != null)
                     {
