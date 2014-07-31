@@ -112,7 +112,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         
         try
         {
-            copyAccounts(backupFile);
+            exportAccounts(backupFile);
             
             log(Level.INFO, _("createBackup.success.log")
                     .replace("{0}", backupFile.getName()));
@@ -153,7 +153,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
             {
                 try
                 {
-                    copyAccounts(backupFile);
+                    exportAccounts(backupFile);
                     
                     log(Level.INFO, _("createBackup.success.log")
                             .replace("{0}", backupFile.getName()));
@@ -168,7 +168,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         return backupFile;
     }
     
-    private void copyAccounts(File backupFile) throws IOException
+    private void exportAccounts(File backupFile) throws IOException
     {
         if (backupFile == null)
             throw new IllegalArgumentException();
