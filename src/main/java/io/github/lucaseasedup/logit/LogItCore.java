@@ -66,6 +66,7 @@ import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.persistence.PersistenceSerializer;
 import io.github.lucaseasedup.logit.profile.ProfileManager;
+import io.github.lucaseasedup.logit.security.GlobalPasswordManager;
 import io.github.lucaseasedup.logit.security.SecurityHelper;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.storage.CacheType;

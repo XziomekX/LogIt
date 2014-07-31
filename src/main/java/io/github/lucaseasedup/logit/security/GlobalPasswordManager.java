@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit;
+package io.github.lucaseasedup.logit.security;
 
-import io.github.lucaseasedup.logit.security.SecurityHelper;
+import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.TimeUnit;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
