@@ -23,7 +23,6 @@ import io.github.lucaseasedup.logit.TimeUnit;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public final class GlobalPasswordManager extends LogItCoreObject implements Runnable
 {
@@ -43,9 +42,11 @@ public final class GlobalPasswordManager extends LogItCoreObject implements Runn
     @Override
     public void run()
     {
-        for (Iterator<Entry<String, Long>> it = passwords.entrySet().iterator(); it.hasNext();)
+        Iterator<Map.Entry<String, Long>> it = passwords.entrySet().iterator();
+        
+        while (it.hasNext())
         {
-            Entry<String, Long> e = it.next();
+            Map.Entry<String, Long> e = it.next();
             
             if (e.getValue() <= 0)
             {
@@ -63,11 +64,15 @@ public final class GlobalPasswordManager extends LogItCoreObject implements Runn
         if (password == null)
             throw new IllegalArgumentException();
         
-        for (Entry<String, Long> e : passwords.entrySet())
+        Iterator<Map.Entry<String, Long>> it = passwords.entrySet().iterator();
+        
+        while (it.hasNext())
         {
+            Map.Entry<String, Long> e = it.next();
+            
             if (e.getKey().equals(password) && e.getValue() > 0)
             {
-                passwords.remove(e.getKey());
+                it.remove();
                 
                 return true;
             }
