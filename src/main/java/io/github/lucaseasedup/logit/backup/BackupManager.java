@@ -106,16 +106,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
      */
     public File createBackup()
     {
-        File backupDir = getDataFile(getConfig("config.yml").getString("backup.path"));
-        final File backupFile = new File(backupDir, formatBackupFilename(new Date()));
-        
-        backupDir.getParentFile().mkdirs();
-        backupDir.mkdir();
-        
-        if (backupFile.exists())
-        {
-            backupFile.delete();
-        }
+        final File backupFile = allocateBackupFileForDate(new Date());
         
         log(Level.INFO, _("createBackup.creating"));
         
@@ -151,16 +142,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
      */
     public File createBackupAsynchronously()
     {
-        File backupDir = getDataFile(getConfig("config.yml").getString("backup.path"));
-        final File backupFile = new File(backupDir, formatBackupFilename(new Date()));
-        
-        backupDir.getParentFile().mkdirs();
-        backupDir.mkdir();
-        
-        if (backupFile.exists())
-        {
-            backupFile.delete();
-        }
+        final File backupFile = allocateBackupFileForDate(new Date());
         
         log(Level.INFO, _("createBackup.creating"));
         
@@ -387,6 +369,48 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         DateFormat dateFormat = new SimpleDateFormat(backupFilenameFormat);
         
         return dateFormat;
+    }
+    
+    private File allocateBackupFileForDate(Date date)
+    {
+        if (date == null)
+            throw new IllegalArgumentException();
+        
+        File backupDir = getDataFile(getConfig("config.yml").getString("backup.path"));
+        File backupFile;
+        int suffixIdx = 0;
+        
+        do
+        {
+            suffixIdx++;
+            
+            String filename = formatBackupFilename(date);
+            
+            if (suffixIdx > 1)
+            {
+                filename += "__" + suffixIdx;
+            }
+            
+            backupFile = new File(backupDir, filename + ".db");
+        }
+        while (backupFile.exists());
+        
+        backupDir.getParentFile().mkdirs();
+        backupDir.mkdir();
+        
+        if (!backupFile.exists())
+        {
+            try
+            {
+                backupFile.createNewFile();
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, ex);
+            }
+        }
+        
+        return backupFile;
     }
     
     /**
