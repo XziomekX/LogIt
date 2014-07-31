@@ -52,7 +52,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void connect() throws IOException
+    public synchronized void connect() throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#connect()");
         
@@ -65,7 +65,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public boolean isConnected() throws IOException
+    public synchronized boolean isConnected() throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#isConnected()");
         
@@ -73,7 +73,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void ping() throws IOException
+    public synchronized void ping() throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#ping()");
         
@@ -107,7 +107,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void close() throws IOException
+    public synchronized void close() throws IOException
     {
         for (StorageObserver o : obs)
         {
@@ -125,7 +125,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public List<String> getUnitNames() throws IOException
+    public synchronized List<String> getUnitNames() throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#getUnitNames()");
         
@@ -133,7 +133,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public Hashtable<String, DataType> getKeys(String unit) throws IOException
+    public synchronized Hashtable<String, DataType> getKeys(String unit) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#getKeys(\"" + unit + "\")");
         
@@ -141,7 +141,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public String getPrimaryKey(String unit) throws IOException
+    public synchronized String getPrimaryKey(String unit) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#getPrimaryKey(\"" + unit + "\")");
         
@@ -149,7 +149,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public List<Storage.Entry> selectEntries(String unit) throws IOException
+    public synchronized List<Storage.Entry> selectEntries(String unit) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#selectEntries(\"" + unit + "\")");
         
@@ -182,7 +182,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public List<Storage.Entry> selectEntries(String unit, List<String> keys)
+    public synchronized List<Storage.Entry> selectEntries(String unit, List<String> keys)
             throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#selectEntries("
@@ -211,7 +211,9 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public List<Storage.Entry> selectEntries(String unit, Selector selector) throws IOException
+    public synchronized List<Storage.Entry> selectEntries(String unit,
+                                                          Selector selector)
+            throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#selectEntries("
                                 + "\"" + unit + "\", "
@@ -239,7 +241,9 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public List<Storage.Entry> selectEntries(String unit, List<String> keys, Selector selector)
+    public synchronized List<Storage.Entry> selectEntries(String unit,
+                                                          List<String> keys,
+                                                          Selector selector)
             throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#selectEntries("
@@ -269,9 +273,9 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void createUnit(final String unit,
-                           final Hashtable<String, DataType> keys,
-                           final String primaryKey)
+    public synchronized void createUnit(final String unit,
+                                        final Hashtable<String, DataType> keys,
+                                        final String primaryKey)
             throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#createUnit("
@@ -306,7 +310,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void renameUnit(String unit, String newName) throws IOException
+    public synchronized void renameUnit(String unit, String newName) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#renameUnit("
                                 + "\"" + unit + "\", "
@@ -345,7 +349,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void eraseUnit(final String unit) throws IOException
+    public synchronized void eraseUnit(final String unit) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#eraseUnit("
                                 + "\"" + unit + "\")");
@@ -376,7 +380,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void removeUnit(final String unit) throws IOException
+    public synchronized void removeUnit(final String unit) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#removeUnit("
                                 + "\"" + unit + "\")");
@@ -407,7 +411,10 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void addKey(final String unit, final String key, final DataType type) throws IOException
+    public synchronized void addKey(final String unit,
+                                    final String key,
+                                    final DataType type)
+            throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#addKey("
                                 + "\"" + unit + "\", "
@@ -443,7 +450,9 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void addEntry(final String unit, final Storage.Entry entry) throws IOException
+    public synchronized void addEntry(final String unit,
+                                      final Storage.Entry entry)
+            throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#addEntry("
                                 + "\"" + unit + "\", "
@@ -475,9 +484,9 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void updateEntries(final String unit,
-                              final Storage.Entry entrySubset,
-                              final Selector selector)
+    public synchronized void updateEntries(final String unit,
+                                           final Storage.Entry entrySubset,
+                                           final Selector selector)
             throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#updateEntries("
@@ -520,7 +529,9 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void removeEntries(final String unit, final Selector selector) throws IOException
+    public synchronized void removeEntries(final String unit,
+                                           final Selector selector)
+            throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#removeEntries("
                                 + "\"" + unit + "\", "
@@ -562,7 +573,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void executeBatch() throws IOException
+    public synchronized void executeBatch() throws IOException
     {
         leading.executeBatch();
         
@@ -587,7 +598,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void clearBatch() throws IOException
+    public synchronized void clearBatch() throws IOException
     {
         leading.clearBatch();
         
@@ -598,7 +609,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public void setAutobatchEnabled(boolean status)
+    public synchronized void setAutobatchEnabled(boolean status)
     {
         super.setAutobatchEnabled(status);
         leading.setAutobatchEnabled(status);
