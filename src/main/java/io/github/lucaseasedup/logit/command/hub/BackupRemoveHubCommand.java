@@ -22,6 +22,10 @@ import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
+import io.github.lucaseasedup.logit.command.wizard.ConfirmationWizard;
+import java.io.File;
+import java.text.ParseException;
+import java.util.Date;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -42,30 +46,142 @@ public final class BackupRemoveHubCommand extends HubCommand
     }
     
     @Override
-    public void execute(CommandSender sender, String[] args)
+    public void execute(final CommandSender sender, final String[] args)
     {
+        final int amount;
+        
         try
         {
-            int amount = Integer.parseInt(args[0]);
-            int manualRemoveLimit = getConfig("config.yml").getInt("backup.manualRemoveLimit");
-            
-            if (amount > manualRemoveLimit)
-            {
-                amount = manualRemoveLimit;
-            }
-            
-            int effectiveAmount = getBackupManager().removeBackups(amount);
-            
-            if (sender instanceof Player)
-            {
-                sendMsg(sender, _("removeBackups.success")
-                        .replace("{0}", String.valueOf(effectiveAmount)));
-            }
+            amount = Integer.parseInt(args[0]);
         }
         catch (NumberFormatException ex)
         {
             sendMsg(sender, _("invalidParam")
                     .replace("{0}", "amount"));
+            
+            return;
         }
+        
+        if (amount < 1)
+        {
+            sendMsg(sender, _("removeBackups.noBackupsSelected"));
+            
+            return;
+        }
+        
+        int manualRemoveLimit = getConfig("config.yml").getInt("backup.manualRemoveLimit");
+        File[] backups = getBackupManager().getBackups();
+        
+        if (backups.length == 0)
+        {
+            sendMsg(sender, _("removeBackups.noBackupsAvailable"));
+            
+            return;
+        }
+        
+        final int limitedAmount;
+        
+        if (amount > manualRemoveLimit)
+        {
+            limitedAmount = manualRemoveLimit;
+            
+            sendMsg(sender, _("removeBackups.confirm.limitedAmount")
+                    .replace("{0}", String.valueOf(limitedAmount)));
+        }
+        else
+        {
+            limitedAmount = amount;
+            
+            sendMsg(sender, _("removeBackups.confirm.amount")
+                    .replace("{0}", String.valueOf(limitedAmount)));
+        }
+        
+        if (sender instanceof Player)
+        {
+            sendMsg(sender, "");
+        }
+        
+        sendMsg(sender, _("removeBackups.confirm.header"));
+        
+        if (limitedAmount == 1)
+        {
+            sendMsg(sender, _("removeBackups.confirm.typeToRemove.single"));
+        }
+        else
+        {
+            sendMsg(sender, _("removeBackups.confirm.typeToRemove.range"));
+        }
+        
+        sendMsg(sender, "");
+        
+        if (limitedAmount > 1)
+        {
+            if (limitedAmount < amount)
+            {
+                sendMsg(sender, _("removeBackups.confirm.limitedAmount")
+                        .replace("{0}", String.valueOf(limitedAmount)));
+            }
+            else
+            {
+                sendMsg(sender, _("removeBackups.confirm.amount")
+                        .replace("{0}", String.valueOf(limitedAmount)));
+            }
+        }
+        
+        File firstBackup = backups[0];
+        Date firstBackupDate = null;
+        
+        try
+        {
+            firstBackupDate = getBackupManager().parseBackupFilename(firstBackup.getName());
+        }
+        catch (ParseException ex)
+        {
+        }
+        
+        if (limitedAmount == 1)
+        {
+            sendMsg(sender, _("removeBackups.confirm.date.single")
+                    .replace("{0}",
+                            (firstBackupDate != null) ? firstBackupDate.toString() : "?"));
+        }
+        else
+        {
+            File lastBackup = backups[Math.min(limitedAmount, backups.length) - 1];
+            Date lastBackupDate = null;
+            
+            try
+            {
+                lastBackupDate = getBackupManager().parseBackupFilename(lastBackup.getName());
+            }
+            catch (ParseException ex)
+            {
+            }
+            
+            sendMsg(sender, _("removeBackups.confirm.date.range.start")
+                    .replace("{0}",
+                            (firstBackupDate != null) ? firstBackupDate.toString() : "?"));
+            sendMsg(sender, _("removeBackups.confirm.date.range.end")
+                    .replace("{0}",
+                            (lastBackupDate != null) ? lastBackupDate.toString() : "?"));
+        }
+        
+        sendMsg(sender, "");
+        sendMsg(sender, _("removeBackups.confirm.typeToCancel"));
+        
+        new ConfirmationWizard(sender, "remove", new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                int effectiveAmount = getBackupManager().removeBackups(limitedAmount);
+                
+                if (sender instanceof Player)
+                {
+                    sendMsg(sender, _("removeBackups.success")
+                            .replace("{0}", String.valueOf(effectiveAmount)));
+                }
+            }
+        }).createWizard();
     }
 }
