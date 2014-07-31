@@ -371,7 +371,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         return dateFormat;
     }
     
-    private File allocateBackupFileForDate(Date date)
+    private synchronized File allocateBackupFileForDate(Date date)
     {
         if (date == null)
             throw new IllegalArgumentException();
