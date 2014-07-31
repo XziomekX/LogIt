@@ -398,16 +398,13 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         backupDir.getParentFile().mkdirs();
         backupDir.mkdir();
         
-        if (!backupFile.exists())
+        try
         {
-            try
-            {
-                backupFile.createNewFile();
-            }
-            catch (IOException ex)
-            {
-                log(Level.WARNING, ex);
-            }
+            backupFile.createNewFile();
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, ex);
         }
         
         return backupFile;
