@@ -44,6 +44,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Color;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -58,7 +59,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
                                    String packageDefPathname,
                                    String header)
     {
-        if (filename == null || filename.isEmpty()
+        if (StringUtils.isBlank(filename)
                 || userDefPathname == null || packageDefPathname == null)
         {
             throw new IllegalArgumentException();
@@ -720,7 +721,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
         
         String validatorClassName = defSection.get("validator");
         
-        if (validatorClassName != null && !validatorClassName.isEmpty())
+        if (!StringUtils.isBlank(validatorClassName))
         {
             try
             {
@@ -740,7 +741,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
         
         String observerClassName = defSection.get("observer");
         
-        if (observerClassName != null && !observerClassName.isEmpty())
+        if (!StringUtils.isBlank(observerClassName))
         {
             try
             {

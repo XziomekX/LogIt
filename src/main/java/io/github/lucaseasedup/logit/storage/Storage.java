@@ -26,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 
 public abstract class Storage implements AutoCloseable
 {
@@ -135,7 +136,7 @@ public abstract class Storage implements AutoCloseable
         
         public String get(String key)
         {
-            if (key == null || key.trim().isEmpty())
+            if (StringUtils.isBlank(key))
                 throw new IllegalArgumentException();
             
             return backend.get(key);
@@ -143,7 +144,7 @@ public abstract class Storage implements AutoCloseable
         
         public void put(String key, String value)
         {
-            if (key == null || key.trim().isEmpty())
+            if (StringUtils.isBlank(key))
                 throw new IllegalArgumentException();
             
             String oldValue;
@@ -253,7 +254,7 @@ public abstract class Storage implements AutoCloseable
         {
             private Datum(String key, String value)
             {
-                if (key == null || key.trim().isEmpty())
+                if (StringUtils.isBlank(key))
                     throw new IllegalArgumentException();
                 
                 this.key = key;

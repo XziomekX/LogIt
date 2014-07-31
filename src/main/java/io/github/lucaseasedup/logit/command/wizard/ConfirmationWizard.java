@@ -19,6 +19,7 @@
 package io.github.lucaseasedup.logit.command.wizard;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
 public final class ConfirmationWizard extends Wizard
@@ -29,8 +30,8 @@ public final class ConfirmationWizard extends Wizard
      *                 will tell this wizard to proceed.
      * @param callback a callback that will be run when the given keyword will be typed. 
      * 
-     * @throws IllegalArgumentException if {@code sender} or {@code callback} is {@code null};
-     *                                  or {@code keyword} is null, blank or starts with "/".
+     * @throws IllegalArgumentException if {@code sender} or {@code callback} is {@code null}; or
+     *                                  {@code keyword} is {@code null}, blank or starts with "/".
      */
     public ConfirmationWizard(CommandSender sender, String keyword, Runnable callback)
     {
@@ -39,8 +40,7 @@ public final class ConfirmationWizard extends Wizard
         if (sender == null)
             throw new IllegalArgumentException();
         
-        if (keyword == null || keyword.trim().isEmpty()
-                || keyword.startsWith("/"))
+        if (StringUtils.isBlank(keyword) || keyword.startsWith("/"))
             throw new IllegalArgumentException();
         
         if (callback == null)

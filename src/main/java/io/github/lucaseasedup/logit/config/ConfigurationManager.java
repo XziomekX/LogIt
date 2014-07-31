@@ -22,6 +22,7 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 
 public final class ConfigurationManager extends LogItCoreObject
@@ -46,7 +47,7 @@ public final class ConfigurationManager extends LogItCoreObject
                                       String packageConfigDef,
                                       String header)
     {
-        if (filename == null || filename.isEmpty()
+        if (StringUtils.isBlank(filename)
                 || userConfigDef == null || packageConfigDef == null)
         {
             throw new IllegalArgumentException();

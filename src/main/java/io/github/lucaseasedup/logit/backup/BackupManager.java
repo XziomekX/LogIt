@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public final class BackupManager extends LogItCoreObject implements Runnable
@@ -210,13 +211,13 @@ public final class BackupManager extends LogItCoreObject implements Runnable
      * @param filename the backup filename.
      * 
      * @throws FileNotFoundException    if no such backup exists.
-     * @throws IllegalArgumentException if {@code filename} is {@code null} or empty.
+     * @throws IllegalArgumentException if {@code filename} is {@code null} or blank.
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public void restoreBackup(String filename) throws FileNotFoundException
     {
-        if (filename == null || filename.isEmpty())
+        if (StringUtils.isBlank(filename))
             throw new IllegalArgumentException();
         
         File backupFile = getBackupFile(filename);
@@ -331,11 +332,11 @@ public final class BackupManager extends LogItCoreObject implements Runnable
      * @return the backup file, or {@code null} if a backup
      *         with the given filename does not exist.
      * 
-     * @throws IllegalArgumentException if {@code filename} is {@code null} or empty.
+     * @throws IllegalArgumentException if {@code filename} is {@code null} or blank.
      */
     public File getBackupFile(String filename)
     {
-        if (filename == null || filename.isEmpty())
+        if (StringUtils.isBlank(filename))
             throw new IllegalArgumentException();
         
         File backupDir = getDataFile(getConfig("config.yml").getString("backup.path"));
@@ -349,7 +350,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     
     public Date parseBackupFilename(String filename) throws ParseException
     {
-        if (filename == null || filename.isEmpty())
+        if (StringUtils.isBlank(filename))
             throw new IllegalArgumentException();
         
         return buildDateFormat().parse(filename);

@@ -40,12 +40,13 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.logging.Level;
 import javax.xml.bind.DatatypeConverter;
+import org.apache.commons.lang.StringUtils;
 
 public final class Account extends LogItCoreObject
 {
     public Account(String username)
     {
-        if (username == null || username.trim().isEmpty())
+        if (StringUtils.isBlank(username))
             throw new IllegalArgumentException();
         
         this.entry = new Storage.Entry();
@@ -297,9 +298,6 @@ public final class Account extends LogItCoreObject
     
     public void setEmail(String email)
     {
-        if (email == null)
-            throw new IllegalArgumentException();
-        
         if (!Validators.validateEmail(email))
             throw new IllegalArgumentException();
         
@@ -504,7 +502,7 @@ public final class Account extends LogItCoreObject
     
     public Account clone(String username)
     {
-        if (username == null || username.isEmpty())
+        if (StringUtils.isBlank(username))
             throw new IllegalArgumentException();
         
         Storage.Entry entryClone = entry.copy();
@@ -519,6 +517,9 @@ public final class Account extends LogItCoreObject
     
     public void enqueueSaveCallback(SaveCallback callback)
     {
+        if (callback == null)
+            throw new IllegalArgumentException();
+        
         saveCallbacks.add(callback);
     }
     

@@ -34,7 +34,7 @@ public final class Property extends Observable implements Disposable
                     Object value,
                     PropertyValidator validator)
     {
-        if (path == null || path.isEmpty() || type == null)
+        if (StringUtils.isBlank(path) || type == null)
             throw new IllegalArgumentException();
         
         this.path = path;

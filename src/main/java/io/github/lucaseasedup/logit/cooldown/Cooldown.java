@@ -18,11 +18,13 @@
  */
 package io.github.lucaseasedup.logit.cooldown;
 
+import org.apache.commons.lang.StringUtils;
+
 public final class Cooldown
 {
     public Cooldown(String name)
     {
-        if (name == null || name.isEmpty())
+        if (StringUtils.isBlank(name))
             throw new IllegalArgumentException();
         
         this.name = name;

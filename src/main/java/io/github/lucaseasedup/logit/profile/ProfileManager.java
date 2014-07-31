@@ -37,6 +37,7 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public final class ProfileManager extends LogItCoreObject
@@ -101,7 +102,7 @@ public final class ProfileManager extends LogItCoreObject
     
     public boolean containsProfile(String playerName)
     {
-        if (playerName == null || playerName.isEmpty())
+        if (StringUtils.isBlank(playerName))
             throw new IllegalArgumentException();
         
         return new File(path, playerName.toLowerCase() + ".yml").exists();
@@ -116,7 +117,7 @@ public final class ProfileManager extends LogItCoreObject
      */
     public Field getField(String fieldName)
     {
-        if (fieldName == null || fieldName.isEmpty())
+        if (fieldName == null)
             throw new IllegalArgumentException();
         
         for (Field field : definedFields)
@@ -137,7 +138,7 @@ public final class ProfileManager extends LogItCoreObject
     
     public boolean isFieldDefined(String fieldName)
     {
-        if (fieldName == null || fieldName.isEmpty())
+        if (fieldName == null)
             throw new IllegalArgumentException();
         
         for (Field field : definedFields)
@@ -173,9 +174,7 @@ public final class ProfileManager extends LogItCoreObject
     
     public void setProfileString(String playerName, String fieldName, String value)
     {
-        if (playerName == null || playerName.isEmpty()
-                || fieldName == null || fieldName.isEmpty()
-                || value == null)
+        if (StringUtils.isBlank(playerName) || StringUtils.isBlank(fieldName) || value == null)
         {
             throw new IllegalArgumentException();
         }
@@ -213,8 +212,7 @@ public final class ProfileManager extends LogItCoreObject
     
     public void setProfileInteger(String playerName, String fieldName, int value)
     {
-        if (playerName == null || playerName.isEmpty()
-                || fieldName == null || fieldName.isEmpty())
+        if (StringUtils.isBlank(playerName) || StringUtils.isBlank(fieldName))
         {
             throw new IllegalArgumentException();
         }
@@ -241,8 +239,7 @@ public final class ProfileManager extends LogItCoreObject
     
     public void setProfileFloat(String playerName, String fieldName, double value)
     {
-        if (playerName == null || playerName.isEmpty()
-                || fieldName == null || fieldName.isEmpty())
+        if (StringUtils.isBlank(playerName) || StringUtils.isBlank(fieldName))
         {
             throw new IllegalArgumentException();
         }
@@ -269,8 +266,7 @@ public final class ProfileManager extends LogItCoreObject
     
     public void removeProfileObject(String playerName, String fieldName)
     {
-        if (playerName == null || playerName.isEmpty()
-                || fieldName == null || fieldName.isEmpty())
+        if (StringUtils.isBlank(playerName) || StringUtils.isBlank(fieldName))
         {
             throw new IllegalArgumentException();
         }
@@ -298,7 +294,7 @@ public final class ProfileManager extends LogItCoreObject
     
     private YamlConfiguration getProfileConfiguration(String playerName)
     {
-        if (playerName == null || playerName.isEmpty())
+        if (StringUtils.isBlank(playerName))
         {
             throw new IllegalArgumentException();
         }
@@ -324,7 +320,7 @@ public final class ProfileManager extends LogItCoreObject
     
     private void saveProfileConfiguration(String playerName)
     {
-        if (playerName == null || playerName.isEmpty())
+        if (StringUtils.isBlank(playerName))
         {
             throw new IllegalArgumentException();
         }
@@ -344,8 +340,7 @@ public final class ProfileManager extends LogItCoreObject
     
     private Field newField(String fieldName, String definitionString)
     {
-        if (fieldName == null || fieldName.isEmpty()
-                || definitionString == null || definitionString.isEmpty())
+        if (StringUtils.isBlank(fieldName) || StringUtils.isBlank(definitionString))
         {
             throw new IllegalArgumentException();
         }

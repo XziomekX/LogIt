@@ -31,6 +31,7 @@ import io.github.lucaseasedup.logit.locale.Locale;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -299,7 +300,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     account.recordLogin(currentTimeSecs, playerIp, Account.LOGIN_SUCCESS);
                 }
                 
-                if (account.getIp().trim().isEmpty())
+                if (StringUtils.isBlank(account.getIp()))
                 {
                     account.setIp(playerIp);
                 }

@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -255,7 +256,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     
     public boolean isRegistered(String username)
     {
-        if (username == null || username.isEmpty())
+        if (StringUtils.isBlank(username))
             throw new IllegalArgumentException();
         
         return selectAccount(username, Arrays.asList(keys.username())) != null;
@@ -387,8 +388,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     
     public void renameAccount(String username, String newUsername)
     {
-        if (username == null || username.isEmpty()
-                || newUsername == null || newUsername.isEmpty())
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(newUsername))
         {
             throw new IllegalArgumentException();
         }
@@ -432,14 +432,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @return a {@code CancellableState} indicating whether this operation
      *         has been cancelled by one of the {@code AccountRemoveEvent} handlers.
      * 
-     * @throws IllegalArgumentException if {@code username} is {@code null} or empty.
+     * @throws IllegalArgumentException if {@code username} is {@code null} or blank.
      * 
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
     public CancelledState removeAccount(String username)
     {
-        if (username == null || username.isEmpty())
+        if (StringUtils.isBlank(username))
             throw new IllegalArgumentException();
         
         username = username.toLowerCase();

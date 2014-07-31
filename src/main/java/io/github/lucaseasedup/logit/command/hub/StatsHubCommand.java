@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -68,7 +69,7 @@ public final class StatsHubCommand extends HubCommand
             {
                 String ip = account.getIp();
                 
-                if (!ip.isEmpty())
+                if (!StringUtils.isBlank(ip))
                 {
                     uniqueIps.add(ip);
                 }

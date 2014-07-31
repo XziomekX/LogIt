@@ -44,6 +44,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -91,7 +92,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             String displayName = account.getDisplayName();
             
-            if (!displayName.isEmpty() && !player.getName().equals(displayName)
+            if (!StringUtils.isBlank(displayName) && !player.getName().equals(displayName)
                     && getConfig("config.yml").getBoolean("usernameCaseMismatch.kick"))
             {
                 event.disallow(Result.KICK_OTHER, _("usernameCaseMismatch.kick")
@@ -111,7 +112,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         int minUsernameLength = getConfig("secret.yml").getInt("username.minLength");
         int maxUsernameLength = getConfig("secret.yml").getInt("username.maxLength");
         
-        if (username.trim().isEmpty())
+        if (StringUtils.isBlank(username))
         {
             event.disallow(KICK_OTHER, _("usernameBlank"));
         }
@@ -226,19 +227,16 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         if (account != null)
         {
-            if (account.getUuid().isEmpty())
+            if (StringUtils.isBlank(account.getUuid()))
             {
                 account.setUuid(uuid);
             }
-        }
-        
-        if (account != null)
-        {
+            
             if (getConfig("config.yml").getBoolean("loginSessions.enabled") && validnessTime > 0)
             {
                 String loginSession = account.getLoginSession();
                 
-                if (loginSession != null && !loginSession.isEmpty())
+                if (!StringUtils.isBlank(loginSession))
                 {
                     String[] loginSplit = loginSession.split(";");
                     
@@ -259,7 +257,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             
             String displayName = account.getDisplayName();
             
-            if (!displayName.isEmpty() && !player.getName().equals(displayName)
+            if (!StringUtils.isBlank(displayName) && !player.getName().equals(displayName)
                     && getConfig("config.yml").getBoolean("usernameCaseMismatch.warning"))
             {
                 getMessageDispatcher().dispatchMessage(username, _("usernameCaseMismatch.warning")

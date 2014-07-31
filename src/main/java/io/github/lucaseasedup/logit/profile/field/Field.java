@@ -18,11 +18,13 @@
  */
 package io.github.lucaseasedup.logit.profile.field;
 
+import org.apache.commons.lang.StringUtils;
+
 public abstract class Field
 {
     public Field(String name)
     {
-        if (name == null || name.isEmpty())
+        if (StringUtils.isBlank(name))
             throw new IllegalArgumentException();
         
         this.name = name;
