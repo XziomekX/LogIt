@@ -29,14 +29,21 @@ public final class ConfirmationWizard extends Wizard
      *                 will tell this wizard to proceed.
      * @param callback a callback that will be run when the given keyword will be typed. 
      * 
-     * @throws IllegalArgumentException if {@code sender}, {@code keyword},
-     *                                  or {@code callback} is {@code null}.
+     * @throws IllegalArgumentException if {@code sender} or {@code callback} is {@code null};
+     *                                  or {@code keyword} is null, blank or starts with "/".
      */
     public ConfirmationWizard(CommandSender sender, String keyword, Runnable callback)
     {
         super(sender, null);
         
-        if (sender == null || keyword == null || callback == null)
+        if (sender == null)
+            throw new IllegalArgumentException();
+        
+        if (keyword == null || keyword.trim().isEmpty()
+                || keyword.startsWith("/"))
+            throw new IllegalArgumentException();
+        
+        if (callback == null)
             throw new IllegalArgumentException();
         
         this.keyword = keyword;
