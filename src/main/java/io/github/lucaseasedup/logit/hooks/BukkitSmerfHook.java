@@ -47,7 +47,8 @@ public final class BukkitSmerfHook
             return false;
         
         IPlayersStorage storage = Check.getStorage();
+        Boolean isPremium = storage.isPremium(player.getName());
         
-        return storage.isPremium(player.getName());
+        return isPremium != null && isPremium == Boolean.TRUE;
     }
 }
