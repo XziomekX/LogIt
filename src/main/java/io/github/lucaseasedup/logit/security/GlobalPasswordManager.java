@@ -88,6 +88,11 @@ public final class GlobalPasswordManager extends LogItCoreObject implements Runn
         return password;
     }
     
+    public void invalidatePassword(String password)
+    {
+        passwords.remove(password);
+    }
+    
     /**
      * Recommended task period of {@code GlobalPasswordManager} running as a Bukkit task.
      */
