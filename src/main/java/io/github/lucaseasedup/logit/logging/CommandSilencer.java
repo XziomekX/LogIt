@@ -66,6 +66,9 @@ public final class CommandSilencer implements Disposable
             @Override
             public boolean isLoggable(LogRecord record)
             {
+                if (isDisposed())
+                    return true;
+                
                 if (!record.getLoggerName().equals("Minecraft-Server"))
                     return true;
                 
@@ -126,6 +129,11 @@ public final class CommandSilencer implements Disposable
             throw new IllegalArgumentException();
         
         return CollectionUtils.containsIgnoreCase(label, command.getAliases());
+    }
+    
+    /* package */ boolean isDisposed()
+    {
+        return silencedCommands == null;
     }
     
     /* package */ Matcher getMatcherForMsg(String msg)
