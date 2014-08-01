@@ -43,7 +43,7 @@ public final class LoginHistoryCommand extends LogItCoreObject implements Comman
             player = (Player) sender;
         }
         
-        if (args.length == 0 || args.length == 1)
+        if (args.length < 3)
         {
             String playerName;
             
@@ -65,7 +65,7 @@ public final class LoginHistoryCommand extends LogItCoreObject implements Comman
                 
                 playerName = player.getName();
             }
-            else
+            else if (args[0].equals("-x"))
             {
                 if (player != null && !player.hasPermission("logit.loginhistory.others"))
                 {
@@ -74,7 +74,21 @@ public final class LoginHistoryCommand extends LogItCoreObject implements Comman
                     return true;
                 }
                 
-                playerName = args[0];
+                if (args.length < 2)
+                {
+                    sendMsg(sender, _("paramMissing")
+                            .replace("{0}", "username"));
+                    
+                    return true;
+                }
+                
+                playerName = args[1];
+            }
+            else
+            {
+                sendMsg(sender, _("incorrectParamCombination"));
+                
+                return true;
             }
             
             Account account = getAccountManager().selectAccount(playerName, Arrays.asList(

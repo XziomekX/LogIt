@@ -57,7 +57,7 @@ commands:
   
   loginhistory:
     descripton: Shows login history for your account.
-    usage: /<command> [username]
+    usage: /<command>
   
   $logit-nop-command:
     description: Reserved for internal use.
