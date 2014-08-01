@@ -488,7 +488,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
         {
             save();
             
-            log(Level.INFO, _("config.set.success.log")
+            log(Level.FINE, _("config.set.success.log")
                     .replace("{0}", p.getPath())
                     .replace("{1}", p.toString()));
         }
