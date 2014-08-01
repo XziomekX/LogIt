@@ -39,6 +39,7 @@ import io.github.lucaseasedup.logit.util.CollectionUtils;
 import io.github.lucaseasedup.logit.util.JoinMessageGenerator;
 import io.github.lucaseasedup.logit.util.QuitMessageGenerator;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -49,6 +50,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -490,47 +492,21 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             return;
         
         String message = event.getMessage();
-        List<String> loginAliases = getPlugin().getCommand("login").getAliases();
-        List<String> registerAliases = getPlugin().getCommand("register").getAliases();
+        PluginCommand loginCommand = getPlugin().getCommand("login");
+        PluginCommand registerCommand = getPlugin().getCommand("register");
         
-        // Check if the sent command starts with "/login" or "/register".
-        if (message.startsWith("/login ") || message.equals("/login")
-                || message.startsWith("/register ") || message.equals("/register"))
+        if (matchesCommand(loginCommand, message)
+                || matchesCommand(registerCommand, message))
         {
             return;
-        }
-        
-        // Check if the sent command starts with any of "/login" aliases.
-        for (String alias : loginAliases)
-        {
-            if (message.equalsIgnoreCase("/" + alias)
-                    || message.toLowerCase().startsWith("/" + alias + " "))
-            {
-                return;
-            }
-        }
-        
-        // Check if the sent command starts with any of "/register" aliases.
-        for (String alias : registerAliases)
-        {
-            if (message.equalsIgnoreCase("/" + alias)
-                    || message.toLowerCase().startsWith("/" + alias + " "))
-            {
-                return;
-            }
         }
         
         List<String> allowedCommands = getConfig("config.yml")
                 .getStringList("forceLogin.allowedCommands");
         
-        // Check if the sent command is one of the allowed in the config.
-        for (String command : allowedCommands)
+        if (matchesCommand(allowedCommands, message))
         {
-            if (message.equalsIgnoreCase("/" + command)
-                    || message.toLowerCase().startsWith("/" + command + " "))
-            {
-                return;
-            }
+            return;
         }
         
         if (!getSessionManager().isSessionAlive(player)
@@ -539,6 +515,39 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             event.setCancelled(true);
             getMessageDispatcher().sendForceLoginMessage(player);
         }
+    }
+    
+    private boolean matchesCommand(PluginCommand command, String message)
+    {
+        if (command == null || message == null)
+            throw new IllegalArgumentException();
+        
+        String commandLabel = command.getLabel();
+        
+        if (message.equals("/" + commandLabel))
+            return true;
+        
+        if (message.toLowerCase().startsWith("/" + commandLabel.toLowerCase() + " "))
+            return true;
+        
+        return matchesCommand(command.getAliases(), message);
+    }
+    
+    private boolean matchesCommand(Collection<String> matchers, String message)
+    {
+        if (matchers == null || message == null)
+            throw new IllegalArgumentException();
+        
+        for (String matcher : matchers)
+        {
+            if (message.equalsIgnoreCase("/" + matcher)
+                    || message.toLowerCase().startsWith("/" + matcher.toLowerCase() + " "))
+            {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     @EventHandler(priority = EventPriority.NORMAL)
