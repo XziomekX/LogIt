@@ -57,6 +57,7 @@ import io.github.lucaseasedup.logit.locale.EnglishLocale;
 import io.github.lucaseasedup.logit.locale.GermanLocale;
 import io.github.lucaseasedup.logit.locale.LocaleManager;
 import io.github.lucaseasedup.logit.locale.PolishLocale;
+import io.github.lucaseasedup.logit.logging.CommandSilencer;
 import io.github.lucaseasedup.logit.logging.LogItCoreLogger;
 import io.github.lucaseasedup.logit.persistence.AirBarSerializer;
 import io.github.lucaseasedup.logit.persistence.ExperienceSerializer;
@@ -263,6 +264,17 @@ public final class LogItCore
     {
         logger = new LogItCoreLogger(this);
         logger.open();
+        
+        commandSilencer = new CommandSilencer(Arrays.asList(
+                getPlugin().getCommand("login"),
+                getPlugin().getCommand("logout"),
+                getPlugin().getCommand("register"),
+                getPlugin().getCommand("unregister"),
+                getPlugin().getCommand("changepass"),
+                getPlugin().getCommand("changeemail"),
+                getPlugin().getCommand("recoverpass")
+        ));
+        commandSilencer.registerFilters();
     }
     
     private void doFirstRunStuff()
@@ -695,6 +707,12 @@ public final class LogItCore
         {
             configurationManager.dispose();
             configurationManager = null;
+        }
+        
+        if (commandSilencer != null)
+        {
+            commandSilencer.dispose();
+            commandSilencer = null;
         }
         
         if (localeManager != null)
@@ -1134,6 +1152,7 @@ public final class LogItCore
     
     private ConfigurationManager configurationManager;
     private LogItCoreLogger logger;
+    private CommandSilencer commandSilencer;
     private CraftReflect craftReflect;
     private LocaleManager localeManager;
     private AccountManager accountManager;
