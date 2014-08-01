@@ -167,8 +167,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         boolean newbieTeleportEnabled = getConfig("config.yml")
                                 .getBoolean("newbieTeleport.enabled");
                         
-                        if (getConfig("config.yml").getBoolean("waitingRoom.enabled")
-                                && newbieTeleportEnabled)
+                        if (newbieTeleportEnabled)
                         {
                             Location newbieTeleportLocation = getConfig("config.yml")
                                     .getLocation("newbieTeleport.location")
@@ -367,8 +366,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         boolean newbieTeleportEnabled = getConfig("config.yml")
                                 .getBoolean("newbieTeleport.enabled");
                         
-                        if (getConfig("config.yml").getBoolean("waitingRoom.enabled")
-                                && newbieTeleportEnabled)
+                        if (newbieTeleportEnabled)
                         {
                             Location newbieTeleportLocation = getConfig("config.yml")
                                     .getLocation("newbieTeleport.location")
