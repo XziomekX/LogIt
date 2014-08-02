@@ -111,6 +111,9 @@ public final class LogItCore
     /**
      * Starts up the LogIt core.
      * 
+     * @return a {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code LogItCoreStartEvent} handlers.
+     * 
      * @throws FatalReportedException if a critical error occurred
      *                                and LogIt could not start.
      *                                
@@ -119,10 +122,17 @@ public final class LogItCore
      * @see #isStarted()
      * @see #stop()
      */
-    public void start() throws FatalReportedException
+    public CancelledState start() throws FatalReportedException
     {
         if (isStarted())
             throw new IllegalStateException("The LogIt core has already been started.");
+        
+        CancellableEvent evt = new LogItCoreStartEvent(this);
+        
+        Bukkit.getPluginManager().callEvent(evt);
+        
+        if (evt.isCancelled())
+            return CancelledState.CANCELLED;
         
         getDataFolder().mkdir();
         
@@ -195,6 +205,8 @@ public final class LogItCore
         {
             log(Level.INFO, t("firstRun"));
         }
+        
+        return CancelledState.NOT_CANCELLED;
     }
     
     private void setUpConfiguration() throws FatalReportedException
@@ -819,32 +831,38 @@ public final class LogItCore
         }
         
         stop();
-        start();
         
-        try
-        {
-            getPlugin().reloadMessages(getConfig("config.yml").getString("locale"));
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, "Could not load messages.", ex);
-        }
-        
-        if (sessionsFile.exists())
+        if (!start().isCancelled())
         {
             try
             {
-                sessionManager.importSessions(sessionsFile);
+                getPlugin().reloadMessages(getConfig("config.yml").getString("locale"));
             }
             catch (IOException ex)
             {
-                log(Level.WARNING, "Could not import sessions.", ex);
+                log(Level.WARNING, "Could not load messages.", ex);
             }
             
-            sessionsFile.delete();
+            if (sessionsFile.exists())
+            {
+                try
+                {
+                    sessionManager.importSessions(sessionsFile);
+                }
+                catch (IOException ex)
+                {
+                    log(Level.WARNING, "Could not import sessions.", ex);
+                }
+                
+                sessionsFile.delete();
+            }
+            
+            log(Level.INFO, t("reloadPlugin.success"));
         }
-        
-        log(Level.INFO, t("reloadPlugin.success"));
+        else
+        {
+            log(Level.INFO, t("reloadPlugin.fail"));
+        }
     }
     
     /**

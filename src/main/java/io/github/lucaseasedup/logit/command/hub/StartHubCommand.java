@@ -53,9 +53,14 @@ public final class StartHubCommand extends HubCommand
         
         try
         {
-            getCore().start();
-            
-            sendMsg(sender, t("startCore.success"));
+            if (!getCore().start().isCancelled())
+            {
+                sendMsg(sender, t("startCore.success"));
+            }
+            else
+            {
+                sendMsg(sender, t("startCore.fail"));
+            }
         }
         catch (FatalReportedException ex)
         {
