@@ -19,7 +19,7 @@
 package io.github.lucaseasedup.logit;
 
 import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import com.google.common.io.Files;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.account.AccountKeys;
@@ -189,11 +189,11 @@ public final class LogItCore
         
         started = true;
         
-        log(Level.FINE, _("startPlugin.success"));
+        log(Level.FINE, t("startPlugin.success"));
         
         if (isFirstRun())
         {
-            log(Level.INFO, _("firstRun"));
+            log(Level.INFO, t("firstRun"));
         }
     }
     
@@ -309,7 +309,7 @@ public final class LogItCore
             
             if (updateVersion != null)
             {
-                log(Level.INFO, _("updateAvailable")
+                log(Level.INFO, t("updateAvailable")
                         .replace("{0}", String.valueOf(updateVersion))
                         .replace("{1}", "http://dev.bukkit.org/bukkit-plugins/logit/"));
             }
@@ -662,7 +662,7 @@ public final class LogItCore
         
         dispose();
         
-        log(Level.FINE, _("stopPlugin.success"));
+        log(Level.FINE, t("stopPlugin.success"));
         
         if (logger != null)
         {
@@ -844,7 +844,7 @@ public final class LogItCore
             sessionsFile.delete();
         }
         
-        log(Level.INFO, _("reloadPlugin.success"));
+        log(Level.INFO, t("reloadPlugin.success"));
     }
     
     /**

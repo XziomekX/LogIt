@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
@@ -83,12 +83,12 @@ public final class StatsHubCommand extends HubCommand
             sendMsg(sender, "");
         }
         
-        sendMsg(sender, _("stats.header"));
-        sendMsg(sender, _("stats.accountCount")
+        sendMsg(sender, t("stats.header"));
+        sendMsg(sender, t("stats.accountCount")
                 .replace("{0}", (accounts != null) ? String.valueOf(accounts.size()) : "?"));
-        sendMsg(sender, _("stats.uniqueIps")
+        sendMsg(sender, t("stats.uniqueIps")
                 .replace("{0}", (uniqueIps != null) ? String.valueOf(uniqueIps.size()) : "?"));
-        sendMsg(sender, _("stats.backupCount")
+        sendMsg(sender, t("stats.backupCount")
                 .replace("{0}", String.valueOf(backupCount)));
         
         if (getConfig("config.yml").getBoolean("stats.enabled"))
@@ -97,9 +97,9 @@ public final class StatsHubCommand extends HubCommand
             int passwordChanges = getConfig("stats.yml").getInt("passwordChanges");
             
             sendMsg(sender, "");
-            sendMsg(sender, _("stats.logins")
+            sendMsg(sender, t("stats.logins")
                     .replace("{0}", String.valueOf(logins)));
-            sendMsg(sender, _("stats.passwordChanges")
+            sendMsg(sender, t("stats.passwordChanges")
                     .replace("{0}", String.valueOf(passwordChanges)));
         }
         

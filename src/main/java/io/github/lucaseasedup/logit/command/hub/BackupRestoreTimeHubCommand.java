@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.TimeString;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.command.CommandAccess;
@@ -79,7 +79,7 @@ public final class BackupRestoreTimeHubCommand extends HubCommand
         
         if (closestBackup == null)
         {
-            sendMsg(sender, _("restoreBackup.noBackups"));
+            sendMsg(sender, t("restoreBackup.noBackups"));
             
             return;
         }

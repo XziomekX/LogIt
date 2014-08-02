@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.command.CommandAccess;
@@ -71,7 +71,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
     {
         if (!new File("plugins/AuthMe").exists())
         {
-            sendMsg(sender, _("import.authme.folderNotFound"));
+            sendMsg(sender, t("import.authme.folderNotFound"));
             
             return;
         }
@@ -80,7 +80,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
         
         if (!authMeConfigFile.exists())
         {
-            sendMsg(sender, _("import.authme.configNotFound"));
+            sendMsg(sender, t("import.authme.configNotFound"));
             
             return;
         }
@@ -93,8 +93,8 @@ public final class ImportAuthMeHubCommand extends HubCommand
             sendMsg(sender, "");
         }
         
-        sendMsg(sender, _("import.authme.header"));
-        sendMsg(sender, _("import.authme.typeToImport"));
+        sendMsg(sender, t("import.authme.header"));
+        sendMsg(sender, t("import.authme.typeToImport"));
         
         new ConfirmationWizard(sender, "import", new Runnable()
         {
@@ -116,7 +116,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
                         {
                             if (sender instanceof Player)
                             {
-                                sendMsg(sender, _("unexpectedError"));
+                                sendMsg(sender, t("unexpectedError"));
                             }
                         }
                         finally
@@ -170,7 +170,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
         
         if (backend == null)
         {
-            sendMsg(sender, _("import.authme.configPropNotFound")
+            sendMsg(sender, t("import.authme.configPropNotFound")
                     .replace("{0}", "DataSource.backend"));
             
             return;
@@ -178,7 +178,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
         
         if (settingsSecurityPasswordHash == null)
         {
-            sendMsg(sender, _("import.authme.configPropNotFound")
+            sendMsg(sender, t("import.authme.configPropNotFound")
                     .replace("{0}", "settings.security.passwordHash"));
             
             return;
@@ -186,7 +186,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
         
         if (!AuthMePasswordHelper.validateEncryptionMethod(settingsSecurityPasswordHash))
         {
-            sendMsg(sender, _("import.authme.unsupportedEncryptionMethod")
+            sendMsg(sender, t("import.authme.unsupportedEncryptionMethod")
                     .replace("{0}", settingsSecurityPasswordHash));
             
             return;
@@ -282,7 +282,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
                 
                 if (!backendFile.exists())
                 {
-                    sendMsg(sender, _("import.authme.fileNotFound")
+                    sendMsg(sender, t("import.authme.fileNotFound")
                             .replace("{0}", "auths.db"));
                     
                     return;
@@ -389,12 +389,12 @@ public final class ImportAuthMeHubCommand extends HubCommand
                 }
             }
             
-            log(Level.INFO, _("import.authme.success")
+            log(Level.INFO, t("import.authme.success")
                     .replace("{0}", String.valueOf(accountsImported)));
             
             if (sender instanceof Player)
             {
-                sendMsg(sender, _("import.authme.success")
+                sendMsg(sender, t("import.authme.success")
                         .replace("{0}", String.valueOf(accountsImported)));
             }
         }

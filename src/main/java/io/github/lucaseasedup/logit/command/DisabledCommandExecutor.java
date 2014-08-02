@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,7 +30,7 @@ public final class DisabledCommandExecutor extends LogItCoreObject implements Co
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        sendMsg(sender, _("cmdDisabled"));
+        sendMsg(sender, t("cmdDisabled"));
         
         return true;
     }

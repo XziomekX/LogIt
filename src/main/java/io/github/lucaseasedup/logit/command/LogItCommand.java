@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.command.hub.HubCommand;
 import io.github.lucaseasedup.logit.command.hub.HubCommands;
@@ -42,11 +42,11 @@ public final class LogItCommand extends LogItCoreObject implements TabExecutor
         {
             if (sender instanceof Player && !sender.hasPermission("logit"))
             {
-                sendMsg(sender, _("noPerms"));
+                sendMsg(sender, t("noPerms"));
             }
             else
             {
-                sendMsg(sender, _("typeForHelp"));
+                sendMsg(sender, t("typeForHelp"));
             }
             
             return true;
@@ -56,21 +56,21 @@ public final class LogItCommand extends LogItCoreObject implements TabExecutor
         {
             if (!sender.hasPermission(hubCommand.getPermission()))
             {
-                sendMsg(sender, _("noPerms"));
+                sendMsg(sender, t("noPerms"));
                 
                 return true;
             }
         }
         else if (hubCommand.isPlayerOnly())
         {
-            sendMsg(sender, _("onlyForPlayers"));
+            sendMsg(sender, t("onlyForPlayers"));
             
             return true;
         }
         
         if (hubCommand.isRunningCoreRequired() && !isCoreStarted())
         {
-            sendMsg(sender, _("coreNotStarted"));
+            sendMsg(sender, t("coreNotStarted"));
             
             return true;
         }
@@ -86,12 +86,12 @@ public final class LogItCommand extends LogItCoreObject implements TabExecutor
             {
                 if (args.length - subcommandWords.length > i)
                 {
-                    usageParams.append(_("cmdUsage.param")
+                    usageParams.append(t("cmdUsage.param")
                             .replace("{0}", params.get(i)));
                 }
                 else
                 {
-                    usageParams.append(_("cmdUsage.missingParam")
+                    usageParams.append(t("cmdUsage.missingParam")
                             .replace("{0}", params.get(i)));
                 }
             }
@@ -100,11 +100,11 @@ public final class LogItCommand extends LogItCoreObject implements TabExecutor
             
             if (helpLine.hasOptionalParam())
             {
-                usageParams.append(_("cmdUsage.optionalParam")
+                usageParams.append(t("cmdUsage.optionalParam")
                         .replace("{0}", helpLine.getOptionalParam()));
             }
             
-            sendMsg(sender, _("cmdUsage")
+            sendMsg(sender, t("cmdUsage")
                     .replace("{0}", helpLine.getCommand())
                     .replace("{1}", usageParams.toString()));
             

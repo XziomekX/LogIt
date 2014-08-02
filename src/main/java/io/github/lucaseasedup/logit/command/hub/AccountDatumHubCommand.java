@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
@@ -60,7 +60,7 @@ public final class AccountDatumHubCommand extends HubCommand
         
         if (account == null)
         {
-            sendMsg(sender, _("notRegistered.others")
+            sendMsg(sender, t("notRegistered.others")
                     .replace("{0}", args[0]));
             
             return;
@@ -68,7 +68,7 @@ public final class AccountDatumHubCommand extends HubCommand
         
         if (!account.getEntry().containsKey(args[1]))
         {
-            sendMsg(sender, _("accountDatum.keyNotFound")
+            sendMsg(sender, t("accountDatum.keyNotFound")
                     .replace("{0}", args[1]));
             
             return;
@@ -79,7 +79,7 @@ public final class AccountDatumHubCommand extends HubCommand
             sendMsg(sender, "");
         }
         
-        sendMsg(sender, _("accountDatum.result")
+        sendMsg(sender, t("accountDatum.result")
                 .replace("{0}", args[0].toLowerCase())
                 .replace("{1}", args[1])
                 .replace("{2}", account.getEntry().get(args[1])));

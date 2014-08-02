@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import java.util.List;
@@ -50,22 +50,22 @@ public final class AccountStatusHubCommand extends HubCommand
             sendMsg(sender, "");
         }
         
-        sendMsg(sender, _("accountStatus.header"));
-        sendMsg(sender, _("accountStatus.username")
+        sendMsg(sender, t("accountStatus.header"));
+        sendMsg(sender, t("accountStatus.username")
                 .replace("{0}", args[0].toLowerCase()));
         
         String status; 
         
         if (getAccountManager().isRegistered(args[0]))
         {
-            status = _("accountStatus.status.registered");
+            status = t("accountStatus.status.registered");
         }
         else
         {
-            status = _("accountStatus.status.notRegistered");
+            status = t("accountStatus.status.notRegistered");
         }
         
-        sendMsg(sender, _("accountStatus.status")
+        sendMsg(sender, t("accountStatus.status")
                 .replace("{0}", status));
         
         if (sender instanceof Player)

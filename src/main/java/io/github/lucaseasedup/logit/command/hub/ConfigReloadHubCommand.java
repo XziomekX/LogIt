@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
@@ -52,18 +52,18 @@ public final class ConfigReloadHubCommand extends HubCommand
         {
             getConfigurationManager().loadAll();
             
-            log(Level.INFO, _("reloadConfig.success"));
+            log(Level.INFO, t("reloadConfig.success"));
             
             if (sender instanceof Player)
             {
-                sendMsg(sender, _("reloadConfig.success"));
+                sendMsg(sender, t("reloadConfig.success"));
             }
         }
         catch (IOException | InvalidConfigurationException | InvalidPropertyValueException ex)
         {
             ex.printStackTrace();
             
-            sendMsg(sender, _("reloadConfig.fail"));
+            sendMsg(sender, t("reloadConfig.fail"));
         }
     }
 }

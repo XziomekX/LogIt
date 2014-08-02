@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;
@@ -68,14 +68,14 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                    || !player.hasPermission("logit.register.others")
             ))
             {
-                sendMsg(sender, _("noPerms"));
+                sendMsg(sender, t("noPerms"));
                 
                 return true;
             }
             
             if (args.length < 2)
             {
-                sendMsg(sender, _("paramMissing")
+                sendMsg(sender, t("paramMissing")
                         .replace("{0}", "player"));
                 
                 return true;
@@ -83,7 +83,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             
             if (!disablePasswords && args.length < 3)
             {
-                sendMsg(sender, _("paramMissing")
+                sendMsg(sender, t("paramMissing")
                         .replace("{0}", "password"));
                 
                 return true;
@@ -91,7 +91,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             
             if (getAccountManager().isRegistered(args[1]))
             {
-                sendMsg(sender, _("alreadyRegistered.others")
+                sendMsg(sender, t("alreadyRegistered.others")
                         .replace("{0}", args[1]));
                 
                 return true;
@@ -99,7 +99,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             
             if (!disablePasswords && args[2].length() < minPasswordLength)
             {
-                sendMsg(sender, _("passwordTooShort")
+                sendMsg(sender, t("passwordTooShort")
                         .replace("{0}", String.valueOf(minPasswordLength)));
                 
                 return true;
@@ -107,7 +107,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             
             if (!disablePasswords && args[2].length() > maxPasswordLength)
             {
-                sendMsg(sender, _("passwordTooLong")
+                sendMsg(sender, t("passwordTooLong")
                         .replace("{0}", String.valueOf(maxPasswordLength)));
                 
                 return true;
@@ -141,7 +141,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 
                 if (!getAccountManager().insertAccount(account).isCancelled())
                 {
-                    sendMsg(sender, _("createAccount.success.others")
+                    sendMsg(sender, t("createAccount.success.others")
                             .replace("{0}", PlayerUtils.getPlayerRealName(args[1])));
                     
                     if (isPlayerOnline(args[1]))
@@ -155,13 +155,13 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         
                         if (!getSessionManager().startSession(paramPlayer).isCancelled())
                         {
-                            sendMsg(paramPlayer, _("createAccount.successAndLogin.self"));
-                            sendMsg(sender, _("startSession.success.others")
+                            sendMsg(paramPlayer, t("createAccount.successAndLogin.self"));
+                            sendMsg(sender, t("startSession.success.others")
                                     .replace("{0}", paramPlayer.getName()));
                         }
                         else
                         {
-                            sendMsg(paramPlayer, _("createAccount.success.self"));
+                            sendMsg(paramPlayer, t("createAccount.success.self"));
                         }
                         
                         boolean newbieTeleportEnabled = getConfig("config.yml")
@@ -180,7 +180,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             }
             catch (ReportedException ex)
             {
-                sendMsg(sender, _("createAccount.fail.others")
+                sendMsg(sender, t("createAccount.fail.others")
                         .replace("{0}", args[1]));
             }
             finally
@@ -192,21 +192,21 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
         {
             if (player == null)
             {
-                sendMsg(sender, _("onlyForPlayers"));
+                sendMsg(sender, t("onlyForPlayers"));
                 
                 return true;
             }
             
             if (!player.hasPermission("logit.register.self"))
             {
-                sendMsg(player, _("noPerms"));
+                sendMsg(player, t("noPerms"));
                 
                 return true;
             }
             
             if (!disablePasswords && args.length < 1)
             {
-                sendMsg(player, _("paramMissing")
+                sendMsg(player, t("paramMissing")
                         .replace("{0}", "password"));
                 
                 return true;
@@ -214,7 +214,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             
             if (!disablePasswords && args.length < 2)
             {
-                sendMsg(player, _("paramMissing")
+                sendMsg(player, t("paramMissing")
                         .replace("{0}", "confirmpassword"));
                 
                 return true;
@@ -237,14 +237,14 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             
             if (isRegistered && !canTakeOver)
             {
-                sendMsg(player, _("alreadyRegistered.self"));
+                sendMsg(player, t("alreadyRegistered.self"));
                 
                 return true;
             }
             
             if (!disablePasswords && args[0].length() < minPasswordLength)
             {
-                sendMsg(player, _("passwordTooShort")
+                sendMsg(player, t("passwordTooShort")
                         .replace("{0}", String.valueOf(minPasswordLength)));
                 
                 return true;
@@ -252,7 +252,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             
             if (!disablePasswords && args[0].length() > maxPasswordLength)
             {
-                sendMsg(player, _("passwordTooLong")
+                sendMsg(player, t("passwordTooLong")
                         .replace("{0}", String.valueOf(maxPasswordLength)));
                 
                 return true;
@@ -260,7 +260,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
             
             if (!disablePasswords && !args[0].equals(args[1]))
             {
-                sendMsg(player, _("passwordsDoNotMatch"));
+                sendMsg(player, t("passwordsDoNotMatch"));
                 
                 return true;
             }
@@ -280,7 +280,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 if (accountsWithIp >= accountsPerIp
                         && !unrestrictedIps.contains(getPlayerIp(player)))
                 {
-                    sendMsg(player, _("accountsPerIpLimitReached"));
+                    sendMsg(player, t("accountsPerIpLimitReached"));
                     
                     return true;
                 }
@@ -313,23 +313,23 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         {
                             if (success)
                             {
-                                sendMsg(sender, _("takeover.success"));
+                                sendMsg(sender, t("takeover.success"));
                                 
                                 if (!getSessionManager().startSession(player).isCancelled())
                                 {
-                                    sendMsg(sender, _("startSession.success.self"));
+                                    sendMsg(sender, t("startSession.success.self"));
                                 }
                             }
                             else
                             {
-                                sendMsg(sender, _("takeover.fail"));
+                                sendMsg(sender, t("takeover.fail"));
                             }
                         }
                     });
                 }
                 catch (ReportedException ex)
                 {
-                    sendMsg(sender, _("takeover.fail"));
+                    sendMsg(sender, t("takeover.fail"));
                 }
                 finally
                 {
@@ -356,11 +356,11 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         
                         if (!getSessionManager().startSession(player).isCancelled())
                         {
-                            sendMsg(sender, _("createAccount.successAndLogin.self"));
+                            sendMsg(sender, t("createAccount.successAndLogin.self"));
                         }
                         else
                         {
-                            sendMsg(sender, _("createAccount.success.self"));
+                            sendMsg(sender, t("createAccount.success.self"));
                         }
                         
                         boolean newbieTeleportEnabled = getConfig("config.yml")
@@ -377,19 +377,19 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                         
                         if (getConfig("config.yml").getBoolean("loginSessions.enabled"))
                         {
-                            sendMsg(sender, _("rememberLogin.prompt"));
+                            sendMsg(sender, t("rememberLogin.prompt"));
                         }
                         
                         if (getConfig("config.yml").getBoolean("passwordRecovery.promptToAddEmail")
                                 && getConfig("config.yml").getBoolean("passwordRecovery.enabled"))
                         {
-                            sendMsg(sender, _("noEmailSet"));
+                            sendMsg(sender, t("noEmailSet"));
                         }
                     }
                 }
                 catch (ReportedException ex)
                 {
-                    sendMsg(sender, _("createAccount.fail.self"));
+                    sendMsg(sender, t("createAccount.fail.self"));
                 }
                 finally
                 {
@@ -399,7 +399,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
         }
         else
         {
-            sendMsg(sender, _("incorrectParamCombination"));
+            sendMsg(sender, t("incorrectParamCombination"));
         }
         
         return true;

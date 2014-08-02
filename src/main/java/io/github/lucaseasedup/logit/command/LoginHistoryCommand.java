@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
@@ -51,14 +51,14 @@ public final class LoginHistoryCommand extends LogItCoreObject implements Comman
             {
                 if (player == null)
                 {
-                    sendMsg(sender, _("onlyForPlayers"));
+                    sendMsg(sender, t("onlyForPlayers"));
                     
                     return true;
                 }
                 
                 if (!player.hasPermission("logit.loginhistory.self"))
                 {
-                    sendMsg(sender, _("noPerms"));
+                    sendMsg(sender, t("noPerms"));
                     
                     return true;
                 }
@@ -69,14 +69,14 @@ public final class LoginHistoryCommand extends LogItCoreObject implements Comman
             {
                 if (player != null && !player.hasPermission("logit.loginhistory.others"))
                 {
-                    sendMsg(sender, _("noPerms"));
+                    sendMsg(sender, t("noPerms"));
                     
                     return true;
                 }
                 
                 if (args.length < 2)
                 {
-                    sendMsg(sender, _("paramMissing")
+                    sendMsg(sender, t("paramMissing")
                             .replace("{0}", "username"));
                     
                     return true;
@@ -86,7 +86,7 @@ public final class LoginHistoryCommand extends LogItCoreObject implements Comman
             }
             else
             {
-                sendMsg(sender, _("incorrectParamCombination"));
+                sendMsg(sender, t("incorrectParamCombination"));
                 
                 return true;
             }
@@ -100,11 +100,11 @@ public final class LoginHistoryCommand extends LogItCoreObject implements Comman
             {
                 if (args.length == 0)
                 {
-                    sendMsg(sender, _("notRegistered.self"));
+                    sendMsg(sender, t("notRegistered.self"));
                 }
                 else
                 {
-                    sendMsg(sender, _("notRegistered.others")
+                    sendMsg(sender, t("notRegistered.others")
                             .replace("{0}", PlayerUtils.getPlayerRealName(playerName)));
                 }
                 
@@ -114,7 +114,7 @@ public final class LoginHistoryCommand extends LogItCoreObject implements Comman
             List<String> records = account.getLoginHistory();
             
             sendMsg(sender, "");
-            sendMsg(sender, _("loginHistory.header"));
+            sendMsg(sender, t("loginHistory.header"));
             
             String lastIp = null;
             int equalRecords = 1;
@@ -160,7 +160,7 @@ public final class LoginHistoryCommand extends LogItCoreObject implements Comman
         }
         else
         {
-            sendMsg(sender, _("incorrectParamCombination"));
+            sendMsg(sender, t("incorrectParamCombination"));
         }
         
         return true;
@@ -195,7 +195,7 @@ public final class LoginHistoryCommand extends LogItCoreObject implements Comman
         
         if (equalRecords > 1)
         {
-            repetition = _("loginHistory.record.repetition")
+            repetition = t("loginHistory.record.repetition")
                     .replace("{0}", String.valueOf(equalRecords));
         }
         else
@@ -205,10 +205,10 @@ public final class LoginHistoryCommand extends LogItCoreObject implements Comman
         
         if (ip.equals(lastIp))
         {
-            ip = _("loginHistory.record.ipDitto");
+            ip = t("loginHistory.record.ipDitto");
         }
         
-        sendMsg(sender, _(messageLabel)
+        sendMsg(sender, t(messageLabel)
                 .replace("{0}", new Date(Long.parseLong(unixTime) * 1000L).toString())
                 .replace("{1}", ip)
                 .replace("{2}", repetition));

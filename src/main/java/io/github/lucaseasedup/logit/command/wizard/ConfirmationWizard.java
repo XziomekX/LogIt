@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.command.wizard;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
@@ -65,7 +65,7 @@ public final class ConfirmationWizard extends Wizard
         }
         else
         {
-            sendMessage(_("wizardCancelled"));
+            sendMessage(t("wizardCancelled"));
         }
         
         cancelWizard();

@@ -19,8 +19,8 @@
 package io.github.lucaseasedup.logit.session;
 
 import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.LogItCoreObject;
@@ -96,7 +96,7 @@ public final class SessionManager extends LogItCoreObject
                         {
                             endSession(username);
                             
-                            sendMsg(player, _("automaticallyLoggedOut"));
+                            sendMsg(player, t("automaticallyLoggedOut"));
                             
                             if (getCore().isPlayerForcedToLogIn(player))
                             {
@@ -124,7 +124,7 @@ public final class SessionManager extends LogItCoreObject
                 {
                     if (timeoutEnabled && session.getStatus() <= -timeoutValue)
                     {
-                        player.kickPlayer(_("forcedLoginTimeout"));
+                        player.kickPlayer(t("forcedLoginTimeout"));
                     }
                     else
                     {
@@ -264,7 +264,7 @@ public final class SessionManager extends LogItCoreObject
         Session session = new Session(ip);
         sessions.put(username, session);
         
-        log(Level.FINE, _("createSession.success.log")
+        log(Level.FINE, t("createSession.success.log")
                 .replace("{0}", username));
         
         return CancelledState.NOT_CANCELLED;
@@ -311,7 +311,7 @@ public final class SessionManager extends LogItCoreObject
         
         sessions.remove(username.toLowerCase());
         
-        log(Level.FINE, _("destroySession.success.log")
+        log(Level.FINE, t("destroySession.success.log")
                 .replace("{0}", username.toLowerCase()));
         
         return CancelledState.NOT_CANCELLED;
@@ -383,7 +383,7 @@ public final class SessionManager extends LogItCoreObject
         // Start the session.
         session.setStatus(0L);
         
-        log(Level.FINE, _("startSession.success.log")
+        log(Level.FINE, t("startSession.success.log")
                 .replace("{0}", username));
         
         return CancelledState.NOT_CANCELLED;
@@ -427,7 +427,7 @@ public final class SessionManager extends LogItCoreObject
         // End the session.
         session.setStatus(-1L);
         
-        log(Level.FINE, _("endSession.success.log")
+        log(Level.FINE, t("endSession.success.log")
                 .replace("{0}", username.toLowerCase()));
         
         return CancelledState.NOT_CANCELLED;

@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.account.Account;
@@ -47,21 +47,21 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
         {
             if (player == null)
             {
-                sendMsg(sender, _("onlyForPlayers"));
+                sendMsg(sender, t("onlyForPlayers"));
                 
                 return true;
             }
             
             if (!player.hasPermission("logit.remember"))
             {
-                sendMsg(sender, _("noPerms"));
+                sendMsg(sender, t("noPerms"));
                 
                 return true;
             }
             
             if (!getSessionManager().isSessionAlive(player))
             {
-                sendMsg(sender, _("notLoggedIn.self"));
+                sendMsg(sender, t("notLoggedIn.self"));
                 
                 return true;
             }
@@ -72,7 +72,7 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
             
             if (!getAccountManager().isRegistered(player.getName()))
             {
-                sendMsg(sender, _("notRegistered.self"));
+                sendMsg(sender, t("notRegistered.self"));
                 
                 return true;
             }
@@ -84,12 +84,12 @@ public final class RememberCommand extends LogItCoreObject implements CommandExe
                     .getTime("loginSessions.validnessTime", TimeUnit.SECONDS);
             Locale activeLocale = getLocaleManager().getActiveLocale();
             
-            sendMsg(sender, _("rememberLogin.success")
+            sendMsg(sender, t("rememberLogin.success")
                     .replace("{0}", activeLocale.stringifySeconds(validnessTime)));
         }
         else
         {
-            sendMsg(sender, _("incorrectParamCombination"));
+            sendMsg(sender, t("incorrectParamCombination"));
         }
         
         return true;

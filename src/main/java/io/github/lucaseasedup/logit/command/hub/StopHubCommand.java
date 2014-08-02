@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.command.wizard.ConfirmationWizard;
@@ -50,9 +50,9 @@ public final class StopHubCommand extends HubCommand
             sendMsg(sender, "");
         }
         
-        sendMsg(sender, _("stopCore.confirm.areYouSure"));
-        sendMsg(sender, _("stopCore.confirm.vulnerabilityInfo"));
-        sendMsg(sender, _("stopCore.confirm.typeToConfirm"));
+        sendMsg(sender, t("stopCore.confirm.areYouSure"));
+        sendMsg(sender, t("stopCore.confirm.vulnerabilityInfo"));
+        sendMsg(sender, t("stopCore.confirm.typeToConfirm"));
         
         new ConfirmationWizard(sender, "stop", new Runnable()
         {
@@ -61,7 +61,7 @@ public final class StopHubCommand extends HubCommand
             {
                 getCore().stop();
                 
-                sendMsg(sender, _("stopCore.success"));
+                sendMsg(sender, t("stopCore.success"));
             }
         }).createWizard();
     }

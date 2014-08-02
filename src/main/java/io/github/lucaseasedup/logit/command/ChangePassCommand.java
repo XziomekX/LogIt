@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
@@ -50,14 +50,14 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
         {
             if (player != null && !player.hasPermission("logit.changepass.others"))
             {
-                sendMsg(sender, _("noPerms"));
+                sendMsg(sender, t("noPerms"));
                 
                 return true;
             }
             
             if (args.length < 2)
             {
-                sendMsg(sender, _("paramMissing")
+                sendMsg(sender, t("paramMissing")
                         .replace("{0}", "player"));
                 
                 return true;
@@ -65,7 +65,7 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             
             if (args.length < 3)
             {
-                sendMsg(sender, _("paramMissing")
+                sendMsg(sender, t("paramMissing")
                         .replace("{0}", "newpassword"));
                 
                 return true;
@@ -73,7 +73,7 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             
             if (args[2].length() < minPasswordLength)
             {
-                sendMsg(sender, _("passwordTooShort")
+                sendMsg(sender, t("passwordTooShort")
                         .replace("{0}", String.valueOf(minPasswordLength)));
                 
                 return true;
@@ -81,7 +81,7 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             
             if (args[2].length() > maxPasswordLength)
             {
-                sendMsg(sender, _("passwordTooLong")
+                sendMsg(sender, t("passwordTooLong")
                         .replace("{0}", String.valueOf(maxPasswordLength)));
                 
                 return true;
@@ -93,7 +93,7 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             
             if (account == null)
             {
-                sendMsg(sender, _("notRegistered.others")
+                sendMsg(sender, t("notRegistered.others")
                         .replace("{0}", PlayerUtils.getPlayerRealName(args[1])));
                 
                 return true;
@@ -101,8 +101,8 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             
             account.changePassword(args[2]);
             
-            sendMsg(args[1], _("changePassword.success.self"));
-            sendMsg(sender, _("changePassword.success.others")
+            sendMsg(args[1], t("changePassword.success.self"));
+            sendMsg(sender, t("changePassword.success.others")
                     .replace("{0}", PlayerUtils.getPlayerRealName(args[1])));
             
             if (getConfig("config.yml").getBoolean("stats.enabled"))
@@ -115,21 +115,21 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
         {
             if (player == null)
             {
-                sendMsg(sender, _("onlyForPlayers"));
+                sendMsg(sender, t("onlyForPlayers"));
                 
                 return true;
             }
             
             if (!player.hasPermission("logit.changepass.self"))
             {
-                sendMsg(player, _("noPerms"));
+                sendMsg(player, t("noPerms"));
                 
                 return true;
             }
             
             if (args.length < 1)
             {
-                sendMsg(player, _("paramMissing")
+                sendMsg(player, t("paramMissing")
                         .replace("{0}", "oldpassword"));
                 
                 return true;
@@ -137,7 +137,7 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             
             if (args.length < 2)
             {
-                sendMsg(player, _("paramMissing")
+                sendMsg(player, t("paramMissing")
                         .replace("{0}", "newpassword"));
                 
                 return true;
@@ -145,7 +145,7 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             
             if (args.length < 3)
             {
-                sendMsg(player, _("paramMissing")
+                sendMsg(player, t("paramMissing")
                         .replace("{0}", "confirmpassword"));
                 
                 return true;
@@ -161,7 +161,7 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             
             if (args[1].length() < minPasswordLength)
             {
-                sendMsg(player, _("passwordTooShort")
+                sendMsg(player, t("passwordTooShort")
                         .replace("{0}", String.valueOf(minPasswordLength)));
                 
                 return true;
@@ -169,7 +169,7 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             
             if (args[1].length() > maxPasswordLength)
             {
-                sendMsg(player, _("passwordTooLong")
+                sendMsg(player, t("passwordTooLong")
                         .replace("{0}", String.valueOf(maxPasswordLength)));
                 
                 return true;
@@ -177,7 +177,7 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             
             if (!args[1].equals(args[2]))
             {
-                sendMsg(player, _("passwordsDoNotMatch"));
+                sendMsg(player, t("passwordsDoNotMatch"));
                 
                 return true;
             }
@@ -191,21 +191,21 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             
             if (account == null)
             {
-                sendMsg(player, _("notRegistered.self"));
+                sendMsg(player, t("notRegistered.self"));
                 
                 return true;
             }
             
             if (!account.checkPassword(args[0]))
             {
-                sendMsg(player, _("incorrectPassword"));
+                sendMsg(player, t("incorrectPassword"));
                 
                 return true;
             }
             
             account.changePassword(args[1]);
             
-            sendMsg(sender, _("changePassword.success.self"));
+            sendMsg(sender, t("changePassword.success.self"));
             
             LogItCooldowns.activate(player, LogItCooldowns.CHANGEPASS);
             
@@ -217,7 +217,7 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
         }
         else
         {
-            sendMsg(sender, _("incorrectParamCombination"));
+            sendMsg(sender, t("incorrectParamCombination"));
         }
         
         return true;

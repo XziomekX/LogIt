@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import org.bukkit.command.CommandSender;
@@ -49,9 +49,9 @@ public final class VersionHubCommand extends HubCommand
             sendMsg(sender, "");
         }
         
-        sendMsg(sender, _("aboutPlugin.header"));
-        sendMsg(sender, _("aboutPlugin.version")
+        sendMsg(sender, t("aboutPlugin.header"));
+        sendMsg(sender, t("aboutPlugin.version")
                 .replace("{0}", getPlugin().getDescription().getVersion()));
-        sendMsg(sender, _("aboutPlugin.author"));
+        sendMsg(sender, t("aboutPlugin.author"));
     }
 }

@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.command.wizard.ProfileEditWizard;
 import io.github.lucaseasedup.logit.command.wizard.ProfileViewWizard;
@@ -44,14 +44,14 @@ public final class ProfileCommand extends LogItCoreObject implements CommandExec
         {
             if (player == null)
             {
-                sendMsg(sender, _("onlyForPlayers"));
+                sendMsg(sender, t("onlyForPlayers"));
                 
                 return true;
             }
             
             if (!player.hasPermission("logit.profile.view.self"))
             {
-                sendMsg(sender, _("noPerms"));
+                sendMsg(sender, t("noPerms"));
                 
                 return true;
             }
@@ -62,14 +62,14 @@ public final class ProfileCommand extends LogItCoreObject implements CommandExec
         {
             if (player != null && !player.hasPermission("logit.profile.view.others"))
             {
-                sendMsg(sender, _("noPerms"));
+                sendMsg(sender, t("noPerms"));
                 
                 return true;
             }
             
             if (!getProfileManager().containsProfile(args[1]))
             {
-                sendMsg(sender, _("profile.view.profileNotFound"));
+                sendMsg(sender, t("profile.view.profileNotFound"));
                 
                 return true;
             }
@@ -80,14 +80,14 @@ public final class ProfileCommand extends LogItCoreObject implements CommandExec
         {
             if (player == null)
             {
-                sendMsg(sender, _("onlyForPlayers"));
+                sendMsg(sender, t("onlyForPlayers"));
                 
                 return true;
             }
             
             if (!player.hasPermission("logit.profile.edit.self"))
             {
-                sendMsg(sender, _("noPerms"));
+                sendMsg(sender, t("noPerms"));
                 
                 return true;
             }
@@ -98,7 +98,7 @@ public final class ProfileCommand extends LogItCoreObject implements CommandExec
         {
             if (player != null && !player.hasPermission("logit.profile.edit.others"))
             {
-                sendMsg(sender, _("noPerms"));
+                sendMsg(sender, t("noPerms"));
                 
                 return true;
             }
@@ -107,7 +107,7 @@ public final class ProfileCommand extends LogItCoreObject implements CommandExec
         }
         else
         {
-            sendMsg(sender, _("incorrectParamCombination"));
+            sendMsg(sender, t("incorrectParamCombination"));
         }
         
         return true;

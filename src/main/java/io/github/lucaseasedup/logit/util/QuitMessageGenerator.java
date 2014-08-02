@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.util;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCore;
 import org.bukkit.entity.Player;
 
@@ -38,11 +38,11 @@ public final class QuitMessageGenerator
         
         if (core.getConfig("config.yml").getBoolean("messages.beautify"))
         {
-            message = _("quit.beautified");
+            message = t("quit.beautified");
         }
         else
         {
-            message = _("quit.native");
+            message = t("quit.native");
         }
         
         return message.replace("{0}", player.getName());

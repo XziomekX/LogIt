@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
@@ -50,14 +50,14 @@ public final class ChangeEmailCommand extends LogItCoreObject implements TabExec
         {
             if (player != null && !player.hasPermission("logit.changeemail.others"))
             {
-                sendMsg(sender, _("noPerms"));
+                sendMsg(sender, t("noPerms"));
                 
                 return true;
             }
             
             if (args.length < 2)
             {
-                sendMsg(sender, _("paramMissing")
+                sendMsg(sender, t("paramMissing")
                         .replace("{0}", "player"));
                 
                 return true;
@@ -65,7 +65,7 @@ public final class ChangeEmailCommand extends LogItCoreObject implements TabExec
             
             if (args.length < 3)
             {
-                sendMsg(sender, _("paramMissing")
+                sendMsg(sender, t("paramMissing")
                         .replace("{0}", "newemail"));
                 
                 return true;
@@ -73,7 +73,7 @@ public final class ChangeEmailCommand extends LogItCoreObject implements TabExec
             
             if (!Validators.validateEmail(args[2]))
             {
-                sendMsg(sender, _("changeEmail.invalidEmailAddress"));
+                sendMsg(sender, t("changeEmail.invalidEmailAddress"));
                 
                 return true;
             }
@@ -84,7 +84,7 @@ public final class ChangeEmailCommand extends LogItCoreObject implements TabExec
             
             if (account == null)
             {
-                sendMsg(sender, _("notRegistered.others")
+                sendMsg(sender, t("notRegistered.others")
                         .replace("{0}", PlayerUtils.getPlayerRealName(args[1])));
                 
                 return true;
@@ -92,9 +92,9 @@ public final class ChangeEmailCommand extends LogItCoreObject implements TabExec
             
             account.setEmail(args[2]);
             
-            sendMsg(args[1], _("changeEmail.success.self")
+            sendMsg(args[1], t("changeEmail.success.self")
                     .replace("{0}", args[2].toLowerCase()));
-            sendMsg(sender, _("changeEmail.success.others")
+            sendMsg(sender, t("changeEmail.success.others")
                     .replace("{0}", PlayerUtils.getPlayerRealName(args[1]))
                     .replace("{1}", args[2].toLowerCase()));
         }
@@ -102,21 +102,21 @@ public final class ChangeEmailCommand extends LogItCoreObject implements TabExec
         {
             if (player == null)
             {
-                sendMsg(sender, _("onlyForPlayers"));
+                sendMsg(sender, t("onlyForPlayers"));
                 
                 return true;
             }
             
             if (!player.hasPermission("logit.changeemail.self"))
             {
-                sendMsg(player, _("noPerms"));
+                sendMsg(player, t("noPerms"));
                 
                 return true;
             }
             
             if (args.length < 1)
             {
-                sendMsg(player, _("paramMissing")
+                sendMsg(player, t("paramMissing")
                         .replace("{0}", "newemail"));
                 
                 return true;
@@ -132,7 +132,7 @@ public final class ChangeEmailCommand extends LogItCoreObject implements TabExec
             
             if (!Validators.validateEmail(args[0]))
             {
-                sendMsg(player, _("changeEmail.invalidEmailAddress"));
+                sendMsg(player, t("changeEmail.invalidEmailAddress"));
                 
                 return true;
             }
@@ -143,7 +143,7 @@ public final class ChangeEmailCommand extends LogItCoreObject implements TabExec
             
             if (account == null)
             {
-                sendMsg(player, _("notRegistered.self"));
+                sendMsg(player, t("notRegistered.self"));
                 
                 return true;
             }
@@ -155,21 +155,21 @@ public final class ChangeEmailCommand extends LogItCoreObject implements TabExec
             
             if (accountsWithEmail >= getConfig("config.yml").getInt("accountsPerEmail"))
             {
-                sendMsg(player, _("accountsPerEmailLimitReached"));
+                sendMsg(player, t("accountsPerEmailLimitReached"));
                 
                 return true;
             }
             
             account.setEmail(args[0]);
             
-            sendMsg(sender, _("changeEmail.success.self")
+            sendMsg(sender, t("changeEmail.success.self")
                     .replace("{0}", args[0].toLowerCase()));
             
             LogItCooldowns.activate(player, LogItCooldowns.CHANGEEMAIL);
         }
         else
         {
-            sendMsg(sender, _("incorrectParamCombination"));
+            sendMsg(sender, t("incorrectParamCombination"));
         }
         
         return true;

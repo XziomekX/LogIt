@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.account.Account;
@@ -50,14 +50,14 @@ public final class UnregisterCommand extends LogItCoreObject implements TabExecu
         {
             if (player != null && !player.hasPermission("logit.unregister.others"))
             {
-                sendMsg(sender, _("noPerms"));
+                sendMsg(sender, t("noPerms"));
                 
                 return true;
             }
             
             if (args.length < 2)
             {
-                sendMsg(sender, _("paramMissing")
+                sendMsg(sender, t("paramMissing")
                         .replace("{0}", "player"));
                 
                 return true;
@@ -69,7 +69,7 @@ public final class UnregisterCommand extends LogItCoreObject implements TabExecu
             
             if (account == null)
             {
-                sendMsg(sender, _("notRegistered.others")
+                sendMsg(sender, t("notRegistered.others")
                         .replace("{0}", args[1]));
                 
                 return true;
@@ -77,7 +77,7 @@ public final class UnregisterCommand extends LogItCoreObject implements TabExecu
             
             if (player != null && player.getName().equalsIgnoreCase(args[1]))
             {
-                sendMsg(sender, _("removeAccount.indirectAccountRemoval"));
+                sendMsg(sender, t("removeAccount.indirectAccountRemoval"));
                 
                 return true;
             }
@@ -90,8 +90,8 @@ public final class UnregisterCommand extends LogItCoreObject implements TabExecu
                 {
                     if (!getSessionManager().endSession(paramPlayer).isCancelled())
                     {
-                        sendMsg(paramPlayer, _("removeAccount.sessionEnded"));
-                        sendMsg(sender, _("endSession.success.others")
+                        sendMsg(paramPlayer, t("removeAccount.sessionEnded"));
+                        sendMsg(sender, t("endSession.success.others")
                                 .replace("{0}", paramPlayer.getName()));
                     }
                 }
@@ -103,14 +103,14 @@ public final class UnregisterCommand extends LogItCoreObject implements TabExecu
                 
                 if (!getAccountManager().removeAccount(args[1]).isCancelled())
                 {
-                    sendMsg(args[1], _("removeAccount.success.self"));
-                    sendMsg(sender, _("removeAccount.success.others")
+                    sendMsg(args[1], t("removeAccount.success.self"));
+                    sendMsg(sender, t("removeAccount.success.others")
                             .replace("{0}", PlayerUtils.getPlayerRealName(args[1])));
                 }
             }
             catch (ReportedException ex)
             {
-                sendMsg(sender, _("removeAccount.fail.others")
+                sendMsg(sender, t("removeAccount.fail.others")
                         .replace("{0}", PlayerUtils.getPlayerRealName(args[1])));
             }
             finally
@@ -122,21 +122,21 @@ public final class UnregisterCommand extends LogItCoreObject implements TabExecu
         {
             if (player == null)
             {
-                sendMsg(sender, _("onlyForPlayers"));
+                sendMsg(sender, t("onlyForPlayers"));
                 
                 return true;
             }
             
             if (!player.hasPermission("logit.unregister.self"))
             {
-                sendMsg(player, _("noPerms"));
+                sendMsg(player, t("noPerms"));
                 
                 return true;
             }
             
             if (args.length < 1 && !disablePasswords)
             {
-                sendMsg(player, _("paramMissing")
+                sendMsg(player, t("paramMissing")
                         .replace("{0}", "password"));
                 
                 return true;
@@ -160,14 +160,14 @@ public final class UnregisterCommand extends LogItCoreObject implements TabExecu
             
             if (account == null)
             {
-                sendMsg(player, _("notRegistered.self"));
+                sendMsg(player, t("notRegistered.self"));
                 
                 return true;
             }
             
             if (!disablePasswords && !account.checkPassword(args[0]))
             {
-                sendMsg(player, _("incorrectPassword"));
+                sendMsg(player, t("incorrectPassword"));
                 
                 return true;
             }
@@ -176,7 +176,7 @@ public final class UnregisterCommand extends LogItCoreObject implements TabExecu
             {
                 if (!getSessionManager().endSession(player).isCancelled())
                 {
-                    sendMsg(sender, _("removeAccount.sessionEnded"));
+                    sendMsg(sender, t("removeAccount.sessionEnded"));
                 }
             }
             
@@ -186,14 +186,14 @@ public final class UnregisterCommand extends LogItCoreObject implements TabExecu
                 
                 if (!getAccountManager().removeAccount(player.getName()).isCancelled())
                 {
-                    sendMsg(sender, _("removeAccount.success.self"));
+                    sendMsg(sender, t("removeAccount.success.self"));
                     
                     LogItCooldowns.activate(player, LogItCooldowns.UNREGISTER);
                 }
             }
             catch (ReportedException ex)
             {
-                sendMsg(sender, _("removeAccount.fail.self"));
+                sendMsg(sender, t("removeAccount.fail.self"));
             }
             finally
             {
@@ -202,7 +202,7 @@ public final class UnregisterCommand extends LogItCoreObject implements TabExecu
         }
         else
         {
-            sendMsg(sender, _("incorrectParamCombination"));
+            sendMsg(sender, t("incorrectParamCombination"));
         }
         
         return true;

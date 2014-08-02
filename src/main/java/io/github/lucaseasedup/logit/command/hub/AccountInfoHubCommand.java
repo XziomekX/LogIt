@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
@@ -61,7 +61,7 @@ public final class AccountInfoHubCommand extends HubCommand
         
         if (account == null)
         {
-            sendMsg(sender, _("notRegistered.others")
+            sendMsg(sender, t("notRegistered.others")
                     .replace("{0}", PlayerUtils.getPlayerRealName(args[0])));
             
             return;
@@ -72,21 +72,21 @@ public final class AccountInfoHubCommand extends HubCommand
             sendMsg(sender, "");
         }
         
-        sendMsg(sender, _("accountInfo.header"));
-        sendMsg(sender, _("accountInfo.username")
+        sendMsg(sender, t("accountInfo.header"));
+        sendMsg(sender, t("accountInfo.username")
                 .replace("{0}", account.getUsername()));
         
         if (!(sender instanceof Player)
                 || sender.hasPermission("logit.account.info.ip"))
         {
-            sendMsg(sender, _("accountInfo.ip")
+            sendMsg(sender, t("accountInfo.ip")
                     .replace("{0}", account.getIp()));
         }
         
         if (!(sender instanceof Player)
                 || sender.hasPermission("logit.account.info.email"))
         {
-            sendMsg(sender, _("accountInfo.email")
+            sendMsg(sender, t("accountInfo.email")
                     .replace("{0}", account.getEmail()));
         }
         
@@ -97,11 +97,11 @@ public final class AccountInfoHubCommand extends HubCommand
             
             if (lastActiveDate < 0)
             {
-                sendMsg(sender, _("accountInfo.lastActiveDate.never"));
+                sendMsg(sender, t("accountInfo.lastActiveDate.never"));
             }
             else
             {
-                sendMsg(sender, _("accountInfo.lastActiveDate")
+                sendMsg(sender, t("accountInfo.lastActiveDate")
                         .replace("{0}", new Date(account.getLastActiveDate() * 1000L).toString()));
             }
         }
@@ -113,11 +113,11 @@ public final class AccountInfoHubCommand extends HubCommand
             
             if (registrationDate < 0)
             {
-                sendMsg(sender, _("accountInfo.registrationDate.never"));
+                sendMsg(sender, t("accountInfo.registrationDate.never"));
             }
             else
             {
-                sendMsg(sender, _("accountInfo.registrationDate")
+                sendMsg(sender, t("accountInfo.registrationDate")
                         .replace("{0}", new Date(account.getRegistrationDate() * 1000L).toString()));
             }
         }
@@ -125,7 +125,7 @@ public final class AccountInfoHubCommand extends HubCommand
         if (!(sender instanceof Player)
                 || sender.hasPermission("logit.account.info.displayname"))
         {
-            sendMsg(sender, _("accountInfo.displayName")
+            sendMsg(sender, t("accountInfo.displayName")
                     .replace("{0}", account.getDisplayName()));
         }
         
@@ -135,7 +135,7 @@ public final class AccountInfoHubCommand extends HubCommand
             if (account.isLocked())
             {
                 sendMsg(sender, "");
-                sendMsg(sender, _("accountInfo.locked")
+                sendMsg(sender, t("accountInfo.locked")
                         .replace("{0}", account.getUsername()));
             }
         }

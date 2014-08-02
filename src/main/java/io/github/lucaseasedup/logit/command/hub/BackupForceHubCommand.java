@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import java.io.File;
@@ -49,7 +49,7 @@ public final class BackupForceHubCommand extends HubCommand
         
         if (sender instanceof Player)
         {
-            sendMsg(sender, _("createBackup.willBeCreated")
+            sendMsg(sender, t("createBackup.willBeCreated")
                     .replace("{0}", backupFile.getName()));
         }
     }

@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.backup;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.TimeUnit;
@@ -109,18 +109,18 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     {
         final File backupFile = allocateBackupFileForDate(new Date());
         
-        log(Level.INFO, _("createBackup.creating"));
+        log(Level.INFO, t("createBackup.creating"));
         
         try
         {
             exportAccounts(backupFile);
             
-            log(Level.INFO, _("createBackup.success.log")
+            log(Level.INFO, t("createBackup.success.log")
                     .replace("{0}", backupFile.getName()));
         }
         catch (IOException ex)
         {
-            log(Level.WARNING, _("createBackup.fail.log"), ex);
+            log(Level.WARNING, t("createBackup.fail.log"), ex);
             
             ReportedException.throwNew(ex);
         }
@@ -145,7 +145,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
     {
         final File backupFile = allocateBackupFileForDate(new Date());
         
-        log(Level.INFO, _("createBackup.creating"));
+        log(Level.INFO, t("createBackup.creating"));
         
         new BukkitRunnable()
         {
@@ -156,12 +156,12 @@ public final class BackupManager extends LogItCoreObject implements Runnable
                 {
                     exportAccounts(backupFile);
                     
-                    log(Level.INFO, _("createBackup.success.log")
+                    log(Level.INFO, t("createBackup.success.log")
                             .replace("{0}", backupFile.getName()));
                 }
                 catch (IOException ex)
                 {
-                    log(Level.WARNING, _("createBackup.fail.log"), ex);
+                    log(Level.WARNING, t("createBackup.fail.log"), ex);
                 }
             }
         }.runTaskAsynchronously(getPlugin());
@@ -250,7 +250,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
                 accountManager.getStorage().setAutobatchEnabled(false);
             }
             
-            log(Level.INFO, _("restoreBackup.success.log")
+            log(Level.INFO, t("restoreBackup.success.log")
                     .replace("{0}", filename));
         }
         catch (IOException ex)
@@ -287,7 +287,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
             }
         }
         
-        log(Level.INFO, _("removeBackups.success")
+        log(Level.INFO, t("removeBackups.success")
                 .replace("{0}", String.valueOf(effectiveAmount)));
         
         return effectiveAmount;

@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
@@ -50,9 +50,9 @@ public final class GlobalpassHubCommand extends HubCommand
         long lifetimeSecs = getConfig("config.yml")
                 .getTime("globalPassword.invalidateAfter", TimeUnit.SECONDS);
         
-        sendMsg(sender, _("globalpass.generated")
+        sendMsg(sender, t("globalpass.generated")
                 .replace("{0}", password));
-        sendMsg(sender, _("globalpass.invalidationInfo")
+        sendMsg(sender, t("globalpass.invalidationInfo")
                 .replace("{0}", activeLocale.stringifySeconds((int) lifetimeSecs)));
     }
 }

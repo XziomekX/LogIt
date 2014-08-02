@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
@@ -46,14 +46,14 @@ public final class AcclockCommand extends LogItCoreObject implements TabExecutor
         {
             if (player != null && !player.hasPermission("logit.acclock"))
             {
-                sendMsg(player, _("noPerms"));
+                sendMsg(player, t("noPerms"));
                 
                 return true;
             }
             
             if (args.length < 1)
             {
-                sendMsg(sender, _("paramMissing")
+                sendMsg(sender, t("paramMissing")
                         .replace("{0}", "username"));
                 
                 return true;
@@ -61,7 +61,7 @@ public final class AcclockCommand extends LogItCoreObject implements TabExecutor
             
             if (player != null && player.getName().equalsIgnoreCase(args[0]))
             {
-                sendMsg(sender, _("acclock.cannotLockYourself"));
+                sendMsg(sender, t("acclock.cannotLockYourself"));
                 
                 return true;
             }
@@ -73,7 +73,7 @@ public final class AcclockCommand extends LogItCoreObject implements TabExecutor
             
             if (account == null)
             {
-                sendMsg(sender, _("notRegistered.others")
+                sendMsg(sender, t("notRegistered.others")
                         .replace("{0}", args[0]));
                 
                 return true;
@@ -83,15 +83,15 @@ public final class AcclockCommand extends LogItCoreObject implements TabExecutor
             
             if (PlayerUtils.isPlayerOnline(args[0]))
             {
-                PlayerUtils.getPlayer(args[0]).kickPlayer(_("acclock.success.self"));
+                PlayerUtils.getPlayer(args[0]).kickPlayer(t("acclock.success.self"));
             }
             
-            sendMsg(sender, _("acclock.success.others")
+            sendMsg(sender, t("acclock.success.others")
                     .replace("{0}", PlayerUtils.getPlayerRealName(args[0])));
         }
         else
         {
-            sendMsg(sender, _("incorrectParamCombination"));
+            sendMsg(sender, t("incorrectParamCombination"));
         }
         
         return true;

@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
@@ -55,7 +55,7 @@ public final class BackupRestoreFileHubCommand extends HubCommand
         
         if (selectedBackup == null)
         {
-            sendMsg(sender, _("restoreBackup.backupNotFound")
+            sendMsg(sender, t("restoreBackup.backupNotFound")
                     .replace("{0}", args[0]));
             
             return;
@@ -69,7 +69,7 @@ public final class BackupRestoreFileHubCommand extends HubCommand
         }
         catch (ParseException ex)
         {
-            sendMsg(sender, _("restoreBackup.fail")
+            sendMsg(sender, t("restoreBackup.fail")
                     .replace("{0}", selectedBackup.getName()));
             
             return;
@@ -80,15 +80,15 @@ public final class BackupRestoreFileHubCommand extends HubCommand
             sendMsg(sender, "");
         }
         
-        sendMsg(sender, _("restoreBackup.confirm.header"));
-        sendMsg(sender, _("restoreBackup.confirm.typeToProceed"));
+        sendMsg(sender, t("restoreBackup.confirm.header"));
+        sendMsg(sender, t("restoreBackup.confirm.typeToProceed"));
         sendMsg(sender, "");
-        sendMsg(sender, _("restoreBackup.confirm.filename")
+        sendMsg(sender, t("restoreBackup.confirm.filename")
                 .replace("{0}", selectedBackup.getName()));
-        sendMsg(sender, _("restoreBackup.confirm.date")
+        sendMsg(sender, t("restoreBackup.confirm.date")
                 .replace("{0}", selectedBackupDate.toString()));
         sendMsg(sender, "");
-        sendMsg(sender, _("restoreBackup.confirm.typeToCancel"));
+        sendMsg(sender, t("restoreBackup.confirm.typeToCancel"));
         
         new ConfirmationWizard(sender, "proceed", new Runnable()
         {
@@ -103,7 +103,7 @@ public final class BackupRestoreFileHubCommand extends HubCommand
                     
                     if (sender instanceof Player)
                     {
-                        sendMsg(sender, _("restoreBackup.success")
+                        sendMsg(sender, t("restoreBackup.success")
                                 .replace("{0}", args[0]));
                     }
                 }
@@ -111,7 +111,7 @@ public final class BackupRestoreFileHubCommand extends HubCommand
                 {
                     if (sender instanceof Player)
                     {
-                        sendMsg(sender, _("restoreBackup.fail")
+                        sendMsg(sender, t("restoreBackup.fail")
                                 .replace("{0}", args[0]));
                     }
                 }

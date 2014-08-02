@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.util;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import io.github.lucaseasedup.logit.LogItCore;
 import org.bukkit.Bukkit;
@@ -42,22 +42,22 @@ public final class JoinMessageGenerator
         
         if (core.getConfig("config.yml").getBoolean("messages.beautify"))
         {
-            message = _("join.beautified");
+            message = t("join.beautified");
         }
         else
         {
-            message = _("join.native");
+            message = t("join.native");
         }
         
         String inWorld;
         
         if (core.getConfig("config.yml").getBoolean("messages.beautify"))
         {
-            inWorld = _("join.beautified.inWorld");
+            inWorld = t("join.beautified.inWorld");
         }
         else
         {
-            inWorld = _("join.native.inWorld");
+            inWorld = t("join.native.inWorld");
         }
         
         if (revealSpawnWorld)

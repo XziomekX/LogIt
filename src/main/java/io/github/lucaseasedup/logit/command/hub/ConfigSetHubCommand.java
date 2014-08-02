@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
@@ -59,7 +59,7 @@ public final class ConfigSetHubCommand extends HubCommand
         {
             if (!getConfig("config.yml").contains(camelCasePath))
             {
-                sendMsg(sender, _("config.propertyNotFound")
+                sendMsg(sender, t("config.propertyNotFound")
                         .replace("{0}", hyphenatedPath));
                 
                 return;
@@ -125,7 +125,7 @@ public final class ConfigSetHubCommand extends HubCommand
                     }
                     catch (NumberFormatException ex)
                     {
-                        sendMsg(sender, _("invalidParam")
+                        sendMsg(sender, t("invalidParam")
                                 .replace("{0}", "value"));
                         
                         return;
@@ -160,7 +160,7 @@ public final class ConfigSetHubCommand extends HubCommand
                 if ("$".equals(inputValue))
                 {
                     if (!(sender instanceof Player))
-                        throw new RuntimeException(_("onlyForPlayers"));
+                        throw new RuntimeException(t("onlyForPlayers"));
                     
                     Player player = ((Player) sender);
                     
@@ -183,7 +183,7 @@ public final class ConfigSetHubCommand extends HubCommand
                     }
                     catch (NumberFormatException ex)
                     {
-                        sendMsg(sender, _("invalidParam")
+                        sendMsg(sender, t("invalidParam")
                                 .replace("{0}", "value"));
                         
                         return;
@@ -211,7 +211,7 @@ public final class ConfigSetHubCommand extends HubCommand
                 if ("$".equals(inputValue))
                 {
                     if (!(sender instanceof Player))
-                        throw new RuntimeException(_("onlyForPlayers"));
+                        throw new RuntimeException(t("onlyForPlayers"));
                     
                     Location loc = ((Player) sender).getLocation();
                     
@@ -235,14 +235,14 @@ public final class ConfigSetHubCommand extends HubCommand
             
             if (sender instanceof Player)
             {
-                sendMsg(sender, _("config.set.success")
+                sendMsg(sender, t("config.set.success")
                         .replace("{0}", property.getPath())
                         .replace("{1}", property.getValue().toString()));
             }
             
             if (property.requiresRestart())
             {
-                sendMsg(sender, _("config.set.reloadPlugin"));
+                sendMsg(sender, t("config.set.reloadPlugin"));
             }
         }
         catch (RuntimeException ex)
@@ -256,7 +256,7 @@ public final class ConfigSetHubCommand extends HubCommand
                 log(Level.WARNING, ex);
             }
             
-            sendMsg(sender, _("config.set.fail")
+            sendMsg(sender, t("config.set.fail")
                     .replace("{0}", property.getPath())
                     .replace("{1}", exMsg));
         }

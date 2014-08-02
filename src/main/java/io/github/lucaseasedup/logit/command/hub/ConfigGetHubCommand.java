@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
@@ -53,7 +53,7 @@ public final class ConfigGetHubCommand extends HubCommand
         {
             if (!getConfig("config.yml").contains(camelCasePath))
             {
-                sendMsg(sender, _("config.propertyNotFound")
+                sendMsg(sender, t("config.propertyNotFound")
                         .replace("{0}", hyphenatedPath));
                 
                 return;
@@ -68,7 +68,7 @@ public final class ConfigGetHubCommand extends HubCommand
             property = getConfig("config.yml").getProperty(hyphenatedPath);
         }
         
-        sendMsg(sender, _("config.get.property")
+        sendMsg(sender, t("config.get.property")
                 .replace("{0}", property.getPath())
                 .replace("{1}", property.getValue().toString()));
     }

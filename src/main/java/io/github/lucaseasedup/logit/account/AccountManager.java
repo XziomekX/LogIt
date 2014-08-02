@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.QueuedMap;
@@ -339,14 +339,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             buffer.remove(account.getUsername());
             buffer.put(account.getUsername(), account);
             
-            log(Level.WARNING, _("createAccount.success.log")
+            log(Level.WARNING, t("createAccount.success.log")
                     .replace("{0}", account.getUsername()));
             
             event.executeSuccessTasks();
         }
         catch (IOException ex)
         {
-            log(Level.WARNING, _("createAccount.fail.log")
+            log(Level.WARNING, t("createAccount.fail.log")
                     .replace("{0}", account.getUsername()), ex);
             
             event.executeFailureTasks();
@@ -459,14 +459,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             
             buffer.put(username, null);
             
-            log(Level.WARNING, _("removeAccount.success.log")
+            log(Level.WARNING, t("removeAccount.success.log")
                     .replace("{0}", username));
             
             event.executeSuccessTasks();
         }
         catch (IOException ex)
         {
-            log(Level.WARNING, _("removeAccount.fail.log")
+            log(Level.WARNING, t("removeAccount.fail.log")
                     .replace("{0}", username), ex);
             
             event.executeFailureTasks();

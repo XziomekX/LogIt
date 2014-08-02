@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.command.wizard;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.FatalReportedException;
 import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.account.Account;
@@ -46,9 +46,9 @@ public final class ConvertWizard extends Wizard
             sendMessage("");
         }
         
-        sendMessage(_("wizard.convert.welcome"));
-        sendMessage(_("wizard.orangeHorizontalLine"));
-        sendMessage(_("wizard.convert.welcomeChoice"));
+        sendMessage(t("wizard.convert.welcome"));
+        sendMessage(t("wizard.orangeHorizontalLine"));
+        sendMessage(t("wizard.convert.welcomeChoice"));
         
         updateStep(Step.WELCOME_CHOICE);
     }
@@ -60,12 +60,12 @@ public final class ConvertWizard extends Wizard
         {
             if ("proceed".equals(message))
             {
-                sendMessage(_("wizard.convert.enterStorageType"));
+                sendMessage(t("wizard.convert.enterStorageType"));
                 updateStep(Step.ENTER_DBTYPE);
             }
             else
             {
-                sendMessage(_("wizardCancelled"));
+                sendMessage(t("wizardCancelled"));
                 cancelWizard();
             }
         }
@@ -74,32 +74,32 @@ public final class ConvertWizard extends Wizard
             if (!new StorageTypeValidator().validate("storage.accounts.leading.storageType",
                     PropertyType.STRING, message))
             {
-                sendMessage(_("wizard.convert.unknownStorageType")
+                sendMessage(t("wizard.convert.unknownStorageType")
                         .replace("{0}", message));
-                sendMessage(_("wizard.convert.unknownStorageType.tryAgain"));
+                sendMessage(t("wizard.convert.unknownStorageType.tryAgain"));
             }
             else
             {
                 dbtype = message;
                 
-                sendMessage(_("wizard.convert.selectedStorageType")
+                sendMessage(t("wizard.convert.selectedStorageType")
                         .replace("{0}", message));
                 
                 switch (dbtype)
                 {
                 case "sqlite":
                 case "h2":
-                    sendMessage(_("wizard.convert.enterFilename"));
+                    sendMessage(t("wizard.convert.enterFilename"));
                     updateStep(Step.ENTER_FILENAME);
                     break;
                     
                 case "mysql":
-                    sendMessage(_("wizard.convert.enterHost"));
+                    sendMessage(t("wizard.convert.enterHost"));
                     updateStep(Step.ENTER_HOST);
                     break;
                     
                 case "csv":
-                    sendMessage(_("wizard.convert.enterUnit"));
+                    sendMessage(t("wizard.convert.enterUnit"));
                     updateStep(Step.ENTER_TABLE);
                     break;
                 }
@@ -109,14 +109,14 @@ public final class ConvertWizard extends Wizard
         {
             filename = message;
 
-            sendMessage(_("wizard.convert.enteredFilename")
+            sendMessage(t("wizard.convert.enteredFilename")
                     .replace("{0}", message));
             
             switch (dbtype)
             {
             case "sqlite":
             case "h2":
-                sendMessage(_("wizard.convert.enterUnit"));
+                sendMessage(t("wizard.convert.enterUnit"));
                 updateStep(Step.ENTER_TABLE);
                 break;
             }
@@ -125,13 +125,13 @@ public final class ConvertWizard extends Wizard
         {
             host = message;
             
-            sendMessage(_("wizard.convert.enteredHost")
+            sendMessage(t("wizard.convert.enteredHost")
                     .replace("{0}", message));
             
             switch (dbtype)
             {
             case "mysql":
-                sendMessage(_("wizard.convert.enterUser"));
+                sendMessage(t("wizard.convert.enterUser"));
                 updateStep(Step.ENTER_USER);
                 break;
             }
@@ -140,13 +140,13 @@ public final class ConvertWizard extends Wizard
         {
             user = message;
             
-            sendMessage(_("wizard.convert.enteredUser")
+            sendMessage(t("wizard.convert.enteredUser")
                     .replace("{0}", message));
             
             switch (dbtype)
             {
             case "mysql":
-                sendMessage(_("wizard.convert.enterPassword"));
+                sendMessage(t("wizard.convert.enterPassword"));
                 updateStep(Step.ENTER_PASSWORD);
                 break;
             }
@@ -155,13 +155,13 @@ public final class ConvertWizard extends Wizard
         {
             password = message;
             
-            sendMessage(_("wizard.convert.enteredPassword")
+            sendMessage(t("wizard.convert.enteredPassword")
                     .replace("{0}", message.replaceAll(".", "*")));
             
             switch (dbtype)
             {
             case "mysql":
-                sendMessage(_("wizard.convert.enterDatabaseName"));
+                sendMessage(t("wizard.convert.enterDatabaseName"));
                 updateStep(Step.ENTER_DATABASE);
                 break;
             }
@@ -170,13 +170,13 @@ public final class ConvertWizard extends Wizard
         {
             database = message;
             
-            sendMessage(_("wizard.convert.enteredDatabaseName")
+            sendMessage(t("wizard.convert.enteredDatabaseName")
                     .replace("{0}", message));
             
             switch (dbtype)
             {
             case "mysql":
-                sendMessage(_("wizard.convert.enterUnit"));
+                sendMessage(t("wizard.convert.enterUnit"));
                 updateStep(Step.ENTER_TABLE);
                 break;
             }
@@ -185,16 +185,16 @@ public final class ConvertWizard extends Wizard
         {
             table = message;
             
-            sendMessage(_("wizard.convert.enteredUnit")
+            sendMessage(t("wizard.convert.enteredUnit")
                     .replace("{0}", message));
-            sendMessage(_("wizard.convert.copyOrSkip"));
+            sendMessage(t("wizard.convert.copyOrSkip"));
             updateStep(Step.COPY_OR_LEAVE);
         }
         else if (getCurrentStep() == Step.COPY_OR_LEAVE)
         {
             copyAccounts = message.equalsIgnoreCase("copy");
             
-            sendMessage(_("wizard.convert.finishChoice"));
+            sendMessage(t("wizard.convert.finishChoice"));
             updateStep(Step.FINISH_CHOICE);
         }
         else if (getCurrentStep() == Step.FINISH_CHOICE)
@@ -203,7 +203,7 @@ public final class ConvertWizard extends Wizard
             {
                 for (Player player : Bukkit.getOnlinePlayers())
                 {
-                    player.kickPlayer(_("serverMaintenance"));
+                    player.kickPlayer(t("serverMaintenance"));
                 }
                 
                 getConfig("config.yml")
@@ -258,10 +258,10 @@ public final class ConvertWizard extends Wizard
                     
                     if (getSender() instanceof Player)
                     {
-                        sendMessage(_("wizard.convert.success"));
+                        sendMessage(t("wizard.convert.success"));
                     }
                     
-                    log(Level.INFO, _("wizard.convert.success.log"));
+                    log(Level.INFO, t("wizard.convert.success.log"));
                     
                     updateStep(Step.SUCCESS);
                 }
@@ -269,10 +269,10 @@ public final class ConvertWizard extends Wizard
                 {
                     if (getSender() instanceof Player)
                     {
-                        sendMessage(_("wizard.convert.fail"));
+                        sendMessage(t("wizard.convert.fail"));
                     }
                     
-                    log(Level.SEVERE, _("wizard.convert.fail.log"));
+                    log(Level.SEVERE, t("wizard.convert.fail.log"));
                     
                     updateStep(Step.FAIL);
                 }
@@ -280,10 +280,10 @@ public final class ConvertWizard extends Wizard
                 {
                     if (getSender() instanceof Player)
                     {
-                        sendMessage(_("wizard.convert.fail"));
+                        sendMessage(t("wizard.convert.fail"));
                     }
                     
-                    log(Level.SEVERE, _("wizard.convert.fail.log"), ex);
+                    log(Level.SEVERE, t("wizard.convert.fail.log"), ex);
                     
                     updateStep(Step.FAIL);
                 }
@@ -296,7 +296,7 @@ public final class ConvertWizard extends Wizard
             }
             else
             {
-                sendMessage(_("wizardCancelled"));
+                sendMessage(t("wizardCancelled"));
                 cancelWizard();
             }
         }

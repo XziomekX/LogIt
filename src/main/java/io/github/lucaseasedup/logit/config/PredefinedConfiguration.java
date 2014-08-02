@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.config;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
 import io.github.lucaseasedup.logit.TimeString;
@@ -488,13 +488,13 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
         {
             save();
             
-            log(Level.INFO, _("config.set.success.log")
+            log(Level.INFO, t("config.set.success.log")
                     .replace("{0}", p.getPath())
                     .replace("{1}", p.toString()));
         }
         catch (IOException ex)
         {
-            log(Level.WARNING, _("config.set.fail.log"), ex);
+            log(Level.WARNING, t("config.set.fail.log"), ex);
         }
     }
     

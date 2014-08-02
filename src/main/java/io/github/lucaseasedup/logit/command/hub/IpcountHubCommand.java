@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
@@ -56,7 +56,7 @@ public final class IpcountHubCommand extends HubCommand
                 new SelectorCondition(keys().ip(), Infix.EQUALS, args[0])
         );
         
-        sendMsg(sender, _("ipcount")
+        sendMsg(sender, t("ipcount")
                 .replace("{0}", args[0])
                 .replace("{1}", (accounts != null) ? String.valueOf(accounts.size()) : "?"));
     }

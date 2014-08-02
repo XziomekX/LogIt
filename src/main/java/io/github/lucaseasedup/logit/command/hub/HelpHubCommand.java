@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import java.util.Iterator;
@@ -69,9 +69,9 @@ public final class HelpHubCommand extends HubCommand
                     params.append("]");
                 }
                 
-                String helpLine = _("subCmdHelpLine");
+                String helpLine = t("subCmdHelpLine");
                 String command = hubCommand.getHelpLine().getCommand();
-                String description = _(hubCommand.getHelpLine().getDescriptionLabel());
+                String description = t(hubCommand.getHelpLine().getDescriptionLabel());
                 
                 helpLine = helpLine.replace("{0}", command + params.toString());
                 helpLine = helpLine.replace("{1}", description);

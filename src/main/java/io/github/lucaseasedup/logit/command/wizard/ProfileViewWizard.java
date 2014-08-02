@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.command.wizard;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.profile.field.Field;
 import java.util.List;
 import org.bukkit.command.CommandSender;
@@ -38,9 +38,9 @@ public final class ProfileViewWizard extends Wizard
         List<Field> fields = getProfileManager().getDefinedFields();
         
         sendMessage("");
-        sendMessage(_("profile.view.header")
+        sendMessage(t("profile.view.header")
                 .replace("{0}", playerName));
-        sendMessage(_("wizard.orangeHorizontalLine"));
+        sendMessage(t("wizard.orangeHorizontalLine"));
         
         if (!fields.isEmpty())
         {
@@ -54,17 +54,17 @@ public final class ProfileViewWizard extends Wizard
                     value = "";
                 }
                 
-                sendMessage(_("profile.view.field")
+                sendMessage(t("profile.view.field")
                         .replace("{0}", field.getName())
                         .replace("{1}", value.toString()));
             }
         }
         else
         {
-            sendMessage(_("profile.view.noFields"));
+            sendMessage(t("profile.view.noFields"));
         }
         
-        sendMessage(_("wizard.orangeHorizontalLine"));
+        sendMessage(t("wizard.orangeHorizontalLine"));
         cancelWizard();
     }
     

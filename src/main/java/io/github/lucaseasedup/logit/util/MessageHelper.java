@@ -38,7 +38,7 @@ public final class MessageHelper
      * 
      * @return the translated message.
      */
-    public static String _(String label)
+    public static String t(String label)
     {
         return LogItPlugin.getMessage(label);
     }

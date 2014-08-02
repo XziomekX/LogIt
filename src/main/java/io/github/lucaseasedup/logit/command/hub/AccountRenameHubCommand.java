@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
@@ -49,7 +49,7 @@ public final class AccountRenameHubCommand extends HubCommand
     {
         if (!getAccountManager().isRegistered(args[0]))
         {
-            sendMsg(sender, _("notRegistered.others")
+            sendMsg(sender, t("notRegistered.others")
                     .replace("{0}", args[0].toLowerCase()));
             
             return;
@@ -57,7 +57,7 @@ public final class AccountRenameHubCommand extends HubCommand
         
         if (!args[1].matches(getConfig("secret.yml").getString("username.regex")))
         {
-            sendMsg(sender, _("accountRename.usernameInvalid"));
+            sendMsg(sender, t("accountRename.usernameInvalid"));
             
             return;
         }
@@ -67,7 +67,7 @@ public final class AccountRenameHubCommand extends HubCommand
         
         if (args[1].length() < minUsernameLength)
         {
-            sendMsg(sender, _("accountRename.usernameTooShort")
+            sendMsg(sender, t("accountRename.usernameTooShort")
                     .replace("{0}", String.valueOf(minUsernameLength)));
             
             return;
@@ -75,7 +75,7 @@ public final class AccountRenameHubCommand extends HubCommand
         
         if (args[1].length() > maxUsernameLength)
         {
-            sendMsg(sender, _("accountRename.usernameTooLong")
+            sendMsg(sender, t("accountRename.usernameTooLong")
                     .replace("{0}", String.valueOf(maxUsernameLength)));
             
             return;
@@ -83,7 +83,7 @@ public final class AccountRenameHubCommand extends HubCommand
         
         if (!args[1].matches(getConfig("secret.yml").getString("username.regex")))
         {
-            sendMsg(sender, _("accountRename.usernameInvalid"));
+            sendMsg(sender, t("accountRename.usernameInvalid"));
             
             return;
         }
@@ -91,14 +91,14 @@ public final class AccountRenameHubCommand extends HubCommand
         if (CollectionUtils.containsIgnoreCase(args[1],
                 getConfig("config.yml").getStringList("prohibitedUsernames")))
         {
-            sendMsg(sender, _("accountRename.usernameProhibited"));
+            sendMsg(sender, t("accountRename.usernameProhibited"));
             
             return;
         }
         
         if (isPlayerOnline(args[1]))
         {
-            sendMsg(sender, _("accountRename.usernameTaken"));
+            sendMsg(sender, t("accountRename.usernameTaken"));
             
             return;
         }
@@ -106,13 +106,13 @@ public final class AccountRenameHubCommand extends HubCommand
         {
             if (getAccountManager().isRegistered(args[1]))
             {
-                sendMsg(sender, _("accountRename.usernameTaken"));
+                sendMsg(sender, t("accountRename.usernameTaken"));
                 
                 return;
             }
         }
         
-        sendMsg(sender, _("accountRename.confirm")
+        sendMsg(sender, t("accountRename.confirm")
                 .replace("{0}", args[0].toLowerCase())
                 .replace("{1}", args[1].toLowerCase()));
         
@@ -123,7 +123,7 @@ public final class AccountRenameHubCommand extends HubCommand
             {
                 getAccountManager().renameAccount(args[0], args[1]);
                 
-                sendMsg(sender, _("accountRename.success")
+                sendMsg(sender, t("accountRename.success")
                         .replace("{0}", args[1].toLowerCase()));
             }
         }).createWizard();

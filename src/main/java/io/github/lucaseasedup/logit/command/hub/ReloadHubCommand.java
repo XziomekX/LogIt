@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.FatalReportedException;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
@@ -61,14 +61,14 @@ public final class ReloadHubCommand extends HubCommand
             
             if (sender instanceof Player)
             {
-                sendMsg(sender, _("reloadPlugin.success"));
+                sendMsg(sender, t("reloadPlugin.success"));
             }
         }
         catch (FatalReportedException ex)
         {
             if (sender instanceof Player)
             {
-                sendMsg(sender, _("reloadPlugin.fail"));
+                sendMsg(sender, t("reloadPlugin.fail"));
             }
         }
     }

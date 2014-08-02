@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.command.wizard.ConfirmationWizard;
@@ -56,7 +56,7 @@ public final class BackupRemoveHubCommand extends HubCommand
         }
         catch (NumberFormatException ex)
         {
-            sendMsg(sender, _("invalidParam")
+            sendMsg(sender, t("invalidParam")
                     .replace("{0}", "amount"));
             
             return;
@@ -64,7 +64,7 @@ public final class BackupRemoveHubCommand extends HubCommand
         
         if (amount < 1)
         {
-            sendMsg(sender, _("removeBackups.noBackupsSelected"));
+            sendMsg(sender, t("removeBackups.noBackupsSelected"));
             
             return;
         }
@@ -74,7 +74,7 @@ public final class BackupRemoveHubCommand extends HubCommand
         
         if (backups.length == 0)
         {
-            sendMsg(sender, _("removeBackups.noBackupsAvailable"));
+            sendMsg(sender, t("removeBackups.noBackupsAvailable"));
             
             return;
         }
@@ -85,14 +85,14 @@ public final class BackupRemoveHubCommand extends HubCommand
         {
             limitedAmount = manualRemoveLimit;
             
-            sendMsg(sender, _("removeBackups.confirm.limitedAmount")
+            sendMsg(sender, t("removeBackups.confirm.limitedAmount")
                     .replace("{0}", String.valueOf(limitedAmount)));
         }
         else
         {
             limitedAmount = amount;
             
-            sendMsg(sender, _("removeBackups.confirm.amount")
+            sendMsg(sender, t("removeBackups.confirm.amount")
                     .replace("{0}", String.valueOf(limitedAmount)));
         }
         
@@ -101,15 +101,15 @@ public final class BackupRemoveHubCommand extends HubCommand
             sendMsg(sender, "");
         }
         
-        sendMsg(sender, _("removeBackups.confirm.header"));
+        sendMsg(sender, t("removeBackups.confirm.header"));
         
         if (limitedAmount == 1)
         {
-            sendMsg(sender, _("removeBackups.confirm.typeToRemove.single"));
+            sendMsg(sender, t("removeBackups.confirm.typeToRemove.single"));
         }
         else
         {
-            sendMsg(sender, _("removeBackups.confirm.typeToRemove.range"));
+            sendMsg(sender, t("removeBackups.confirm.typeToRemove.range"));
         }
         
         sendMsg(sender, "");
@@ -118,12 +118,12 @@ public final class BackupRemoveHubCommand extends HubCommand
         {
             if (limitedAmount < amount)
             {
-                sendMsg(sender, _("removeBackups.confirm.limitedAmount")
+                sendMsg(sender, t("removeBackups.confirm.limitedAmount")
                         .replace("{0}", String.valueOf(limitedAmount)));
             }
             else
             {
-                sendMsg(sender, _("removeBackups.confirm.amount")
+                sendMsg(sender, t("removeBackups.confirm.amount")
                         .replace("{0}", String.valueOf(limitedAmount)));
             }
         }
@@ -141,7 +141,7 @@ public final class BackupRemoveHubCommand extends HubCommand
         
         if (limitedAmount == 1)
         {
-            sendMsg(sender, _("removeBackups.confirm.date.single")
+            sendMsg(sender, t("removeBackups.confirm.date.single")
                     .replace("{0}",
                             (firstBackupDate != null) ? firstBackupDate.toString() : "?"));
         }
@@ -158,16 +158,16 @@ public final class BackupRemoveHubCommand extends HubCommand
             {
             }
             
-            sendMsg(sender, _("removeBackups.confirm.date.range.start")
+            sendMsg(sender, t("removeBackups.confirm.date.range.start")
                     .replace("{0}",
                             (firstBackupDate != null) ? firstBackupDate.toString() : "?"));
-            sendMsg(sender, _("removeBackups.confirm.date.range.end")
+            sendMsg(sender, t("removeBackups.confirm.date.range.end")
                     .replace("{0}",
                             (lastBackupDate != null) ? lastBackupDate.toString() : "?"));
         }
         
         sendMsg(sender, "");
-        sendMsg(sender, _("removeBackups.confirm.typeToCancel"));
+        sendMsg(sender, t("removeBackups.confirm.typeToCancel"));
         
         new ConfirmationWizard(sender, "remove", new Runnable()
         {
@@ -178,7 +178,7 @@ public final class BackupRemoveHubCommand extends HubCommand
                 
                 if (sender instanceof Player)
                 {
-                    sendMsg(sender, _("removeBackups.success")
+                    sendMsg(sender, t("removeBackups.success")
                             .replace("{0}", String.valueOf(effectiveAmount)));
                 }
             }

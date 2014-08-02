@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;
@@ -65,14 +65,14 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                    || !player.hasPermission("logit.login.others")
             ))
             {
-                sendMsg(sender, _("noPerms"));
+                sendMsg(sender, t("noPerms"));
                 
                 return true;
             }
             
             if (args.length < 2)
             {
-                sendMsg(sender, _("paramMissing")
+                sendMsg(sender, t("paramMissing")
                         .replace("{0}", "player"));
                 
                 return true;
@@ -80,7 +80,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             if (!isPlayerOnline(args[1]))
             {
-                sendMsg(sender, _("playerNotOnline")
+                sendMsg(sender, t("playerNotOnline")
                         .replace("{0}", args[1]));
                 
                 return true;
@@ -90,7 +90,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             if (getSessionManager().isSessionAlive(paramPlayer))
             {
-                sendMsg(sender, _("alreadyLoggedIn.others")
+                sendMsg(sender, t("alreadyLoggedIn.others")
                         .replace("{0}", paramPlayer.getName()));
                 
                 return true;
@@ -103,8 +103,8 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             if (!getSessionManager().startSession(paramPlayer).isCancelled())
             {
-                sendMsg(paramPlayer, _("startSession.success.self"));
-                sendMsg(sender, _("startSession.success.others")
+                sendMsg(paramPlayer, t("startSession.success.self"));
+                sendMsg(sender, t("startSession.success.others")
                         .replace("{0}", paramPlayer.getName()));
                 
                 if (getConfig("config.yml").getBoolean("stats.enabled"))
@@ -118,21 +118,21 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
         {
             if (player == null)
             {
-                sendMsg(sender, _("onlyForPlayers"));
+                sendMsg(sender, t("onlyForPlayers"));
                 
                 return true;
             }
             
             if (!player.hasPermission("logit.login.self"))
             {
-                sendMsg(player, _("noPerms"));
+                sendMsg(player, t("noPerms"));
                 
                 return true;
             }
             
             if (args.length < 1 && !disablePasswords)
             {
-                sendMsg(player, _("paramMissing")
+                sendMsg(player, t("paramMissing")
                         .replace("{0}", "password"));
                 
                 return true;
@@ -140,7 +140,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             if (getSessionManager().isSessionAlive(player))
             {
-                sendMsg(player, _("alreadyLoggedIn.self"));
+                sendMsg(player, t("alreadyLoggedIn.self"));
                 
                 return true;
             }
@@ -157,7 +157,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                             TimeUnit.SECONDS
                     );
                     
-                    sendMsg(player, _("tooManyLoginFails.blockLoggingIn")
+                    sendMsg(player, t("tooManyLoginFails.blockLoggingIn")
                             .replace("{0}", locale.stringifySeconds(blockageTimeSecs)));
                     
                     return true;
@@ -178,7 +178,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             if (account == null)
             {
-                sendMsg(player, _("notRegistered.self"));
+                sendMsg(player, t("notRegistered.self"));
                 
                 return true;
             }
@@ -191,7 +191,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             {
                 if (!account.checkPassword(args[0]))
                 {
-                    sendMsg(player, _("incorrectPassword"));
+                    sendMsg(player, t("incorrectPassword"));
                     
                     int failsToBlockLoggingIn = getConfig("config.yml")
                             .getInt("bruteForce.blockLogin.attempts");
@@ -211,13 +211,13 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     {
                         Bukkit.banIP(playerIp);
                         
-                        player.kickPlayer(_("tooManyLoginFails.ban"));
+                        player.kickPlayer(t("tooManyLoginFails.ban"));
                         
                         failedLogins.remove(player);
                     }
                     else if (failsToKick > 0 && failedLogins.get(player) >= failsToKick)
                     {
-                        player.kickPlayer(_("tooManyLoginFails.kick"));
+                        player.kickPlayer(t("tooManyLoginFails.kick"));
                         
                         failedLogins.remove(player);
                     }
@@ -237,7 +237,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                         loginBlockade.put(player,
                                 System.currentTimeMillis() + loginBlockadeTimeMillis);
                         
-                        sendMsg(player, _("tooManyLoginFails.blockLoggingIn")
+                        sendMsg(player, t("tooManyLoginFails.blockLoggingIn")
                                 .replace("{0}", locale.stringifySeconds(loginBlockadeTimeSecs)));
                         
                         failedLogins.remove(player);
@@ -263,7 +263,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                             {
                                 if (!getSessionManager().isSessionAlive(player))
                                 {
-                                    sendMsg(player, _("takeover.prompt"));
+                                    sendMsg(player, t("takeover.prompt"));
                                 }
                             }
                         }.runTaskLater(getPlugin(), 20L);
@@ -282,7 +282,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             
             if (!getSessionManager().startSession(player).isCancelled())
             {
-                sendMsg(sender, _("startSession.success.self"));
+                sendMsg(sender, t("startSession.success.self"));
 
                 if (getConfig("config.yml").getBoolean("stats.enabled"))
                 {
@@ -292,7 +292,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 
                 if (getConfig("config.yml").getBoolean("loginSessions.enabled"))
                 {
-                    sendMsg(sender, _("rememberLogin.prompt"));
+                    sendMsg(sender, t("rememberLogin.prompt"));
                 }
                 
                 if (getConfig("config.yml").getBoolean("loginHistory.enabled"))
@@ -308,7 +308,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
         }
         else
         {
-            sendMsg(sender, _("incorrectParamCombination"));
+            sendMsg(sender, t("incorrectParamCombination"));
         }
         
         return true;

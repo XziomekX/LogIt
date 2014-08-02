@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
 import java.util.Arrays;
@@ -45,14 +45,14 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
         {
             if (player != null && !player.hasPermission("logit.logout.others"))
             {
-                sendMsg(sender, _("noPerms"));
+                sendMsg(sender, t("noPerms"));
                 
                 return true;
             }
             
             if (args.length < 2)
             {
-                sendMsg(sender, _("paramMissing")
+                sendMsg(sender, t("paramMissing")
                         .replace("{0}", "player"));
                 
                 return true;
@@ -62,7 +62,7 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
             
             if (paramPlayer == null)
             {
-                sendMsg(sender, _("playerNotOnline")
+                sendMsg(sender, t("playerNotOnline")
                         .replace("{0}", args[1]));
                 
                 return true;
@@ -70,7 +70,7 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
             
             if (!getSessionManager().isSessionAlive(paramPlayer))
             {
-                sendMsg(sender, _("notLoggedIn.others")
+                sendMsg(sender, t("notLoggedIn.others")
                         .replace("{0}", paramPlayer.getName()));
                 
                 return true;
@@ -78,8 +78,8 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
             
             if (!getSessionManager().endSession(paramPlayer).isCancelled())
             {
-                sendMsg(paramPlayer, _("endSession.success.self"));
-                sendMsg(sender, _("endSession.success.others")
+                sendMsg(paramPlayer, t("endSession.success.self"));
+                sendMsg(sender, t("endSession.success.others")
                         .replace("{0}", paramPlayer.getName()));
             }
         }
@@ -87,21 +87,21 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
         {
             if (player == null)
             {
-                sendMsg(sender, _("onlyForPlayers"));
+                sendMsg(sender, t("onlyForPlayers"));
                 
                 return true;
             }
             
             if (!player.hasPermission("logit.logout.self"))
             {
-                sendMsg(player, _("noPerms"));
+                sendMsg(player, t("noPerms"));
                 
                 return true;
             }
             
             if (!getSessionManager().isSessionAlive(player))
             {
-                sendMsg(player, _("notLoggedIn.self"));
+                sendMsg(player, t("notLoggedIn.self"));
                 
                 return true;
             }
@@ -113,7 +113,7 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
             
             if (!getSessionManager().endSession(player).isCancelled())
             {
-                sendMsg(sender, _("endSession.success.self"));
+                sendMsg(sender, t("endSession.success.self"));
                 
                 if (account != null
                         && getConfig("config.yml").getBoolean("loginSessions.enabled"))
@@ -124,7 +124,7 @@ public final class LogoutCommand extends LogItCoreObject implements CommandExecu
         }
         else
         {
-            sendMsg(sender, _("incorrectParamCombination"));
+            sendMsg(sender, t("incorrectParamCombination"));
         }
         
         return true;

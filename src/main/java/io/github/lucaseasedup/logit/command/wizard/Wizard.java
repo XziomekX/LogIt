@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.wizard;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -63,7 +63,7 @@ public abstract class Wizard extends LogItCoreObject implements Listener
     {
         if (event.getPlayer() == sender)
         {
-            sendMessage(_("wizardCancelled"));
+            sendMessage(t("wizardCancelled"));
             cancelWizard();
             Bukkit.dispatchCommand(event.getPlayer(), event.getMessage().substring(1));
             event.setCancelled(true);

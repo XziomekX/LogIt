@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.listener;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
@@ -97,7 +97,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             if (!StringUtils.isBlank(displayName) && !player.getName().equals(displayName)
                     && getConfig("config.yml").getBoolean("usernameCaseMismatch.kick"))
             {
-                event.disallow(Result.KICK_OTHER, _("usernameCaseMismatch.kick")
+                event.disallow(Result.KICK_OTHER, t("usernameCaseMismatch.kick")
                         .replace("{0}", displayName));
                 
                 return;
@@ -105,7 +105,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             
             if (account.isLocked())
             {
-                event.disallow(Result.KICK_OTHER, _("acclock.success.self"));
+                event.disallow(Result.KICK_OTHER, t("acclock.success.self"));
                 
                 return;
             }
@@ -116,34 +116,34 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         if (StringUtils.isBlank(username))
         {
-            event.disallow(KICK_OTHER, _("usernameBlank"));
+            event.disallow(KICK_OTHER, t("usernameBlank"));
         }
         else if (username.length() < minUsernameLength)
         {
-            event.disallow(KICK_OTHER, _("usernameTooShort")
+            event.disallow(KICK_OTHER, t("usernameTooShort")
                     .replace("{0}", String.valueOf(minUsernameLength)));
         }
         else if (username.length() > maxUsernameLength)
         {
-            event.disallow(KICK_OTHER, _("usernameTooLong")
+            event.disallow(KICK_OTHER, t("usernameTooLong")
                     .replace("{0}", String.valueOf(maxUsernameLength)));
         }
         else if (!player.getName().matches(getConfig("secret.yml").getString("username.regex")))
         {
-            event.disallow(KICK_OTHER, _("usernameInvalid"));
+            event.disallow(KICK_OTHER, t("usernameInvalid"));
         }
         else if (CollectionUtils.containsIgnoreCase(username,
                 getConfig("config.yml").getStringList("prohibitedUsernames")))
         {
-            event.disallow(KICK_OTHER, _("usernameProhibited"));
+            event.disallow(KICK_OTHER, t("usernameProhibited"));
         }
         else if (isPlayerOnline(username))
         {
-            event.disallow(KICK_OTHER, _("usernameAlreadyUsed"));
+            event.disallow(KICK_OTHER, t("usernameAlreadyUsed"));
         }
         else if (getConfig("config.yml").getBoolean("kickUnregistered") && account == null)
         {
-            event.disallow(KICK_OTHER, _("kickUnregistered"));
+            event.disallow(KICK_OTHER, t("kickUnregistered"));
         }
         else
         {
@@ -168,7 +168,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             if (actualFreeSlots <= 0
                     && !CollectionUtils.containsIgnoreCase(username, reserveForPlayers))
             {
-                event.disallow(KICK_OTHER, _("noSlotsFree"));
+                event.disallow(KICK_OTHER, t("noSlotsFree"));
             }
         }
     }
@@ -262,7 +262,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             if (!StringUtils.isBlank(displayName) && !player.getName().equals(displayName)
                     && getConfig("config.yml").getBoolean("usernameCaseMismatch.warning"))
             {
-                getMessageDispatcher().dispatchMessage(username, _("usernameCaseMismatch.warning")
+                getMessageDispatcher().dispatchMessage(username, t("usernameCaseMismatch.warning")
                         .replace("{0}", displayName), 4L);
             }
             
@@ -281,7 +281,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                     {
                         if (!getSessionManager().isSessionAlive(player))
                         {
-                            sendMsg(player, _("takeover.prompt"));
+                            sendMsg(player, t("takeover.prompt"));
                         }
                     }
                 }.runTaskLater(getPlugin(), 140L);

@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command.hub;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.config.Property;
@@ -60,7 +60,7 @@ public final class ConfigListHubCommand extends HubCommand
             }
             catch (NumberFormatException ex)
             {
-                sendMsg(sender, _("invalidParam")
+                sendMsg(sender, t("invalidParam")
                         .replace("{0}", "page"));
                 
                 return;
@@ -73,17 +73,17 @@ public final class ConfigListHubCommand extends HubCommand
         }
         
         sendMsg(sender, "");
-        sendMsg(sender, _("config.list.header1")
+        sendMsg(sender, t("config.list.header1")
                 .replace("{0}", String.valueOf(page))
                 .replace("{1}", String.valueOf(pages)));
-        sendMsg(sender, _("config.list.header2"));
-        sendMsg(sender, _("config.list.header3"));
+        sendMsg(sender, t("config.list.header2"));
+        sendMsg(sender, t("config.list.header3"));
         
         for (Map.Entry<String, Property> e : properties.entrySet())
         {
             if ((i > ((PROPERTIES_PER_PAGE * (page - 1)) - 1)) && (j < PROPERTIES_PER_PAGE))
             {
-                sendMsg(sender, _("config.list.property")
+                sendMsg(sender, t("config.list.property")
                         .replace("{0}", e.getValue().getPath())
                         .replace("{1}", e.getValue().toString()));
                 
@@ -95,7 +95,7 @@ public final class ConfigListHubCommand extends HubCommand
         
         if (page > pages)
         {
-            sendMsg(sender, _("config.list.noProperties"));
+            sendMsg(sender, t("config.list.noProperties"));
         }
     }
     

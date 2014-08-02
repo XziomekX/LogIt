@@ -18,9 +18,9 @@
  */
 package io.github.lucaseasedup.logit;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper._;
 import static io.github.lucaseasedup.logit.util.MessageHelper.broadcastMsgExcept;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import io.github.lucaseasedup.logit.hooks.EssentialsHook;
 import io.github.lucaseasedup.logit.hooks.VanishNoPacketHook;
 import io.github.lucaseasedup.logit.locale.Locale;
@@ -107,11 +107,11 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
             {
                 if (!getConfig("config.yml").getBoolean("passwords.disable"))
                 {
-                    sendMsg(player, _("pleaseLogIn"));
+                    sendMsg(player, t("pleaseLogIn"));
                 }
                 else
                 {
-                    sendMsg(player, _("pleaseLogIn_noPassword"));
+                    sendMsg(player, t("pleaseLogIn_noPassword"));
                 }
             }
         }
@@ -121,11 +121,11 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
             {
                 if (!getConfig("config.yml").getBoolean("passwords.disable"))
                 {
-                    sendMsg(player, _("pleaseRegister"));
+                    sendMsg(player, t("pleaseRegister"));
                 }
                 else
                 {
-                    sendMsg(player, _("pleaseRegister_noPassword"));
+                    sendMsg(player, t("pleaseRegister_noPassword"));
                 }
             }
         }
@@ -201,12 +201,12 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         
         if (cooldownMillis >= 2000L)
         {
-            sendMsg(username, _("cooldown.moreThanSecond")
+            sendMsg(username, t("cooldown.moreThanSecond")
                     .replace("{0}", cooldownText));
         }
         else
         {
-            sendMsg(username, _("cooldown.secondOrLess")
+            sendMsg(username, t("cooldown.secondOrLess")
                     .replace("{0}", cooldownText));
         }
     }
