@@ -32,6 +32,8 @@ public @interface Key
     
     /**
      * Tells what values are considered null.
+     * 
+     * @return KeyConstraint the key constraint.
      */
     KeyConstraint constraint() default KeyConstraint.NONE;
 }
