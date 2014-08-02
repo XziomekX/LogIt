@@ -21,8 +21,6 @@ package io.github.lucaseasedup.logit.config;
 import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
-import io.github.lucaseasedup.logit.TimeString;
-import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.util.IniUtils;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import it.sauronsoftware.base64.Base64;

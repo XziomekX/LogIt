@@ -19,7 +19,7 @@
 package io.github.lucaseasedup.logit.security;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.config.TimeUnit;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;

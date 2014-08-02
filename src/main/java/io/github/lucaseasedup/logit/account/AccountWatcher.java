@@ -19,7 +19,7 @@
 package io.github.lucaseasedup.logit.account;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.config.TimeUnit;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorBinary;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;

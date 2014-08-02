@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit;
 
+import io.github.lucaseasedup.logit.config.TimeUnit;
 import io.github.lucaseasedup.logit.craftreflect.CraftPlayer;
 import io.github.lucaseasedup.logit.craftreflect.EntityPlayer;
 import io.github.lucaseasedup.logit.session.SessionStartEvent;

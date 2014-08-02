@@ -19,7 +19,7 @@
 package io.github.lucaseasedup.logit.cooldown;
 
 import io.github.lucaseasedup.logit.LogItCore;
-import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.config.TimeUnit;
 import org.bukkit.entity.Player;
 
 public final class LogItCooldowns

@@ -18,9 +18,9 @@
  */
 package io.github.lucaseasedup.logit.config.validators;
 
-import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.config.PropertyType;
 import io.github.lucaseasedup.logit.config.PropertyValidator;
+import io.github.lucaseasedup.logit.config.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

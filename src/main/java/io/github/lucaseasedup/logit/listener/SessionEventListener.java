@@ -19,8 +19,8 @@
 package io.github.lucaseasedup.logit.listener;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.account.Account;
+import io.github.lucaseasedup.logit.config.TimeUnit;
 import io.github.lucaseasedup.logit.session.SessionEndEvent;
 import io.github.lucaseasedup.logit.session.SessionStartEvent;
 import io.github.lucaseasedup.logit.util.PlayerUtils;

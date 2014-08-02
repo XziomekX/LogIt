@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.config;
 
-import io.github.lucaseasedup.logit.TimeUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

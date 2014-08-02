@@ -23,7 +23,7 @@ import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.QueuedMap;
 import io.github.lucaseasedup.logit.ReportedException;
-import io.github.lucaseasedup.logit.TimeUnit;
+import io.github.lucaseasedup.logit.config.TimeUnit;
 import io.github.lucaseasedup.logit.logging.CustomLevel;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.storage.Infix;
