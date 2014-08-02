@@ -39,7 +39,7 @@ public final class SerializerObserver extends PropertyObserver
     {
         Class<? extends PersistenceSerializer> clazz = null;
         
-        switch (p.getPath().toLowerCase())
+        switch (p.getPath())
         {
         case "waitingRoom.enabled":
             clazz = LocationSerializer.class;
