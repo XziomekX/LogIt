@@ -128,15 +128,14 @@ public final class LogItPlugin extends JavaPlugin
      * 
      * @param prefix the locale prefix.
      * 
-     * @throws FileNotFoundException if no message file has been found.
-     * @throws IOException           if there was an error while reading.
+     * @throws IOException if there was an error while reading.
      */
-    public void reloadMessages(String prefix) throws FileNotFoundException, IOException
+    public void reloadMessages(String prefix) throws IOException
     {
         loadMessages(prefix);
     }
     
-    private void loadMessages(String prefix) throws FileNotFoundException, IOException
+    private void loadMessages(String prefix) throws IOException
     {
         if (prefix == null)
             throw new IllegalArgumentException();
