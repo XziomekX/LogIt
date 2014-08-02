@@ -22,7 +22,7 @@ import io.github.lucaseasedup.logit.storage.Storage;
 
 public final class AccountInsertEvent extends AccountEvent
 {
-    public AccountInsertEvent(Storage.Entry entry)
+    /* package */ AccountInsertEvent(Storage.Entry entry)
     {
         if (entry == null)
             throw new IllegalArgumentException();

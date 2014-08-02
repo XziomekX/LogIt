@@ -20,7 +20,7 @@ package io.github.lucaseasedup.logit.session;
 
 public final class SessionCreateEvent extends SessionEvent
 {
-    public SessionCreateEvent(String username)
+    /* package */ SessionCreateEvent(String username)
     {
         super(username, null);
     }

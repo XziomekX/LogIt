@@ -20,7 +20,7 @@ package io.github.lucaseasedup.logit.account;
 
 public final class AccountRemoveEvent extends AccountEvent
 {
-    public AccountRemoveEvent(String username)
+    /* package */ AccountRemoveEvent(String username)
     {
         if (username == null)
             throw new IllegalArgumentException();
