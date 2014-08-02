@@ -50,7 +50,10 @@ import io.github.lucaseasedup.logit.hooks.VaultHook;
 import io.github.lucaseasedup.logit.listener.BlockEventListener;
 import io.github.lucaseasedup.logit.listener.EntityEventListener;
 import io.github.lucaseasedup.logit.listener.InventoryEventListener;
+import io.github.lucaseasedup.logit.listener.JoinMessage;
 import io.github.lucaseasedup.logit.listener.PlayerEventListener;
+import io.github.lucaseasedup.logit.listener.PlayerKicker;
+import io.github.lucaseasedup.logit.listener.QuitMessage;
 import io.github.lucaseasedup.logit.listener.ServerEventListener;
 import io.github.lucaseasedup.logit.listener.SessionEventListener;
 import io.github.lucaseasedup.logit.locale.EnglishLocale;
@@ -78,10 +81,12 @@ import io.github.lucaseasedup.logit.storage.StorageType;
 import io.github.lucaseasedup.logit.storage.WrapperStorage;
 import io.github.lucaseasedup.logit.tabapi.TabAPI;
 import io.github.lucaseasedup.logit.util.IoUtils;
+import io.github.lucaseasedup.logit.util.MessageHelper;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +98,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -195,7 +201,7 @@ public final class LogItCore
         
         startTasks();
         enableCommands();
-        registerEvents();
+        registerEventListeners();
         
         started = true;
         
@@ -204,6 +210,30 @@ public final class LogItCore
         if (isFirstRun())
         {
             log(Level.INFO, t("firstRun"));
+        }
+        
+        PlayerEventListener playerEventListener = getEventListener(PlayerEventListener.class);
+        PlayerKicker playerKicker = new PlayerKicker()
+        {
+            @Override
+            public void kick(Player player, String message)
+            {
+                player.kickPlayer(message);
+            }
+        };
+        
+        for (final Player player : Bukkit.getOnlinePlayers())
+        {
+            playerEventListener.onLogin(player, playerKicker);
+            playerEventListener.onJoin(player, new JoinMessage()
+            {
+                @Override
+                public void set(String joinMessage)
+                {
+                    MessageHelper.broadcastMsgExcept(joinMessage,
+                            Arrays.asList(player.getName()));
+                }
+            });
         }
         
         return CancelledState.NOT_CANCELLED;
@@ -620,19 +650,34 @@ public final class LogItCore
         enableCommand(command, executor, true);
     }
     
-    private void registerEvents()
+    private void registerEventListeners()
     {
         PlayerCollections.registerListener(getPlugin());
         
-        Bukkit.getPluginManager().registerEvents(getMessageDispatcher(), getPlugin());
-        Bukkit.getPluginManager().registerEvents(getCooldownManager(), getPlugin());
-        Bukkit.getPluginManager().registerEvents(getTabListUpdater(), getPlugin());
-        Bukkit.getPluginManager().registerEvents(new ServerEventListener(), getPlugin());
-        Bukkit.getPluginManager().registerEvents(new BlockEventListener(), getPlugin());
-        Bukkit.getPluginManager().registerEvents(new EntityEventListener(), getPlugin());
-        Bukkit.getPluginManager().registerEvents(new PlayerEventListener(), getPlugin());
-        Bukkit.getPluginManager().registerEvents(new InventoryEventListener(), getPlugin());
-        Bukkit.getPluginManager().registerEvents(new SessionEventListener(), getPlugin());
+        registerEventListener(getMessageDispatcher());
+        registerEventListener(getCooldownManager());
+        registerEventListener(getTabListUpdater());
+        registerEventListener(new ServerEventListener());
+        registerEventListener(new BlockEventListener());
+        registerEventListener(new EntityEventListener());
+        registerEventListener(new PlayerEventListener());
+        registerEventListener(new InventoryEventListener());
+        registerEventListener(new SessionEventListener());
+    }
+    
+    private <T extends Listener> void registerEventListener(T listener)
+    {
+        if (listener == null)
+            throw new IllegalArgumentException();
+        
+        Bukkit.getPluginManager().registerEvents(listener, getPlugin());
+        
+        if (eventListeners == null)
+        {
+            eventListeners = new HashMap<>();
+        }
+        
+        eventListeners.put(listener.getClass(), listener);
     }
     
     /**
@@ -647,6 +692,21 @@ public final class LogItCore
     {
         if (!isStarted())
             throw new IllegalStateException("The LogIt core is not started.");
+        
+        PlayerEventListener playerEventListener = getEventListener(PlayerEventListener.class);
+        
+        for (final Player player : Bukkit.getOnlinePlayers())
+        {
+            playerEventListener.onQuit(player, new QuitMessage()
+            {
+                @Override
+                public void set(String quitMessage)
+                {
+                    MessageHelper.broadcastMsgExcept(quitMessage,
+                            Arrays.asList(player.getName()));
+                }
+            });
+        }
         
         disableCommands();
         
@@ -1147,6 +1207,12 @@ public final class LogItCore
         return tabListUpdater;
     }
     
+    @SuppressWarnings("unchecked")
+    public <T extends Listener> T getEventListener(Class<T> listenerClass)
+    {
+        return (T) eventListeners.get(listenerClass);
+    }
+    
     /**
      * The preferred way to obtain the instance of {@code LogItCore}.
      * 
@@ -1193,4 +1259,6 @@ public final class LogItCore
     private BukkitTask sessionManagerTask;
     private BukkitTask globalPasswordManagerTask;
     private BukkitTask accountWatcherTask;
+    
+    private Map<Class<? extends Listener>, Listener> eventListeners;
 }

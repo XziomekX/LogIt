@@ -64,6 +64,16 @@ public final class PlayerUtils
         return getPlayer(name) != null;
     }
     
+    public static boolean isAnotherPlayerOnline(Player player)
+    {
+        Player p = getPlayer(player.getName());
+        
+        if (p == null)
+            return false;
+        
+        return !p.equals(player);
+    }
+    
     public static String getPlayerIp(Player player)
     {
         if (player.getAddress() == null)

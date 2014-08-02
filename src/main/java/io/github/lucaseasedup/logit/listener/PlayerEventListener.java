@@ -21,8 +21,6 @@ package io.github.lucaseasedup.logit.listener;
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
-import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.TimeUnit;
 import io.github.lucaseasedup.logit.account.Account;
@@ -37,6 +35,7 @@ import io.github.lucaseasedup.logit.storage.SelectorNegation;
 import io.github.lucaseasedup.logit.util.BlockUtils;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
 import io.github.lucaseasedup.logit.util.JoinMessageGenerator;
+import io.github.lucaseasedup.logit.util.PlayerUtils;
 import io.github.lucaseasedup.logit.util.QuitMessageGenerator;
 import java.util.Arrays;
 import java.util.Collection;
@@ -74,12 +73,28 @@ import org.bukkit.scheduler.BukkitRunnable;
 public final class PlayerEventListener extends LogItCoreObject implements Listener
 {
     @EventHandler(priority = EventPriority.NORMAL)
-    private void onLogin(PlayerLoginEvent event)
+    private void onLogin(final PlayerLoginEvent event)
     {
         if (!Result.ALLOWED.equals(event.getResult()))
             return;
         
         Player player = event.getPlayer();
+        
+        onLogin(player, new PlayerKicker()
+        {
+            @Override
+            public void kick(Player player, String message)
+            {
+                event.disallow(Result.KICK_OTHER, message);
+            }
+        });
+    }
+    
+    public void onLogin(Player player, PlayerKicker kicker)
+    {
+        if (player == null || kicker == null)
+            throw new IllegalArgumentException();
+        
         String username = player.getName().toLowerCase();
         
         Account account = getAccountManager().selectAccount(username, Arrays.asList(
@@ -97,7 +112,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             if (!StringUtils.isBlank(displayName) && !player.getName().equals(displayName)
                     && getConfig("config.yml").getBoolean("usernameCaseMismatch.kick"))
             {
-                event.disallow(Result.KICK_OTHER, t("usernameCaseMismatch.kick")
+                kicker.kick(player, t("usernameCaseMismatch.kick")
                         .replace("{0}", displayName));
                 
                 return;
@@ -105,7 +120,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             
             if (account.isLocked())
             {
-                event.disallow(Result.KICK_OTHER, t("acclock.success.self"));
+                kicker.kick(player, t("acclock.success.self"));
                 
                 return;
             }
@@ -116,34 +131,34 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         if (StringUtils.isBlank(username))
         {
-            event.disallow(KICK_OTHER, t("usernameBlank"));
+            kicker.kick(player, t("usernameBlank"));
         }
         else if (username.length() < minUsernameLength)
         {
-            event.disallow(KICK_OTHER, t("usernameTooShort")
+            kicker.kick(player, t("usernameTooShort")
                     .replace("{0}", String.valueOf(minUsernameLength)));
         }
         else if (username.length() > maxUsernameLength)
         {
-            event.disallow(KICK_OTHER, t("usernameTooLong")
+            kicker.kick(player, t("usernameTooLong")
                     .replace("{0}", String.valueOf(maxUsernameLength)));
         }
         else if (!player.getName().matches(getConfig("secret.yml").getString("username.regex")))
         {
-            event.disallow(KICK_OTHER, t("usernameInvalid"));
+            kicker.kick(player, t("usernameInvalid"));
         }
         else if (CollectionUtils.containsIgnoreCase(username,
                 getConfig("config.yml").getStringList("prohibitedUsernames")))
         {
-            event.disallow(KICK_OTHER, t("usernameProhibited"));
+            kicker.kick(player, t("usernameProhibited"));
         }
-        else if (isPlayerOnline(username))
+        else if (PlayerUtils.isAnotherPlayerOnline(player))
         {
-            event.disallow(KICK_OTHER, t("usernameAlreadyUsed"));
+            kicker.kick(player, t("usernameAlreadyUsed"));
         }
         else if (getConfig("config.yml").getBoolean("kickUnregistered") && account == null)
         {
-            event.disallow(KICK_OTHER, t("kickUnregistered"));
+            kicker.kick(player, t("kickUnregistered"));
         }
         else
         {
@@ -168,20 +183,36 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             if (actualFreeSlots <= 0
                     && !CollectionUtils.containsIgnoreCase(username, reserveForPlayers))
             {
-                event.disallow(KICK_OTHER, t("noSlotsFree"));
+                kicker.kick(player, t("noSlotsFree"));
             }
         }
     }
     
     @EventHandler(priority = EventPriority.LOW)
-    private void onJoin(PlayerJoinEvent event)
+    private void onJoin(final PlayerJoinEvent event)
     {
         final Player player = event.getPlayer();
+        
+        onJoin(player, new JoinMessage()
+        {
+            @Override
+            public void set(String joinMessage)
+            {
+                event.setJoinMessage(joinMessage);
+            }
+        });
+    }
+    
+    public void onJoin(final Player player, JoinMessage joinMessage)
+    {
+        if (player == null || joinMessage == null)
+            throw new IllegalArgumentException();
+        
         String username = player.getName().toLowerCase();
         String ip = getPlayerIp(player);
         UUID uuid = player.getUniqueId();
         
-        event.setJoinMessage(null);
+        joinMessage.set(null);
         
         if (getSessionManager().getSession(player) == null)
         {
@@ -300,7 +331,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             if (!getConfig("config.yml").getBoolean("messages.join.hide")
                     && !VanishNoPacketHook.isVanished(player))
             {
-                event.setJoinMessage(JoinMessageGenerator.generate(player,
+                joinMessage.set(JoinMessageGenerator.generate(player,
                         getConfig("config.yml").getBoolean("messages.join.showWorld")));
             }
         }
@@ -361,9 +392,24 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     }
     
     @EventHandler(priority = EventPriority.LOW)
-    private void onQuit(PlayerQuitEvent event)
+    private void onQuit(final PlayerQuitEvent event)
     {
         Player player = event.getPlayer();
+        
+        onQuit(player, new QuitMessage()
+        {
+            @Override
+            public void set(String quitMessage)
+            {
+                event.setQuitMessage(quitMessage);
+            }
+        });
+    }
+    
+    public void onQuit(Player player, QuitMessage quitMessage)
+    {
+        if (player == null || quitMessage == null)
+            throw new IllegalArgumentException();
         
         playersDeadOnJoin.remove(player);
         
@@ -382,11 +428,11 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                         || getSessionManager().isSessionAlive(player))
                 && !VanishNoPacketHook.isVanished(player))
         {
-            event.setQuitMessage(QuitMessageGenerator.generate(player));
+            quitMessage.set(QuitMessageGenerator.generate(player));
         }
         else
         {
-            event.setQuitMessage(null);
+            quitMessage.set(null);
         }
     }
     
