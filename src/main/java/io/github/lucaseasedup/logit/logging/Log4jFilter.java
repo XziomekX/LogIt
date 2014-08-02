@@ -49,6 +49,9 @@ public final class Log4jFilter
                 if (commandSilencer.isDisposed())
                     return Result.NEUTRAL;
                 
+                if (event.getMessage().getFormattedMessage() == null)
+                    return Result.NEUTRAL;
+                
                 if (!event.getLoggerName().endsWith(".PlayerConnection"))
                     return Result.NEUTRAL;
                 
