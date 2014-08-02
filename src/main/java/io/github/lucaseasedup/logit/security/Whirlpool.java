@@ -213,7 +213,7 @@ public class Whirlpool
      * @param    source        plaintext data to hash.
      * @param    sourceBits    how many bits of plaintext to process.
      * 
-     * This method maintains the invariant: bufferBits < 512
+     * This method maintains the invariant: bufferBits &lt; 512
      */
     public void NESSIEadd(byte[] source, long sourceBits)
     {
@@ -295,7 +295,9 @@ public class Whirlpool
     /**
      * Get the hash value from the hashing state.
      * 
-     * This method uses the invariant: bufferBits < 512
+     * This method uses the invariant: bufferBits &lt; 512
+     * 
+     * @param digest the digest.
      */
     public void NESSIEfinalize(byte[] digest)
     {
@@ -342,7 +344,7 @@ public class Whirlpool
      * 
      * @param source plaintext data to hash (ASCII text string).
      * 
-     * This method maintains the invariant: bufferBits < 512
+     * This method maintains the invariant: bufferBits &lt; 512
      */
     public void NESSIEadd(String source)
     {
