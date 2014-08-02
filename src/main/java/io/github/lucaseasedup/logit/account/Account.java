@@ -145,7 +145,7 @@ public final class Account extends LogItCoreObject
         {
             String userHashingAlgorithm = entry.get(keys().hashing_algorithm());
             
-            if (userHashingAlgorithm != null)
+            if (!StringUtils.isBlank(userHashingAlgorithm))
             {
                 hashingAlgorithm = userHashingAlgorithm;
             }

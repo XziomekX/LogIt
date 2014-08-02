@@ -48,8 +48,11 @@ public final class SecurityHelper extends LogItCoreObject
                                  String hashedPassword,
                                  String hashingAlgorithm)
     {
-        if (password == null || hashedPassword == null || hashingAlgorithm == null)
+        if (password == null || hashedPassword == null
+                || hashingAlgorithm == null)
+        {
             throw new IllegalArgumentException();
+        }
         
         if (getConfig("secret.yml").getBoolean("debug.forceHashingAlgorithm"))
         {
@@ -58,7 +61,11 @@ public final class SecurityHelper extends LogItCoreObject
         
         HashingAlgorithm algorithmType = HashingAlgorithm.decode(hashingAlgorithm);
         
-        if (algorithmType == HashingAlgorithm.BCRYPT)
+        if (algorithmType == null)
+        {
+            return false;
+        }
+        else if (algorithmType == HashingAlgorithm.BCRYPT)
         {
             return BCrypt.checkpw(password, hashedPassword);
         }
@@ -100,8 +107,11 @@ public final class SecurityHelper extends LogItCoreObject
                                  String salt,
                                  String hashingAlgorithm)
     {
-        if (password == null || hashedPassword == null || salt == null || hashingAlgorithm == null)
+        if (password == null || hashedPassword == null
+                || salt == null || hashingAlgorithm == null)
+        {
             throw new IllegalArgumentException();
+        }
         
         if (getConfig("secret.yml").getBoolean("debug.forceHashingAlgorithm"))
         {
@@ -110,7 +120,11 @@ public final class SecurityHelper extends LogItCoreObject
         
         HashingAlgorithm algorithmType = HashingAlgorithm.decode(hashingAlgorithm);
         
-        if (algorithmType == HashingAlgorithm.BCRYPT)
+        if (algorithmType == null)
+        {
+            return false;
+        }
+        else if (algorithmType == HashingAlgorithm.BCRYPT)
         {
             try
             {
