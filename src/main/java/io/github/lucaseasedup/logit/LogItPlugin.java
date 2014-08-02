@@ -230,7 +230,7 @@ public final class LogItPlugin extends JavaPlugin
                 message = getInstance().customLocalMessages.getString(label);
             }
         }
-        catch (NullPointerException | MissingResourceException | ClassCastException ex)
+        catch (MissingResourceException | ClassCastException ex)
         {
             return label;
         }
