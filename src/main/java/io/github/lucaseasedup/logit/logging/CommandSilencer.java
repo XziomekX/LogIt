@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.logging;
 
-import io.github.lucaseasedup.logit.Disposable;
+import io.github.lucaseasedup.logit.common.Disposable;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
 import java.util.Collection;
 import java.util.HashSet;

@@ -310,7 +310,7 @@ public final class TabAPI implements Listener
     }
     
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerQuit(PlayerQuitEvent event)
+    private void onPlayerQuit(PlayerQuitEvent event)
     {
         Player player = event.getPlayer();
         

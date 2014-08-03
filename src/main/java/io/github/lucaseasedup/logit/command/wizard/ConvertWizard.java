@@ -19,9 +19,9 @@
 package io.github.lucaseasedup.logit.command.wizard;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper.t;
-import io.github.lucaseasedup.logit.FatalReportedException;
-import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.account.Account;
+import io.github.lucaseasedup.logit.common.FatalReportedException;
+import io.github.lucaseasedup.logit.common.ReportedException;
 import io.github.lucaseasedup.logit.config.PropertyType;
 import io.github.lucaseasedup.logit.config.validators.StorageTypeValidator;
 import io.github.lucaseasedup.logit.storage.SelectorConstant;

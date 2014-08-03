@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import io.github.lucaseasedup.logit.CancellableEvent;
+import io.github.lucaseasedup.logit.common.CancellableEvent;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.event.HandlerList;

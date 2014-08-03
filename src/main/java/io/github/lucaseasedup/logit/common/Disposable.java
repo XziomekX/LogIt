@@ -1,5 +1,5 @@
 /*
- * CancelledState.java
+ * Disposable.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -16,20 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit;
+package io.github.lucaseasedup.logit.common;
 
-public enum CancelledState
+public interface Disposable
 {
-    CANCELLED, NOT_CANCELLED;
-    
     /**
-     * Returns {@code true} if this state represents an operation
-     * that has been externally cancelled by whatever means it would possibly become so.
-     * 
-     * @return {@code true} if cancelled; {@code false} otherwise.
+     * Nullifies and/or empties (if possible) all the member fields in this object,
+     * creating a chance for the garbage collector
+     * to deallocate as many unused objects as possible.
      */
-    public boolean isCancelled()
-    {
-        return this.equals(CANCELLED);
-    }
+    public void dispose();
 }

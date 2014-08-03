@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit;
+package io.github.lucaseasedup.logit.common;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -112,7 +112,7 @@ public final class PlayerCollections implements Listener
         return collection;
     }
     
-    /* package */ static synchronized void registerListener(JavaPlugin plugin)
+    public static synchronized void registerListener(JavaPlugin plugin)
     {
         if (plugin == null)
             throw new IllegalArgumentException();

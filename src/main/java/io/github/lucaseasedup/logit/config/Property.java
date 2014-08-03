@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.config;
 
-import io.github.lucaseasedup.logit.Disposable;
+import io.github.lucaseasedup.logit.common.Disposable;
 import java.util.List;
 import java.util.Observable;
 import org.apache.commons.lang.StringUtils;

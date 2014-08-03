@@ -18,6 +18,7 @@
  */
 package io.github.lucaseasedup.logit;
 
+import io.github.lucaseasedup.logit.common.CancellableEvent;
 import org.bukkit.event.HandlerList;
 
 public final class LogItCoreStartEvent extends CancellableEvent

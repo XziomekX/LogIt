@@ -19,8 +19,8 @@
 package io.github.lucaseasedup.logit.persistence;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
-import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.account.Account;
+import io.github.lucaseasedup.logit.common.ReportedException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;

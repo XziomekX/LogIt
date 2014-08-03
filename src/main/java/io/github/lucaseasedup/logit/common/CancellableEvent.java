@@ -1,5 +1,5 @@
 /*
- * Disposable.java
+ * CancellableEvent.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -16,14 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit;
+package io.github.lucaseasedup.logit.common;
 
-public interface Disposable
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
+
+public abstract class CancellableEvent extends Event implements Cancellable
 {
-    /**
-     * Nullifies and/or empties (if possible) all the member fields in this object,
-     * creating a chance for the garbage collector
-     * to deallocate as many unused objects as possible.
-     */
-    public void dispose();
+    @Override
+    public final boolean isCancelled()
+    {
+        return cancelled;
+    }
+    
+    @Override
+    public final void setCancelled(boolean cancelled)
+    {
+        this.cancelled = cancelled;
+    }
+    
+    private boolean cancelled = false;
 }

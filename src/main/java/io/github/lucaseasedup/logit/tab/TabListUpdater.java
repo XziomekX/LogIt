@@ -16,12 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit;
+package io.github.lucaseasedup.logit.tab;
 
+import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.common.Wrapper;
 import io.github.lucaseasedup.logit.config.TimeUnit;
 import io.github.lucaseasedup.logit.craftreflect.CraftPlayer;
+import io.github.lucaseasedup.logit.craftreflect.CraftReflect;
 import io.github.lucaseasedup.logit.craftreflect.EntityPlayer;
 import io.github.lucaseasedup.logit.session.SessionStartEvent;
+import io.github.lucaseasedup.logit.tabapi.TabAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,6 +37,15 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public final class TabListUpdater extends LogItCoreObject implements Runnable, Listener
 {
+    public TabListUpdater(Wrapper<TabAPI> tabApiWrapper, CraftReflect craftReflect)
+    {
+        if (tabApiWrapper == null)
+            throw new IllegalArgumentException();
+        
+        this.tabApiWrapper = tabApiWrapper;
+        this.craftReflect = craftReflect;
+    }
+    
     @Override
     public void run()
     {
@@ -52,13 +65,13 @@ public final class TabListUpdater extends LogItCoreObject implements Runnable, L
         if (player == null)
             throw new IllegalArgumentException();
         
-        if (getCore().getTabApi() == null)
+        if (getTabApi() == null)
             return;
         
-        getCore().getTabApi().clearTab(player);
+        getTabApi().clearTab(player);
         
-        int horizSize = getCore().getTabApi().getHorizSize();
-        int vertSize = getCore().getTabApi().getVertSize();
+        int horizSize = getTabApi().getHorizSize();
+        int vertSize = getTabApi().getVertSize();
         int i = 0;
         int j = 0;
         
@@ -72,19 +85,19 @@ public final class TabListUpdater extends LogItCoreObject implements Runnable, L
             
             int ping;
             
-            if (getCore().getCraftReflect() == null)
+            if (craftReflect == null)
             {
                 ping = 0;
             }
             else
             {
-                CraftPlayer craftPlayer = getCore().getCraftReflect().getCraftPlayer(p);
+                CraftPlayer craftPlayer = craftReflect.getCraftPlayer(p);
                 EntityPlayer entityPlayer = craftPlayer.getHandle();
                 
                 ping = entityPlayer.getPing();
             }
             
-            getCore().getTabApi().setTabString(player, j, i, p.getPlayerListName(), ping);
+            getTabApi().setTabString(player, j, i, p.getPlayerListName(), ping);
             
             i++;
             
@@ -100,8 +113,8 @@ public final class TabListUpdater extends LogItCoreObject implements Runnable, L
             }
         }
         
-        getCore().getTabApi().updatePlayer(player);
-        getCore().getTabApi().setPriority(player, 1);
+        getTabApi().updatePlayer(player);
+        getTabApi().setPriority(player, 1);
     }
     
     @EventHandler(priority = EventPriority.NORMAL)
@@ -143,8 +156,16 @@ public final class TabListUpdater extends LogItCoreObject implements Runnable, L
         }.runTaskLater(getPlugin(), 1L);
     }
     
+    private TabAPI getTabApi()
+    {
+        return tabApiWrapper.get();
+    }
+    
     /**
      * Recommended task period of {@code TabListUpdater} running as a Bukkit task.
      */
     public static final long TASK_PERIOD = TimeUnit.SECONDS.convert(2, TimeUnit.TICKS);
+    
+    private Wrapper<TabAPI> tabApiWrapper;
+    private final CraftReflect craftReflect;
 }

@@ -41,6 +41,11 @@ import io.github.lucaseasedup.logit.command.RecoverPassCommand;
 import io.github.lucaseasedup.logit.command.RegisterCommand;
 import io.github.lucaseasedup.logit.command.RememberCommand;
 import io.github.lucaseasedup.logit.command.UnregisterCommand;
+import io.github.lucaseasedup.logit.common.CancellableEvent;
+import io.github.lucaseasedup.logit.common.CancelledState;
+import io.github.lucaseasedup.logit.common.FatalReportedException;
+import io.github.lucaseasedup.logit.common.PlayerCollections;
+import io.github.lucaseasedup.logit.common.Wrapper;
 import io.github.lucaseasedup.logit.config.ConfigurationManager;
 import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
 import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
@@ -80,6 +85,7 @@ import io.github.lucaseasedup.logit.storage.Storage.DataType;
 import io.github.lucaseasedup.logit.storage.StorageFactory;
 import io.github.lucaseasedup.logit.storage.StorageType;
 import io.github.lucaseasedup.logit.storage.WrapperStorage;
+import io.github.lucaseasedup.logit.tab.TabListUpdater;
 import io.github.lucaseasedup.logit.tabapi.TabAPI;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import io.github.lucaseasedup.logit.util.MessageHelper;
@@ -185,6 +191,9 @@ public final class LogItCore
         cooldownManager = new CooldownManager();
         accountWatcher = new AccountWatcher();
         
+        tabApiWrapper = new Wrapper<>();
+        tabListUpdater = new TabListUpdater(tabApiWrapper, craftReflect);
+        
         new BukkitRunnable()
         {
             @Override
@@ -192,13 +201,11 @@ public final class LogItCore
             {
                 if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null)
                 {
-                    tabApi = new TabAPI();
-                    tabApi.onEnable();
+                    tabApiWrapper.set(new TabAPI());
+                    tabApiWrapper.get().onEnable();
                 }
             }
         }.runTaskLater(getPlugin(), 1L);
-        
-        tabListUpdater = new TabListUpdater();
         
         startTasks();
         enableCommands();
@@ -856,10 +863,11 @@ public final class LogItCore
             accountWatcher = null;
         }
         
-        if (tabApi != null)
+        if (tabApiWrapper.get() != null)
         {
-            tabApi.onDisable();
-            tabApi = null;
+            tabApiWrapper.get().onDisable();
+            tabApiWrapper.set(null);
+            tabApiWrapper = null;
         }
         
         tabListUpdater = null;
@@ -1133,11 +1141,6 @@ public final class LogItCore
         return logger;
     }
     
-    protected CraftReflect getCraftReflect()
-    {
-        return craftReflect;
-    }
-    
     public LocaleManager getLocaleManager()
     {
         return localeManager;
@@ -1198,11 +1201,6 @@ public final class LogItCore
         return accountWatcher;
     }
     
-    /* package */ TabAPI getTabApi()
-    {
-        return tabApi;
-    }
-    
     public TabListUpdater getTabListUpdater()
     {
         return tabListUpdater;
@@ -1251,7 +1249,7 @@ public final class LogItCore
     private GlobalPasswordManager globalPasswordManager;
     private CooldownManager cooldownManager;
     private AccountWatcher accountWatcher;
-    private TabAPI tabApi;
+    private Wrapper<TabAPI> tabApiWrapper;
     private TabListUpdater tabListUpdater;
     
     private BukkitTask tabListUpdaterTask;

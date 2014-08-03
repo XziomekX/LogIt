@@ -1,5 +1,5 @@
 /*
- * CancellableEvent.java
+ * Wrapper.java
  *
  * Copyright (C) 2012-2014 LucasEasedUp
  *
@@ -16,24 +16,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit;
+package io.github.lucaseasedup.logit.common;
 
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-
-public abstract class CancellableEvent extends Event implements Cancellable
+public final class Wrapper<T>
 {
-    @Override
-    public final boolean isCancelled()
+    public Wrapper()
     {
-        return cancelled;
+        this.obj = null;
     }
     
-    @Override
-    public final void setCancelled(boolean cancelled)
+    public Wrapper(T obj)
     {
-        this.cancelled = cancelled;
+        this.obj = obj;
     }
     
-    private boolean cancelled = false;
+    public T get()
+    {
+        return obj;
+    }
+    
+    public void set(T obj)
+    {
+        this.obj = obj;
+    }
+    
+    private T obj;
 }

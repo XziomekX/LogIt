@@ -20,11 +20,11 @@ package io.github.lucaseasedup.logit.command.hub;
 
 import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.util.MessageHelper.t;
-import io.github.lucaseasedup.logit.ReportedException;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.command.wizard.ConfirmationWizard;
+import io.github.lucaseasedup.logit.common.ReportedException;
 import io.github.lucaseasedup.logit.security.AuthMePasswordHelper;
 import io.github.lucaseasedup.logit.storage.MySqlStorage;
 import io.github.lucaseasedup.logit.storage.SelectorConstant;

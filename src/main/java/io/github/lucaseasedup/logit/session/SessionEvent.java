@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.session;
 
-import io.github.lucaseasedup.logit.CancellableEvent;
+import io.github.lucaseasedup.logit.common.CancellableEvent;
 import org.bukkit.event.HandlerList;
 
 public abstract class SessionEvent extends CancellableEvent

@@ -20,6 +20,7 @@ package io.github.lucaseasedup.logit;
 
 import io.github.lucaseasedup.logit.command.DisabledCommandExecutor;
 import io.github.lucaseasedup.logit.command.LogItCommand;
+import io.github.lucaseasedup.logit.common.FatalReportedException;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
 import java.io.File;
 import java.io.FileInputStream;
