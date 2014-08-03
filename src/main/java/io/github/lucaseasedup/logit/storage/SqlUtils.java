@@ -16,15 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit.util;
+package io.github.lucaseasedup.logit.storage;
 
-import io.github.lucaseasedup.logit.storage.Infix;
-import io.github.lucaseasedup.logit.storage.Selector;
-import io.github.lucaseasedup.logit.storage.SelectorBinary;
-import io.github.lucaseasedup.logit.storage.SelectorCondition;
-import io.github.lucaseasedup.logit.storage.SelectorConstant;
-import io.github.lucaseasedup.logit.storage.SelectorNegation;
-import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.storage.Storage.DataType;
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.storage;
 
-import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;

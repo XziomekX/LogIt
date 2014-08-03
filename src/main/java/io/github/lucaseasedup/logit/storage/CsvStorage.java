@@ -18,7 +18,6 @@
  */
 package io.github.lucaseasedup.logit.storage;
 
-import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;

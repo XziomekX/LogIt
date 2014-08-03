@@ -20,7 +20,6 @@ package io.github.lucaseasedup.logit.storage;
 
 import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.logging.CustomLevel;
-import io.github.lucaseasedup.logit.util.SqlUtils;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
