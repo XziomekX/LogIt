@@ -353,7 +353,7 @@ public final class LogItCore
     {
         try
         {
-            String updateVersion = UpdateChecker.checkForUpdate(
+            String updateVersion = LogItUpdateChecker.checkForUpdate(
                     getPlugin().getDescription().getFullName()
             );
             

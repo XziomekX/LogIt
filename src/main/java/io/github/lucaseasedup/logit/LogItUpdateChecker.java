@@ -31,9 +31,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public final class UpdateChecker
+public final class LogItUpdateChecker
 {
-    private UpdateChecker()
+    private LogItUpdateChecker()
     {
     }
     
