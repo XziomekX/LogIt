@@ -389,6 +389,21 @@ public final class SessionManager extends LogItCoreObject
         return CancelledState.NOT_CANCELLED;
     }
     
+    @Deprecated
+    public CancelledState startSession(String username)
+    {
+        Player player = PlayerUtils.getPlayer(username);
+        
+        if (player != null)
+        {
+            return startSession(player);
+        }
+        else
+        {
+            return CancelledState.NOT_CANCELLED;
+        }
+    }
+    
     /**
      * Ends a session associated with a username.
      * 
