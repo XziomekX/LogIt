@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.backup;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper.t;
+import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.AccountManager;
 import io.github.lucaseasedup.logit.common.ReportedException;

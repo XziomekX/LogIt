@@ -27,6 +27,7 @@ import io.github.lucaseasedup.logit.config.ConfigurationManager;
 import io.github.lucaseasedup.logit.config.PredefinedConfiguration;
 import io.github.lucaseasedup.logit.cooldown.CooldownManager;
 import io.github.lucaseasedup.logit.locale.LocaleManager;
+import io.github.lucaseasedup.logit.message.LogItMessageDispatcher;
 import io.github.lucaseasedup.logit.persistence.PersistenceManager;
 import io.github.lucaseasedup.logit.profile.ProfileManager;
 import io.github.lucaseasedup.logit.security.GlobalPasswordManager;

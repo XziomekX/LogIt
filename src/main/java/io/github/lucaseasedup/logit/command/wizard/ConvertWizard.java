@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.command.wizard;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper.t;
+import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.common.FatalReportedException;
 import io.github.lucaseasedup.logit.common.ReportedException;

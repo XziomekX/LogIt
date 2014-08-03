@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit.util;
+package io.github.lucaseasedup.logit.message;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper.t;
+import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCore;
 import org.bukkit.entity.Player;
 

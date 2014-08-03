@@ -18,14 +18,16 @@
  */
 package io.github.lucaseasedup.logit.listener;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
-import static io.github.lucaseasedup.logit.util.MessageHelper.t;
+import static io.github.lucaseasedup.logit.message.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.config.TimeUnit;
 import io.github.lucaseasedup.logit.hooks.BukkitSmerfHook;
 import io.github.lucaseasedup.logit.hooks.VanishNoPacketHook;
+import io.github.lucaseasedup.logit.message.JoinMessageGenerator;
+import io.github.lucaseasedup.logit.message.QuitMessageGenerator;
 import io.github.lucaseasedup.logit.persistence.LocationSerializer;
 import io.github.lucaseasedup.logit.session.Session;
 import io.github.lucaseasedup.logit.storage.Infix;
@@ -34,9 +36,7 @@ import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.SelectorNegation;
 import io.github.lucaseasedup.logit.util.BlockUtils;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
-import io.github.lucaseasedup.logit.util.JoinMessageGenerator;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
-import io.github.lucaseasedup.logit.util.QuitMessageGenerator;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;

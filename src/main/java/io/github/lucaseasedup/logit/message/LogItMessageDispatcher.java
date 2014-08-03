@@ -16,17 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit;
+package io.github.lucaseasedup.logit.message;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper.broadcastMsgExcept;
-import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
-import static io.github.lucaseasedup.logit.util.MessageHelper.t;
+import static io.github.lucaseasedup.logit.message.MessageHelper.broadcastMsgExcept;
+import static io.github.lucaseasedup.logit.message.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.message.MessageHelper.t;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.config.TimeUnit;
 import io.github.lucaseasedup.logit.hooks.EssentialsHook;
 import io.github.lucaseasedup.logit.hooks.VanishNoPacketHook;
 import io.github.lucaseasedup.logit.locale.Locale;
-import io.github.lucaseasedup.logit.util.JoinMessageGenerator;
-import io.github.lucaseasedup.logit.util.QuitMessageGenerator;
 import java.util.Arrays;
 import java.util.Hashtable;
 import org.bukkit.Bukkit;

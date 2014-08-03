@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.config;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper.t;
+import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
 import io.github.lucaseasedup.logit.util.IniUtils;

@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit;
 
+import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
-import static io.github.lucaseasedup.logit.util.MessageHelper.t;
 import com.google.common.io.Files;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.account.AccountKeys;
@@ -68,6 +68,8 @@ import io.github.lucaseasedup.logit.locale.LocaleManager;
 import io.github.lucaseasedup.logit.locale.PolishLocale;
 import io.github.lucaseasedup.logit.logging.CommandSilencer;
 import io.github.lucaseasedup.logit.logging.LogItCoreLogger;
+import io.github.lucaseasedup.logit.message.LogItMessageDispatcher;
+import io.github.lucaseasedup.logit.message.MessageHelper;
 import io.github.lucaseasedup.logit.persistence.AirBarSerializer;
 import io.github.lucaseasedup.logit.persistence.ExperienceSerializer;
 import io.github.lucaseasedup.logit.persistence.HealthBarSerializer;
@@ -87,7 +89,6 @@ import io.github.lucaseasedup.logit.storage.StorageType;
 import io.github.lucaseasedup.logit.storage.WrapperStorage;
 import io.github.lucaseasedup.logit.tab.TabListUpdater;
 import io.github.lucaseasedup.logit.util.IoUtils;
-import io.github.lucaseasedup.logit.util.MessageHelper;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;

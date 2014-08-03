@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.command.wizard;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper.t;
+import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import io.github.lucaseasedup.logit.profile.field.Field;
 import java.util.List;
 import org.bukkit.command.CommandSender;

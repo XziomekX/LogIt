@@ -18,7 +18,7 @@
  */
 package io.github.lucaseasedup.logit.account;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper.t;
+import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.common.CancelledState;
 import io.github.lucaseasedup.logit.common.QueuedMap;

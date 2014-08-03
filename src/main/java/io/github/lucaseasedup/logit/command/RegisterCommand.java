@@ -18,8 +18,8 @@
  */
 package io.github.lucaseasedup.logit.command;
 
-import static io.github.lucaseasedup.logit.util.MessageHelper.sendMsg;
-import static io.github.lucaseasedup.logit.util.MessageHelper.t;
+import static io.github.lucaseasedup.logit.message.MessageHelper.sendMsg;
+import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;

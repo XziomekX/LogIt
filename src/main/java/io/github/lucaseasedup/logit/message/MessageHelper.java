@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package io.github.lucaseasedup.logit.util;
+package io.github.lucaseasedup.logit.message;
 
 import io.github.lucaseasedup.logit.LogItPlugin;
+import io.github.lucaseasedup.logit.util.CollectionUtils;
 import java.util.Collection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
