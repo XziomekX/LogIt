@@ -86,7 +86,6 @@ import io.github.lucaseasedup.logit.storage.StorageFactory;
 import io.github.lucaseasedup.logit.storage.StorageType;
 import io.github.lucaseasedup.logit.storage.WrapperStorage;
 import io.github.lucaseasedup.logit.tab.TabListUpdater;
-import io.github.lucaseasedup.logit.tabapi.TabAPI;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import io.github.lucaseasedup.logit.util.MessageHelper;
 import java.io.File;
@@ -108,6 +107,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.mcsg.double0negative.tabapi.TabAPI;
 
 /**
  * The central part of LogIt.

@@ -1,4 +1,4 @@
-package io.github.lucaseasedup.logit.tabapi;
+package org.mcsg.double0negative.tabapi;
 
 import io.github.lucaseasedup.logit.util.ArrayUtils;
 

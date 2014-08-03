@@ -25,7 +25,6 @@ import io.github.lucaseasedup.logit.craftreflect.CraftPlayer;
 import io.github.lucaseasedup.logit.craftreflect.CraftReflect;
 import io.github.lucaseasedup.logit.craftreflect.EntityPlayer;
 import io.github.lucaseasedup.logit.session.SessionStartEvent;
-import io.github.lucaseasedup.logit.tabapi.TabAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,6 +33,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.mcsg.double0negative.tabapi.TabAPI;
 
 public final class TabListUpdater extends LogItCoreObject implements Runnable, Listener
 {

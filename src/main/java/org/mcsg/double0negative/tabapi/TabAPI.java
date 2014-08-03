@@ -1,4 +1,4 @@
-package io.github.lucaseasedup.logit.tabapi;
+package org.mcsg.double0negative.tabapi;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
