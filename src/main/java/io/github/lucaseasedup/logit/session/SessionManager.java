@@ -389,9 +389,29 @@ public final class SessionManager extends LogItCoreObject
         return CancelledState.NOT_CANCELLED;
     }
     
+    /**
+     * Starts a session associated with a username.
+     * 
+     * <p> If the session has already been started (e.i. is alive), no action will be taken.
+     * If no session exists for this username, it will be created.
+     * 
+     * <p> This method emits the {@code SessionStartEvent} event.
+     * 
+     * @param username the username.
+     * 
+     * @return a {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code SessionStartEvent} handlers.
+     * 
+     * @throws IllegalArgumentException if {@code player} is {@code null}.
+     * 
+     * @deprecated Use {@link #startSession(Player)} instead.
+     */
     @Deprecated
     public CancelledState startSession(String username)
     {
+        if (username == null)
+            throw new IllegalArgumentException();
+        
         Player player = PlayerUtils.getPlayer(username);
         
         if (player != null)
