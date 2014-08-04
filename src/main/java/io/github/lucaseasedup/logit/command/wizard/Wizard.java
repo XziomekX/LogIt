@@ -33,7 +33,7 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
-public abstract class Wizard extends LogItCoreObject implements Listener 
+public abstract class Wizard extends LogItCoreObject implements Listener
 {
     public Wizard(CommandSender sender, Object initStep)
     {

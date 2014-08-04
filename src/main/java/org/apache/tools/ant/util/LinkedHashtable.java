@@ -58,74 +58,92 @@ public class LinkedHashtable<K, V> extends Hashtable<K, V> {
         map = new LinkedHashMap<K, V>(m);
     }
 
+    @Override
     public synchronized void clear() {
         map.clear();
     }
 
+    @Override
     public boolean contains(Object value) {
         return containsKey(value);
     }
 
+    @Override
     public synchronized boolean containsKey(Object value) {
         return map.containsKey(value);
     }
 
+    @Override
     public synchronized boolean containsValue(Object value) {
         return map.containsValue(value);
     }
 
+    @Override
     public Enumeration<V> elements() {
         return CollectionUtils.asEnumeration(values().iterator());
     }
 
+    @Override
     public synchronized Set<Map.Entry<K, V>> entrySet() {
         return map.entrySet();
     }
 
+    @Override
     public synchronized boolean equals(Object o) {
         return map.equals(o);
     }
 
+    @Override
     public synchronized V get(Object k) {
         return map.get(k);
     }
 
+    @Override
     public synchronized int hashCode() {
         return map.hashCode();
     }
 
+    @Override
     public synchronized boolean isEmpty() {
         return map.isEmpty();
     }
 
+    @Override
     public Enumeration<K> keys() {
         return CollectionUtils.asEnumeration(keySet().iterator());
     }
 
+    @Override
     public synchronized Set<K> keySet() {
         return map.keySet();
     }
 
+    @Override
     public synchronized V put(K k, V v) {
         return map.put(k, v);
     }
 
+    @Override
     public synchronized void putAll(Map<? extends K, ? extends V> m) {
         map.putAll(m);
     }
 
+    @Override
     public synchronized V remove(Object k) {
         return map.remove(k);
     }
 
+    @Override
     public synchronized int size() {
         return map.size();
     }
 
+    @Override
     public synchronized String toString() {
         return map.toString();
     }
 
+    @Override
     public synchronized Collection<V> values() {
         return map.values();
     }

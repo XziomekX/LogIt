@@ -26,7 +26,7 @@ public final class SessionCreateEvent extends SessionEvent
     }
     
     /**
-     * Always returns <code>null</code> 
+     * Always returns <code>null</code>
      */
     @Override
     public Session getSession()

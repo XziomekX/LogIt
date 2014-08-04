@@ -34,7 +34,7 @@ public final class MessageHelper
     
     /**
      * Returns the translated message associated with the given label.
-     *  
+     * 
      * @param label the message label.
      * 
      * @return the translated message.

@@ -50,7 +50,7 @@ public final class LogItUpdateChecker
      * 
      * @throws IOException              if an I/O error occurred
      *                                  while downloading the RSS file.
-     *                                  
+     * 
      * @throws ParseException           if the RSS file could not be parsed.
      * 
      * @throws UnknownHostException     if a connection to the remote host
@@ -157,7 +157,7 @@ public final class LogItUpdateChecker
                           + "\\.([0-9]+)"              // .<minor>
                           + "(?:\\.([0-9]+)|)"         // (.<patch>)
                           + "(?:\\-([A-Za-z0-9_-]+)|)" // (-<qualifier>)
-                          + " *$");                    // 
+                          + " *$");                    //
     
     private static final String RSS_URL = "http://dev.bukkit.org/bukkit-plugins/logit/files.rss";
 }

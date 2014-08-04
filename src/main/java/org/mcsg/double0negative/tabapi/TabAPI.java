@@ -202,7 +202,7 @@ public final class TabAPI implements Listener
     }
     
     /**
-     * Set the tab for a player. 
+     * Set the tab for a player.
      * 
      * <p>If the plugin the tab is being set from does not have a priority,
      * it will automatically be give a base priority of 0.

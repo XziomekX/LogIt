@@ -59,7 +59,7 @@ public abstract class LogItCoreObject implements Disposable
     @Override
     public void dispose()
     {
-        // Left for optional implementation by extending classes. 
+        // Left for optional implementation by extending classes.
     }
     
     protected final LogItCore getCore()

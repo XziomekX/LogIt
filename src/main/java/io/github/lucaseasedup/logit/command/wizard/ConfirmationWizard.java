@@ -28,7 +28,7 @@ public final class ConfirmationWizard extends Wizard
      * @param sender   a {@code CommandSender} that ran this wizard.
      * @param keyword  a keyword that, when sent by the specified {@code CommandSender},
      *                 will tell this wizard to proceed.
-     * @param callback a callback that will be run when the given keyword will be typed. 
+     * @param callback a callback that will be run when the given keyword will be typed.
      * 
      * @throws IllegalArgumentException if {@code sender} or {@code callback} is {@code null}; or
      *                                  {@code keyword} is {@code null}, blank or starts with "/".
@@ -53,7 +53,7 @@ public final class ConfirmationWizard extends Wizard
     @Override
     protected void onCreate()
     {
-        // Left for optional implementation by extending classes. 
+        // Left for optional implementation by extending classes.
     }
     
     @Override

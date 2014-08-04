@@ -147,7 +147,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * 
      * @throws IllegalArgumentException if {@code username} or
      *                                  {@code queryKeys} is {@code null}.
-     *                                  
+     * 
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
@@ -170,7 +170,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             
             // The account is known not to exist.
             if (cachedAccount == null)
-            { 
+            {
                 return null;
             }
             // The account exists in the buffer.

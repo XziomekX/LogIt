@@ -51,6 +51,7 @@ public class CollectionUtils {
      * @since Ant 1.5
      * @deprecated since 1.6.x.
      */
+    @Deprecated
     public static boolean equals(Vector<?> v1, Vector<?> v2) {
         if (v1 == v2) {
             return true;
@@ -74,6 +75,7 @@ public class CollectionUtils {
      * @since Ant 1.5
      * @deprecated since 1.6.x.
      */
+    @Deprecated
     public static boolean equals(Dictionary<?, ?> d1, Dictionary<?, ?> d2) {
         if (d1 == d2) {
             return true;
@@ -127,6 +129,7 @@ public class CollectionUtils {
      * @since Ant 1.6
      * @deprecated since 1.6.x.
      */
+    @Deprecated
     public static <K, V> void putAll(Dictionary<? super K, ? super V> m1, Dictionary<? extends K, ? extends V> m2) {
         for (Enumeration<? extends K> it = m2.keys(); it.hasMoreElements();) {
             K key = it.nextElement();
@@ -146,6 +149,7 @@ public class CollectionUtils {
         /**
          * @return false always.
          */
+        @Override
         public boolean hasMoreElements() {
             return false;
         }
@@ -154,6 +158,7 @@ public class CollectionUtils {
          * @return nothing.
          * @throws NoSuchElementException always.
          */
+        @Override
         public E nextElement() throws NoSuchElementException {
             throw new NoSuchElementException();
         }
@@ -178,9 +183,11 @@ public class CollectionUtils {
      */
     public static <E> Enumeration<E> asEnumeration(final Iterator<E> iter) {
         return new Enumeration<E>() {
+            @Override
             public boolean hasMoreElements() {
                 return iter.hasNext();
             }
+            @Override
             public E nextElement() {
                 return iter.next();
             }
@@ -194,12 +201,15 @@ public class CollectionUtils {
      */
     public static <E> Iterator<E> asIterator(final Enumeration<E> e) {
         return new Iterator<E>() {
+            @Override
             public boolean hasNext() {
                 return e.hasMoreElements();
             }
+            @Override
             public E next() {
                 return e.nextElement();
             }
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException();
             }
@@ -228,10 +238,12 @@ public class CollectionUtils {
             this.e2 = e2;
         }
 
+        @Override
         public boolean hasMoreElements() {
             return e1.hasMoreElements() || e2.hasMoreElements();
         }
 
+        @Override
         public E nextElement() throws NoSuchElementException {
             if (e1.hasMoreElements()) {
                 return e1.nextElement();

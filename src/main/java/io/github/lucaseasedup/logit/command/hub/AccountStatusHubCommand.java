@@ -54,7 +54,7 @@ public final class AccountStatusHubCommand extends HubCommand
         sendMsg(sender, t("accountStatus.username")
                 .replace("{0}", args[0].toLowerCase()));
         
-        String status; 
+        String status;
         
         if (getAccountManager().isRegistered(args[0]))
         {

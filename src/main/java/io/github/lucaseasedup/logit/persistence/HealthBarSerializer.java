@@ -45,7 +45,7 @@ public final class HealthBarSerializer implements PersistenceSerializer
         String health = data.get("health");
         
         if (health != null)
-        {       
+        {
             if (player.isOnline())
             {
                 player.setHealth(Double.valueOf(health).intValue());

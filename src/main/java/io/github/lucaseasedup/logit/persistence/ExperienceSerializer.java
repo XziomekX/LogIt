@@ -53,12 +53,12 @@ public final class ExperienceSerializer implements PersistenceSerializer
         String level = data.get("level");
         
         if (exp != null)
-        {       
+        {
             player.setExp(Float.parseFloat(exp));
         }
         
         if (level != null)
-        {       
+        {
             player.setLevel(Integer.parseInt(level));
         }
     }

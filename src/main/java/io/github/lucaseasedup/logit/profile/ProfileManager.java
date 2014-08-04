@@ -169,7 +169,7 @@ public final class ProfileManager extends LogItCoreObject
     public double getProfileFloat(String playerName, String fieldName)
     {
         return getProfileConfiguration(playerName).getDouble(fieldName);
-    }   
+    }
     
     public void setProfileString(String playerName, String fieldName, String value)
     {
@@ -410,7 +410,7 @@ public final class ProfileManager extends LogItCoreObject
     
     private final static Pattern FIELD_DEFINITION_PATTERN =
             Pattern.compile("^\\s*([A-Za-z_0-9]+)"   // Type name
-                           + "\\s*\\[(.*)\\]\\s*$"); // Constraint arguments 
+                           + "\\s*\\[(.*)\\]\\s*$"); // Constraint arguments
     
     private final static Pattern INTEGER_RANGE_PATTERN =
             Pattern.compile("^\\s*(-?[0-9]+)"        // Min

@@ -62,7 +62,7 @@ public final class PersistenceManager extends LogItCoreObject
      * 
      * @throws IllegalArgumentException if {@code account}, {@code player}
      *                                  or {@code clazz} is {@code null}.
-     *                                  
+     * 
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
@@ -108,7 +108,7 @@ public final class PersistenceManager extends LogItCoreObject
      * 
      * @throws IllegalArgumentException if {@code account} or
      *                                  {@code player} is {@code null}.
-     *                                  
+     * 
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
@@ -150,7 +150,7 @@ public final class PersistenceManager extends LogItCoreObject
      * 
      * @throws IllegalArgumentException if {@code account}, {@code player} or
      *                                  {@code clazz} is {@code null}.
-     *                                  
+     * 
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
@@ -201,7 +201,7 @@ public final class PersistenceManager extends LogItCoreObject
      * 
      * @throws IllegalArgumentException if {@code account} or
      *                                  {@code player} is {@code null}.
-     *                                  
+     * 
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
