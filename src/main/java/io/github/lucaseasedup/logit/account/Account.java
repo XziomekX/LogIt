@@ -39,12 +39,58 @@ import java.util.UUID;
 import java.util.logging.Level;
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * Represents a single account in an {@code AccountManager}.
+ *
+ * <p> Every {@code Account} has its own {@code Storage.Entry} instance
+ * underlain so that it could be saved to a {@code Storage} as well as
+ * selected and reconstructed using {@link AccountManager#selectAccount}.
+ *
+ * <p>Default values for entry keys:<br><br>
+ *
+ * <table>
+ *  <tr><td><b>Key</b></td><td><b>Default value</b></td></tr>
+ *  <tr><td>username</td><td><i>n/a; required</i></td></tr>
+ *  <tr><td>uuid</td><td>{@code ""}</td></tr>
+ *  <tr><td>salt</td><td>{@code ""}</td></tr>
+ *  <tr><td>password</td><td>{@code ""}</td></tr>
+ *  <tr><td>hashing_algorithm</td><td>{@code ""}</td></tr>
+ *  <tr><td>ip</td><td>{@code ""}</td></tr>
+ *  <tr><td>login_session</td><td>{@code ""}</td></tr>
+ *  <tr><td>email</td><td>{@code ""}</td></tr>
+ *  <tr><td>last_active_date</td><td>{@code "-1"}</td></tr>
+ *  <tr><td>reg_date</td><td>{@code "-1"}</td></tr>
+ *  <tr><td>is_locked</td><td>{@code "0"}</td></tr>
+ *  <tr><td>login_history</td><td>{@code ""}</td></tr>
+ *  <tr><td>display_name</td><td>{@code ""}</td></tr>
+ *  <tr><td>persistence</td><td>{@code ""}</td></tr>
+ * </table>
+ */
 public final class Account extends LogItCoreObject
 {
+    /**
+     * Creates a new {@code Account} object, with all entry keys filled with
+     * their defaults.
+     *
+     * <p> A new {@code Storage.Entry} instance will be created for
+     * this account to hold its data in a storage-oriented manner.
+     *
+     * <p> After you finish filling this {@code Account} with data,
+     * use {@code AccountManager#insertAccount(Account)} or
+     * {@code AccountManager#insertAccounts(Account...)} to insert the new
+     * account to the storage.
+     *
+     * @param username
+     *       A username for this account, which will be saved to the underlying
+     *       storage entry as soon as it is created.
+     *
+     * @throws IllegalArgumentException
+     *        If {@code username} is {@code null} or blank.
+     */
     public Account(String username)
     {
         if (StringUtils.isBlank(username))
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Null or blank username");
         
         this.entry = new Storage.Entry();
         this.entry.put(keys().username(), username.toLowerCase());
@@ -52,13 +98,31 @@ public final class Account extends LogItCoreObject
         fillWithDefaults();
     }
     
+    /**
+     * Creates a new {@code Account} object based on a {@code Storage.Entry}.
+     *
+     * @param entry
+     *       A storage entry to hold data for this account.
+     *
+     * @param fillWithDefaults
+     *       If {@code true}, the missing entry keys will be filled with their
+     *       defaults.
+     *
+     * @throws IllegalArgumentException
+     *        If {@code entry} is {@code null}, does not contain
+     *        the username key or the username in this entry is {@code null}
+     *        or blank.
+     */
     /* package */ Account(Storage.Entry entry, boolean fillWithDefaults)
     {
         if (entry == null)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Null storage entry");
         
         if (!entry.containsKey(keys().username()))
-            throw new IllegalArgumentException("Missing key: username");
+            throw new IllegalArgumentException("Missing entry key: username");
+        
+        if (StringUtils.isBlank(entry.get(keys().username())))
+            throw new IllegalArgumentException("Null or blank username");
         
         this.entry = entry;
         
@@ -68,75 +132,127 @@ public final class Account extends LogItCoreObject
         }
     }
     
+    /**
+     * Creates a new {@code Account} object based on a {@code Storage.Entry},
+     * filling all the missing keys with their defaults.
+     *
+     * @param entry
+     *       A storage entry to hold data for this account.
+     *
+     * @throws IllegalArgumentException
+     *        If {@code entry} is {@code null}, does not contain
+     *        the username key or the username in this entry is {@code null}
+     *        or blank.
+     *
+     * @see #Account(String)
+     */
     public Account(Storage.Entry entry)
     {
         this(entry, true);
     }
     
+    /**
+     * Returns the username.
+     *
+     * <p> This method requires the following keys to exist in the underlying
+     * storage entry: <i>username</i>.
+     *
+     * @return The username.
+     *
+     * @throws IllegalArgumentException
+     *        If the underlying entry does not contain the required keys.
+     */
     public String getUsername()
     {
         if (!entry.containsKey(keys().username()))
-            throw new IllegalArgumentException("Missing key: username");
+            throw new IllegalArgumentException("Missing entry key: username");
         
         return entry.get(keys().username()).toLowerCase();
     }
     
+    /**
+     * Returns the UUID.
+     *
+     * <p> This method requires the following keys to exist in the underlying
+     * storage entry: <i>uuid</i>.
+     *
+     * @return The UUID.
+     *
+     * @throws IllegalArgumentException
+     *        If the underlying entry does not contain the required keys.
+     */
     public String getUuid()
     {
         if (!entry.containsKey(keys().uuid()))
-            throw new IllegalArgumentException("Missing key: uuid");
+            throw new IllegalArgumentException("Missing entry key: uuid");
         
         return entry.get(keys().uuid());
     }
     
+    /**
+     * Changes the UUID.
+     *
+     * @param uuid
+     *       The new UUID.
+     *
+     * @throws IllegalArgumentException
+     *        If {@code uuid} is {@code null}.
+     */
     public void setUuid(UUID uuid)
     {
         if (uuid == null)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Null uuid");
         
         entry.put(keys().uuid(), uuid.toString());
     }
     
+    /**
+     * Removes the UUID.
+     */
     public void removeUuid()
     {
         entry.put(keys().uuid(), "");
     }
     
     /**
-     * Checks if a password is equal, after hashing,
-     * to this password of this account.
-     * 
-     * <p> The password will be hashed using the algorithm specified
-     * in the appropriate key of the account entry.
-     * If no hashing algorithm was specified in the account entry,
-     * the global hashing algorithm stored in the config file will be used instead.
-     * 
+     * Checks if passwords match.
+     *
+     * <p> The given password will be hashed using the algorithm specified
+     * in the hashing_algorithm key. If this key does not represent a valid
+     * hashing algorithm, the default hashing algorithm (stored in the config
+     * file) will be used instead.
+     *
      * <p> If passwords have been disabled as of the config file,
      * this method will always return {@code true}.
-     * 
-     * @param password the password to be checked.
-     * 
-     * @return {@code true} if the password is correct;
-     *         {@code false} otherwise or if an I/O error occurred.
-     * 
-     * @throws IllegalArgumentException if {@code password} is {@code null}.
+     *
+     * <p> This method requires the following keys to exist in the underlying
+     * storage entry: <i>salt</i>, <i>password</i>, <i>hashing_algorithm</i>.
+     *
+     * @param password
+     *       The password to be checked.
+     *
+     * @return {@code true} if the password is correct; {@code false} otherwise.
+     *
+     * @throws IllegalArgumentException
+     *        If {@code password} is {@code null}, or if the underlying entry
+     *        does not contain the required keys.
      */
     public boolean checkPassword(String password)
     {
         if (password == null)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Null password");
         
         if (getConfig("config.yml").getBoolean("passwords.disable"))
             return true;
         
         if (!entry.containsKey(keys().salt()))
-            throw new IllegalArgumentException("Missing key: salt");
+            throw new IllegalArgumentException("Missing entry key: salt");
         
         if (!entry.containsKey(keys().password()))
-            throw new IllegalArgumentException("Missing key: password");
+            throw new IllegalArgumentException("Missing entry key: password");
         
         if (!entry.containsKey(keys().hashing_algorithm()))
-            throw new IllegalArgumentException("Missing key: hashing_algorithm");
+            throw new IllegalArgumentException("Missing entry key: hashing_algorithm");
         
         String actualHashedPassword = entry.get(keys().password());
         String hashingAlgorithm = getSecurityHelper().getDefaultHashingAlgorithm().name();
@@ -166,7 +282,7 @@ public final class Account extends LogItCoreObject
     }
     
     /**
-     * Changes password of this {@code Account}.
+     * Changes the password.
      * 
      * <p> The password will be hashed
      * using the default algorithm specified in the config file.
@@ -174,14 +290,16 @@ public final class Account extends LogItCoreObject
      * <p> If passwords have been disabled as of the config file,
      * no action will be taken.
      * 
-     * @param newPassword the new password.
+     * @param newPassword
+     *       The new password.
      * 
-     * @throws IllegalArgumentException if {@code newPassword} is {@code null}.
+     * @throws IllegalArgumentException
+     *        If {@code newPassword} is {@code null}.
      */
     public void changePassword(String newPassword)
     {
         if (newPassword == null)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Null newPassword");
         
         if (getConfig("config.yml").getBoolean("passwords.disable"))
             return;
@@ -206,84 +324,141 @@ public final class Account extends LogItCoreObject
         entry.put(keys().hashing_algorithm(), hashingAlgorithm.encode());
     }
     
+    /**
+     * Returns the IP address.
+     *
+     * <p> This method requires the following keys to exist in the underlying
+     * storage entry: <i>ip</i>.
+     *
+     * @return The IP address.
+     *
+     * @throws IllegalArgumentException
+     *        If the underlying entry does not contain the required keys.
+     */
     public String getIp()
     {
         if (!entry.containsKey(keys().ip()))
-            throw new IllegalArgumentException("Missing key: ip");
+            throw new IllegalArgumentException("Missing entry key: ip");
         
         return entry.get(keys().ip());
     }
     
     /**
-     * Attaches an IP address to this {@code AccountData}.
+     * Changes the IP address.
      * 
-     * @param ip the IP address to be attached.
+     * @param ip
+     *       The new IP address.
      * 
-     * @throws IllegalArgumentException if {@code ip} is {@code null}
-     *                                  or not a valid IPv4/6 address.
+     * @throws IllegalArgumentException
+     *        If {@code ip} is {@code null} or is not a valid IPv4/6 address.
      */
     public void setIp(String ip)
     {
+        if (ip == null)
+            throw new IllegalArgumentException("Null ip");
+        
         if (!Validators.validateIp(ip))
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("ip is not a valid IPv4/6 address");
         
         entry.put(keys().ip(), ip);
     }
     
+    /**
+     * Removes the IP address.
+     */
     public void removeIp()
     {
         entry.put(keys().ip(), "");
     }
     
+    /**
+     * Returns the login-session string.
+     *
+     * <p> This method requires the following keys to exist in the underlying
+     * storage entry: <i>login_session</i>.
+     *
+     * @return The login-session string.
+     *
+     * @throws IllegalArgumentException
+     *        If the underlying entry does not contain the required keys.
+     */
     public String getLoginSession()
     {
         if (!entry.containsKey(keys().login_session()))
-            throw new IllegalArgumentException("Missing key: login_session");
+            throw new IllegalArgumentException("Missing entry key: login_session");
         
         return entry.get(keys().login_session());
     }
     
     /**
-     * Saves login session for this {@code Account}.
-     * 
-     * @param ip   the player IP address.
-     * @param time the UNIX time of when the login session was saved.
-     * 
-     * @throws IllegalArgumentException if {@code ip} is {@code null}
-     *                                  or not a valid IPv4/6 address,
-     *                                  or {@code time} is negative.
-     *                                  
-     * @throws ReportedException        if an I/O error occurred,
-     *                                  and it was reported to the logger.
+     * Saves login session.
+     *
+     * @param ip
+     *       The player IP address.
+     * @param time
+     *       The UNIX time of when the login session was saved.
+     *
+     * @throws IllegalArgumentException
+     *        If {@code ip} is {@code null} or is not a valid IPv4/6 address,
+     *        or if {@code time} is negative.
      */
     public void saveLoginSession(String ip, long time)
     {
-        if (!Validators.validateIp(ip) || time < 0)
-            throw new IllegalArgumentException();
+        if (ip == null)
+            throw new IllegalArgumentException("Null ip");
+        
+        if (!Validators.validateIp(ip))
+            throw new IllegalArgumentException("ip is not a valid IPv4/6 address");
+        
+        if (time < 0)
+            throw new IllegalArgumentException("Negative time");
         
         entry.put(keys().login_session(), ip + ";" + time);
     }
     
     /**
-     * Erases login session of this {@code Account}.
+     * Erases the login session.
      */
     public void eraseLoginSession()
     {
         entry.put(keys().login_session(), "");
     }
     
+    /**
+     * Returns the e-mail address.
+     *
+     * <p> This method requires the following keys to exist in the underlying
+     * storage entry: <i>email</i>.
+     *
+     * @return The e-mail address.
+     *
+     * @throws IllegalArgumentException
+     *        If the underlying entry does not contain the required keys.
+     */
     public String getEmail()
     {
         if (!entry.containsKey(keys().email()))
-            throw new IllegalArgumentException("Missing key: email");
+            throw new IllegalArgumentException("Missing entry key: email");
         
         return entry.get(keys().email()).toLowerCase();
     }
     
+    /**
+     * Changes the e-mail address.
+     * 
+     * @param email
+     *       The new e-mail address.
+     *
+     * @throws IllegalArgumentException
+     *        If {@code email} is {@code null} or is not a valid e-mail address.
+     */
     public void setEmail(String email)
     {
+        if (email == null)
+            throw new IllegalArgumentException("Null email");
+        
         if (!Validators.validateEmail(email))
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("email is not a valid e-mail address");
         
         entry.put(keys().email(), email.toLowerCase());
     }
@@ -293,66 +468,147 @@ public final class Account extends LogItCoreObject
         entry.put(keys().email(), "");
     }
     
+    /**
+     * Returns the last-active date.
+     *
+     * <p> This method requires the following keys to exist in the underlying
+     * storage entry: <i>last_active_date</i>.
+     *
+     * @return The last-active date in UNIX time.
+     *
+     * @throws IllegalArgumentException
+     *        If the underlying entry does not contain the required keys.
+     */
     public long getLastActiveDate()
     {
         if (!entry.containsKey(keys().last_active_date()))
-            throw new IllegalArgumentException("Missing key: last_active_date");
+            throw new IllegalArgumentException("Missing entry key: last_active_date");
         
         return Long.parseLong(entry.get(keys().last_active_date()));
     }
     
     /**
-     * Updates last-active date of this {@code Account}, overwriting it
-     * with the current time retrieved when calling this method.
+     * Changes the last-active date.
      * 
-     * @param unixTime the last-active date in UNIX time.
+     * @param unixTime
+     *       The new last-active date in UNIX time.
      */
     public void setLastActiveDate(long unixTime)
     {
         entry.put(keys().last_active_date(), String.valueOf(unixTime));
     }
     
+    /**
+     * Returns the registration date.
+     *
+     * <p> This method requires the following keys to exist in the underlying
+     * storage entry: <i>reg_date</i>.
+     *
+     * @return The registration date in UNIX time.
+     *
+     * @throws IllegalArgumentException
+     *        If the underlying entry does not contain the required keys.
+     */
     public long getRegistrationDate()
     {
         if (!entry.containsKey(keys().reg_date()))
-            throw new IllegalArgumentException("Missing key: reg_date");
+            throw new IllegalArgumentException("Missing entry key: reg_date");
         
         return Long.parseLong(entry.get(keys().reg_date()));
     }
     
+    /**
+     * Changes the registration date.
+     *
+     * @param unixTime
+     *       The new registration date in UNIX time.
+     */
     public void setRegistrationDate(long unixTime)
     {
         entry.put(keys().reg_date(), String.valueOf(unixTime));
     }
     
+    /**
+     * Checks if this account has been locked.
+     *
+     * <p> This method requires the following keys to exist in the underlying
+     * storage entry: <i>is_locked</i>.
+     *
+     * @return {@code true} if this account is locked; {@code false} otherwise.
+     *
+     * @throws IllegalArgumentException
+     *        If the underlying entry does not contain the required keys.
+     */
     public boolean isLocked()
     {
         if (!entry.containsKey(keys().is_locked()))
-            throw new IllegalArgumentException("Missing key: is_locked");
+            throw new IllegalArgumentException("Missing entry key: is_locked");
         
         return entry.get(keys().is_locked()).equals("1");
     }
     
+    /**
+     * Locks or unlocks this account.
+     *
+     * <p> Locked accounts disallow their owners to join the game.
+     *
+     * @param locked
+     *       Whether this account should be locked or unlocked.
+     */
     public void setLocked(boolean locked)
     {
         entry.put(keys().is_locked(), locked ? "1" : "0");
     }
     
+    /**
+     * Returns the login history.
+     *
+     * <p> This method requires the following keys to exist in the underlying
+     * storage entry: <i>login_history</i>.
+     *
+     * @return The login history.
+     *
+     * @throws IllegalArgumentException
+     *        If the underlying entry does not contain the required keys.
+     */
     public List<String> getLoginHistory()
     {
         if (!entry.containsKey(keys().login_history()))
-            throw new IllegalArgumentException("Missing key: login_history");
+            throw new IllegalArgumentException("Missing entry key: login_history");
         
         return new ArrayList<>(Arrays.asList(entry.get(keys().login_history()).split("\\|")));
     }
     
+    /**
+     * Records a player login.
+     *
+     * @param unixTime
+     *       The UNIX time of the recorded login.
+     *
+     * @param ip
+     *       An IP address of the player who tried to log in.
+     *
+     * @param succeeded
+     *       Whether the login succeeded or failed. By <i>succeeded</i> I mean
+     *       that the entered password was correct.
+     *
+     * @throws IllegalArgumentException
+     *        If {@code unixTime} is negative, or {@code ip} is {@code null}
+     *        or is not a valid IPv4/6 address.
+     */
     public void recordLogin(long unixTime, String ip, boolean succeeded)
     {
-        if (unixTime < 0 || !Validators.validateIp(ip))
-            throw new IllegalArgumentException();
+        if (unixTime < 0)
+            throw new IllegalArgumentException("Negative unixTime");
+        
+        if (ip == null)
+            throw new IllegalArgumentException("Null ip");
+        
+        if (!Validators.validateIp(ip))
+            throw new IllegalArgumentException("ip is not a valid IPv4/6 address");
         
         if (!entry.containsKey(keys().login_history()))
-            throw new IllegalArgumentException("Missing key: login_history");
+            throw new IllegalArgumentException("Missing entry key: login_history");
         
         String historyString = entry.get(keys().login_history());
         List<String> records = new ArrayList<>(Arrays.asList(historyString.split("\\|")));
@@ -379,36 +635,62 @@ public final class Account extends LogItCoreObject
         entry.put(keys().login_history(), historyBuilder.toString());
     }
     
+    /**
+     * Returns the display name.
+     *
+     * <p> This method requires the following keys to exist in the underlying
+     * storage entry: <i>display_name</i>.
+     *
+     * @return The display name.
+     *
+     * @throws IllegalArgumentException
+     *        If the underlying entry does not contain the required keys.
+     */
     public String getDisplayName()
     {
         if (!entry.containsKey(keys().display_name()))
-            throw new IllegalArgumentException("Missing key: display_name");
+            throw new IllegalArgumentException("Missing entry key: display_name");
         
         return entry.get(keys().display_name());
     }
     
+    /**
+     * Changes the display name.
+     *
+     * @param displayName
+     *       The new display name.
+     *
+     * @throws IllegalArgumentException
+     *        If {@code displayName} is {@code null}.
+     */
     public void setDisplayName(String displayName)
     {
         if (displayName == null)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Null displayName");
         
         entry.put(keys().display_name(), displayName);
     }
     
     /**
-     * Returns persistence data from this {@code Account}
-     * as a {@code Map}.
-     * 
-     * @return the persistence data; {@code null}
-     *         if an I/O error occurred.
-     * 
-     * @throws ReportedException if an I/O error occurred,
-     *                           and it was reported to the logger.
+     * Returns the persistence data as a {@code Map<String, String>}.
+     *
+     * <p> This method requires the following keys to exist in the underlying
+     * storage entry: <i>persistence</i>.
+     *
+     * @return The persistence data, or {@code null} if an I/O error occurred
+     *         whilst the deserialization process.
+     *
+     * @throws IllegalArgumentException
+     *        If the underlying entry does not contain the required keys.
+     *
+     * @throws ReportedException
+     *        If an I/O error occurred while deserializing the persistence,
+     *        and the error was reported to the logger.
      */
     public Map<String, String> getPersistence()
     {
         if (!entry.containsKey(keys().persistence()))
-            throw new IllegalArgumentException("Missing key: persistence");
+            throw new IllegalArgumentException("Missing entry key: persistence");
         
         String persistenceString = entry.get(keys().persistence());
         Map<String, String> persistence = new LinkedHashMap<>();
@@ -444,19 +726,22 @@ public final class Account extends LogItCoreObject
     }
     
     /**
-     * Saves persistence data to this {@code Account}.
+     * Saves persistence data.
      * 
-     * @param persistence the persistence data.
+     * @param persistence
+     *       The new persistence data.
      * 
-     * @throws IllegalArgumentException if {@code persistence} is {@code null}.
+     * @throws IllegalArgumentException
+     *        If {@code persistence} is {@code null}.
      * 
-     * @throws ReportedException        if an I/O error occurred,
-     *                                  and it was reported to the logger.
+     * @throws ReportedException
+     *        If an I/O error occurred while serializing the persistence,
+     *        and the error was reported to the logger.
      */
     public void savePersistence(Map<String, String> persistence)
     {
         if (persistence == null)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Null persistence");
         
         if (!getConfig("secret.yml").getBoolean("debug.writePersistence"))
             return;
@@ -484,10 +769,21 @@ public final class Account extends LogItCoreObject
         }
     }
     
+    /**
+     * Clones this {@code Account}.
+     *
+     * <p> A new {@code Storage.Entry} is created as a copy of the
+     * original entry.
+     *
+     * @param username
+     *       A username for the cloned account.
+     *
+     * @return The cloned {@code Account} object.
+     */
     public Account clone(String username)
     {
         if (StringUtils.isBlank(username))
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Null or blank username");
         
         Storage.Entry entryClone = entry.copy();
         
@@ -499,10 +795,19 @@ public final class Account extends LogItCoreObject
         return accountClone;
     }
     
+    /**
+     * Enqueues a new save-callback to be called when this accounts
+     * gets updated in a {@code Storage}.
+     *
+     * <p> Once the callback gets called, it is removed from the queue.
+     *
+     * @param callback
+     *       The save-callback to be enqueued.
+     */
     public void enqueueSaveCallback(SaveCallback callback)
     {
         if (callback == null)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Null callback");
         
         saveCallbacks.add(callback);
     }
@@ -587,21 +892,40 @@ public final class Account extends LogItCoreObject
     }
     
     /**
-     * Do not use unless you know what you're doing!
-     * 
-     * @return the account entry.
+     * Returns the underlying storage entry.
+     *
+     * <p> <b>Do not use unless you know what you're doing!</b>
+     *
+     * @return The account entry.
      */
     public Storage.Entry getEntry()
     {
         return entry;
     }
     
+    /**
+     * @see Account#enqueueSaveCallback(SaveCallback)
+     */
     public static interface SaveCallback
     {
+        /**
+         * Called after a save process.
+         * 
+         * @param success
+         *       Whether the account was successfully saved in a
+         *       {@code Storage}.
+         */
         public void onSave(boolean success);
     }
     
+    /**
+     * Used for {@link #recordLogin(long, String, boolean)}.
+     */
     public static final boolean LOGIN_SUCCESS = true;
+    
+    /**
+     * Used for {@link #recordLogin(long, String, boolean)}.
+     */
     public static final boolean LOGIN_FAIL = false;
     
     private final Storage.Entry entry;
