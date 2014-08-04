@@ -515,21 +515,75 @@ public final class Account extends LogItCoreObject
         }
     }
     
+    /**
+     * Fills with defaults keys that are missing in this account.
+     */
     private void fillWithDefaults()
     {
-        entry.put(keys().uuid(), "");
-        entry.put(keys().salt(), "");
-        entry.put(keys().password(), "");
-        entry.put(keys().hashing_algorithm(), "");
-        entry.put(keys().ip(), "");
-        entry.put(keys().login_session(), "");
-        entry.put(keys().email(), "");
-        entry.put(keys().last_active_date(), "-1");
-        entry.put(keys().reg_date(), "-1");
-        entry.put(keys().is_locked(), "0");
-        entry.put(keys().login_history(), "");
-        entry.put(keys().display_name(), "");
-        entry.put(keys().persistence(), "");
+        if (!entry.containsKey(keys().uuid()))
+        {
+            entry.put(keys().uuid(), "");
+        }
+        
+        if (!entry.containsKey(keys().salt()))
+        {
+            entry.put(keys().salt(), "");
+        }
+        
+        if (!entry.containsKey(keys().password()))
+        {
+            entry.put(keys().password(), "");
+        }
+        
+        if (!entry.containsKey(keys().hashing_algorithm()))
+        {
+            entry.put(keys().hashing_algorithm(), "");
+        }
+        
+        if (!entry.containsKey(keys().ip()))
+        {
+            entry.put(keys().ip(), "");
+        }
+        
+        if (!entry.containsKey(keys().login_session()))
+        {
+            entry.put(keys().login_session(), "");
+        }
+        
+        if (!entry.containsKey(keys().email()))
+        {
+            entry.put(keys().email(), "");
+        }
+        
+        if (!entry.containsKey(keys().last_active_date()))
+        {
+            entry.put(keys().last_active_date(), "-1");
+        }
+        
+        if (!entry.containsKey(keys().reg_date()))
+        {
+            entry.put(keys().reg_date(), "-1");
+        }
+        
+        if (!entry.containsKey(keys().is_locked()))
+        {
+            entry.put(keys().is_locked(), "0");
+        }
+        
+        if (!entry.containsKey(keys().login_history()))
+        {
+            entry.put(keys().login_history(), "");
+        }
+        
+        if (!entry.containsKey(keys().display_name()))
+        {
+            entry.put(keys().display_name(), "");
+        }
+        
+        if (!entry.containsKey(keys().persistence()))
+        {
+            entry.put(keys().persistence(), "");
+        }
     }
     
     /**
