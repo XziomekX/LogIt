@@ -27,7 +27,8 @@ public enum HashingAlgorithm
     
     private HashingAlgorithm(String name)
     {
-        assert name != null;
+        if (name == null)
+            throw new IllegalArgumentException("Null name");
         
         this.name = name;
     }

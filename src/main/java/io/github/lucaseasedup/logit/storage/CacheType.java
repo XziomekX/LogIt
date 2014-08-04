@@ -24,7 +24,8 @@ public enum CacheType
     
     private CacheType(String name)
     {
-        assert name != null;
+        if (name == null)
+            throw new IllegalArgumentException("Null name");
         
         this.name = name;
     }
