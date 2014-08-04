@@ -215,7 +215,7 @@ public final class Account extends LogItCoreObject
     }
     
     /**
-     * Checks if passwords match.
+     * Checks whether passwords match.
      *
      * <p> The given password will be hashed using the algorithm specified
      * in the hashing_algorithm key. If this key does not represent a valid
@@ -529,7 +529,7 @@ public final class Account extends LogItCoreObject
     }
     
     /**
-     * Checks if this account has been locked.
+     * Checks whether this account has been locked.
      *
      * <p> This method requires the following keys to exist in the underlying
      * storage entry: <i>is_locked</i>.

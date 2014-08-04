@@ -42,9 +42,14 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public final class SessionManager extends LogItCoreObject
-        implements Iterable<Map.Entry<String, Session>>, Runnable
+/**
+ * Provides a facility manage login sessions.
+ */
+public final class SessionManager extends LogItCoreObject implements Runnable
 {
+    /**
+     * Do not call directly.
+     */
     @Override
     public void dispose()
     {
@@ -141,12 +146,13 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Returns a session associated with a username.
+     * Returns a {@code Session} object associated with a specific username.
      * 
-     * @param username the username.
+     * @param username
+     *       The username.
      * 
-     * @return the {@code Session} object, or {@code null} if no session
-     *         has been associated with this username.
+     * @return The {@code Session} object, or {@code null} if no session
+     *         is associated with this username.
      */
     public Session getSession(String username)
     {
@@ -154,12 +160,13 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Returns a session associated with a player.
+     * Returns a {@code Session} object associated with a specific player.
      * 
-     * @param player the player.
+     * @param player
+     *       The player.
      * 
-     * @return the {@code Session} object, or {@code null} if no session
-     *         has been associated with this player's name.
+     * @return The {@code Session} object, or {@code null} if no session
+     *         is associated with this player.
      */
     public Session getSession(Player player)
     {
@@ -167,17 +174,19 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Checks whether a session associated with a username is alive.
-     * 
-     * <p> Returns {@code true} if such session exists, is alive and,
-     * if a player with this username is online, player IP matches session IP;
-     * {@code false} otherwise.
-     * 
-     * @param username the username.
-     * 
-     * @return {@code true} if such session is alive; {@code false} otherwise.
-     * 
-     * @throws IllegalArgumentException if {@code username} is {@code null}.
+     * Checks whether the session associated with a specific username is alive.
+     *
+     * @param username
+     *       The username.
+     *
+     * @return {@code true} if such session exists, is alive and,
+     *         if a player with this username is online, player IP matches
+     *         session IP; {@code false} otherwise.
+     *
+     * @throws IllegalArgumentException
+     *        If {@code username} is {@code null}.
+     *
+     * @see #isSessionAlive(Player)
      */
     public boolean isSessionAlive(String username)
     {
@@ -203,15 +212,14 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Checks if a session associated with a player is alive.
-     * 
-     * <p> Returns {@code true} if such session exists, is alive
-     * and player IP matches session IP; {@code false} otherwise.
-     * 
-     * @param player the player.
-     * 
-     * @return {@code true} if {@code player} is not {@code null}
-     *         and the session is alive; {@code false} otherwise.
+     * Checks whether a session associated with a specific player is alive.
+     *
+     * @param player
+     *       The player.
+     *
+     * @return {@code true} if {@code player} is not {@code null},
+     *         such session exists, is alive and player IP matches session IP;
+     *         {@code false} otherwise.
      */
     public boolean isSessionAlive(Player player)
     {
@@ -229,18 +237,21 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Creates a new session and associates it with a player.
-     * 
+     * Creates a new session and associates it with a specific player.
+     *
      * <p> If a session for this player already exists, no action will be taken.
-     * 
+     *
      * <p> This method emits the {@code SessionCreateEvent} event.
-     * 
-     * @param player the player.
-     * 
-     * @return a {@code CancellableState} indicating whether this operation
-     *         has been cancelled by one of the {@code SessionCreateEvent} handlers.
-     * 
-     * @throws IllegalArgumentException if {@code player} is {@code null}.
+     *
+     * @param player
+     *       The player.
+     *
+     * @return A {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code SessionCreateEvent}
+     *         handlers.
+     *
+     * @throws IllegalArgumentException
+     *        If {@code player} is {@code null}.
      */
     public CancelledState createSession(Player player)
     {
@@ -271,7 +282,7 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Destroys a session associated with the given username.
+     * Destroys a session associated with a specific username.
      * 
      * <p> If no session for this username exists, no action will be taken.
      * If the session exists and is alive, this method will try to end it
@@ -279,13 +290,15 @@ public final class SessionManager extends LogItCoreObject
      * 
      * <p> This method emits the {@code SessionDestroyEvent} event.
      * 
-     * @param username the username.
+     * @param username
+     *       The username.
      * 
-     * @return a {@code CancellableState} indicating whether this operation
+     * @return A {@code CancellableState} indicating whether this operation
      *         has been cancelled by one of the {@code SessionDestroyEvent}
      *         handlers.
      * 
-     * @throws IllegalArgumentException if {@code username} is {@code null}.
+     * @throws IllegalArgumentException
+     *        If {@code username} is {@code null}.
      */
     public CancelledState destroySession(String username)
     {
@@ -318,19 +331,23 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Destroys a session associated with a player.
+     * Destroys a session associated with a specific player.
      * 
      * <p> If no session for this player exists, no action will be taken.
-     * If the session exists and is alive, this method will try to end it before proceeding.
+     * If the session exists and is alive, this method will try to end it
+     * before proceeding.
      * 
      * <p> This method emits the {@code SessionDestroyEvent} event.
      * 
-     * @param player the player.
+     * @param player
+     *       The player.
      * 
-     * @return a {@code CancellableState} indicating whether this operation
-     *         has been cancelled by one of the {@code SessionDestroyEvent} handlers.
+     * @return A {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code SessionDestroyEvent}
+     *         handlers.
      * 
-     * @throws IllegalArgumentException if {@code player} is {@code null}.
+     * @throws IllegalArgumentException
+     *        If {@code player} is {@code null}.
      */
     public CancelledState destroySession(Player player)
     {
@@ -341,19 +358,23 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Starts a session associated with a player.
+     * Starts a session associated with a specific player.
      * 
-     * <p> If the session has already been started (e.i. is alive), no action will be taken.
-     * If no session exists for this player, it will be created.
+     * <p> If the session has already been started (e.i. is alive),
+     * no action will be taken. If no session exists for this player,
+     * it will be created.
      * 
      * <p> This method emits the {@code SessionStartEvent} event.
      * 
-     * @param player the player.
+     * @param player
+     *       The player.
      * 
-     * @return a {@code CancellableState} indicating whether this operation
-     *         has been cancelled by one of the {@code SessionStartEvent} handlers.
+     * @return A {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code SessionStartEvent}
+     *         handlers.
      * 
-     * @throws IllegalArgumentException if {@code player} is {@code null}.
+     * @throws IllegalArgumentException
+     *        If {@code player} is {@code null}.
      */
     public CancelledState startSession(Player player)
     {
@@ -390,19 +411,23 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Starts a session associated with a username.
+     * Starts a session associated with a specific username.
      * 
-     * <p> If the session has already been started (e.i. is alive), no action will be taken.
-     * If no session exists for this username, it will be created.
+     * <p> If the session has already been started (e.i. is alive),
+     * no action will be taken. If no session exists for this username,
+     * it will be created.
      * 
      * <p> This method emits the {@code SessionStartEvent} event.
      * 
-     * @param username the username.
+     * @param username
+     *       The username.
      * 
-     * @return a {@code CancellableState} indicating whether this operation
-     *         has been cancelled by one of the {@code SessionStartEvent} handlers.
+     * @return A {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code SessionStartEvent}
+     *         handlers.
      * 
-     * @throws IllegalArgumentException if {@code player} is {@code null}.
+     * @throws IllegalArgumentException
+     *        If {@code player} is {@code null}.
      * 
      * @deprecated Use {@link #startSession(Player)} instead.
      */
@@ -425,19 +450,22 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Ends a session associated with a username.
-     * 
+     * Ends a session associated with a specific username.
+     *
      * <p> If the session is not alive or does not exist,
      * no action will be taken.
-     * 
+     *
      * <p> This method emits the {@code SessionEndEvent} event.
-     * 
-     * @param username the username.
-     * 
-     * @return a {@code CancellableState} indicating whether this operation
-     *         has been cancelled by one of the {@code SessionEndEvent} handlers.
-     * 
-     * @throws IllegalArgumentException if {@code username} is {@code null}.
+     *
+     * @param username
+     *       The username.
+     *
+     * @return A {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code SessionEndEvent}
+     *         handlers.
+     *
+     * @throws IllegalArgumentException
+     *        If {@code username} is {@code null}.
      */
     public CancelledState endSession(String username)
     {
@@ -469,19 +497,22 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Ends a session associated with a player.
-     * 
+     * Ends a session associated with a specific player.
+     *
      * <p> If the session is not alive or does not exist,
      * no action will be taken.
-     * 
+     *
      * <p> This method emits the {@code SessionEndEvent} event.
-     * 
-     * @param player the player.
-     * 
-     * @return a {@code CancellableState} indicating whether this operation
-     *         has been cancelled by one of the {@code SessionEndEvent} handlers.
-     * 
-     * @throws IllegalArgumentException if {@code player} is {@code null}.
+     *
+     * @param player
+     *       The player.
+     *
+     * @return A {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code SessionEndEvent}
+     *         handlers.
+     *
+     * @throws IllegalArgumentException
+     *        If {@code player} is {@code null}.
      */
     public CancelledState endSession(Player player)
     {
@@ -492,13 +523,13 @@ public final class SessionManager extends LogItCoreObject
     }
     
     /**
-     * Creates an iterator over the sessions in this {@code SessionManager}
-     * with element removing disabled.
-     * 
-     * @return the session iterator.
+     * Returns an iterator over the sessions in this {@code SessionManager}.
+     *
+     * <p> Element removal is not supported.
+     *
+     * @return The session iterator.
      */
-    @Override
-    public Iterator<Map.Entry<String, Session>> iterator()
+    public Iterator<Map.Entry<String, Session>> sessionIterator()
     {
         return newSessionIterator();
     }
@@ -532,13 +563,17 @@ public final class SessionManager extends LogItCoreObject
     
     /**
      * Exports all sessions from this {@code SessionManager} to a file.
-     * 
+     *
      * <p> The file will be deleted before exporting.
-     * 
-     * @param file the file to which the sessions will be exported.
-     * 
-     * @throws IOException if an I/O error occurred.
-     * @throws IllegalArgumentException if {@code file} is {@code null}.
+     *
+     * @param file
+     *       The file to which the sessions will be exported.
+     *
+     * @throws IOException
+     *        If an I/O error occurred.
+     *
+     * @throws IllegalArgumentException
+     *        If {@code file} is {@code null}.
      */
     public void exportSessions(File file) throws IOException
     {
@@ -581,14 +616,21 @@ public final class SessionManager extends LogItCoreObject
     
     /**
      * Imports all sessions from a file to this {@code SessionManager}.
-     * 
-     * <p> Only the sessions that don't exist in this {@code SessionManager} will be imported.
-     * 
-     * @param file the file from which the sessions will be imported.
-     * 
-     * @throws FileNotFoundException if no such file exists.
-     * @throws IOException if an I/O error occurred.
-     * @throws IllegalArgumentException if {@code file} is {@code null}.
+     *
+     * <p> Only the sessions that don't exist in this {@code SessionManager}
+     * will be imported.
+     *
+     * @param file
+     *       The file from which the sessions will be imported.
+     *
+     * @throws FileNotFoundException
+     *        If no such file exists.
+     *
+     * @throws IOException
+     *        If an I/O error occurred.
+     *
+     * @throws IllegalArgumentException
+     *        If {@code file} is {@code null}.
      */
     public void importSessions(File file) throws FileNotFoundException, IOException
     {

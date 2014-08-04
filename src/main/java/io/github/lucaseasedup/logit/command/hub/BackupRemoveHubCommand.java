@@ -137,6 +137,7 @@ public final class BackupRemoveHubCommand extends HubCommand
         }
         catch (ParseException ex)
         {
+            // If an exception occurred, firstBackupDate will stay nulled.
         }
         
         if (limitedAmount == 1)
@@ -156,6 +157,7 @@ public final class BackupRemoveHubCommand extends HubCommand
             }
             catch (ParseException ex)
             {
+                // If an exception occurred, lastBackupDate will stay nulled.
             }
             
             sendMsg(sender, t("removeBackups.confirm.date.range.start")

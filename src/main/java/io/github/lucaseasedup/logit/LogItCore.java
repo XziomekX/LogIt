@@ -111,6 +111,9 @@ import org.mcsg.double0negative.tabapi.TabAPI;
 
 /**
  * The central part of LogIt.
+ * 
+ * <p> There is only one instance of {@code LogItCore}, obtainable using
+ * {@link #getInstance()}.
  */
 public final class LogItCore
 {
@@ -123,15 +126,17 @@ public final class LogItCore
     
     /**
      * Starts up the LogIt core.
-     * 
-     * @return a {@code CancellableState} indicating whether this operation
-     *         has been cancelled by one of the {@code LogItCoreStartEvent} handlers.
-     * 
-     * @throws FatalReportedException if a critical error occurred
-     *                                and LogIt could not start.
-     *                                
-     * @throws IllegalStateException  if the LogIt core is already running.
-     * 
+     *
+     * @return A {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code LogItCoreStartEvent}
+     *         handlers.
+     *
+     * @throws FatalReportedException
+     *        If a critical error occurred and LogIt could not start.
+     *
+     * @throws IllegalStateException
+     *        If the LogIt core is already running.
+     *
      * @see #isStarted()
      * @see #stop()
      */
@@ -440,7 +445,7 @@ public final class LogItCore
                 new StorageFactory(getConfig("config.yml"), "storage.accounts.leading")
                         .produceStorage(leadingStorageType);
         
-        Storage mirrorAccountStorage = 
+        Storage mirrorAccountStorage =
                 new StorageFactory(getConfig("config.yml"), "storage.accounts.mirror")
                         .produceStorage(mirrorStorageType);
         
@@ -691,7 +696,8 @@ public final class LogItCore
     /**
      * Stops the LogIt core.
      * 
-     * @throws IllegalStateException if the LogIt core is not running.
+     * @throws IllegalStateException
+     *        If the LogIt core is not running.
      * 
      * @see #isStarted()
      * @see #start()
@@ -875,10 +881,13 @@ public final class LogItCore
     
     /**
      * Restarts the LogIt core.
-     * 
-     * @throws FatalReportedException if the LogIt core could not be started again.
-     * @throws IllegalStateException  if the LogIt core is not running.
-     * 
+     *
+     * @throws FatalReportedException
+     *        If the LogIt core could not be started again.
+     *
+     * @throws IllegalStateException
+     *        If the LogIt core is not running.
+     *
      * @see #isStarted()
      * @see #start()
      */
@@ -940,16 +949,19 @@ public final class LogItCore
      * <p> Returns {@code true} if the <i>forceLogin.global</i> config setting
      * is set to <i>true</i>, or the player is in a world with forced login.
      * 
-     * <p> If the player name is contained in the <i>forceLogin.exemptPlayers</i>
-     * config property, it always returns {@code false} regardless of the above conditions.
+     * <p> If the player name is contained in the
+     * <i>forceLogin.exemptPlayers</i> config property, it always returns
+     * {@code false} regardless of the above conditions.
      * 
      * <p> Note that this method does not check if the player is logged in.
      * For that purpose, use {@link SessionManager#isSessionAlive(Player)}
      * or {@link SessionManager#isSessionAlive(String)}.
      * 
-     * @param player the player whom this check will be ran on.
+     * @param player
+     *       The player whom this check will be ran on.
      * 
-     * @return {@code true} if the player is forced to log in; {@code false} otherwise.
+     * @return {@code true} if the player is forced to log in;
+     *         {@code false} otherwise.
      */
     public boolean isPlayerForcedToLogIn(Player player)
     {
@@ -968,19 +980,23 @@ public final class LogItCore
     
     /**
      * Updates permission groups for a player only if LogIt is linked to Vault.
-     * 
+     *
+     * <p> If Vault is not enabled, no action will be taken.
+     *
      * <p> Permission groups currently supported: <ul>
      *  <li>Registered</li>
      *  <li>Not registered</li>
      *  <li>Logged in</li>
      *  <li>Logged out</li>
      * </ul>
-     * 
+     *
      * <p> Exact group names will be read from the configuration file.
-     * 
-     * @param player the player whose permission groups should be updated.
-     * 
-     * @throws IllegalArgumentException if {@code player} is {@code null}.
+     *
+     * @param player
+     *       The player whose permission groups should be updated.
+     *
+     * @throws IllegalArgumentException
+     *        If {@code player} is {@code null}.
      */
     public void updatePlayerGroup(Player player)
     {
@@ -1058,13 +1074,13 @@ public final class LogItCore
     }
     
     /**
-     * Returns the LogIt plugin object.
+     * Returns the {@code LogItPlugin} object.
      * 
      * <p> Most of times, all the work will be done with the LogIt core,
      * but the {@code LogItPlugin} may come useful if you want to,
      * for example, reload the message files.
      * 
-     * @return the LogIt plugin object.
+     * @return The {@code LogItPlugin} object.
      */
     public LogItPlugin getPlugin()
     {
@@ -1072,9 +1088,10 @@ public final class LogItCore
     }
     
     /**
-     * Returns the LogIt data folder as a {@code File} object (<i>/plugins/LogIt/</i>).
+     * Returns the LogIt data folder as a {@code File} object
+     * (<i>/plugins/LogIt/</i>).
      * 
-     * @return the data folder.
+     * @return The data folder.
      */
     public File getDataFolder()
     {
@@ -1085,9 +1102,10 @@ public final class LogItCore
      * Returns a file, as a {@code File} object,
      * relative to the LogIt data folder (<i>/plugins/LogIt/</i>).
      * 
-     * @param path the relative path.
+     * @param path
+     *       The relative path.
      * 
-     * @return the data file.
+     * @return The data file.
      */
     public File getDataFile(String path)
     {
@@ -1108,7 +1126,8 @@ public final class LogItCore
     /**
      * Checks if the LogIt core has been successfully started and is running.
      * 
-     * @return {@code true} if the LogIt core is started; {@code false} otherwise.
+     * @return {@code true} if the LogIt core is started;
+     *         {@code false} otherwise.
      */
     public boolean isStarted()
     {
@@ -1215,7 +1234,7 @@ public final class LogItCore
     /**
      * The preferred way to obtain the instance of {@code LogItCore}.
      * 
-     * @return the instance of {@code LogItCore}.
+     * @return The instance of {@code LogItCore}.
      */
     public static LogItCore getInstance()
     {

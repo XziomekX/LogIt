@@ -101,6 +101,8 @@ public final class CommandSilencer implements Disposable
         }
         catch (ClassNotFoundException | NoClassDefFoundError ex)
         {
+            // If the class was not found, it means we're running an old
+            // version of CraftBukkit. Standard logger will be used instead.
         }
     }
     

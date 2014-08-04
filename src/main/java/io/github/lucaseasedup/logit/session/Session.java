@@ -102,7 +102,7 @@ public final class Session
     }
     
     /**
-     * Checks if this session is alive.
+     * Checks whether this session is alive.
      * 
      * <p> A session is alive when its status is greater or equal to {@code 0}.
      * 
