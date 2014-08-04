@@ -42,7 +42,6 @@ import io.github.lucaseasedup.logit.command.RegisterCommand;
 import io.github.lucaseasedup.logit.command.RememberCommand;
 import io.github.lucaseasedup.logit.command.UnregisterCommand;
 import io.github.lucaseasedup.logit.common.CancellableEvent;
-import io.github.lucaseasedup.logit.common.CancelledState;
 import io.github.lucaseasedup.logit.common.FatalReportedException;
 import io.github.lucaseasedup.logit.common.PlayerCollections;
 import io.github.lucaseasedup.logit.common.Wrapper;
