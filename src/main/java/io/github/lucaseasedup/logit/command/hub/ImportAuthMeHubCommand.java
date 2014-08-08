@@ -245,32 +245,38 @@ public final class ImportAuthMeHubCommand extends HubCommand
                         }
                         
                         String world = authMeEntry.get(dataSourceMySqlColumnLastLocWorld);
-                        String x = authMeEntry.get(dataSourceMySqlColumnLastLocX);
-                        String y = authMeEntry.get(dataSourceMySqlColumnLastLocY);
-                        String z = authMeEntry.get(dataSourceMySqlColumnLastLocZ);
                         
-                        if (!y.equals("0.0"))
+                        if (dataSourceMySqlColumnLastLocX != null
+                                && dataSourceMySqlColumnLastLocY != null
+                                && dataSourceMySqlColumnLastLocZ != null)
                         {
-                            Map<String, Map<String, String>> persistenceIni = new HashMap<>();
-                            Map<String, String> persistence = new LinkedHashMap<>();
+                            String x = authMeEntry.get(dataSourceMySqlColumnLastLocX);
+                            String y = authMeEntry.get(dataSourceMySqlColumnLastLocY);
+                            String z = authMeEntry.get(dataSourceMySqlColumnLastLocZ);
                             
-                            persistence.put("world", world);
-                            persistence.put("x", x);
-                            persistence.put("y", y);
-                            persistence.put("z", z);
-                            persistence.put("yaw", "0.0");
-                            persistence.put("pitch", "0.0");
-                            
-                            persistenceIni.put("persistence", persistence);
-                            
-                            String persistenceString = IniUtils.serialize(persistenceIni);
-                            
-                            if (getConfig("secret.yml").getBoolean("debug.encodePersistence"))
+                            if (!y.equals("0.0"))
                             {
-                                persistenceString = Base64.encode(persistenceString);
+                                Map<String, Map<String, String>> persistenceIni = new HashMap<>();
+                                Map<String, String> persistence = new LinkedHashMap<>();
+                                
+                                persistence.put("world", world);
+                                persistence.put("x", x);
+                                persistence.put("y", y);
+                                persistence.put("z", z);
+                                persistence.put("yaw", "0.0");
+                                persistence.put("pitch", "0.0");
+                                
+                                persistenceIni.put("persistence", persistence);
+                                
+                                String persistenceString = IniUtils.serialize(persistenceIni);
+                                
+                                if (getConfig("secret.yml").getBoolean("debug.encodePersistence"))
+                                {
+                                    persistenceString = Base64.encode(persistenceString);
+                                }
+                                
+                                logItEntryBuilder.put(keys().persistence(), persistenceString);
                             }
-                            
-                            logItEntryBuilder.put(keys().persistence(), persistenceString);
                         }
                         
                         logItAccounts.add(new Account(logItEntryBuilder.build()));
