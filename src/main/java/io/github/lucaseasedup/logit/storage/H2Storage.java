@@ -35,6 +35,9 @@ public final class H2Storage extends Storage
 {
     public H2Storage(String host)
     {
+        if (host == null)
+            throw new IllegalArgumentException();
+        
         this.host = host;
     }
     

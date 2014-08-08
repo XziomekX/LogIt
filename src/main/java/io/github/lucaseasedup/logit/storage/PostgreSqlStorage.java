@@ -35,6 +35,9 @@ public final class PostgreSqlStorage extends Storage
 {
     public PostgreSqlStorage(String host, String user, String password)
     {
+        if (host == null || user == null || password == null)
+            throw new IllegalArgumentException();
+        
         this.host = host;
         this.user = user;
         this.password = password;

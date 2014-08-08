@@ -33,6 +33,9 @@ public final class SqliteStorage extends Storage
 {
     public SqliteStorage(String host)
     {
+        if (host == null)
+            throw new IllegalArgumentException();
+        
         this.host = host;
     }
     

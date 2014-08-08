@@ -35,6 +35,9 @@ public final class MySqlStorage extends Storage
 {
     public MySqlStorage(String host, String user, String password, String database)
     {
+        if (host == null || user == null || password == null || database == null)
+            throw new IllegalArgumentException();
+        
         this.host = host;
         this.user = user;
         this.password = password;
