@@ -29,6 +29,7 @@ import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.Selector;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
+import io.github.lucaseasedup.logit.storage.SelectorConstant;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.storage.Storage.Entry.Datum;
 import io.github.lucaseasedup.logit.storage.StorageObserver;
@@ -38,8 +39,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -311,6 +314,37 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         }
         
         return accounts;
+    }
+    
+    /**
+     * Returns all registered usernames in this {@code AccountManager}.
+     *
+     * @return A {@code Set} containing all registered usernames lowercase, or
+     *         {@code null} if an I/O error occurred.
+     *
+     * @throws ReportedException
+     *        If an I/O error occurred, and it was reported to the logger.
+     */
+    public Set<String> getRegisteredUsernames()
+    {
+        List<Account> accounts = getAccountManager().selectAccounts(
+                Arrays.asList(
+                        keys().username()
+                ),
+                new SelectorConstant(true)
+        );
+        
+        if (accounts == null)
+            return null;
+        
+        Set<String> usernames = new LinkedHashSet<>();
+        
+        for (Account account : accounts)
+        {
+            usernames.add(account.getUsername());
+        }
+        
+        return usernames;
     }
     
     public CancelledState insertAccount(Account account)

@@ -27,7 +27,6 @@ import io.github.lucaseasedup.logit.command.wizard.ConfirmationWizard;
 import io.github.lucaseasedup.logit.common.ReportedException;
 import io.github.lucaseasedup.logit.security.AuthMePasswordHelper;
 import io.github.lucaseasedup.logit.storage.MySqlStorage;
-import io.github.lucaseasedup.logit.storage.SelectorConstant;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.IniUtils;
@@ -37,14 +36,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -192,7 +192,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
             return;
         }
         
-        List<Storage.Entry> logItEntries = new ArrayList<>();
+        List<Account> logItAccounts = new ArrayList<>();
         
         try
         {
@@ -221,10 +221,15 @@ public final class ImportAuthMeHubCommand extends HubCommand
                     
                     for (Storage.Entry authMeEntry : authMeEntries)
                     {
+                        String authMeUsername = authMeEntry.get(dataSourceMySqlColumnName);
+                        
+                        if (StringUtils.isBlank(authMeUsername))
+                            continue;
+                        
                         Storage.Entry.Builder logItEntryBuilder = new Storage.Entry.Builder();
                         
                         logItEntryBuilder.put(keys().username(),
-                                authMeEntry.get(dataSourceMySqlColumnName));
+                                StringUtils.lowerCase(authMeUsername));
                         logItEntryBuilder.put(keys().password(),
                                 authMeEntry.get(dataSourceMySqlColumnPassword));
                         logItEntryBuilder.put(keys().hashing_algorithm(),
@@ -268,7 +273,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
                             logItEntryBuilder.put(keys().persistence(), persistenceString);
                         }
                         
-                        logItEntries.add(logItEntryBuilder.build());
+                        logItAccounts.add(new Account(logItEntryBuilder.build()));
                     }
                 }
                 finally
@@ -295,7 +300,6 @@ public final class ImportAuthMeHubCommand extends HubCommand
                     while ((line = br.readLine()) != null)
                     {
                         String[] split = line.split(":");
-                        
                         Storage.Entry.Builder logItEntryBuilder = new Storage.Entry.Builder();
                         
                         if (split.length == 0)
@@ -303,7 +307,10 @@ public final class ImportAuthMeHubCommand extends HubCommand
                         
                         if (split.length >= 1)
                         {
-                            logItEntryBuilder.put(keys().username(), split[0]);
+                            if (StringUtils.isBlank(split[0]))
+                                continue;
+                            
+                            logItEntryBuilder.put(keys().username(), split[0].toLowerCase());
                         }
                         
                         if (split.length >= 2)
@@ -352,42 +359,32 @@ public final class ImportAuthMeHubCommand extends HubCommand
                             }
                         }
                         
-                        logItEntries.add(logItEntryBuilder.build());
+                        logItAccounts.add(new Account(logItEntryBuilder.build()));
                     }
                 }
             }
             
-            List<Account> accounts = getAccountManager().selectAccounts(
-                    Arrays.asList(
-                            keys().username()
-                    ),
-                    new SelectorConstant(true)
-            );
-            
-            Set<String> registeredUsernames = null;
-            
-            if (accounts != null)
-            {
-                registeredUsernames = new HashSet<>();
-                
-                for (Account account : accounts)
-                {
-                    registeredUsernames.add(account.getUsername().toLowerCase());
-                }
-            }
-            
+            Set<String> registeredUsernames = getAccountManager().getRegisteredUsernames();
             int accountsImported = 0;
             
-            for (Storage.Entry logItEntry : logItEntries)
+            Iterator<Account> it = logItAccounts.iterator();
+            
+            while (it.hasNext())
             {
+                Account logItAccount = it.next();
+                
                 if (registeredUsernames != null
-                        && !registeredUsernames.contains(logItEntry.get(keys().username())))
+                        && registeredUsernames.contains(logItAccount.getUsername()))
                 {
-                    getAccountManager().insertAccount(new Account(logItEntry));
+                    it.remove();
                     
-                    accountsImported++;
+                    continue;
                 }
+                
+                accountsImported++;
             }
+            
+            getAccountManager().insertAccounts(logItAccounts.toArray(new Account[0]));
             
             log(Level.INFO, t("import.authme.success")
                     .replace("{0}", String.valueOf(accountsImported)));
