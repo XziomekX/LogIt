@@ -38,6 +38,11 @@ public final class MySqlStorage extends Storage
         if (host == null || user == null || password == null || database == null)
             throw new IllegalArgumentException();
         
+        if (!host.startsWith("jdbc:mysql://"))
+        {
+            host = "jdbc:mysql://" + host;
+        }
+        
         this.host = host;
         this.user = user;
         this.password = password;

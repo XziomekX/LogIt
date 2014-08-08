@@ -38,6 +38,11 @@ public final class PostgreSqlStorage extends Storage
         if (host == null || user == null || password == null)
             throw new IllegalArgumentException();
         
+        if (!host.startsWith("jdbc:postgresql://"))
+        {
+            host = "jdbc:postgresql://" + host;
+        }
+        
         this.host = host;
         this.user = user;
         this.password = password;
