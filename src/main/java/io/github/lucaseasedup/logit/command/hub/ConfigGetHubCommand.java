@@ -70,6 +70,6 @@ public final class ConfigGetHubCommand extends HubCommand
         
         sendMsg(sender, t("config.get.property")
                 .replace("{0}", property.getPath())
-                .replace("{1}", property.getValue().toString()));
+                .replace("{1}", property.getStringifiedValue()));
     }
 }

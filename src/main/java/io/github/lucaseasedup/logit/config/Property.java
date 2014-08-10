@@ -19,6 +19,8 @@
 package io.github.lucaseasedup.logit.config;
 
 import io.github.lucaseasedup.logit.common.Disposable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Observable;
 import org.apache.commons.lang.StringUtils;
@@ -84,7 +86,6 @@ public final class Property extends Observable implements Disposable
         case OBJECT:
         case BOOLEAN:
         case COLOR:
-        case DOUBLE:
         case INT:
         case ITEM_STACK:
         case LONG:
@@ -92,6 +93,10 @@ public final class Property extends Observable implements Disposable
         case VECTOR:
         case LOCATION:
             sb.append(value.toString());
+            break;
+            
+        case DOUBLE:
+            sb.append(new BigDecimal(getDouble()).setScale(2));
             break;
             
         case LIST:
@@ -118,6 +123,18 @@ public final class Property extends Observable implements Disposable
     public Object getValue()
     {
         return value;
+    }
+    
+    public String getStringifiedValue()
+    {
+        switch (type)
+        {
+        case DOUBLE:
+            return "~" + new BigDecimal(getDouble()).setScale(2, RoundingMode.HALF_UP);
+            
+        default:
+            return value.toString();
+        }
     }
     
     public boolean getBoolean()

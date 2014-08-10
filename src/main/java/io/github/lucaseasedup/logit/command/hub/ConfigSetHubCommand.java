@@ -237,7 +237,7 @@ public final class ConfigSetHubCommand extends HubCommand
             {
                 sendMsg(sender, t("config.set.success")
                         .replace("{0}", property.getPath())
-                        .replace("{1}", property.getValue().toString()));
+                        .replace("{1}", property.getStringifiedValue()));
             }
             
             if (property.requiresRestart())

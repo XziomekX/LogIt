@@ -18,6 +18,8 @@
  */
 package io.github.lucaseasedup.logit.config;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.bukkit.Bukkit;
@@ -62,11 +64,11 @@ public final class LocationSerializable implements Cloneable, ConfigurationSeria
     public String toString()
     {
         return "world: " + world
-                + "; x: " + x
-                + "; y: " + y
-                + "; z: " + z
-                + "; yaw: " + yaw
-                + "; pitch: " + pitch;
+                + "; x: " + new BigDecimal(x).setScale(2, RoundingMode.HALF_UP)
+                + "; y: " + new BigDecimal(y).setScale(2, RoundingMode.HALF_UP)
+                + "; z: " + new BigDecimal(z).setScale(2, RoundingMode.HALF_UP)
+                + "; yaw: " + new BigDecimal(yaw).setScale(2, RoundingMode.HALF_UP)
+                + "; pitch: " + new BigDecimal(pitch).setScale(2, RoundingMode.HALF_UP);
     }
     
     public org.bukkit.Location toBukkitLocation()
