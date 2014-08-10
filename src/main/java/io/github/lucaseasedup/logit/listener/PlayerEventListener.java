@@ -347,7 +347,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 Location playerLocation = player.getLocation();
                 Block nearestBlockBelow = BlockUtils.getNearestBlockBelow(playerLocation);
                 
-                if (nearestBlockBelow.getType().equals(Material.PORTAL))
+                if (nearestBlockBelow != null
+                        && nearestBlockBelow.getType().equals(Material.PORTAL))
                 {
                     playerLocation = BlockUtils.getNearestSafeSpace(playerLocation, 1000);
                     
