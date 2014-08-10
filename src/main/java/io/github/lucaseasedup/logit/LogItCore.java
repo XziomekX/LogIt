@@ -90,7 +90,6 @@ import io.github.lucaseasedup.logit.tab.TabListUpdater;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -162,18 +161,6 @@ public final class LogItCore
         if (isFirstRun())
         {
             doFirstRunStuff();
-        }
-        
-        if (getConfig("config.yml").getBoolean("checkForUpdates"))
-        {
-            new BukkitRunnable()
-            {
-                @Override
-                public void run()
-                {
-                    checkForUpdate();
-                }
-            }.runTaskLater(getPlugin(), 1L);
         }
         
         setUpCraftReflect();
@@ -351,33 +338,6 @@ public final class LogItCore
             {
                 log(Level.WARNING, "Could not copy resource: password-recovery.html", ex);
             }
-        }
-    }
-    
-    private void checkForUpdate()
-    {
-        try
-        {
-            String updateVersion = LogItUpdateChecker.checkForUpdate(
-                    getPlugin().getDescription().getFullName()
-            );
-            
-            if (updateVersion != null)
-            {
-                log(Level.INFO, t("updateAvailable")
-                        .replace("{0}", String.valueOf(updateVersion))
-                        .replace("{1}", "http://dev.bukkit.org/bukkit-plugins/logit/"));
-            }
-        }
-        catch (IOException ex)
-        {
-            // If a connection to the remote host could not be established,
-            // we can't do anything about it and neither the user can,
-            // so we'll just act as it never happened.
-        }
-        catch (ParseException ex)
-        {
-            log(Level.WARNING, ex);
         }
     }
     
