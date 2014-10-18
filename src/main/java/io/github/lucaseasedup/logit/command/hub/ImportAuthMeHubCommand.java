@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -69,6 +70,24 @@ public final class ImportAuthMeHubCommand extends HubCommand
     @Override
     public void execute(final CommandSender sender, String[] args)
     {
+        sendMsg(sender, t("import.authme.header"));
+        sendMsg(sender, t("import.authme.prologue1"));
+        sendMsg(sender, t("import.authme.prologue2"));
+        sendMsg(sender, t("import.authme.prologue3"));
+        sendMsg(sender, t("import.authme.prologue4"));
+        
+        confirmOperation(sender);
+    }
+    
+    private void confirmOperation(final CommandSender sender)
+    {
+        if (Bukkit.getPluginManager().isPluginEnabled("AuthMe"))
+        {
+            sendMsg(sender, t("import.authme.authMeRunning"));
+            
+            return;
+        }
+        
         if (!new File("plugins/AuthMe").exists())
         {
             sendMsg(sender, t("import.authme.folderNotFound"));
@@ -93,8 +112,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
             sendMsg(sender, "");
         }
         
-        sendMsg(sender, t("import.authme.header"));
-        sendMsg(sender, t("import.authme.typeToImport"));
+        sendMsg(sender, t("import.authme.typeToConfirm"));
         
         new ConfirmationWizard(sender, "import", new Runnable()
         {
@@ -133,7 +151,8 @@ public final class ImportAuthMeHubCommand extends HubCommand
         }).createWizard();
     }
     
-    private void importAccounts(CommandSender sender, YamlConfiguration authMeConfig)
+    private void importAccounts(CommandSender sender,
+                                YamlConfiguration authMeConfig)
     {
         String backend =
                 authMeConfig.getString("DataSource.backend");
@@ -196,20 +215,24 @@ public final class ImportAuthMeHubCommand extends HubCommand
         
         try
         {
-            if (backend.equalsIgnoreCase("mysql") || backend.equalsIgnoreCase("sqlite"))
+            if (backend.equalsIgnoreCase("mysql")
+                    || backend.equalsIgnoreCase("sqlite"))
             {
                 Storage storage;
                 
                 if (backend.equalsIgnoreCase("mysql"))
                 {
-                    storage = new MySqlStorage(dataSourceMySqlHost + ":" + dataSourceMySqlPort,
+                    String dataSourceMySqlPath =
+                            dataSourceMySqlHost + ":" + dataSourceMySqlPort;
+                    
+                    storage = new MySqlStorage(dataSourceMySqlPath,
                             dataSourceMySqlUsername, dataSourceMySqlPassword,
                             dataSourceMySqlDatabase);
                 }
                 else
                 {
                     storage = new SqliteStorage("jdbc:sqlite:plugins/AuthMe/"
-                                                + dataSourceMySqlDatabase + ".db");
+                                             + dataSourceMySqlDatabase + ".db");
                 }
                 
                 try
@@ -221,12 +244,14 @@ public final class ImportAuthMeHubCommand extends HubCommand
                     
                     for (Storage.Entry authMeEntry : authMeEntries)
                     {
-                        String authMeUsername = authMeEntry.get(dataSourceMySqlColumnName);
+                        String authMeUsername = authMeEntry
+                                .get(dataSourceMySqlColumnName);
                         
                         if (StringUtils.isBlank(authMeUsername))
                             continue;
                         
-                        Storage.Entry.Builder logItEntryBuilder = new Storage.Entry.Builder();
+                        Storage.Entry.Builder logItEntryBuilder =
+                                new Storage.Entry.Builder();
                         
                         logItEntryBuilder.put(keys().username(),
                                 StringUtils.lowerCase(authMeUsername));
@@ -237,27 +262,34 @@ public final class ImportAuthMeHubCommand extends HubCommand
                         logItEntryBuilder.put(keys().ip(),
                                 authMeEntry.get(dataSourceMySqlColumnIp));
                         
-                        String email = authMeEntry.get(dataSourceMySqlColumnEmail);
+                        String email = authMeEntry
+                                .get(dataSourceMySqlColumnEmail);
                         
                         if (!email.equals("your@email.com"))
                         {
                             logItEntryBuilder.put(keys().email(), email);
                         }
                         
-                        String world = authMeEntry.get(dataSourceMySqlColumnLastLocWorld);
+                        String world = authMeEntry
+                                .get(dataSourceMySqlColumnLastLocWorld);
                         
                         if (dataSourceMySqlColumnLastLocX != null
                                 && dataSourceMySqlColumnLastLocY != null
                                 && dataSourceMySqlColumnLastLocZ != null)
                         {
-                            String x = authMeEntry.get(dataSourceMySqlColumnLastLocX);
-                            String y = authMeEntry.get(dataSourceMySqlColumnLastLocY);
-                            String z = authMeEntry.get(dataSourceMySqlColumnLastLocZ);
+                            String x = authMeEntry
+                                    .get(dataSourceMySqlColumnLastLocX);
+                            String y = authMeEntry
+                                    .get(dataSourceMySqlColumnLastLocY);
+                            String z = authMeEntry
+                                    .get(dataSourceMySqlColumnLastLocZ);
                             
                             if (!y.equals("0.0"))
                             {
-                                Map<String, Map<String, String>> persistenceIni = new HashMap<>();
-                                Map<String, String> persistence = new LinkedHashMap<>();
+                                Map<String, Map<String, String>> persistenceIni =
+                                        new HashMap<>();
+                                Map<String, String> persistence =
+                                        new LinkedHashMap<>();
                                 
                                 persistence.put("world", world);
                                 persistence.put("x", x);
@@ -268,14 +300,17 @@ public final class ImportAuthMeHubCommand extends HubCommand
                                 
                                 persistenceIni.put("persistence", persistence);
                                 
-                                String persistenceString = IniUtils.serialize(persistenceIni);
+                                String persistenceString =
+                                        IniUtils.serialize(persistenceIni);
                                 
                                 if (getConfig("secret.yml").getBoolean("debug.encodePersistence"))
                                 {
-                                    persistenceString = Base64.encode(persistenceString);
+                                    persistenceString =
+                                            Base64.encode(persistenceString);
                                 }
                                 
-                                logItEntryBuilder.put(keys().persistence(), persistenceString);
+                                logItEntryBuilder.put(keys().persistence(),
+                                        persistenceString);
                             }
                         }
                         
@@ -306,7 +341,8 @@ public final class ImportAuthMeHubCommand extends HubCommand
                     while ((line = br.readLine()) != null)
                     {
                         String[] split = line.split(":");
-                        Storage.Entry.Builder logItEntryBuilder = new Storage.Entry.Builder();
+                        Storage.Entry.Builder logItEntryBuilder =
+                                new Storage.Entry.Builder();
                         
                         if (split.length == 0)
                             continue;
@@ -316,7 +352,8 @@ public final class ImportAuthMeHubCommand extends HubCommand
                             if (StringUtils.isBlank(split[0]))
                                 continue;
                             
-                            logItEntryBuilder.put(keys().username(), split[0].toLowerCase());
+                            logItEntryBuilder.put(keys().username(),
+                                    split[0].toLowerCase());
                         }
                         
                         if (split.length >= 2)
@@ -339,8 +376,10 @@ public final class ImportAuthMeHubCommand extends HubCommand
                         
                         if (split.length >= 8 && !split[5].equals("0.0"))
                         {
-                            Map<String, Map<String, String>> persistenceIni = new HashMap<>();
-                            Map<String, String> persistence = new LinkedHashMap<>();
+                            Map<String, Map<String, String>> persistenceIni =
+                                    new HashMap<>();
+                            Map<String, String> persistence =
+                                    new LinkedHashMap<>();
                             
                             persistence.put("world", split[7]);
                             persistence.put("x", split[4]);
@@ -370,7 +409,8 @@ public final class ImportAuthMeHubCommand extends HubCommand
                 }
             }
             
-            Set<String> registeredUsernames = getAccountManager().getRegisteredUsernames();
+            Set<String> registeredUsernames =
+                    getAccountManager().getRegisteredUsernames();
             int accountsImported = 0;
             
             Iterator<Account> it = logItAccounts.iterator();
@@ -390,7 +430,9 @@ public final class ImportAuthMeHubCommand extends HubCommand
                 accountsImported++;
             }
             
-            getAccountManager().insertAccounts(logItAccounts.toArray(new Account[0]));
+            getAccountManager().insertAccounts(
+                    logItAccounts.toArray(new Account[0])
+            );
             
             log(Level.INFO, t("import.authme.success")
                     .replace("{0}", String.valueOf(accountsImported)));
