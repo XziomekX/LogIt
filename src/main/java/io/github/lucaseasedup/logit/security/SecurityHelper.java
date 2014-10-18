@@ -142,7 +142,7 @@ public final class SecurityHelper extends LogItCoreObject
         }
         else
         {
-            if (getConfig("config.yml").getBoolean("passwords.useSalt"))
+            if (getConfig("secret.yml").getBoolean("passwords.useSalt"))
             {
                 return hashedPassword.equals(
                         SecurityHelper.hash(password, salt, algorithmType)

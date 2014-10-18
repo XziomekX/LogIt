@@ -267,7 +267,7 @@ public final class Account extends LogItCoreObject
             }
         }
         
-        if (getConfig("config.yml").getBoolean("passwords.useSalt"))
+        if (getConfig("secret.yml").getBoolean("passwords.useSalt"))
         {
             String actualSalt = entry.get(keys().salt());
             
@@ -307,7 +307,7 @@ public final class Account extends LogItCoreObject
         HashingAlgorithm hashingAlgorithm = getSecurityHelper().getDefaultHashingAlgorithm();
         String newHash;
         
-        if (getConfig("config.yml").getBoolean("passwords.useSalt"))
+        if (getConfig("secret.yml").getBoolean("passwords.useSalt"))
         {
             String newSalt = SecurityHelper.generateSalt(hashingAlgorithm);
             
