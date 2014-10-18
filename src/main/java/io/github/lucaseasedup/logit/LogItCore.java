@@ -323,7 +323,6 @@ public final class LogItCore
     {
         getDataFile("backup").mkdir();
         getDataFile("mail").mkdir();
-        getDataFile("lang").mkdir();
         
         File passwordRecoveryTemplateFile = getDataFile("mail/password-recovery.html");
         
