@@ -164,22 +164,25 @@ public final class LogItCore
         globalPasswordManager = new GlobalPasswordManager();
         cooldownManager = new CooldownManager();
         accountWatcher = new AccountWatcher();
-        
         tabApiWrapper = new Wrapper<>();
-        tabListUpdater = new TabListUpdater(tabApiWrapper, craftReflect);
         
-        new BukkitRunnable()
+        if (getConfig("config.yml").getBoolean("forceLogin.hideFromTabList"))
         {
-            @Override
-            public void run()
+            tabListUpdater = new TabListUpdater(tabApiWrapper, craftReflect);
+            
+            new BukkitRunnable()
             {
-                if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null)
+                @Override
+                public void run()
                 {
-                    tabApiWrapper.set(new TabAPI());
-                    tabApiWrapper.get().onEnable();
+                    if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null)
+                    {
+                        tabApiWrapper.set(new TabAPI());
+                        tabApiWrapper.get().onEnable();
+                    }
                 }
-            }
-        }.runTaskLater(getPlugin(), 1L);
+            }.runTaskLater(getPlugin(), 1L);
+        }
         
         startTasks();
         enableCommands();
@@ -545,24 +548,48 @@ public final class LogItCore
     
     private void startTasks()
     {
-        accountManagerTask = Bukkit.getScheduler().runTaskTimer(getPlugin(),
-                getAccountManager(), 0L,
-                getConfig("secret.yml").getTime("bufferFlushInterval", TimeUnit.TICKS));
-        backupManagerTask = Bukkit.getScheduler().runTaskTimer(getPlugin(),
-                getBackupManager(), 0L,
-                BackupManager.TASK_PERIOD);
-        sessionManagerTask = Bukkit.getScheduler().runTaskTimer(getPlugin(),
-                getSessionManager(), 0L,
-                SessionManager.TASK_PERIOD);
-        globalPasswordManagerTask = Bukkit.getScheduler().runTaskTimer(getPlugin(),
-                getGlobalPasswordManager(), 0L,
-                GlobalPasswordManager.TASK_PERIOD);
+        long bufferFlushInterval = getConfig("secret.yml")
+                .getTime("bufferFlushInterval", TimeUnit.TICKS);
+        
+        accountManagerTask = Bukkit.getScheduler().runTaskTimer(
+                getPlugin(),
+                getAccountManager(),
+                0L,
+                bufferFlushInterval
+        );
+        backupManagerTask = Bukkit.getScheduler().runTaskTimer(
+                getPlugin(),
+                getBackupManager(),
+                0L,
+                BackupManager.TASK_PERIOD
+        );
+        sessionManagerTask = Bukkit.getScheduler().runTaskTimer(
+                getPlugin(),
+                getSessionManager(),
+                0L,
+                SessionManager.TASK_PERIOD
+        );
+        globalPasswordManagerTask = Bukkit.getScheduler().runTaskTimer(
+                getPlugin(),
+                getGlobalPasswordManager(),
+                0L,
+                GlobalPasswordManager.TASK_PERIOD
+        );
         accountWatcherTask = Bukkit.getScheduler().runTaskTimer(getPlugin(),
-                getAccountWatcher(), 0L,
-                AccountWatcher.TASK_PERIOD);
-        tabListUpdaterTask = Bukkit.getScheduler().runTaskTimer(getPlugin(),
-                tabListUpdater, 20L,
-                TabListUpdater.TASK_PERIOD);
+                getAccountWatcher(),
+                0L,
+                AccountWatcher.TASK_PERIOD
+        );
+        
+        if (getTabListUpdater() != null)
+        {
+            tabListUpdaterTask = Bukkit.getScheduler().runTaskTimer(
+                    getPlugin(),
+                    getTabListUpdater(),
+                    20L,
+                    TabListUpdater.TASK_PERIOD
+            );
+        }
     }
     
     private void enableCommands()
@@ -610,7 +637,12 @@ public final class LogItCore
         
         registerEventListener(getMessageDispatcher());
         registerEventListener(getCooldownManager());
-        registerEventListener(getTabListUpdater());
+        
+        if (getTabListUpdater() != null)
+        {
+            registerEventListener(getTabListUpdater());
+        }
+        
         registerEventListener(new ServerEventListener());
         registerEventListener(new BlockEventListener());
         registerEventListener(new EntityEventListener());

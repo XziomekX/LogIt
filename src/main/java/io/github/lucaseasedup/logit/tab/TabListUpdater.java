@@ -107,7 +107,7 @@ public final class TabListUpdater extends LogItCoreObject implements Runnable, L
             @Override
             public void run()
             {
-                getCore().getTabListUpdater().updateAllTabLists();
+                updateAllTabLists();
             }
         }.runTaskLater(getPlugin(), 1L);
     }
@@ -120,7 +120,7 @@ public final class TabListUpdater extends LogItCoreObject implements Runnable, L
             @Override
             public void run()
             {
-                getCore().getTabListUpdater().updateAllTabLists();
+                updateAllTabLists();
             }
         }.runTaskLater(getPlugin(), 1L);
     }
@@ -133,7 +133,7 @@ public final class TabListUpdater extends LogItCoreObject implements Runnable, L
             @Override
             public void run()
             {
-                getCore().getTabListUpdater().updateAllTabLists();
+                updateAllTabLists();
             }
         }.runTaskLater(getPlugin(), 1L);
     }
