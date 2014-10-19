@@ -13,9 +13,6 @@ public final class QuitMessageGenerator
     public static String generate(Player player)
     {
         LogItCore core = LogItCore.getInstance();
-        
-        assert core != null;
-        
         String message;
         
         if (core.getConfig("config.yml").getBoolean("messages.beautify"))

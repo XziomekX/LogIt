@@ -42,6 +42,9 @@ public final class SerializerObserver extends PropertyObserver
         case "forceLogin.obfuscate.hunger":
             clazz = HungerBarSerializer.class;
             break;
+            
+        default:
+            break;
         }
         
         if (clazz != null)

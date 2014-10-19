@@ -601,12 +601,13 @@ public final class WrapperStorage extends Storage
         }
     }
     
-    public void mirrorStorage(Storage storage, Hashtable<String, String> unitMappings)
+    public void mirrorStorage(Storage storage,
+                              Hashtable<String, String> unitMappings)
     {
         if (storage == null || unitMappings == null)
             throw new IllegalArgumentException();
         
-        if (!mirrors.contains(storage))
+        if (!mirrors.containsKey(storage))
         {
             mirrors.put(storage, unitMappings);
         }

@@ -566,19 +566,13 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         
         try (Storage sessionsStorage = new SqliteStorage("jdbc:sqlite:" + file))
         {
+            Hashtable<String, DataType> keys = new Hashtable<>();
+            keys.put("username", DataType.TINYTEXT);
+            keys.put("status", DataType.INTEGER);
+            keys.put("ip", DataType.TINYTEXT);
+            
             sessionsStorage.connect();
-            sessionsStorage.createUnit("sessions",
-                    new Hashtable<String, DataType>()
-                    {
-                        private static final long serialVersionUID = 1L;
-                        
-                        {
-                            put("username", DataType.TINYTEXT);
-                            put("status", DataType.INTEGER);
-                            put("ip", DataType.TINYTEXT);
-                        }
-                    }, "username"
-            );
+            sessionsStorage.createUnit("sessions", keys, "username");
             sessionsStorage.setAutobatchEnabled(true);
             
             for (Map.Entry<String, Session> e : sessions.entrySet())

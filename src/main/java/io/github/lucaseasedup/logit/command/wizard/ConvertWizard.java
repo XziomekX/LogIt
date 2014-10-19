@@ -53,8 +53,11 @@ public final class ConvertWizard extends Wizard
         }
         else if (getCurrentStep() == Step.ENTER_DBTYPE)
         {
-            if (!new StorageTypeValidator().validate("storage.accounts.leading.storageType",
-                    PropertyType.STRING, message))
+            if (!new StorageTypeValidator().validate(
+                    "storage.accounts.leading.storageType",
+                    PropertyType.STRING,
+                    message
+            ))
             {
                 sendMessage(t("wizard.convert.unknownStorageType")
                         .replace("{0}", message));
@@ -84,6 +87,9 @@ public final class ConvertWizard extends Wizard
                     sendMessage(t("wizard.convert.enterUnit"));
                     updateStep(Step.ENTER_TABLE);
                     break;
+                    
+                default:
+                    throw new RuntimeException("Unexpected dbtype" + dbtype);
                 }
             }
         }
@@ -101,6 +107,9 @@ public final class ConvertWizard extends Wizard
                 sendMessage(t("wizard.convert.enterUnit"));
                 updateStep(Step.ENTER_TABLE);
                 break;
+                
+            default:
+                throw new RuntimeException("Unexpected dbtype" + dbtype);
             }
         }
         else if (getCurrentStep() == Step.ENTER_HOST)
@@ -116,6 +125,9 @@ public final class ConvertWizard extends Wizard
                 sendMessage(t("wizard.convert.enterUser"));
                 updateStep(Step.ENTER_USER);
                 break;
+                
+            default:
+                throw new RuntimeException("Unexpected dbtype" + dbtype);
             }
         }
         else if (getCurrentStep() == Step.ENTER_USER)
@@ -131,6 +143,9 @@ public final class ConvertWizard extends Wizard
                 sendMessage(t("wizard.convert.enterPassword"));
                 updateStep(Step.ENTER_PASSWORD);
                 break;
+                
+            default:
+                throw new RuntimeException("Unexpected dbtype" + dbtype);
             }
         }
         else if (getCurrentStep() == Step.ENTER_PASSWORD)
@@ -146,6 +161,9 @@ public final class ConvertWizard extends Wizard
                 sendMessage(t("wizard.convert.enterDatabaseName"));
                 updateStep(Step.ENTER_DATABASE);
                 break;
+                
+            default:
+                throw new RuntimeException("Unexpected dbtype" + dbtype);
             }
         }
         else if (getCurrentStep() == Step.ENTER_DATABASE)
@@ -161,6 +179,9 @@ public final class ConvertWizard extends Wizard
                 sendMessage(t("wizard.convert.enterUnit"));
                 updateStep(Step.ENTER_TABLE);
                 break;
+                
+            default:
+                throw new RuntimeException("Unexpected dbtype" + dbtype);
             }
         }
         else if (getCurrentStep() == Step.ENTER_TABLE)
@@ -183,104 +204,112 @@ public final class ConvertWizard extends Wizard
         {
             if ("proceed".equals(message))
             {
-                for (Player player : Bukkit.getOnlinePlayers())
-                {
-                    player.kickPlayer(t("serverMaintenance"));
-                }
-                
-                getConfig("config.yml")
-                        .set("storage.accounts.leading.storageType", dbtype);
-                
-                switch (dbtype)
-                {
-                case "sqlite":
-                    getConfig("config.yml")
-                            .set("storage.accounts.leading.sqlite.filename", filename);
-                    break;
-                    
-                case "h2":
-                    getConfig("config.yml")
-                            .set("storage.accounts.leading.h2.filename", filename);
-                    break;
-                    
-                case "mysql":
-                    getConfig("config.yml")
-                            .set("storage.accounts.leading.mysql.host", host);
-                    getConfig("config.yml")
-                            .set("storage.accounts.leading.mysql.user", user);
-                    getConfig("config.yml")
-                            .set("storage.accounts.leading.mysql.password", password);
-                    getConfig("config.yml")
-                            .set("storage.accounts.leading.mysql.database", database);
-                    break;
-                }
-                
-                getConfig("config.yml").set("storage.accounts.leading.unit", table);
-                
-                try
-                {
-                    ReportedException.incrementRequestCount();
-                    
-                    List<Account> accounts = null;
-                    
-                    if (copyAccounts)
-                    {
-                        accounts = getAccountManager().selectAccounts(keys().getNames(),
-                                new SelectorConstant(true));
-                    }
-                    
-                    getCore().restart();
-                    
-                    if (copyAccounts && accounts != null)
-                    {
-                        getAccountManager().insertAccounts(
-                                accounts.toArray(new Account[accounts.size()])
-                        );
-                    }
-                    
-                    if (getSender() instanceof Player)
-                    {
-                        sendMessage(t("wizard.convert.success"));
-                    }
-                    
-                    log(Level.INFO, t("wizard.convert.success.log"));
-                    
-                    updateStep(Step.SUCCESS);
-                }
-                catch (ReportedException ex)
-                {
-                    if (getSender() instanceof Player)
-                    {
-                        sendMessage(t("wizard.convert.fail"));
-                    }
-                    
-                    log(Level.SEVERE, t("wizard.convert.fail.log"));
-                    
-                    updateStep(Step.FAIL);
-                }
-                catch (FatalReportedException ex)
-                {
-                    if (getSender() instanceof Player)
-                    {
-                        sendMessage(t("wizard.convert.fail"));
-                    }
-                    
-                    log(Level.SEVERE, t("wizard.convert.fail.log"), ex);
-                    
-                    updateStep(Step.FAIL);
-                }
-                finally
-                {
-                    ReportedException.decrementRequestCount();
-                }
-                
-                cancelWizard();
+                doConversion();
             }
             else
             {
                 sendMessage(t("wizardCancelled"));
-                cancelWizard();
             }
+            
+            cancelWizard();
+        }
+    }
+    
+    private void doConversion()
+    {
+        for (Player player : Bukkit.getOnlinePlayers())
+        {
+            player.kickPlayer(t("serverMaintenance"));
+        }
+        
+        getConfig("config.yml")
+                .set("storage.accounts.leading.storageType", dbtype);
+        
+        switch (dbtype)
+        {
+        case "sqlite":
+            getConfig("config.yml")
+                    .set("storage.accounts.leading.sqlite.filename", filename);
+            break;
+            
+        case "h2":
+            getConfig("config.yml")
+                    .set("storage.accounts.leading.h2.filename", filename);
+            break;
+            
+        case "mysql":
+            getConfig("config.yml")
+                    .set("storage.accounts.leading.mysql.host", host);
+            getConfig("config.yml")
+                    .set("storage.accounts.leading.mysql.user", user);
+            getConfig("config.yml")
+                    .set("storage.accounts.leading.mysql.password", password);
+            getConfig("config.yml")
+                    .set("storage.accounts.leading.mysql.database", database);
+            break;
+            
+        default:
+            throw new RuntimeException("Unexpected dbtype" + dbtype);
+        }
+        
+        getConfig("config.yml").set("storage.accounts.leading.unit", table);
+        
+        try
+        {
+            ReportedException.incrementRequestCount();
+            
+            List<Account> accounts = null;
+            
+            if (copyAccounts)
+            {
+                accounts = getAccountManager().selectAccounts(
+                        keys().getNames(), new SelectorConstant(true)
+                );
+            }
+            
+            getCore().restart();
+            
+            if (copyAccounts && accounts != null)
+            {
+                getAccountManager().insertAccounts(
+                        accounts.toArray(new Account[accounts.size()])
+                );
+            }
+            
+            if (getSender() instanceof Player)
+            {
+                sendMessage(t("wizard.convert.success"));
+            }
+            
+            log(Level.INFO, t("wizard.convert.success.log"));
+            
+            updateStep(Step.SUCCESS);
+        }
+        catch (ReportedException ex)
+        {
+            if (getSender() instanceof Player)
+            {
+                sendMessage(t("wizard.convert.fail"));
+            }
+            
+            log(Level.SEVERE, t("wizard.convert.fail.log"));
+            
+            updateStep(Step.FAIL);
+        }
+        catch (FatalReportedException ex)
+        {
+            if (getSender() instanceof Player)
+            {
+                sendMessage(t("wizard.convert.fail"));
+            }
+            
+            log(Level.SEVERE, t("wizard.convert.fail.log"), ex);
+            
+            updateStep(Step.FAIL);
+        }
+        finally
+        {
+            ReportedException.decrementRequestCount();
         }
     }
     

@@ -17,9 +17,6 @@ public final class JoinMessageGenerator
     public static String generate(Player player, boolean revealSpawnWorld)
     {
         LogItCore core = LogItCore.getInstance();
-        
-        assert core != null;
-        
         String message;
         
         if (core.getConfig("config.yml").getBoolean("messages.beautify"))
@@ -59,8 +56,6 @@ public final class JoinMessageGenerator
     public static String getWorldAlias(World world)
     {
         LogItCore core = LogItCore.getInstance();
-        
-        assert core != null;
         
         if (!core.getConfig("config.yml").getBoolean("messages.multiverseHook")
                 || !Bukkit.getPluginManager().isPluginEnabled("Multiverse-Core"))
