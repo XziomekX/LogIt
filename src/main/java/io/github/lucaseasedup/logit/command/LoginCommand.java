@@ -37,7 +37,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             player = null;
         }
         
-        boolean disablePasswords = getConfig("config.yml").getBoolean("passwords.disable");
+        boolean disablePasswords = getConfig("secret.yml").getBoolean("passwords.disable");
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 2)
         {

@@ -224,7 +224,7 @@ public final class Account extends LogItCoreObject
         if (password == null)
             throw new IllegalArgumentException("Null password");
         
-        if (getConfig("config.yml").getBoolean("passwords.disable"))
+        if (getConfig("secret.yml").getBoolean("passwords.disable"))
             return true;
         
         if (!entry.containsKey(keys().salt()))
@@ -283,7 +283,7 @@ public final class Account extends LogItCoreObject
         if (newPassword == null)
             throw new IllegalArgumentException("Null newPassword");
         
-        if (getConfig("config.yml").getBoolean("passwords.disable"))
+        if (getConfig("secret.yml").getBoolean("passwords.disable"))
             return;
         
         HashingAlgorithm hashingAlgorithm = getSecurityHelper().getDefaultHashingAlgorithm();

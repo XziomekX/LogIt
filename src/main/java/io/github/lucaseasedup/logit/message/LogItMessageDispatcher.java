@@ -87,7 +87,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         {
             if (getConfig("config.yml").getBoolean("forceLogin.prompt.login"))
             {
-                if (!getConfig("config.yml").getBoolean("passwords.disable"))
+                if (!getConfig("secret.yml").getBoolean("passwords.disable"))
                 {
                     sendMsg(player, t("pleaseLogIn"));
                 }
@@ -101,7 +101,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         {
             if (getConfig("config.yml").getBoolean("forceLogin.prompt.register"))
             {
-                if (!getConfig("config.yml").getBoolean("passwords.disable"))
+                if (!getConfig("secret.yml").getBoolean("passwords.disable"))
                 {
                     sendMsg(player, t("pleaseRegister"));
                 }

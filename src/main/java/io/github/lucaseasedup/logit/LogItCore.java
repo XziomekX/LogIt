@@ -574,7 +574,7 @@ public final class LogItCore
         enableCommand("register", new RegisterCommand());
         enableCommand("unregister", new UnregisterCommand());
         enableCommand("changepass", new ChangePassCommand(),
-                !getConfig("config.yml").getBoolean("passwords.disable"));
+                !getConfig("secret.yml").getBoolean("passwords.disable"));
         enableCommand("changeemail", new ChangeEmailCommand());
         enableCommand("recoverpass", new RecoverPassCommand(),
                 getConfig("config.yml").getBoolean("passwordRecovery.enabled"));

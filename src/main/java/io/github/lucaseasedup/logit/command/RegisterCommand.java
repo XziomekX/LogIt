@@ -38,7 +38,7 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
         
         int minPasswordLength = getConfig("config.yml").getInt("passwords.minLength");
         int maxPasswordLength = getConfig("config.yml").getInt("passwords.maxLength");
-        boolean disablePasswords = getConfig("config.yml").getBoolean("passwords.disable");
+        boolean disablePasswords = getConfig("secret.yml").getBoolean("passwords.disable");
         
         if (args.length > 0 && args[0].equals("-x")
                 && ((args.length <= 2 && disablePasswords)
