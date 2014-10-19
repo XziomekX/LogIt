@@ -180,7 +180,9 @@ public final class SqlUtils
             }
             
             sb.append(" (");
-            sb.append(translateSelector(selectorBinary.getRightOperand(), columnQuote, valueQuote));
+            sb.append(translateSelector(
+                    selectorBinary.getRightOperand(), columnQuote, valueQuote
+            ));
             sb.append(")");
             
             return sb.toString();

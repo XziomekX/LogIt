@@ -700,6 +700,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     private void onRespawn(PlayerRespawnEvent event)
     {
         Player player = event.getPlayer();
+        String playerName = player.getName();
         
         if (getConfig("config.yml").getBoolean("waitingRoom.enabled")
                 && !getSessionManager().isSessionAlive(player)
@@ -709,7 +710,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             {
                 Location respawnLocation = event.getRespawnLocation();
                 
-                Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
+                Account account = getAccountManager().selectAccount(playerName, Arrays.asList(
                         keys().username(),
                         keys().persistence()
                 ));

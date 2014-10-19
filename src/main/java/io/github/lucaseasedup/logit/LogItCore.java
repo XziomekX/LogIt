@@ -84,7 +84,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -283,7 +282,7 @@ public final class LogItCore
         {
             configurationManager.loadAll();
         }
-        catch (IOException | InvalidConfigurationException ex)
+        catch (IOException ex)
         {
             log(Level.SEVERE, "Could not load a configuration file.", ex);
             

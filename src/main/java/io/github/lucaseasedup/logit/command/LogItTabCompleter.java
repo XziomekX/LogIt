@@ -2,7 +2,6 @@ package io.github.lucaseasedup.logit.command;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
-import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import java.io.File;

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.configuration.InvalidConfigurationException;
 
 public final class ConfigurationManager extends LogItCoreObject
 {
@@ -36,10 +35,15 @@ public final class ConfigurationManager extends LogItCoreObject
         }
         
         if (registrations.containsKey(filename))
-            throw new RuntimeException("Configuration already registered: " + filename);
+        {
+            throw new RuntimeException(
+                    "Configuration already registered: " + filename
+            );
+        }
         
-        registrations.put(filename,
-                new PredefinedConfiguration(filename, userConfigDef, packageConfigDef, header));
+        registrations.put(filename, new PredefinedConfiguration(
+                filename, userConfigDef, packageConfigDef, header
+        ));
     }
     
     public void unregisterConfiguration(String filename)
@@ -55,9 +59,7 @@ public final class ConfigurationManager extends LogItCoreObject
         registrations.clear();
     }
     
-    public void loadAll() throws IOException,
-                                 InvalidConfigurationException,
-                                 InvalidPropertyValueException
+    public void loadAll() throws IOException, InvalidPropertyValueException
     {
         for (PredefinedConfiguration configuration : registrations.values())
         {

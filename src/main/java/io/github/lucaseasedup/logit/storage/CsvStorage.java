@@ -148,20 +148,23 @@ public final class CsvStorage extends Storage
                     line = br.readLine();
                     
                     if (line == null)
-                        throw new IOException("Corrupted CSV file.");
+                        throw new IOException("Corrupted CSV file");
                     
                     lineBuilder.append("\r\n");
                     lineBuilder.append(line);
                 }
                 
-                String[] lineValues = lineBuilder.toString().split("(?<=\"),(?=\")");
-                Storage.Entry.Builder entryBuilder = new Storage.Entry.Builder();
+                String[] lineValues =
+                        lineBuilder.toString().split("(?<=\"),(?=\")");
+                Storage.Entry.Builder entryBuilder =
+                        new Storage.Entry.Builder();
                 
                 for (int i = 0; i < lineValues.length; i++)
                 {
                     if (keys == null || keys.contains(tableKeys[i]))
                     {
-                        entryBuilder.put(tableKeys[i], unescapeValue(lineValues[i]));
+                        entryBuilder.put(tableKeys[i],
+                                unescapeValue(lineValues[i]));
                     }
                 }
                 
@@ -185,7 +188,11 @@ public final class CsvStorage extends Storage
             throw new IOException("Database closed.");
         
         if (primaryKey != null && !keys.containsKey(primaryKey))
-            throw new IllegalArgumentException("Cannot create index on a non-existing key");
+        {
+            throw new IllegalArgumentException(
+                    "Cannot create index on a non-existing key"
+            );
+        }
         
         File file = new File(dir, unit);
         

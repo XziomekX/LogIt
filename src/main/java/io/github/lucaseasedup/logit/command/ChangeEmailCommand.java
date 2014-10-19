@@ -106,8 +106,12 @@ public final class ChangeEmailCommand extends LogItCoreObject implements TabExec
             
             if (getCooldownManager().isCooldownActive(player, LogItCooldowns.CHANGEEMAIL))
             {
-                getMessageDispatcher().sendCooldownMessage(player.getName(),
-                        getCooldownManager().getCooldownMillis(player, LogItCooldowns.CHANGEEMAIL));
+                getMessageDispatcher().sendCooldownMessage(
+                        player.getName(),
+                        getCooldownManager().getCooldownMillis(
+                                player, LogItCooldowns.CHANGEEMAIL
+                        )
+                );
                 
                 return true;
             }

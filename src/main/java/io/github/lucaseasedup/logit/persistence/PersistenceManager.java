@@ -63,7 +63,9 @@ public final class PersistenceManager extends LogItCoreObject
         serializeUsing(account, player, serializer);
     }
     
-    public void serializeUsing(Account account, Player player, PersistenceSerializer serializer)
+    public void serializeUsing(Account account,
+                               Player player,
+                               PersistenceSerializer serializer)
     {
         if (account == null || player == null || serializer == null)
             throw new IllegalArgumentException();
@@ -151,7 +153,9 @@ public final class PersistenceManager extends LogItCoreObject
         unserializeUsing(account, player, serializer);
     }
     
-    public void unserializeUsing(Account account, Player player, PersistenceSerializer serializer)
+    public void unserializeUsing(Account account,
+                                 Player player,
+                                 PersistenceSerializer serializer)
     {
         if (account == null || player == null || serializer == null)
             throw new IllegalArgumentException();
@@ -341,9 +345,9 @@ public final class PersistenceManager extends LogItCoreObject
     
     private Class<? extends PersistenceSerializer>[] getSerializersInOrder()
     {
-        Set<Class<? extends PersistenceSerializer>> classes = serializers.keySet();
+        Set<Class<? extends PersistenceSerializer>> classes =
+                serializers.keySet();
         
-        @SuppressWarnings("unchecked")
         Class<? extends PersistenceSerializer>[] result =
                 classes.toArray(new Class[classes.size()]);
         
@@ -377,10 +381,10 @@ public final class PersistenceManager extends LogItCoreObject
                     throw new RuntimeException();
                 
                 if (o1Before == o2Before && (o1Before != null || o2Before != null))
-                    throw new RuntimeException("Circular serializer dependency.");
+                    throw new RuntimeException("Circular serializer dependency");
 
                 if (o1After == o2After && (o1After != null || o2After != null))
-                    throw new RuntimeException("Circular serializer dependency.");
+                    throw new RuntimeException("Circular serializer dependency");
                 
                 if (o1Before == o2)
                     return -1;
@@ -414,7 +418,8 @@ public final class PersistenceManager extends LogItCoreObject
         return keys.value();
     }
     
-    private boolean containsKey(Class<? extends PersistenceSerializer> clazz, String keyName)
+    private boolean containsKey(Class<? extends PersistenceSerializer> clazz,
+                                String keyName)
     {
         if (clazz == null || keyName == null)
             throw new IllegalArgumentException();

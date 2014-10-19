@@ -83,8 +83,12 @@ public final class AccountInfoHubCommand extends HubCommand
             }
             else
             {
+                String registrationDateString = new Date(
+                        account.getLastActiveDate() * 1000L
+                ).toString();
+                
                 sendMsg(sender, t("accountInfo.lastActiveDate")
-                        .replace("{0}", new Date(account.getLastActiveDate() * 1000L).toString()));
+                        .replace("{0}", registrationDateString));
             }
         }
         
@@ -99,8 +103,12 @@ public final class AccountInfoHubCommand extends HubCommand
             }
             else
             {
+                String registrationDateString = new Date(
+                        account.getRegistrationDate() * 1000L
+                ).toString();
+                
                 sendMsg(sender, t("accountInfo.registrationDate")
-                        .replace("{0}", new Date(account.getRegistrationDate() * 1000L).toString()));
+                        .replace("{0}", registrationDateString));
             }
         }
         
