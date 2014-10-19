@@ -240,6 +240,57 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 return true;
             }
             
+            boolean lowercaseLetters = getConfig("config.yml")
+                    .getBoolean("passwords.complexity.lowercaseLetters");
+            boolean uppercaseLetters = getConfig("config.yml")
+                    .getBoolean("passwords.complexity.uppercaseLetters");
+            boolean numbers = getConfig("config.yml")
+                    .getBoolean("passwords.complexity.numbers");
+            boolean specialSymbols = getConfig("config.yml")
+                    .getBoolean("passwords.complexity.specialSymbols");
+            boolean blockSimplePasswords = getConfig("config.yml")
+                    .getBoolean("passwords.complexity.blockSimplePasswords");
+            
+            if (!disablePasswords && lowercaseLetters
+                    && !getSecurityHelper().containsLowercaseLetters(args[0]))
+            {
+                sendMsg(player, t("passwordMustContainLowercaseLetters"));
+                
+                return true;
+            }
+            
+            if (!disablePasswords && uppercaseLetters
+                    && !getSecurityHelper().containsUppercaseLetters(args[0]))
+            {
+                sendMsg(player, t("passwordMustContainUppercaseLetters"));
+                
+                return true;
+            }
+            
+            if (!disablePasswords && numbers
+                    && !getSecurityHelper().containsNumbers(args[0]))
+            {
+                sendMsg(player, t("passwordMustContainNumbers"));
+                
+                return true;
+            }
+            
+            if (!disablePasswords && specialSymbols
+                    && !getSecurityHelper().containsSpecialSymbols(args[0]))
+            {
+                sendMsg(player, t("passwordMustContainSpecialSymbols"));
+                
+                return true;
+            }
+            
+            if (!disablePasswords && blockSimplePasswords
+                    && getSecurityHelper().isSimplePassword(args[0]))
+            {
+                sendMsg(player, t("passwordTooSimple"));
+                
+                return true;
+            }
+            
             if (!disablePasswords && !args[0].equals(args[1]))
             {
                 sendMsg(player, t("passwordsDoNotMatch"));
@@ -247,7 +298,8 @@ public final class RegisterCommand extends LogItCoreObject implements CommandExe
                 return true;
             }
             
-            int accountsPerIp = getConfig("config.yml").getInt("accountsPerIp.amount");
+            int accountsPerIp = getConfig("config.yml")
+                    .getInt("accountsPerIp.amount");
             
             if (accountsPerIp >= 0 && !isTakingOver)
             {

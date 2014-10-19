@@ -1,5 +1,6 @@
 package io.github.lucaseasedup.logit.security;
 
+import java.util.regex.Pattern;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -137,6 +138,54 @@ public final class SecurityHelper extends LogItCoreObject
                 );
             }
         }
+    }
+    
+    public boolean containsLowercaseLetters(String password)
+    {
+        if (password == null)
+            throw new IllegalArgumentException();
+        
+        return LOWERCASE_LETTERS.matcher(password).find();
+    }
+    
+    public boolean containsUppercaseLetters(String password)
+    {
+        if (password == null)
+            throw new IllegalArgumentException();
+        
+        return UPPERCASE_LETTERS.matcher(password).find();
+    }
+    
+    public boolean containsNumbers(String password)
+    {
+        if (password == null)
+            throw new IllegalArgumentException();
+        
+        return NUMBERS.matcher(password).find();
+    }
+    
+    public boolean containsSpecialSymbols(String password)
+    {
+        if (password == null)
+            throw new IllegalArgumentException();
+        
+        return SPECIAL_SYMBOLS.matcher(password).find();
+    }
+    
+    public boolean isSimplePassword(String password)
+    {
+        if (password == null)
+            throw new IllegalArgumentException();
+        
+        for (int i = 0; i < password.length(); i++)
+        {
+            if (password.charAt(i) != ('1' + i))
+            {
+                return false;
+            }
+        }
+        
+        return true;
     }
     
     /**
@@ -397,4 +446,13 @@ public final class SecurityHelper extends LogItCoreObject
         
         return sb.toString();
     }
+    
+    private static final Pattern LOWERCASE_LETTERS =
+            Pattern.compile("[a-z]");
+    private static final Pattern UPPERCASE_LETTERS =
+            Pattern.compile("[A-Z]");
+    private static final Pattern NUMBERS =
+            Pattern.compile("\\d");
+    private static final Pattern SPECIAL_SYMBOLS =
+            Pattern.compile("[^A-Za-z0-9]");
 }

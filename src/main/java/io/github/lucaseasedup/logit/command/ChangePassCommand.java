@@ -25,12 +25,15 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             player = (Player) sender;
         }
         
-        int minPasswordLength = getConfig("config.yml").getInt("passwords.minLength");
-        int maxPasswordLength = getConfig("config.yml").getInt("passwords.maxLength");
+        int minPasswordLength = getConfig("config.yml")
+                .getInt("passwords.minLength");
+        int maxPasswordLength = getConfig("config.yml")
+                .getInt("passwords.maxLength");
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 3)
         {
-            if (player != null && !player.hasPermission("logit.changepass.others"))
+            if (player != null
+                    && !player.hasPermission("logit.changepass.others"))
             {
                 sendMsg(sender, t("noPerms"));
                 
@@ -133,7 +136,8 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
                 return true;
             }
             
-            if (getCooldownManager().isCooldownActive(player, LogItCooldowns.CHANGEPASS))
+            if (getCooldownManager().isCooldownActive(player,
+                    LogItCooldowns.CHANGEPASS))
             {
                 getMessageDispatcher().sendCooldownMessage(player.getName(),
                         getCooldownManager().getCooldownMillis(player, LogItCooldowns.CHANGEPASS));
@@ -153,6 +157,57 @@ public final class ChangePassCommand extends LogItCoreObject implements TabExecu
             {
                 sendMsg(player, t("passwordTooLong")
                         .replace("{0}", String.valueOf(maxPasswordLength)));
+                
+                return true;
+            }
+            
+            boolean lowercaseLetters = getConfig("config.yml")
+                    .getBoolean("passwords.complexity.lowercaseLetters");
+            boolean uppercaseLetters = getConfig("config.yml")
+                    .getBoolean("passwords.complexity.uppercaseLetters");
+            boolean numbers = getConfig("config.yml")
+                    .getBoolean("passwords.complexity.numbers");
+            boolean specialSymbols = getConfig("config.yml")
+                    .getBoolean("passwords.complexity.specialSymbols");
+            boolean blockSimplePasswords = getConfig("config.yml")
+                    .getBoolean("passwords.complexity.blockSimplePasswords");
+            
+            if (lowercaseLetters
+                    && !getSecurityHelper().containsLowercaseLetters(args[1]))
+            {
+                sendMsg(player, t("passwordMustContainLowercaseLetters"));
+                
+                return true;
+            }
+            
+            if (uppercaseLetters
+                    && !getSecurityHelper().containsUppercaseLetters(args[1]))
+            {
+                sendMsg(player, t("passwordMustContainUppercaseLetters"));
+                
+                return true;
+            }
+            
+            if (numbers
+                    && !getSecurityHelper().containsNumbers(args[1]))
+            {
+                sendMsg(player, t("passwordMustContainNumbers"));
+                
+                return true;
+            }
+            
+            if (specialSymbols
+                    && !getSecurityHelper().containsSpecialSymbols(args[1]))
+            {
+                sendMsg(player, t("passwordMustContainSpecialSymbols"));
+                
+                return true;
+            }
+            
+            if (blockSimplePasswords
+                    && getSecurityHelper().isSimplePassword(args[1]))
+            {
+                sendMsg(player, t("passwordTooSimple"));
                 
                 return true;
             }
