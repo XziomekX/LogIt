@@ -2,6 +2,7 @@ package io.github.lucaseasedup.logit.command;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
+import io.github.lucaseasedup.logit.config.Property;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import java.io.File;
@@ -12,9 +13,9 @@ import java.util.List;
 
 public final class LogItTabCompleter extends LogItCoreObject
 {
-    public List<String> completeUsername(String username)
+    public List<String> completeUsername(String stub)
     {
-        if (username == null)
+        if (stub == null)
             throw new IllegalArgumentException();
         
         List<Account> accounts = getAccountManager().selectAccounts(
@@ -22,7 +23,7 @@ public final class LogItTabCompleter extends LogItCoreObject
                 new SelectorCondition(
                         keys().username(),
                         Infix.STARTS_WITH,
-                        username
+                        stub
                 )
         );
         
@@ -43,9 +44,9 @@ public final class LogItTabCompleter extends LogItCoreObject
                         ? suggestions.size() : MAX_SUGGESTIONS);
     }
     
-    public List<String> completeBackupFilename(String filename)
+    public List<String> completeBackupFilename(String stub)
     {
-        if (filename == null)
+        if (stub == null)
             throw new IllegalArgumentException();
         
         File[] backups = getBackupManager().getBackups();
@@ -53,7 +54,7 @@ public final class LogItTabCompleter extends LogItCoreObject
         
         for (File backup : backups)
         {
-            if (backup.getName().startsWith(filename))
+            if (backup.getName().startsWith(stub))
             {
                 suggestions.add(backup.getName());
             }
@@ -61,6 +62,29 @@ public final class LogItTabCompleter extends LogItCoreObject
             if (suggestions.size() >= MAX_SUGGESTIONS)
             {
                 break;
+            }
+        }
+        
+        return suggestions;
+    }
+    
+    public List<String> completeConfigProperty(String stub)
+    {
+        if (stub == null)
+            throw new IllegalArgumentException();
+        
+        List<String> suggestions = new ArrayList<>();
+        
+        for (String property : getConfig("config.yml").getProperties().keySet())
+        {
+            if (property.startsWith(stub))
+            {
+                suggestions.add(property);
+                
+                if (suggestions.size() >= MAX_SUGGESTIONS)
+                {
+                    break;
+                }
             }
         }
         

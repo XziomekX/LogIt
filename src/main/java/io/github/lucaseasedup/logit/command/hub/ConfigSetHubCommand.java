@@ -2,6 +2,7 @@ package io.github.lucaseasedup.logit.command.hub;
 
 import static io.github.lucaseasedup.logit.message.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.message.MessageHelper.t;
+import java.util.List;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
@@ -242,5 +243,19 @@ public final class ConfigSetHubCommand extends HubCommand
                     .replace("{0}", property.getPath())
                     .replace("{1}", exMsg));
         }
+    }
+    
+    @Override
+    public List<String> complete(CommandSender sender, String[] args)
+    {
+        if (!getConfig("secret.yml").getBoolean("tabCompletion"))
+            return null;
+        
+        if (args.length == 1)
+        {
+            return getTabCompleter().completeConfigProperty(args[0]);
+        }
+        
+        return null;
     }
 }
