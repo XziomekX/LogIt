@@ -552,11 +552,12 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             throw new IllegalArgumentException();
         
         String commandLabel = command.getLabel();
+        String lowerMessage = message.toLowerCase();
         
-        if (message.equals("/" + commandLabel))
+        if (message.equalsIgnoreCase("/" + commandLabel))
             return true;
         
-        if (message.toLowerCase().startsWith("/" + commandLabel.toLowerCase() + " "))
+        if (lowerMessage.startsWith("/" + commandLabel.toLowerCase() + " "))
             return true;
         
         return matchesCommand(command.getAliases(), message);
@@ -567,10 +568,20 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         if (matchers == null || message == null)
             throw new IllegalArgumentException();
         
+        String lowerMessage = message.toLowerCase();
+        
         for (String matcher : matchers)
         {
+            String lowerMatcher = matcher.toLowerCase();
+            
             if (message.equalsIgnoreCase("/" + matcher)
-                    || message.toLowerCase().startsWith("/" + matcher.toLowerCase() + " "))
+                    || lowerMessage.startsWith("/" + lowerMatcher + " "))
+            {
+                return true;
+            }
+            
+            if (message.equalsIgnoreCase(matcher)
+                    || lowerMessage.startsWith(lowerMatcher + " "))
             {
                 return true;
             }
