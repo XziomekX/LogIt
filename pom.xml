@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
     
     <groupId>io.github.lucaseasedup.logit</groupId>
-    <artifactId>logit</artifactId>
+    <artifactId>LogIt-Classic</artifactId>
     <packaging>jar</packaging>
     <version>SNAPSHOT</version>
-    <name>LogIt</name>
+    <name>LogIt Classic</name>
     <url>http://dev.bukkit.org/bukkit-plugins/logit/</url>
     
     <licenses>
