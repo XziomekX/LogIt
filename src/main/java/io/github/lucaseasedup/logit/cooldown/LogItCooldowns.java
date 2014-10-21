@@ -49,11 +49,14 @@ public final class LogItCooldowns
         }
         else
         {
-            throw new IllegalArgumentException("Unknown cooldown type: " + cooldown.getName());
+            throw new IllegalArgumentException(
+                    "Unknown cooldown type: " + cooldown.getName()
+            );
         }
         
-        logItCore.getCooldownManager().activateCooldown(player,
-                LogItCooldowns.CHANGEPASS, cooldownTime);
+        logItCore.getCooldownManager().activateCooldown(
+                player, cooldown, cooldownTime
+        );
     }
     
     public static final Cooldown REGISTER = new Cooldown("logit.register");
