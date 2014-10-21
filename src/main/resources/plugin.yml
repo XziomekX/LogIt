@@ -7,61 +7,47 @@ softdepend: [BukkitSmerf, Essentials, Multiverse-Core, ProtocolLib, Vault]
 commands:
   logit:
     description: LogIt generic command.
-    usage: /<command> [help|version|start|stop|reload|backup <force|restore <file <filename>|time <time>>|remove <amount>>|gotowr|globalpass|account <status <username>|info <username>|rename <username> <newUsername>|datum <username> <key>>|ipcount <ip>|config <get <path>|set <path> <value>|list [page]|reload>|convert|stats|import authme]
 
   login:
     description: Logs you in.
-    usage: /<command> [password]
     aliases: [l]
 
   logout:
     description: Logs you out.
-    usage: /<command>
 
   remember:
     description: Remembers your login.
-    usage: /<command>
 
   register:
     description: Registers you.
-    usage: /<command> <password> <confirmpassword>
     aliases: [reg]
 
   unregister:
     description: Unregisters you.
-    usage: /<command> [password]
 
   changepass:
     description: Changes your password.
-    usage: /<command> <oldpassword> <newpassword> <confirmpassword>
 
   changeemail:
     description: Changes your e-mail address.
-    usage: /<command> <newemail>
 
   recoverpass:
     description: Recovers your password through e-mail.
-    usage: /<command> <email>
   
   profile:
     description: Allows to view and edit player profiles.
-    usage: /<command> <view [player]|edit [player]>
   
   acclock:
     description: Locks an account so that no one can log into it until it's unlocked.
-    usage: /<command> <username>
   
   accunlock:
     description: Unlocks an account.
-    usage: /<command> <username>
   
   loginhistory:
     descripton: Shows login history for your account.
-    usage: /<command>
   
   $logit-nop-command:
     description: Reserved for internal use.
-    usage: /<command>
 
 permissions:
   logit.*:
