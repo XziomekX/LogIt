@@ -1,4 +1,4 @@
-name: LogIt Classic
+name: LogIt
 version: ${project.version}
 author: LucasEasedUp
 main: io.github.lucaseasedup.logit.LogItPlugin
