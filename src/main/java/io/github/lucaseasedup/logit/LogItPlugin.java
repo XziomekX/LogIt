@@ -219,12 +219,13 @@ public final class LogItPlugin extends JavaPlugin
         
         message = ChatColor.translateAlternateColorCodes('&', message);
         
-        return parseMessage(message);
+        return getInstance().replaceGlobalTokens(message);
     }
     
-    private static String parseMessage(String message)
+    public String replaceGlobalTokens(String message)
     {
-        message = message.replace("%bukkit_version%", Bukkit.getBukkitVersion());
+        message = message.replace("%bukkit_version%",
+                Bukkit.getBukkitVersion());
         message = message.replace("%logit_version%",
                 LogItPlugin.getInstance().getDescription().getVersion());
         message = message.replace("%server_id%", Bukkit.getServerId());
@@ -237,7 +238,8 @@ public final class LogItPlugin extends JavaPlugin
     
     public static String getCraftBukkitVersion()
     {
-        String packageName = Bukkit.getServer().getClass().getPackage().getName();
+        String packageName = Bukkit.getServer()
+                .getClass().getPackage().getName();
         String[] packageParts = packageName.split("\\.");
         
         return packageParts[packageParts.length - 1];
@@ -245,7 +247,13 @@ public final class LogItPlugin extends JavaPlugin
     
     /* package */ static LogItPlugin getInstance()
     {
-        return (LogItPlugin) Bukkit.getPluginManager().getPlugin("LogIt");
+        if (instance == null)
+        {
+            instance = (LogItPlugin)
+                    Bukkit.getPluginManager().getPlugin("LogIt");
+        }
+        
+        return instance;
     }
     
     static
@@ -253,6 +261,7 @@ public final class LogItPlugin extends JavaPlugin
         ConfigurationSerialization.registerClass(LocationSerializable.class);
     }
     
+    private static LogItPlugin instance = null;
     private PropertyResourceBundle messages;
     private PropertyResourceBundle customGlobalMessages;
     private PropertyResourceBundle customLocalMessages;

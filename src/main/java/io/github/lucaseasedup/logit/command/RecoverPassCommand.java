@@ -147,7 +147,8 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                         
                         if (!paramEmail.equalsIgnoreCase(email))
                         {
-                            sendMsg(player, t("recoverPassword.incorrectEmailAddress"));
+                            sendMsg(player,
+                                    t("recoverPassword.incorrectEmailAddress"));
                             
                             return;
                         }
@@ -157,11 +158,17 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                         String body = bodyTemplate
                                 .replace("%player%", playerName)
                                 .replace("%password%", newPassword);
+                        body = getPlugin().replaceGlobalTokens(body);
                         
-                        LogItCooldowns.activate(player, LogItCooldowns.RECOVERPASS);
+                        LogItCooldowns.activate(player,
+                                LogItCooldowns.RECOVERPASS);
                         
-                        MailSender.from(smtpHost, smtpPort, smtpUser, smtpPassword)
-                                .sendMail(Arrays.asList(to),from, subject, body, htmlEnabled);
+                        MailSender.from(
+                                smtpHost, smtpPort, smtpUser, smtpPassword
+                        ).sendMail(
+                                Arrays.asList(to), from,
+                                subject, body, htmlEnabled
+                        );
                         
                         account.changePassword(newPassword);
                         
