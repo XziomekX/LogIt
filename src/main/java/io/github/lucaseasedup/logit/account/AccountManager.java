@@ -309,7 +309,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      */
     public Set<String> getRegisteredUsernames()
     {
-        List<Account> accounts = getAccountManager().selectAccounts(
+        List<Account> accounts = selectAccounts(
                 Arrays.asList(
                         keys().username()
                 ),
