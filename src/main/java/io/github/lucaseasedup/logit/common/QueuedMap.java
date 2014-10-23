@@ -75,6 +75,33 @@ public final class QueuedMap<K, V> implements Map<K, V>
         };
     }
     
+    public synchronized Map.Entry<K, V> element()
+    {
+        final K key = keys.element();
+        final V value = values.get(key);
+        
+        return new Map.Entry<K, V>()
+        {
+            @Override
+            public K getKey()
+            {
+                return key;
+            }
+            
+            @Override
+            public V getValue()
+            {
+                return value;
+            }
+            
+            @Override
+            public V setValue(V value)
+            {
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
+    
     @Override
     public synchronized int size()
     {
