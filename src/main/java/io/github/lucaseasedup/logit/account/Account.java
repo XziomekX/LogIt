@@ -885,6 +885,24 @@ public final class Account extends LogItCoreObject
         return entry;
     }
     
+    public void bufferLock()
+    {
+        if (bufferLocked)
+            throw new IllegalStateException("Account already buffer-locked");
+        
+        bufferLocked = true;
+    }
+    
+    public void bufferUnlock()
+    {
+        bufferLocked = false;
+    }
+    
+    public boolean isBufferLocked()
+    {
+        return bufferLocked;
+    }
+    
     /**
      * @see Account#enqueueSaveCallback(SaveCallback)
      */
@@ -912,4 +930,5 @@ public final class Account extends LogItCoreObject
     
     private final Storage.Entry entry;
     private final Queue<SaveCallback> saveCallbacks = new LinkedList<>();
+    private boolean bufferLocked = false;
 }

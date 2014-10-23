@@ -531,23 +531,36 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             return;
         
         Map<String, Account> dirtyAccounts = new HashMap<>();
+        QueuedMap<String, Account> ignoredAccounts = new QueuedMap<>();
         QueuedMap<String, Storage.Entry> dirtyEntries = new QueuedMap<>();
         
         while (!buffer.isEmpty())
         {
             Map.Entry<String, Account> e = buffer.remove();
+            String username = e.getKey();
+            Account account = e.getValue();
             
-            if (e.getValue() == null)
+            if (account == null)
                 continue;
             
-            Storage.Entry dirtyEntry = e.getValue().getEntry().copyDirty();
+            if (account.isBufferLocked())
+            {
+                ignoredAccounts.put(username, account);
+                
+                continue;
+            }
+            
+            Storage.Entry dirtyEntry = account.getEntry().copyDirty();
             
             if (!dirtyEntry.getKeys().isEmpty())
             {
-                dirtyAccounts.put(e.getKey(), e.getValue());
-                dirtyEntries.put(e.getKey(), dirtyEntry);
+                dirtyAccounts.put(username, account);
+                dirtyEntries.put(username, dirtyEntry);
             }
         }
+        
+        // Restore buffer-locked accounts.
+        buffer.putAll(ignoredAccounts);
         
         if (dirtyEntries.isEmpty())
             return;

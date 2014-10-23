@@ -132,16 +132,19 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                 @Override
                 public void run()
                 {
+                    Account account = null;
+                    
                     try
                     {
                         ReportedException.incrementRequestCount();
                         
-                        Account account = getAccountManager().selectAccount(playerName,
+                        account = getAccountManager().selectAccount(playerName,
                                 Arrays.asList(
                                         keys().username(),
                                         keys().email()
                                 )
                         );
+                        account.bufferLock();
                         
                         String email = account.getEmail();
                         
@@ -188,6 +191,11 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
                     finally
                     {
                         ReportedException.decrementRequestCount();
+                        
+                        if (account != null)
+                        {
+                            account.bufferUnlock();
+                        }
                         
                         playerLocks.remove(username);
                     }
