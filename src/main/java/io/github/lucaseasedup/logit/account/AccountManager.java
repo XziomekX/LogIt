@@ -136,7 +136,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
-    public Account selectAccount(String username, List<String> queryKeys)
+    public synchronized Account selectAccount(String username,
+                                              List<String> queryKeys)
     {
         if (username == null || queryKeys == null)
             throw new IllegalArgumentException();
@@ -239,15 +240,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         return cachedAccount;
     }
     
-    public boolean isRegistered(String username)
-    {
-        if (StringUtils.isBlank(username))
-            throw new IllegalArgumentException();
-        
-        return selectAccount(username, Arrays.asList(keys.username())) != null;
-    }
-    
-    public List<Account> selectAccounts(List<String> queryKeys, Selector selector)
+    public synchronized List<Account> selectAccounts(List<String> queryKeys,
+                                                     Selector selector)
     {
         if (queryKeys == null || selector == null)
             throw new IllegalArgumentException();
@@ -298,6 +292,14 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         return accounts;
     }
     
+    public boolean isRegistered(String username)
+    {
+        if (StringUtils.isBlank(username))
+            throw new IllegalArgumentException();
+        
+        return selectAccount(username, Arrays.asList(keys.username())) != null;
+    }
+    
     /**
      * Returns all registered usernames in this {@code AccountManager}.
      *
@@ -329,7 +331,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         return usernames;
     }
     
-    public CancelledState insertAccount(Account account)
+    public synchronized CancelledState insertAccount(Account account)
     {
         if (account == null)
             throw new IllegalArgumentException();
@@ -373,7 +375,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         return CancelledState.NOT_CANCELLED;
     }
     
-    public void insertAccounts(Account... accounts)
+    public synchronized void insertAccounts(Account... accounts)
     {
         if (accounts == null)
             throw new IllegalArgumentException();
@@ -402,7 +404,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         }
     }
     
-    public void renameAccount(String username, String newUsername)
+    public synchronized void renameAccount(String username, String newUsername)
     {
         if (StringUtils.isBlank(username) || StringUtils.isBlank(newUsername))
         {
@@ -453,7 +455,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
-    public CancelledState removeAccount(String username)
+    public synchronized CancelledState removeAccount(String username)
     {
         if (StringUtils.isBlank(username))
             throw new IllegalArgumentException();
@@ -493,7 +495,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         return CancelledState.NOT_CANCELLED;
     }
     
-    public void removeAccounts(String... usernames)
+    public synchronized void removeAccounts(String... usernames)
     {
         if (usernames == null)
             throw new IllegalArgumentException();
