@@ -293,13 +293,13 @@ public final class Account extends LogItCoreObject
         {
             String newSalt = SecurityHelper.generateSalt(hashingAlgorithm);
             
-            newHash = SecurityHelper.hash(newPassword, newSalt, hashingAlgorithm);
+            newHash = SecurityHelper.getHash(newPassword, newSalt, hashingAlgorithm);
             
             entry.put(keys().salt(), newSalt);
         }
         else
         {
-            newHash = SecurityHelper.hash(newPassword, hashingAlgorithm);
+            newHash = SecurityHelper.getHash(newPassword, hashingAlgorithm);
         }
         
         entry.put(keys().password(), newHash);
@@ -778,7 +778,7 @@ public final class Account extends LogItCoreObject
     }
     
     /**
-     * Enqueues a new save-callback to be called when this accounts
+     * Enqueues a new save-callback to be called when this account
      * gets updated in a {@code Storage}.
      *
      * <p> Once the callback gets called, it is removed from the queue.

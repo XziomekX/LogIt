@@ -19,6 +19,7 @@ import io.github.lucaseasedup.logit.storage.SelectorNegation;
 import io.github.lucaseasedup.logit.util.BlockUtils;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
+import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -62,7 +63,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         
         Player player = event.getPlayer();
         
-        onLogin(player, new PlayerKicker()
+        onLogin(player, event.getAddress(), new PlayerKicker()
         {
             @Override
             public void kick(Player player, String message)
@@ -72,7 +73,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         });
     }
     
-    public void onLogin(Player player, PlayerKicker kicker)
+    public void onLogin(Player player, InetAddress address, PlayerKicker kicker)
     {
         if (player == null || kicker == null)
             throw new IllegalArgumentException();

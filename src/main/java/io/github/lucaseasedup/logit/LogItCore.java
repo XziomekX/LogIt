@@ -218,7 +218,8 @@ public final class LogItCore
         
         for (final Player player : Bukkit.getOnlinePlayers())
         {
-            playerEventListener.onLogin(player, playerKicker);
+            playerEventListener.onLogin(player,
+                    player.getAddress().getAddress(), playerKicker);
             playerEventListener.onJoin(player, new JoinMessage()
             {
                 @Override
@@ -918,10 +919,6 @@ public final class LogItCore
             }
             
             log(Level.INFO, t("reloadPlugin.success"));
-        }
-        else
-        {
-            log(Level.INFO, t("reloadPlugin.fail"));
         }
     }
     

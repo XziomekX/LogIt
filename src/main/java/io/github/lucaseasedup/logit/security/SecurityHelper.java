@@ -1,10 +1,10 @@
 package io.github.lucaseasedup.logit.security;
 
-import java.util.regex.Pattern;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 public final class SecurityHelper extends LogItCoreObject
 {
@@ -59,7 +59,7 @@ public final class SecurityHelper extends LogItCoreObject
         }
         else
         {
-            return hashedPassword.equals(SecurityHelper.hash(password, algorithmType));
+            return hashedPassword.equals(SecurityHelper.getHash(password, algorithmType));
         }
     }
     
@@ -128,13 +128,13 @@ public final class SecurityHelper extends LogItCoreObject
             if (getConfig("secret.yml").getBoolean("passwords.useSalt"))
             {
                 return hashedPassword.equals(
-                        SecurityHelper.hash(password, salt, algorithmType)
+                        SecurityHelper.getHash(password, salt, algorithmType)
                 );
             }
             else
             {
                 return hashedPassword.equals(
-                        SecurityHelper.hash(password, algorithmType)
+                        SecurityHelper.getHash(password, algorithmType)
                 );
             }
         }
@@ -208,7 +208,7 @@ public final class SecurityHelper extends LogItCoreObject
      */
     public static String getMd2(String string)
     {
-        return hash(string, "MD2");
+        return getHash(string, "MD2");
     }
     
     /**
@@ -219,7 +219,7 @@ public final class SecurityHelper extends LogItCoreObject
      */
     public static String getMd5(String string)
     {
-        return hash(string, "MD5");
+        return getHash(string, "MD5");
     }
     
     /**
@@ -230,7 +230,7 @@ public final class SecurityHelper extends LogItCoreObject
      */
     public static String getSha1(String string)
     {
-        return hash(string, "SHA-1");
+        return getHash(string, "SHA-1");
     }
     
     /**
@@ -241,7 +241,7 @@ public final class SecurityHelper extends LogItCoreObject
      */
     public static String getSha256(String string)
     {
-        return hash(string, "SHA-256");
+        return getHash(string, "SHA-256");
     }
     
     /**
@@ -252,7 +252,7 @@ public final class SecurityHelper extends LogItCoreObject
      */
     public static String getSha384(String string)
     {
-        return hash(string, "SHA-384");
+        return getHash(string, "SHA-384");
     }
     
     /**
@@ -263,7 +263,7 @@ public final class SecurityHelper extends LogItCoreObject
      */
     public static String getSha512(String string)
     {
-        return hash(string, "SHA-512");
+        return getHash(string, "SHA-512");
     }
     
     /**
@@ -299,9 +299,10 @@ public final class SecurityHelper extends LogItCoreObject
      * 
      * @throws IllegalArgumentException if this method does not support the given algorithm.
      * 
-     * @see #hash(String, String, HashingAlgorithm)
+     * @see #getHash(String, String, HashingAlgorithm)
      */
-    public static String hash(String string, HashingAlgorithm hashingAlgorithm)
+    public static String getHash(String string,
+                                 HashingAlgorithm hashingAlgorithm)
     {
         switch (hashingAlgorithm)
         {
@@ -346,9 +347,11 @@ public final class SecurityHelper extends LogItCoreObject
      * 
      * @return resulting hash.
      * 
-     * @see #hash(String, HashingAlgorithm)
+     * @see #getHash(String, HashingAlgorithm)
      */
-    public static String hash(String string, String salt, HashingAlgorithm hashingAlgorithm)
+    public static String getHash(String string,
+                                 String salt,
+                                 HashingAlgorithm hashingAlgorithm)
     {
         String hash;
         
@@ -358,19 +361,18 @@ public final class SecurityHelper extends LogItCoreObject
         }
         else if (hashingAlgorithm == HashingAlgorithm.PLAIN)
         {
-            hash = hash(string, hashingAlgorithm);
+            hash = getHash(string, hashingAlgorithm);
         }
         else
         {
-            hash = hash(string + salt, hashingAlgorithm);
+            hash = getHash(string + salt, hashingAlgorithm);
         }
         
         return hash;
     }
     
-    private static String hash(String string, String algorithm)
+    private static String getHash(String string, String algorithm)
     {
-        StringBuilder sb = new StringBuilder();
         MessageDigest messageDigest;
         
         try
@@ -384,6 +386,7 @@ public final class SecurityHelper extends LogItCoreObject
         }
         
         byte bytes[] = messageDigest.digest();
+        StringBuilder sb = new StringBuilder();
         
         for (byte b : bytes)
         {

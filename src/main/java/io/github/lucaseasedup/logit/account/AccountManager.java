@@ -357,7 +357,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             buffer.remove(account.getUsername());
             buffer.put(account.getUsername(), account);
             
-            log(Level.WARNING, t("createAccount.success.log")
+            log(Level.FINE, t("createAccount.success.log")
                     .replace("{0}", account.getUsername()));
             
             event.executeSuccessTasks();
