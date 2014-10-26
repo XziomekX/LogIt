@@ -18,8 +18,17 @@ public final class EssentialsHook
         if (!Bukkit.getPluginManager().isPluginEnabled("Essentials"))
             return false;
         
-        Essentials ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
+        Essentials ess = (Essentials)
+                Bukkit.getPluginManager().getPlugin("Essentials");
+        String essVersion = ess.getDescription().getVersion();
         
-        return ess.getUser(player).isVanished();
+        if (essVersion.equals("2.12.1"))
+        {
+            return ess.getUser((Object) player).isVanished();
+        }
+        else
+        {
+            return ess.getUser(player).isVanished();
+        }
     }
 }
