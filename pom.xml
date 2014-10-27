@@ -144,7 +144,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>src/main/fake</source>
+                                <source>src/fake/java</source>
                             </sources>
                         </configuration>
                     </execution>
