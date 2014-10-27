@@ -77,6 +77,11 @@ public final class UnregisterCommand extends LogItCoreObject implements TabExecu
                                 .replace("{0}", paramPlayer.getName()));
                     }
                 }
+                
+                if (getConfig("config.yml").getBoolean("kickUnregistered"))
+                {
+                    paramPlayer.kickPlayer(t("removeAccount.kick"));
+                }
             }
             
             try
@@ -168,7 +173,14 @@ public final class UnregisterCommand extends LogItCoreObject implements TabExecu
                 
                 if (!getAccountManager().removeAccount(player.getName()).isCancelled())
                 {
-                    sendMsg(sender, t("removeAccount.success.self"));
+                    if (getConfig("config.yml").getBoolean("kickUnregistered"))
+                    {
+                        player.kickPlayer(t("removeAccount.kick"));
+                    }
+                    else
+                    {
+                        sendMsg(sender, t("removeAccount.success.self"));
+                    }
                     
                     LogItCooldowns.activate(player, LogItCooldowns.UNREGISTER);
                 }
