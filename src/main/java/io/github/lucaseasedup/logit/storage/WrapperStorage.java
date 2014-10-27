@@ -409,7 +409,12 @@ public final class WrapperStorage extends Storage
             @Override
             public void walk(Storage storage, String unit) throws IOException
             {
-                storage.addKey(unit, key, type);
+                Hashtable<String, DataType> keys = storage.getKeys(unit);
+                
+                if (!keys.containsKey(key))
+                {
+                    storage.addKey(unit, key, type);
+                }
             }
         }, unit);
         
