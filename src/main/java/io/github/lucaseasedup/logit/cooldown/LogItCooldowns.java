@@ -16,10 +16,6 @@ public final class LogItCooldowns
             throw new IllegalArgumentException();
         
         LogItCore logItCore = LogItCore.getInstance();
-        
-        if (logItCore == null)
-            throw new IllegalStateException();
-        
         long cooldownTime;
         
         if (cooldown == REGISTER)
