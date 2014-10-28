@@ -41,7 +41,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @param unit    the name of a unit eligible for account storage.
      * @param keys    the account keys present in the specified unit.
      */
-    public AccountManager(WrapperStorage storage, String unit, AccountKeys keys)
+    public AccountManager(final WrapperStorage storage,
+                          String unit,
+                          AccountKeys keys)
     {
         if (storage == null || unit == null || keys == null)
             throw new IllegalArgumentException();
@@ -70,6 +72,21 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         this.storage = storage;
         this.unit = unit;
         this.keys = keys;
+        this.pinger = new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    storage.ping();
+                }
+                catch (IOException ex)
+                {
+                    log(Level.WARNING, "Could not ping the database.", ex);
+                }
+            }
+        };
     }
     
     @Override
@@ -100,21 +117,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     {
         if (pingerTask == null)
         {
-            pingerTask = new BukkitRunnable()
-            {
-                @Override
-                public void run()
-                {
-                    try
-                    {
-                        storage.ping();
-                    }
-                    catch (IOException ex)
-                    {
-                        log(Level.WARNING, "Could not ping the database.", ex);
-                    }
-                }
-            }.runTaskTimer(getPlugin(), 20L, TimeUnit.MINUTES.convert(5, TimeUnit.TICKS));
+            pingerTask = pinger.runTaskTimer(getPlugin(), 20L,
+                    TimeUnit.MINUTES.convert(5, TimeUnit.TICKS));
         }
         
         flushBuffer();
@@ -632,6 +636,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     private Storage storage;
     private String unit;
     private AccountKeys keys;
+    private BukkitRunnable pinger;
     private BukkitTask pingerTask;
     private QueuedMap<String, Account> buffer = new QueuedMap<>();
 }
