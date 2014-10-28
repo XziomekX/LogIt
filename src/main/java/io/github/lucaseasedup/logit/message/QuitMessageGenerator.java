@@ -13,9 +13,11 @@ public final class QuitMessageGenerator
     public static String generate(Player player)
     {
         LogItCore core = LogItCore.getInstance();
+        boolean beautifyMessages = core.getConfig("config.yml")
+                .getBoolean("messages.beautify");
         String message;
         
-        if (core.getConfig("config.yml").getBoolean("messages.beautify"))
+        if (beautifyMessages)
         {
             message = t("quit.beautified");
         }

@@ -17,9 +17,11 @@ public final class JoinMessageGenerator
     public static String generate(Player player, boolean revealSpawnWorld)
     {
         LogItCore core = LogItCore.getInstance();
+        boolean beautifyMessages = core.getConfig("config.yml")
+                .getBoolean("messages.beautify");
         String message;
         
-        if (core.getConfig("config.yml").getBoolean("messages.beautify"))
+        if (beautifyMessages)
         {
             message = t("join.beautified");
         }
@@ -30,7 +32,7 @@ public final class JoinMessageGenerator
         
         String inWorld;
         
-        if (core.getConfig("config.yml").getBoolean("messages.beautify"))
+        if (beautifyMessages)
         {
             inWorld = t("join.beautified.inWorld");
         }
@@ -43,7 +45,8 @@ public final class JoinMessageGenerator
         {
             String worldAlias = getWorldAlias(player.getWorld());
             
-            message = message.replace("{1}", inWorld.replace("{0}", worldAlias));
+            message = message.replace("{1}",
+                    inWorld.replace("{0}", worldAlias));
         }
         else
         {
