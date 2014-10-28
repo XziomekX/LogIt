@@ -1,7 +1,7 @@
 package org.sqlite;
 
-import java.util.Properties;
 import java.sql.Connection;
+import java.util.Properties;
 
 public final class JDBC
 {
