@@ -1,6 +1,6 @@
 package io.github.lucaseasedup.logit.locale;
 
-@LocalePrefix("en")
+@LocaleTag("en")
 public final class EnglishLocale implements Locale
 {
     private EnglishLocale()

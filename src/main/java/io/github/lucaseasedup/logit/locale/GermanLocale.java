@@ -1,6 +1,6 @@
 package io.github.lucaseasedup.logit.locale;
 
-@LocalePrefix("de")
+@LocaleTag("de")
 public final class GermanLocale implements Locale
 {
     private GermanLocale()

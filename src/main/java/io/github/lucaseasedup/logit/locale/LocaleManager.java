@@ -89,8 +89,8 @@ public final class LocaleManager extends LogItCoreObject
         if (localeObj == null)
             throw new IllegalArgumentException();
         
-        if (localeObj.getClass().getAnnotation(LocalePrefix.class) == null)
-            throw new RuntimeException("LocalePrefix not found.");
+        if (localeObj.getClass().getAnnotation(LocaleTag.class) == null)
+            throw new RuntimeException("LocaleTag not found.");
         
         if (locales.containsKey(localeObj.getClass()))
             throw new RuntimeException("Locale already registered.");
@@ -123,7 +123,7 @@ public final class LocaleManager extends LogItCoreObject
         
         for (Map.Entry<Class<? extends Locale>, Locale> e : locales.entrySet())
         {
-            if (getLocalePrefix(e.getKey()).equals(prefix))
+            if (getLocaleTag(e.getKey()).equals(prefix))
             {
                 return e.getValue();
             }
@@ -132,12 +132,12 @@ public final class LocaleManager extends LogItCoreObject
         return null;
     }
     
-    public static String getLocalePrefix(Class<? extends Locale> locale)
+    public static String getLocaleTag(Class<? extends Locale> locale)
     {
         if (locale == null)
             throw new IllegalArgumentException();
         
-        return locale.getAnnotation(LocalePrefix.class).value();
+        return locale.getAnnotation(LocaleTag.class).value();
     }
     
     private Map<Class<? extends Locale>, Locale> locales = new HashMap<>();
