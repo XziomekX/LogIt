@@ -2,6 +2,7 @@ package io.github.lucaseasedup.logit;
 
 import io.github.lucaseasedup.logit.command.DisabledCommandExecutor;
 import io.github.lucaseasedup.logit.command.LogItCommand;
+import io.github.lucaseasedup.logit.command.NopCommandExecutor;
 import io.github.lucaseasedup.logit.common.FatalReportedException;
 import io.github.lucaseasedup.logit.config.LocationSerializable;
 import java.io.File;
@@ -50,7 +51,10 @@ public final class LogItPlugin extends JavaPlugin
             getLogger().log(Level.WARNING, "Could not load messages.", ex);
         }
         
-        getCommand("logit").setExecutor(new LogItCommand());
+        getCommand("logit")
+                .setExecutor(new LogItCommand());
+        getCommand("$logit-nop-command")
+                .setExecutor(new NopCommandExecutor());
         
         core = LogItCore.getInstance();
         
@@ -80,7 +84,10 @@ public final class LogItPlugin extends JavaPlugin
             core = null;
         }
         
-        getCommand("logit").setExecutor(new DisabledCommandExecutor());
+        getCommand("logit")
+                .setExecutor(new DisabledCommandExecutor());
+        getCommand("$logit-nop-command")
+                .setExecutor(new DisabledCommandExecutor());
         
         messages = null;
         customGlobalMessages = null;

@@ -17,7 +17,6 @@ import io.github.lucaseasedup.logit.command.LogItTabCompleter;
 import io.github.lucaseasedup.logit.command.LoginCommand;
 import io.github.lucaseasedup.logit.command.LoginHistoryCommand;
 import io.github.lucaseasedup.logit.command.LogoutCommand;
-import io.github.lucaseasedup.logit.command.NopCommandExecutor;
 import io.github.lucaseasedup.logit.command.ProfileCommand;
 import io.github.lucaseasedup.logit.command.RecoverPassCommand;
 import io.github.lucaseasedup.logit.command.RegisterCommand;
@@ -609,7 +608,6 @@ public final class LogItCore
         enableCommand("accunlock", new AccunlockCommand());
         enableCommand("loginhistory", new LoginHistoryCommand(),
                 getConfig("config.yml").getBoolean("loginHistory.enabled"));
-        enableCommand("$logit-nop-command", new NopCommandExecutor());
     }
     
     private void enableCommand(String command,
@@ -745,7 +743,6 @@ public final class LogItCore
         disableCommand("acclock");
         disableCommand("accunlock");
         disableCommand("loginhistory");
-        disableCommand("$logit-nop-command");
     }
     
     private void disableCommand(String command)
