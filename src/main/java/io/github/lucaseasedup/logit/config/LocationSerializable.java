@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
@@ -55,7 +56,12 @@ public final class LocationSerializable implements Cloneable, ConfigurationSeria
     
     public org.bukkit.Location toBukkitLocation()
     {
-        return new org.bukkit.Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
+        World worldObj = Bukkit.getWorld(world);
+        
+        if (worldObj == null)
+            return null;
+        
+        return new org.bukkit.Location(worldObj, x, y, z, yaw, pitch);
     }
     
     @Override
