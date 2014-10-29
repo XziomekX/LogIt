@@ -101,6 +101,8 @@ public final class LogItPlugin extends JavaPlugin
     
     private void disable()
     {
+        Bukkit.getConsoleSender().sendMessage(getMessage("pluginStopping"));
+        
         getServer().getPluginManager().disablePlugin(this);
     }
     
