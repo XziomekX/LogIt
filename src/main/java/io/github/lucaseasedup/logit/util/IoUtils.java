@@ -13,6 +13,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URLDecoder;
+import java.nio.channels.FileChannel;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -99,6 +100,32 @@ public final class IoUtils
                         os.write(buffer, 0, readBytes);
                     }
                 }
+            }
+        }
+    }
+    
+    public static void copyFile(File sourceFile, File destFile)
+            throws IOException
+    {
+        if (!destFile.exists())
+        {
+            destFile.getParentFile().mkdirs();
+            destFile.createNewFile();
+        }
+        
+        try(
+            FileInputStream source = new FileInputStream(sourceFile);
+            FileOutputStream destination = new FileOutputStream(destFile);
+        )
+        {
+            try (
+                FileChannel sourceChannel = source.getChannel();
+                FileChannel destinationChannel = destination.getChannel();
+            )
+            {
+                destinationChannel.transferFrom(
+                        sourceChannel, 0, sourceChannel.size()
+                );
             }
         }
     }

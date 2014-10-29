@@ -2,7 +2,6 @@ package io.github.lucaseasedup.logit;
 
 import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
-import com.google.common.io.Files;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.account.AccountManager;
@@ -257,10 +256,7 @@ public final class LogItCore
             
             try
             {
-                newConfigDefFile.getParentFile().mkdirs();
-                newConfigDefFile.createNewFile();
-                
-                Files.copy(oldConfigDefFile, newConfigDefFile);
+                IoUtils.copyFile(oldConfigDefFile, newConfigDefFile);
                 
                 oldConfigDefFile.delete();
             }
