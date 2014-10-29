@@ -1,15 +1,11 @@
 package io.github.lucaseasedup.logit.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URLDecoder;
@@ -21,34 +17,6 @@ public final class IoUtils
 {
     private IoUtils()
     {
-    }
-    
-    @SuppressWarnings("unchecked")
-    public static <T> T deepCopy(T obj)
-    {
-        try
-        {
-            try (
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(baos);
-            )
-            {
-                oos.writeObject(obj);
-                oos.flush();
-                
-                try (
-                    ByteArrayInputStream bain = new ByteArrayInputStream(baos.toByteArray());
-                    ObjectInputStream ois = new ObjectInputStream(bain);
-                )
-                {
-                    return (T) ois.readObject();
-                }
-            }
-        }
-        catch (IOException | ClassNotFoundException ex)
-        {
-            return null;
-        }
     }
     
     public static String toString(InputStream is) throws IOException

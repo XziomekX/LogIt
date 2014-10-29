@@ -4,6 +4,7 @@ import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import com.google.common.collect.ImmutableMap;
 import io.github.lucaseasedup.logit.util.IniUtils;
 import io.github.lucaseasedup.logit.util.IoUtils;
+import io.github.lucaseasedup.logit.util.Utils;
 import it.sauronsoftware.base64.Base64;
 import java.io.File;
 import java.io.FileInputStream;
@@ -87,7 +88,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
         {
             userDefFile.getParentFile().mkdirs();
             userDefString = packageDefString;
-            userDef = IoUtils.deepCopy(packageDef);
+            userDef = Utils.deepCopy(packageDef);
             
             for (Map<String, String> userDefSection : userDef.values())
             {
