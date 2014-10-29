@@ -341,7 +341,7 @@ public final class LogItCore
         try
         {
             String version = LogItPlugin.getCraftBukkitVersion();
-            String craftClassName = "io.github.lucaseasedup.logit.craftreflect."
+            String craftClassName = LogItPlugin.PACKAGE + ".craftreflect."
                         + version + ".CraftReflect";
             Class<?> craftClass = Class.forName(craftClassName);
             

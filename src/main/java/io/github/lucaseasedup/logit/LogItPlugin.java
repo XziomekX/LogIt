@@ -268,6 +268,8 @@ public final class LogItPlugin extends JavaPlugin
         ConfigurationSerialization.registerClass(LocationSerializable.class);
     }
     
+    public static final String PACKAGE = "io.github.lucaseasedup.logit";
+    
     private static LogItPlugin instance = null;
     private PropertyResourceBundle messages;
     private PropertyResourceBundle customGlobalMessages;

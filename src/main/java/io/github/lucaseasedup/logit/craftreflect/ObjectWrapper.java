@@ -13,7 +13,7 @@ public abstract class ObjectWrapper
             throws ReflectiveOperationException
     {
         String bukkitVersion = LogItPlugin.getCraftBukkitVersion();
-        String wrapperCraftClassName = "io.github.lucaseasedup.logit.craftreflect."
+        String wrapperCraftClassName = LogItPlugin.PACKAGE + ".craftreflect."
                     + bukkitVersion + "." + castTo.getSimpleName();
         Class<?> wrapperCraftClass = Class.forName(wrapperCraftClassName);
         
