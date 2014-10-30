@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
+import org.apache.tools.ant.util.LinkedHashtable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -566,7 +567,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         
         try (Storage sessionsStorage = new SqliteStorage("jdbc:sqlite:" + file))
         {
-            Hashtable<String, DataType> keys = new Hashtable<>();
+            Hashtable<String, DataType> keys = new LinkedHashtable<>();
             keys.put("username", DataType.TINYTEXT);
             keys.put("status", DataType.INTEGER);
             keys.put("ip", DataType.TINYTEXT);
