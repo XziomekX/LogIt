@@ -2,8 +2,41 @@ package io.github.lucaseasedup.logit.config;
 
 public enum TimeUnit
 {
-    MILLISECONDS(1), TICKS(50), SECONDS(1000), MINUTES(60000),
-    HOURS(3600000), DAYS(86400000), WEEKS(604800000);
+    /*
+     * 1 ms = 1 ms
+     */
+    MILLISECONDS(1),
+    
+    /*
+     * 1000 ms = 20 ticks
+     * 1 tick = 1000 / 20 ms = 50 ms
+     */
+    TICKS(50),
+    
+    /*
+     * 1 s = 1000 ms
+     */
+    SECONDS(1000),
+    
+    /*
+     * 1 min = 60 * 1000 ms
+     */
+    MINUTES(60000),
+    
+    /*
+     * 1 hour = 60 * 60 * 1000 ms
+     */
+    HOURS(3600000),
+    
+    /*
+     * 1 day = 24 * 60 * 60 * 1000 ms
+     */
+    DAYS(86400000),
+    
+    /*
+     * 1 week = 7 * 24 * 60 * 60 * 1000 ms
+     */
+    WEEKS(604800000);
     
     private TimeUnit(long milliseconds)
     {
