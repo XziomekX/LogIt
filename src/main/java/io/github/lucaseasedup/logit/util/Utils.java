@@ -1,10 +1,12 @@
 package io.github.lucaseasedup.logit.util;
 
+import io.github.lucaseasedup.logit.LogItCore;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.logging.Level;
 
 public final class Utils
 {
@@ -37,6 +39,8 @@ public final class Utils
         }
         catch (IOException | ClassNotFoundException ex)
         {
+            LogItCore.getInstance().log(Level.WARNING, ex);
+            
             return null;
         }
     }
