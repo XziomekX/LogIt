@@ -42,6 +42,7 @@ public final class LogItPlugin extends JavaPlugin
         
         try
         {
+            // Load default messages.
             loadMessages(getConfig().getString("locale", "en"));
         }
         catch (IOException ex)

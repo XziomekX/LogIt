@@ -144,6 +144,17 @@ public final class LogItCore
         setUpConfiguration();
         setUpLogger();
         
+        try
+        {
+            getPlugin().loadMessages(
+                    getConfig("config.yml").getString("locale")
+            );
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, "Could not load messages.", ex);
+        }
+        
         if (isFirstRun())
         {
             doFirstRunStuff();
@@ -886,17 +897,6 @@ public final class LogItCore
         
         if (!start().isCancelled())
         {
-            try
-            {
-                getPlugin().loadMessages(
-                        getConfig("config.yml").getString("locale")
-                );
-            }
-            catch (IOException ex)
-            {
-                log(Level.WARNING, "Could not load messages.", ex);
-            }
-            
             if (sessionsFile.exists())
             {
                 try
