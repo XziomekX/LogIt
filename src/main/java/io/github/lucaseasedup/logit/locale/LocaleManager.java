@@ -42,17 +42,17 @@ public final class LocaleManager extends LogItCoreObject
         activeLocaleObj = localeObj;
     }
     
-    public void switchActiveLocale(String prefix)
+    public void switchActiveLocale(String tag)
     {
-        if (prefix == null)
+        if (tag == null)
             throw new IllegalArgumentException();
         
-        Locale localeObj = getLocaleByPrefix(prefix);
+        Locale localeObj = getLocaleByTag(tag);
         
         if (localeObj == null)
         {
             if (fallbackLocaleObj == null)
-                throw new RuntimeException("No fallback locale set.");
+                throw new RuntimeException("No fallback locale set");
             
             localeObj = fallbackLocaleObj;
         }
@@ -110,20 +110,20 @@ public final class LocaleManager extends LogItCoreObject
     }
     
     /**
-     * Returns locale from this {@code LocaleManager} that has the given prefix.
+     * Returns locale from this {@code LocaleManager} that has the given tag.
      * 
-     * @param prefix the locale prefix.
+     * @param tag the locale tag.
      * 
-     * @return the locale object or {@code null} if no locale with this prefix was found.
+     * @return the locale object or {@code null} if no locale with this tag was found.
      */
-    public Locale getLocaleByPrefix(String prefix)
+    public Locale getLocaleByTag(String tag)
     {
-        if (prefix == null)
+        if (tag == null)
             throw new IllegalArgumentException();
         
         for (Map.Entry<Class<? extends Locale>, Locale> e : locales.entrySet())
         {
-            if (getLocaleTag(e.getKey()).equals(prefix))
+            if (getLocaleTag(e.getKey()).equals(tag))
             {
                 return e.getValue();
             }
