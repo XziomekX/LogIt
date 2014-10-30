@@ -107,7 +107,7 @@ public final class LogItPlugin extends JavaPlugin
     }
     
     /**
-     * Reloads message files.
+     * Loads message files.
      * 
      * <p> First, it tries to load local <i>messages_{prefix}.properties</i>
      * from the plugin JAR. If the file does not exist, it tries to load global
@@ -122,12 +122,7 @@ public final class LogItPlugin extends JavaPlugin
      * 
      * @throws IOException if there was an error while reading.
      */
-    public void reloadMessages(String prefix) throws IOException
-    {
-        loadMessages(prefix);
-    }
-    
-    private void loadMessages(String prefix) throws IOException
+    public void loadMessages(String prefix) throws IOException
     {
         if (prefix == null)
             throw new IllegalArgumentException();

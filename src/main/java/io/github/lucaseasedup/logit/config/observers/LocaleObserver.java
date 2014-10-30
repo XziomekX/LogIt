@@ -12,7 +12,7 @@ public final class LocaleObserver extends PropertyObserver
     {
         try
         {
-            getPlugin().reloadMessages(p.getString());
+            getPlugin().loadMessages(p.getString());
             
             if (getLocaleManager() != null)
             {

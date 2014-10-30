@@ -888,7 +888,7 @@ public final class LogItCore
         {
             try
             {
-                getPlugin().reloadMessages(
+                getPlugin().loadMessages(
                         getConfig("config.yml").getString("locale")
                 );
             }
