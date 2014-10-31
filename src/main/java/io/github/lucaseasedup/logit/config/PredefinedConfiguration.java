@@ -70,7 +70,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
     
     public void load() throws IOException, InvalidPropertyValueException
     {
-        reopen();
+        open();
         
         File backupFile = new File(file.getCanonicalPath() + ".bak");
         IoUtils.copyFile(file, backupFile);
@@ -219,7 +219,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
         }
     }
     
-    private void reopen() throws IOException
+    private void open() throws IOException
     {
         if (!file.exists())
         {
