@@ -3,22 +3,9 @@ package io.github.lucaseasedup.logit.account;
 import io.github.lucaseasedup.logit.common.CancellableEvent;
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.event.HandlerList;
 
 public abstract class AccountEvent extends CancellableEvent
 {
-    public AccountEvent()
-    {
-        this.successTasks = new ArrayList<>();
-        this.failureTasks = new ArrayList<>();
-    }
-    
-    @Override
-    public HandlerList getHandlers()
-    {
-        return handlers;
-    }
-    
     /**
      * Schedules a task to be executed when the action following
      * this event succeeds.
@@ -99,13 +86,6 @@ public abstract class AccountEvent extends CancellableEvent
         failureTasks = null;
     }
     
-    public static HandlerList getHandlerList()
-    {
-        return handlers;
-    }
-    
-    private static final HandlerList handlers = new HandlerList();
-    
-    private List<Runnable> successTasks;
-    private List<Runnable> failureTasks;
+    private List<Runnable> successTasks = new ArrayList<>();
+    private List<Runnable> failureTasks = new ArrayList<>();
 }
