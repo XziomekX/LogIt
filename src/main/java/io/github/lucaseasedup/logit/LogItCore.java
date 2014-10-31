@@ -689,17 +689,28 @@ public final class LogItCore
     
     /**
      * Stops the LogIt core.
-     * 
+     *
+     * @return A {@code CancellableState} indicating whether this operation
+     *         has been cancelled by one of the {@code LogItCoreStopEvent}
+     *         handlers.
+     *
      * @throws IllegalStateException
      *        If the LogIt core is not running.
      * 
      * @see #isStarted()
      * @see #start()
      */
-    public void stop()
+    public CancelledState stop()
     {
         if (!isStarted())
             throw new IllegalStateException("The LogIt core is not started.");
+        
+        CancellableEvent evt = new LogItCoreStopEvent(this);
+        
+        Bukkit.getPluginManager().callEvent(evt);
+        
+        if (evt.isCancelled())
+            return CancelledState.CANCELLED;
         
         File sessionsFile = getDataFile(
                 getConfig("config.yml").getString("storage.sessions.filename")
@@ -765,6 +776,8 @@ public final class LogItCore
             logger.close();
             logger = null;
         }
+        
+        return CancelledState.NOT_CANCELLED;
     }
     
     private void disableCommands()
@@ -911,9 +924,10 @@ public final class LogItCore
         if (!isStarted())
             throw new IllegalStateException("The LogIt core is not started.");
         
-        stop();
+        CancelledState stop = stop();
+        CancelledState start = start();
         
-        if (!start().isCancelled())
+        if (!stop.isCancelled() && !start.isCancelled())
         {
             log(Level.INFO, t("reloadPlugin.success"));
         }
