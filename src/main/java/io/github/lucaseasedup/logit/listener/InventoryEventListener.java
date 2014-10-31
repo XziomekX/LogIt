@@ -25,6 +25,9 @@ public final class InventoryEventListener extends LogItCoreObject implements Lis
             session.resetInactivityTime();
         }
         
+        if (event.isCancelled())
+            return;
+        
         if (getConfig("config.yml").getBoolean("forceLogin.prevent.inventoryClick")
                 && !getSessionManager().isSessionAlive(player)
                 && getCore().isPlayerForcedToLogIn(player))

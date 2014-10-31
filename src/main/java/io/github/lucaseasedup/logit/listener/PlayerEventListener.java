@@ -450,6 +450,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             session.resetInactivityTime();
         }
         
+        if (event.isCancelled())
+            return;
+        
         if (getConfig("config.yml").getBoolean("forceLogin.prevent.toggleSneak")
                 && !getSessionManager().isSessionAlive(player)
                 && getCore().isPlayerForcedToLogIn(player))
@@ -471,6 +474,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             session.resetInactivityTime();
         }
+        
+        if (event.isCancelled())
+            return;
         
         if (getConfig("config.yml").getBoolean("forceLogin.prevent.chat")
                 && !getSessionManager().isSessionAlive(player)
@@ -517,6 +523,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             session.resetInactivityTime();
         }
+        
+        if (event.isCancelled())
+            return;
         
         if (!getConfig("config.yml").getBoolean("forceLogin.prevent.commandPreprocess"))
             return;
@@ -602,6 +611,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             session.resetInactivityTime();
         }
         
+        if (event.isCancelled())
+            return;
+        
         if (getConfig("config.yml").getBoolean("forceLogin.prevent.interact")
                 && !getSessionManager().isSessionAlive(player)
                 && getCore().isPlayerForcedToLogIn(player))
@@ -632,6 +644,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             session.resetInactivityTime();
         }
+        
+        if (event.isCancelled())
+            return;
         
         if (getConfig("config.yml").getBoolean("forceLogin.prevent.interactEntity")
                 && !getSessionManager().isSessionAlive(player)
@@ -671,6 +686,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             session.resetInactivityTime();
         }
+        
+        if (event.isCancelled())
+            return;
         
         if (getConfig("config.yml").getBoolean("forceLogin.prevent.dropItem")
                 && !getSessionManager().isSessionAlive(player)
