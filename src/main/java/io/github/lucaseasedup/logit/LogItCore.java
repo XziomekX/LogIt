@@ -214,6 +214,24 @@ public final class LogItCore
             tellConsole(t("firstRun3"));
         }
         
+        File sessionsFile = getDataFile(
+                getConfig("config.yml").getString("storage.sessions.filename")
+        );
+        
+        if (sessionsFile.exists())
+        {
+            try
+            {
+                sessionManager.importSessions(sessionsFile);
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, "Could not import sessions.", ex);
+            }
+            
+            sessionsFile.delete();
+        }
+        
         PlayerEventListener playerEventListener =
                 getEventListener(PlayerEventListener.class);
         PlayerKicker playerKicker = new PlayerKicker()
@@ -683,6 +701,19 @@ public final class LogItCore
         if (!isStarted())
             throw new IllegalStateException("The LogIt core is not started.");
         
+        File sessionsFile = getDataFile(
+                getConfig("config.yml").getString("storage.sessions.filename")
+        );
+        
+        try
+        {
+            sessionManager.exportSessions(sessionsFile);
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, "Could not export sessions.", ex);
+        }
+        
         PlayerEventListener playerEventListener =
                 getEventListener(PlayerEventListener.class);
         
@@ -880,37 +911,10 @@ public final class LogItCore
         if (!isStarted())
             throw new IllegalStateException("The LogIt core is not started.");
         
-        File sessionsFile = getDataFile(
-                getConfig("config.yml").getString("storage.sessions.filename")
-        );
-        
-        try
-        {
-            sessionManager.exportSessions(sessionsFile);
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, "Could not export sessions.", ex);
-        }
-        
         stop();
         
         if (!start().isCancelled())
         {
-            if (sessionsFile.exists())
-            {
-                try
-                {
-                    sessionManager.importSessions(sessionsFile);
-                }
-                catch (IOException ex)
-                {
-                    log(Level.WARNING, "Could not import sessions.", ex);
-                }
-                
-                sessionsFile.delete();
-            }
-            
             log(Level.INFO, t("reloadPlugin.success"));
         }
     }
