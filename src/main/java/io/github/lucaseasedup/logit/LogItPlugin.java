@@ -158,7 +158,7 @@ public final class LogItPlugin extends JavaPlugin
     {
         File file = new File(getDataFolder(), path);
         
-        if (!file.exists())
+        if (!file.isFile())
         {
             customGlobalMessages = null;
             
@@ -175,7 +175,7 @@ public final class LogItPlugin extends JavaPlugin
     {
         File file = new File(getDataFolder(), path);
         
-        if (!file.exists())
+        if (!file.isFile())
         {
             customLocalMessages = null;
             

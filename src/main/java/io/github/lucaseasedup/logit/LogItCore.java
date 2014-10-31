@@ -218,7 +218,7 @@ public final class LogItCore
                 getConfig("config.yml").getString("storage.sessions.filename")
         );
         
-        if (sessionsFile.exists())
+        if (sessionsFile.isFile())
         {
             try
             {
@@ -279,7 +279,7 @@ public final class LogItCore
         
         File oldConfigDefFile = getDataFile("config-def.b64");
         
-        if (oldConfigDefFile.exists())
+        if (oldConfigDefFile.isFile())
         {
             File newConfigDefFile = getDataFile(".doNotTouch/config-def.b64");
             

@@ -324,7 +324,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         File backupDir = getDataFile(getConfig("config.yml").getString("backup.path"));
         File backupFile = new File(backupDir, filename);
         
-        if (!backupFile.exists())
+        if (!backupFile.isFile())
             return null;
         
         return backupFile;

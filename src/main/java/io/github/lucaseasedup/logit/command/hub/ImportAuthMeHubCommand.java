@@ -70,7 +70,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
             return;
         }
         
-        if (!new File("plugins/AuthMe").exists())
+        if (!new File("plugins/AuthMe").isDirectory())
         {
             sendMsg(sender, t("import.authme.folderNotFound"));
             
@@ -79,7 +79,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
         
         File authMeConfigFile = new File("plugins/AuthMe/config.yml");
         
-        if (!authMeConfigFile.exists())
+        if (!authMeConfigFile.isFile())
         {
             sendMsg(sender, t("import.authme.configNotFound"));
             
@@ -308,7 +308,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
             {
                 File backendFile = new File("plugins/AuthMe/auths.db");
                 
-                if (!backendFile.exists())
+                if (!backendFile.isFile())
                 {
                     sendMsg(sender, t("import.authme.fileNotFound")
                             .replace("{0}", "auths.db"));

@@ -86,7 +86,7 @@ public final class ProfileManager extends LogItCoreObject
         if (StringUtils.isBlank(playerName))
             throw new IllegalArgumentException();
         
-        return new File(path, playerName.toLowerCase() + ".yml").exists();
+        return new File(path, playerName.toLowerCase() + ".yml").isFile();
     }
     
     /**

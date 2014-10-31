@@ -614,7 +614,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         if (file == null)
             throw new IllegalArgumentException();
         
-        if (!file.exists())
+        if (!file.isFile())
             throw new FileNotFoundException();
         
         try (Storage sessionsStorage = new SqliteStorage("jdbc:sqlite:" + file))
