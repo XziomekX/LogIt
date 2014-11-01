@@ -24,7 +24,7 @@ public final class TimeString
             
             if (unit != null)
             {
-                time += unit.convert(Long.parseLong(longValue), convertTo);
+                time += unit.convertTo(Long.parseLong(longValue), convertTo);
             }
         }
         

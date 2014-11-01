@@ -1,5 +1,6 @@
 package io.github.lucaseasedup.logit.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -21,6 +22,9 @@ public final class IoUtils
     
     public static String toString(InputStream is) throws IOException
     {
+        if (is == null)
+            throw new IllegalArgumentException();
+        
         StringWriter sw = new StringWriter();
         InputStreamReader isr = new InputStreamReader(is);
         
@@ -37,25 +41,29 @@ public final class IoUtils
     
     public static String toString(File file) throws IOException
     {
+        if (file == null)
+            throw new IllegalArgumentException();
+        
         try (InputStream is = new FileInputStream(file))
         {
             return IoUtils.toString(is);
         }
     }
     
-    public static void extractResource(String resource, File dest) throws IOException
+    public static void readResource(String resource, OutputStream out)
+            throws IOException
     {
+        if (resource == null || out == null)
+            throw new IllegalArgumentException();
+        
         int readBytes;
         byte[] buffer = new byte[4096];
         
-        String jarUrlPath =
-                IoUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String jarUrlPath = IoUtils.class.getProtectionDomain()
+                .getCodeSource().getLocation().getPath();
         String jarPath = URLDecoder.decode(jarUrlPath, "UTF-8");
         
-        try (
-            ZipFile jarZipFile = new ZipFile(jarPath);
-            OutputStream os = new FileOutputStream(dest);
-        )
+        try (ZipFile jarZipFile = new ZipFile(jarPath))
         {
             ZipEntry entry = jarZipFile.getEntry(resource);
             
@@ -65,10 +73,36 @@ public final class IoUtils
                 {
                     while ((readBytes = is.read(buffer)) > 0)
                     {
-                        os.write(buffer, 0, readBytes);
+                        out.write(buffer, 0, readBytes);
                     }
                 }
             }
+        }
+    }
+    
+    public static void extractResource(String resource, File dest)
+            throws IOException
+    {
+        if (resource == null || dest == null)
+            throw new IllegalArgumentException();
+        
+        try (FileOutputStream fos = new FileOutputStream(dest))
+        {
+            readResource(resource, fos);
+        }
+    }
+    
+    public static String resourceToString(String resource)
+            throws IOException
+    {
+        if (resource == null)
+            throw new IllegalArgumentException();
+        
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream())
+        {
+            readResource(resource, baos);
+            
+            return baos.toString();
         }
     }
     

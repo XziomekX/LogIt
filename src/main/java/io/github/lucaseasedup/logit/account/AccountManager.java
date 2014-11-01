@@ -118,7 +118,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         if (pingerTask == null)
         {
             pingerTask = pinger.runTaskTimer(getPlugin(), 20L,
-                    TimeUnit.MINUTES.convert(5, TimeUnit.TICKS));
+                    TimeUnit.MINUTES.convertTo(5, TimeUnit.TICKS));
         }
         
         flushBuffer();

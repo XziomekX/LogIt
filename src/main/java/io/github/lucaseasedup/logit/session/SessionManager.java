@@ -644,7 +644,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
     /**
      * Recommended task period of {@code SessionManager} running as a Bukkit task.
      */
-    public static final long TASK_PERIOD = TimeUnit.TICKS.convert(1, TimeUnit.TICKS);
+    public static final long TASK_PERIOD = TimeUnit.TICKS.convertTo(1, TimeUnit.TICKS);
     
     private Map<String, Session> sessions = new ConcurrentHashMap<>();
 }

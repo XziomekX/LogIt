@@ -12,6 +12,9 @@ public final class PlayerUtils
     
     public static Player getPlayer(String name)
     {
+        if (name == null || name.isEmpty())
+            throw new IllegalArgumentException();
+        
         return Bukkit.getPlayerExact(name);
     }
     
@@ -24,6 +27,9 @@ public final class PlayerUtils
      */
     public static String getPlayerRealName(String name)
     {
+        if (name == null || name.isEmpty())
+            throw new IllegalArgumentException();
+        
         if (isPlayerOnline(name))
         {
             return getPlayer(name).getName();
@@ -75,8 +81,11 @@ public final class PlayerUtils
      * 
      * @return {@code true} if the player is within the radius; {@code false} otherwise.
      */
-    public static boolean isPlayerAt(Player player, Location location,
-                                     double radiusX, double radiusY, double radiusZ)
+    public static boolean isPlayerAt(Player player,
+                                     Location location,
+                                     double radiusX,
+                                     double radiusY,
+                                     double radiusZ)
     {
         Location playerLocation = player.getLocation();
         

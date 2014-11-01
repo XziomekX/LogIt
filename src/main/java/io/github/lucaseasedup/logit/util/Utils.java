@@ -17,6 +17,9 @@ public final class Utils
     @SuppressWarnings("unchecked")
     public static <T> T deepCopy(T obj)
     {
+        if (obj == null)
+            throw new IllegalArgumentException();
+        
         try
         {
             try (

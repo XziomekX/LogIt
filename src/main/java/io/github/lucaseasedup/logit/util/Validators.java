@@ -1,7 +1,6 @@
 package io.github.lucaseasedup.logit.util;
 
 import java.util.regex.Pattern;
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.conn.util.InetAddressUtils;
 
 public final class Validators
@@ -12,7 +11,7 @@ public final class Validators
     
     public static boolean validateEmail(String email)
     {
-        if (StringUtils.isBlank(email))
+        if (email == null || email.isEmpty())
             return false;
         
         return EMAIL_PATTERN.matcher(email).matches();
@@ -20,10 +19,11 @@ public final class Validators
     
     public static boolean validateIp(String ip)
     {
-        if (StringUtils.isBlank(ip))
+        if (ip == null || ip.isEmpty())
             return false;
         
-        return InetAddressUtils.isIPv4Address(ip) || InetAddressUtils.isIPv6Address(ip);
+        return InetAddressUtils.isIPv4Address(ip)
+                || InetAddressUtils.isIPv6Address(ip);
     }
     
     public static final Pattern EMAIL_PATTERN = Pattern.compile(

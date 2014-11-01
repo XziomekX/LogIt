@@ -83,7 +83,7 @@ public final class GlobalPasswordManager extends LogItCoreObject implements Runn
     /**
      * Recommended task period of {@code GlobalPasswordManager} running as a Bukkit task.
      */
-    public static final long TASK_PERIOD = TimeUnit.SECONDS.convert(1, TimeUnit.TICKS);
+    public static final long TASK_PERIOD = TimeUnit.SECONDS.convertTo(1, TimeUnit.TICKS);
     
     private Map<String, Long> passwords = new Hashtable<>();
 }

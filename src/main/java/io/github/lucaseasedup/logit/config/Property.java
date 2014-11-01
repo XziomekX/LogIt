@@ -54,7 +54,6 @@ public final class Property extends Observable implements Disposable
         return requiresRestart;
     }
     
-    @SuppressWarnings("rawtypes")
     @Override
     public String toString()
     {
@@ -92,7 +91,7 @@ public final class Property extends Observable implements Disposable
         case MAP_LIST:
         case SHORT_LIST:
         case STRING_LIST:
-            sb.append(StringUtils.join((List) value, ", "));
+            sb.append(StringUtils.join((List<?>) value, ", "));
             break;
             
         default:
@@ -159,10 +158,9 @@ public final class Property extends Observable implements Disposable
         return (Vector) value;
     }
     
-    @SuppressWarnings("rawtypes")
-    public List getList()
+    public List<?> getList()
     {
-        return (List) value;
+        return (List<?>) value;
     }
     
     @SuppressWarnings("unchecked")

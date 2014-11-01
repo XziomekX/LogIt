@@ -297,7 +297,6 @@ public final class PersistenceManager extends LogItCoreObject
         return serializers.get(clazz);
     }
     
-    @SuppressWarnings("incomplete-switch")
     private boolean isSerializedUsing(Map<String, String> persistence,
                                       PersistenceSerializer serializer)
     {
@@ -310,6 +309,10 @@ public final class PersistenceManager extends LogItCoreObject
             
             switch (key.constraint())
             {
+            case NONE:
+            {
+                break;
+            }
             case NON_NULL:
             {
                 if (value == null)
@@ -336,6 +339,12 @@ public final class PersistenceManager extends LogItCoreObject
                 }
                 
                 break;
+            }
+            default:
+            {
+                throw new RuntimeException(
+                        "Unsupported key constraint: " + key.constraint()
+                );
             }
             }
         }

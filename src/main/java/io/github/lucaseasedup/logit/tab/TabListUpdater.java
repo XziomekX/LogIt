@@ -17,7 +17,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.mcsg.double0negative.tabapi.TabAPI;
 
-public final class TabListUpdater extends LogItCoreObject implements Runnable, Listener
+public final class TabListUpdater extends LogItCoreObject
+        implements Runnable, Listener
 {
     public TabListUpdater(Wrapper<TabAPI> tabApiWrapper, CraftReflect craftReflect)
     {
@@ -146,7 +147,7 @@ public final class TabListUpdater extends LogItCoreObject implements Runnable, L
     /**
      * Recommended task period of {@code TabListUpdater} running as a Bukkit task.
      */
-    public static final long TASK_PERIOD = TimeUnit.SECONDS.convert(2, TimeUnit.TICKS);
+    public static final long TASK_PERIOD = TimeUnit.SECONDS.convertTo(2, TimeUnit.TICKS);
     
     private Wrapper<TabAPI> tabApiWrapper;
     private final CraftReflect craftReflect;

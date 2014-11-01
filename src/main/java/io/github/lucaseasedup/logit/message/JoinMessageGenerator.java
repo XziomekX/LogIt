@@ -16,6 +16,9 @@ public final class JoinMessageGenerator
     
     public static String generate(Player player, boolean revealSpawnWorld)
     {
+        if (player == null)
+            throw new IllegalArgumentException();
+        
         LogItCore core = LogItCore.getInstance();
         boolean beautifyMessages = core.getConfig("config.yml")
                 .getBoolean("messages.beautify");
@@ -58,6 +61,9 @@ public final class JoinMessageGenerator
     
     public static String getWorldAlias(World world)
     {
+        if (world == null)
+            throw new IllegalArgumentException();
+        
         LogItCore core = LogItCore.getInstance();
         
         if (!core.getConfig("config.yml").getBoolean("messages.multiverseHook")
@@ -71,6 +77,7 @@ public final class JoinMessageGenerator
         if (!(plugin instanceof MultiverseCore))
             return world.getName();
         
-        return ((MultiverseCore) plugin).getMVWorldManager().getMVWorld(world).getAlias();
+        return ((MultiverseCore) plugin).getMVWorldManager()
+                .getMVWorld(world).getAlias();
     }
 }

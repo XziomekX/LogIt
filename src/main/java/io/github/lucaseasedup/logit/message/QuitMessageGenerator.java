@@ -12,6 +12,9 @@ public final class QuitMessageGenerator
     
     public static String generate(Player player)
     {
+        if (player == null)
+            throw new IllegalArgumentException();
+        
         LogItCore core = LogItCore.getInstance();
         boolean beautifyMessages = core.getConfig("config.yml")
                 .getBoolean("messages.beautify");

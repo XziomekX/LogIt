@@ -156,6 +156,9 @@ public final class LogItPlugin extends JavaPlugin
     
     private void loadCustomGlobalMessages(String path) throws IOException
     {
+        if (path == null)
+            throw new IllegalArgumentException();
+        
         File file = new File(getDataFolder(), path);
         
         if (!file.isFile())
@@ -173,6 +176,9 @@ public final class LogItPlugin extends JavaPlugin
     
     private void loadCustomLocalMessages(String path) throws IOException
     {
+        if (path == null)
+            throw new IllegalArgumentException();
+        
         File file = new File(getDataFolder(), path);
         
         if (!file.isFile())
@@ -229,6 +235,9 @@ public final class LogItPlugin extends JavaPlugin
     
     public String replaceGlobalTokens(String message)
     {
+        if (message == null)
+            throw new IllegalArgumentException();
+        
         message = message.replace("%bukkit_version%",
                 Bukkit.getBukkitVersion());
         message = message.replace("%logit_version%",

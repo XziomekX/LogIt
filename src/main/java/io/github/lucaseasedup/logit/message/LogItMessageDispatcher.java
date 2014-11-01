@@ -30,7 +30,9 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         }
     }
     
-    public void dispatchMessage(final String username, final String message, long delay)
+    public void dispatchMessage(final String username,
+                                final String message,
+                                long delay)
     {
         if (username == null || message == null || delay < 0)
             throw new IllegalArgumentException();
@@ -56,7 +58,8 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
     }
     
     /**
-     * Sends a message to the given player telling them either to log in or to register.
+     * Sends a message to the given player telling them either to log in
+     * or to register.
      * 
      * <p> This method's behavior may be altered by the configuration file.
      * 
@@ -77,8 +80,11 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
             long currentTimeMillis = System.currentTimeMillis();
             Long playerInterval = forceLoginPromptIntervals.get(player);
             
-            if (playerInterval != null && currentTimeMillis - playerInterval < minInterval)
+            if (playerInterval != null
+                    && currentTimeMillis - playerInterval < minInterval)
+            {
                 return;
+            }
             
             forceLoginPromptIntervals.put(player, currentTimeMillis);
         }
@@ -121,12 +127,15 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         new ForceLoginPrompter(username).runTaskLater(getPlugin(), delay);
     }
     
-    public void dispatchRepeatingForceLoginPrompter(String username, long delay, long period)
+    public void dispatchRepeatingForceLoginPrompter(String username,
+                                                    long delay,
+                                                    long period)
     {
         if (username == null || delay < 0 || period <= 0)
             throw new IllegalArgumentException();
         
-        new ForceLoginPrompter(username).runTaskTimer(getPlugin(), delay, period);
+        new ForceLoginPrompter(username)
+                .runTaskTimer(getPlugin(), delay, period);
     }
     
     /**
@@ -178,7 +187,8 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
             throw new IllegalArgumentException();
         
         Locale activeLocale = getLocaleManager().getActiveLocale();
-        int cooldownSecs = (int) TimeUnit.MILLISECONDS.convert(cooldownMillis, TimeUnit.SECONDS);
+        long cooldownSecs = TimeUnit.MILLISECONDS
+                .convertTo(cooldownMillis, TimeUnit.SECONDS);
         String cooldownText = activeLocale.stringifySeconds(cooldownSecs);
         
         if (cooldownMillis >= 2000L)
@@ -237,5 +247,6 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         private final String username;
     }
     
-    private Hashtable<Player, Long> forceLoginPromptIntervals = new Hashtable<>();
+    private Hashtable<Player, Long> forceLoginPromptIntervals =
+            new Hashtable<>();
 }

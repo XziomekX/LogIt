@@ -23,6 +23,9 @@ public final class MessageHelper
      */
     public static String t(String label)
     {
+        if (label == null)
+            throw new IllegalArgumentException();
+        
         return LogItPlugin.getMessage(label);
     }
     
@@ -37,6 +40,9 @@ public final class MessageHelper
      */
     public static void sendMsg(CommandSender sender, String message)
     {
+        if (sender == null || message == null)
+            throw new IllegalArgumentException();
+        
         if (sender instanceof Player)
         {
             sender.sendMessage(message);
@@ -55,6 +61,9 @@ public final class MessageHelper
      */
     public static void sendMsg(String playerName, String message)
     {
+        if (playerName == null || message == null)
+            throw new IllegalArgumentException();
+        
         Player player = Bukkit.getPlayerExact(playerName);
         
         if (player != null)
@@ -70,6 +79,9 @@ public final class MessageHelper
      */
     public static void broadcastMsg(String message)
     {
+        if (message == null)
+            throw new IllegalArgumentException();
+        
         for (Player p : Bukkit.getOnlinePlayers())
         {
             sendMsg(p, message);
@@ -84,8 +96,12 @@ public final class MessageHelper
      * @param exceptPlayers the case-insensitive player names {@code Collection}
      *                      that will omitted in the broadcasting.
      */
-    public static void broadcastMsgExcept(String message, Collection<String> exceptPlayers)
+    public static void broadcastMsgExcept(String message,
+                                          Collection<String> exceptPlayers)
     {
+        if (message == null || exceptPlayers == null)
+            throw new IllegalArgumentException();
+        
         for (Player p : Bukkit.getOnlinePlayers())
         {
             if (!CollectionUtils.containsIgnoreCase(p.getName(), exceptPlayers))

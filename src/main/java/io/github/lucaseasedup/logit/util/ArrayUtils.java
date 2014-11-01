@@ -10,6 +10,9 @@ public final class ArrayUtils
     
     public static int[][] copy(int[][] src)
     {
+        if (src == null)
+            throw new IllegalArgumentException();
+        
         int[][] dest = new int[src.length][src[0].length];
         
         for (int i = 0; i < src.length; i++)
@@ -22,6 +25,9 @@ public final class ArrayUtils
     
     public static <T> T[][] copy(Class<T> clazz, T[][] src)
     {
+        if (clazz == null || src == null)
+            throw new IllegalArgumentException();
+        
         @SuppressWarnings("unchecked")
         T[][] dest = (T[][]) Array.newInstance(clazz, src.length, src[0].length);
         

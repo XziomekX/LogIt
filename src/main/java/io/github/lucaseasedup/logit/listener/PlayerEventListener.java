@@ -344,23 +344,42 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             
             long promptPeriod = getConfig("config.yml")
                     .getTime("forceLogin.periodicalPrompt.period", TimeUnit.TICKS);
+            boolean promptOnJoin = getConfig("config.yml")
+                    .getBoolean("forceLogin.promptOn.join");
+            boolean periodicalPrompt = getConfig("config.yml")
+                    .getBoolean("forceLogin.periodicalPrompt.enabled");
             
-            if (getConfig("config.yml").getBoolean("forceLogin.promptOn.join"))
+            if (promptOnJoin)
             {
-                if (getConfig("config.yml").getBoolean("forceLogin.periodicalPrompt.enabled"))
+                if (periodicalPrompt)
                 {
-                    getMessageDispatcher().dispatchRepeatingForceLoginPrompter(username,
-                            TimeUnit.SECONDS.convert(1, TimeUnit.TICKS), promptPeriod);
+                    long promptDelay = TimeUnit.SECONDS
+                            .convertTo(1, TimeUnit.TICKS);
+                    
+                    getMessageDispatcher().dispatchRepeatingForceLoginPrompter(
+                            username,
+                            promptDelay,
+                            promptPeriod
+                    );
                 }
                 else
                 {
-                    getMessageDispatcher().dispatchForceLoginPrompter(username, 5L);
+                    getMessageDispatcher().dispatchForceLoginPrompter(
+                            username,
+                            5L
+                    );
                 }
             }
-            else if (getConfig("config.yml").getBoolean("forceLogin.periodicalPrompt.enabled"))
+            else if (periodicalPrompt)
             {
-                getMessageDispatcher().dispatchRepeatingForceLoginPrompter(username,
-                        TimeUnit.SECONDS.convert(1, TimeUnit.TICKS) + promptPeriod, promptPeriod);
+                long promptDelay = TimeUnit.SECONDS
+                        .convertTo(1, TimeUnit.TICKS);
+                
+                getMessageDispatcher().dispatchRepeatingForceLoginPrompter(
+                        username,
+                        promptDelay + promptPeriod,
+                        promptPeriod
+                );
             }
         }
         

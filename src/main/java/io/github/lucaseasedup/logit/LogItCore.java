@@ -798,6 +798,9 @@ public final class LogItCore
     
     private void disableCommand(String command)
     {
+        if (command == null)
+            throw new IllegalArgumentException();
+        
         getPlugin().getCommand(command).setExecutor(
                 new DisabledCommandExecutor()
         );
@@ -1029,6 +1032,9 @@ public final class LogItCore
     
     public void log(Level level, String msg)
     {
+        if (level == null || msg == null)
+            throw new IllegalArgumentException();
+        
         msg = ChatColor.stripColor(msg);
         
         if (getLogger() == null)
@@ -1043,6 +1049,9 @@ public final class LogItCore
     
     public void log(Level level, String msg, Throwable throwable)
     {
+        if (level == null || msg == null || throwable == null)
+            throw new IllegalArgumentException();
+        
         msg = ChatColor.stripColor(msg);
         
         if (getLogger() == null)
@@ -1057,6 +1066,9 @@ public final class LogItCore
     
     public void log(Level level, Throwable throwable)
     {
+        if (level == null || throwable == null)
+            throw new IllegalArgumentException();
+        
         if (getLogger() == null)
         {
             getPlugin().getLogger().log(level, null, throwable);
@@ -1069,6 +1081,9 @@ public final class LogItCore
     
     public void tellConsole(String msg)
     {
+        if (msg == null)
+            throw new IllegalArgumentException();
+        
         Bukkit.getConsoleSender().sendMessage(msg);
     }
     
@@ -1108,7 +1123,18 @@ public final class LogItCore
      */
     public File getDataFile(String path)
     {
+        if (path == null)
+            throw new IllegalArgumentException();
+        
         return new File(getDataFolder(), path);
+    }
+    
+    public File getDataFile(String parent, String path)
+    {
+        if (parent == null || path == null)
+            throw new IllegalArgumentException();
+        
+        return new File(getDataFolder(), parent + File.separator + path);
     }
     
     /**
@@ -1144,7 +1170,7 @@ public final class LogItCore
             throw new IllegalArgumentException();
         
         if (getConfigurationManager() == null)
-            return null;
+            throw new IllegalStateException("ConfigurationManager not found");
         
         return getConfigurationManager().getConfiguration(filename);
     }
@@ -1228,6 +1254,9 @@ public final class LogItCore
     @SuppressWarnings("unchecked")
     public <T extends Listener> T getEventListener(Class<T> listenerClass)
     {
+        if (listenerClass == null)
+            throw new IllegalArgumentException();
+        
         return (T) eventListeners.get(listenerClass);
     }
     

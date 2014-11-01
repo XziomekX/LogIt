@@ -134,7 +134,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                 
                 if (blockadeExpirationTimeMillis - 1000L > System.currentTimeMillis())
                 {
-                    long blockageTimeSecs = TimeUnit.MILLISECONDS.convert(
+                    long blockageTimeSecs = TimeUnit.MILLISECONDS.convertTo(
                             blockadeExpirationTimeMillis - System.currentTimeMillis(),
                             TimeUnit.SECONDS
                     );
@@ -211,7 +211,7 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                                         TimeUnit.MILLISECONDS);
                         
                         long loginBlockadeTimeSecs =
-                                TimeUnit.MILLISECONDS.convert(loginBlockadeTimeMillis,
+                                TimeUnit.MILLISECONDS.convertTo(loginBlockadeTimeMillis,
                                         TimeUnit.SECONDS);
                         
                         Locale locale = getLocaleManager().getActiveLocale();

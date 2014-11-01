@@ -20,8 +20,12 @@ public final class IniUtils
     {
     }
     
-    public static Map<String, Map<String, String>> unserialize(InputStream in) throws IOException
+    public static Map<String, Map<String, String>> unserialize(InputStream in)
+            throws IOException
     {
+        if (in == null)
+            throw new IllegalArgumentException();
+        
         Map<String, Map<String, String>> result = new LinkedHashMap<>();
         
         try (BufferedReader br = new BufferedReader(new InputStreamReader(in)))
@@ -57,14 +61,19 @@ public final class IniUtils
         return result;
     }
     
-    public static Map<String, Map<String, String>> unserialize(String in) throws IOException
+    public static Map<String, Map<String, String>> unserialize(String in)
+            throws IOException
     {
         return unserialize(new ByteArrayInputStream(in.getBytes()));
     }
     
-    public static void serialize(Map<String, Map<String, String>> in, OutputStream out)
+    public static void serialize(Map<String, Map<String, String>> in,
+                                 OutputStream out)
             throws IOException
     {
+        if (in == null || out == null)
+            throw new IllegalArgumentException();
+        
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out)))
         {
             for (Map.Entry<String, Map<String, String>> section : in.entrySet())
@@ -90,8 +99,12 @@ public final class IniUtils
         }
     }
     
-    public static String serialize(Map<String, Map<String, String>> in) throws IOException
+    public static String serialize(Map<String, Map<String, String>> in)
+            throws IOException
     {
+        if (in == null)
+            throw new IllegalArgumentException();
+        
         OutputStream outputStream = new ByteArrayOutputStream();
         
         serialize(in, outputStream);

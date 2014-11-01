@@ -84,6 +84,11 @@ public abstract class LogItCoreObject implements Disposable
         return getCore().getDataFile(path);
     }
     
+    protected final File getDataFile(String parent, String path)
+    {
+        return getCore().getDataFile(parent, path);
+    }
+    
     protected final ConfigurationManager getConfigurationManager()
     {
         return getCore().getConfigurationManager();

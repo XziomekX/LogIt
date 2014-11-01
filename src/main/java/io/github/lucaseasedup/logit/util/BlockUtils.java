@@ -14,6 +14,9 @@ public final class BlockUtils
     
     public static Block getNearestBlockBelow(Location location)
     {
+        if (location == null)
+            throw new IllegalArgumentException();
+        
         World world = location.getWorld();
         int x = location.getBlockX();
         int y = location.getBlockY();
@@ -35,6 +38,9 @@ public final class BlockUtils
     
     public static boolean isMaterialSafe(Material material)
     {
+        if (material == null)
+            throw new IllegalArgumentException();
+        
         return material != Material.PORTAL
                 && material != Material.LAVA
                 && material != Material.WATER
@@ -50,6 +56,9 @@ public final class BlockUtils
     
     public static boolean isBlockAdjacent(Block block, BlockFace face, Material... toMaterials)
     {
+        if (block == null || face == null || toMaterials == null)
+            throw new IllegalArgumentException();
+        
         block = block.getRelative(face);
         
         for (Material toMaterial : toMaterials)
@@ -82,6 +91,9 @@ public final class BlockUtils
      */
     public static Location getNearestSafeSpace(Location origin, int maxRadius)
     {
+        if (origin == null)
+            throw new IllegalArgumentException();
+        
         BlockFace[] faces = {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST};
         BlockFace[][] orths = {
                 {BlockFace.NORTH, BlockFace.EAST},
