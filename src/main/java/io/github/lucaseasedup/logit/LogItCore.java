@@ -1170,7 +1170,7 @@ public final class LogItCore
             throw new IllegalArgumentException();
         
         if (getConfigurationManager() == null)
-            throw new IllegalStateException("ConfigurationManager not found");
+            return null;
         
         return getConfigurationManager().getConfiguration(filename);
     }
