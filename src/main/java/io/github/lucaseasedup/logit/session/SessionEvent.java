@@ -4,7 +4,7 @@ import io.github.lucaseasedup.logit.common.CancellableEvent;
 
 public abstract class SessionEvent extends CancellableEvent
 {
-    public SessionEvent(String username, Session session)
+    /* package */ SessionEvent(String username, Session session)
     {
         this.username = username;
         this.session = session;

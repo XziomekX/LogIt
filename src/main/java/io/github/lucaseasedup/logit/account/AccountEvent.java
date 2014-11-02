@@ -6,6 +6,10 @@ import java.util.List;
 
 public abstract class AccountEvent extends CancellableEvent
 {
+    /* package */ AccountEvent()
+    {
+    }
+    
     /**
      * Schedules a task to be executed when the action following
      * this event succeeds.
