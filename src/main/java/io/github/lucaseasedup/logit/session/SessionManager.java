@@ -128,7 +128,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
                     {
                         boolean playerRegistered =
                                 getAccountManager().isRegistered(username,
-                                        RegistrationFetchMode.CACHE_ELSE_FALSE);
+                                        RegistrationFetchMode.STORAGE_FALLBACK);
                         
                         timedOut = (playerRegistered && loginTimeoutElapsed)
                                 || (!playerRegistered && registerTimeoutElapsed);
