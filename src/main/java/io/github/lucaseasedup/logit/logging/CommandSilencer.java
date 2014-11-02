@@ -1,7 +1,8 @@
 package io.github.lucaseasedup.logit.logging;
 
-import io.github.lucaseasedup.logit.common.Disposable;
+import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
+import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.logging.Filter;
@@ -10,8 +11,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Player;
 
-public final class CommandSilencer implements Disposable
+public final class CommandSilencer extends LogItCoreObject
 {
     public CommandSilencer(Collection<PluginCommand> silencedCommands)
     {
@@ -63,7 +65,18 @@ public final class CommandSilencer implements Disposable
                 
                 if (matcher.find())
                 {
-                    String label = matcher.group(1);
+                    String username = matcher.group(1);
+                    String label = matcher.group(2);
+                    Player player = PlayerUtils.getPlayer(username);
+                    
+                    // If the player isn't logged in and has to log in, do not
+                    // show any commands issued -- they might have mistakenly
+                    // typed e.g. "/logni 1234" instead of "/login 1234".
+                    if (!getSessionManager().isSessionAlive(player)
+                            && getCore().isPlayerForcedToLogIn(player))
+                    {
+                        return false;
+                    }
                     
                     if (isCommandSilenced(label))
                     {
@@ -129,7 +142,7 @@ public final class CommandSilencer implements Disposable
     }
     
     private static final Pattern SERVER_COMMAND_PATTERN = Pattern
-            .compile(" issued server command: /([A-Za-z]+)");
+            .compile("(.+) issued server command: /([A-Za-z]+)");
     
     private Collection<PluginCommand> silencedCommands;
 }
