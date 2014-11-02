@@ -282,7 +282,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         
         for (Storage.Entry entry : entries)
         {
-            String username = entry.get(keys().username());
+            String username = entry.get(keys().username()).toLowerCase();
+            
+            registrationCache.put(username, true);
             
             if (buffer.get(username) != null)
             {
