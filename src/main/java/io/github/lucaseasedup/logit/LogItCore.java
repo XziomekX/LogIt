@@ -47,6 +47,7 @@ import io.github.lucaseasedup.logit.locale.LocaleManager;
 import io.github.lucaseasedup.logit.locale.PolishLocale;
 import io.github.lucaseasedup.logit.logging.CommandSilencer;
 import io.github.lucaseasedup.logit.logging.LogItCoreLogger;
+import io.github.lucaseasedup.logit.logging.timing.LogItTakeoffTiming;
 import io.github.lucaseasedup.logit.message.LogItMessageDispatcher;
 import io.github.lucaseasedup.logit.message.MessageHelper;
 import io.github.lucaseasedup.logit.persistence.AirBarSerializer;
@@ -130,6 +131,12 @@ public final class LogItCore
             );
         }
         
+        LogItTakeoffTiming timing = new LogItTakeoffTiming();
+        timing.setStart();
+        
+        // =======================================
+        timing.setPreEvent();
+        
         CancellableEvent evt = new LogItCoreStartEvent(this);
         
         Bukkit.getPluginManager().callEvent(evt);
@@ -137,12 +144,25 @@ public final class LogItCore
         if (evt.isCancelled())
             return CancelledState.CANCELLED;
         
+        timing.setPostEvent();
+        // =======================================
+        
         getDataFolder().mkdir();
         
         firstRun = !getDataFile("config.yml").exists();
         
+        // =======================================
+        timing.setPreConfman();
+        
         setUpConfiguration();
+        
+        timing.setPostConfman();
+        // =======================================
+        
         setUpLogger();
+        
+        // =======================================
+        timing.setPreMsgs();
         
         try
         {
@@ -155,6 +175,9 @@ public final class LogItCore
             log(Level.WARNING, "Could not load messages.", ex);
         }
         
+        timing.setPostMsgs();
+        // =======================================
+        
         if (isFirstRun())
         {
             doFirstRunStuff();
@@ -162,8 +185,22 @@ public final class LogItCore
         
         setUpCraftReflect();
         setUpLocaleManager();
+        
+        // =======================================
+        timing.setPreAccman();
+        
         setUpAccountManager();
+        
+        timing.setPostAccman();
+        // =======================================
+        
+        // =======================================
+        timing.setPrePersman();
+        
         setUpPersistenceManager();
+        
+        timing.setPostPersman();
+        // =======================================
         
         securityHelper = new SecurityHelper();
         backupManager = new BackupManager(getAccountManager());
@@ -203,6 +240,24 @@ public final class LogItCore
         enableCommands();
         registerEventListeners();
         
+        timing.setEnd();
+        
+        if (getConfig("secret.yml").getBoolean("timings.enabled"))
+        {
+            File timingsFile = getDataFile(
+                    getConfig("secret.yml").getString("timings.filename")
+            );
+            
+            try
+            {
+                timing.saveTiming(timingsFile);
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, "Could not save timings", ex);
+            }
+        }
+        
         started = true;
         
         log(Level.FINE, t("startPlugin.success"));
@@ -214,49 +269,7 @@ public final class LogItCore
             tellConsole(t("firstRun3"));
         }
         
-        File sessionsFile = getDataFile(
-                getConfig("config.yml").getString("storage.sessions.filename")
-        );
-        
-        if (sessionsFile.isFile())
-        {
-            try
-            {
-                sessionManager.importSessions(sessionsFile);
-            }
-            catch (IOException ex)
-            {
-                log(Level.WARNING, "Could not import sessions.", ex);
-            }
-            
-            sessionsFile.delete();
-        }
-        
-        PlayerEventListener playerEventListener =
-                getEventListener(PlayerEventListener.class);
-        PlayerKicker playerKicker = new PlayerKicker()
-        {
-            @Override
-            public void kick(Player player, String message)
-            {
-                player.kickPlayer(message);
-            }
-        };
-        
-        for (final Player player : Bukkit.getOnlinePlayers())
-        {
-            playerEventListener.onLogin(player,
-                    player.getAddress().getAddress(), playerKicker);
-            playerEventListener.onJoin(player, new JoinMessage()
-            {
-                @Override
-                public void set(String joinMessage)
-                {
-                    MessageHelper.broadcastMsgExcept(joinMessage,
-                            Arrays.asList(player.getName()));
-                }
-            });
-        }
+        doPostStartDuties();
         
         return CancelledState.NOT_CANCELLED;
     }
@@ -686,6 +699,53 @@ public final class LogItCore
         Bukkit.getPluginManager().registerEvents(listener, getPlugin());
         
         eventListeners.put(listener.getClass(), listener);
+    }
+    
+    private void doPostStartDuties()
+    {
+        File sessionsFile = getDataFile(
+                getConfig("config.yml").getString("storage.sessions.filename")
+        );
+        
+        if (sessionsFile.isFile())
+        {
+            try
+            {
+                sessionManager.importSessions(sessionsFile);
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, "Could not import sessions.", ex);
+            }
+            
+            sessionsFile.delete();
+        }
+        
+        PlayerEventListener playerEventListener =
+                getEventListener(PlayerEventListener.class);
+        PlayerKicker playerKicker = new PlayerKicker()
+        {
+            @Override
+            public void kick(Player player, String message)
+            {
+                player.kickPlayer(message);
+            }
+        };
+        
+        for (final Player player : Bukkit.getOnlinePlayers())
+        {
+            playerEventListener.onLogin(player,
+                    player.getAddress().getAddress(), playerKicker);
+            playerEventListener.onJoin(player, new JoinMessage()
+            {
+                @Override
+                public void set(String joinMessage)
+                {
+                    MessageHelper.broadcastMsgExcept(joinMessage,
+                            Arrays.asList(player.getName()));
+                }
+            });
+        }
     }
     
     /**
