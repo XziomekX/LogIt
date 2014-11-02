@@ -40,8 +40,11 @@ public final class MessageHelper
      */
     public static void sendMsg(CommandSender sender, String message)
     {
-        if (sender == null || message == null)
+        if (sender == null)
             throw new IllegalArgumentException();
+        
+        if (message == null)
+            return;
         
         if (sender instanceof Player)
         {
@@ -61,8 +64,11 @@ public final class MessageHelper
      */
     public static void sendMsg(String playerName, String message)
     {
-        if (playerName == null || message == null)
+        if (playerName == null)
             throw new IllegalArgumentException();
+        
+        if (message == null)
+            return;
         
         Player player = Bukkit.getPlayerExact(playerName);
         
@@ -80,7 +86,7 @@ public final class MessageHelper
     public static void broadcastMsg(String message)
     {
         if (message == null)
-            throw new IllegalArgumentException();
+            return;
         
         for (Player p : Bukkit.getOnlinePlayers())
         {
@@ -99,7 +105,10 @@ public final class MessageHelper
     public static void broadcastMsgExcept(String message,
                                           Collection<String> exceptPlayers)
     {
-        if (message == null || exceptPlayers == null)
+        if (message == null)
+            return;
+        
+        if (exceptPlayers == null)
             throw new IllegalArgumentException();
         
         for (Player p : Bukkit.getOnlinePlayers())
