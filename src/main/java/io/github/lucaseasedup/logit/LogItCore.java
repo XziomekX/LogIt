@@ -333,7 +333,8 @@ public final class LogItCore
                 getPlugin().getCommand("unregister"),
                 getPlugin().getCommand("changepass"),
                 getPlugin().getCommand("changeemail"),
-                getPlugin().getCommand("recoverpass")
+                getPlugin().getCommand("recoverpass"),
+                getPlugin().getCommand("loginhistory")
         ));
         commandSilencer.registerFilters();
     }
