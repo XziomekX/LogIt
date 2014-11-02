@@ -107,6 +107,12 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             buffer.clear();
             buffer = null;
         }
+        
+        if (registrationCache != null)
+        {
+            registrationCache.clear();
+            registrationCache = null;
+        }
     }
     
     /**
@@ -209,6 +215,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         if (entries == null)
             return null;
         
+        // Cache registration status.
+        registrationCache.put(username, !entries.isEmpty());
+        
         // If no such account exists in the storage,
         // mark it in the buffer as non-existing and return null.
         if (entries.isEmpty())
@@ -296,12 +305,63 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         return accounts;
     }
     
-    public boolean isRegistered(String username)
+    public boolean isRegistered(String username,
+                                RegistrationFetchMode fetchMode)
     {
         if (StringUtils.isBlank(username))
             throw new IllegalArgumentException();
         
-        return selectAccount(username, Arrays.asList(keys.username())) != null;
+        username = username.toLowerCase();
+        
+        if (fetchMode == RegistrationFetchMode.STORAGE_ONLY)
+        {
+            return fetchRegistrationStatus(username);
+        }
+        else
+        {
+            Boolean registered = registrationCache.get(username);
+            
+            if (registered == null)
+            {
+                if (fetchMode == RegistrationFetchMode.STORAGE_FALLBACK)
+                {
+                    return fetchRegistrationStatus(username);
+                }
+                else if (fetchMode == RegistrationFetchMode.CACHE_ELSE_TRUE)
+                {
+                    return true;
+                }
+                else if (fetchMode == RegistrationFetchMode.CACHE_ELSE_FALSE)
+                {
+                    return false;
+                }
+                else
+                {
+                    throw new IllegalArgumentException(
+                            "Unsupported RegistrationFetchMode: " + fetchMode
+                    );
+                }
+            }
+            else
+            {
+                return registered;
+            }
+        }
+    }
+    
+    public boolean isRegistered(String username)
+    {
+        return isRegistered(username, RegistrationFetchMode.STORAGE_ONLY);
+    }
+    
+    private boolean fetchRegistrationStatus(String username)
+    {
+        Account account = selectAccount(
+                username,
+                Arrays.asList(keys.username())
+        );
+        
+        return account != null;
     }
     
     /**
@@ -633,10 +693,16 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         return keys;
     }
     
+    public static enum RegistrationFetchMode
+    {
+        CACHE_ELSE_TRUE, CACHE_ELSE_FALSE, STORAGE_FALLBACK, STORAGE_ONLY;
+    }
+    
     private Storage storage;
     private String unit;
     private AccountKeys keys;
     private BukkitRunnable pinger;
     private BukkitTask pingerTask;
     private QueuedMap<String, Account> buffer = new QueuedMap<>();
+    private Map<String, Boolean> registrationCache = new HashMap<>();
 }

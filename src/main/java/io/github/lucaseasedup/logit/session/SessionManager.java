@@ -6,6 +6,7 @@ import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCa
 import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.account.AccountManager.RegistrationFetchMode;
 import io.github.lucaseasedup.logit.config.TimeUnit;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
@@ -52,8 +53,11 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         boolean timeoutEnabled = getConfig("config.yml")
                 .getBoolean("forceLogin.timeout.enabled");
         
-        long timeoutValue = getConfig("config.yml")
-                .getTime("forceLogin.timeout.value", TimeUnit.TICKS);
+        long timeoutValueLogin = getConfig("config.yml")
+                .getTime("forceLogin.timeout.value.login", TimeUnit.TICKS);
+        
+        long timeoutValueRegister = getConfig("config.yml")
+                .getTime("forceLogin.timeout.value.register", TimeUnit.TICKS);
         
         List<String> disableTimeoutForPlayers = getConfig("config.yml")
                 .getStringList("forceLogin.timeout.disableForPlayers");
@@ -110,7 +114,27 @@ public final class SessionManager extends LogItCoreObject implements Runnable
                 if (!containsIgnoreCase(username, disableTimeoutForPlayers)
                         && getCore().isPlayerForcedToLogIn(player))
                 {
-                    if (timeoutEnabled && session.getStatus() <= -timeoutValue)
+                    boolean loginTimeoutElapsed =
+                            session.getStatus() <= -timeoutValueLogin;
+                    boolean registerTimeoutElapsed =
+                            session.getStatus() <= -timeoutValueRegister;
+                    boolean timedOut;
+                    
+                    if (!loginTimeoutElapsed && !registerTimeoutElapsed)
+                    {
+                        timedOut = false;
+                    }
+                    else
+                    {
+                        boolean playerRegistered =
+                                getAccountManager().isRegistered(username,
+                                        RegistrationFetchMode.CACHE_ELSE_FALSE);
+                        
+                        timedOut = (playerRegistered && loginTimeoutElapsed)
+                                || (!playerRegistered && registerTimeoutElapsed);
+                    }
+                    
+                    if (timeoutEnabled && timedOut)
                     {
                         player.kickPlayer(t("forcedLoginTimeout"));
                     }
