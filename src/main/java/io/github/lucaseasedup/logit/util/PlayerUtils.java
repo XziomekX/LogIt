@@ -12,7 +12,7 @@ public final class PlayerUtils
     
     public static Player getPlayer(String name)
     {
-        if (name == null || name.isEmpty())
+        if (name == null)
             throw new IllegalArgumentException();
         
         return Bukkit.getPlayerExact(name);
@@ -27,7 +27,7 @@ public final class PlayerUtils
      */
     public static String getPlayerRealName(String name)
     {
-        if (name == null || name.isEmpty())
+        if (name == null)
             throw new IllegalArgumentException();
         
         if (isPlayerOnline(name))
