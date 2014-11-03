@@ -53,7 +53,8 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public final class PlayerEventListener extends LogItCoreObject implements Listener
+public final class PlayerEventListener extends LogItCoreObject
+        implements Listener
 {
     @EventHandler(priority = EventPriority.NORMAL)
     private void onLogin(final PlayerLoginEvent event)
@@ -75,7 +76,7 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
     
     public void onLogin(Player player, InetAddress address, PlayerKicker kicker)
     {
-        if (player == null || kicker == null)
+        if (player == null || address == null || kicker == null)
             throw new IllegalArgumentException();
         
         String username = player.getName().toLowerCase();
@@ -92,7 +93,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             String displayName = account.getDisplayName();
             
-            if (!StringUtils.isBlank(displayName) && !player.getName().equals(displayName)
+            if (!StringUtils.isBlank(displayName)
+                    && !player.getName().equals(displayName)
                     && getConfig("config.yml").getBoolean("usernameCaseMismatch.kick"))
             {
                 kicker.kick(player, t("usernameCaseMismatch.kick")
@@ -109,8 +111,10 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             }
         }
         
-        int minUsernameLength = getConfig("secret.yml").getInt("username.minLength");
-        int maxUsernameLength = getConfig("secret.yml").getInt("username.maxLength");
+        int minUsernameLength = getConfig("secret.yml")
+                .getInt("username.minLength");
+        int maxUsernameLength = getConfig("secret.yml")
+                .getInt("username.maxLength");
         
         if (StringUtils.isBlank(username))
         {
@@ -139,15 +143,17 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
         {
             kicker.kick(player, t("usernameAlreadyUsed"));
         }
-        else if (getConfig("config.yml").getBoolean("kickUnregistered") && account == null)
+        else if (getConfig("config.yml").getBoolean("kickUnregistered")
+                && account == null)
         {
             kicker.kick(player, t("kickUnregistered"));
         }
         else
         {
-            int freeSlots = Bukkit.getMaxPlayers() - Bukkit.getOnlinePlayers().length;
-            List<String> reserveForPlayers =
-                    getConfig("config.yml").getStringList("reserveSlots.forPlayers");
+            int freeSlots =
+                    Bukkit.getMaxPlayers() - Bukkit.getOnlinePlayers().length;
+            List<String> reserveForPlayers = getConfig("config.yml")
+                    .getStringList("reserveSlots.forPlayers");
             int reservedSlots = 0;
             
             // Calculate how many players for which slots should be reserved are online.
@@ -159,7 +165,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 }
             }
             
-            int maxReservedSlots = getConfig("config.yml").getInt("reserveSlots.amount");
+            int maxReservedSlots = getConfig("config.yml")
+                    .getInt("reserveSlots.amount");
             int unusedReservedSlots = maxReservedSlots - reservedSlots;
             int actualFreeSlots = freeSlots - unusedReservedSlots;
             
@@ -248,7 +255,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                 account.setUuid(uuid);
             }
             
-            if (getConfig("config.yml").getBoolean("loginSessions.enabled") && validnessTime > 0)
+            if (getConfig("config.yml").getBoolean("loginSessions.enabled")
+                    && validnessTime > 0)
             {
                 String loginSession = account.getLoginSession();
                 
@@ -262,7 +270,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
                         int loginTime = Integer.parseInt(loginSplit[1]);
                         int currentTime = (int) (System.currentTimeMillis() / 1000L);
                         
-                        if (ip.equals(loginIp) && currentTime - loginTime < validnessTime
+                        if (ip.equals(loginIp)
+                                && currentTime - loginTime < validnessTime
                                 && !getSessionManager().isSessionAlive(username))
                         {
                             getSessionManager().startSession(player);
@@ -273,11 +282,13 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             
             String displayName = account.getDisplayName();
             
-            if (!StringUtils.isBlank(displayName) && !player.getName().equals(displayName)
+            if (!StringUtils.isBlank(displayName)
+                    && !player.getName().equals(displayName)
                     && getConfig("config.yml").getBoolean("usernameCaseMismatch.warning"))
             {
-                getMessageDispatcher().dispatchMessage(username, t("usernameCaseMismatch.warning")
-                        .replace("{0}", displayName), 4L);
+                getMessageDispatcher().dispatchMessage(username,
+                        t("usernameCaseMismatch.warning")
+                                .replace("{0}", displayName), 4L);
             }
             
             boolean isPremium = BukkitSmerfHook.isPremium(player);
@@ -309,7 +320,8 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             }
         }
         
-        if (getSessionManager().isSessionAlive(player) || !getCore().isPlayerForcedToLogIn(player))
+        if (getSessionManager().isSessionAlive(player)
+                || !getCore().isPlayerForcedToLogIn(player))
         {
             if (!getConfig("config.yml").getBoolean("messages.join.hide")
                     && !VanishNoPacketHook.isVanished(player))
@@ -388,6 +400,9 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             playersDeadOnJoin.add(player);
         }
         
+        getSessionManager().getSession(player)
+                .setLastForceLoginLocation(player.getLocation());
+        
         if (getConfig("config.yml").getBoolean("groups.enabled"))
         {
             getCore().updatePlayerGroup(player);
@@ -450,11 +465,48 @@ public final class PlayerEventListener extends LogItCoreObject implements Listen
             session.resetInactivityTime();
         }
         
-        if (getConfig("config.yml").getBoolean("forceLogin.prevent.move")
-                && !getSessionManager().isSessionAlive(player)
+        if (!getSessionManager().isSessionAlive(player)
                 && getCore().isPlayerForcedToLogIn(player))
         {
-            event.setTo(event.getFrom());
+            boolean preventMovement = false;
+            
+            if (getConfig("config.yml").getBoolean("forceLogin.prevent.move"))
+            {
+                preventMovement = true;
+            }
+            else if (session != null)
+            {
+                int moveRadius = getConfig("config.yml")
+                        .getInt("forceLogin.moveRadius");
+                
+                if (moveRadius >= 0)
+                {
+                    Location spawnLocation =
+                            session.getLastForceLoginLocation();
+                    
+                    if (spawnLocation != null)
+                    {
+                        spawnLocation = spawnLocation.clone();
+                        spawnLocation.setY(event.getTo().getY());
+                        
+                        double fromDistance =
+                                event.getFrom().distanceSquared(spawnLocation);
+                        double toDistance =
+                                event.getTo().distanceSquared(spawnLocation);
+                        
+                        if (toDistance > fromDistance)
+                        {
+                            preventMovement =
+                                    toDistance > (moveRadius * moveRadius);
+                        }
+                    }
+                }
+            }
+            
+            if (preventMovement)
+            {
+                event.setTo(event.getFrom());
+            }
         }
     }
     

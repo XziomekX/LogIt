@@ -1,6 +1,7 @@
 package io.github.lucaseasedup.logit.session;
 
 import io.github.lucaseasedup.logit.util.Validators;
+import org.bukkit.Location;
 
 /**
  * Represents a player session. It holds a time-based status,
@@ -123,7 +124,18 @@ public final class Session
         inactivityTime = 0L;
     }
     
+    public Location getLastForceLoginLocation()
+    {
+        return lastForceLoginLocation;
+    }
+    
+    public void setLastForceLoginLocation(Location lastForceLoginLocation)
+    {
+        this.lastForceLoginLocation = lastForceLoginLocation;
+    }
+    
     private String ip;
     private long status = -1L;
     private long inactivityTime = 0L;
+    private Location lastForceLoginLocation = null;
 }
