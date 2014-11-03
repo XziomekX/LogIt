@@ -5,6 +5,7 @@ import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
+import io.github.lucaseasedup.logit.command.wizard.ConfirmationCallback;
 import io.github.lucaseasedup.logit.command.wizard.ConfirmationWizard;
 import io.github.lucaseasedup.logit.common.ReportedException;
 import io.github.lucaseasedup.logit.security.AuthMePasswordHelper;
@@ -19,7 +20,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -52,6 +52,13 @@ public final class ImportAuthMeHubCommand extends HubCommand
     @Override
     public void execute(final CommandSender sender, String[] args)
     {
+        if (locked)
+        {
+            sendMsg(sender, t("cmdPlayerLock"));
+            
+            return;
+        }
+        
         sendMsg(sender, t("import.authme.header"));
         sendMsg(sender, t("import.authme.prologue1"));
         sendMsg(sender, t("import.authme.prologue2"));
@@ -96,10 +103,10 @@ public final class ImportAuthMeHubCommand extends HubCommand
         
         sendMsg(sender, t("import.authme.typeToConfirm"));
         
-        new ConfirmationWizard(sender, "import", new Runnable()
+        new ConfirmationWizard(sender, "import", new ConfirmationCallback()
         {
             @Override
-            public void run()
+            public void confirmed()
             {
                 new BukkitRunnable()
                 {
@@ -124,13 +131,19 @@ public final class ImportAuthMeHubCommand extends HubCommand
                             ReportedException.decrementRequestCount();
                         }
                         
-                        senderLocks.remove(sender);
+                        locked = false;
                     }
                 }.runTaskAsynchronously(getPlugin());
-                
-                senderLocks.add(sender);
+            }
+            
+            @Override
+            public void cancelled()
+            {
+                locked = false;
             }
         }).createWizard();
+        
+        locked = true;
     }
     
     private void importAccounts(CommandSender sender,
@@ -433,5 +446,5 @@ public final class ImportAuthMeHubCommand extends HubCommand
         }
     }
     
-    private final Set<CommandSender> senderLocks = new HashSet<>();
+    private boolean locked = false;
 }

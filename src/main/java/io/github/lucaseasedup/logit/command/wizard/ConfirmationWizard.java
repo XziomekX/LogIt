@@ -15,7 +15,9 @@ public final class ConfirmationWizard extends Wizard
      * @throws IllegalArgumentException if {@code sender} or {@code callback} is {@code null}; or
      *                                  {@code keyword} is {@code null}, blank or starts with "/".
      */
-    public ConfirmationWizard(CommandSender sender, String keyword, Runnable callback)
+    public ConfirmationWizard(CommandSender sender,
+                              String keyword,
+                              ConfirmationCallback callback)
     {
         super(sender, null);
         
@@ -32,10 +34,30 @@ public final class ConfirmationWizard extends Wizard
         this.callback = callback;
     }
     
+    public ConfirmationWizard(CommandSender sender,
+                              String keyword,
+                              final Runnable callback)
+    {
+        this(sender, keyword, new ConfirmationCallback()
+        {
+            
+            @Override
+            public void confirmed()
+            {
+                callback.run();
+            }
+            
+            @Override
+            public void cancelled()
+            {
+                // Ignore.
+            }
+        });
+    }
+    
     @Override
     protected void onCreate()
     {
-        // Left for optional implementation by extending classes.
     }
     
     @Override
@@ -43,10 +65,12 @@ public final class ConfirmationWizard extends Wizard
     {
         if (message.equalsIgnoreCase(keyword))
         {
-            callback.run();
+            callback.confirmed();
         }
         else
         {
+            callback.cancelled();
+            
             sendMessage(t("wizardCancelled"));
         }
         
@@ -54,5 +78,5 @@ public final class ConfirmationWizard extends Wizard
     }
     
     private final String keyword;
-    private final Runnable callback;
+    private final ConfirmationCallback callback;
 }
