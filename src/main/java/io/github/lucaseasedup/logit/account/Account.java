@@ -2,8 +2,8 @@ package io.github.lucaseasedup.logit.account;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.common.ReportedException;
-import io.github.lucaseasedup.logit.security.HashingAlgorithm;
-import io.github.lucaseasedup.logit.security.SecurityHelper;
+import io.github.lucaseasedup.logit.security.model.HashingModel;
+import io.github.lucaseasedup.logit.security.model.HashingModelDecoder;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.util.IniUtils;
 import io.github.lucaseasedup.logit.util.Validators;
@@ -237,7 +237,8 @@ public final class Account extends LogItCoreObject
             throw new IllegalArgumentException("Missing entry key: hashing_algorithm");
         
         String actualHashedPassword = entry.get(keys().password());
-        String hashingAlgorithm = getSecurityHelper().getDefaultHashingAlgorithm().name();
+        HashingModel hashingModel =
+                getSecurityHelper().getDefaultHashingModel();
         
         if (!getConfig("secret.yml").getBoolean("debug.forceHashingAlgorithm"))
         {
@@ -245,7 +246,7 @@ public final class Account extends LogItCoreObject
             
             if (!StringUtils.isBlank(userHashingAlgorithm))
             {
-                hashingAlgorithm = userHashingAlgorithm;
+                hashingModel = HashingModelDecoder.decode(userHashingAlgorithm);
             }
         }
         
@@ -253,13 +254,15 @@ public final class Account extends LogItCoreObject
         {
             String actualSalt = entry.get(keys().salt());
             
-            return getSecurityHelper().checkPassword(password, actualHashedPassword,
-                    actualSalt, hashingAlgorithm);
+            return getSecurityHelper().checkPassword(
+                    password, actualHashedPassword, actualSalt, hashingModel
+            );
         }
         else
         {
-            return getSecurityHelper().checkPassword(password, actualHashedPassword,
-                    hashingAlgorithm);
+            return getSecurityHelper().checkPassword(
+                    password, actualHashedPassword, hashingModel
+            );
         }
     }
     
@@ -286,24 +289,25 @@ public final class Account extends LogItCoreObject
         if (getConfig("secret.yml").getBoolean("passwords.disable"))
             return;
         
-        HashingAlgorithm hashingAlgorithm = getSecurityHelper().getDefaultHashingAlgorithm();
+        HashingModel hashingModel =
+                getSecurityHelper().getDefaultHashingModel();
         String newHash;
         
         if (getConfig("secret.yml").getBoolean("passwords.useSalt"))
         {
-            String newSalt = SecurityHelper.generateSalt(hashingAlgorithm);
+            String newSalt = hashingModel.generateSalt();
             
-            newHash = SecurityHelper.getHash(newPassword, newSalt, hashingAlgorithm);
+            newHash = hashingModel.getHash(newPassword, newSalt);
             
             entry.put(keys().salt(), newSalt);
         }
         else
         {
-            newHash = SecurityHelper.getHash(newPassword, hashingAlgorithm);
+            newHash = hashingModel.getHash(newPassword);
         }
         
         entry.put(keys().password(), newHash);
-        entry.put(keys().hashing_algorithm(), hashingAlgorithm.encode());
+        entry.put(keys().hashing_algorithm(), hashingModel.encode());
     }
     
     /**

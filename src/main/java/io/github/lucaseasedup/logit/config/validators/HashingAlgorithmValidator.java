@@ -2,7 +2,9 @@ package io.github.lucaseasedup.logit.config.validators;
 
 import io.github.lucaseasedup.logit.config.PropertyType;
 import io.github.lucaseasedup.logit.config.PropertyValidator;
-import io.github.lucaseasedup.logit.security.HashingAlgorithm;
+import io.github.lucaseasedup.logit.security.model.AuthMeHashingModel;
+import io.github.lucaseasedup.logit.security.model.HashingModel;
+import io.github.lucaseasedup.logit.security.model.HashingModelDecoder;
 
 public final class HashingAlgorithmValidator implements PropertyValidator
 {
@@ -12,8 +14,10 @@ public final class HashingAlgorithmValidator implements PropertyValidator
         if (value == null)
             return false;
         
-        HashingAlgorithm algorithmType = HashingAlgorithm.decode(value.toString());
+        HashingModel hashingModel =
+                HashingModelDecoder.decode(value.toString());
         
-        return algorithmType != null && algorithmType != HashingAlgorithm.AUTHME;
+        return hashingModel != null
+                && !(hashingModel instanceof AuthMeHashingModel);
     }
 }

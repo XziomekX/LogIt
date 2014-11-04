@@ -1,5 +1,8 @@
 package io.github.lucaseasedup.logit.security;
 
+import io.github.lucaseasedup.logit.security.lib.BCrypt;
+import io.github.lucaseasedup.logit.security.model.CommonHashingModel;
+
 public final class AuthMePasswordHelper
 {
     private AuthMePasswordHelper()
@@ -10,7 +13,9 @@ public final class AuthMePasswordHelper
                                                   String hashedPassword,
                                                   String encryptionMethod)
     {
-        if (compareWithEncryptionMethod(password, hashedPassword, encryptionMethod))
+        if (compareWithEncryptionMethod(
+                password, hashedPassword, encryptionMethod
+        ))
         {
             return true;
         }
@@ -41,12 +46,16 @@ public final class AuthMePasswordHelper
             case "DOUBLEMD5":
             {
                 return hashedPassword.equals(
-                        SecurityHelper.getMd5(SecurityHelper.getMd5(password))
+                        CommonHashingModel.getMd5(
+                                CommonHashingModel.getMd5(password)
+                        )
                 );
             }
             case "MD5":
             {
-                return hashedPassword.equals(SecurityHelper.getMd5(password));
+                return hashedPassword.equals(
+                        CommonHashingModel.getMd5(password)
+                );
             }
             case "PLAINTEXT":
             {
@@ -58,31 +67,37 @@ public final class AuthMePasswordHelper
                 
                 for (int i = 0; i < 25; i++)
                 {
-                    hash = SecurityHelper.getSha512(hash);
+                    hash = CommonHashingModel.getSha512(hash);
                 }
                 
                 return hashedPassword.equalsIgnoreCase(hash);
             }
             case "SHA1":
             {
-                return hashedPassword.equals(SecurityHelper.getSha1(password));
+                return hashedPassword.equals(
+                        CommonHashingModel.getSha1(password)
+                );
             }
             case "SHA256":
             {
                 String[] line = hashedPassword.split("\\$");
-                String hash = SecurityHelper.getSha256(
-                        SecurityHelper.getSha256(password) + line[2]
+                String hash = CommonHashingModel.getSha256(
+                        CommonHashingModel.getSha256(password) + line[2]
                 );
                 
                 return hashedPassword.equals("$SHA$" + line[2] + "$" + hash);
             }
             case "SHA512":
             {
-                return hashedPassword.equals(SecurityHelper.getSha512(password));
+                return hashedPassword.equals(
+                        CommonHashingModel.getSha512(password)
+                );
             }
             case "WHIRLPOOL":
             {
-                return hashedPassword.equals(SecurityHelper.getWhirlpool(password));
+                return hashedPassword.equals(
+                        CommonHashingModel.getWhirlpool(password)
+                );
             }
             case "XAUTH":
             {
@@ -103,7 +118,8 @@ public final class AuthMePasswordHelper
         return false;
     }
     
-    private static boolean compareWithAllEncryptionMethods(String password, String hashedPassword)
+    private static boolean compareWithAllEncryptionMethods(String password,
+                                                           String hashedPassword)
     {
         if (compareWithEncryptionMethod(password, hashedPassword, "BCRYPT"))
             return true;
@@ -154,8 +170,20 @@ public final class AuthMePasswordHelper
     
     private static String getXauthHash(String password, String salt)
     {
-        String hash = SecurityHelper.getWhirlpool(salt + password).toLowerCase();
-        int saltPos = (password.length() >= hash.length() ? hash.length() - 1 : password.length());
+        String hash = CommonHashingModel.getWhirlpool(
+                salt + password
+        ).toLowerCase();
+        
+        int saltPos;
+        
+        if (password.length() >= hash.length())
+        {
+            saltPos = hash.length() - 1;
+        }
+        else
+        {
+            saltPos = password.length();
+        }
         
         return hash.substring(0, saltPos) + salt + hash.substring(saltPos);
     }

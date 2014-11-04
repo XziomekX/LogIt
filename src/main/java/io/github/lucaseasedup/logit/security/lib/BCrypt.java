@@ -1,4 +1,4 @@
-package io.github.lucaseasedup.logit.security;
+package io.github.lucaseasedup.logit.security.lib;
 
 // Copyright (c) 2006 Damien Miller <djm@mindrot.org>
 //
