@@ -5,10 +5,15 @@ import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
+import io.github.lucaseasedup.logit.storage.Infix;
+import io.github.lucaseasedup.logit.storage.SelectorBinary;
+import io.github.lucaseasedup.logit.storage.SelectorCondition;
+import io.github.lucaseasedup.logit.storage.SelectorNegation;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -127,6 +132,43 @@ public final class AccountInfoHubCommand extends HubCommand
                 sendMsg(sender, "");
                 sendMsg(sender, t("accountInfo.locked")
                         .replace("{0}", account.getUsername()));
+            }
+        }
+        
+        if (!StringUtils.isBlank(account.getIp()))
+        {
+            List<Account> otherAccounts = getAccountManager().selectAccounts(
+                    Arrays.asList(
+                            keys().username(),
+                            keys().ip()
+                    ),
+                    new SelectorBinary(
+                            new SelectorNegation(
+                                    new SelectorCondition(
+                                            keys().username(),
+                                            Infix.EQUALS,
+                                            account.getUsername()
+                                    )
+                            ),
+                            Infix.AND,
+                            new SelectorCondition(
+                                    keys().ip(),
+                                    Infix.EQUALS,
+                                    account.getIp()
+                            )
+                    )
+            );
+            
+            if (otherAccounts != null && !otherAccounts.isEmpty())
+            {
+                sendMsg(sender, "");
+                sendMsg(sender, t("accountInfo.otherAccounts"));
+                
+                for (Account otherAccount : otherAccounts)
+                {
+                    sendMsg(sender, t("accountInfo.otherAccounts.username")
+                            .replace("{0}", otherAccount.getUsername()));
+                }
             }
         }
         
