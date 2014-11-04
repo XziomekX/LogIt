@@ -267,7 +267,28 @@ public final class ConvertWizard extends Wizard
                 );
             }
             
-            getCore().restart();
+            try
+            {
+                getCore().restart();
+            }
+            catch (FatalReportedException ex)
+            {
+                if (getSender() instanceof Player)
+                {
+                    sendMessage(t("wizard.convert.fail"));
+                }
+                
+                log(Level.SEVERE, t("wizard.convert.fail.log"), ex);
+                
+                updateStep(Step.FAIL);
+                
+                if (getConfig("config.yml").getBoolean("terminateUnsafeServer"))
+                {
+                    Bukkit.getServer().shutdown();
+                }
+                
+                return;
+            }
             
             if (copyAccounts && accounts != null)
             {
@@ -293,17 +314,6 @@ public final class ConvertWizard extends Wizard
             }
             
             log(Level.SEVERE, t("wizard.convert.fail.log"));
-            
-            updateStep(Step.FAIL);
-        }
-        catch (FatalReportedException ex)
-        {
-            if (getSender() instanceof Player)
-            {
-                sendMessage(t("wizard.convert.fail"));
-            }
-            
-            log(Level.SEVERE, t("wizard.convert.fail.log"), ex);
             
             updateStep(Step.FAIL);
         }

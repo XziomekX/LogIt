@@ -65,7 +65,14 @@ public final class LogItPlugin extends JavaPlugin
         }
         catch (FatalReportedException ex)
         {
-            disable();
+            if (getConfig().getBoolean("terminateUnsafeServer", true))
+            {
+                Bukkit.getServer().shutdown();
+            }
+            else
+            {
+                disable();
+            }
         }
     }
     
