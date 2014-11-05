@@ -8,6 +8,7 @@ import io.github.lucaseasedup.logit.command.hub.HubCommands;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -108,6 +109,7 @@ public final class LogItCommand extends LogItCoreObject implements TabExecutor
     {
         HubCommand hubCommand = findHubCommand(args);
         
+        // If command found, complete its arguments.
         if (hubCommand != null)
         {
             String[] subcommandWords = hubCommand.getSubcommand().split("\\s+");
@@ -115,7 +117,9 @@ public final class LogItCommand extends LogItCoreObject implements TabExecutor
             
             if (subcommandWords.length <= args.length - 1)
             {
-                hubCommandArgs = Arrays.copyOfRange(args, subcommandWords.length, args.length);
+                hubCommandArgs = Arrays.copyOfRange(
+                        args, subcommandWords.length, args.length
+                );
             }
             else
             {
@@ -124,8 +128,13 @@ public final class LogItCommand extends LogItCoreObject implements TabExecutor
             
             return hubCommand.complete(sender, hubCommandArgs);
         }
-        
-        return null;
+        // If command not found, complete command.
+        else
+        {
+            return getTabCompleter().completeHubCommand(
+                    StringUtils.join(args, " ")
+            );
+        }
     }
     
     private HubCommand findHubCommand(String[] args)

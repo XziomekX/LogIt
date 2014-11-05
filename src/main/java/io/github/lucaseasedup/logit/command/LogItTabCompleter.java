@@ -2,16 +2,59 @@ package io.github.lucaseasedup.logit.command;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
+import io.github.lucaseasedup.logit.command.hub.HubCommand;
+import io.github.lucaseasedup.logit.command.hub.HubCommands;
 import io.github.lucaseasedup.logit.storage.Infix;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
+import io.github.lucaseasedup.logit.util.Utils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public final class LogItTabCompleter extends LogItCoreObject
 {
+    public List<String> completeHubCommand(String stub)
+    {
+        if (stub == null)
+            throw new IllegalArgumentException();
+        
+        List<String> suggestions = new ArrayList<>();
+        Iterator<HubCommand> commandIt = HubCommands.iterator();
+        
+        while (commandIt.hasNext() && suggestions.size() < MAX_SUGGESTIONS)
+        {
+            HubCommand command = commandIt.next();
+            
+            if (command.getSubcommand().startsWith(stub))
+            {
+                String[] stubWords = Utils.getWords(stub);
+                String[] commandWords = Utils.getWords(command.getSubcommand());
+                String suggestion;
+                
+                // Complete next word.
+                if (stubWords.length == 0 || stub.endsWith(" "))
+                {
+                    suggestion = commandWords[stubWords.length];
+                }
+                // Complete current word.
+                else
+                {
+                    suggestion = commandWords[stubWords.length - 1];
+                }
+                
+                if (!suggestions.contains(suggestion))
+                {
+                    suggestions.add(suggestion);
+                }
+            }
+        }
+        
+        return suggestions;
+    }
+    
     public List<String> completeUsername(String stub)
     {
         if (stub == null)

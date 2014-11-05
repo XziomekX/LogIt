@@ -14,6 +14,16 @@ public final class Utils
     {
     }
     
+    public static String[] getWords(String string)
+    {
+        String trim = string.trim();
+        
+        if (trim.isEmpty())
+            return new String[0];
+        
+        return trim.split("\\s+");
+    }
+    
     @SuppressWarnings("unchecked")
     public static <T> T deepCopy(T obj)
     {
