@@ -5,7 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
-public final class CommonHashingModel extends HashingModel
+public final class CommonHashingModel implements HashingModel
 {
     public CommonHashingModel(Algorithm algorithm, int rounds)
     {

@@ -2,7 +2,7 @@ package io.github.lucaseasedup.logit.security.model;
 
 import io.github.lucaseasedup.logit.security.AuthMePasswordHelper;
 
-public final class AuthMeHashingModel extends HashingModel
+public final class AuthMeHashingModel implements HashingModel
 {
     public AuthMeHashingModel(String encryptionMethod)
     {

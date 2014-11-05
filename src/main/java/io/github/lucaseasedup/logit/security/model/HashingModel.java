@@ -1,11 +1,11 @@
 package io.github.lucaseasedup.logit.security.model;
 
-public abstract class HashingModel
+public interface HashingModel
 {
-    public abstract String getHash(String string);
-    public abstract String getHash(String string, String salt);
-    public abstract boolean verify(String string, String hash);
-    public abstract boolean verify(String string, String salt, String hash);
-    public abstract String generateSalt();
-    public abstract String encode();
+    public String getHash(String string);
+    public String getHash(String string, String salt);
+    public boolean verify(String string, String hash);
+    public boolean verify(String string, String salt, String hash);
+    public String generateSalt();
+    public String encode();
 }

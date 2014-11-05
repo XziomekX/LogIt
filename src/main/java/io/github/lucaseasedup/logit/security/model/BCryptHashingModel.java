@@ -2,7 +2,7 @@ package io.github.lucaseasedup.logit.security.model;
 
 import io.github.lucaseasedup.logit.security.lib.BCrypt;
 
-public final class BCryptHashingModel extends HashingModel
+public final class BCryptHashingModel implements HashingModel
 {
     @Override
     public String getHash(String string)
