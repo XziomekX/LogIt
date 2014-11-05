@@ -236,7 +236,7 @@ public final class Account extends LogItCoreObject
         if (!entry.containsKey(keys().hashing_algorithm()))
             throw new IllegalArgumentException("Missing entry key: hashing_algorithm");
         
-        String actualHashedPassword = entry.get(keys().password());
+        String hash = entry.get(keys().password());
         HashingModel hashingModel =
                 getSecurityHelper().getDefaultHashingModel();
         
@@ -252,17 +252,13 @@ public final class Account extends LogItCoreObject
         
         if (getConfig("secret.yml").getBoolean("passwords.useSalt"))
         {
-            String actualSalt = entry.get(keys().salt());
+            String salt = entry.get(keys().salt());
             
-            return getSecurityHelper().checkPassword(
-                    password, actualHashedPassword, actualSalt, hashingModel
-            );
+            return hashingModel.verify(password, salt, hash);
         }
         else
         {
-            return getSecurityHelper().checkPassword(
-                    password, actualHashedPassword, hashingModel
-            );
+            return hashingModel.verify(password, hash);
         }
     }
     

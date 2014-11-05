@@ -66,7 +66,9 @@ public final class GlobalPasswordManager extends LogItCoreObject implements Runn
     public String generatePassword()
     {
         int length = getConfig("config.yml").getInt("globalPassword.length");
-        String password = SecurityHelper.generatePassword(length, "0123456789");
+        String password = getSecurityHelper().generatePassword(
+                length, "0123456789"
+        );
         long lifetimeTicks = getConfig("config.yml")
                 .getTime("globalPassword.invalidateAfter", TimeUnit.TICKS);
         

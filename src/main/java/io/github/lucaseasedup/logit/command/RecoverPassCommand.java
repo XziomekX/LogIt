@@ -7,7 +7,6 @@ import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.common.ReportedException;
 import io.github.lucaseasedup.logit.cooldown.LogItCooldowns;
 import io.github.lucaseasedup.logit.mail.MailSender;
-import io.github.lucaseasedup.logit.security.SecurityHelper;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
 import java.io.IOException;
@@ -93,7 +92,7 @@ public final class RecoverPassCommand extends LogItCoreObject implements Command
             final String playerName = player.getName();
             final String paramEmail = args[0];
             
-            final String newPassword = SecurityHelper.generatePassword(
+            final String newPassword = getSecurityHelper().generatePassword(
                     getConfig("config.yml").getInt("passwordRecovery.passwordLength"),
                     getConfig("config.yml").getString("passwordRecovery.passwordCombination")
             );
