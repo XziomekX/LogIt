@@ -3,6 +3,7 @@ package io.github.lucaseasedup.logit.command.hub;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +30,9 @@ public abstract class HubCommand extends LogItCoreObject
     @SuppressWarnings("unused")
     public List<String> complete(CommandSender sender, String[] args)
     {
-        return null;
+        return (args.length > getParams().size())
+                ? new ArrayList<String>()
+                : null;
     }
     
     public String getSubcommand()
