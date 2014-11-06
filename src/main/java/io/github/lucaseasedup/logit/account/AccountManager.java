@@ -485,6 +485,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             storage.updateEntries(unit,
                     new Storage.Entry.Builder()
                             .put(keys().username(), newUsername)
+                            .put(keys().uuid(), "")
+                            .put(keys().display_name(), "")
                             .build(),
                     new SelectorCondition(keys.username(), Infix.EQUALS, username)
             );

@@ -92,10 +92,15 @@ public final class PlayerEventListener extends LogItCoreObject
         if (account != null)
         {
             String displayName = account.getDisplayName();
+            boolean usernameCaseMismatchKick = getConfig("config.yml")
+                    .getBoolean("usernameCaseMismatch.kick");
             
-            if (!StringUtils.isBlank(displayName)
-                    && !player.getName().equals(displayName)
-                    && getConfig("config.yml").getBoolean("usernameCaseMismatch.kick"))
+            if (StringUtils.isBlank(displayName))
+            {
+                account.setDisplayName(player.getName());
+            }
+            else if (!player.getName().equals(displayName)
+                    && usernameCaseMismatchKick)
             {
                 kicker.kick(player, t("usernameCaseMismatch.kick")
                         .replace("{0}", displayName));
