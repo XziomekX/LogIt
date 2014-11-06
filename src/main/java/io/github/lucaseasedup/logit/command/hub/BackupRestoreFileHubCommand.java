@@ -81,6 +81,14 @@ public final class BackupRestoreFileHubCommand extends HubCommand
                 {
                     ReportedException.incrementRequestCount();
                     
+                    boolean forceBeforeRestore = getConfig("config.yml")
+                            .getBoolean("backup.forceBeforeRestore");
+                    
+                    if (forceBeforeRestore)
+                    {
+                        getBackupManager().createBackup();
+                    }
+                    
                     getBackupManager().restoreBackup(args[0]);
                     
                     if (sender instanceof Player)
