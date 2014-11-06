@@ -357,20 +357,26 @@ public final class LogItCore
         getDataFile("backup").mkdir();
         getDataFile("mail").mkdir();
         
-        File passwordRecoveryTemplateFile =
-                getDataFile("mail/password-recovery.html");
+        extractMailTemplate("password-recovery.html");
+    }
+    
+    private void extractMailTemplate(String filename)
+    {
+        if (filename == null)
+            throw new IllegalArgumentException();
         
-        if (!passwordRecoveryTemplateFile.exists())
+        File templateFile = getDataFile("mail", filename);
+        
+        if (!templateFile.exists())
         {
             try
             {
-                IoUtils.extractResource("password-recovery.html",
-                        passwordRecoveryTemplateFile);
+                IoUtils.extractResource(filename, templateFile);
             }
             catch (IOException ex)
             {
                 log(Level.WARNING,
-                        "Could not copy resource: password-recovery.html", ex);
+                        "Could not extract mail template: " + filename, ex);
             }
         }
     }
