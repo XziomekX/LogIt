@@ -17,6 +17,8 @@ import io.github.lucaseasedup.logit.storage.Storage.Entry.Datum;
 import io.github.lucaseasedup.logit.storage.StorageObserver;
 import io.github.lucaseasedup.logit.storage.WrapperStorage;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,6 +89,24 @@ public final class AccountManager extends LogItCoreObject implements Runnable
                 }
             }
         };
+        
+        if (getConfig("secret.yml").getBoolean("generateBufferUsageGraph"))
+        {
+            try
+            {
+                bufferUsageGraphWriter = new BufferedWriter(
+                        new FileWriter(getDataFile("bufferUsage.csv"), true)
+                );
+                bufferUsageGraphWriter.newLine();
+                bufferUsageGraphWriter.write(":" + System.currentTimeMillis());
+                bufferUsageGraphWriter.newLine();
+                bufferUsageGraphWriter.flush();
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, ex);
+            }
+        }
     }
     
     @Override
@@ -112,6 +132,20 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         {
             registrationCache.clear();
             registrationCache = null;
+        }
+        
+        if (bufferUsageGraphWriter != null)
+        {
+            try
+            {
+                bufferUsageGraphWriter.close();
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, ex);
+            }
+            
+            bufferUsageGraphWriter = null;
         }
     }
     
@@ -632,6 +666,24 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         // Restore buffer-locked accounts.
         buffer.putAll(ignoredAccounts);
         
+        if (bufferUsageGraphWriter != null)
+        {
+            long elapsedTicks = getCore().getGlobalClock().getElapsed();
+            
+            try
+            {
+                bufferUsageGraphWriter.write(
+                        elapsedTicks + "," + dirtyEntries.size()
+                );
+                bufferUsageGraphWriter.newLine();
+                bufferUsageGraphWriter.flush();
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, ex);
+            }
+        }
+        
         if (dirtyEntries.isEmpty())
             return;
         
@@ -709,4 +761,5 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     private BukkitTask pingerTask;
     private QueuedMap<String, Account> buffer = new QueuedMap<>();
     private Map<String, Boolean> registrationCache = new HashMap<>();
+    private BufferedWriter bufferUsageGraphWriter;
 }

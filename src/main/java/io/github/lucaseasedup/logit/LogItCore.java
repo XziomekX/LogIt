@@ -24,6 +24,7 @@ import io.github.lucaseasedup.logit.command.UnregisterCommand;
 import io.github.lucaseasedup.logit.common.CancellableEvent;
 import io.github.lucaseasedup.logit.common.FatalReportedException;
 import io.github.lucaseasedup.logit.common.PlayerCollections;
+import io.github.lucaseasedup.logit.common.Timer;
 import io.github.lucaseasedup.logit.common.Wrapper;
 import io.github.lucaseasedup.logit.config.ConfigurationManager;
 import io.github.lucaseasedup.logit.config.InvalidPropertyValueException;
@@ -130,6 +131,15 @@ public final class LogItCore
                     "The LogIt core has already been started."
             );
         }
+        
+        scheduleTask(new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                globalClock.advance();
+            }
+        }, 0L, globalClock.getInterval());
         
         LogItTakeoffTiming timing = new LogItTakeoffTiming();
         timing.setStart();
@@ -1225,6 +1235,11 @@ public final class LogItCore
         return started;
     }
     
+    public Timer getGlobalClock()
+    {
+        return globalClock;
+    }
+    
     public ConfigurationManager getConfigurationManager()
     {
         return configurationManager;
@@ -1346,6 +1361,7 @@ public final class LogItCore
     private final LogItPlugin plugin;
     private boolean firstRun;
     private boolean started = false;
+    private final Timer globalClock = new Timer(1L);
     
     private ConfigurationManager configurationManager;
     private LogItCoreLogger logger;
@@ -1369,4 +1385,8 @@ public final class LogItCore
     private Set<BukkitTask> tasks = new LinkedHashSet<>();
     private Map<Class<? extends Listener>, Listener> eventListeners =
             new HashMap<>();
+    
+    {
+        globalClock.start();
+    }
 }
