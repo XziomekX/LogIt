@@ -48,7 +48,7 @@ import io.github.lucaseasedup.logit.locale.LocaleManager;
 import io.github.lucaseasedup.logit.locale.PolishLocale;
 import io.github.lucaseasedup.logit.logging.CommandSilencer;
 import io.github.lucaseasedup.logit.logging.LogItCoreLogger;
-import io.github.lucaseasedup.logit.logging.timing.LogItTakeoffTiming;
+import io.github.lucaseasedup.logit.logging.timing.TakeoffTiming;
 import io.github.lucaseasedup.logit.message.LogItMessageDispatcher;
 import io.github.lucaseasedup.logit.message.MessageHelper;
 import io.github.lucaseasedup.logit.persistence.AirBarSerializer;
@@ -141,7 +141,7 @@ public final class LogItCore
             }
         }, 0L, globalClock.getInterval());
         
-        LogItTakeoffTiming timing = new LogItTakeoffTiming();
+        TakeoffTiming timing = new TakeoffTiming();
         timing.setStart();
         
         // =======================================

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Date;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public final class LogItTakeoffTiming
+public final class TakeoffTiming
 {
     public void setStart()
     {
