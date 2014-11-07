@@ -456,16 +456,18 @@ public final class LogItCore
                 getConfig("config.yml").getString("storage.accounts.leading.cache")
         );
         
+        String leadingUnit = getConfig("config.yml")
+                .getString("storage.accounts.leading.unit");
+        String mirrorUnit = getConfig("config.yml")
+                .getString("storage.accounts.mirror.unit");
+        
         @SuppressWarnings("resource")
         WrapperStorage accountStorage = new WrapperStorage.Builder()
                 .leading(leadingAccountStorage)
                 .cacheType(accountCacheType)
                 .build();
         Hashtable<String, String> unitMappings = new Hashtable<>();
-        unitMappings.put(
-                getConfig("config.yml").getString("storage.accounts.leading.unit"),
-                getConfig("config.yml").getString("storage.accounts.mirror.unit")
-        );
+        unitMappings.put(leadingUnit, mirrorUnit);
         accountStorage.mirrorStorage(mirrorAccountStorage, unitMappings);
         
         try
@@ -517,21 +519,18 @@ public final class LogItCore
             FatalReportedException.throwNew(ex);
         }
         
-        if (accountCacheType == CacheType.PRELOADED)
+        try
         {
-            try
-            {
-                accountStorage.selectEntries(
-                        getConfig("config.yml").getString("storage.accounts.leading.unit")
-                );
-            }
-            catch (IOException ex)
-            {
-                log(Level.SEVERE, "Could not preload accounts.", ex);
-            }
+            accountStorage.preload(leadingUnit);
+        }
+        catch (IOException ex)
+        {
+            log(Level.SEVERE, "Could not preload accounts", ex);
         }
         
-        accountManager = new AccountManager(accountStorage, accountsUnit, accountKeys);
+        accountManager = new AccountManager(
+                accountStorage, accountsUnit, accountKeys
+        );
     }
     
     private void setUpPersistenceManager() throws FatalReportedException

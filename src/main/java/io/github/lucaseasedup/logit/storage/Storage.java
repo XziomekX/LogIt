@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -200,6 +201,64 @@ public abstract class Storage implements AutoCloseable
         public Iterator<Datum> iterator()
         {
             return new DatumIterator();
+        }
+        
+        public static List<Storage.Entry> copyList(List<Storage.Entry> entries)
+        {
+            if (entries == null)
+                throw new IllegalArgumentException();
+            
+            return copyList(entries, new SelectorConstant(true));
+        }
+        
+        public static List<Storage.Entry> copyList(List<Storage.Entry> entries,
+                                                   Selector selector)
+        {
+            if (entries == null || selector == null)
+                throw new IllegalArgumentException();
+            
+            List<Storage.Entry> copies = new LinkedList<>();
+            
+            for (Storage.Entry entry : entries)
+            {
+                if (SqlUtils.resolveSelector(selector, entry))
+                {
+                    copies.add(entry.copy());
+                }
+            }
+            
+            return copies;
+        }
+        
+        public static List<Storage.Entry> copyList(List<Storage.Entry> entries,
+                                                   List<String> keys,
+                                                   Selector selector)
+        {
+            if (entries == null || keys == null || selector == null)
+                throw new IllegalArgumentException();
+            
+            List<Storage.Entry> copies = new LinkedList<>();
+            
+            for (Storage.Entry entry : entries)
+            {
+                if (SqlUtils.resolveSelector(selector, entry))
+                {
+                    Storage.Entry.Builder copyBuilder =
+                            new Storage.Entry.Builder();
+                    
+                    for (Storage.Entry.Datum datum : entry)
+                    {
+                        if (keys == null || keys.contains(datum.getKey()))
+                        {
+                            copyBuilder.put(datum.getKey(), datum.getValue());
+                        }
+                    }
+                    
+                    copies.add(copyBuilder.build());
+                }
+            }
+            
+            return copies;
         }
         
         public final class DatumIterator implements Iterator<Datum>
