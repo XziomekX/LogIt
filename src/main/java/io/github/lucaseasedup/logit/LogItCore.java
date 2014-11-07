@@ -49,6 +49,7 @@ import io.github.lucaseasedup.logit.locale.PolishLocale;
 import io.github.lucaseasedup.logit.logging.CommandSilencer;
 import io.github.lucaseasedup.logit.logging.LogItCoreLogger;
 import io.github.lucaseasedup.logit.logging.timing.TakeoffTiming;
+import io.github.lucaseasedup.logit.logging.timing.Timing;
 import io.github.lucaseasedup.logit.message.LogItMessageDispatcher;
 import io.github.lucaseasedup.logit.message.MessageHelper;
 import io.github.lucaseasedup.logit.persistence.AirBarSerializer;
@@ -132,6 +133,9 @@ public final class LogItCore
             );
         }
         
+        TakeoffTiming timing = new TakeoffTiming();
+        timing.start();
+        
         scheduleTask(new BukkitRunnable()
         {
             @Override
@@ -141,11 +145,8 @@ public final class LogItCore
             }
         }, 0L, globalClock.getInterval());
         
-        TakeoffTiming timing = new TakeoffTiming();
-        timing.setStart();
-        
         // =======================================
-        timing.setPreEvent();
+        timing.startEvent();
         
         CancellableEvent evt = new LogItCoreStartEvent(this);
         
@@ -154,7 +155,7 @@ public final class LogItCore
         if (evt.isCancelled())
             return CancelledState.CANCELLED;
         
-        timing.setPostEvent();
+        timing.endEvent();
         // =======================================
         
         getDataFolder().mkdir();
@@ -162,17 +163,21 @@ public final class LogItCore
         firstRun = !getDataFile("config.yml").exists();
         
         // =======================================
-        timing.setPreConfman();
+        timing.startConfigurationManager();
         
         setUpConfiguration();
         
-        timing.setPostConfman();
+        timing.endConfigurationManager();
         // =======================================
+        
+        // =======================================
+        timing.startLogger();
         
         setUpLogger();
         
+        timing.endLogger();
         // =======================================
-        timing.setPreMsgs();
+        timing.startMessages();
         
         try
         {
@@ -185,7 +190,7 @@ public final class LogItCore
             log(Level.WARNING, "Could not load messages.", ex);
         }
         
-        timing.setPostMsgs();
+        timing.endMessages();
         // =======================================
         
         if (isFirstRun())
@@ -193,23 +198,30 @@ public final class LogItCore
             doFirstRunStuff();
         }
         
+        // =======================================
+        timing.startCraftReflect();
+        
         setUpCraftReflect();
+        
+        timing.endCraftReflect();
+        // =======================================
+        
         setUpLocaleManager();
         
         // =======================================
-        timing.setPreAccman();
+        timing.startAccountManager();
         
         setUpAccountManager();
         
-        timing.setPostAccman();
+        timing.endAccountManager();
         // =======================================
         
         // =======================================
-        timing.setPrePersman();
+        timing.startPersistenceManager();
         
         setUpPersistenceManager();
         
-        timing.setPostPersman();
+        timing.endPersistenceManager();
         // =======================================
         
         securityHelper = new SecurityHelper();
@@ -250,22 +262,12 @@ public final class LogItCore
         enableCommands();
         registerEventListeners();
         
-        timing.setEnd();
+        timing.end();
         
         if (getConfig("secret.yml").getBoolean("timings.enabled"))
         {
-            File timingsFile = getDataFile(
-                    getConfig("secret.yml").getString("timings.filename")
-            );
-            
-            try
-            {
-                timing.saveTiming(timingsFile);
-            }
-            catch (IOException ex)
-            {
-                log(Level.WARNING, "Could not save timings", ex);
-            }
+            clearTimings();
+            saveTiming(timing);
         }
         
         started = true;
@@ -1112,6 +1114,35 @@ public final class LogItCore
             VaultHook.playerAddGroup(player,
                     getConfig("config.yml").getString("groups.loggedOut"));
         }
+    }
+    
+    public void clearTimings()
+    {
+        getTimingsFile().delete();
+    }
+    
+    public void saveTiming(Timing timing)
+    {
+        if (timing == null)
+            throw new IllegalArgumentException();
+        
+        File timingsFile = getTimingsFile();
+        
+        try
+        {
+            timing.saveTiming(timingsFile);
+        }
+        catch (IOException ex)
+        {
+            log(Level.WARNING, "Could not save timings", ex);
+        }
+    }
+    
+    private File getTimingsFile()
+    {
+        return getDataFile(
+                getConfig("secret.yml").getString("timings.filename")
+        );
     }
     
     public void log(Level level, String msg)

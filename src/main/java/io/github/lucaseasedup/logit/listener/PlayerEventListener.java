@@ -8,6 +8,8 @@ import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.config.TimeUnit;
 import io.github.lucaseasedup.logit.hooks.BukkitSmerfHook;
 import io.github.lucaseasedup.logit.hooks.VanishNoPacketHook;
+import io.github.lucaseasedup.logit.logging.timing.PlayerJoinTiming;
+import io.github.lucaseasedup.logit.logging.timing.PlayerLoginTiming;
 import io.github.lucaseasedup.logit.message.JoinMessageGenerator;
 import io.github.lucaseasedup.logit.message.QuitMessageGenerator;
 import io.github.lucaseasedup.logit.persistence.LocationSerializer;
@@ -79,7 +81,13 @@ public final class PlayerEventListener extends LogItCoreObject
         if (player == null || address == null || kicker == null)
             throw new IllegalArgumentException();
         
+        PlayerLoginTiming timing = new PlayerLoginTiming();
+        timing.start();
+        
         String username = player.getName().toLowerCase();
+        
+        // =======================================
+        timing.startSelectAccount();
         
         Account account = getAccountManager().selectAccount(username, Arrays.asList(
                 keys().username(),
@@ -88,6 +96,9 @@ public final class PlayerEventListener extends LogItCoreObject
                 keys().display_name(),
                 keys().persistence()
         ));
+        
+        timing.endSelectAccount();
+        // =======================================
         
         if (account != null)
         {
@@ -181,6 +192,13 @@ public final class PlayerEventListener extends LogItCoreObject
                 kicker.kick(player, t("noSlotsFree"));
             }
         }
+        
+        timing.end();
+        
+        if (getConfig("secret.yml").getBoolean("timings.enabled"))
+        {
+            getCore().saveTiming(timing);
+        }
     }
     
     @EventHandler(priority = EventPriority.LOW)
@@ -203,30 +221,26 @@ public final class PlayerEventListener extends LogItCoreObject
         if (player == null || joinMessage == null)
             throw new IllegalArgumentException();
         
+        PlayerJoinTiming timing = new PlayerJoinTiming();
+        timing.start();
+        
         String username = player.getName().toLowerCase();
         String ip = getPlayerIp(player);
         UUID uuid = player.getUniqueId();
         
         joinMessage.set(null);
         
+        // =======================================
+        timing.startCreateSession();
+        
         if (getSessionManager().getSession(player) == null)
         {
             getSessionManager().createSession(player);
         }
         
-        long validnessTime = getConfig("config.yml")
-                .getTime("loginSessions.validnessTime", TimeUnit.SECONDS);
-        
-        List<Account> uuidMatchedAccounts = getAccountManager().selectAccounts(
-                keys().getNames(),
-                new SelectorBinary(
-                        new SelectorCondition(keys().uuid(), Infix.EQUALS, uuid.toString()),
-                        Infix.AND,
-                        new SelectorNegation(
-                                new SelectorCondition(keys().username(), Infix.CONTAINS, "$")
-                        )
-                )
-        );
+        timing.endCreateSession();
+        // =======================================
+        timing.startSelectAccount();
         
         Account account = getAccountManager().selectAccount(username, Arrays.asList(
                 keys().username(),
@@ -235,6 +249,30 @@ public final class PlayerEventListener extends LogItCoreObject
                 keys().display_name(),
                 keys().persistence()
         ));
+        
+        timing.endSelectAccount();
+        // =======================================
+        timing.startUuidMatching();
+        
+        List<Account> uuidMatchedAccounts = getAccountManager().selectAccounts(
+                keys().getNames(),
+                new SelectorBinary(
+                        new SelectorCondition(
+                                keys().uuid(),
+                                Infix.EQUALS,
+                                uuid.toString()
+                        ),
+                        Infix.AND,
+                        new SelectorNegation(new SelectorCondition(
+                                keys().username(),
+                                Infix.CONTAINS,
+                                "$"
+                        ))
+                )
+        );
+        
+        timing.endUuidMatching();
+        // =======================================
         
         if (uuidMatchedAccounts != null && !uuidMatchedAccounts.isEmpty())
         {
@@ -259,6 +297,9 @@ public final class PlayerEventListener extends LogItCoreObject
             {
                 account.setUuid(uuid);
             }
+            
+            long validnessTime = getConfig("config.yml")
+                    .getTime("loginSessions.validnessTime", TimeUnit.SECONDS);
             
             if (getConfig("config.yml").getBoolean("loginSessions.enabled")
                     && validnessTime > 0)
@@ -296,13 +337,13 @@ public final class PlayerEventListener extends LogItCoreObject
                                 .replace("{0}", displayName), 4L);
             }
             
-            boolean isPremium = BukkitSmerfHook.isPremium(player);
             boolean premiumTakeoverEnabled = getConfig("config.yml")
                     .getBoolean("premiumTakeover.enabled");
             String promptOn = getConfig("config.yml")
                     .getString("premiumTakeover.promptOn");
             
-            if (isPremium && premiumTakeoverEnabled && promptOn.equals("join"))
+            if (premiumTakeoverEnabled && promptOn.equals("join")
+                    && BukkitSmerfHook.isPremium(player))
             {
                 new BukkitRunnable()
                 {
@@ -339,11 +380,20 @@ public final class PlayerEventListener extends LogItCoreObject
         {
             if (account != null)
             {
+                // =======================================
+                timing.startSerialize();
+                
                 getCore().getPersistenceManager().serialize(account, player);
+                
+                timing.endSerialize();
+                // =======================================
             }
             
             if (!getConfig("config.yml").getBoolean("waitingRoom.enabled"))
             {
+                // =======================================
+                timing.startSafeLocation();
+                
                 Location playerLocation = player.getLocation();
                 Block nearestBlockBelow = BlockUtils.getNearestBlockBelow(playerLocation);
                 
@@ -357,6 +407,9 @@ public final class PlayerEventListener extends LogItCoreObject
                         player.teleport(playerLocation);
                     }
                 }
+                
+                timing.endSafeLocation();
+                // =======================================
             }
             
             long promptPeriod = getConfig("config.yml")
@@ -411,6 +464,13 @@ public final class PlayerEventListener extends LogItCoreObject
         if (getConfig("config.yml").getBoolean("groups.enabled"))
         {
             getCore().updatePlayerGroup(player);
+        }
+        
+        timing.end();
+        
+        if (getConfig("secret.yml").getBoolean("timings.enabled"))
+        {
+            getCore().saveTiming(timing);
         }
     }
     

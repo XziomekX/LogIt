@@ -97,10 +97,6 @@ public final class AccountManager extends LogItCoreObject implements Runnable
                 bufferUsageGraphWriter = new BufferedWriter(
                         new FileWriter(getDataFile("bufferUsage.csv"), true)
                 );
-                bufferUsageGraphWriter.newLine();
-                bufferUsageGraphWriter.write(":" + System.currentTimeMillis());
-                bufferUsageGraphWriter.newLine();
-                bufferUsageGraphWriter.flush();
             }
             catch (IOException ex)
             {
@@ -672,6 +668,13 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             
             try
             {
+                if (!bufferUsageGraphWritten)
+                {
+                    bufferUsageGraphWriter.newLine();
+                    bufferUsageGraphWriter.write(":" + System.currentTimeMillis());
+                    bufferUsageGraphWriter.newLine();
+                }
+                
                 bufferUsageGraphWriter.write(
                         elapsedTicks + "," + dirtyEntries.size()
                 );
@@ -762,4 +765,5 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     private QueuedMap<String, Account> buffer = new QueuedMap<>();
     private Map<String, Boolean> registrationCache = new HashMap<>();
     private BufferedWriter bufferUsageGraphWriter;
+    private boolean bufferUsageGraphWritten = false;
 }
