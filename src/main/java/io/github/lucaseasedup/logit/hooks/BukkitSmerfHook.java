@@ -1,7 +1,8 @@
 package io.github.lucaseasedup.logit.hooks;
 
+import com.gmail.bukkitsmerf.autoin.api.AutoInAPI;
+import com.gmail.bukkitsmerf.autoin.api.PlayerStatus;
 import com.gmail.bukkitsmerf.check.Check;
-import com.gmail.bukkitsmerf.check.IPlayersStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -25,12 +26,25 @@ public final class BukkitSmerfHook
         if (player == null)
             throw new IllegalArgumentException();
         
-        if (!Bukkit.getPluginManager().isPluginEnabled("BukkitSmerf"))
+        if (Bukkit.getPluginManager().isPluginEnabled("BukkitSmerf"))
+        {
+            com.gmail.bukkitsmerf.check.IPlayersStorage storage =
+                    Check.getStorage();
+            Boolean isPremium = storage.isPremium(player.getName());
+            
+            return isPremium != null && isPremium.equals(true);
+        }
+        else if (Bukkit.getPluginManager().isPluginEnabled("AutoIn_BukkitSmerf"))
+        {
+            com.gmail.bukkitsmerf.autoin.api.IPlayersStorage storage =
+                    AutoInAPI.getStorage();
+            PlayerStatus status = storage.getStatus(player);
+            
+            return status.isPremium();
+        }
+        else
+        {
             return false;
-        
-        IPlayersStorage storage = Check.getStorage();
-        Boolean isPremium = storage.isPremium(player.getName());
-        
-        return isPremium != null && isPremium.equals(true);
+        }
     }
 }
