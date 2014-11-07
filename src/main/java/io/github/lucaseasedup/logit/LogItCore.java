@@ -926,7 +926,11 @@ public final class LogItCore
             persistenceManager = null;
         }
         
-        securityHelper = null;
+        if (securityHelper != null)
+        {
+            securityHelper.dispose();
+            securityHelper = null;
+        }
         
         if (backupManager != null)
         {
@@ -983,7 +987,11 @@ public final class LogItCore
             tabApiWrapper = null;
         }
         
-        tabListUpdater = null;
+        if (tabListUpdater != null)
+        {
+            tabListUpdater.dispose();
+            tabListUpdater = null;
+        }
     }
     
     /**
