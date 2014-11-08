@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 public final class Utils
 {
@@ -19,9 +20,9 @@ public final class Utils
         String trim = string.trim();
         
         if (trim.isEmpty())
-            return new String[0];
+            return ArrayUtils.NO_STRINGS;
         
-        return trim.split("\\s+");
+        return WORD_SPACE_PATTERN.split(trim);
     }
     
     @SuppressWarnings("unchecked")
@@ -57,4 +58,7 @@ public final class Utils
             return null;
         }
     }
+    
+    private static final Pattern WORD_SPACE_PATTERN =
+            Pattern.compile("\\s+");
 }

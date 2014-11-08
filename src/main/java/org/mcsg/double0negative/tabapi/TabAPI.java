@@ -338,11 +338,6 @@ public final class TabAPI implements Listener
         return horizTabSize;
     }
     
-    private static final String[] colors = {
-        "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "a", "b", "c", "d", "f", "g", "h",
-        "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z"
-    };
-    
     private static final Plugin plugin = LogItCore.getInstance().getPlugin();
     
     private static final int horizTabSize = 3;

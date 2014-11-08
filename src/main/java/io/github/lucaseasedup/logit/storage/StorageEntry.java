@@ -30,7 +30,7 @@ public final class StorageEntry implements Iterable<StorageDatum>
             sb.append("\"");
         }
         
-        return "Entry {" + sb.toString() + "}";
+        return "Entry {" + sb + "}";
     }
     
     public String get(String key)
@@ -150,7 +150,7 @@ public final class StorageEntry implements Iterable<StorageDatum>
                                                List<String> keys,
                                                Selector selector)
     {
-        if (entries == null || keys == null || selector == null)
+        if (entries == null || selector == null)
             throw new IllegalArgumentException();
         
         List<StorageEntry> copies = new LinkedList<>();
@@ -241,5 +241,5 @@ public final class StorageEntry implements Iterable<StorageDatum>
     }
     
     private Map<String, String> backend = new LinkedHashMap<>();
-    private Set<String> dirtyKeys = new HashSet<>();
+    private final Set<String> dirtyKeys = new HashSet<>();
 }

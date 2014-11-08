@@ -25,18 +25,21 @@ public final class IoUtils
         if (is == null)
             throw new IllegalArgumentException();
         
-        StringWriter sw = new StringWriter();
-        InputStreamReader isr = new InputStreamReader(is);
-        
-        char[] buffer = new char[1024 * 4];
-        int n = 0;
-        
-        while (-1 != (n = isr.read(buffer)))
+        try (
+                StringWriter sw = new StringWriter();
+                InputStreamReader isr = new InputStreamReader(is);
+        )
         {
-            sw.write(buffer, 0, n);
+            char[] buffer = new char[1024 * 4];
+            int n;
+            
+            while (-1 != (n = isr.read(buffer)))
+            {
+                sw.write(buffer, 0, n);
+            }
+            
+            return sw.toString();
         }
-        
-        return sw.toString();
     }
     
     public static String toString(File file) throws IOException

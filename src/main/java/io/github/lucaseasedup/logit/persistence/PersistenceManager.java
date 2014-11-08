@@ -4,6 +4,7 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.common.ReportedException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,11 +18,6 @@ import org.bukkit.entity.Player;
  */
 public final class PersistenceManager extends LogItCoreObject
 {
-    public PersistenceManager()
-    {
-        serializers = new HashMap<>();
-    }
-    
     @Override
     public void dispose()
     {
@@ -212,10 +208,9 @@ public final class PersistenceManager extends LogItCoreObject
             
             if (isSerializedUsing(persistence, serializer))
             {
-                for (Key key : getSerializerKeys(serializer.getClass()))
-                {
-                    keysToErase.add(key);
-                }
+                Collections.addAll(
+                        keysToErase, getSerializerKeys(serializer.getClass())
+                );
                 
                 serializer.unserialize(persistence, player);
             }
@@ -357,6 +352,7 @@ public final class PersistenceManager extends LogItCoreObject
         Set<Class<? extends PersistenceSerializer>> classes =
                 serializers.keySet();
         
+        @SuppressWarnings("unchecked")
         Class<? extends PersistenceSerializer>[] result =
                 classes.toArray(new Class[classes.size()]);
         
@@ -456,5 +452,6 @@ public final class PersistenceManager extends LogItCoreObject
         return clazz.getConstructor().newInstance();
     }
     
-    private Map<Class<? extends PersistenceSerializer>, PersistenceSerializer> serializers;
+    private Map<Class<? extends PersistenceSerializer>, PersistenceSerializer> serializers
+            = new HashMap<>();
 }

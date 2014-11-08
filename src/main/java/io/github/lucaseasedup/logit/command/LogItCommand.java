@@ -5,6 +5,7 @@ import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.command.hub.HubCommand;
 import io.github.lucaseasedup.logit.command.hub.HubCommands;
+import io.github.lucaseasedup.logit.util.ArrayUtils;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -123,7 +124,7 @@ public final class LogItCommand extends LogItCoreObject implements TabExecutor
             }
             else
             {
-                hubCommandArgs = new String[0];
+                hubCommandArgs = ArrayUtils.NO_STRINGS;
             }
             
             return hubCommand.complete(sender, hubCommandArgs);

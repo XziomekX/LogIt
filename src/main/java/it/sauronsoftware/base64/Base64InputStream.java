@@ -58,6 +58,8 @@ public class Base64InputStream extends InputStream
      * End-of-stream flag.
      */
     private boolean eof = false;
+    
+    private static final int[] NO_INTS = new int[0];
 
     /**
      * <p>
@@ -100,7 +102,7 @@ public class Base64InputStream extends InputStream
                 if (i != 0) {
                     throw new IOException("Bad base64 stream");
                 } else {
-                    buffer = new int[0];
+                    buffer = NO_INTS;
                     eof = true;
                     return;
                 }

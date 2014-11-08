@@ -28,9 +28,9 @@ public final class BackupRemoveHubCommand extends HubCommand
     }
     
     @Override
-    public void execute(final CommandSender sender, final String[] args)
+    public void execute(final CommandSender sender, String[] args)
     {
-        final int amount;
+        int amount;
         
         try
         {

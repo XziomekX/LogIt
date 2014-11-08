@@ -216,7 +216,7 @@ public final class PlayerEventListener extends LogItCoreObject
     @EventHandler(priority = EventPriority.LOW)
     private void onJoin(final PlayerJoinEvent event)
     {
-        final Player player = event.getPlayer();
+        Player player = event.getPlayer();
         
         onJoin(player, new JoinMessage()
         {

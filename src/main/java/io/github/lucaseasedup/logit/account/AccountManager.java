@@ -45,23 +45,16 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @param unit    the name of a unit eligible for account storage.
      * @param keys    the account keys present in the specified unit.
      */
-    public AccountManager(final WrapperStorage storage,
-                          String unit,
-                          AccountKeys keys)
+    public AccountManager(
+            WrapperStorage storage, String unit, AccountKeys keys
+    ) throws IOException
     {
         if (storage == null || unit == null || keys == null)
             throw new IllegalArgumentException();
         
-        try
+        if (!storage.isConnected())
         {
-            if (!storage.isConnected())
-            {
-                throw new IllegalStateException("isConnected() returned false");
-            }
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException(ex);
+            throw new IllegalStateException("isConnected() returned false");
         }
         
         storage.addObserver(new StorageObserver()
@@ -426,7 +419,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         if (accounts == null)
             return null;
         
-        Set<String> usernames = new LinkedHashSet<>();
+        Set<String> usernames = new LinkedHashSet<>(accounts.size());
         
         for (Account account : accounts)
         {
@@ -687,13 +680,15 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             
             try
             {
-                if (!bufferUsageGraphWritten)
+                if (!bufferUsageGraphTouched)
                 {
                     bufferUsageGraphWriter.newLine();
                     bufferUsageGraphWriter.write(
                             ":" + System.currentTimeMillis()
                     );
                     bufferUsageGraphWriter.newLine();
+                    
+                    bufferUsageGraphTouched = true;
                 }
                 
                 bufferUsageGraphWriter.write(
@@ -790,5 +785,5 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     private QueuedMap<String, Account> buffer = new QueuedMap<>();
     private Map<String, Boolean> registrationCache = new HashMap<>();
     private BufferedWriter bufferUsageGraphWriter;
-    private boolean bufferUsageGraphWritten = false;
+    private boolean bufferUsageGraphTouched = false;
 }

@@ -149,9 +149,9 @@ public final class QueuedMap<K, V> implements Map<K, V>
     }
     
     @Override
-    public void putAll(Map<? extends K, ? extends V> map)
+    public void putAll(Map<? extends K, ? extends V> m)
     {
-        for (Map.Entry<? extends K, ? extends V> e : map.entrySet())
+        for (Map.Entry<? extends K, ? extends V> e : m.entrySet())
         {
             put(e.getKey(), e.getValue());
         }

@@ -2,7 +2,6 @@ package io.github.lucaseasedup.logit.util;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 public final class CollectionUtils
@@ -65,17 +64,19 @@ public final class CollectionUtils
     
     public static String toString(Iterable<?> iterable)
     {
-        StringBuilder sb = new StringBuilder();
-        Iterator<?> it = iterable.iterator();
+        if (iterable == null)
+            throw new IllegalArgumentException();
         
-        while (it.hasNext())
+        StringBuilder sb = new StringBuilder();
+        
+        for (Object value : iterable)
         {
             if (sb.length() > 0)
             {
                 sb.append(", ");
             }
             
-            sb.append(it.next());
+            sb.append(value);
         }
         
         return sb.toString();

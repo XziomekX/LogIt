@@ -59,7 +59,7 @@ public final class Property extends Observable implements Disposable
     {
         StringBuilder sb = new StringBuilder();
         
-        sb.append("[").append(type.toString()).append("] ");
+        sb.append("[").append(type).append("] ");
         
         switch (type)
         {
@@ -73,7 +73,7 @@ public final class Property extends Observable implements Disposable
         case STRING:
         case VECTOR:
         case LOCATION:
-            sb.append(value.toString());
+            sb.append(value);
             break;
             
         case DOUBLE:

@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -558,7 +559,11 @@ public final class Account extends LogItCoreObject
         if (!entry.containsKey(keys().login_history()))
             throw new IllegalArgumentException("Missing entry key: login_history");
         
-        return new ArrayList<>(Arrays.asList(entry.get(keys().login_history()).split("\\|")));
+        return new ArrayList<>(Arrays.asList(
+                LOGIN_HISTORY_SEPARATOR_PATTERN.split(
+                        entry.get(keys().login_history())
+                )
+        ));
     }
     
     /**
@@ -592,9 +597,9 @@ public final class Account extends LogItCoreObject
         if (!entry.containsKey(keys().login_history()))
             throw new IllegalArgumentException("Missing entry key: login_history");
         
-        String historyString = entry.get(keys().login_history());
-        List<String> records = new ArrayList<>(Arrays.asList(historyString.split("\\|")));
-        int recordsToKeep = getConfig("config.yml").getInt("loginHistory.recordsToKeep");
+        List<String> records = getLoginHistory();
+        int recordsToKeep = getConfig("config.yml")
+                .getInt("loginHistory.recordsToKeep");
         
         for (int i = 0, n = records.size() - recordsToKeep + 1;  i < n; i++)
         {
@@ -610,7 +615,7 @@ public final class Account extends LogItCoreObject
             if (!record.isEmpty())
             {
                 historyBuilder.append(record);
-                historyBuilder.append("|");
+                historyBuilder.append(LOGIN_HISTORY_SEPARATOR);
             }
         }
         
@@ -686,7 +691,9 @@ public final class Account extends LogItCoreObject
             
             try
             {
-                persistence = IniUtils.unserialize(persistenceString).get("persistence");
+                persistence = IniUtils.unserialize(
+                        persistenceString
+                ).get("persistence");
             }
             catch (IOException ex)
             {
@@ -928,6 +935,10 @@ public final class Account extends LogItCoreObject
      */
     public static final boolean LOGIN_FAIL = false;
     
+    public static final String LOGIN_HISTORY_SEPARATOR = "|";
+    private static final Pattern LOGIN_HISTORY_SEPARATOR_PATTERN =
+            Pattern.compile(Pattern.quote(LOGIN_HISTORY_SEPARATOR));
+
     private final StorageEntry entry;
     private final Queue<SaveCallback> saveCallbacks = new LinkedList<>();
     private boolean bufferLocked = false;

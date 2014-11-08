@@ -696,7 +696,7 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
             break;
             
         default:
-            throw new RuntimeException("Unknown property type: " + type.toString());
+            throw new RuntimeException("Unknown property type: " + type);
         }
         
         String validatorClassName = defSection.get("validator");

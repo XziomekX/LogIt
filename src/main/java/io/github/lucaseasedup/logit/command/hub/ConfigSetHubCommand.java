@@ -58,7 +58,7 @@ public final class ConfigSetHubCommand extends HubCommand
         }
         
         String inputValue = args[1];
-        Object outputValue = null;
+        Object outputValue;
         
         try
         {

@@ -38,4 +38,6 @@ public final class ArrayUtils
         
         return dest;
     }
+    
+    public static final String[] NO_STRINGS = new String[0];
 }

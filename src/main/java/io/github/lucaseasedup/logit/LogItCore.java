@@ -489,7 +489,7 @@ public final class LogItCore
         }
         catch (IOException ex)
         {
-            log(Level.SEVERE, "Could not establish database connection.", ex);
+            log(Level.SEVERE, "Could not establish database connection", ex);
             
             FatalReportedException.throwNew(ex);
         }
@@ -501,7 +501,7 @@ public final class LogItCore
         }
         catch (IOException ex)
         {
-            log(Level.SEVERE, "Could not create accounts table.", ex);
+            log(Level.SEVERE, "Could not create accounts unit", ex);
             
             FatalReportedException.throwNew(ex);
         }
@@ -526,7 +526,7 @@ public final class LogItCore
         }
         catch (IOException ex)
         {
-            log(Level.SEVERE, "Could not update accounts table columns.", ex);
+            log(Level.SEVERE, "Could not update accounts table columns", ex);
             
             FatalReportedException.throwNew(ex);
         }
@@ -540,9 +540,16 @@ public final class LogItCore
             log(Level.SEVERE, "Could not preload accounts", ex);
         }
         
-        accountManager = new AccountManager(
-                accountStorage, accountsUnit, accountKeys
-        );
+        try
+        {
+            accountManager = new AccountManager(
+                    accountStorage, accountsUnit, accountKeys
+            );
+        }
+        catch (IOException ex)
+        {
+            log(Level.SEVERE, "Could not construct AccountManager", ex);
+        }
     }
     
     private void setUpPersistenceManager() throws FatalReportedException
@@ -1421,8 +1428,8 @@ public final class LogItCore
     private Wrapper<TabAPI> tabApiWrapper;
     private TabListUpdater tabListUpdater;
     
-    private Set<BukkitTask> tasks = new LinkedHashSet<>();
-    private Map<Class<? extends Listener>, Listener> eventListeners =
+    private final Set<BukkitTask> tasks = new LinkedHashSet<>();
+    private final Map<Class<? extends Listener>, Listener> eventListeners =
             new HashMap<>();
     
     {

@@ -55,7 +55,7 @@ public final class HelpHubCommand extends HubCommand
                 String command = hubCommand.getHelpLine().getCommand();
                 String description = t(hubCommand.getHelpLine().getDescriptionLabel());
                 
-                helpLine = helpLine.replace("{0}", command + params.toString());
+                helpLine = helpLine.replace("{0}", command + params);
                 helpLine = helpLine.replace("{1}", description);
                 
                 sendMsg(sender, helpLine);

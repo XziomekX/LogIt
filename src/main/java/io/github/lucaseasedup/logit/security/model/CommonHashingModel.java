@@ -227,7 +227,7 @@ public final class CommonHashingModel implements HashingModel
             return null;
         }
         
-        byte bytes[] = digest.digest();
+        byte[] bytes = digest.digest();
         StringBuilder sb = new StringBuilder();
         
         for (byte b : bytes)

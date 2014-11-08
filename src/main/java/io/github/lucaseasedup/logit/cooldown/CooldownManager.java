@@ -21,6 +21,7 @@ public final class CooldownManager extends LogItCoreObject implements Listener
             }
             
             cooldowns.clear();
+            cooldowns = null;
         }
     }
     

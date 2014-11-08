@@ -30,5 +30,5 @@ public enum DataType
     /**
      * Text of unlimited length.
      */
-    TEXT;
+    TEXT,
 }

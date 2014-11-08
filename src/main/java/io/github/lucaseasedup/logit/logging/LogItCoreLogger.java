@@ -130,7 +130,7 @@ public final class LogItCoreLogger
             throwable.printStackTrace(pw);
         }
         
-        log(level, message + " [Exception stack trace:\n" + sw.toString() + "]");
+        log(level, message + " [Exception stack trace:\n" + sw + "]");
     }
     
     /**
@@ -153,7 +153,7 @@ public final class LogItCoreLogger
             throwable.printStackTrace(pw);
         }
         
-        log(level, "Caught exception:\n" + sw.toString());
+        log(level, "Caught exception:\n" + sw);
     }
     
     private void openLogFile(String filename)

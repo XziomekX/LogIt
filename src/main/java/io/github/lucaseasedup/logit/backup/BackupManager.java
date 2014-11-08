@@ -89,7 +89,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
      */
     public File createBackup()
     {
-        final File backupFile = allocateBackupFileForDate(new Date());
+        File backupFile = allocateBackupFileForDate(new Date());
         
         log(Level.INFO, t("createBackup.creating"));
         

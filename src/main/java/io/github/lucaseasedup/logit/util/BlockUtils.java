@@ -103,12 +103,12 @@ public final class BlockUtils
         
         for (int r = 0; r <= maxRadius; r++)
         {
-            for (int s = 0; s < 6; s++)
+            for (int i = 0; i < 6; i++)
             {
-                BlockFace face = faces[s % 3];
-                BlockFace[] orth = orths[s % 3];
+                BlockFace face = faces[i % 3];
+                BlockFace[] orth = orths[i % 3];
                 
-                if (s >= 3)
+                if (i >= 3)
                 {
                     face = face.getOppositeFace();
                 }

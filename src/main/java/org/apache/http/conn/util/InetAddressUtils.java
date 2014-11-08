@@ -39,22 +39,22 @@ public class InetAddressUtils
     {
     }
     
-    public static boolean isIPv4Address(final String input)
+    public static boolean isIPv4Address(String input)
     {
         return IPV4_PATTERN.matcher(input).matches();
     }
     
-    public static boolean isIPv6StdAddress(final String input)
+    public static boolean isIPv6StdAddress(String input)
     {
         return IPV6_STD_PATTERN.matcher(input).matches();
     }
     
-    public static boolean isIPv6HexCompressedAddress(final String input)
+    public static boolean isIPv6HexCompressedAddress(String input)
     {
         return IPV6_HEX_COMPRESSED_PATTERN.matcher(input).matches();
     }
     
-    public static boolean isIPv6Address(final String input)
+    public static boolean isIPv6Address(String input)
     {
         return isIPv6StdAddress(input) || isIPv6HexCompressedAddress(input);
     }

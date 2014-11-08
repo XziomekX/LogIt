@@ -142,7 +142,7 @@ public final class SqlUtils
         
         List<StorageEntry> entries = new LinkedList<>();
         
-        if (rs != null && rs.isBeforeFirst())
+        if (rs.isBeforeFirst())
         {
             while (rs.next())
             {

@@ -99,9 +99,9 @@ public final class CsvStorage implements Storage
             
             String[] topValues = line.split(",");
             
-            for (int i = 0; i < topValues.length; i++)
+            for (String topValue : topValues)
             {
-                keys.put(unescapeValue(topValues[i]), DataType.TEXT);
+                keys.put(unescapeValue(topValue), DataType.TEXT);
             }
         }
         

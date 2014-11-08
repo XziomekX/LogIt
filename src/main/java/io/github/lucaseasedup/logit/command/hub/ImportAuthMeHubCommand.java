@@ -51,7 +51,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
     }
     
     @Override
-    public void execute(final CommandSender sender, String[] args)
+    public void execute(CommandSender sender, String[] args)
     {
         if (locked)
         {
@@ -427,7 +427,7 @@ public final class ImportAuthMeHubCommand extends HubCommand
             }
             
             getAccountManager().insertAccounts(
-                    logItAccounts.toArray(new Account[0])
+                    logItAccounts.toArray(new Account[logItAccounts.size()])
             );
             
             log(Level.INFO, t("import.authme.success")
