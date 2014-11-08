@@ -91,6 +91,7 @@ public final class PlayerEventListener extends LogItCoreObject
         
         Account account = getAccountManager().selectAccount(username, Arrays.asList(
                 keys().username(),
+                keys().uuid(), // for onJoin()
                 keys().login_session(),
                 keys().is_locked(),
                 keys().display_name(),
@@ -255,19 +256,22 @@ public final class PlayerEventListener extends LogItCoreObject
         timing.startUuidMatching();
         
         List<Account> uuidMatchedAccounts = getAccountManager().selectAccounts(
-                keys().getNames(),
+                Arrays.asList(
+                        keys().username(),
+                        keys().uuid()
+                ),
                 new SelectorBinary(
-                        new SelectorCondition(
-                                keys().uuid(),
-                                Infix.EQUALS,
-                                uuid.toString()
-                        ),
-                        Infix.AND,
                         new SelectorNegation(new SelectorCondition(
                                 keys().username(),
                                 Infix.CONTAINS,
                                 "$"
-                        ))
+                        )),
+                        Infix.AND,
+                        new SelectorCondition(
+                                keys().uuid(),
+                                Infix.EQUALS,
+                                uuid.toString()
+                        )
                 )
         );
         
