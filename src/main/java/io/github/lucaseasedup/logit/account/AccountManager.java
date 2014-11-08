@@ -15,6 +15,7 @@ import io.github.lucaseasedup.logit.storage.SelectorConstant;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.storage.Storage.Entry.Datum;
 import io.github.lucaseasedup.logit.storage.StorageObserver;
+import io.github.lucaseasedup.logit.storage.StoragePinger;
 import io.github.lucaseasedup.logit.storage.WrapperStorage;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
 import java.io.BufferedWriter;
@@ -74,21 +75,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         this.storage = storage;
         this.unit = unit;
         this.keys = keys;
-        this.pinger = new BukkitRunnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    storage.ping();
-                }
-                catch (IOException ex)
-                {
-                    log(Level.WARNING, "Could not ping the database.", ex);
-                }
-            }
-        };
+        this.pinger = new StoragePinger(storage);
         
         if (getConfig("secret.yml").getBoolean("generateBufferUsageGraph"))
         {
@@ -111,6 +98,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         storage = null;
         unit = null;
         keys = null;
+        pinger = null;
         
         if (pingerTask != null)
         {

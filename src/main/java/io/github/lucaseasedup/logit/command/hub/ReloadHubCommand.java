@@ -5,10 +5,10 @@ import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.common.FatalReportedException;
+import io.github.lucaseasedup.logit.common.GcRunner;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public final class ReloadHubCommand extends HubCommand
 {
@@ -33,14 +33,7 @@ public final class ReloadHubCommand extends HubCommand
         {
             getCore().restart();
             
-            new BukkitRunnable()
-            {
-                @Override
-                public void run()
-                {
-                    System.gc();
-                }
-            }.runTaskAsynchronously(getPlugin());
+            new GcRunner().runTaskAsynchronously(getPlugin());
             
             if (sender instanceof Player)
             {
