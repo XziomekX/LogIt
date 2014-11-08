@@ -434,7 +434,7 @@ public final class WrapperStorage extends Storage
             if (preloadedCache.containsKey(unit))
             {
                 for (Storage.Entry entry : preloadedCache.get(unit))
-                {// TODO: null
+                {
                     entry.put(key, "");
                 }
             }
@@ -618,7 +618,7 @@ public final class WrapperStorage extends Storage
         }
     }
     
-    public void mirrorStorage(Storage storage,
+    public synchronized void mirrorStorage(Storage storage,
                               Hashtable<String, String> unitMappings)
     {
         if (storage == null || unitMappings == null)
@@ -630,22 +630,22 @@ public final class WrapperStorage extends Storage
         }
     }
     
-    public void mirrorStorage(Storage storage)
+    public synchronized void mirrorStorage(Storage storage)
     {
         mirrorStorage(storage, new Hashtable<String, String>());
     }
     
-    public void unmirrorStorage(Storage o)
+    public synchronized void unmirrorStorage(Storage o)
     {
         mirrors.remove(o);
     }
     
-    public void unmirrorAll()
+    public synchronized void unmirrorAll()
     {
         mirrors.clear();
     }
     
-    public void addObserver(StorageObserver o)
+    public synchronized void addObserver(StorageObserver o)
     {
         if (o == null)
             throw new IllegalArgumentException();
@@ -656,17 +656,17 @@ public final class WrapperStorage extends Storage
         }
     }
     
-    public void deleteObserver(StorageObserver o)
+    public synchronized void deleteObserver(StorageObserver o)
     {
         obs.removeElement(o);
     }
     
-    public void deleteObservers()
+    public synchronized void deleteObservers()
     {
         obs.removeAllElements();
     }
     
-    public int countObservers()
+    public synchronized int countObservers()
     {
         return obs.size();
     }
@@ -707,22 +707,12 @@ public final class WrapperStorage extends Storage
     
     private void log(Level level, String message)
     {
-        LogItCore logItCore = LogItCore.getInstance();
-        
-        if (logItCore != null)
-        {
-            logItCore.log(level, message);
-        }
+        LogItCore.getInstance().log(level, message);
     }
     
     private void log(Level level, Throwable throwable)
     {
-        LogItCore logItCore = LogItCore.getInstance();
-        
-        if (logItCore != null)
-        {
-            logItCore.log(level, throwable);
-        }
+        LogItCore.getInstance().log(level, throwable);
     }
     
     public static final class Builder
