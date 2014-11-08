@@ -25,17 +25,10 @@ public abstract class LogItCoreObject implements Disposable
 {
     /**
      * Constructs a new {@code LogItCoreObject}.
-     * 
-     * @throws IllegalStateException if no {@code LogItCore} instance could be found.
      */
     public LogItCoreObject()
     {
         core = LogItCore.getInstance();
-        
-        if (core == null)
-        {
-            throw new IllegalStateException("No LogItCore instance found.");
-        }
     }
     
     @Override
