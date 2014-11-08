@@ -1,365 +1,59 @@
 package io.github.lucaseasedup.logit.storage;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.apache.commons.lang.StringUtils;
 
-public abstract class Storage implements AutoCloseable
+public interface Storage extends AutoCloseable
 {
-    public abstract void connect() throws IOException;
-    public abstract boolean isConnected() throws IOException;
-    public abstract void ping() throws IOException;
+    public void connect()
+            throws IOException;
+    public boolean isConnected()
+            throws IOException;
+    public void ping()
+            throws IOException;
+    @Override public void close()
+            throws IOException;
     
-    @Override
-    public abstract void close() throws IOException;
+    public List<String> getUnitNames()
+            throws IOException;
+    public UnitKeys getKeys(String unit)
+            throws IOException;
+    public String getPrimaryKey(String unit)
+            throws IOException;
     
-    public abstract List<String> getUnitNames() throws IOException;
-    public abstract Hashtable<String, DataType> getKeys(String unit) throws IOException;
-    public abstract String getPrimaryKey(String unit) throws IOException;
+    public List<StorageEntry> selectEntries(String unit)
+            throws IOException;
+    public List<StorageEntry> selectEntries(String unit, Selector selector)
+            throws IOException;
+    public List<StorageEntry> selectEntries(String unit, List<String> keys)
+            throws IOException;
+    public List<StorageEntry> selectEntries(
+            String unit, List<String> keys, Selector selector
+    ) throws IOException;
     
-    public abstract List<Storage.Entry> selectEntries(String unit) throws IOException;
-    public abstract List<Storage.Entry> selectEntries(String unit,
-                                                      List<String> keys) throws IOException;
-    public abstract List<Storage.Entry> selectEntries(String unit,
-                                                      Selector selector) throws IOException;
-    public abstract List<Storage.Entry> selectEntries(String unit,
-                                                      List<String> keys,
-                                                      Selector selector) throws IOException;
+    public void createUnit(String unit, UnitKeys keys, String primaryKey)
+            throws IOException;
+    public void renameUnit(String unit, String newName)
+            throws IOException;
+    public void eraseUnit(String unit)
+            throws IOException;
+    public void removeUnit(String unit)
+            throws IOException;
     
-    public abstract void createUnit(String unit,
-                                    Hashtable<String, DataType> keys,
-                                    String primaryKey) throws IOException;
-    public abstract void renameUnit(String unit, String newName) throws IOException;
-    public abstract void eraseUnit(String unit) throws IOException;
-    public abstract void removeUnit(String unit) throws IOException;
+    public void addKey(String unit, String key, DataType type)
+            throws IOException;
+    public void addEntry(String unit, StorageEntry entry)
+            throws IOException;
+    public void updateEntries(
+            String unit, StorageEntry entrySubset, Selector selector
+    ) throws IOException;
+    public void removeEntries(String unit, Selector selector)
+            throws IOException;
     
-    public abstract void addKey(String unit, String key, DataType type) throws IOException;
-    public abstract void addEntry(String unit, Storage.Entry entry) throws IOException;
-    public abstract void updateEntries(String unit,
-                                       Storage.Entry entrySubset,
-                                       Selector selector) throws IOException;
-    public abstract void removeEntries(String unit, Selector selector) throws IOException;
-    
-    public abstract void executeBatch() throws IOException;
-    public abstract void clearBatch() throws IOException;
-    
-    public boolean isAutobatchEnabled()
-    {
-        return autobatch;
-    }
-    
-    public void setAutobatchEnabled(boolean status)
-    {
-        autobatch = status;
-    }
-    
-    public enum DataType
-    {
-        /**
-         * Integer-number value.
-         */
-        INTEGER,
-        
-        /**
-         * Real-number value.
-         */
-        REAL,
-        
-        /**
-         * Text of maximum length of 255 characters.
-         */
-        TINYTEXT,
-        
-        /**
-         * Text of maximum length of 1023 characters.
-         */
-        MEDIUMTEXT,
-        
-        /**
-         * Text of maximum length of 10119 characters.
-         */
-        LONGTEXT,
-        
-        /**
-         * Text of unlimited length.
-         */
-        TEXT;
-    }
-    
-    public static final class Entry implements Iterable<Storage.Entry.Datum>
-    {
-        @Override
-        public String toString()
-        {
-            StringBuilder sb = new StringBuilder();
-            
-            for (Datum datum : this)
-            {
-                if (sb.length() > 0)
-                {
-                    sb.append(", ");
-                }
-                
-                sb.append("\"");
-                sb.append(datum.getKey());
-                sb.append("\": \"");
-                sb.append(datum.getValue());
-                sb.append("\"");
-            }
-            
-            return "Entry {" + sb.toString() + "}";
-        }
-        
-        public String get(String key)
-        {
-            if (StringUtils.isBlank(key))
-                throw new IllegalArgumentException();
-            
-            return backend.get(key);
-        }
-        
-        public void put(String key, String value)
-        {
-            if (StringUtils.isBlank(key))
-                throw new IllegalArgumentException();
-            
-            String oldValue;
-            
-            if (value == null)
-            {
-                oldValue = backend.put(key, "");
-            }
-            else
-            {
-                oldValue = backend.put(key, value);
-            }
-            
-            if (oldValue == null || !oldValue.equals(value))
-            {
-                dirtyKeys.add(key);
-            }
-        }
-        
-        public Set<String> getKeys()
-        {
-            return backend.keySet();
-        }
-        
-        public boolean containsKey(String key)
-        {
-            return get(key) != null;
-        }
-        
-        public Storage.Entry copy()
-        {
-            Storage.Entry copy = new Storage.Entry();
-            
-            copy.backend = new LinkedHashMap<>(backend);
-            
-            return copy;
-        }
-        
-        public Storage.Entry copyDirty()
-        {
-            Storage.Entry copy = new Storage.Entry();
-            
-            for (Map.Entry<String, String> e : backend.entrySet())
-            {
-                if (isKeyDirty(e.getKey()))
-                {
-                    copy.backend.put(e.getKey(), e.getValue());
-                }
-            }
-            
-            return copy;
-        }
-        
-        public boolean isKeyDirty(String key)
-        {
-            if (key == null)
-                throw new IllegalArgumentException();
-            
-            return dirtyKeys.contains(key);
-        }
-        
-        public void clearKeyDirty(String key)
-        {
-            if (key == null)
-                throw new IllegalArgumentException();
-            
-            dirtyKeys.remove(key);
-        }
-        
-        @Override
-        public Iterator<Datum> iterator()
-        {
-            return new DatumIterator();
-        }
-        
-        public static List<Storage.Entry> copyList(List<Storage.Entry> entries)
-        {
-            if (entries == null)
-                throw new IllegalArgumentException();
-            
-            return copyList(entries, new SelectorConstant(true));
-        }
-        
-        public static List<Storage.Entry> copyList(List<Storage.Entry> entries,
-                                                   Selector selector)
-        {
-            if (entries == null || selector == null)
-                throw new IllegalArgumentException();
-            
-            List<Storage.Entry> copies = new LinkedList<>();
-            
-            for (Storage.Entry entry : entries)
-            {
-                if (SqlUtils.resolveSelector(selector, entry))
-                {
-                    copies.add(entry.copy());
-                }
-            }
-            
-            return copies;
-        }
-        
-        public static List<Storage.Entry> copyList(List<Storage.Entry> entries,
-                                                   List<String> keys,
-                                                   Selector selector)
-        {
-            if (entries == null || keys == null || selector == null)
-                throw new IllegalArgumentException();
-            
-            List<Storage.Entry> copies = new LinkedList<>();
-            
-            for (Storage.Entry entry : entries)
-            {
-                if (SqlUtils.resolveSelector(selector, entry))
-                {
-                    Storage.Entry.Builder copyBuilder =
-                            new Storage.Entry.Builder();
-                    
-                    for (Storage.Entry.Datum datum : entry)
-                    {
-                        if (keys == null || keys.contains(datum.getKey()))
-                        {
-                            copyBuilder.put(datum.getKey(), datum.getValue());
-                        }
-                    }
-                    
-                    copies.add(copyBuilder.build());
-                }
-            }
-            
-            return copies;
-        }
-        
-        public final class DatumIterator implements Iterator<Datum>
-        {
-            public DatumIterator()
-            {
-                it = backend.entrySet().iterator();
-            }
-            
-            @Override
-            public boolean hasNext()
-            {
-                return it.hasNext();
-            }
-            
-            @Override
-            public Datum next()
-            {
-                Map.Entry<String, String> el = it.next();
-                
-                return new Datum(el.getKey(), el.getValue());
-            }
-            
-            @Override
-            public void remove()
-            {
-                it.remove();
-            }
-            
-            private final Iterator<Map.Entry<String, String>> it;
-        }
-        
-        public static final class Datum
-        {
-            private Datum(String key, String value)
-            {
-                if (StringUtils.isBlank(key))
-                    throw new IllegalArgumentException();
-                
-                this.key = key;
-                
-                if (value == null)
-                {
-                    this.value = "";
-                }
-                else
-                {
-                    this.value = value;
-                }
-            }
-            
-            public String getKey()
-            {
-                return key;
-            }
-            
-            public String getValue()
-            {
-                return value;
-            }
-            
-            private final String key;
-            private final String value;
-        }
-        
-        public static final class Builder
-        {
-            public Builder put(String key, String value)
-            {
-                entry.put(key, value);
-                
-                return this;
-            }
-            
-            public Builder putAll(Storage.Entry sourceEntry)
-            {
-                for (Datum datum : sourceEntry)
-                {
-                    put(datum.getKey(), datum.getValue());
-                }
-                
-                return this;
-            }
-            
-            public Storage.Entry build()
-            {
-                Storage.Entry builtEntry = entry;
-                
-                entry = new Storage.Entry();
-                
-                builtEntry.dirtyKeys.clear();
-                
-                return builtEntry;
-            }
-            
-            private Storage.Entry entry = new Storage.Entry();
-        }
-        
-        private Map<String, String> backend = new LinkedHashMap<>();
-        private Set<String> dirtyKeys = new HashSet<>();
-    }
-    
-    private boolean autobatch = false;
+    public boolean isAutobatchEnabled();
+    public void setAutobatchEnabled(boolean status);
+    public void executeBatch()
+            throws IOException;
+    public void clearBatch()
+            throws IOException;
 }

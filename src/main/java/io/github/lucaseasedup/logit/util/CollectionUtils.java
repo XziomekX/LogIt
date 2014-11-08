@@ -1,8 +1,8 @@
 package io.github.lucaseasedup.logit.util;
 
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 public final class CollectionUtils
@@ -22,24 +22,6 @@ public final class CollectionUtils
         }
         
         return false;
-    }
-    
-    /**
-     * Adds an element to a collection only if the latter does not contain it
-     * and the element is not null.
-     * 
-     * @param collection the collection to be populated with the given element.
-     * @param element the element to be added to the given collection.
-     */
-    public static <T> void addNonnullIfMissing(Collection<T> collection, T element)
-    {
-        if (collection == null)
-            throw new IllegalArgumentException();
-        
-        if (element != null && !collection.contains(element))
-        {
-            collection.add(element);
-        }
     }
     
     public static boolean collectionsMatch(Collection<?> coll1, Collection<?> coll2)
@@ -81,18 +63,19 @@ public final class CollectionUtils
         return set.size() != coll.size();
     }
     
-    public static String toString(Enumeration<?> enumeration)
+    public static String toString(Iterable<?> iterable)
     {
         StringBuilder sb = new StringBuilder();
+        Iterator<?> it = iterable.iterator();
         
-        while (enumeration.hasMoreElements())
+        while (it.hasNext())
         {
             if (sb.length() > 0)
             {
                 sb.append(", ");
             }
             
-            sb.append(enumeration.nextElement());
+            sb.append(it.next());
         }
         
         return sb.toString();

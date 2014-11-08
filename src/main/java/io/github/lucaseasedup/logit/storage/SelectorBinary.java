@@ -2,9 +2,11 @@ package io.github.lucaseasedup.logit.storage;
 
 public final class SelectorBinary extends Selector
 {
-    public SelectorBinary(Selector leftOperand,
-                          SelectorBinary.Relation relation,
-                          Selector rightOperand)
+    public SelectorBinary(
+            Selector leftOperand,
+            SelectorBinary.Relation relation,
+            Selector rightOperand
+    )
     {
         if (leftOperand == null || relation == null || rightOperand == null)
             throw new IllegalArgumentException();

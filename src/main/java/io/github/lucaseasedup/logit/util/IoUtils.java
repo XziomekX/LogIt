@@ -115,7 +115,7 @@ public final class IoUtils
             destFile.createNewFile();
         }
         
-        try(
+        try (
             FileInputStream source = new FileInputStream(sourceFile);
             FileOutputStream destination = new FileOutputStream(destFile);
         )

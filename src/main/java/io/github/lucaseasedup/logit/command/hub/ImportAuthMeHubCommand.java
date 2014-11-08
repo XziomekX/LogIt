@@ -12,6 +12,7 @@ import io.github.lucaseasedup.logit.security.AuthMePasswordHelper;
 import io.github.lucaseasedup.logit.storage.MySqlStorage;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
+import io.github.lucaseasedup.logit.storage.StorageEntry;
 import io.github.lucaseasedup.logit.util.IniUtils;
 import it.sauronsoftware.base64.Base64;
 import java.io.BufferedReader;
@@ -234,10 +235,10 @@ public final class ImportAuthMeHubCommand extends HubCommand
                 {
                     storage.connect();
                     
-                    List<Storage.Entry> authMeEntries =
+                    List<StorageEntry> authMeEntries =
                             storage.selectEntries(dataSourceMySqlTablename);
                     
-                    for (Storage.Entry authMeEntry : authMeEntries)
+                    for (StorageEntry authMeEntry : authMeEntries)
                     {
                         String authMeUsername = authMeEntry
                                 .get(dataSourceMySqlColumnName);
@@ -245,8 +246,8 @@ public final class ImportAuthMeHubCommand extends HubCommand
                         if (StringUtils.isBlank(authMeUsername))
                             continue;
                         
-                        Storage.Entry.Builder logItEntryBuilder =
-                                new Storage.Entry.Builder();
+                        StorageEntry.Builder logItEntryBuilder =
+                                new StorageEntry.Builder();
                         
                         logItEntryBuilder.put(keys().username(),
                                 StringUtils.lowerCase(authMeUsername));
@@ -336,8 +337,8 @@ public final class ImportAuthMeHubCommand extends HubCommand
                     while ((line = br.readLine()) != null)
                     {
                         String[] split = line.split(":");
-                        Storage.Entry.Builder logItEntryBuilder =
-                                new Storage.Entry.Builder();
+                        StorageEntry.Builder logItEntryBuilder =
+                                new StorageEntry.Builder();
                         
                         if (split.length == 0)
                             continue;

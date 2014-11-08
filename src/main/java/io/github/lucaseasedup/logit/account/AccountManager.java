@@ -13,7 +13,8 @@ import io.github.lucaseasedup.logit.storage.Selector;
 import io.github.lucaseasedup.logit.storage.SelectorCondition;
 import io.github.lucaseasedup.logit.storage.SelectorConstant;
 import io.github.lucaseasedup.logit.storage.Storage;
-import io.github.lucaseasedup.logit.storage.Storage.Entry.Datum;
+import io.github.lucaseasedup.logit.storage.StorageDatum;
+import io.github.lucaseasedup.logit.storage.StorageEntry;
 import io.github.lucaseasedup.logit.storage.StorageObserver;
 import io.github.lucaseasedup.logit.storage.StoragePinger;
 import io.github.lucaseasedup.logit.storage.WrapperStorage;
@@ -217,7 +218,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             }
         }
         
-        List<Storage.Entry> entries = null;
+        List<StorageEntry> entries = null;
         
         try
         {
@@ -258,7 +259,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         // fill the missing keys with the values fetched from the storage.
         if (cachedAccount != null)
         {
-            for (Datum datum : entries.get(0))
+            for (StorageDatum datum : entries.get(0))
             {
                 if (!cachedAccount.getEntry().containsKey(datum.getKey()))
                 {
@@ -291,7 +292,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         if (!queryKeys.contains(keys.username()))
             throw new IllegalArgumentException("Missing query key: username");
         
-        List<Storage.Entry> entries = null;
+        List<StorageEntry> entries = null;
         
         try
         {
@@ -309,7 +310,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         
         List<Account> accounts = new ArrayList<>(entries.size());
         
-        for (Storage.Entry entry : entries)
+        for (StorageEntry entry : entries)
         {
             String username = entry.get(keys().username()).toLowerCase();
             
@@ -317,7 +318,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             
             if (buffer.get(username) != null)
             {
-                for (Datum datum : buffer.get(username).getEntry())
+                for (StorageDatum datum : buffer.get(username).getEntry())
                 {
                     entry.put(datum.getKey(), datum.getValue());
                 }
@@ -449,11 +450,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         
         try
         {
-            Storage.Entry entry = account.getEntry();
+            StorageEntry entry = account.getEntry();
             
             storage.addEntry(unit, entry);
             
-            for (Datum datum : entry)
+            for (StorageDatum datum : entry)
             {
                 entry.clearKeyDirty(datum.getKey());
             }
@@ -520,7 +521,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         try
         {
             storage.updateEntries(unit,
-                    new Storage.Entry.Builder()
+                    new StorageEntry.Builder()
                             .put(keys().username(), newUsername)
                             .put(keys().uuid(), "")
                             .put(keys().display_name(), "")
@@ -650,7 +651,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         
         Map<String, Account> dirtyAccounts = new HashMap<>();
         QueuedMap<String, Account> ignoredAccounts = new QueuedMap<>();
-        QueuedMap<String, Storage.Entry> dirtyEntries = new QueuedMap<>();
+        QueuedMap<String, StorageEntry> dirtyEntries = new QueuedMap<>();
         
         while (!buffer.isEmpty())
         {
@@ -668,7 +669,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
                 continue;
             }
             
-            Storage.Entry dirtyEntry = account.getEntry().copyDirty();
+            StorageEntry dirtyEntry = account.getEntry().copyDirty();
             
             if (!dirtyEntry.getKeys().isEmpty())
             {
@@ -717,7 +718,7 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         {
             storage.setAutobatchEnabled(true);
             
-            for (Map.Entry<String, Storage.Entry> e : dirtyEntries.entrySet())
+            for (Map.Entry<String, StorageEntry> e : dirtyEntries.entrySet())
             {
                 try
                 {

@@ -5,13 +5,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import org.apache.tools.ant.util.LinkedHashtable;
 
-public final class SqliteStorage extends Storage
+public final class SqliteStorage implements Storage
 {
     public SqliteStorage(String host)
     {
@@ -26,7 +24,9 @@ public final class SqliteStorage extends Storage
     {
         try
         {
-            connection = org.sqlite.JDBC.createConnection(host, new Properties());
+            connection = org.sqlite.JDBC.createConnection(
+                    host, new Properties()
+            );
             statement = connection.createStatement();
         }
         catch (SQLException ex)
@@ -119,9 +119,9 @@ public final class SqliteStorage extends Storage
     }
     
     @Override
-    public Hashtable<String, DataType> getKeys(String unit) throws IOException
+    public UnitKeys getKeys(String unit) throws IOException
     {
-        Hashtable<String, DataType> keys = new LinkedHashtable<>();
+        UnitKeys keys = new UnitKeys();
         String sql = "PRAGMA table_info('" + SqlUtils.escapeQuotes(unit, "'", true) + "');";
         
         try (ResultSet tableInfo = executeQuery(sql))
@@ -166,7 +166,7 @@ public final class SqliteStorage extends Storage
     }
     
     @Override
-    public List<Storage.Entry> selectEntries(String unit) throws IOException
+    public List<StorageEntry> selectEntries(String unit) throws IOException
     {
         String sql = "SELECT * FROM `" + SqlUtils.escapeQuotes(unit, "`", true) + "`;";
         
@@ -181,7 +181,24 @@ public final class SqliteStorage extends Storage
     }
     
     @Override
-    public List<Storage.Entry> selectEntries(String unit, List<String> keys)
+    public List<StorageEntry> selectEntries(String unit, Selector selector)
+            throws IOException
+    {
+        String sql = "SELECT * FROM `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
+                   + " WHERE " + SqlUtils.translateSelector(selector, "`", "'") + ";";
+        
+        try
+        {
+            return SqlUtils.copyResultSet(executeQuery(sql));
+        }
+        catch (SQLException ex)
+        {
+            throw new IOException(ex);
+        }
+    }
+    
+    @Override
+    public List<StorageEntry> selectEntries(String unit, List<String> keys)
             throws IOException
     {
         String sql = "SELECT " + SqlUtils.translateKeyList(keys, "`")
@@ -198,24 +215,9 @@ public final class SqliteStorage extends Storage
     }
     
     @Override
-    public List<Storage.Entry> selectEntries(String unit, Selector selector) throws IOException
-    {
-        String sql = "SELECT * FROM `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
-                   + " WHERE " + SqlUtils.translateSelector(selector, "`", "'") + ";";
-        
-        try
-        {
-            return SqlUtils.copyResultSet(executeQuery(sql));
-        }
-        catch (SQLException ex)
-        {
-            throw new IOException(ex);
-        }
-    }
-    
-    @Override
-    public List<Storage.Entry> selectEntries(String unit, List<String> keys, Selector selector)
-            throws IOException
+    public List<StorageEntry> selectEntries(
+            String unit, List<String> keys, Selector selector
+    ) throws IOException
     {
         String sql = "SELECT " + SqlUtils.translateKeyList(keys, "`")
                    + " FROM `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
@@ -232,7 +234,7 @@ public final class SqliteStorage extends Storage
     }
     
     @Override
-    public void createUnit(String unit, Hashtable<String, DataType> keys, String primaryKey)
+    public void createUnit(String unit, UnitKeys keys, String primaryKey)
             throws IOException
     {
         String sql = "CREATE TABLE IF NOT EXISTS `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
@@ -295,7 +297,8 @@ public final class SqliteStorage extends Storage
     }
     
     @Override
-    public void addKey(String unit, String key, DataType type) throws IOException
+    public void addKey(String unit, String key, DataType type)
+            throws IOException
     {
         String sql = "ALTER TABLE `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
                    + " ADD COLUMN `" + SqlUtils.escapeQuotes(key, "`", true) + "` "
@@ -312,7 +315,7 @@ public final class SqliteStorage extends Storage
     }
     
     @Override
-    public void addEntry(String unit, Storage.Entry entry) throws IOException
+    public void addEntry(String unit, StorageEntry entry) throws IOException
     {
         String sql = "INSERT INTO `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
                    + " (" + SqlUtils.translateEntryNames(entry, "`") + ")"
@@ -329,8 +332,9 @@ public final class SqliteStorage extends Storage
     }
     
     @Override
-    public void updateEntries(String unit, Storage.Entry entrySubset, Selector selector)
-            throws IOException
+    public void updateEntries(
+            String unit, StorageEntry entrySubset, Selector selector
+    ) throws IOException
     {
         String sql = "UPDATE `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
                    + " SET " + SqlUtils.translateEntrySubset(entrySubset, "`", "'")
@@ -360,6 +364,18 @@ public final class SqliteStorage extends Storage
         {
             throw new IOException(ex);
         }
+    }
+    
+    @Override
+    public boolean isAutobatchEnabled()
+    {
+        return autobatch;
+    }
+    
+    @Override
+    public void setAutobatchEnabled(boolean status)
+    {
+        autobatch = status;
     }
     
     @Override
@@ -412,6 +428,8 @@ public final class SqliteStorage extends Storage
     }
     
     private final String host;
+    
     private Connection connection;
     private Statement statement;
+    private boolean autobatch = false;
 }

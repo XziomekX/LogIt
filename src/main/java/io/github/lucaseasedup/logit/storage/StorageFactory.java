@@ -19,32 +19,45 @@ public final class StorageFactory
         switch (type)
         {
         case NONE:
+        {
             return new NullStorage();
-        
+        }
         case SQLITE:
+        {
             return new SqliteStorage("jdbc:sqlite:" + core.getDataFolder() + "/"
                     + configuration.getString(path + ".sqlite.filename"));
-            
+        }
         case MYSQL:
+        {
             return new MySqlStorage(
                     configuration.getString(path + ".mysql.host"),
                     configuration.getString(path + ".mysql.user"),
                     configuration.getString(path + ".mysql.password"),
-                    configuration.getString(path + ".mysql.database"));
-            
+                    configuration.getString(path + ".mysql.database")
+            );
+        }
         case H2:
-            return new H2Storage("jdbc:h2:" + new File(core.getDataFolder(),
-                    configuration.getString(path + ".h2.filename")).getAbsolutePath());
+        {
+            File file = new File(
+                    core.getDataFolder(),
+                    configuration.getString(path + ".h2.filename")
+            );
             
+            return new H2Storage("jdbc:h2:" + file.getAbsolutePath());
+        }
         case POSTGRESQL:
+        {
             return new PostgreSqlStorage(
                     configuration.getString(path + ".postgresql.host"),
                     configuration.getString(path + ".postgresql.user"),
-                    configuration.getString(path + ".postgresql.password"));
-            
+                    configuration.getString(path + ".postgresql.password")
+            );
+        }
         case CSV:
         {
-            File dir = core.getDataFile(configuration.getString(path + ".csv.dir"));
+            File dir = core.getDataFile(
+                    configuration.getString(path + ".csv.dir")
+            );
             
             if (!dir.exists())
             {
@@ -55,8 +68,9 @@ public final class StorageFactory
             return new CsvStorage(dir);
         }
         default:
-            throw new RuntimeException("StorageFactory does not support the "
-                                       + type.name() + " storage type.");
+            throw new IllegalArgumentException(
+                    "Unsupported storage type: " + type
+            );
         }
     }
     

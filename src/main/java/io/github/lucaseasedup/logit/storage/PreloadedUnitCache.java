@@ -1,14 +1,12 @@
 package io.github.lucaseasedup.logit.storage;
 
-import io.github.lucaseasedup.logit.storage.Storage.DataType;
-import java.util.Hashtable;
 import java.util.List;
 
 public final class PreloadedUnitCache
 {
-    public PreloadedUnitCache(Hashtable<String, DataType> keys,
-                              String primaryKey,
-                              List<Storage.Entry> entries)
+    public PreloadedUnitCache(
+            UnitKeys keys, String primaryKey, List<StorageEntry> entries
+    )
     {
         if (keys == null || primaryKey == null || entries == null)
             throw new IllegalArgumentException();
@@ -18,7 +16,7 @@ public final class PreloadedUnitCache
         this.entries = entries;
     }
     
-    public Hashtable<String, DataType> getKeys()
+    public UnitKeys getKeys()
     {
         return keys;
     }
@@ -28,12 +26,12 @@ public final class PreloadedUnitCache
         return primaryKey;
     }
     
-    public List<Storage.Entry> getEntryList()
+    public List<StorageEntry> getEntryList()
     {
         return entries;
     }
     
-    private final Hashtable<String, DataType> keys;
+    private final UnitKeys keys;
     private final String primaryKey;
-    private final List<Storage.Entry> entries;
+    private final List<StorageEntry> entries;
 }

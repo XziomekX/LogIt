@@ -4,7 +4,7 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.common.ReportedException;
 import io.github.lucaseasedup.logit.security.model.HashingModel;
 import io.github.lucaseasedup.logit.security.model.HashingModelDecoder;
-import io.github.lucaseasedup.logit.storage.Storage;
+import io.github.lucaseasedup.logit.storage.StorageEntry;
 import io.github.lucaseasedup.logit.util.IniUtils;
 import io.github.lucaseasedup.logit.util.Validators;
 import it.sauronsoftware.base64.Base64;
@@ -24,7 +24,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * Represents a single account in an {@code AccountManager}.
  *
- * <p> Every {@code Account} has its own {@code Storage.Entry} instance
+ * <p> Every {@code Account} has its own {@code StorageEntry} instance
  * underlain so that it could be saved to a {@code Storage} as well as
  * selected and reconstructed using {@link AccountManager#selectAccount}.
  *
@@ -54,7 +54,7 @@ public final class Account extends LogItCoreObject
      * Creates a new {@code Account} object, with all entry keys filled with
      * their defaults.
      *
-     * <p> A new {@code Storage.Entry} instance will be created for
+     * <p> A new {@code StorageEntry} instance will be created for
      * this account to hold its data in a storage-oriented manner.
      *
      * <p> After you finish filling this {@code Account} with data,
@@ -74,14 +74,14 @@ public final class Account extends LogItCoreObject
         if (StringUtils.isBlank(username))
             throw new IllegalArgumentException("Null or blank username");
         
-        this.entry = new Storage.Entry();
+        this.entry = new StorageEntry();
         this.entry.put(keys().username(), username.toLowerCase());
         
         fillWithDefaults();
     }
     
     /**
-     * Creates a new {@code Account} object based on a {@code Storage.Entry}.
+     * Creates a new {@code Account} object based on a {@code StorageEntry}.
      *
      * @param entry
      *       A storage entry to hold data for this account.
@@ -95,7 +95,7 @@ public final class Account extends LogItCoreObject
      *        the username key or the username in this entry is {@code null}
      *        or blank.
      */
-    /* package */ Account(Storage.Entry entry, boolean fillWithDefaults)
+    /* package */ Account(StorageEntry entry, boolean fillWithDefaults)
     {
         if (entry == null)
             throw new IllegalArgumentException("Null storage entry");
@@ -115,7 +115,7 @@ public final class Account extends LogItCoreObject
     }
     
     /**
-     * Creates a new {@code Account} object based on a {@code Storage.Entry},
+     * Creates a new {@code Account} object based on a {@code StorageEntry},
      * filling all the missing keys with their defaults.
      *
      * @param entry
@@ -128,7 +128,7 @@ public final class Account extends LogItCoreObject
      *
      * @see #Account(String)
      */
-    public Account(Storage.Entry entry)
+    public Account(StorageEntry entry)
     {
         this(entry, true);
     }
@@ -754,7 +754,7 @@ public final class Account extends LogItCoreObject
     /**
      * Clones this {@code Account}.
      *
-     * <p> A new {@code Storage.Entry} is created as a copy of the
+     * <p> A new {@code StorageEntry} is created as a copy of the
      * original entry.
      *
      * @param username
@@ -767,7 +767,7 @@ public final class Account extends LogItCoreObject
         if (StringUtils.isBlank(username))
             throw new IllegalArgumentException("Null or blank username");
         
-        Storage.Entry entryClone = entry.copy();
+        StorageEntry entryClone = entry.copy();
         
         entryClone.put(keys().username(), username.toLowerCase());
         entryClone.clearKeyDirty(keys().username());
@@ -880,7 +880,7 @@ public final class Account extends LogItCoreObject
      *
      * @return The account entry.
      */
-    public Storage.Entry getEntry()
+    public StorageEntry getEntry()
     {
         return entry;
     }
@@ -928,7 +928,7 @@ public final class Account extends LogItCoreObject
      */
     public static final boolean LOGIN_FAIL = false;
     
-    private final Storage.Entry entry;
+    private final StorageEntry entry;
     private final Queue<SaveCallback> saveCallbacks = new LinkedList<>();
     private boolean bufferLocked = false;
 }

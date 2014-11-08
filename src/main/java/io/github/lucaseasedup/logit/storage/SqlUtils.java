@@ -1,9 +1,7 @@
 package io.github.lucaseasedup.logit.storage;
 
-import io.github.lucaseasedup.logit.storage.Storage.DataType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +12,13 @@ public final class SqlUtils
     {
     }
     
-    public static String escapeQuotes(String string, String quote, boolean escapeBackslashes)
+    public static String escapeQuotes(
+            String string, String quote, boolean escapeBackslashes
+    )
     {
+        if (string == null || quote == null)
+            throw new IllegalArgumentException();
+        
         string = string.replace(quote, quote + quote);
         
         if (escapeBackslashes)
@@ -26,15 +29,21 @@ public final class SqlUtils
         return string;
     }
     
-    public static boolean resolveSelector(Selector selector, Storage.Entry entry)
+    public static boolean resolveSelector(Selector selector, StorageEntry entry)
     {
+        if (selector == null || entry == null)
+            throw new IllegalArgumentException();
+        
         if (selector instanceof SelectorConstant)
         {
             return ((SelectorConstant) selector).getValue();
         }
         else if (selector instanceof SelectorNegation)
         {
-            return !resolveSelector(((SelectorNegation) selector).getOperand(), entry);
+            return !resolveSelector(
+                    ((SelectorNegation) selector).getOperand(),
+                    entry
+            );
         }
         else if (selector instanceof SelectorBinary)
         {
@@ -45,14 +54,15 @@ public final class SqlUtils
             case AND:
                 return resolveSelector(selectorBinary.getLeftOperand(), entry)
                         && resolveSelector(selectorBinary.getRightOperand(), entry);
-                
+            
             case OR:
                 return resolveSelector(selectorBinary.getLeftOperand(), entry)
                         || resolveSelector(selectorBinary.getRightOperand(), entry);
-                
+            
             default:
-                throw new RuntimeException("Unsupported relation: "
-                                         + selectorBinary.getRelation());
+                throw new IllegalArgumentException(
+                        "Unsupported relation: " + selectorBinary.getRelation()
+                );
             }
         }
         else if (selector instanceof SelectorCondition)
@@ -66,14 +76,21 @@ public final class SqlUtils
             {
             case EQUALS:
                 if (actualValue == null)
+                {
                     return operandValue == null;
+                }
                 else
+                {
                     return actualValue.equals(operandValue);
+                }
                 
             case LESS_THAN:
                 try
                 {
-                    return Long.parseLong(actualValue) < Long.parseLong(operandValue);
+                    long actualLong = Long.parseLong(actualValue);
+                    long operandLong = Long.parseLong(operandValue);
+
+                    return actualLong < operandLong;
                 }
                 catch (NumberFormatException ex)
                 {
@@ -83,7 +100,10 @@ public final class SqlUtils
             case GREATER_THAN:
                 try
                 {
-                    return Long.parseLong(actualValue) > Long.parseLong(operandValue);
+                    long actualLong = Long.parseLong(actualValue);
+                    long operandLong = Long.parseLong(operandValue);
+
+                    return actualLong > operandLong;
                 }
                 catch (NumberFormatException ex)
                 {
@@ -92,37 +112,47 @@ public final class SqlUtils
                 
             case STARTS_WITH:
                 return actualValue.startsWith(operandValue);
-                
+            
             case ENDS_WITH:
                 return actualValue.endsWith(operandValue);
-                
+            
             case CONTAINS:
                 return actualValue.contains(operandValue);
                 
             default:
-                throw new RuntimeException("Unsupported relation: "
-                                           + selectorCondition.getRelation());
+                throw new IllegalArgumentException(
+                        "Unsupported relation: "
+                                + selectorCondition.getRelation()
+                );
             }
         }
         else
         {
-            throw new RuntimeException("Unsupported selector: " + selector.getClass().getName());
+            throw new IllegalArgumentException(
+                    "Unsupported selector: " + selector.getClass().getName()
+            );
         }
     }
     
-    public static List<Storage.Entry> copyResultSet(ResultSet rs) throws SQLException
+    public static List<StorageEntry> copyResultSet(ResultSet rs)
+            throws SQLException
     {
-        List<Storage.Entry> entries = new LinkedList<>();
+        if (rs == null)
+            throw new IllegalArgumentException();
+        
+        List<StorageEntry> entries = new LinkedList<>();
         
         if (rs != null && rs.isBeforeFirst())
         {
             while (rs.next())
             {
-                Storage.Entry.Builder entryBuilder = new Storage.Entry.Builder();
+                StorageEntry.Builder entryBuilder = new StorageEntry.Builder();
                 
                 for (int i = 1, n = rs.getMetaData().getColumnCount(); i <= n; i++)
                 {
-                    entryBuilder.put(rs.getMetaData().getColumnLabel(i), rs.getString(i));
+                    entryBuilder.put(
+                            rs.getMetaData().getColumnLabel(i), rs.getString(i)
+                    );
                 }
                 
                 entries.add(entryBuilder.build());
@@ -134,11 +164,11 @@ public final class SqlUtils
         return entries;
     }
     
-    public static String translateSelector(Selector selector,
-                                           String columnQuote,
-                                           String valueQuote)
+    public static String translateSelector(
+            Selector selector, String columnQuote, String valueQuote
+    )
     {
-        if (selector == null)
+        if (selector == null || columnQuote == null || valueQuote == null)
             throw new IllegalArgumentException();
         
         if (selector instanceof SelectorConstant)
@@ -150,10 +180,11 @@ public final class SqlUtils
         else if (selector instanceof SelectorNegation)
         {
             SelectorNegation selectorNegation = (SelectorNegation) selector;
+            String translatedSelector = translateSelector(
+                    selectorNegation.getOperand(), columnQuote, valueQuote
+            );
             
-            return "NOT ("
-                 + translateSelector(selectorNegation.getOperand(), columnQuote, valueQuote)
-                 + ")";
+            return "NOT (" + translatedSelector + ")";
         }
         else if (selector instanceof SelectorBinary)
         {
@@ -161,7 +192,9 @@ public final class SqlUtils
             StringBuilder sb = new StringBuilder();
             
             sb.append("(");
-            sb.append(translateSelector(selectorBinary.getLeftOperand(), columnQuote, valueQuote));
+            sb.append(translateSelector(
+                    selectorBinary.getLeftOperand(), columnQuote, valueQuote
+            ));
             sb.append(") ");
             
             switch (selectorBinary.getRelation())
@@ -169,14 +202,15 @@ public final class SqlUtils
             case AND:
                 sb.append("AND");
                 break;
-                
+            
             case OR:
                 sb.append("OR");
                 break;
-                
+            
             default:
-                throw new RuntimeException("Unsupported relation: "
-                                         + selectorBinary.getRelation());
+                throw new IllegalArgumentException(
+                        "Unsupported relation: " + selectorBinary.getRelation()
+                );
             }
             
             sb.append(" (");
@@ -194,7 +228,9 @@ public final class SqlUtils
             
             sb.append("(");
             sb.append(columnQuote);
-            sb.append(escapeQuotes(selectorCondition.getKey(), columnQuote, true));
+            sb.append(escapeQuotes(
+                    selectorCondition.getKey(), columnQuote, true
+            ));
             sb.append(columnQuote);
             sb.append(") ");
             
@@ -219,8 +255,10 @@ public final class SqlUtils
                 break;
                 
             default:
-                throw new RuntimeException("Unsupported relation: "
-                                           + selectorCondition.getRelation());
+                throw new IllegalArgumentException(
+                        "Unsupported relation: "
+                                + selectorCondition.getRelation()
+                );
             }
             
             sb.append(" (");
@@ -232,7 +270,9 @@ public final class SqlUtils
                 sb.append("%");
             }
             
-            sb.append(escapeQuotes(selectorCondition.getValue(), valueQuote, true));
+            sb.append(escapeQuotes(
+                    selectorCondition.getValue(), valueQuote, true
+            ));
             
             if (selectorCondition.getRelation().equals(Infix.STARTS_WITH)
                     || selectorCondition.getRelation().equals(Infix.CONTAINS))
@@ -247,12 +287,17 @@ public final class SqlUtils
         }
         else
         {
-            throw new RuntimeException("Unsupported selector: " + selector.getClass().getName());
+            throw new IllegalArgumentException(
+                    "Unsupported selector: " + selector.getClass().getName()
+            );
         }
     }
     
     public static String encodeType(DataType type)
     {
+        if (type == null)
+            throw new IllegalArgumentException();
+        
         switch (type)
         {
         case INTEGER:
@@ -270,41 +315,58 @@ public final class SqlUtils
             return "TEXT";
             
         default:
-            throw new RuntimeException("Unknown type: " + type);
+            throw new IllegalArgumentException("Unknown type: " + type);
         }
     }
     
     public static DataType decodeType(String type)
     {
+        if (type == null)
+            throw new IllegalArgumentException();
+        
         type = type.toUpperCase();
         
-        if (type.startsWith("INT") || type.startsWith("TINYINT") || type.startsWith("SMALLINT")
-                || type.startsWith("MEDIUMINT") || type.startsWith("BIGINT"))
+        if (type.startsWith("INT")
+                || type.startsWith("TINYINT")
+                || type.startsWith("SMALLINT")
+                || type.startsWith("MEDIUMINT")
+                || type.startsWith("BIGINT"))
         {
             return DataType.INTEGER;
         }
-        else if (type.startsWith("REAL") || type.startsWith("DOUBLE") || type.startsWith("FLOAT"))
+        else if (type.startsWith("REAL")
+                || type.startsWith("DOUBLE")
+                || type.startsWith("FLOAT"))
         {
             return DataType.REAL;
         }
-        else if (type.startsWith("VARCHAR") || type.startsWith("TEXT")
-                || type.startsWith("CLOB") || type.startsWith("CHAR")
-                || type.startsWith("VARYING CHARACTER")  || type.startsWith("NVARCHAR")
-                || type.startsWith("LONGVARCHAR") || type.startsWith("NCHAR")
-                || type.startsWith("NTEXT") || type.startsWith("LONGTEXT")
-                || type.startsWith("MEDIUMTEXT") || type.startsWith("NCLOB")
+        else if (type.startsWith("VARCHAR")
+                || type.startsWith("TEXT")
+                || type.startsWith("CLOB")
+                || type.startsWith("CHAR")
+                || type.startsWith("VARYING CHARACTER")
+                || type.startsWith("NVARCHAR")
+                || type.startsWith("LONGVARCHAR")
+                || type.startsWith("NCHAR")
+                || type.startsWith("NTEXT")
+                || type.startsWith("LONGTEXT")
+                || type.startsWith("MEDIUMTEXT")
+                || type.startsWith("NCLOB")
                 || type.startsWith("TINYTEXT"))
         {
             return DataType.TEXT;
         }
         else
         {
-            throw new RuntimeException("Unknown type: " + type);
+            throw new IllegalArgumentException("Unsupported type: " + type);
         }
     }
     
     public static String translateKeyList(List<String> keys, String columnQuote)
     {
+        if (keys == null || columnQuote == null)
+            throw new IllegalArgumentException();
+        
         StringBuilder sb = new StringBuilder();
         
         for (String key : keys)
@@ -322,12 +384,19 @@ public final class SqlUtils
         return sb.toString();
     }
     
-    public static String translateKeyTypeList(Hashtable<String, DataType> keys,
-                                              String primaryKey,
-                                              String columnQuote)
+    public static String translateKeyTypeList(
+            UnitKeys keys, String primaryKey, String columnQuote
+    )
     {
+        if (keys == null || columnQuote == null)
+            throw new IllegalArgumentException();
+        
         if (primaryKey != null && !keys.containsKey(primaryKey))
-            throw new IllegalArgumentException("Cannot create index on a non-existing key");
+        {
+            throw new IllegalArgumentException(
+                    "Cannot create index on a non-existing key"
+            );
+        }
         
         StringBuilder sb = new StringBuilder();
         
@@ -354,11 +423,16 @@ public final class SqlUtils
         return sb.toString();
     }
     
-    public static String translateEntryNames(Storage.Entry entry, String columnQuote)
+    public static String translateEntryNames(
+            StorageEntry entry, String columnQuote
+    )
     {
+        if (entry == null || columnQuote == null)
+            throw new IllegalArgumentException();
+        
         StringBuilder sb = new StringBuilder();
         
-        for (Storage.Entry.Datum datum : entry)
+        for (StorageDatum datum : entry)
         {
             if (sb.length() > 0)
             {
@@ -373,11 +447,16 @@ public final class SqlUtils
         return sb.toString();
     }
     
-    public static String translateEntryValues(Storage.Entry entry, String valueQuote)
+    public static String translateEntryValues(
+            StorageEntry entry, String valueQuote
+    )
     {
+        if (entry == null || valueQuote == null)
+            throw new IllegalArgumentException();
+        
         StringBuilder sb = new StringBuilder();
         
-        for (Storage.Entry.Datum datum : entry)
+        for (StorageDatum datum : entry)
         {
             if (sb.length() > 0)
             {
@@ -392,13 +471,16 @@ public final class SqlUtils
         return sb.toString();
     }
     
-    public static String translateEntrySubset(Storage.Entry entrySubset,
-                                              String columnQuote,
-                                              String valueQuote)
+    public static String translateEntrySubset(
+            StorageEntry entrySubset, String columnQuote, String valueQuote
+    )
     {
+        if (entrySubset == null || columnQuote == null || valueQuote == null)
+            throw new IllegalArgumentException();
+        
         StringBuilder sb = new StringBuilder();
         
-        for (Storage.Entry.Datum datum : entrySubset)
+        for (StorageDatum datum : entrySubset)
         {
             if (sb.length() > 0)
             {

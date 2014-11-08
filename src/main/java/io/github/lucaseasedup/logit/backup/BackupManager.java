@@ -8,7 +8,8 @@ import io.github.lucaseasedup.logit.common.Timer;
 import io.github.lucaseasedup.logit.config.TimeUnit;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
-import io.github.lucaseasedup.logit.storage.Storage.DataType;
+import io.github.lucaseasedup.logit.storage.StorageEntry;
+import io.github.lucaseasedup.logit.storage.UnitKeys;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,7 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
 import org.apache.commons.lang.StringUtils;
@@ -156,11 +156,11 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         if (backupFile == null)
             throw new IllegalArgumentException();
         
-        Hashtable<String, DataType> keys =
+        UnitKeys keys =
                 accountManager.getStorage().getKeys(accountManager.getUnit());
         String primaryKey =
                 accountManager.getStorage().getPrimaryKey(accountManager.getUnit());
-        List<Storage.Entry> entries =
+        List<StorageEntry> entries =
                 accountManager.getStorage().selectEntries(accountManager.getUnit());
         
         try (Storage backupStorage = new SqliteStorage("jdbc:sqlite:" + backupFile))
@@ -172,7 +172,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
             {
                 backupStorage.setAutobatchEnabled(true);
                 
-                for (Storage.Entry entry : entries)
+                for (StorageEntry entry : entries)
                 {
                     backupStorage.addEntry("accounts", entry);
                 }
@@ -211,7 +211,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
         {
             backupStorage.connect();
             
-            List<Storage.Entry> entries = backupStorage.selectEntries("accounts");
+            List<StorageEntry> entries = backupStorage.selectEntries("accounts");
             
             accountManager.getStorage().eraseUnit(accountManager.getUnit());
             
@@ -219,7 +219,7 @@ public final class BackupManager extends LogItCoreObject implements Runnable
             {
                 accountManager.getStorage().setAutobatchEnabled(true);
                 
-                for (Storage.Entry entry : entries)
+                for (StorageEntry entry : entries)
                 {
                     accountManager.getStorage().addEntry(accountManager.getUnit(), entry);
                 }

@@ -8,21 +8,21 @@ import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.AccountManager.RegistrationFetchMode;
 import io.github.lucaseasedup.logit.config.TimeUnit;
+import io.github.lucaseasedup.logit.storage.DataType;
 import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
-import io.github.lucaseasedup.logit.storage.Storage.DataType;
+import io.github.lucaseasedup.logit.storage.StorageEntry;
+import io.github.lucaseasedup.logit.storage.UnitKeys;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
-import org.apache.tools.ant.util.LinkedHashtable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -591,7 +591,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         
         try (Storage sessionsStorage = new SqliteStorage("jdbc:sqlite:" + file))
         {
-            Hashtable<String, DataType> keys = new LinkedHashtable<>();
+            UnitKeys keys = new UnitKeys();
             keys.put("username", DataType.TINYTEXT);
             keys.put("status", DataType.INTEGER);
             keys.put("ip", DataType.TINYTEXT);
@@ -602,7 +602,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
             
             for (Map.Entry<String, Session> e : sessions.entrySet())
             {
-                sessionsStorage.addEntry("sessions", new Storage.Entry.Builder()
+                sessionsStorage.addEntry("sessions", new StorageEntry.Builder()
                         .put("username", e.getKey())
                         .put("status", String.valueOf(e.getValue().getStatus()))
                         .put("ip", e.getValue().getIp())
@@ -645,10 +645,10 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         {
             sessionsStorage.connect();
             
-            List<Storage.Entry> entries = sessionsStorage.selectEntries("sessions",
+            List<StorageEntry> entries = sessionsStorage.selectEntries("sessions",
                     Arrays.asList("username", "status", "ip"));
             
-            for (Storage.Entry entry : entries)
+            for (StorageEntry entry : entries)
             {
                 String username = entry.get("username");
                 

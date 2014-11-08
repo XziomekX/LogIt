@@ -8,12 +8,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.tools.ant.util.LinkedHashtable;
 
-public final class CsvStorage extends Storage
+public final class CsvStorage implements Storage
 {
     public CsvStorage(File dir)
     {
@@ -26,6 +24,13 @@ public final class CsvStorage extends Storage
     @Override
     public void connect() throws IOException
     {
+        if (!dir.isDirectory())
+        {
+            throw new IOException(
+                    "CSV path is not a directory: " + dir
+            );
+        }
+        
         connected = true;
     }
     
@@ -38,6 +43,12 @@ public final class CsvStorage extends Storage
     @Override
     public void ping() throws IOException
     {
+        if (!dir.isDirectory())
+        {
+            throw new IOException(
+                    "CSV path is not a directory: " + dir
+            );
+        }
     }
     
     @Override
@@ -69,14 +80,17 @@ public final class CsvStorage extends Storage
     }
     
     @Override
-    public Hashtable<String, DataType> getKeys(String unit) throws IOException
+    public UnitKeys getKeys(String unit) throws IOException
     {
         if (!connected)
             throw new IOException("Database closed.");
         
-        Hashtable<String, DataType> keys = new LinkedHashtable<>();
+        UnitKeys keys = new UnitKeys();
         
-        try (BufferedReader br = new BufferedReader(new FileReader(new File(dir, unit))))
+        try (
+                FileReader fr = new FileReader(new File(dir, unit));
+                BufferedReader br = new BufferedReader(fr);
+        )
         {
             String line = br.readLine();
             
@@ -101,31 +115,36 @@ public final class CsvStorage extends Storage
     }
     
     @Override
-    public List<Storage.Entry> selectEntries(String unit) throws IOException
+    public List<StorageEntry> selectEntries(String unit) throws IOException
     {
         return selectEntries(unit, null, new SelectorConstant(true));
     }
     
     @Override
-    public List<Storage.Entry> selectEntries(String unit, List<String> keys)
+    public List<StorageEntry> selectEntries(String unit, Selector selector)
+            throws IOException
+    {
+        return selectEntries(unit, null, selector);
+    }
+    
+    @Override
+    public List<StorageEntry> selectEntries(String unit, List<String> keys)
             throws IOException
     {
         return selectEntries(unit, keys, new SelectorConstant(true));
     }
     
     @Override
-    public List<Storage.Entry> selectEntries(String unit, Selector selector) throws IOException
+    public List<StorageEntry> selectEntries(
+            String unit, List<String> keys, Selector selector
+    ) throws IOException
     {
-        return selectEntries(unit, null, selector);
-    }
-    
-    @Override
-    public List<Storage.Entry> selectEntries(String unit, List<String> keys, Selector selector)
-            throws IOException
-    {
-        List<Storage.Entry> entries = new ArrayList<>();
+        List<StorageEntry> entries = new ArrayList<>();
         
-        try (BufferedReader br = new BufferedReader(new FileReader(new File(dir, unit))))
+        try (
+                FileReader fr = new FileReader(new File(dir, unit));
+                BufferedReader br = new BufferedReader(fr);
+        )
         {
             String line = br.readLine();
             
@@ -156,8 +175,8 @@ public final class CsvStorage extends Storage
                 
                 String[] lineValues =
                         lineBuilder.toString().split("(?<=\"),(?=\")");
-                Storage.Entry.Builder entryBuilder =
-                        new Storage.Entry.Builder();
+                StorageEntry.Builder entryBuilder =
+                        new StorageEntry.Builder();
                 
                 for (int i = 0; i < lineValues.length; i++)
                 {
@@ -168,7 +187,7 @@ public final class CsvStorage extends Storage
                     }
                 }
                 
-                Storage.Entry entry = entryBuilder.build();
+                StorageEntry entry = entryBuilder.build();
                 
                 if (SqlUtils.resolveSelector(selector, entry))
                 {
@@ -181,7 +200,7 @@ public final class CsvStorage extends Storage
     }
     
     @Override
-    public void createUnit(String unit, Hashtable<String, DataType> keys, String primaryKey)
+    public void createUnit(String unit, UnitKeys keys, String primaryKey)
             throws IOException
     {
         if (!connected)
@@ -233,12 +252,18 @@ public final class CsvStorage extends Storage
         
         String keys;
         
-        try (BufferedReader bw = new BufferedReader(new FileReader(new File(dir, unit))))
+        try (
+                FileReader fr = new FileReader(new File(dir, unit));
+                BufferedReader br = new BufferedReader(fr);
+        )
         {
-            keys = bw.readLine();
+            keys = br.readLine();
         }
         
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(new File(dir, unit))))
+        try (
+                FileWriter fw = new FileWriter(new File(dir, unit));
+                BufferedWriter bw = new BufferedWriter(fw);
+        )
         {
             bw.write(keys + "\r\n");
         }
@@ -254,38 +279,42 @@ public final class CsvStorage extends Storage
     }
     
     @Override
-    public void addKey(String unit, String key, DataType type) throws IOException
+    public void addKey(String unit, String key, DataType type)
+            throws IOException
     {
         if (!connected)
             throw new IOException("Database closed.");
         
-        Hashtable<String, DataType> keys = getKeys(unit);
+        UnitKeys keys = getKeys(unit);
         String primaryKey = getPrimaryKey(unit);
         
         if (keys.containsKey(key))
             throw new IOException("Key with this name already exists: " + key);
         
-        List<Storage.Entry> entries = selectEntries(unit);
+        List<StorageEntry> entries = selectEntries(unit);
         
         keys.put(key, type);
         removeUnit(unit);
         createUnit(unit, keys, primaryKey);
         
-        for (Storage.Entry entry : entries)
+        for (StorageEntry entry : entries)
         {
             addEntry(unit, entry);
         }
     }
     
     @Override
-    public void addEntry(String unit, Storage.Entry entry) throws IOException
+    public void addEntry(String unit, StorageEntry entry) throws IOException
     {
         if (!connected)
             throw new IOException("Database closed.");
         
-        Hashtable<String, DataType> keys = getKeys(unit);
+        UnitKeys keys = getKeys(unit);
         
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(new File(dir, unit), true)))
+        try (
+                FileWriter fw = new FileWriter(new File(dir, unit), true);
+                BufferedWriter bw = new BufferedWriter(fw);
+        )
         {
             StringBuilder sb = new StringBuilder();
             
@@ -312,25 +341,26 @@ public final class CsvStorage extends Storage
     }
     
     @Override
-    public void updateEntries(String unit, Storage.Entry entrySubset, Selector selector)
-            throws IOException
+    public void updateEntries(
+            String unit, StorageEntry entrySubset, Selector selector
+    ) throws IOException
     {
         if (!connected)
             throw new IOException("Database closed.");
         
-        Hashtable<String, DataType> keys = getKeys(unit);
+        UnitKeys keys = getKeys(unit);
         String primaryKey = getPrimaryKey(unit);
         
-        List<Storage.Entry> entries = selectEntries(unit);
+        List<StorageEntry> entries = selectEntries(unit);
         
         removeUnit(unit);
         createUnit(unit, keys, primaryKey);
         
-        for (Storage.Entry entry : entries)
+        for (StorageEntry entry : entries)
         {
             if (SqlUtils.resolveSelector(selector, entry))
             {
-                for (Storage.Entry.Datum datum : entrySubset)
+                for (StorageDatum datum : entrySubset)
                 {
                     entry.put(datum.getKey(), datum.getValue());
                 }
@@ -346,21 +376,33 @@ public final class CsvStorage extends Storage
         if (!connected)
             throw new IOException("Database closed.");
         
-        Hashtable<String, DataType> keys = getKeys(unit);
+        UnitKeys keys = getKeys(unit);
         String primaryKey = getPrimaryKey(unit);
         
-        List<Storage.Entry> entries = selectEntries(unit);
+        List<StorageEntry> entries = selectEntries(unit);
         
         removeUnit(unit);
         createUnit(unit, keys, primaryKey);
         
-        for (Storage.Entry entry : entries)
+        for (StorageEntry entry : entries)
         {
             if (!SqlUtils.resolveSelector(selector, entry))
             {
                 addEntry(unit, entry);
             }
         }
+    }
+    
+    @Override
+    public boolean isAutobatchEnabled()
+    {
+        return false;
+    }
+    
+    @Override
+    public void setAutobatchEnabled(boolean status)
+    {
+        // Batching is not supported.
     }
     
     @Override

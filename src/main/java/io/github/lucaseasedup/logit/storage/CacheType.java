@@ -7,7 +7,7 @@ public enum CacheType
     private CacheType(String name)
     {
         if (name == null)
-            throw new IllegalArgumentException("Null name");
+            throw new IllegalArgumentException();
         
         this.name = name;
     }
@@ -27,8 +27,8 @@ public enum CacheType
      * 
      * @param name string representation of a {@code CacheType}.
      * 
-     * @return the corresponding {@code CacheType},
-     *         or {@code null} if no {@code CacheType} was found for the given string.
+     * @return the corresponding {@code CacheType}, or {@code null}
+     *         if no {@code CacheType} was found for the given string.
      */
     public static CacheType decode(String name)
     {

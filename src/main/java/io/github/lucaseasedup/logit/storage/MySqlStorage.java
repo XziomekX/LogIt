@@ -8,17 +8,20 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.tools.ant.util.LinkedHashtable;
 
-public final class MySqlStorage extends Storage
+public final class MySqlStorage implements Storage
 {
-    public MySqlStorage(String host, String user, String password, String database)
+    public MySqlStorage(
+            String host, String user, String password, String database
+    )
     {
-        if (host == null || user == null || password == null || database == null)
+        if (host == null || user == null
+                || password == null || database == null)
+        {
             throw new IllegalArgumentException();
+        }
         
         if (!host.startsWith("jdbc:mysql://"))
         {
@@ -38,7 +41,9 @@ public final class MySqlStorage extends Storage
         {
             connection = DriverManager.getConnection(host, user, password);
             statement = connection.createStatement();
-            statement.execute("USE `" + SqlUtils.escapeQuotes(database, "`", true) + "`;");
+            statement.execute(
+                    "USE `" + SqlUtils.escapeQuotes(database, "`", true) + "`;"
+            );
         }
         catch (SQLException ex)
         {
@@ -130,9 +135,9 @@ public final class MySqlStorage extends Storage
     }
     
     @Override
-    public Hashtable<String, DataType> getKeys(String unit) throws IOException
+    public UnitKeys getKeys(String unit) throws IOException
     {
-        Hashtable<String, DataType> keys = new LinkedHashtable<>();
+        UnitKeys keys = new UnitKeys();
         String sql = "DESCRIBE `" + SqlUtils.escapeQuotes(unit, "`", true) + "`;";
         
         try (ResultSet tableInfo = executeQuery(sql))
@@ -140,7 +145,9 @@ public final class MySqlStorage extends Storage
             while (tableInfo.next())
             {
                 String name = tableInfo.getString("Field");
-                DataType type = SqlUtils.decodeType(tableInfo.getString("Type"));
+                DataType type = SqlUtils.decodeType(
+                        tableInfo.getString("Type")
+                );
                 
                 keys.put(name, type);
             }
@@ -177,7 +184,7 @@ public final class MySqlStorage extends Storage
     }
     
     @Override
-    public List<Storage.Entry> selectEntries(String unit) throws IOException
+    public List<StorageEntry> selectEntries(String unit) throws IOException
     {
         String sql = "SELECT * FROM `" + SqlUtils.escapeQuotes(unit, "`", true) + "`;";
         
@@ -192,7 +199,24 @@ public final class MySqlStorage extends Storage
     }
     
     @Override
-    public List<Storage.Entry> selectEntries(String unit, List<String> keys)
+    public List<StorageEntry> selectEntries(String unit, Selector selector)
+            throws IOException
+    {
+        String sql = "SELECT * FROM `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
+                   + " WHERE " + SqlUtils.translateSelector(selector, "`", "'") + ";";
+        
+        try
+        {
+            return SqlUtils.copyResultSet(executeQuery(sql));
+        }
+        catch (SQLException ex)
+        {
+            throw new IOException(ex);
+        }
+    }
+    
+    @Override
+    public List<StorageEntry> selectEntries(String unit, List<String> keys)
             throws IOException
     {
         String sql = "SELECT " + SqlUtils.translateKeyList(keys, "`")
@@ -209,24 +233,9 @@ public final class MySqlStorage extends Storage
     }
     
     @Override
-    public List<Storage.Entry> selectEntries(String unit, Selector selector) throws IOException
-    {
-        String sql = "SELECT * FROM `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
-                   + " WHERE " + SqlUtils.translateSelector(selector, "`", "'") + ";";
-        
-        try
-        {
-            return SqlUtils.copyResultSet(executeQuery(sql));
-        }
-        catch (SQLException ex)
-        {
-            throw new IOException(ex);
-        }
-    }
-    
-    @Override
-    public List<Storage.Entry> selectEntries(String unit, List<String> keys, Selector selector)
-            throws IOException
+    public List<StorageEntry> selectEntries(
+            String unit, List<String> keys, Selector selector
+    ) throws IOException
     {
         String sql = "SELECT " + SqlUtils.translateKeyList(keys, "`")
                    + " FROM `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
@@ -243,7 +252,7 @@ public final class MySqlStorage extends Storage
     }
     
     @Override
-    public void createUnit(String unit, Hashtable<String, DataType> keys, String primaryKey)
+    public void createUnit(String unit, UnitKeys keys, String primaryKey)
             throws IOException
     {
         String sql = "CREATE TABLE IF NOT EXISTS `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
@@ -306,7 +315,8 @@ public final class MySqlStorage extends Storage
     }
     
     @Override
-    public void addKey(String unit, String key, DataType type) throws IOException
+    public void addKey(String unit, String key, DataType type)
+            throws IOException
     {
         String sql = "ALTER TABLE `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
                    + " ADD COLUMN `" + SqlUtils.escapeQuotes(key, "`", true) + "` "
@@ -323,7 +333,7 @@ public final class MySqlStorage extends Storage
     }
     
     @Override
-    public void addEntry(String unit, Storage.Entry entry) throws IOException
+    public void addEntry(String unit, StorageEntry entry) throws IOException
     {
         String sql = "INSERT INTO `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
                    + " (" + SqlUtils.translateEntryNames(entry, "`") + ")"
@@ -340,7 +350,9 @@ public final class MySqlStorage extends Storage
     }
     
     @Override
-    public void updateEntries(String unit, Storage.Entry entrySubset, Selector selector)
+    public void updateEntries(
+            String unit, StorageEntry entrySubset, Selector selector
+    )
             throws IOException
     {
         String sql = "UPDATE `" + SqlUtils.escapeQuotes(unit, "`", true) + "`"
@@ -371,6 +383,18 @@ public final class MySqlStorage extends Storage
         {
             throw new IOException(ex);
         }
+    }
+    
+    @Override
+    public boolean isAutobatchEnabled()
+    {
+        return autobatch;
+    }
+    
+    @Override
+    public void setAutobatchEnabled(boolean status)
+    {
+        autobatch = status;
     }
     
     @Override
@@ -435,4 +459,5 @@ public final class MySqlStorage extends Storage
     
     private Connection connection;
     private Statement statement;
+    private boolean autobatch = false;
 }

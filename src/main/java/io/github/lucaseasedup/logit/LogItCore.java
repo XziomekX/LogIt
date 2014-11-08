@@ -64,10 +64,11 @@ import io.github.lucaseasedup.logit.security.GlobalPasswordManager;
 import io.github.lucaseasedup.logit.security.SecurityHelper;
 import io.github.lucaseasedup.logit.session.SessionManager;
 import io.github.lucaseasedup.logit.storage.CacheType;
+import io.github.lucaseasedup.logit.storage.DataType;
 import io.github.lucaseasedup.logit.storage.Storage;
-import io.github.lucaseasedup.logit.storage.Storage.DataType;
 import io.github.lucaseasedup.logit.storage.StorageFactory;
 import io.github.lucaseasedup.logit.storage.StorageType;
+import io.github.lucaseasedup.logit.storage.UnitKeys;
 import io.github.lucaseasedup.logit.storage.WrapperStorage;
 import io.github.lucaseasedup.logit.tab.TabListUpdater;
 import io.github.lucaseasedup.logit.util.IoUtils;
@@ -509,8 +510,7 @@ public final class LogItCore
         {
             accountStorage.setAutobatchEnabled(true);
             
-            Hashtable<String, DataType> existingKeys =
-                    accountStorage.getKeys(accountsUnit);
+            UnitKeys existingKeys = accountStorage.getKeys(accountsUnit);
             
             for (Map.Entry<String, DataType> e : accountKeys.entrySet())
             {

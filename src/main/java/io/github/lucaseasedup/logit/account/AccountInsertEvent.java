@@ -1,11 +1,11 @@
 package io.github.lucaseasedup.logit.account;
 
-import io.github.lucaseasedup.logit.storage.Storage;
+import io.github.lucaseasedup.logit.storage.StorageEntry;
 import org.bukkit.event.HandlerList;
 
 public final class AccountInsertEvent extends AccountEvent
 {
-    /* package */ AccountInsertEvent(Storage.Entry entry)
+    /* package */ AccountInsertEvent(StorageEntry entry)
     {
         if (entry == null)
             throw new IllegalArgumentException();
@@ -31,5 +31,5 @@ public final class AccountInsertEvent extends AccountEvent
     
     private static final HandlerList handlers = new HandlerList();
     
-    private final Storage.Entry entry;
+    private final StorageEntry entry;
 }

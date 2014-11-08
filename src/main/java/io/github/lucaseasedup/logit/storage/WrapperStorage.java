@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
-public final class WrapperStorage extends Storage
+public final class WrapperStorage implements Storage
 {
     private WrapperStorage(Storage leading, CacheType cacheType)
     {
@@ -148,7 +148,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public synchronized Hashtable<String, DataType> getKeys(String unit)
+    public synchronized UnitKeys getKeys(String unit)
             throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#getKeys(\"" + unit + "\")");
@@ -187,7 +187,7 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public synchronized List<Storage.Entry> selectEntries(String unit)
+    public synchronized List<StorageEntry> selectEntries(String unit)
             throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#selectEntries(\"" + unit + "\")");
@@ -198,12 +198,12 @@ public final class WrapperStorage extends Storage
         }
         else if (cacheType == CacheType.PRELOADED)
         {
-            List<Storage.Entry> entries = preloadedCache.get(unit).getEntryList();
+            List<StorageEntry> entries = preloadedCache.get(unit).getEntryList();
             
             if (entries == null)
                 return null;
             
-            return Storage.Entry.copyList(entries);
+            return StorageEntry.copyList(entries);
         }
         else
         {
@@ -212,39 +212,9 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public synchronized List<Storage.Entry> selectEntries(String unit,
-                                                          List<String> keys)
-            throws IOException
-    {
-        log(CustomLevel.INTERNAL, "WrapperStorage#selectEntries("
-                                + "\"" + unit + "\", "
-                                + Arrays.toString(keys.toArray()) + ")");
-        
-        if (cacheType == CacheType.DISABLED)
-        {
-            return leading.selectEntries(unit, keys);
-        }
-        else if (cacheType == CacheType.PRELOADED)
-        {
-            List<Storage.Entry> entries = preloadedCache.get(unit).getEntryList();
-            
-            if (entries == null)
-                return null;
-            
-            return Storage.Entry.copyList(
-                    entries, keys, new SelectorConstant(true)
-            );
-        }
-        else
-        {
-            throw new RuntimeException("Unsupported cache type: " + cacheType);
-        }
-    }
-    
-    @Override
-    public synchronized List<Storage.Entry> selectEntries(String unit,
-                                                          Selector selector)
-            throws IOException
+    public synchronized List<StorageEntry> selectEntries(
+            String unit, Selector selector
+    ) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#selectEntries("
                                 + "\"" + unit + "\", "
@@ -256,12 +226,12 @@ public final class WrapperStorage extends Storage
         }
         else if (cacheType == CacheType.PRELOADED)
         {
-            List<Storage.Entry> entries = preloadedCache.get(unit).getEntryList();
+            List<StorageEntry> entries = preloadedCache.get(unit).getEntryList();
             
             if (entries == null)
                 return null;
             
-            return Storage.Entry.copyList(
+            return StorageEntry.copyList(
                     entries, new SelectorConstant(true)
             );
         }
@@ -272,10 +242,39 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public synchronized List<Storage.Entry> selectEntries(String unit,
-                                                          List<String> keys,
-                                                          Selector selector)
-            throws IOException
+    public synchronized List<StorageEntry> selectEntries(
+            String unit, List<String> keys
+    ) throws IOException
+    {
+        log(CustomLevel.INTERNAL, "WrapperStorage#selectEntries("
+                                + "\"" + unit + "\", "
+                                + Arrays.toString(keys.toArray()) + ")");
+        
+        if (cacheType == CacheType.DISABLED)
+        {
+            return leading.selectEntries(unit, keys);
+        }
+        else if (cacheType == CacheType.PRELOADED)
+        {
+            List<StorageEntry> entries = preloadedCache.get(unit).getEntryList();
+            
+            if (entries == null)
+                return null;
+            
+            return StorageEntry.copyList(
+                    entries, keys, new SelectorConstant(true)
+            );
+        }
+        else
+        {
+            throw new RuntimeException("Unsupported cache type: " + cacheType);
+        }
+    }
+    
+    @Override
+    public synchronized List<StorageEntry> selectEntries(
+            String unit, List<String> keys, Selector selector
+    ) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#selectEntries("
                                 + "\"" + unit + "\", "
@@ -288,12 +287,12 @@ public final class WrapperStorage extends Storage
         }
         else if (cacheType == CacheType.PRELOADED)
         {
-            List<Storage.Entry> entries = preloadedCache.get(unit).getEntryList();
+            List<StorageEntry> entries = preloadedCache.get(unit).getEntryList();
             
             if (entries == null)
                 return null;
             
-            return Storage.Entry.copyList(
+            return StorageEntry.copyList(
                     entries, keys, selector
             );
         }
@@ -304,15 +303,14 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public synchronized void createUnit(String unit,
-                                        final Hashtable<String, DataType> keys,
-                                        final String primaryKey)
-            throws IOException
+    public synchronized void createUnit(
+            String unit, final UnitKeys keys, final String primaryKey
+    ) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#createUnit("
                                 + "\"" + unit + "\", "
                                 + "Hashtable {keys: ["
-                                        + CollectionUtils.toString(keys.keys())
+                                    + CollectionUtils.toString(keys.keySet())
                                 + "]})");
         
         leading.createUnit(unit, keys, primaryKey);
@@ -331,7 +329,7 @@ public final class WrapperStorage extends Storage
             if (!preloadedCache.containsKey(unit))
             {
                 PreloadedUnitCache unitCache = new PreloadedUnitCache(
-                        keys, primaryKey, new LinkedList<Storage.Entry>()
+                        keys, primaryKey, new LinkedList<StorageEntry>()
                 );
                 
                 preloadedCache.put(unit, unitCache);
@@ -447,10 +445,9 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public synchronized void addKey(String unit,
-                                    final String key,
-                                    final DataType type)
-            throws IOException
+    public synchronized void addKey(
+            String unit, final String key, final DataType type
+    ) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#addKey("
                                 + "\"" + unit + "\", "
@@ -464,7 +461,7 @@ public final class WrapperStorage extends Storage
             @Override
             public void walk(Storage storage, String unit) throws IOException
             {
-                Hashtable<String, DataType> keys = storage.getKeys(unit);
+                UnitKeys keys = storage.getKeys(unit);
                 
                 if (!keys.containsKey(key))
                 {
@@ -477,7 +474,7 @@ public final class WrapperStorage extends Storage
         {
             if (preloadedCache.containsKey(unit))
             {
-                for (Storage.Entry entry : preloadedCache.get(unit).getEntryList())
+                for (StorageEntry entry : preloadedCache.get(unit).getEntryList())
                 {
                     entry.put(key, "");
                 }
@@ -493,9 +490,9 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public synchronized void addEntry(String unit,
-                                      final Storage.Entry entry)
-            throws IOException
+    public synchronized void addEntry(
+            String unit, final StorageEntry entry
+    ) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#addEntry("
                                 + "\"" + unit + "\", "
@@ -527,10 +524,9 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public synchronized void updateEntries(String unit,
-                                           final Storage.Entry entrySubset,
-                                           final Selector selector)
-            throws IOException
+    public synchronized void updateEntries(
+            String unit, final StorageEntry entrySubset, final Selector selector
+    ) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#updateEntries("
                                 + "\"" + unit + "\", "
@@ -552,11 +548,11 @@ public final class WrapperStorage extends Storage
         {
             if (preloadedCache.containsKey(unit))
             {
-                for (Storage.Entry entry : preloadedCache.get(unit).getEntryList())
+                for (StorageEntry entry : preloadedCache.get(unit).getEntryList())
                 {
                     if (SqlUtils.resolveSelector(selector, entry))
                     {
-                        for (Storage.Entry.Datum datum : entrySubset)
+                        for (StorageDatum datum : entrySubset)
                         {
                             entry.put(datum.getKey(), datum.getValue());
                         }
@@ -572,9 +568,9 @@ public final class WrapperStorage extends Storage
     }
     
     @Override
-    public synchronized void removeEntries(String unit,
-                                           final Selector selector)
-            throws IOException
+    public synchronized void removeEntries(
+            String unit, final Selector selector
+    ) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#removeEntries("
                                 + "\"" + unit + "\", "
@@ -595,12 +591,12 @@ public final class WrapperStorage extends Storage
         {
             if (preloadedCache.containsKey(unit))
             {
-                Iterator<Storage.Entry> entryIt =
+                Iterator<StorageEntry> entryIt =
                         preloadedCache.get(unit).getEntryList().iterator();
                 
                 while (entryIt.hasNext())
                 {
-                    Storage.Entry entry = entryIt.next();
+                    StorageEntry entry = entryIt.next();
                     
                     if (SqlUtils.resolveSelector(selector, entry))
                     {
@@ -613,6 +609,23 @@ public final class WrapperStorage extends Storage
         for (StorageObserver o : obs)
         {
             o.afterRemoveEntries(unit, selector);
+        }
+    }
+    
+    @Override
+    public boolean isAutobatchEnabled()
+    {
+        return leading.isAutobatchEnabled();
+    }
+    
+    @Override
+    public synchronized void setAutobatchEnabled(boolean status)
+    {
+        leading.setAutobatchEnabled(status);
+        
+        for (Storage mirror : mirrors.keySet())
+        {
+            mirror.setAutobatchEnabled(status);
         }
     }
     
@@ -652,20 +665,9 @@ public final class WrapperStorage extends Storage
         }
     }
     
-    @Override
-    public synchronized void setAutobatchEnabled(boolean status)
-    {
-        super.setAutobatchEnabled(status);
-        leading.setAutobatchEnabled(status);
-        
-        for (Storage mirror : mirrors.keySet())
-        {
-            mirror.setAutobatchEnabled(status);
-        }
-    }
-    
-    public synchronized void mirrorStorage(Storage storage,
-                              Hashtable<String, String> unitMappings)
+    public synchronized void mirrorStorage(
+            Storage storage, Hashtable<String, String> unitMappings
+    )
     {
         if (storage == null || unitMappings == null)
             throw new IllegalArgumentException();
@@ -797,7 +799,11 @@ public final class WrapperStorage extends Storage
         public void walk(Storage storage, String unit) throws IOException;
     }
     
+    /**
+     * Used to update mirrors in the background.
+     */
     private final ExecutorService executorService;
+    
     private final Storage leading;
     private final CacheType cacheType;
     

@@ -1,7 +1,5 @@
 package io.github.lucaseasedup.logit.storage;
 
-import io.github.lucaseasedup.logit.storage.Storage.DataType;
-import java.util.Hashtable;
 
 public abstract class StorageObserver
 {
@@ -10,7 +8,7 @@ public abstract class StorageObserver
     }
     
     @SuppressWarnings("unused")
-    public void afterCreateUnit(String unit, Hashtable<String, DataType> keys)
+    public void afterCreateUnit(String unit, UnitKeys keys)
     {
     }
     
@@ -35,12 +33,12 @@ public abstract class StorageObserver
     }
     
     @SuppressWarnings("unused")
-    public void afterAddEntry(String unit, Storage.Entry entry)
+    public void afterAddEntry(String unit, StorageEntry entry)
     {
     }
     
     @SuppressWarnings("unused")
-    public void afterUpdateEntries(String unit, Storage.Entry entrySubset, Selector selector)
+    public void afterUpdateEntries(String unit, StorageEntry entrySubset, Selector selector)
     {
     }
     
