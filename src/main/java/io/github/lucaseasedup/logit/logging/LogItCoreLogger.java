@@ -22,12 +22,14 @@ public final class LogItCoreLogger
         this.core = core;
     }
     
-    public void open()
+    public synchronized void open()
     {
-        openLogFile(core.getConfig("config.yml").getString("logging.file.filename"));
+        openLogFile(
+                core.getConfig("config.yml").getString("logging.file.filename")
+        );
     }
     
-    public void close()
+    public synchronized void close()
     {
         if (logFileWriter != null)
         {
@@ -49,8 +51,8 @@ public final class LogItCoreLogger
     /**
      * Logs a message in the name of LogIt.
      * 
-     * <p> The logger message will be saved in a log file if doing so is permitted
-     * by the appropriate configuration setting.
+     * <p> The message will be saved to the log file if it's been enabled
+     * in the config.
      * 
      * @param level   the message level.
      * @param message the message to be logged.
@@ -65,7 +67,8 @@ public final class LogItCoreLogger
         if (level == null || message == null)
             throw new IllegalArgumentException();
         
-        if (core.getConfig("config.yml") != null && core.getConfig("config.yml").isLoaded())
+        if (core.getConfig("config.yml") != null
+                && core.getConfig("config.yml").isLoaded())
         {
             boolean fileLogEnabled = core.getConfig("config.yml")
                     .getBoolean("logging.file.enabled");
@@ -86,13 +89,15 @@ public final class LogItCoreLogger
                 }
                 catch (IOException ex)
                 {
-                    core.getPlugin().getLogger().log(Level.WARNING, "Could not log to file.", ex);
+                    core.getPlugin().getLogger().log(Level.WARNING,
+                            "Could not log to file", ex);
                 }
             }
             
             if (core.getConfig("config.yml").getBoolean("logging.verboseConsole"))
             {
-                System.out.println("[" + level + "] " + ChatColor.stripColor(message));
+                System.out.println("[" + level + "] "
+                        + ChatColor.stripColor(message));
                 
                 return;
             }
@@ -104,16 +109,19 @@ public final class LogItCoreLogger
     /**
      * Logs a message with a {@code Throwable} in the name of LogIt.
      * 
-     * <p> The logger message will be saved in a log file if doing so is permitted
-     * by the appropriate configuration setting.
+     * <p> The message will be saved to the log file if it's been enabled
+     * in the config.
      * 
      * @param level     the message level.
      * @param message   the message to be logged.
-     * @param throwable the throwable whose stack trace should be appended to the log.
+     * @param throwable the throwable whose stack trace should be appended
+     *                  to the log.
      * 
      * @see #log(Level, String)
      */
-    public synchronized void log(Level level, String message, Throwable throwable)
+    public synchronized void log(Level level,
+                                 String message,
+                                 Throwable throwable)
     {
         StringWriter sw = new StringWriter();
         
@@ -128,8 +136,8 @@ public final class LogItCoreLogger
     /**
      * Logs a {@code Throwable} in the name of LogIt.
      * 
-     * <p> The logger message will be saved in a log file if doing so is permitted
-     * by the appropriate configuration setting.
+     * <p> The message will be saved to the log file if it's been enabled
+     * in the config.
      * 
      * @param level     the logging level.
      * @param throwable the throwable to be logged.
@@ -186,7 +194,8 @@ public final class LogItCoreLogger
         return logFileWriter;
     }
     
-    private static final DateFormat LOG_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final DateFormat LOG_DATE_FORMAT =
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
     private final LogItCore core;
     private FileWriter logFileWriter;

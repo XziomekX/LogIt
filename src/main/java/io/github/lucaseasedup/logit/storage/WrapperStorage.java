@@ -4,6 +4,7 @@ import io.github.lucaseasedup.logit.LogItCore;
 import io.github.lucaseasedup.logit.logging.CustomLevel;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -64,7 +65,13 @@ public final class WrapperStorage extends Storage
             
             for (String unit : units)
             {
-                preloadedCache.put(unit, leading.selectEntries(unit));
+                PreloadedUnitCache unitCache = new PreloadedUnitCache(
+                        leading.getKeys(unit),
+                        leading.getPrimaryKey(unit),
+                        leading.selectEntries(unit)
+                );
+                
+                preloadedCache.put(unit, unitCache);
             }
         }
     }
@@ -126,7 +133,18 @@ public final class WrapperStorage extends Storage
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#getUnitNames()");
         
-        return leading.getUnitNames();
+        if (cacheType == CacheType.DISABLED)
+        {
+            return leading.getUnitNames();
+        }
+        else if (cacheType == CacheType.PRELOADED)
+        {
+            return new ArrayList<>(preloadedCache.keySet());
+        }
+        else
+        {
+            throw new RuntimeException("Unsupported cache type: " + cacheType);
+        }
     }
     
     @Override
@@ -135,7 +153,18 @@ public final class WrapperStorage extends Storage
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#getKeys(\"" + unit + "\")");
         
-        return leading.getKeys(unit);
+        if (cacheType == CacheType.DISABLED)
+        {
+            return leading.getKeys(unit);
+        }
+        else if (cacheType == CacheType.PRELOADED)
+        {
+            return preloadedCache.get(unit).getKeys();
+        }
+        else
+        {
+            throw new RuntimeException("Unsupported cache type: " + cacheType);
+        }
     }
     
     @Override
@@ -143,7 +172,18 @@ public final class WrapperStorage extends Storage
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#getPrimaryKey(\"" + unit + "\")");
         
-        return leading.getPrimaryKey(unit);
+        if (cacheType == CacheType.DISABLED)
+        {
+            return leading.getPrimaryKey(unit);
+        }
+        else if (cacheType == CacheType.PRELOADED)
+        {
+            return preloadedCache.get(unit).getPrimaryKey();
+        }
+        else
+        {
+            throw new RuntimeException("Unsupported cache type: " + cacheType);
+        }
     }
     
     @Override
@@ -158,7 +198,7 @@ public final class WrapperStorage extends Storage
         }
         else if (cacheType == CacheType.PRELOADED)
         {
-            List<Storage.Entry> entries = preloadedCache.get(unit);
+            List<Storage.Entry> entries = preloadedCache.get(unit).getEntryList();
             
             if (entries == null)
                 return null;
@@ -186,7 +226,7 @@ public final class WrapperStorage extends Storage
         }
         else if (cacheType == CacheType.PRELOADED)
         {
-            List<Storage.Entry> entries = preloadedCache.get(unit);
+            List<Storage.Entry> entries = preloadedCache.get(unit).getEntryList();
             
             if (entries == null)
                 return null;
@@ -216,7 +256,7 @@ public final class WrapperStorage extends Storage
         }
         else if (cacheType == CacheType.PRELOADED)
         {
-            List<Storage.Entry> entries = preloadedCache.get(unit);
+            List<Storage.Entry> entries = preloadedCache.get(unit).getEntryList();
             
             if (entries == null)
                 return null;
@@ -248,7 +288,7 @@ public final class WrapperStorage extends Storage
         }
         else if (cacheType == CacheType.PRELOADED)
         {
-            List<Storage.Entry> entries = preloadedCache.get(unit);
+            List<Storage.Entry> entries = preloadedCache.get(unit).getEntryList();
             
             if (entries == null)
                 return null;
@@ -290,7 +330,11 @@ public final class WrapperStorage extends Storage
         {
             if (!preloadedCache.containsKey(unit))
             {
-                preloadedCache.put(unit, new LinkedList<Storage.Entry>());
+                PreloadedUnitCache unitCache = new PreloadedUnitCache(
+                        keys, primaryKey, new LinkedList<Storage.Entry>()
+                );
+                
+                preloadedCache.put(unit, unitCache);
             }
         }
         
@@ -361,7 +405,7 @@ public final class WrapperStorage extends Storage
         {
             if (preloadedCache.containsKey(unit))
             {
-                preloadedCache.get(unit).clear();
+                preloadedCache.get(unit).getEntryList().clear();
             }
         }
         
@@ -433,10 +477,12 @@ public final class WrapperStorage extends Storage
         {
             if (preloadedCache.containsKey(unit))
             {
-                for (Storage.Entry entry : preloadedCache.get(unit))
+                for (Storage.Entry entry : preloadedCache.get(unit).getEntryList())
                 {
                     entry.put(key, "");
                 }
+                
+                preloadedCache.get(unit).getKeys().put(key, type);
             }
         }
         
@@ -470,7 +516,7 @@ public final class WrapperStorage extends Storage
         {
             if (preloadedCache.containsKey(unit))
             {
-                preloadedCache.get(unit).add(entry.copy());
+                preloadedCache.get(unit).getEntryList().add(entry.copy());
             }
         }
         
@@ -506,7 +552,7 @@ public final class WrapperStorage extends Storage
         {
             if (preloadedCache.containsKey(unit))
             {
-                for (Storage.Entry entry : preloadedCache.get(unit))
+                for (Storage.Entry entry : preloadedCache.get(unit).getEntryList())
                 {
                     if (SqlUtils.resolveSelector(selector, entry))
                     {
@@ -549,16 +595,16 @@ public final class WrapperStorage extends Storage
         {
             if (preloadedCache.containsKey(unit))
             {
-                Iterator<Storage.Entry> it =
-                        preloadedCache.get(unit).iterator();
+                Iterator<Storage.Entry> entryIt =
+                        preloadedCache.get(unit).getEntryList().iterator();
                 
-                while (it.hasNext())
+                while (entryIt.hasNext())
                 {
-                    Storage.Entry entry = it.next();
+                    Storage.Entry entry = entryIt.next();
                     
                     if (SqlUtils.resolveSelector(selector, entry))
                     {
-                        it.remove();
+                        entryIt.remove();
                     }
                 }
             }
@@ -759,5 +805,5 @@ public final class WrapperStorage extends Storage
             new Hashtable<>();
     private final Vector<StorageObserver> obs = new Vector<>();
     
-    private Hashtable<String, List<Storage.Entry>> preloadedCache;
+    private Hashtable<String, PreloadedUnitCache> preloadedCache;
 }

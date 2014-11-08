@@ -89,14 +89,25 @@ public final class PlayerEventListener extends LogItCoreObject
         // =======================================
         timing.startSelectAccount();
         
-        Account account = getAccountManager().selectAccount(username, Arrays.asList(
-                keys().username(),
-                keys().uuid(), // for onJoin()
-                keys().login_session(),
-                keys().is_locked(),
-                keys().display_name(),
-                keys().persistence()
-        ));
+        List<String> keys;
+        
+        if (getConfig("secret.yml").getBoolean("fullLoginSelect"))
+        {
+            keys = keys().getNames();
+        }
+        else
+        {
+            keys = Arrays.asList(
+                    keys().username(),
+                    keys().uuid(), // for onJoin()
+                    keys().login_session(),
+                    keys().is_locked(),
+                    keys().display_name(),
+                    keys().persistence()
+            );
+        }
+        
+        Account account = getAccountManager().selectAccount(username, keys);
         
         timing.endSelectAccount();
         // =======================================

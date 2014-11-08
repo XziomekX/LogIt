@@ -40,7 +40,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     /**
      * Constructs a new {@code AccountManager}.
      * 
-     * @param storage the storage that this {@code AccountManager} will operate on.
+     * @param storage the storage that this {@code AccountManager} will
+     *                operate on.
      * @param unit    the name of a unit eligible for account storage.
      * @param keys    the account keys present in the specified unit.
      */
@@ -149,7 +150,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     }
     
     /**
-     * Selects an account with the given username from the underlying storage unit.
+     * Selects an account with the given username from the underlying storage
+     * unit.
      * 
      * @param username  the username of an account to be selected.
      * @param queryKeys the account keys to be returned by this query.
@@ -191,7 +193,8 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             else
             {
                 // All the query keys can be found in the cached entry.
-                if (CollectionUtils.isSubset(queryKeys, cachedAccount.getEntry().getKeys()))
+                if (CollectionUtils.isSubset(queryKeys,
+                        cachedAccount.getEntry().getKeys()))
                 {
                     return cachedAccount;
                 }
@@ -219,8 +222,15 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         
         try
         {
-            entries = storage.selectEntries(unit, queryKeys,
-                    new SelectorCondition(keys.username(), Infix.EQUALS, username));
+            entries = storage.selectEntries(
+                    unit,
+                    queryKeys,
+                    new SelectorCondition(
+                            keys.username(),
+                            Infix.EQUALS,
+                            username
+                    )
+            );
         }
         catch (IOException ex)
         {
@@ -253,7 +263,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             {
                 if (!cachedAccount.getEntry().containsKey(datum.getKey()))
                 {
-                    cachedAccount.getEntry().put(datum.getKey(), datum.getValue());
+                    cachedAccount.getEntry().put(
+                            datum.getKey(), datum.getValue()
+                    );
                     cachedAccount.getEntry().clearKeyDirty(datum.getKey());
                 }
             }
@@ -376,10 +388,19 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     
     private boolean fetchRegistrationStatus(String username)
     {
-        Account account = selectAccount(
-                username,
-                Arrays.asList(keys.username())
-        );
+        Account account;
+        
+        if (buffer.containsKey(username))
+        {
+            account = buffer.get(username);
+        }
+        else
+        {
+            account = selectAccount(
+                    username,
+                    Arrays.asList(keys.username())
+            );
+        }
         
         return account != null;
     }
@@ -438,7 +459,6 @@ public final class AccountManager extends LogItCoreObject implements Runnable
                 entry.clearKeyDirty(datum.getKey());
             }
             
-            buffer.remove(account.getUsername());
             buffer.put(account.getUsername(), account);
             
             log(Level.FINE, t("createAccount.success.log")
@@ -506,7 +526,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable
                             .put(keys().uuid(), "")
                             .put(keys().display_name(), "")
                             .build(),
-                    new SelectorCondition(keys.username(), Infix.EQUALS, username)
+                    new SelectorCondition(
+                            keys.username(),
+                            Infix.EQUALS,
+                            username
+                    )
             );
             
             if (buffer.get(username) != null)
@@ -523,20 +547,22 @@ public final class AccountManager extends LogItCoreObject implements Runnable
     }
     
     /**
-     * Removes an account with the given username from the underlying storage unit.
+     * Removes an account with the given username from the underlying storage
+     * unit.
      * 
-     * <p> Removing an account does not entail logging out the corresponding player.
-     * To log out a player, use {@link SessionManager#endSession(String)}
-     * or {@link SessionManager#endSession(Player)}.
+     * <p> Removing an account does not entail logging out the corresponding
+     * player. To log out a player, use {@link SessionManager#endSession}.
      * 
      * <p> This method emits the {@code AccountRemoveEvent} event.
      * 
      * @param username the username of an account to be removed.
      * 
      * @return a {@code CancellableState} indicating whether this operation
-     *         has been cancelled by one of the {@code AccountRemoveEvent} handlers.
+     *         has been cancelled by one of the {@code AccountRemoveEvent}
+     *         handlers.
      * 
-     * @throws IllegalArgumentException if {@code username} is {@code null} or blank.
+     * @throws IllegalArgumentException if {@code username} is {@code null}
+     *                                  or blank.
      * 
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
@@ -557,8 +583,13 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         
         try
         {
-            storage.removeEntries(unit,
-                    new SelectorCondition(keys.username(), Infix.EQUALS, username)
+            storage.removeEntries(
+                    unit,
+                    new SelectorCondition(
+                            keys.username(),
+                            Infix.EQUALS,
+                            username
+                    )
             );
             
             buffer.put(username, null);
@@ -659,7 +690,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable
                 if (!bufferUsageGraphWritten)
                 {
                     bufferUsageGraphWriter.newLine();
-                    bufferUsageGraphWriter.write(":" + System.currentTimeMillis());
+                    bufferUsageGraphWriter.write(
+                            ":" + System.currentTimeMillis()
+                    );
                     bufferUsageGraphWriter.newLine();
                 }
                 
@@ -689,11 +722,15 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             {
                 try
                 {
-                    storage.updateEntries(unit, e.getValue(), new SelectorCondition(
-                            keys.username(),
-                            Infix.EQUALS,
-                            e.getKey().toLowerCase()
-                    ));
+                    storage.updateEntries(
+                            unit,
+                            e.getValue(),
+                            new SelectorCondition(
+                                    keys.username(),
+                                    Infix.EQUALS,
+                                    e.getKey().toLowerCase()
+                            )
+                    );
                     
                     dirtyAccounts.get(e.getKey()).runSaveCallbacks(true);
                 }
