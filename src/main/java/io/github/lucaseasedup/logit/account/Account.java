@@ -606,7 +606,7 @@ public final class Account extends LogItCoreObject
             records.remove(0);
         }
         
-        records.add(String.valueOf(unixTime) + ";" + ip + ";" + succeeded);
+        records.add(unixTime + ";" + ip + ";" + succeeded);
         
         StringBuilder historyBuilder = new StringBuilder();
         

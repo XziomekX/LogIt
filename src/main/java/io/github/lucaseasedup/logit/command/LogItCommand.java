@@ -18,7 +18,9 @@ import org.bukkit.entity.Player;
 public final class LogItCommand extends LogItCoreObject implements TabExecutor
 {
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+    public boolean onCommand(
+            CommandSender sender, Command cmd, String label, String[] args
+    )
     {
         HubCommand hubCommand = findHubCommand(args);
         
@@ -187,7 +189,8 @@ public final class LogItCommand extends LogItCoreObject implements TabExecutor
                 hubCommandArgs[hubCommandArgs.length - 1] = "";
             }
             
-            if (params.size() != 0 || i == subcommandWords.length + params.size() + 1)
+            if (!params.isEmpty()
+                    || i == subcommandWords.length + params.size() + 1)
             {
                 hubCommandArgs[hubCommandArgs.length - 1] += " ";
             }

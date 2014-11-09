@@ -264,8 +264,8 @@ public final class SqlUtils
             sb.append(" (");
             sb.append(valueQuote);
             
-            if (selectorCondition.getRelation().equals(Infix.ENDS_WITH)
-                    || selectorCondition.getRelation().equals(Infix.CONTAINS))
+            if (selectorCondition.getRelation() == Infix.ENDS_WITH
+                    || selectorCondition.getRelation() == Infix.CONTAINS)
             {
                 sb.append("%");
             }
@@ -274,8 +274,8 @@ public final class SqlUtils
                     selectorCondition.getValue(), valueQuote, true
             ));
             
-            if (selectorCondition.getRelation().equals(Infix.STARTS_WITH)
-                    || selectorCondition.getRelation().equals(Infix.CONTAINS))
+            if (selectorCondition.getRelation() == Infix.STARTS_WITH
+                    || selectorCondition.getRelation() == Infix.CONTAINS)
             {
                 sb.append("%");
             }

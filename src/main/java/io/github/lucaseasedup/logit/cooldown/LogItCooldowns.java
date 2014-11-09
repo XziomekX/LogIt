@@ -18,7 +18,11 @@ public final class LogItCooldowns
         LogItCore logItCore = LogItCore.getInstance();
         long cooldownTime;
         
-        if (cooldown == REGISTER)
+        if (cooldown == DUMMY)
+        {
+            cooldownTime = 0;
+        }
+        else if (cooldown == REGISTER)
         {
             cooldownTime = logItCore.getConfig("config.yml")
                     .getTime("cooldowns.register", TimeUnit.MILLISECONDS);
@@ -55,6 +59,7 @@ public final class LogItCooldowns
         );
     }
     
+    public static final Cooldown DUMMY = new Cooldown("logit.dummy");
     public static final Cooldown REGISTER = new Cooldown("logit.register");
     public static final Cooldown UNREGISTER = new Cooldown("logit.unregister");
     public static final Cooldown CHANGEPASS = new Cooldown("logit.changepass");

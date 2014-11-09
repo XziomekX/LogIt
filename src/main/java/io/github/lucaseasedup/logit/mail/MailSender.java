@@ -67,7 +67,10 @@ public final class MailSender
         
         for (String address : to)
         {
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(address));
+            message.addRecipient(
+                    Message.RecipientType.TO,
+                    new InternetAddress(address)
+            );
         }
         
         message.setSentDate(new Date());

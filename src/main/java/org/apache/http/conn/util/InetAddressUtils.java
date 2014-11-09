@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  * 
  * @since 4.0
  */
-public class InetAddressUtils
+public final class InetAddressUtils
 {
     private InetAddressUtils()
     {

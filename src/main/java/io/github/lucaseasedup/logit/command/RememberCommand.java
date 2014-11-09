@@ -13,10 +13,13 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public final class RememberCommand extends LogItCoreObject implements CommandExecutor
+public final class RememberCommand extends LogItCoreObject
+        implements CommandExecutor
 {
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+    public boolean onCommand(
+            CommandSender sender, Command cmd, String label, String[] args
+    )
     {
         Player player = null;
         

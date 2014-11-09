@@ -6,7 +6,7 @@ public abstract class ObjectWrapper
 {
     public ObjectWrapper(Object o)
     {
-        this.holder = new ObjectHolder(o);
+        this.holder = new Holder(o);
     }
     
     public final <T extends ObjectWrapper> T cast(Class<T> castTo)
@@ -30,30 +30,30 @@ public abstract class ObjectWrapper
         return newWrapper;
     }
     
-    public final ObjectHolder getHolder()
+    public final Holder getHolder()
     {
         return holder;
     }
     
-    public static final class ObjectHolder
+    public static final class Holder
     {
-        private ObjectHolder(Object o)
+        private Holder(Object obj)
         {
-            this.o = o;
+            this.obj = obj;
         }
         
         public Object get()
         {
-            return o;
+            return obj;
         }
         
-        private void set(Object o)
+        private void set(Object obj)
         {
-            this.o = o;
+            this.obj = obj;
         }
         
-        private Object o = null;
+        private Object obj = null;
     }
     
-    private final ObjectHolder holder;
+    private final Holder holder;
 }

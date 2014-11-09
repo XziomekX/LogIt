@@ -8,7 +8,7 @@ import java.util.Map;
  * 
  * @modifiedby LucasEU
  */
-public class TabObject
+public final class TabObject
 {
     public void setPriority(TabAPI tabApi, int priority)
     {
@@ -29,7 +29,7 @@ public class TabObject
         }
     }
     
-    public TabHolder getTab()
+    /* package */ TabHolder getTab()
     {
         int i = 3;
         

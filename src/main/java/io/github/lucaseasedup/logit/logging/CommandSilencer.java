@@ -53,7 +53,7 @@ public final class CommandSilencer extends LogItCoreObject
                 if (isDisposed())
                     return true;
                 
-                if (!record.getLoggerName().equals("Minecraft-Server"))
+                if (!"Minecraft-Server".equals(record.getLoggerName()))
                     return true;
                 
                 // Short-circut with fast contains() call.

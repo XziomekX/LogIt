@@ -85,7 +85,7 @@ public final class AuthMePasswordHelper
                         CommonHashingModel.getSha256(password) + line[2]
                 );
                 
-                return hashedPassword.equals("$SHA$" + line[2] + "$" + hash);
+                return hashedPassword.equals("$SHA$" + line[2] + '$' + hash);
             }
             case "SHA512":
             {

@@ -390,16 +390,16 @@ public final class ProfileManager extends LogItCoreObject
         }
     }
     
-    private final static Pattern FIELD_DEFINITION_PATTERN =
+    private static final Pattern FIELD_DEFINITION_PATTERN =
             Pattern.compile("^\\s*([A-Za-z_0-9]+)"   // Type name
                            + "\\s*\\[(.*)\\]\\s*$"); // Constraint arguments
     
-    private final static Pattern INTEGER_RANGE_PATTERN =
+    private static final Pattern INTEGER_RANGE_PATTERN =
             Pattern.compile("^\\s*(-?[0-9]+)"        // Min
                            + "\\s*\\.\\.\\."         // Range operator
                            + "\\s*(-?[0-9]+)\\s*$"); // Max
     
-    private final static Pattern FLOAT_RANGE_PATTERN =
+    private static final Pattern FLOAT_RANGE_PATTERN =
             Pattern.compile("^\\s*(-?[0-9]+\\.[0-9]+)"        // Min
                            + "\\s*\\.\\.\\."                  // Range operator
                            + "\\s*(-?[0-9]+\\.[0-9]+)\\s*$"); // Max

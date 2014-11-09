@@ -2,7 +2,9 @@ package io.github.lucaseasedup.logit.command;
 
 public final class CommandHelpLine
 {
-    private CommandHelpLine(String command, String descriptionLabel, String optionalParam)
+    private CommandHelpLine(
+            String command, String descriptionLabel, String optionalParam
+    )
     {
         this.command = command;
         this.descriptionLabel = descriptionLabel;

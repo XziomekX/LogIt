@@ -54,7 +54,9 @@ public final class BlockUtils
                 && material != Material.TRIPWIRE;
     }
     
-    public static boolean isBlockAdjacent(Block block, BlockFace face, Material... toMaterials)
+    public static boolean isBlockAdjacent(
+            Block block, BlockFace face, Material... toMaterials
+    )
     {
         if (block == null || face == null || toMaterials == null)
             throw new IllegalArgumentException();
@@ -63,7 +65,7 @@ public final class BlockUtils
         
         for (Material toMaterial : toMaterials)
         {
-            if (!block.getType().equals(toMaterial))
+            if (block.getType() != toMaterial)
             {
                 return false;
             }

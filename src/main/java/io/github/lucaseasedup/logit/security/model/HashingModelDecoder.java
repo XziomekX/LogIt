@@ -8,8 +8,15 @@ import java.util.regex.Pattern;
 
 public final class HashingModelDecoder
 {
+    private HashingModelDecoder()
+    {
+    }
+    
     public static HashingModel decode(String string)
     {
+        if (string == null)
+            throw new IllegalArgumentException();
+        
         if (cache.containsKey(string))
         {
             return cache.get(string);
@@ -24,6 +31,9 @@ public final class HashingModelDecoder
     
     private static HashingModel decodeWithoutCache(String string)
     {
+        if (string == null)
+            throw new IllegalArgumentException();
+        
         if (string.startsWith("authme:"))
         {
             return new AuthMeHashingModel(string.substring("authme:".length()));

@@ -33,7 +33,7 @@ public final class IoUtils
             char[] buffer = new char[1024 * 4];
             int n;
             
-            while (-1 != (n = isr.read(buffer)))
+            while ((n = isr.read(buffer)) != -1)
             {
                 sw.write(buffer, 0, n);
             }
@@ -60,7 +60,7 @@ public final class IoUtils
             throw new IllegalArgumentException();
         
         int readBytes;
-        byte[] buffer = new byte[4096];
+        byte[] buffer = new byte[1024 * 4];
         
         String jarUrlPath = IoUtils.class.getProtectionDomain()
                 .getCodeSource().getLocation().getPath();

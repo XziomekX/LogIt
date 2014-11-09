@@ -43,7 +43,7 @@ public interface Storage extends AutoCloseable
     public void addKey(String unit, String key, DataType type)
             throws IOException;
     public void addEntry(String unit, StorageEntry entry)
-            throws IOException;
+            throws DuplicateEntryException, IOException;
     public void updateEntries(
             String unit, StorageEntry entrySubset, Selector selector
     ) throws IOException;

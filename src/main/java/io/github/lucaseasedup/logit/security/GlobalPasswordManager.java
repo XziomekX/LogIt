@@ -2,7 +2,7 @@ package io.github.lucaseasedup.logit.security;
 
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.config.TimeUnit;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -83,9 +83,11 @@ public final class GlobalPasswordManager extends LogItCoreObject implements Runn
     }
     
     /**
-     * Recommended task period of {@code GlobalPasswordManager} running as a Bukkit task.
+     * Recommended task period of {@code GlobalPasswordManager}
+     * running as a Bukkit task.
      */
-    public static final long TASK_PERIOD = TimeUnit.SECONDS.convertTo(1, TimeUnit.TICKS);
+    public static final long TASK_PERIOD =
+            TimeUnit.SECONDS.convertTo(1, TimeUnit.TICKS);
     
-    private Map<String, Long> passwords = new Hashtable<>();
+    private Map<String, Long> passwords = new HashMap<>();
 }

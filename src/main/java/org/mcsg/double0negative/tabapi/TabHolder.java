@@ -8,7 +8,7 @@ import io.github.lucaseasedup.logit.util.ArrayUtils;
  * @author Drew
  * @modifiedby LucasEU
  */
-class TabHolder
+/* package */ final class TabHolder
 {
     public TabHolder(TabAPI tabApi)
     {

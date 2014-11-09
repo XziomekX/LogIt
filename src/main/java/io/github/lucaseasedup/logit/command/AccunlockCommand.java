@@ -12,10 +12,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-public final class AccunlockCommand extends LogItCoreObject implements TabExecutor
+public final class AccunlockCommand extends LogItCoreObject
+        implements TabExecutor
 {
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+    public boolean onCommand(
+            CommandSender sender, Command cmd, String label, String[] args
+    )
     {
         Player player = null;
         

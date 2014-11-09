@@ -14,8 +14,9 @@ public final class HashingAlgorithmValidator implements PropertyValidator
         if (value == null)
             return false;
         
-        HashingModel hashingModel =
-                HashingModelDecoder.decode(value.toString());
+        HashingModel hashingModel = HashingModelDecoder.decode(
+                value.toString()
+        );
         
         return hashingModel != null
                 && !(hashingModel instanceof AuthMeHashingModel);

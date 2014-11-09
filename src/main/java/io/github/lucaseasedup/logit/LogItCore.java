@@ -76,7 +76,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -137,15 +136,6 @@ public final class LogItCore
         TakeoffTiming timing = new TakeoffTiming();
         timing.start();
         
-        scheduleTask(new BukkitRunnable()
-        {
-            @Override
-            public void run()
-            {
-                globalClock.advance();
-            }
-        }, 0L, globalClock.getInterval());
-        
         // =======================================
         timing.startEvent();
         
@@ -158,6 +148,15 @@ public final class LogItCore
         
         timing.endEvent();
         // =======================================
+        
+        scheduleTask(new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                globalClock.advance();
+            }
+        }, 0L, globalClock.getInterval());
         
         getDataFolder().mkdir();
         
@@ -479,7 +478,7 @@ public final class LogItCore
                 .leading(leadingAccountStorage)
                 .cacheType(accountCacheType)
                 .build();
-        Hashtable<String, String> unitMappings = new Hashtable<>();
+        Map<String, String> unitMappings = new HashMap<>();
         unitMappings.put(leadingUnit, mirrorUnit);
         accountStorage.mirrorStorage(mirrorAccountStorage, unitMappings);
         
@@ -731,11 +730,11 @@ public final class LogItCore
                 getConfig("config.yml").getString("storage.sessions.filename")
         );
         
-        if (sessionsFile.isFile())
+        if (getSessionManager() != null && sessionsFile.isFile())
         {
             try
             {
-                sessionManager.importSessions(sessionsFile);
+                getSessionManager().importSessions(sessionsFile);
             }
             catch (IOException ex)
             {
@@ -801,46 +800,63 @@ public final class LogItCore
                 getConfig("config.yml").getString("storage.sessions.filename")
         );
         
-        try
+        if (getSessionManager() != null)
         {
-            sessionManager.exportSessions(sessionsFile);
-        }
-        catch (IOException ex)
-        {
-            log(Level.WARNING, "Could not export sessions.", ex);
+            try
+            {
+                getSessionManager().exportSessions(sessionsFile);
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, "Could not export sessions.", ex);
+            }
         }
         
         PlayerEventListener playerEventListener =
                 getEventListener(PlayerEventListener.class);
         
-        for (final Player player : Bukkit.getOnlinePlayers())
+        if (playerEventListener != null)
         {
-            playerEventListener.onQuit(player, new QuitMessage()
+            for (final Player player : Bukkit.getOnlinePlayers())
             {
-                @Override
-                public void set(String quitMessage)
+                playerEventListener.onQuit(player, new QuitMessage()
                 {
-                    MessageHelper.broadcastMsgExcept(quitMessage,
-                            Arrays.asList(player.getName()));
-                }
-            });
+                    @Override
+                    public void set(String quitMessage)
+                    {
+                        MessageHelper.broadcastMsgExcept(quitMessage,
+                                Arrays.asList(player.getName()));
+                    }
+                });
+            }
         }
         
         disableCommands();
         
-        getPersistenceManager().unregisterSerializer(LocationSerializer.class);
-        getPersistenceManager().unregisterSerializer(AirBarSerializer.class);
-        getPersistenceManager().unregisterSerializer(HealthBarSerializer.class);
-        getPersistenceManager().unregisterSerializer(ExperienceSerializer.class);
-        getPersistenceManager().unregisterSerializer(HungerBarSerializer.class);
-        
-        try
+        if (getPersistenceManager() != null)
         {
-            getAccountManager().getStorage().close();
+            getPersistenceManager()
+                    .unregisterSerializer(LocationSerializer.class);
+            getPersistenceManager()
+                    .unregisterSerializer(AirBarSerializer.class);
+            getPersistenceManager()
+                    .unregisterSerializer(HealthBarSerializer.class);
+            getPersistenceManager()
+                    .unregisterSerializer(ExperienceSerializer.class);
+            getPersistenceManager()
+                    .unregisterSerializer(HungerBarSerializer.class);
         }
-        catch (IOException ex)
+        
+        if (getAccountManager() != null)
         {
-            log(Level.WARNING, "Could not close database connection.", ex);
+            try
+            {
+                getAccountManager().getStorage().close();
+            }
+            catch (IOException ex)
+            {
+                log(Level.WARNING, "Could not close database connection.", ex);
+            }
         }
         
         Bukkit.getScheduler().cancelTasks(getPlugin());

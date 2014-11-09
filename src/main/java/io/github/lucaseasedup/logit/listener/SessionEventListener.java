@@ -14,13 +14,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public final class SessionEventListener extends LogItCoreObject implements Listener
+public final class SessionEventListener extends LogItCoreObject
+        implements Listener
 {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onStart(SessionStartEvent event)
     {
         String username = event.getUsername();
-        
         Account account = getAccountManager().selectAccount(username, Arrays.asList(
                 keys().username(),
                 keys().persistence()
@@ -67,7 +67,6 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
     private void onEnd(SessionEndEvent event)
     {
         String username = event.getUsername();
-        
         Account account = getAccountManager().selectAccount(username, Arrays.asList(
                 keys().username(),
                 keys().persistence()
@@ -113,7 +112,7 @@ public final class SessionEventListener extends LogItCoreObject implements Liste
                 long promptPeriod = getConfig("config.yml")
                         .getTime("forceLogin.periodicalPrompt.period", TimeUnit.TICKS);
                 
-                getMessageDispatcher().dispatchRepeatingForceLoginPrompter(
+                getMessageDispatcher().dispatchForceLoginPrompter(
                         username, promptPeriod, promptPeriod
                 );
             }

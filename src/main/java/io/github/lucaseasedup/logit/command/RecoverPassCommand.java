@@ -21,10 +21,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public final class RecoverPassCommand extends LogItCoreObject implements CommandExecutor
+public final class RecoverPassCommand extends LogItCoreObject
+        implements CommandExecutor
 {
     @Override
-    public boolean onCommand(final CommandSender sender, Command cmd, String label, String[] args)
+    public boolean onCommand(
+            final CommandSender sender, Command cmd, String label, String[] args
+    )
     {
         final Player player;
         

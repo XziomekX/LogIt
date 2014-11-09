@@ -21,10 +21,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public final class LoginCommand extends LogItCoreObject implements CommandExecutor
+public final class LoginCommand extends LogItCoreObject
+        implements CommandExecutor
 {
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+    public boolean onCommand(
+            CommandSender sender, Command cmd, String label, String[] args
+    )
     {
         final Player player;
         
@@ -37,7 +40,8 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
             player = null;
         }
         
-        boolean disablePasswords = getConfig("secret.yml").getBoolean("passwords.disable");
+        boolean disablePasswords = getConfig("secret.yml")
+                .getBoolean("passwords.disable");
         
         if (args.length > 0 && args[0].equals("-x") && args.length <= 2)
         {
@@ -236,7 +240,8 @@ public final class LoginCommand extends LogItCoreObject implements CommandExecut
                     String promptOn = getConfig("config.yml")
                             .getString("premiumTakeover.promptOn");
                     
-                    if (isPremium && premiumTakeoverEnabled && promptOn.equals("failed-login"))
+                    if (isPremium && premiumTakeoverEnabled
+                            && promptOn.equals("failed-login"))
                     {
                         new BukkitRunnable()
                         {

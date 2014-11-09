@@ -39,9 +39,12 @@ import java.io.UnsupportedEncodingException;
  * @since 1.1
  * @version 1.3
  */
-public class Base64
+public final class Base64
 {
-
+    private Base64()
+    {
+    }
+    
     /**
      * <p>
      * Encodes a string.

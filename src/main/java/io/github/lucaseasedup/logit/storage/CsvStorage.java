@@ -162,6 +162,7 @@ public final class CsvStorage implements Storage
             {
                 StringBuilder lineBuilder = new StringBuilder(line);
                 
+                // Read records spanning multiple lines.
                 while (!line.endsWith("\""))
                 {
                     line = br.readLine();
@@ -321,7 +322,9 @@ public final class CsvStorage implements Storage
             for (String key : keys.keySet())
             {
                 if (sb.length() > 0)
+                {
                     sb.append(",");
+                }
                 
                 String value = entry.get(key);
                 

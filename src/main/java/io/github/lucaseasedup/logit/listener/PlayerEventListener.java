@@ -61,7 +61,7 @@ public final class PlayerEventListener extends LogItCoreObject
     @EventHandler(priority = EventPriority.NORMAL)
     private void onLogin(final PlayerLoginEvent event)
     {
-        if (!Result.ALLOWED.equals(event.getResult()))
+        if (event.getResult() != Result.ALLOWED)
             return;
         
         Player player = event.getPlayer();
@@ -413,7 +413,7 @@ public final class PlayerEventListener extends LogItCoreObject
                 Block nearestBlockBelow = BlockUtils.getNearestBlockBelow(playerLocation);
                 
                 if (nearestBlockBelow != null
-                        && nearestBlockBelow.getType().equals(Material.PORTAL))
+                        && nearestBlockBelow.getType() == Material.PORTAL)
                 {
                     playerLocation = BlockUtils.getNearestSafeSpace(playerLocation, 1000);
                     
@@ -441,7 +441,7 @@ public final class PlayerEventListener extends LogItCoreObject
                     long promptDelay = TimeUnit.SECONDS
                             .convertTo(1, TimeUnit.TICKS);
                     
-                    getMessageDispatcher().dispatchRepeatingForceLoginPrompter(
+                    getMessageDispatcher().dispatchForceLoginPrompter(
                             username,
                             promptDelay,
                             promptPeriod
@@ -460,7 +460,7 @@ public final class PlayerEventListener extends LogItCoreObject
                 long promptDelay = TimeUnit.SECONDS
                         .convertTo(1, TimeUnit.TICKS);
                 
-                getMessageDispatcher().dispatchRepeatingForceLoginPrompter(
+                getMessageDispatcher().dispatchForceLoginPrompter(
                         username,
                         promptDelay + promptPeriod,
                         promptPeriod

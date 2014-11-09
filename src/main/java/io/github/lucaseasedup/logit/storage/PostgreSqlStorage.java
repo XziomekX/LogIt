@@ -326,7 +326,8 @@ public final class PostgreSqlStorage implements Storage
     }
     
     @Override
-    public void addEntry(String unit, StorageEntry entry) throws IOException
+    public void addEntry(String unit, StorageEntry entry)
+            throws DuplicateEntryException, IOException
     {
         String sql = "INSERT INTO \"" + SqlUtils.escapeQuotes(unit, "\"", true) + "\""
                    + " (" + SqlUtils.translateEntryNames(entry, "\"") + ")"
@@ -338,7 +339,14 @@ public final class PostgreSqlStorage implements Storage
         }
         catch (SQLException ex)
         {
-            throw new IOException(ex);
+            if ("23000".equals(ex.getSQLState()))
+            {
+                throw new DuplicateEntryException();
+            }
+            else
+            {
+                throw new IOException(ex);
+            }
         }
     }
     

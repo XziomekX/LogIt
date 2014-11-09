@@ -9,7 +9,8 @@ import io.github.lucaseasedup.logit.hooks.EssentialsHook;
 import io.github.lucaseasedup.logit.hooks.VanishNoPacketHook;
 import io.github.lucaseasedup.logit.locale.Locale;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,7 +19,8 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public final class LogItMessageDispatcher extends LogItCoreObject implements Listener
+public final class LogItMessageDispatcher extends LogItCoreObject
+        implements Listener
 {
     @Override
     public void dispose()
@@ -30,9 +32,9 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         }
     }
     
-    public void dispatchMessage(final String username,
-                                final String message,
-                                long delay)
+    public void dispatchMessage(
+            final String username, final String message, long delay
+    )
     {
         if (username == null || message == null || delay < 0)
             throw new IllegalArgumentException();
@@ -127,9 +129,9 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         new ForceLoginPrompter(username).runTaskLater(getPlugin(), delay);
     }
     
-    public void dispatchRepeatingForceLoginPrompter(String username,
-                                                    long delay,
-                                                    long period)
+    public void dispatchForceLoginPrompter(
+            String username, long delay, long period
+    )
     {
         if (username == null || delay < 0 || period <= 0)
             throw new IllegalArgumentException();
@@ -247,6 +249,5 @@ public final class LogItMessageDispatcher extends LogItCoreObject implements Lis
         private final String username;
     }
     
-    private Hashtable<Player, Long> forceLoginPromptIntervals =
-            new Hashtable<>();
+    private Map<Player, Long> forceLoginPromptIntervals = new HashMap<>();
 }

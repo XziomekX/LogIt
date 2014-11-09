@@ -22,7 +22,7 @@ public final class EssentialsHook
                 Bukkit.getPluginManager().getPlugin("Essentials");
         String essVersion = ess.getDescription().getVersion();
         
-        if (essVersion.equals("2.12.1"))
+        if ("2.12.1".equals(essVersion))
         {
             return ess.getUser((Object) player).isVanished();
         }

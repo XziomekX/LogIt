@@ -6,12 +6,11 @@ import io.github.lucaseasedup.logit.util.CollectionUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -29,7 +28,7 @@ public final class WrapperStorage implements Storage
         
         if (cacheType == CacheType.PRELOADED)
         {
-            preloadedCache = new Hashtable<>();
+            preloadedCache = new HashMap<>();
         }
     }
     
@@ -113,9 +112,9 @@ public final class WrapperStorage implements Storage
     @Override
     public synchronized void close() throws IOException
     {
-        for (StorageObserver o : obs)
+        for (StorageObserver observer : observers)
         {
-            o.beforeClose();
+            observer.beforeClose();
         }
         
         log(CustomLevel.INTERNAL, "WrapperStorage#close()");
@@ -217,8 +216,8 @@ public final class WrapperStorage implements Storage
     ) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#selectEntries("
-                                + "\"" + unit + "\", "
-                                + SqlUtils.translateSelector(selector, "`", "'") + ")");
+                + "\"" + unit + "\", "
+                + SqlUtils.translateSelector(selector, "`", "'") + ")");
         
         if (cacheType == CacheType.DISABLED)
         {
@@ -247,8 +246,8 @@ public final class WrapperStorage implements Storage
     ) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#selectEntries("
-                                + "\"" + unit + "\", "
-                                + Arrays.toString(keys.toArray()) + ")");
+                + "\"" + unit + "\", "
+                + Arrays.toString(keys.toArray()) + ")");
         
         if (cacheType == CacheType.DISABLED)
         {
@@ -277,9 +276,9 @@ public final class WrapperStorage implements Storage
     ) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#selectEntries("
-                                + "\"" + unit + "\", "
-                                + Arrays.toString(keys.toArray()) + ", "
-                                + SqlUtils.translateSelector(selector, "`", "'") + ")");
+                + "\"" + unit + "\", "
+                + Arrays.toString(keys.toArray()) + ", "
+                + SqlUtils.translateSelector(selector, "`", "'") + ")");
         
         if (cacheType == CacheType.DISABLED)
         {
@@ -308,10 +307,10 @@ public final class WrapperStorage implements Storage
     ) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#createUnit("
-                                + "\"" + unit + "\", "
-                                + "Hashtable {keys: ["
-                                    + CollectionUtils.toString(keys.keySet())
-                                + "]})");
+                + "\"" + unit + "\", "
+                + "UnitKeys {keys: ["
+                        + CollectionUtils.toString(keys.keySet())
+                + "]})");
         
         leading.createUnit(unit, keys, primaryKey);
         
@@ -336,9 +335,9 @@ public final class WrapperStorage implements Storage
             }
         }
         
-        for (StorageObserver o : obs)
+        for (StorageObserver observer : observers)
         {
-            o.afterCreateUnit(unit, keys);
+            observer.afterCreateUnit(unit, keys);
         }
     }
     
@@ -347,15 +346,15 @@ public final class WrapperStorage implements Storage
             throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#renameUnit("
-                                + "\"" + unit + "\", "
-                                + "\"" + newName + "\")");
+                + "\"" + unit + "\", "
+                + "\"" + newName + "\")");
         
         if (unit.equals(newName))
             throw new IllegalArgumentException();
         
         leading.renameUnit(unit, newName);
         
-        for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
+        for (Map.Entry<Storage, Map<String, String>> e : mirrors.entrySet())
         {
             String unitMapping = e.getValue().get(unit);
             
@@ -376,9 +375,9 @@ public final class WrapperStorage implements Storage
             }
         }
         
-        for (StorageObserver o : obs)
+        for (StorageObserver observer : observers)
         {
-            o.afterRenameUnit(unit, newName);
+            observer.afterRenameUnit(unit, newName);
         }
     }
     
@@ -386,7 +385,7 @@ public final class WrapperStorage implements Storage
     public synchronized void eraseUnit(String unit) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#eraseUnit("
-                                + "\"" + unit + "\")");
+                + "\"" + unit + "\")");
         
         leading.eraseUnit(unit);
         
@@ -407,9 +406,9 @@ public final class WrapperStorage implements Storage
             }
         }
         
-        for (StorageObserver o : obs)
+        for (StorageObserver observer : observers)
         {
-            o.afterEraseUnit(unit);
+            observer.afterEraseUnit(unit);
         }
     }
     
@@ -417,7 +416,7 @@ public final class WrapperStorage implements Storage
     public synchronized void removeUnit(String unit) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#removeUnit("
-                                + "\"" + unit + "\")");
+                + "\"" + unit + "\")");
         
         leading.removeUnit(unit);
         
@@ -438,9 +437,9 @@ public final class WrapperStorage implements Storage
             }
         }
         
-        for (StorageObserver o : obs)
+        for (StorageObserver observer : observers)
         {
-            o.afterRemoveUnit(unit);
+            observer.afterRemoveUnit(unit);
         }
     }
     
@@ -450,9 +449,9 @@ public final class WrapperStorage implements Storage
     ) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#addKey("
-                                + "\"" + unit + "\", "
-                                + "\"" + key + "\", "
-                                + type + ")");
+                + "\"" + unit + "\", "
+                + "\"" + key + "\", "
+                + type + ")");
         
         leading.addKey(unit, key, type);
         
@@ -483,9 +482,9 @@ public final class WrapperStorage implements Storage
             }
         }
         
-        for (StorageObserver o : obs)
+        for (StorageObserver observer : observers)
         {
-            o.afterAddKey(unit, key, type);
+            observer.afterAddKey(unit, key, type);
         }
     }
     
@@ -495,8 +494,8 @@ public final class WrapperStorage implements Storage
     ) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#addEntry("
-                                + "\"" + unit + "\", "
-                                + entry + ")");
+                + "\"" + unit + "\", "
+                + entry + ")");
         
         leading.addEntry(unit, entry);
         
@@ -517,9 +516,9 @@ public final class WrapperStorage implements Storage
             }
         }
         
-        for (StorageObserver o : obs)
+        for (StorageObserver observer : observers)
         {
-            o.afterAddEntry(unit, entry);
+            observer.afterAddEntry(unit, entry);
         }
     }
     
@@ -529,9 +528,9 @@ public final class WrapperStorage implements Storage
     ) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#updateEntries("
-                                + "\"" + unit + "\", "
-                                + entrySubset + ", "
-                                + SqlUtils.translateSelector(selector, "`", "'") + ")");
+                + "\"" + unit + "\", "
+                + entrySubset + ", "
+                + SqlUtils.translateSelector(selector, "`", "'") + ")");
         
         leading.updateEntries(unit, entrySubset, selector);
         
@@ -561,9 +560,9 @@ public final class WrapperStorage implements Storage
             }
         }
         
-        for (StorageObserver o : obs)
+        for (StorageObserver observer : observers)
         {
-            o.afterUpdateEntries(unit, entrySubset, selector);
+            observer.afterUpdateEntries(unit, entrySubset, selector);
         }
     }
     
@@ -573,8 +572,8 @@ public final class WrapperStorage implements Storage
     ) throws IOException
     {
         log(CustomLevel.INTERNAL, "WrapperStorage#removeEntries("
-                                + "\"" + unit + "\", "
-                                + SqlUtils.translateSelector(selector, "`", "'") + ")");
+                + "\"" + unit + "\", "
+                + SqlUtils.translateSelector(selector, "`", "'") + ")");
         
         leading.removeEntries(unit, selector);
         
@@ -606,9 +605,9 @@ public final class WrapperStorage implements Storage
             }
         }
         
-        for (StorageObserver o : obs)
+        for (StorageObserver observer : observers)
         {
-            o.afterRemoveEntries(unit, selector);
+            observer.afterRemoveEntries(unit, selector);
         }
     }
     
@@ -666,7 +665,7 @@ public final class WrapperStorage implements Storage
     }
     
     public synchronized void mirrorStorage(
-            Storage storage, Hashtable<String, String> unitMappings
+            Storage storage, Map<String, String> unitMappings
     )
     {
         if (storage == null || unitMappings == null)
@@ -680,12 +679,12 @@ public final class WrapperStorage implements Storage
     
     public synchronized void mirrorStorage(Storage storage)
     {
-        mirrorStorage(storage, new Hashtable<String, String>());
+        mirrorStorage(storage, new HashMap<String, String>());
     }
     
-    public synchronized void unmirrorStorage(Storage o)
+    public synchronized void unmirrorStorage(Storage storage)
     {
-        mirrors.remove(o);
+        mirrors.remove(storage);
     }
     
     public synchronized void unmirrorAll()
@@ -693,30 +692,30 @@ public final class WrapperStorage implements Storage
         mirrors.clear();
     }
     
-    public synchronized void addObserver(StorageObserver o)
+    public synchronized void addObserver(StorageObserver observer)
     {
-        if (o == null)
+        if (observer == null)
             throw new IllegalArgumentException();
         
-        if (!obs.contains(o))
+        if (!observers.contains(observer))
         {
-            obs.addElement(o);
+            observers.add(observer);
         }
     }
     
-    public synchronized void deleteObserver(StorageObserver o)
+    public synchronized void deleteObserver(StorageObserver observer)
     {
-        obs.removeElement(o);
+        observers.remove(observer);
     }
     
     public synchronized void deleteObservers()
     {
-        obs.removeAllElements();
+        observers.clear();
     }
     
     public synchronized int countObservers()
     {
-        return obs.size();
+        return observers.size();
     }
     
     public Storage getLeadingStorage()
@@ -731,7 +730,7 @@ public final class WrapperStorage implements Storage
             @Override
             public void run()
             {
-                for (Map.Entry<Storage, Hashtable<String, String>> e : mirrors.entrySet())
+                for (Map.Entry<Storage, Map<String, String>> e : mirrors.entrySet())
                 {
                     String unitMapping = e.getValue().get(unit);
                     
@@ -807,9 +806,8 @@ public final class WrapperStorage implements Storage
     private final Storage leading;
     private final CacheType cacheType;
     
-    private final Hashtable<Storage, Hashtable<String, String>> mirrors =
-            new Hashtable<>();
-    private final Vector<StorageObserver> obs = new Vector<>();
+    private final Map<Storage, Map<String, String>> mirrors = new HashMap<>();
+    private final List<StorageObserver> observers = new ArrayList<>();
     
-    private Hashtable<String, PreloadedUnitCache> preloadedCache;
+    private Map<String, PreloadedUnitCache> preloadedCache;
 }
