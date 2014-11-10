@@ -151,16 +151,16 @@ public final class LoginHistoryCommand extends LogItCoreObject
         return true;
     }
     
-    private void printLoginRecord(CommandSender sender,
-                                  String unixTime,
-                                  String ip,
-                                  String succeeded,
-                                  int equalRecords,
-                                  String lastIp)
+    private void printLoginRecord(
+            CommandSender sender, String unixTime, String ip, String succeeded,
+            int equalRecords, String lastIp
+    )
     {
         if (sender == null || unixTime == null || ip == null
                 || succeeded == null || equalRecords < 0)
+        {
             throw new IllegalArgumentException();
+        }
         
         if (equalRecords == 0)
             return;

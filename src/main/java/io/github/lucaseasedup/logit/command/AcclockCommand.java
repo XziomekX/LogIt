@@ -82,10 +82,9 @@ public final class AcclockCommand extends LogItCoreObject implements TabExecutor
     }
     
     @Override
-    public List<String> onTabComplete(CommandSender sender,
-                                      Command cmd,
-                                      String label,
-                                      String[] args)
+    public List<String> onTabComplete(
+            CommandSender sender, Command cmd, String label, String[] args
+    )
     {
         if (!getConfig("secret.yml").getBoolean("tabCompletion"))
             return null;

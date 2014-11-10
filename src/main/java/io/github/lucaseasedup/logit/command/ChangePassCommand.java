@@ -142,8 +142,12 @@ public final class ChangePassCommand extends LogItCoreObject
             if (getCooldownManager().isCooldownActive(player,
                     LogItCooldowns.CHANGEPASS))
             {
-                getMessageDispatcher().sendCooldownMessage(player.getName(),
-                        getCooldownManager().getCooldownMillis(player, LogItCooldowns.CHANGEPASS));
+                getMessageDispatcher().sendCooldownMessage(
+                        player.getName(),
+                        getCooldownManager().getCooldownMillis(
+                                player, LogItCooldowns.CHANGEPASS
+                        )
+                );
                 
                 return true;
             }
@@ -222,12 +226,15 @@ public final class ChangePassCommand extends LogItCoreObject
                 return true;
             }
             
-            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
-                    keys().username(),
-                    keys().salt(),
-                    keys().password(),
-                    keys().hashing_algorithm()
-            ));
+            Account account = getAccountManager().selectAccount(
+                    player.getName(),
+                    Arrays.asList(
+                            keys().username(),
+                            keys().salt(),
+                            keys().password(),
+                            keys().hashing_algorithm()
+                    )
+            );
             
             if (account == null)
             {
@@ -264,10 +271,9 @@ public final class ChangePassCommand extends LogItCoreObject
     }
     
     @Override
-    public List<String> onTabComplete(CommandSender sender,
-                                      Command cmd,
-                                      String label,
-                                      String[] args)
+    public List<String> onTabComplete(
+            CommandSender sender, Command cmd, String label, String[] args
+    )
     {
         if (!getConfig("secret.yml").getBoolean("tabCompletion"))
             return null;

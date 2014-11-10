@@ -147,8 +147,9 @@ public final class ImportAuthMeHubCommand extends HubCommand
         locked = true;
     }
     
-    private void importAccounts(CommandSender sender,
-                                YamlConfiguration authMeConfig)
+    private void importAccounts(
+            CommandSender sender, YamlConfiguration authMeConfig
+    )
     {
         String backend =
                 authMeConfig.getString("DataSource.backend");
@@ -298,8 +299,10 @@ public final class ImportAuthMeHubCommand extends HubCommand
                                 
                                 String persistenceString =
                                         IniUtils.serialize(persistenceIni);
+                                boolean encode = getConfig("secret.yml")
+                                        .getBoolean("debug.encodePersistence");
                                 
-                                if (getConfig("secret.yml").getBoolean("debug.encodePersistence"))
+                                if (encode)
                                 {
                                     persistenceString =
                                             Base64.encode(persistenceString);

@@ -9,8 +9,9 @@ public final class JDBC
     {
     }
     
-    public static Connection createConnection(String host,
-                                              Properties properties)
+    public static Connection createConnection(
+            String host, Properties properties
+    )
     {
         return null;
     }

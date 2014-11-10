@@ -100,7 +100,8 @@ public final class LoginCommand extends LogItCoreObject
                 }
             }
         }
-        else if ((args.length == 0 && disablePasswords) || (args.length <= 1 && !disablePasswords))
+        else if ((args.length == 0 && disablePasswords)
+                || (args.length <= 1 && !disablePasswords))
         {
             if (player == null)
             {
@@ -152,15 +153,18 @@ public final class LoginCommand extends LogItCoreObject
                 loginBlockade.remove(player);
             }
             
-            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
-                    keys().username(),
-                    keys().salt(),
-                    keys().password(),
-                    keys().hashing_algorithm(),
-                    keys().ip(),
-                    keys().login_history(),
-                    keys().persistence()
-            ));
+            Account account = getAccountManager().selectAccount(
+                    player.getName(),
+                    Arrays.asList(
+                            keys().username(),
+                            keys().salt(),
+                            keys().password(),
+                            keys().hashing_algorithm(),
+                            keys().ip(),
+                            keys().login_history(),
+                            keys().persistence()
+                    )
+            );
             
             if (account == null)
             {
@@ -214,17 +218,20 @@ public final class LoginCommand extends LogItCoreObject
                                 .getTime("bruteForce.blockLogin.forTime",
                                         TimeUnit.MILLISECONDS);
                         
-                        long loginBlockadeTimeSecs =
-                                TimeUnit.MILLISECONDS.convertTo(loginBlockadeTimeMillis,
-                                        TimeUnit.SECONDS);
-                        
-                        Locale locale = getLocaleManager().getActiveLocale();
+                        long loginBlockadeTimeSecs = TimeUnit.MILLISECONDS.convertTo(
+                                loginBlockadeTimeMillis,
+                                TimeUnit.SECONDS
+                        );
                         
                         loginBlockade.put(player,
                                 System.currentTimeMillis() + loginBlockadeTimeMillis);
                         
+                        Locale locale = getLocaleManager().getActiveLocale();
+                        String localeBlockadeTime =
+                                locale.stringifySeconds(loginBlockadeTimeSecs);
+                        
                         sendMsg(player, t("tooManyLoginFails.blockLoggingIn")
-                                .replace("{0}", locale.stringifySeconds(loginBlockadeTimeSecs)));
+                                .replace("{0}", localeBlockadeTime));
                         
                         failedLogins.remove(player);
                     }

@@ -4,38 +4,41 @@ import com.google.common.collect.ImmutableList;
 import io.github.lucaseasedup.logit.storage.DataType;
 import io.github.lucaseasedup.logit.storage.UnitKeys;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 public final class AccountKeys extends UnitKeys
 {
-    public AccountKeys(String username,
-                       String uuid,
-                       String salt,
-                       String password,
-                       String hashing_algorithm,
-                       String ip,
-                       String login_session,
-                       String email,
-                       String last_active_date,
-                       String reg_date,
-                       String is_locked,
-                       String login_history,
-                       String display_name,
-                       String persistence)
+    public AccountKeys(
+            String username,
+            String uuid,
+            String salt,
+            String password,
+            String hashing_algorithm,
+            String ip,
+            String login_session,
+            String email,
+            String last_active_date,
+            String reg_date,
+            String is_locked,
+            String login_history,
+            String display_name,
+            String persistence
+    )
     {
-        if (       username == null
-                || uuid == null
-                || salt == null
-                || password == null
-                || hashing_algorithm == null
-                || ip == null
-                || login_session == null
-                || email == null
-                || last_active_date == null
-                || reg_date == null
-                || is_locked == null
-                || login_history == null
-                || display_name == null
-                || persistence == null)
+        if (StringUtils.isBlank(username)
+                || StringUtils.isBlank(uuid)
+                || StringUtils.isBlank(salt)
+                || StringUtils.isBlank(password)
+                || StringUtils.isBlank(hashing_algorithm)
+                || StringUtils.isBlank(ip)
+                || StringUtils.isBlank(login_session)
+                || StringUtils.isBlank(email)
+                || StringUtils.isBlank(last_active_date)
+                || StringUtils.isBlank(reg_date)
+                || StringUtils.isBlank(is_locked)
+                || StringUtils.isBlank(login_history)
+                || StringUtils.isBlank(display_name)
+                || StringUtils.isBlank(persistence))
         {
             throw new IllegalArgumentException();
         }

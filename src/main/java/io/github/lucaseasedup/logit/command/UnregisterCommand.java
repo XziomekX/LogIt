@@ -108,7 +108,8 @@ public final class UnregisterCommand extends LogItCoreObject
                 ReportedException.decrementRequestCount();
             }
         }
-        else if ((args.length == 0 && disablePasswords) || (args.length <= 1 && !disablePasswords))
+        else if ((args.length == 0 && disablePasswords)
+                || (args.length <= 1 && !disablePasswords))
         {
             if (player == null)
             {
@@ -134,19 +135,26 @@ public final class UnregisterCommand extends LogItCoreObject
             
             if (getCooldownManager().isCooldownActive(player, LogItCooldowns.UNREGISTER))
             {
-                getMessageDispatcher().sendCooldownMessage(player.getName(),
-                        getCooldownManager().getCooldownMillis(player, LogItCooldowns.UNREGISTER));
+                getMessageDispatcher().sendCooldownMessage(
+                        player.getName(),
+                        getCooldownManager().getCooldownMillis(
+                                player, LogItCooldowns.UNREGISTER
+                        )
+                );
                 
                 return true;
             }
             
-            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
-                    keys().username(),
-                    keys().salt(),
-                    keys().password(),
-                    keys().hashing_algorithm(),
-                    keys().persistence()
-            ));
+            Account account = getAccountManager().selectAccount(
+                    player.getName(),
+                    Arrays.asList(
+                            keys().username(),
+                            keys().salt(),
+                            keys().password(),
+                            keys().hashing_algorithm(),
+                            keys().persistence()
+                    )
+            );
             
             if (account == null)
             {
@@ -206,10 +214,9 @@ public final class UnregisterCommand extends LogItCoreObject
     }
     
     @Override
-    public List<String> onTabComplete(CommandSender sender,
-                                      Command cmd,
-                                      String label,
-                                      String[] args)
+    public List<String> onTabComplete(
+            CommandSender sender, Command cmd, String label, String[] args
+    )
     {
         if (!getConfig("secret.yml").getBoolean("tabCompletion"))
             return null;

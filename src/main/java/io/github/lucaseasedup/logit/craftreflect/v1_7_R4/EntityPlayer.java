@@ -1,6 +1,7 @@
 package io.github.lucaseasedup.logit.craftreflect.v1_7_R4;
 
-public final class EntityPlayer extends io.github.lucaseasedup.logit.craftreflect.EntityPlayer
+public final class EntityPlayer
+        extends io.github.lucaseasedup.logit.craftreflect.EntityPlayer
 {
     protected EntityPlayer(Object o)
     {

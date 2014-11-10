@@ -105,10 +105,9 @@ public final class LogItCommand extends LogItCoreObject implements TabExecutor
     }
     
     @Override
-    public List<String> onTabComplete(CommandSender sender,
-                                      Command cmd,
-                                      String label,
-                                      String[] args)
+    public List<String> onTabComplete(
+            CommandSender sender, Command cmd, String label, String[] args
+    )
     {
         HubCommand hubCommand = findHubCommand(args);
         

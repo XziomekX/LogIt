@@ -67,7 +67,8 @@ public enum TimeUnit
      * 
      * @param s the string to be decoded.
      * 
-     * @return the decoded {@code TimeUnit} or {@code null} if the string could not be decoded.
+     * @return the decoded {@code TimeUnit} or {@code null} if the string
+     *         could not be decoded.
      */
     public static TimeUnit decode(String s)
     {

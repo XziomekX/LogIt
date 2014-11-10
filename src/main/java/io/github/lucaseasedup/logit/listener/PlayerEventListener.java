@@ -511,10 +511,13 @@ public final class PlayerEventListener extends LogItCoreObject
         
         playersDeadOnJoin.remove(player);
         
-        Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
-                keys().username(),
-                keys().persistence()
-        ));
+        Account account = getAccountManager().selectAccount(
+                player.getName(),
+                Arrays.asList(
+                        keys().username(),
+                        keys().persistence()
+                )
+        );
         
         if (account != null)
         {
@@ -880,17 +883,26 @@ public final class PlayerEventListener extends LogItCoreObject
             {
                 Location respawnLocation = event.getRespawnLocation();
                 
-                Account account = getAccountManager().selectAccount(playerName, Arrays.asList(
-                        keys().username(),
-                        keys().persistence()
-                ));
+                Account account = getAccountManager().selectAccount(
+                        playerName,
+                        Arrays.asList(
+                                keys().username(),
+                                keys().persistence()
+                        )
+                );
                 
                 if (account != null)
                 {
-                    getPersistenceManager().unserializeUsing(account, player,
-                            LocationSerializer.class);
-                    getPersistenceManager().serializeUsing(account, player,
-                            new LocationSerializer.PlayerlessLocationSerializer(respawnLocation));
+                    getPersistenceManager().unserializeUsing(
+                            account, player,
+                            LocationSerializer.class
+                    );
+                    getPersistenceManager().serializeUsing(
+                            account, player,
+                            new LocationSerializer.PlayerlessLocationSerializer(
+                                    respawnLocation
+                            )
+                    );
                 }
             }
             

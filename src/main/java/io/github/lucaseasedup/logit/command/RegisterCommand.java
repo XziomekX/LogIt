@@ -173,7 +173,8 @@ public final class RegisterCommand extends LogItCoreObject
                 ReportedException.decrementRequestCount();
             }
         }
-        else if ((args.length == 0 && disablePasswords) || (args.length <= 2 && !disablePasswords))
+        else if ((args.length == 0 && disablePasswords)
+                || (args.length <= 2 && !disablePasswords))
         {
             if (player == null)
             {
@@ -207,8 +208,12 @@ public final class RegisterCommand extends LogItCoreObject
             
             if (getCooldownManager().isCooldownActive(player, LogItCooldowns.REGISTER))
             {
-                getMessageDispatcher().sendCooldownMessage(player.getName(),
-                        getCooldownManager().getCooldownMillis(player, LogItCooldowns.REGISTER));
+                getMessageDispatcher().sendCooldownMessage(
+                        player.getName(),
+                        getCooldownManager().getCooldownMillis(
+                                player, LogItCooldowns.REGISTER
+                        )
+                );
                 
                 return true;
             }
@@ -311,8 +316,8 @@ public final class RegisterCommand extends LogItCoreObject
                         new SelectorCondition(keys().ip(), Infix.EQUALS, getPlayerIp(player))
                 ).size();
                 
-                List<String> unrestrictedIps =
-                        getConfig("config.yml").getStringList("accountsPerIp.unrestrictedIps");
+                List<String> unrestrictedIps = getConfig("config.yml")
+                        .getStringList("accountsPerIp.unrestrictedIps");
                 
                 if (accountsWithIp >= accountsPerIp
                         && !unrestrictedIps.contains(getPlayerIp(player)))
@@ -338,9 +343,12 @@ public final class RegisterCommand extends LogItCoreObject
                 {
                     ReportedException.incrementRequestCount();
                     
-                    Account account = getAccountManager().selectAccount(username, Arrays.asList(
-                            keys().username()
-                    ));
+                    Account account = getAccountManager().selectAccount(
+                            username,
+                            Arrays.asList(
+                                    keys().username()
+                            )
+                    );
                     
                     account.changePassword(password);
                     account.enqueueSaveCallback(new Account.SaveCallback()
@@ -417,8 +425,12 @@ public final class RegisterCommand extends LogItCoreObject
                             sendMsg(sender, t("rememberLogin.prompt"));
                         }
                         
-                        if (getConfig("config.yml").getBoolean("passwordRecovery.promptToAddEmail")
-                                && getConfig("config.yml").getBoolean("passwordRecovery.enabled"))
+                        boolean promptToAddEmail = getConfig("config.yml")
+                                .getBoolean("passwordRecovery.promptToAddEmail");
+                        boolean passwordRecoveryEnabled = getConfig("config.yml")
+                                .getBoolean("passwordRecovery.enabled");
+                        
+                        if (promptToAddEmail && passwordRecoveryEnabled)
                         {
                             sendMsg(sender, t("noEmailSet"));
                         }

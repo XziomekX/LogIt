@@ -11,14 +11,19 @@ import org.bukkit.command.CommandSender;
 
 public abstract class HubCommand extends LogItCoreObject
 {
-    public HubCommand(String subcommand,
-                      String[] params,
-                      CommandAccess commandAccess,
-                      CommandHelpLine helpLine)
+    public HubCommand(
+            String subcommand,
+            String[] params,
+            CommandAccess commandAccess,
+            CommandHelpLine helpLine
+    )
     {
-        if (subcommand == null || params == null || commandAccess == null || helpLine == null)
+        if (subcommand == null || params == null
+                || commandAccess == null || helpLine == null)
+        {
             throw new IllegalArgumentException();
-        
+        }
+                    
         this.subcommand = subcommand;
         this.params = Arrays.asList(params);
         this.commandAccess = commandAccess;

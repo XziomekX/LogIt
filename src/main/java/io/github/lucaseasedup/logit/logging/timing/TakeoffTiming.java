@@ -130,13 +130,20 @@ public final class TakeoffTiming extends Timing
         
         timings.set("lastTakeoff.timestamp", new Date().toString());
         timings.set("lastTakeoff.total", end - start);
-        timings.set("lastTakeoff.event", postEvent - preEvent);
-        timings.set("lastTakeoff.configurationManager", postConfigurationManager - preConfigurationManager);
-        timings.set("lastTakeoff.logger", postLogger - preLogger);
-        timings.set("lastTakeoff.messages", postMessages - preMessages);
-        timings.set("lastTakeoff.craftReflect", postCraftReflect - preCraftReflect);
-        timings.set("lastTakeoff.accountManager", postAccountManager - preAccountManager);
-        timings.set("lastTakeoff.persistenceManager", postPersistenceManager - prePersistenceManager);
+        timings.set("lastTakeoff.event",
+                postEvent - preEvent);
+        timings.set("lastTakeoff.configurationManager",
+                postConfigurationManager - preConfigurationManager);
+        timings.set("lastTakeoff.logger",
+                postLogger - preLogger);
+        timings.set("lastTakeoff.messages",
+                postMessages - preMessages);
+        timings.set("lastTakeoff.craftReflect",
+                postCraftReflect - preCraftReflect);
+        timings.set("lastTakeoff.accountManager",
+                postAccountManager - preAccountManager);
+        timings.set("lastTakeoff.persistenceManager",
+                postPersistenceManager - prePersistenceManager);
         
         timings.save(reportFile);
     }

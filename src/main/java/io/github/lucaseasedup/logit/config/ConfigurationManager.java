@@ -23,10 +23,12 @@ public final class ConfigurationManager extends LogItCoreObject
         }
     }
     
-    public void registerConfiguration(String filename,
-                                      String userConfigDef,
-                                      String packageConfigDef,
-                                      String header)
+    public void registerConfiguration(
+            String filename,
+            String userConfigDef,
+            String packageConfigDef,
+            String header
+    )
     {
         if (StringUtils.isBlank(filename)
                 || userConfigDef == null || packageConfigDef == null)

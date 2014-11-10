@@ -159,8 +159,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
-    public synchronized Account selectAccount(String username,
-                                              List<String> queryKeys)
+    public synchronized Account selectAccount(
+            String username, List<String> queryKeys
+    )
     {
         if (username == null || queryKeys == null)
             throw new IllegalArgumentException();
@@ -330,10 +331,11 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         return accounts;
     }
     
-    public boolean isRegistered(String username,
-                                RegistrationFetchMode fetchMode)
+    public boolean isRegistered(
+            String username, RegistrationFetchMode fetchMode
+    )
     {
-        if (StringUtils.isBlank(username))
+        if (StringUtils.isBlank(username) || fetchMode == null)
             throw new IllegalArgumentException();
         
         username = username.toLowerCase();

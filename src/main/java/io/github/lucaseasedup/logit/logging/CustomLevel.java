@@ -10,7 +10,8 @@ public final class CustomLevel extends Level
     }
     
     /**
-     * INTERNAL is a message level providing internal information typically used for debugging.
+     * INTERNAL is a message level providing internal information
+     * typically used for debugging.
      */
     public static final Level INTERNAL = new CustomLevel("INTERNAL", -1000);
     

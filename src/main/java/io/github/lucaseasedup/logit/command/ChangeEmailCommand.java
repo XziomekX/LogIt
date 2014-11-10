@@ -126,9 +126,12 @@ public final class ChangeEmailCommand extends LogItCoreObject
                 return true;
             }
             
-            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
-                    keys().username()
-            ));
+            Account account = getAccountManager().selectAccount(
+                    player.getName(),
+                    Arrays.asList(
+                            keys().username()
+                    )
+            );
             
             if (account == null)
             {
@@ -165,10 +168,9 @@ public final class ChangeEmailCommand extends LogItCoreObject
     }
     
     @Override
-    public List<String> onTabComplete(CommandSender sender,
-                                      Command cmd,
-                                      String label,
-                                      String[] args)
+    public List<String> onTabComplete(
+            CommandSender sender, Command cmd, String label, String[] args
+    )
     {
         if (!getConfig("secret.yml").getBoolean("tabCompletion"))
             return null;

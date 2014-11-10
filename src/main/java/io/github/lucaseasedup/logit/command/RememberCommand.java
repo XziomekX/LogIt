@@ -51,9 +51,12 @@ public final class RememberCommand extends LogItCoreObject
                 return true;
             }
             
-            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
-                    keys().username()
-            ));
+            Account account = getAccountManager().selectAccount(
+                    player.getName(),
+                    Arrays.asList(
+                            keys().username()
+                    )
+            );
             
             if (!getAccountManager().isRegistered(player.getName()))
             {

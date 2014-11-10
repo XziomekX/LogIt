@@ -69,31 +69,37 @@ public final class Log4jFilter extends LogItCoreObject
             }
             
             @Override
-            public Result filter(Logger logger,
-                                 Level level,
-                                 Marker marker,
-                                 Message msg,
-                                 Throwable t)
+            public Result filter(
+                    Logger logger,
+                    Level level,
+                    Marker marker,
+                    Message msg,
+                    Throwable t
+            )
             {
                 return Result.NEUTRAL;
             }
             
             @Override
-            public Result filter(Logger logger,
-                                 Level level,
-                                 Marker marker,
-                                 Object msg,
-                                 Throwable t)
+            public Result filter(
+                    Logger logger,
+                    Level level,
+                    Marker marker,
+                    Object msg,
+                    Throwable t
+            )
             {
                 return Result.NEUTRAL;
             }
             
             @Override
-            public Result filter(Logger logger,
-                                 Level level,
-                                 Marker marker,
-                                 String msg,
-                                 Object... params)
+            public Result filter(
+                    Logger logger,
+                    Level level,
+                    Marker marker,
+                    String msg,
+                    Object... params
+            )
             {
                 return Result.NEUTRAL;
             }

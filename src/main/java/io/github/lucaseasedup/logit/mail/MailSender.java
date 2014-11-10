@@ -50,17 +50,22 @@ public final class MailSender
         properties.setProperty("mail.smtp.host", host);
         properties.setProperty("mail.smtp.port", String.valueOf(port));
         properties.setProperty("mail.smtp.auth", "true");
-        properties.setProperty("mail.smtp.socketFactory.port", String.valueOf(port));
-        properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        properties.setProperty("mail.smtp.socketFactory.port",
+                String.valueOf(port));
+        properties.setProperty("mail.smtp.socketFactory.class",
+                "javax.net.ssl.SSLSocketFactory");
         
-        Session session = Session.getDefaultInstance(properties, new Authenticator()
-        {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication()
-            {
-                return new PasswordAuthentication(user, password);
-            }
-        });
+        Session session = Session.getDefaultInstance(
+                properties,
+                new Authenticator()
+                {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication()
+                    {
+                        return new PasswordAuthentication(user, password);
+                    }
+                }
+        );
         MimeMessage message = new MimeMessage(session);
         
         message.setFrom(new InternetAddress(from));

@@ -44,9 +44,11 @@ public final class PersistenceManager extends LogItCoreObject
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
-    public void serializeUsing(Account account,
-                               Player player,
-                               Class<? extends PersistenceSerializer> clazz)
+    public void serializeUsing(
+            Account account,
+            Player player,
+            Class<? extends PersistenceSerializer> clazz
+    )
     {
         if (account == null || player == null || clazz == null)
             throw new IllegalArgumentException();
@@ -59,9 +61,9 @@ public final class PersistenceManager extends LogItCoreObject
         serializeUsing(account, player, serializer);
     }
     
-    public void serializeUsing(Account account,
-                               Player player,
-                               PersistenceSerializer serializer)
+    public void serializeUsing(
+            Account account, Player player, PersistenceSerializer serializer
+    )
     {
         if (account == null || player == null || serializer == null)
             throw new IllegalArgumentException();
@@ -134,9 +136,11 @@ public final class PersistenceManager extends LogItCoreObject
      * @throws ReportedException        if an I/O error occurred,
      *                                  and it was reported to the logger.
      */
-    public void unserializeUsing(Account account,
-                                 Player player,
-                                 Class<? extends PersistenceSerializer> clazz)
+    public void unserializeUsing(
+            Account account,
+            Player player,
+            Class<? extends PersistenceSerializer> clazz
+    )
     {
         if (account == null || player == null || clazz == null)
             throw new IllegalArgumentException();
@@ -149,9 +153,9 @@ public final class PersistenceManager extends LogItCoreObject
         unserializeUsing(account, player, serializer);
     }
     
-    public void unserializeUsing(Account account,
-                                 Player player,
-                                 PersistenceSerializer serializer)
+    public void unserializeUsing(
+            Account account, Player player, PersistenceSerializer serializer
+    )
     {
         if (account == null || player == null || serializer == null)
             throw new IllegalArgumentException();

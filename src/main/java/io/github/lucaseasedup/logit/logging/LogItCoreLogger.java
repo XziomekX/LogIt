@@ -119,9 +119,9 @@ public final class LogItCoreLogger
      * 
      * @see #log(Level, String)
      */
-    public synchronized void log(Level level,
-                                 String message,
-                                 Throwable throwable)
+    public synchronized void log(
+            Level level, String message, Throwable throwable
+    )
     {
         StringWriter sw = new StringWriter();
         

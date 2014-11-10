@@ -54,8 +54,9 @@ public final class Session
     /**
      * Returns session status.
      * 
-     * <p> Values above or equal to {@code 0} mean that the session is alive (logged-in state).
-     * Values below {@code 0} mean that the session is not alive (logged-out state).
+     * <p> Values above or equal to {@code 0} mean that the session is
+     * alive (logged-in state). Values below {@code 0} mean that the session
+     * is not alive (logged-out state).
      * 
      * @return the session status.
      */

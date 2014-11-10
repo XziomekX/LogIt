@@ -12,11 +12,13 @@ import org.bukkit.util.Vector;
 
 public final class Property extends Observable implements Disposable
 {
-    public Property(String path,
-                    PropertyType type,
-                    boolean requiresRestart,
-                    Object value,
-                    PropertyValidator validator)
+    public Property(
+            String path,
+            PropertyType type,
+            boolean requiresRestart,
+            Object value,
+            PropertyValidator validator
+    )
     {
         if (StringUtils.isBlank(path) || type == null)
             throw new IllegalArgumentException();

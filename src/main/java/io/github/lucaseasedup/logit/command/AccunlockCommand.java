@@ -79,10 +79,9 @@ public final class AccunlockCommand extends LogItCoreObject
     }
     
     @Override
-    public List<String> onTabComplete(CommandSender sender,
-                                      Command cmd,
-                                      String label,
-                                      String[] args)
+    public List<String> onTabComplete(
+            CommandSender sender, Command cmd, String label, String[] args
+    )
     {
         if (!getConfig("secret.yml").getBoolean("tabCompletion"))
             return null;

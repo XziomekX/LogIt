@@ -70,10 +70,13 @@ public final class SerializerObserver extends PropertyObserver
             if (getSessionManager().isSessionAlive(player))
                 continue;
             
-            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
-                    keys().username(),
-                    keys().persistence()
-            ));
+            Account account = getAccountManager().selectAccount(
+                    player.getName(),
+                    Arrays.asList(
+                            keys().username(),
+                            keys().persistence()
+                    )
+            );
             
             if (account != null)
             {
@@ -87,7 +90,8 @@ public final class SerializerObserver extends PropertyObserver
         }
         catch (ReflectiveOperationException ex)
         {
-            log(Level.WARNING, "Could not register serializer: " + clazz.getSimpleName(), ex);
+            log(Level.WARNING, "Could not register serializer: "
+                    + clazz.getSimpleName(), ex);
         }
     }
     
@@ -95,10 +99,13 @@ public final class SerializerObserver extends PropertyObserver
     {
         for (Player player : Bukkit.getOnlinePlayers())
         {
-            Account account = getAccountManager().selectAccount(player.getName(), Arrays.asList(
-                    keys().username(),
-                    keys().persistence()
-            ));
+            Account account = getAccountManager().selectAccount(
+                    player.getName(),
+                    Arrays.asList(
+                            keys().username(),
+                            keys().persistence()
+                    )
+            );
             
             if (account != null)
             {

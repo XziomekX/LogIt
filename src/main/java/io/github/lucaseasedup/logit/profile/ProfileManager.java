@@ -155,7 +155,8 @@ public final class ProfileManager extends LogItCoreObject
     
     public void setProfileString(String playerName, String fieldName, String value)
     {
-        if (StringUtils.isBlank(playerName) || StringUtils.isBlank(fieldName) || value == null)
+        if (StringUtils.isBlank(playerName)
+                || StringUtils.isBlank(fieldName) || value == null)
         {
             throw new IllegalArgumentException();
         }
@@ -314,19 +315,21 @@ public final class ProfileManager extends LogItCoreObject
         }
         catch (IOException ex)
         {
-            log(Level.WARNING,
-                    "Could not save profile configuration with player name: " + playerName, ex);
+            log(Level.WARNING, "Could not save profile configuration" +
+                    " with player name: " + playerName, ex);
         }
     }
     
     private Field newField(String fieldName, String definitionString)
     {
-        if (StringUtils.isBlank(fieldName) || StringUtils.isBlank(definitionString))
+        if (StringUtils.isBlank(fieldName)
+                || StringUtils.isBlank(definitionString))
         {
             throw new IllegalArgumentException();
         }
         
-        Matcher definitionMatcher = FIELD_DEFINITION_PATTERN.matcher(definitionString);
+        Matcher definitionMatcher =
+                FIELD_DEFINITION_PATTERN.matcher(definitionString);
         
         if (definitionMatcher.find())
         {
@@ -355,8 +358,11 @@ public final class ProfileManager extends LogItCoreObject
                 
                 if (rangeMatcher.find())
                 {
-                    return new IntegerField(fieldName, Integer.parseInt(rangeMatcher.group(1)),
-                            Integer.parseInt(rangeMatcher.group(2)));
+                    return new IntegerField(
+                            fieldName,
+                            Integer.parseInt(rangeMatcher.group(1)),
+                            Integer.parseInt(rangeMatcher.group(2))
+                    );
                 }
                 else
                 {

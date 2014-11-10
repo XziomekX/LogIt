@@ -65,11 +65,16 @@ public final class StatsHubCommand extends HubCommand
             sendMsg(sender, "");
         }
         
+        String accountsStat = (accounts != null)
+                ? String.valueOf(accounts.size()) : "?";
+        String uniqueIpsStat = (uniqueIps != null)
+                ? String.valueOf(uniqueIps.size()) : "?";
+        
         sendMsg(sender, t("stats.header"));
         sendMsg(sender, t("stats.accountCount")
-                .replace("{0}", (accounts != null) ? String.valueOf(accounts.size()) : "?"));
+                .replace("{0}", accountsStat));
         sendMsg(sender, t("stats.uniqueIps")
-                .replace("{0}", (uniqueIps != null) ? String.valueOf(uniqueIps.size()) : "?"));
+                .replace("{0}", uniqueIpsStat));
         sendMsg(sender, t("stats.backupCount")
                 .replace("{0}", String.valueOf(backupCount)));
         

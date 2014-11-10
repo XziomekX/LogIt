@@ -47,7 +47,9 @@ public final class BackupRestoreFileHubCommand extends HubCommand
         
         try
         {
-            selectedBackupDate = getBackupManager().parseBackupFilename(selectedBackup.getName());
+            selectedBackupDate = getBackupManager().parseBackupFilename(
+                    selectedBackup.getName()
+            );
         }
         catch (ParseException ex)
         {

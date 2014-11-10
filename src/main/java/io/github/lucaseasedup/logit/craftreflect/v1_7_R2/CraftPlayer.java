@@ -2,7 +2,8 @@ package io.github.lucaseasedup.logit.craftreflect.v1_7_R2;
 
 import org.bukkit.entity.Player;
 
-public final class CraftPlayer extends io.github.lucaseasedup.logit.craftreflect.CraftPlayer
+public final class CraftPlayer
+        extends io.github.lucaseasedup.logit.craftreflect.CraftPlayer
 {
     protected CraftPlayer(Player player)
     {

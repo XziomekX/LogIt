@@ -32,12 +32,15 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-public final class PredefinedConfiguration extends PropertyObserver implements PropertyHolder
+public final class PredefinedConfiguration extends PropertyObserver
+        implements PropertyHolder
 {
-    public PredefinedConfiguration(String filename,
-                                   String userDefPathname,
-                                   String packageDefPathname,
-                                   String header)
+    public PredefinedConfiguration(
+            String filename,
+            String userDefPathname,
+            String packageDefPathname,
+            String header
+    )
     {
         if (StringUtils.isBlank(filename)
                 || userDefPathname == null || packageDefPathname == null)
@@ -78,7 +81,8 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
         String packageDefString = readPackageDefString();
         String userDefString;
         
-        Map<String, Map<String, String>> packageDef = IniUtils.unserialize(packageDefString);
+        Map<String, Map<String, String>> packageDef =
+                IniUtils.unserialize(packageDefString);
         Map<String, Map<String, String>> userDef;
         
         File userDefFile = getDataFile(userDefPathname);
@@ -196,26 +200,26 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
     
     private String readPackageDefString() throws IOException
     {
-        String jarUrlPath =
-                getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        String jarUrlPath = getClass().getProtectionDomain()
+                .getCodeSource().getLocation().getPath();
         String jarPath = URLDecoder.decode(jarUrlPath, "UTF-8");
         
-        try (ZipFile jarZipFile = new ZipFile(jarPath))
+        try (ZipFile jar = new ZipFile(jarPath))
         {
-            ZipEntry packageDefEntry = jarZipFile.getEntry(packageDefPathname);
+            ZipEntry packageDefEntry = jar.getEntry(packageDefPathname);
             
-            try (InputStream packageDefInputStream = jarZipFile.getInputStream(packageDefEntry))
+            try (InputStream is = jar.getInputStream(packageDefEntry))
             {
-                return IoUtils.toString(packageDefInputStream);
+                return IoUtils.toString(is);
             }
         }
     }
     
     private String readUserDefString() throws IOException
     {
-        try (InputStream userDefInputStream = new FileInputStream(getDataFile(userDefPathname)))
+        try (InputStream is = new FileInputStream(getDataFile(userDefPathname)))
         {
-            return decodeConfigDef(IoUtils.toString(userDefInputStream));
+            return decodeConfigDef(IoUtils.toString(is));
         }
     }
     
@@ -514,16 +518,19 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
         removePath(section, parentPath);
     }
     
-    private void registerProperty(String path,
-                                  PropertyType type,
-                                  boolean requiresRestart,
-                                  Object defaultValue,
-                                  PropertyValidator validator,
-                                  PropertyObserver obs)
-            throws InvalidPropertyValueException
+    private void registerProperty(
+            String path,
+            PropertyType type,
+            boolean requiresRestart,
+            Object defaultValue,
+            PropertyValidator validator,
+            PropertyObserver obs
+    ) throws InvalidPropertyValueException
     {
         Object existingValue = configuration.get(path, defaultValue);
-        Property property = new Property(path, type, requiresRestart, existingValue, validator);
+        Property property = new Property(
+                path, type, requiresRestart, existingValue, validator
+        );
         
         if (obs != null)
         {
@@ -713,7 +720,8 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
             }
             catch (ReflectiveOperationException ex)
             {
-                log(Level.WARNING, "Invalid property validator: " + validatorClassName + ".", ex);
+                log(Level.WARNING, "Invalid property validator: "
+                        + validatorClassName + ".", ex);
                 
                 return;
             }
@@ -726,20 +734,23 @@ public final class PredefinedConfiguration extends PropertyObserver implements P
             try
             {
                 @SuppressWarnings("unchecked")
-                Class<PropertyObserver> observerClass =
-                        (Class<PropertyObserver>) Class.forName(observerClassName);
+                Class<PropertyObserver> observerClass = (Class<PropertyObserver>)
+                        Class.forName(observerClassName);
                 
                 observer = observerClass.getConstructor().newInstance();
             }
             catch (ReflectiveOperationException ex)
             {
-                log(Level.WARNING, "Invalid property observer: " + observerClassName + ".", ex);
+                log(Level.WARNING, "Invalid property observer: "
+                        + observerClassName + ".", ex);
                 
                 return;
             }
         }
         
-        registerProperty(path, type, requiresRestart, defaultValue, validator, observer);
+        registerProperty(
+                path, type, requiresRestart, defaultValue, validator, observer
+        );
     }
     
     private String encodeUserDef(String input)

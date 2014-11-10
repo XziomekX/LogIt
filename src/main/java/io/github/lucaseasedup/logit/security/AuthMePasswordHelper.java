@@ -9,9 +9,9 @@ public final class AuthMePasswordHelper
     {
     }
     
-    public static boolean comparePasswordWithHash(String password,
-                                                  String hashedPassword,
-                                                  String encryptionMethod)
+    public static boolean comparePasswordWithHash(
+            String password, String hashedPassword, String encryptionMethod
+    )
     {
         if (compareWithEncryptionMethod(
                 password, hashedPassword, encryptionMethod
@@ -31,9 +31,9 @@ public final class AuthMePasswordHelper
         return false;
     }
     
-    private static boolean compareWithEncryptionMethod(String password,
-                                                       String hashedPassword,
-                                                       String encryptionMethod)
+    private static boolean compareWithEncryptionMethod(
+            String password, String hashedPassword, String encryptionMethod
+    )
     {
         try
         {
@@ -118,8 +118,9 @@ public final class AuthMePasswordHelper
         return false;
     }
     
-    private static boolean compareWithAllEncryptionMethods(String password,
-                                                           String hashedPassword)
+    private static boolean compareWithAllEncryptionMethods(
+            String password, String hashedPassword
+    )
     {
         if (compareWithEncryptionMethod(password, hashedPassword, "BCRYPT"))
             return true;

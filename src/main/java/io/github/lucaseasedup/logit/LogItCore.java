@@ -436,7 +436,8 @@ public final class LogItCore
                 getConfig("config.yml").getString("storage.accounts.mirror.storageType")
         );
         
-        String accountsUnit = getConfig("config.yml").getString("storage.accounts.leading.unit");
+        String accountsUnit = getConfig("config.yml")
+                .getString("storage.accounts.leading.unit");
         AccountKeys accountKeys = new AccountKeys(
             getConfig("config.yml").getString("storage.accounts.keys.username"),
             getConfig("config.yml").getString("storage.accounts.keys.uuid"),
@@ -672,9 +673,9 @@ public final class LogItCore
                 getConfig("config.yml").getBoolean("loginHistory.enabled"));
     }
     
-    private void enableCommand(String command,
-                               CommandExecutor executor,
-                               boolean enabled)
+    private void enableCommand(
+            String command, CommandExecutor executor, boolean enabled
+    )
     {
         if (command == null || executor == null)
             throw new IllegalArgumentException();

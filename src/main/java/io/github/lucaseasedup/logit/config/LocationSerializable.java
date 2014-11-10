@@ -13,12 +13,9 @@ import org.bukkit.configuration.serialization.SerializableAs;
 public final class LocationSerializable
         implements Cloneable, ConfigurationSerializable
 {
-    public LocationSerializable(String world,
-                                double x,
-                                double y,
-                                double z,
-                                float yaw,
-                                float pitch)
+    public LocationSerializable(
+            String world, double x, double y, double z, float yaw, float pitch
+    )
     {
         if (world == null)
             throw new IllegalArgumentException();

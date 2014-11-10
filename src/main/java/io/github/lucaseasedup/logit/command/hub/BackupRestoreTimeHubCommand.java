@@ -66,6 +66,8 @@ public final class BackupRestoreTimeHubCommand extends HubCommand
             return;
         }
         
-        new BackupRestoreFileHubCommand().execute(sender, new String[] {closestBackup.getName()});
+        new BackupRestoreFileHubCommand().execute(
+                sender, new String[] {closestBackup.getName()}
+        );
     }
 }

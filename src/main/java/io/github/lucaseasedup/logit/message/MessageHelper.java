@@ -102,8 +102,9 @@ public final class MessageHelper
      * @param exceptPlayers the case-insensitive player names {@code Collection}
      *                      that will omitted in the broadcasting.
      */
-    public static void broadcastMsgExcept(String message,
-                                          Collection<String> exceptPlayers)
+    public static void broadcastMsgExcept(
+            String message, Collection<String> exceptPlayers
+    )
     {
         if (message == null)
             return;
