@@ -2,7 +2,6 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.message.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.message.MessageHelper.t;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
@@ -115,9 +114,15 @@ public final class RegisterCommand extends LogItCoreObject
                 if (isPlayerOnline(args[1]))
                 {
                     Player paramPlayer = PlayerUtils.getPlayer(args[1]);
+                    String paramPlayerIp = PlayerUtils.getPlayerIp(paramPlayer);
                     
                     account.setUuid(paramPlayer.getUniqueId());
-                    account.setIp(PlayerUtils.getPlayerIp(paramPlayer));
+                    
+                    if (paramPlayerIp != null)
+                    {
+                        account.setIp(paramPlayerIp);
+                    }
+                    
                     account.setDisplayName(paramPlayer.getName());
                 }
                 
@@ -209,7 +214,7 @@ public final class RegisterCommand extends LogItCoreObject
             if (getCooldownManager().isCooldownActive(player, LogItCooldowns.REGISTER))
             {
                 getMessageDispatcher().sendCooldownMessage(
-                        player.getName(),
+                        player,
                         getCooldownManager().getCooldownMillis(
                                 player, LogItCooldowns.REGISTER
                         )
@@ -308,19 +313,20 @@ public final class RegisterCommand extends LogItCoreObject
             
             int accountsPerIp = getConfig("config.yml")
                     .getInt("accountsPerIp.amount");
+            String playerIp = PlayerUtils.getPlayerIp(player);
             
-            if (accountsPerIp >= 0 && !isTakingOver)
+            if (playerIp != null && accountsPerIp >= 0 && !isTakingOver)
             {
                 int accountsWithIp = getAccountManager().selectAccounts(
                         Arrays.asList(keys().username(), keys().ip()),
-                        new SelectorCondition(keys().ip(), Infix.EQUALS, getPlayerIp(player))
+                        new SelectorCondition(keys().ip(), Infix.EQUALS, playerIp)
                 ).size();
                 
                 List<String> unrestrictedIps = getConfig("config.yml")
                         .getStringList("accountsPerIp.unrestrictedIps");
                 
                 if (accountsWithIp >= accountsPerIp
-                        && !unrestrictedIps.contains(getPlayerIp(player)))
+                        && !unrestrictedIps.contains(playerIp))
                 {
                     sendMsg(player, t("accountsPerIpLimitReached"));
                     
@@ -386,11 +392,16 @@ public final class RegisterCommand extends LogItCoreObject
                 try
                 {
                     ReportedException.incrementRequestCount();
-                    
+
                     Account account = new Account(username);
                     account.setUuid(player.getUniqueId());
                     account.changePassword(password);
-                    account.setIp(PlayerUtils.getPlayerIp(player));
+                    
+                    if (playerIp != null)
+                    {
+                        account.setIp(playerIp);
+                    }
+                    
                     account.setLastActiveDate(System.currentTimeMillis() / 1000L);
                     account.setRegistrationDate(System.currentTimeMillis() / 1000L);
                     account.setDisplayName(player.getName());

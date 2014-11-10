@@ -143,7 +143,7 @@ public final class ChangePassCommand extends LogItCoreObject
                     LogItCooldowns.CHANGEPASS))
             {
                 getMessageDispatcher().sendCooldownMessage(
-                        player.getName(),
+                        player,
                         getCooldownManager().getCooldownMillis(
                                 player, LogItCooldowns.CHANGEPASS
                         )

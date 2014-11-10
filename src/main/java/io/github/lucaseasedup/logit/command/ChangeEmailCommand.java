@@ -110,7 +110,7 @@ public final class ChangeEmailCommand extends LogItCoreObject
             if (getCooldownManager().isCooldownActive(player, LogItCooldowns.CHANGEEMAIL))
             {
                 getMessageDispatcher().sendCooldownMessage(
-                        player.getName(),
+                        player,
                         getCooldownManager().getCooldownMillis(
                                 player, LogItCooldowns.CHANGEEMAIL
                         )

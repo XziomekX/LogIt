@@ -113,7 +113,7 @@ public final class SessionEventListener extends LogItCoreObject
                         .getTime("forceLogin.periodicalPrompt.period", TimeUnit.TICKS);
                 
                 getMessageDispatcher().dispatchForceLoginPrompter(
-                        username, promptPeriod, promptPeriod
+                        player, promptPeriod, promptPeriod
                 );
             }
             

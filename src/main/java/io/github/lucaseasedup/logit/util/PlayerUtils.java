@@ -65,7 +65,7 @@ public final class PlayerUtils
     public static String getPlayerIp(Player player)
     {
         if (player.getAddress() == null)
-            return "";
+            return null;
         
         return player.getAddress().getAddress().getHostAddress();
     }

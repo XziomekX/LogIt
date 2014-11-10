@@ -1,6 +1,5 @@
 package io.github.lucaseasedup.logit.session;
 
-import io.github.lucaseasedup.logit.util.Validators;
 import org.bukkit.Location;
 
 /**
@@ -10,25 +9,20 @@ import org.bukkit.Location;
 public final class Session
 {
     /**
-     * Creates a new {@code Session} object with a new status equal to {@code -1L}.
+     * Creates a new {@code Session} object with a new status equal
+     * to {@code -1L}.
      * 
-     * @param ip an IP address of this session.
-     * 
-     * @throws IllegalArgumentException if {@code ip} is {@code null}
-     *                                  or not a valid IPv4/6 address.
+     * @param ip an IP address of this session, can be {@code null}.
      */
     public Session(String ip)
     {
-        if (!Validators.validateIp(ip))
-            throw new IllegalArgumentException();
-        
         this.ip = ip;
     }
     
     /**
      * Returns an IP address associated with this session.
      * 
-     * @return an IP address.
+     * @return an IP address or {@code null}.
      */
     public String getIp()
     {
@@ -38,16 +32,10 @@ public final class Session
     /**
      * Sets a new IP address for this session.
      * 
-     * @param ip new IP address.
-     * 
-     * @throws IllegalArgumentException if {@code ip} is {@code null}
-     *                                  or not a valid IPv4/6 address.
+     * @param ip new IP address, can be {@code null}.
      */
     public void setIp(String ip)
     {
-        if (!Validators.validateIp(ip))
-            throw new IllegalArgumentException();
-        
         this.ip = ip;
     }
     

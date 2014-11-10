@@ -580,18 +580,15 @@ public final class Account extends LogItCoreObject
      *       that the entered password was correct.
      *
      * @throws IllegalArgumentException
-     *        If {@code unixTime} is negative, or {@code ip} is {@code null}
-     *        or is not a valid IPv4/6 address.
+     *        If {@code unixTime} is negative, or if {@code ip} is not null
+     *        but is not a valid IPv4/6 address.
      */
     public void recordLogin(long unixTime, String ip, boolean succeeded)
     {
         if (unixTime < 0)
             throw new IllegalArgumentException("Negative unixTime");
         
-        if (ip == null)
-            throw new IllegalArgumentException("Null ip");
-        
-        if (!Validators.validateIp(ip))
+        if (ip != null && !Validators.validateIp(ip))
             throw new IllegalArgumentException("ip is not a valid IPv4/6 address");
         
         if (!entry.containsKey(keys().login_history()))
@@ -606,7 +603,14 @@ public final class Account extends LogItCoreObject
             records.remove(0);
         }
         
-        records.add(unixTime + ";" + ip + ";" + succeeded);
+        if (ip == null)
+        {
+            records.add(unixTime + ";?.?.?.?;" + succeeded);
+        }
+        else
+        {
+            records.add(unixTime + ";" + ip + ";" + succeeded);
+        }
         
         StringBuilder historyBuilder = new StringBuilder();
         

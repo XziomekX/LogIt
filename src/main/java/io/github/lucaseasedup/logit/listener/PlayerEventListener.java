@@ -2,7 +2,6 @@ package io.github.lucaseasedup.logit.listener;
 
 import static io.github.lucaseasedup.logit.message.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.message.MessageHelper.t;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.config.TimeUnit;
@@ -245,7 +244,6 @@ public final class PlayerEventListener extends LogItCoreObject
         timing.start();
         
         String username = player.getName().toLowerCase();
-        String ip = getPlayerIp(player);
         UUID uuid = player.getUniqueId();
         
         joinMessage.set(null);
@@ -323,9 +321,10 @@ public final class PlayerEventListener extends LogItCoreObject
             
             long validnessTime = getConfig("config.yml")
                     .getTime("loginSessions.validnessTime", TimeUnit.SECONDS);
+            String ip = PlayerUtils.getPlayerIp(player);
             
             if (getConfig("config.yml").getBoolean("loginSessions.enabled")
-                    && validnessTime > 0)
+                    && validnessTime > 0 && ip != null)
             {
                 String loginSession = account.getLoginSession();
                 
@@ -355,7 +354,7 @@ public final class PlayerEventListener extends LogItCoreObject
                     && !player.getName().equals(displayName)
                     && getConfig("config.yml").getBoolean("usernameCaseMismatch.warning"))
             {
-                getMessageDispatcher().dispatchMessage(username,
+                getMessageDispatcher().dispatchMessage(player,
                         t("usernameCaseMismatch.warning")
                                 .replace("{0}", displayName), 4L);
             }
@@ -450,7 +449,7 @@ public final class PlayerEventListener extends LogItCoreObject
                             .convertTo(1, TimeUnit.TICKS);
                     
                     getMessageDispatcher().dispatchForceLoginPrompter(
-                            username,
+                            player,
                             promptDelay,
                             promptPeriod
                     );
@@ -458,7 +457,7 @@ public final class PlayerEventListener extends LogItCoreObject
                 else
                 {
                     getMessageDispatcher().dispatchForceLoginPrompter(
-                            username,
+                            player,
                             5L
                     );
                 }
@@ -469,7 +468,7 @@ public final class PlayerEventListener extends LogItCoreObject
                         .convertTo(1, TimeUnit.TICKS);
                 
                 getMessageDispatcher().dispatchForceLoginPrompter(
-                        username,
+                        player,
                         promptDelay + promptPeriod,
                         promptPeriod
                 );

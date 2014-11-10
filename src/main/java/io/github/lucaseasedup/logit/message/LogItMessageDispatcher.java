@@ -11,7 +11,6 @@ import io.github.lucaseasedup.logit.locale.Locale;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,10 +32,10 @@ public final class LogItMessageDispatcher extends LogItCoreObject
     }
     
     public void dispatchMessage(
-            final String username, final String message, long delay
+            final Player player, final String message, long delay
     )
     {
-        if (username == null || message == null || delay < 0)
+        if (player == null || message == null || delay < 0)
             throw new IllegalArgumentException();
         
         new BukkitRunnable()
@@ -44,19 +43,9 @@ public final class LogItMessageDispatcher extends LogItCoreObject
             @Override
             public void run()
             {
-                Player player = Bukkit.getPlayerExact(username);
-                
-                if (player != null)
-                {
-                    player.sendMessage(message);
-                }
+                player.sendMessage(message);
             }
         }.runTaskLater(getPlugin(), delay);
-    }
-    
-    public void dispatchMessage(Player player, String message, long delay)
-    {
-        dispatchMessage(player.getName(), message, delay);
     }
     
     /**
@@ -121,23 +110,22 @@ public final class LogItMessageDispatcher extends LogItCoreObject
         }
     }
     
-    public void dispatchForceLoginPrompter(String username, long delay)
+    public void dispatchForceLoginPrompter(Player player, long delay)
     {
-        if (username == null || delay < 0)
+        if (player == null || delay < 0)
             throw new IllegalArgumentException();
         
-        new ForceLoginPrompter(username).runTaskLater(getPlugin(), delay);
+        new ForceLoginPrompter(player).runTaskLater(getPlugin(), delay);
     }
     
     public void dispatchForceLoginPrompter(
-            String username, long delay, long period
+            Player player, long delay, long period
     )
     {
-        if (username == null || delay < 0 || period <= 0)
+        if (player == null || delay < 0 || period <= 0)
             throw new IllegalArgumentException();
         
-        new ForceLoginPrompter(username)
-                .runTaskTimer(getPlugin(), delay, period);
+        new ForceLoginPrompter(player).runTaskTimer(getPlugin(), delay, period);
     }
     
     /**
@@ -183,9 +171,9 @@ public final class LogItMessageDispatcher extends LogItCoreObject
         broadcastMsgExcept(quitMessage, Arrays.asList(player.getName()));
     }
     
-    public void sendCooldownMessage(String username, long cooldownMillis)
+    public void sendCooldownMessage(Player player, long cooldownMillis)
     {
-        if (username == null)
+        if (player == null)
             throw new IllegalArgumentException();
         
         Locale activeLocale = getLocaleManager().getActiveLocale();
@@ -195,12 +183,12 @@ public final class LogItMessageDispatcher extends LogItCoreObject
         
         if (cooldownMillis >= 2000L)
         {
-            sendMsg(username, t("cooldown.moreThanSecond")
+            player.sendMessage(t("cooldown.moreThanSecond")
                     .replace("{0}", cooldownText));
         }
         else
         {
-            sendMsg(username, t("cooldown.secondOrLess")
+            player.sendMessage(t("cooldown.secondOrLess")
                     .replace("{0}", cooldownText));
         }
     }
@@ -219,17 +207,18 @@ public final class LogItMessageDispatcher extends LogItCoreObject
     
     private final class ForceLoginPrompter extends BukkitRunnable
     {
-        public ForceLoginPrompter(String username)
+        public ForceLoginPrompter(Player player)
         {
-            this.username = username;
+            if (player == null)
+                throw new IllegalArgumentException();
+            
+            this.player = player;
         }
         
         @Override
         public void run()
         {
-            Player player = Bukkit.getPlayerExact(username);
-            
-            if (player == null || !isCoreStarted())
+            if (!player.isOnline() || !isCoreStarted())
             {
                 cancel();
             }
@@ -246,7 +235,7 @@ public final class LogItMessageDispatcher extends LogItCoreObject
             }
         }
         
-        private final String username;
+        private final Player player;
     }
     
     private Map<Player, Long> forceLoginPromptIntervals = new HashMap<>();

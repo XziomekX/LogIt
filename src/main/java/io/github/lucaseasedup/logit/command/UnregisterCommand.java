@@ -136,7 +136,7 @@ public final class UnregisterCommand extends LogItCoreObject
             if (getCooldownManager().isCooldownActive(player, LogItCooldowns.UNREGISTER))
             {
                 getMessageDispatcher().sendCooldownMessage(
-                        player.getName(),
+                        player,
                         getCooldownManager().getCooldownMillis(
                                 player, LogItCooldowns.UNREGISTER
                         )

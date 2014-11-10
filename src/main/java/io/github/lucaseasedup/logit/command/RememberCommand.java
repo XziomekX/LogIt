@@ -65,15 +65,27 @@ public final class RememberCommand extends LogItCoreObject
                 return true;
             }
             
-            account.saveLoginSession(PlayerUtils.getPlayerIp(player),
-                    System.currentTimeMillis() / 1000L);
+            String playerIp = PlayerUtils.getPlayerIp(player);
+            long validnessTime;
             
-            long validnessTime = getConfig("config.yml")
-                    .getTime("loginSessions.validnessTime", TimeUnit.SECONDS);
+            if (playerIp == null)
+            {
+                validnessTime = 0;
+            }
+            else
+            {
+                account.saveLoginSession(playerIp,
+                        System.currentTimeMillis() / 1000L);
+                validnessTime = getConfig("config.yml")
+                        .getTime("loginSessions.validnessTime", TimeUnit.SECONDS);
+            }
+            
             Locale activeLocale = getLocaleManager().getActiveLocale();
+            String localeValidnessTime =
+                    activeLocale.stringifySeconds(validnessTime);
             
             sendMsg(sender, t("rememberLogin.success")
-                    .replace("{0}", activeLocale.stringifySeconds(validnessTime)));
+                    .replace("{0}", localeValidnessTime));
         }
         else
         {

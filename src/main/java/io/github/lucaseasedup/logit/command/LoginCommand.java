@@ -2,7 +2,6 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.message.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.message.MessageHelper.t;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
@@ -10,6 +9,7 @@ import io.github.lucaseasedup.logit.common.PlayerCollections;
 import io.github.lucaseasedup.logit.config.TimeUnit;
 import io.github.lucaseasedup.logit.hooks.BukkitSmerfHook;
 import io.github.lucaseasedup.logit.locale.Locale;
+import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -173,11 +173,11 @@ public final class LoginCommand extends LogItCoreObject
                 return true;
             }
             
-            String playerIp = getPlayerIp(player);
-            
+            String playerIp = PlayerUtils.getPlayerIp(player);
             long currentTimeSecs = System.currentTimeMillis() / 1000L;
             
-            if (!disablePasswords && !getGlobalPasswordManager().checkPassword(args[0]))
+            if (!disablePasswords
+                    && !getGlobalPasswordManager().checkPassword(args[0]))
             {
                 if (!account.checkPassword(args[0]))
                 {
@@ -197,7 +197,8 @@ public final class LoginCommand extends LogItCoreObject
                     failedLogins.put(player,
                             currentFailedLogins != null ? currentFailedLogins + 1 : 1);
                     
-                    if (failsToBan > 0 && failedLogins.get(player) >= failsToBan)
+                    if (playerIp != null && failsToBan > 0
+                            && failedLogins.get(player) >= failsToBan)
                     {
                         Bukkit.banIP(playerIp);
                         
@@ -205,7 +206,8 @@ public final class LoginCommand extends LogItCoreObject
                         
                         failedLogins.remove(player);
                     }
-                    else if (failsToKick > 0 && failedLogins.get(player) >= failsToKick)
+                    else if (failsToKick > 0
+                            && failedLogins.get(player) >= failsToKick)
                     {
                         player.kickPlayer(t("tooManyLoginFails.kick"));
                         
@@ -294,7 +296,7 @@ public final class LoginCommand extends LogItCoreObject
                     account.recordLogin(currentTimeSecs, playerIp, Account.LOGIN_SUCCESS);
                 }
                 
-                if (StringUtils.isBlank(account.getIp()))
+                if (playerIp != null && StringUtils.isBlank(account.getIp()))
                 {
                     account.setIp(playerIp);
                 }

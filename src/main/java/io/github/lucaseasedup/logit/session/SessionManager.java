@@ -3,7 +3,6 @@ package io.github.lucaseasedup.logit.session;
 import static io.github.lucaseasedup.logit.message.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.getPlayerIp;
 import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.AccountManager.RegistrationFetchMode;
@@ -103,7 +102,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
                         }
                     }
                 }
-                else
+                else if (session.getIp() != null)
                 {
                     destroySession(username);
                 }
@@ -208,9 +207,10 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         if (PlayerUtils.isPlayerOnline(username))
         {
             Player player = Bukkit.getPlayerExact(username);
-            String ip = getPlayerIp(player);
+            String ip = PlayerUtils.getPlayerIp(player);
             
-            return session.isAlive() && ip.equals(session.getIp());
+            return session.isAlive()
+                    && (ip == null || ip.equals(session.getIp()));
         }
         else
         {
@@ -238,9 +238,9 @@ public final class SessionManager extends LogItCoreObject implements Runnable
         if (session == null)
             return false;
         
-        String ip = getPlayerIp(player);
+        String ip = PlayerUtils.getPlayerIp(player);
         
-        return session.isAlive() && ip.equals(session.getIp());
+        return session.isAlive() && (ip == null || ip.equals(session.getIp()));
     }
     
     /**
@@ -266,7 +266,7 @@ public final class SessionManager extends LogItCoreObject implements Runnable
             throw new IllegalArgumentException();
         
         String username = player.getName().toLowerCase();
-        String ip = getPlayerIp(player);
+        String ip = PlayerUtils.getPlayerIp(player);
         
         if (getSession(player) != null)
             return CancelledState.NOT_CANCELLED;

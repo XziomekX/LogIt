@@ -76,7 +76,7 @@ public final class RecoverPassCommand extends LogItCoreObject
             if (getCooldownManager().isCooldownActive(player, LogItCooldowns.RECOVERPASS))
             {
                 getMessageDispatcher().sendCooldownMessage(
-                        username,
+                        player,
                         getCooldownManager().getCooldownMillis(
                                 player, LogItCooldowns.RECOVERPASS
                         )
