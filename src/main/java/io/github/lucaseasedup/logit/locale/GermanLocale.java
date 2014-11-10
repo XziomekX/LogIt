@@ -10,6 +10,12 @@ public final class GermanLocale implements Locale
     @Override
     public String stringifySeconds(long seconds)
     {
+        if (seconds < 0)
+            throw new IllegalArgumentException();
+        
+        if (seconds == 0)
+            return "0 Sekunden";
+        
         StringBuilder sb = new StringBuilder();
         long days, hours, minutes;
         
