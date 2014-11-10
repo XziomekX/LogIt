@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -144,6 +145,13 @@ public final class PlayerEventListener extends LogItCoreObject
         int maxUsernameLength = getConfig("secret.yml")
                 .getInt("username.maxLength");
         
+        if (usernamePattern == null)
+        {
+            usernamePattern = Pattern.compile(
+                    getConfig("secret.yml").getString("username.regex")
+            );
+        }
+        
         if (StringUtils.isBlank(username))
         {
             kicker.kick(player, t("usernameBlank"));
@@ -158,7 +166,7 @@ public final class PlayerEventListener extends LogItCoreObject
             kicker.kick(player, t("usernameTooLong")
                     .replace("{0}", String.valueOf(maxUsernameLength)));
         }
-        else if (!player.getName().matches(getConfig("secret.yml").getString("username.regex")))
+        else if (!usernamePattern.matcher(player.getName()).matches())
         {
             kicker.kick(player, t("usernameInvalid"));
         }
@@ -916,4 +924,5 @@ public final class PlayerEventListener extends LogItCoreObject
     }
     
     private final Set<Player> playersDeadOnJoin = new HashSet<>();
+    private Pattern usernamePattern = null;
 }
