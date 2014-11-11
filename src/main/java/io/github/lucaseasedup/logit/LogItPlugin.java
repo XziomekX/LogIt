@@ -12,6 +12,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.jar.JarEntry;
@@ -50,6 +55,15 @@ public final class LogItPlugin extends JavaPlugin
             // If messages could not be loaded, just log the failure.
             // They're not necessary for LogIt to work.
             getLogger().log(Level.WARNING, "Could not load messages.", ex);
+        }
+        
+        try
+        {
+            loadLibraries();
+        }
+        catch (FatalReportedException ex)
+        {
+            disable();
         }
         
         getCommand("logit")
@@ -255,6 +269,89 @@ public final class LogItPlugin extends JavaPlugin
         message = message.replace("%server_name%", Bukkit.getServerName());
         
         return message;
+    }
+    
+    public void loadLibraries() throws FatalReportedException
+    {
+        File dir = new File(getDataFolder(), "lib");
+        
+        if (!dir.isDirectory())
+            return;
+        
+        File[] files = dir.listFiles();
+        
+        for (File file : files)
+        {
+            if (!file.isFile())
+                continue;
+            
+            if (!file.getName().endsWith(".jar"))
+                continue;
+            
+            loadLibrary(file.getName());
+        }
+    }
+    
+    private void loadLibrary(String filename) throws FatalReportedException
+    {
+        if (isLibraryLoaded(filename))
+            return;
+        
+        try
+        {
+            File file = new File(getDataFolder(), "lib/" + filename);
+            
+            if (!file.exists())
+                throw new FileNotFoundException();
+            
+            URLClassLoader classLoader = (URLClassLoader)
+                    ClassLoader.getSystemClassLoader();
+            URL url = file.toURI().toURL();
+            
+            if (!Arrays.asList(classLoader.getURLs()).contains(url))
+            {
+                Method addUrlMethod = URLClassLoader.class.getDeclaredMethod(
+                        "addURL", new Class[]{URL.class}
+                );
+                addUrlMethod.setAccessible(true);
+                addUrlMethod.invoke(classLoader, new Object[]{url});
+            }
+        }
+        catch (FileNotFoundException | MalformedURLException ex)
+        {
+            getLogger().log(Level.SEVERE,
+                    "Library " + filename + " was not found");
+            disable();
+            
+            FatalReportedException.throwNew(ex);
+        }
+        catch (ReflectiveOperationException ex)
+        {
+            getLogger().log(Level.SEVERE,
+                    "Could not load library " + filename, ex);
+            disable();
+            
+            FatalReportedException.throwNew(ex);
+        }
+    }
+    
+    public boolean isLibraryLoaded(String filename)
+    {
+        File file = new File(getDataFolder(), "lib/" + filename);
+        URLClassLoader classLoader = (URLClassLoader)
+                ClassLoader.getSystemClassLoader();
+        URL url;
+        
+        try
+        {
+            url = file.toURI().toURL();
+        }
+        catch (MalformedURLException ex)
+        {
+            return false;
+        }
+        
+        return Arrays.asList(classLoader.getURLs()).contains(url);
     }
     
     public static String getCraftBukkitVersion()

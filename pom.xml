@@ -78,12 +78,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>9.1-901-1.jdbc4</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <version>1.4.7</version>
@@ -183,7 +177,6 @@
                     <artifactSet>
                         <includes>
                             <include>org.mcstats.bukkit:metrics-lite</include>
-                            <include>postgresql:postgresql</include>
                             <include>javax.mail:mail</include>
                         </includes>
                     </artifactSet>

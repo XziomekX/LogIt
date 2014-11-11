@@ -367,6 +367,7 @@ public final class LogItCore
     private void doFirstRunStuff()
     {
         getDataFile("backup").mkdir();
+        getDataFile("lib").mkdir();
         getDataFile("mail").mkdir();
         
         extractMailTemplate("password-recovery.html");
