@@ -8,7 +8,6 @@ import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public final class AccountDatumHubCommand extends HubCommand
 {
