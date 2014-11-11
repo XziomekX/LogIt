@@ -129,13 +129,21 @@ public final class ChangeEmailCommand extends LogItCoreObject
             Account account = getAccountManager().selectAccount(
                     player.getName(),
                     Arrays.asList(
-                            keys().username()
+                            keys().username(),
+                            keys().email()
                     )
             );
             
             if (account == null)
             {
                 sendMsg(player, t("notRegistered.self"));
+                
+                return true;
+            }
+            
+            if (account.getEmail().equalsIgnoreCase(args[0]))
+            {
+                sendMsg(player, t("changeEmail.noChange"));
                 
                 return true;
             }
