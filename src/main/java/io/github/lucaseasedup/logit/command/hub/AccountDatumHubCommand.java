@@ -56,11 +56,6 @@ public final class AccountDatumHubCommand extends HubCommand
             return;
         }
         
-        if (sender instanceof Player)
-        {
-            sendMsg(sender, "");
-        }
-        
         sendMsg(sender, t("accountDatum.result")
                 .replace("{0}", args[0].toLowerCase())
                 .replace("{1}", args[1])

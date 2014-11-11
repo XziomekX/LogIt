@@ -83,7 +83,6 @@ public final class StatsHubCommand extends HubCommand
             int logins = getConfig("stats.yml").getInt("logins");
             int passwordChanges = getConfig("stats.yml").getInt("passwordChanges");
             
-            sendMsg(sender, "");
             sendMsg(sender, t("stats.logins")
                     .replace("{0}", String.valueOf(logins)));
             sendMsg(sender, t("stats.passwordChanges")
