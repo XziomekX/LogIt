@@ -6,6 +6,7 @@ import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.config.TimeUnit;
 import io.github.lucaseasedup.logit.hooks.BukkitSmerfHook;
+import io.github.lucaseasedup.logit.hooks.EssentialsHook;
 import io.github.lucaseasedup.logit.hooks.VanishNoPacketHook;
 import io.github.lucaseasedup.logit.logging.timing.PlayerJoinTiming;
 import io.github.lucaseasedup.logit.logging.timing.PlayerLoginTiming;
@@ -392,7 +393,8 @@ public final class PlayerEventListener extends LogItCoreObject
                 || !getCore().isPlayerForcedToLogIn(player))
         {
             if (!getConfig("config.yml").getBoolean("messages.join.hide")
-                    && !VanishNoPacketHook.isVanished(player))
+                    && !VanishNoPacketHook.isVanished(player)
+                    && !EssentialsHook.isVanished(player))
             {
                 joinMessage.set(JoinMessageGenerator.generate(player,
                         getConfig("config.yml").getBoolean("messages.join.showWorld")));
@@ -534,7 +536,8 @@ public final class PlayerEventListener extends LogItCoreObject
         if (!getConfig("config.yml").getBoolean("messages.quit.hide")
                 && (!getCore().isPlayerForcedToLogIn(player)
                         || getSessionManager().isSessionAlive(player))
-                && !VanishNoPacketHook.isVanished(player))
+                && !VanishNoPacketHook.isVanished(player)
+                && !EssentialsHook.isVanished(player))
         {
             quitMessage.set(QuitMessageGenerator.generate(player));
         }
