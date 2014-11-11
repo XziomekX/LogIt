@@ -79,6 +79,7 @@ public final class ConvertWizard extends Wizard
                     break;
                     
                 case "mysql":
+                case "postgresql":
                     sendMessage(t("wizard.convert.enterHost"));
                     updateStep(Step.ENTER_HOST);
                     break;
@@ -89,7 +90,7 @@ public final class ConvertWizard extends Wizard
                     break;
                     
                 default:
-                    throw new RuntimeException("Unexpected dbtype" + dbtype);
+                    throw new RuntimeException("Unexpected dbtype: " + dbtype);
                 }
             }
         }
@@ -109,7 +110,7 @@ public final class ConvertWizard extends Wizard
                 break;
                 
             default:
-                throw new RuntimeException("Unexpected dbtype" + dbtype);
+                throw new RuntimeException("Unexpected dbtype: " + dbtype);
             }
         }
         else if (getCurrentStep() == Step.ENTER_HOST)
@@ -122,12 +123,13 @@ public final class ConvertWizard extends Wizard
             switch (dbtype)
             {
             case "mysql":
+            case "postgresql":
                 sendMessage(t("wizard.convert.enterUser"));
                 updateStep(Step.ENTER_USER);
                 break;
                 
             default:
-                throw new RuntimeException("Unexpected dbtype" + dbtype);
+                throw new RuntimeException("Unexpected dbtype: " + dbtype);
             }
         }
         else if (getCurrentStep() == Step.ENTER_USER)
@@ -140,12 +142,13 @@ public final class ConvertWizard extends Wizard
             switch (dbtype)
             {
             case "mysql":
+            case "postgresql":
                 sendMessage(t("wizard.convert.enterPassword"));
                 updateStep(Step.ENTER_PASSWORD);
                 break;
                 
             default:
-                throw new RuntimeException("Unexpected dbtype" + dbtype);
+                throw new RuntimeException("Unexpected dbtype: " + dbtype);
             }
         }
         else if (getCurrentStep() == Step.ENTER_PASSWORD)
@@ -161,9 +164,14 @@ public final class ConvertWizard extends Wizard
                 sendMessage(t("wizard.convert.enterDatabaseName"));
                 updateStep(Step.ENTER_DATABASE);
                 break;
-                
+            
+            case "postgresql":
+                sendMessage(t("wizard.convert.enterUnit"));
+                updateStep(Step.ENTER_TABLE);
+                break;
+            
             default:
-                throw new RuntimeException("Unexpected dbtype" + dbtype);
+                throw new RuntimeException("Unexpected dbtype: " + dbtype);
             }
         }
         else if (getCurrentStep() == Step.ENTER_DATABASE)
@@ -181,7 +189,7 @@ public final class ConvertWizard extends Wizard
                 break;
                 
             default:
-                throw new RuntimeException("Unexpected dbtype" + dbtype);
+                throw new RuntimeException("Unexpected dbtype: " + dbtype);
             }
         }
         else if (getCurrentStep() == Step.ENTER_TABLE)
@@ -232,11 +240,6 @@ public final class ConvertWizard extends Wizard
                     .set("storage.accounts.leading.sqlite.filename", filename);
             break;
             
-        case "h2":
-            getConfig("config.yml")
-                    .set("storage.accounts.leading.h2.filename", filename);
-            break;
-            
         case "mysql":
             getConfig("config.yml")
                     .set("storage.accounts.leading.mysql.host", host);
@@ -247,9 +250,21 @@ public final class ConvertWizard extends Wizard
             getConfig("config.yml")
                     .set("storage.accounts.leading.mysql.database", database);
             break;
+
+        case "h2":
+            getConfig("config.yml")
+                    .set("storage.accounts.leading.h2.filename", filename);
+            break;
+
+        case "postgresql":
+            getConfig("config.yml")
+                    .set("storage.accounts.leading.postgresql.host", host);
+            getConfig("config.yml")
+                    .set("storage.accounts.leading.postgresql.user", user);
+            getConfig("config.yml")
+                    .set("storage.accounts.leading.postgresql.password", password);
             
-        default:
-            throw new RuntimeException("Unexpected dbtype" + dbtype);
+            break;
         }
         
         getConfig("config.yml").set("storage.accounts.leading.unit", table);
