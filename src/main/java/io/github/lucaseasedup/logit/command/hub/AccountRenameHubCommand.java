@@ -80,18 +80,16 @@ public final class AccountRenameHubCommand extends HubCommand
         
         if (PlayerUtils.isPlayerOnline(args[1]))
         {
-            sendMsg(sender, t("accountRename.usernameTaken"));
+            sendMsg(sender, t("accountRename.playerOnline"));
             
             return;
         }
-        else
+        
+        if (getAccountManager().isRegistered(args[1]))
         {
-            if (getAccountManager().isRegistered(args[1]))
-            {
-                sendMsg(sender, t("accountRename.usernameTaken"));
-                
-                return;
-            }
+            sendMsg(sender, t("accountRename.usernameTaken"));
+            
+            return;
         }
         
         sendMsg(sender, t("accountRename.confirm")
