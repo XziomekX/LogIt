@@ -45,53 +45,69 @@ public final class ProfileEditWizard extends Wizard
                 sendMessage(t("wizard.orangeHorizontalLine"));
                 cancelWizard();
             }
-            else if (message.equalsIgnoreCase("edit"))
+            else if (message.toLowerCase().startsWith("edit "))
             {
-                sendMessage(t("profile.edit.enterFieldNumber"));
-                updateStep(Step.EDIT_FIELD);
-            }
-            else if (message.equalsIgnoreCase("erase"))
-            {
-                sendMessage(t("profile.edit.enterFieldNumber"));
-                updateStep(Step.ERASE_FIELD);
-            }
-        }
-        else if (getCurrentStep() == Step.EDIT_FIELD || getCurrentStep() == Step.ERASE_FIELD)
-        {
-            int number;
-            
-            try
-            {
-                number = Integer.parseInt(message);
-            }
-            catch (NumberFormatException ex)
-            {
-                sendMessage(t("profile.edit.unknownField"));
+                String numberString = message.replaceAll("^edit\\s+", "");
+                int number;
                 
-                return;
-            }
-            
-            if (number > fields.size() || number <= 0)
-            {
-                sendMessage(t("profile.edit.unknownField"));
+                try
+                {
+                    number = Integer.parseInt(numberString);
+                }
+                catch (NumberFormatException ex)
+                {
+                    sendMessage(t("profile.edit.unknownField"));
+
+                    return;
+                }
                 
-                return;
-            }
-            
-            field = fields.get(number - 1);
-            
-            if (getCurrentStep() == Step.EDIT_FIELD)
-            {
+                if (number > fields.size() || number <= 0)
+                {
+                    sendMessage(t("profile.edit.unknownField"));
+
+                    return;
+                }
+                
+                field = fields.get(number - 1);
+                
                 sendFieldEditingPrompt();
-                
                 updateStep(Step.ENTER_FIELD_VALUE);
             }
-            else if (getCurrentStep() == Step.ERASE_FIELD)
+            else if (message.toLowerCase().startsWith("erase "))
             {
-                getProfileManager().removeProfileObject(playerName, field.getName());
+                String numberString = message.replaceAll("^erase\\s+", "");
+                int number;
+                
+                try
+                {
+                    number = Integer.parseInt(numberString);
+                }
+                catch (NumberFormatException ex)
+                {
+                    sendMessage(t("profile.edit.unknownField"));
+
+                    return;
+                }
+                
+                if (number > fields.size() || number <= 0)
+                {
+                    sendMessage(t("profile.edit.unknownField"));
+
+                    return;
+                }
+                
+                field = fields.get(number - 1);
+                
+                getProfileManager().removeProfileObject(
+                        playerName, field.getName()
+                );
                 
                 viewProfile(field.getName());
                 updateStep(Step.CHOOSE_ACTION);
+            }
+            else
+            {
+                sendMessage(t("profile.edit.unknownAction"));
             }
         }
         else if (getCurrentStep() == Step.ENTER_FIELD_VALUE)
