@@ -1,7 +1,6 @@
 package io.github.lucaseasedup.logit;
 
 import static io.github.lucaseasedup.logit.message.MessageHelper.t;
-import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.account.AccountKeys;
 import io.github.lucaseasedup.logit.account.AccountManager;
@@ -71,6 +70,7 @@ import io.github.lucaseasedup.logit.storage.StorageType;
 import io.github.lucaseasedup.logit.storage.UnitKeys;
 import io.github.lucaseasedup.logit.storage.WrapperStorage;
 import io.github.lucaseasedup.logit.tab.TabListUpdater;
+import io.github.lucaseasedup.logit.util.CollectionUtils;
 import io.github.lucaseasedup.logit.util.IoUtils;
 import java.io.File;
 import java.io.IOException;
@@ -1079,7 +1079,9 @@ public final class LogItCore
                 .getStringList("forceLogin.exemptPlayers");
         
         return (forcedLoginGlobal || exemptedWorlds.contains(playerWorldName))
-                && !containsIgnoreCase(player.getName(), exemptedPlayers);
+                && !CollectionUtils.containsIgnoreCase(
+                        player.getName(), exemptedPlayers
+                );
     }
     
     /**

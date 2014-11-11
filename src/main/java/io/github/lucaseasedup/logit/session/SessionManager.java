@@ -2,7 +2,6 @@ package io.github.lucaseasedup.logit.session;
 
 import static io.github.lucaseasedup.logit.message.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.message.MessageHelper.t;
-import static io.github.lucaseasedup.logit.util.CollectionUtils.containsIgnoreCase;
 import io.github.lucaseasedup.logit.CancelledState;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.AccountManager.RegistrationFetchMode;
@@ -12,6 +11,7 @@ import io.github.lucaseasedup.logit.storage.SqliteStorage;
 import io.github.lucaseasedup.logit.storage.Storage;
 import io.github.lucaseasedup.logit.storage.StorageEntry;
 import io.github.lucaseasedup.logit.storage.UnitKeys;
+import io.github.lucaseasedup.logit.util.CollectionUtils;
 import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -110,7 +110,12 @@ public final class SessionManager extends LogItCoreObject implements Runnable
             // Player is online but otherwise logged out.
             else if (player != null)
             {
-                if (!containsIgnoreCase(username, disableTimeoutForPlayers)
+                boolean disableTimeoutForPlayer =
+                        CollectionUtils.containsIgnoreCase(
+                                username, disableTimeoutForPlayers
+                        );
+                
+                if (!disableTimeoutForPlayer
                         && getCore().isPlayerForcedToLogIn(player))
                 {
                     boolean loginTimeoutElapsed =
