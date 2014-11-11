@@ -2,11 +2,11 @@ package io.github.lucaseasedup.logit.command.hub;
 
 import static io.github.lucaseasedup.logit.message.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.message.MessageHelper.t;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.command.CommandAccess;
 import io.github.lucaseasedup.logit.command.CommandHelpLine;
 import io.github.lucaseasedup.logit.command.wizard.ConfirmationWizard;
 import io.github.lucaseasedup.logit.util.CollectionUtils;
+import io.github.lucaseasedup.logit.util.PlayerUtils;
 import java.util.List;
 import org.bukkit.command.CommandSender;
 
@@ -78,7 +78,7 @@ public final class AccountRenameHubCommand extends HubCommand
             return;
         }
         
-        if (isPlayerOnline(args[1]))
+        if (PlayerUtils.isPlayerOnline(args[1]))
         {
             sendMsg(sender, t("accountRename.usernameTaken"));
             

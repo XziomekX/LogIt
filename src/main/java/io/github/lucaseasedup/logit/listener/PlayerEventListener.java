@@ -261,61 +261,75 @@ public final class PlayerEventListener extends LogItCoreObject
         // =======================================
         timing.startSelectAccount();
         
-        Account account = getAccountManager().selectAccount(username, Arrays.asList(
+        List<String> joinQueryKeys = Arrays.asList(
                 keys().username(),
                 keys().uuid(),
                 keys().login_session(),
                 keys().display_name(),
                 keys().persistence()
-        ));
+        );
+        Account account = getAccountManager().selectAccount(
+                username, joinQueryKeys
+        );
         
         timing.endSelectAccount();
         // =======================================
-        timing.startUuidMatching();
         
-        List<Account> uuidMatchedAccounts = getAccountManager().selectAccounts(
-                Arrays.asList(
-                        keys().username(),
-                        keys().uuid()
-                ),
-                new SelectorBinary(
-                        new SelectorNegation(new SelectorCondition(
-                                keys().username(),
-                                Infix.CONTAINS,
-                                "$"
-                        )),
-                        Infix.AND,
-                        new SelectorCondition(
-                                keys().uuid(),
-                                Infix.EQUALS,
-                                uuid.toString()
-                        )
-                )
-        );
-        
-        timing.endUuidMatching();
-        // =======================================
-        
-        if (uuidMatchedAccounts != null && !uuidMatchedAccounts.isEmpty())
+        if (account == null)
         {
-            Account uuidMatchedAccount = uuidMatchedAccounts.get(0);
-            String uuidMatchedUsername = uuidMatchedAccount.getUsername();
+            // =======================================
+            timing.startUuidMatching();
             
-            if (!uuidMatchedUsername.equalsIgnoreCase(username))
+            List<Account> uuidMatchedAccounts = getAccountManager().selectAccounts(
+                    Arrays.asList(
+                            keys().username(),
+                            keys().uuid()
+                    ),
+                    new SelectorBinary(
+                            new SelectorNegation(new SelectorCondition(
+                                    keys().username(),
+                                    Infix.CONTAINS,
+                                    "$"
+                            )),
+                            Infix.AND,
+                            new SelectorCondition(
+                                    keys().uuid(),
+                                    Infix.EQUALS,
+                                    uuid.toString()
+                            )
+                    )
+            );
+            
+            if (uuidMatchedAccounts != null && !uuidMatchedAccounts.isEmpty())
             {
-                if (account != null)
-                {
-                    getAccountManager().renameAccount(username,
-                            username + "$" + account.getUuid());
-                }
+                Account uuidMatchedAccount = uuidMatchedAccounts.get(0);
+                String uuidMatchedUsername = uuidMatchedAccount.getUsername();
                 
-                getAccountManager().renameAccount(uuidMatchedUsername, username);
+                if (!uuidMatchedUsername.equalsIgnoreCase(username))
+                {
+                    getAccountManager().renameAccount(
+                            uuidMatchedUsername, username
+                    );
+                    
+                    // Load the new account.
+                    account = getAccountManager().selectAccount(
+                            username, joinQueryKeys
+                    );
+                }
+            }
+            
+            timing.endUuidMatching();
+            // =======================================
+            
+            if (getConfig("config.yml").getBoolean("waitingRoom.enabled"))
+            {
+                player.teleport(getCore().getWaitingRoomLocation());
             }
         }
-        
-        if (account != null)
+        else
         {
-            if (StringUtils.isBlank(account.getUuid()))
+            if (StringUtils.isBlank(account.getUuid())
+                    || !account.getUuid().equals(uuid))
             {
                 account.setUuid(uuid);
             }
@@ -379,13 +393,6 @@ public final class PlayerEventListener extends LogItCoreObject
                         }
                     }
                 }.runTaskLater(getPlugin(), 140L);
-            }
-        }
-        else
-        {
-            if (getConfig("config.yml").getBoolean("waitingRoom.enabled"))
-            {
-                player.teleport(getCore().getWaitingRoomLocation());
             }
         }
         

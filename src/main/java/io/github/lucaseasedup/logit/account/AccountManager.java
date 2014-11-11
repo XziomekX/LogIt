@@ -518,7 +518,6 @@ public final class AccountManager extends LogItCoreObject implements Runnable
             storage.updateEntries(unit,
                     new StorageEntry.Builder()
                             .put(keys().username(), newUsername)
-                            .put(keys().uuid(), "")
                             .put(keys().display_name(), "")
                             .build(),
                     new SelectorCondition(
@@ -528,9 +527,20 @@ public final class AccountManager extends LogItCoreObject implements Runnable
                     )
             );
             
-            if (buffer.get(username) != null)
+            Account bufferedAccount = buffer.remove(username);
+            
+            if (bufferedAccount != null)
             {
-                buffer.put(newUsername, buffer.remove(username));
+                bufferedAccount.getEntry().put(keys().username(), newUsername);
+                
+                if (buffer.get(newUsername) != null)
+                {
+                    buffer.get(newUsername).setEntry(
+                            bufferedAccount.getEntry()
+                    );
+                }
+                
+                buffer.put(newUsername, bufferedAccount);
             }
         }
         catch (IOException ex)

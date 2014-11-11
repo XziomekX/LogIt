@@ -2,7 +2,6 @@ package io.github.lucaseasedup.logit.command;
 
 import static io.github.lucaseasedup.logit.message.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.message.MessageHelper.t;
-import static io.github.lucaseasedup.logit.util.PlayerUtils.isPlayerOnline;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import io.github.lucaseasedup.logit.account.Account;
 import io.github.lucaseasedup.logit.common.ReportedException;
@@ -111,7 +110,7 @@ public final class RegisterCommand extends LogItCoreObject
                 Account account = new Account(args[1]);
                 account.changePassword(password);
                 
-                if (isPlayerOnline(args[1]))
+                if (PlayerUtils.isPlayerOnline(args[1]))
                 {
                     Player paramPlayer = PlayerUtils.getPlayer(args[1]);
                     String paramPlayerIp = PlayerUtils.getPlayerIp(paramPlayer);
@@ -134,7 +133,7 @@ public final class RegisterCommand extends LogItCoreObject
                     sendMsg(sender, t("createAccount.success.others")
                             .replace("{0}", PlayerUtils.getPlayerRealName(args[1])));
                     
-                    if (isPlayerOnline(args[1]))
+                    if (PlayerUtils.isPlayerOnline(args[1]))
                     {
                         Player paramPlayer = PlayerUtils.getPlayer(args[1]);
                         

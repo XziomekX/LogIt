@@ -896,6 +896,14 @@ public final class Account extends LogItCoreObject
         return entry;
     }
     
+    /* package */ void setEntry(StorageEntry entry)
+    {
+        if (entry == null)
+            throw new IllegalArgumentException();
+        
+        this.entry = entry;
+    }
+    
     public void bufferLock()
     {
         if (bufferLocked)
@@ -942,8 +950,8 @@ public final class Account extends LogItCoreObject
     public static final String LOGIN_HISTORY_SEPARATOR = "|";
     private static final Pattern LOGIN_HISTORY_SEPARATOR_PATTERN =
             Pattern.compile(Pattern.quote(LOGIN_HISTORY_SEPARATOR));
-
-    private final StorageEntry entry;
+    
+    private StorageEntry entry;
     private final Queue<SaveCallback> saveCallbacks = new LinkedList<>();
     private boolean bufferLocked = false;
 }
