@@ -37,7 +37,7 @@ public final class ProfileManager extends LogItCoreObject
             
             try
             {
-                definedFields.add(newField(fieldName, fieldDefinition));
+                definedFields.add(getNewField(fieldName, fieldDefinition));
             }
             catch (RuntimeException ex)
             {
@@ -320,7 +320,7 @@ public final class ProfileManager extends LogItCoreObject
         }
     }
     
-    private Field newField(String fieldName, String definitionString)
+    private Field getNewField(String fieldName, String definitionString)
     {
         if (StringUtils.isBlank(fieldName)
                 || StringUtils.isBlank(definitionString))
@@ -344,8 +344,11 @@ public final class ProfileManager extends LogItCoreObject
                 
                 if (rangeMatcher.find())
                 {
-                    return new StringField(fieldName, Integer.parseInt(rangeMatcher.group(1)),
-                            Integer.parseInt(rangeMatcher.group(2)));
+                    return new StringField(
+                            fieldName,
+                            Integer.parseInt(rangeMatcher.group(1)),
+                            Integer.parseInt(rangeMatcher.group(2))
+                    );
                 }
                 else
                 {
@@ -375,8 +378,11 @@ public final class ProfileManager extends LogItCoreObject
                 
                 if (rangeMatcher.find())
                 {
-                    return new FloatField(fieldName, Double.valueOf(rangeMatcher.group(1)),
-                            Double.valueOf(rangeMatcher.group(2)));
+                    return new FloatField(
+                            fieldName,
+                            Double.valueOf(rangeMatcher.group(1)),
+                            Double.valueOf(rangeMatcher.group(2))
+                    );
                 }
                 else
                 {
@@ -384,7 +390,10 @@ public final class ProfileManager extends LogItCoreObject
                 }
             }
             case "SET":
-                return new SetField(fieldName, Arrays.asList(arguments.split("(?<!\\\\),")));
+                return new SetField(
+                        fieldName,
+                        Arrays.asList(SET_SPLIT_PATTERN.split(arguments))
+                );
                 
             default:
                 throw new RuntimeException("Unknown field type.");
@@ -409,6 +418,9 @@ public final class ProfileManager extends LogItCoreObject
             Pattern.compile("^\\s*(-?[0-9]+\\.[0-9]+)"        // Min
                            + "\\s*\\.\\.\\."                  // Range operator
                            + "\\s*(-?[0-9]+\\.[0-9]+)\\s*$"); // Max
+    
+    private static final Pattern SET_SPLIT_PATTERN =
+            Pattern.compile("(?<!\\\\),\\s*");
     
     private File path;
     private List<Field> definedFields = new LinkedList<>();

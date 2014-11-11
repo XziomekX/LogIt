@@ -294,7 +294,7 @@ public final class PredefinedConfiguration extends PropertyObserver
         
         for (String key : getKeys(path))
         {
-            values.put(key, getString(path + "." + key));
+            values.put(key, configuration.getString(path + "." + key));
         }
         
         return values;
