@@ -35,7 +35,16 @@ public abstract class Wizard extends LogItCoreObject implements Listener
     {
         if (event.getPlayer() == sender)
         {
-            onMessage(event.getMessage());
+            if (event.getMessage().equals(MAGIC_QUIT_WORD))
+            {
+                sendMessage(t("wizardCancelled"));
+                cancelWizard();
+            }
+            else
+            {
+                onMessage(event.getMessage());
+            }
+            
             event.setCancelled(true);
         }
     }
@@ -47,7 +56,9 @@ public abstract class Wizard extends LogItCoreObject implements Listener
         {
             sendMessage(t("wizardCancelled"));
             cancelWizard();
-            Bukkit.dispatchCommand(event.getPlayer(), event.getMessage().substring(1));
+            Bukkit.dispatchCommand(
+                    event.getPlayer(), event.getMessage().substring(1)
+            );
             event.setCancelled(true);
         }
     }
@@ -57,7 +68,16 @@ public abstract class Wizard extends LogItCoreObject implements Listener
     {
         if (event.getSender() == sender)
         {
-            onMessage(event.getCommand());
+            if (event.getCommand().equals(MAGIC_QUIT_WORD))
+            {
+                sendMessage(t("wizardCancelled"));
+                cancelWizard();
+            }
+            else
+            {
+                onMessage(event.getCommand());
+            }
+            
             event.setCommand("$logit-nop-command");
         }
     }
@@ -107,6 +127,8 @@ public abstract class Wizard extends LogItCoreObject implements Listener
     {
         this.step = step;
     }
+    
+    private static final String MAGIC_QUIT_WORD = ":E1,X2/$";
     
     private final CommandSender sender;
     private final Object initStep;
