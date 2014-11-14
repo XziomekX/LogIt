@@ -85,7 +85,7 @@ public final class ConvertWizard extends Wizard
                     break;
                     
                 case "csv":
-                    sendMessage(t("wizard.convert.enterUnit"));
+                    sendMessage(t("wizard.convert.enterFilename"));
                     updateStep(Step.ENTER_TABLE);
                     break;
                     
