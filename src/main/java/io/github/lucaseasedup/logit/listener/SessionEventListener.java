@@ -60,6 +60,24 @@ public final class SessionEventListener extends LogItCoreObject
             {
                 getPersistenceManager().unserialize(account, player);
             }
+            
+            if (getConfig("config.yml").getBoolean("forceLogin.hideOtherPlayers"))
+            {
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers())
+                {
+                    if (onlinePlayer == player)
+                        continue;
+                    
+                    if (!getSessionManager().isSessionAlive(onlinePlayer)
+                            && getCore().isPlayerForcedToLogIn(onlinePlayer))
+                    {
+                        continue;
+                    }
+                    
+                    onlinePlayer.showPlayer(player);
+                    player.showPlayer(onlinePlayer);
+                }
+            }
         }
     }
     
@@ -105,6 +123,18 @@ public final class SessionEventListener extends LogItCoreObject
             if (account != null)
             {
                 getPersistenceManager().serialize(account, player);
+            }
+            
+            if (getConfig("config.yml").getBoolean("forceLogin.hideOtherPlayers"))
+            {
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers())
+                {
+                    if (onlinePlayer == player)
+                        continue;
+                    
+                    onlinePlayer.hidePlayer(player);
+                    player.hidePlayer(onlinePlayer);
+                }
             }
             
             if (getConfig("config.yml").getBoolean("forceLogin.periodicalPrompt.enabled"))

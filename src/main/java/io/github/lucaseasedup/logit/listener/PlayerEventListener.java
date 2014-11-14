@@ -399,6 +399,24 @@ public final class PlayerEventListener extends LogItCoreObject
         if (getSessionManager().isSessionAlive(player)
                 || !getCore().isPlayerForcedToLogIn(player))
         {
+            if (getConfig("config.yml").getBoolean("forceLogin.hideOtherPlayers"))
+            {
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers())
+                {
+                    if (onlinePlayer == player)
+                        continue;
+
+                    if (getSessionManager().isSessionAlive(onlinePlayer)
+                            || !getCore().isPlayerForcedToLogIn(onlinePlayer))
+                    {
+                        continue;
+                    }
+                    
+                    onlinePlayer.hidePlayer(player);
+                    player.hidePlayer(onlinePlayer);
+                }
+            }
+            
             if (!getConfig("config.yml").getBoolean("messages.join.hide")
                     && !VanishNoPacketHook.isVanished(player)
                     && !EssentialsHook.isVanished(player))
@@ -418,6 +436,18 @@ public final class PlayerEventListener extends LogItCoreObject
                 
                 timing.endSerialize();
                 // =======================================
+            }
+            
+            if (getConfig("config.yml").getBoolean("forceLogin.hideOtherPlayers"))
+            {
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers())
+                {
+                    if (onlinePlayer == player)
+                        continue;
+                    
+                    onlinePlayer.hidePlayer(player);
+                    player.hidePlayer(onlinePlayer);
+                }
             }
             
             if (!getConfig("config.yml").getBoolean("waitingRoom.enabled"))
