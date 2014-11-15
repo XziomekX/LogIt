@@ -50,10 +50,6 @@ commands:
     description: Reserved for internal use.
 
 permissions:
-  logit.*:
-    default: false
-    children:
-      logit.admin: true
   logit.player:
     default: not op
     children:
@@ -117,12 +113,6 @@ permissions:
     default: false
   logit.reload:
     default: false
-  logit.backup.*:
-    default: false
-    children:
-      logit.backup.force: true
-      logit.backup.restore: true
-      logit.backup.remove: true
   logit.backup.force:
     default: false
   logit.backup.restore:
@@ -131,24 +121,10 @@ permissions:
     default: false
   logit.gotowr:
     default: false
-  logit.globalpass.*:
-    default: false
-    children:
-      logit.globalpass.generate: true
   logit.globalpass.generate:
     default: false
   logit.account.status:
     default: false
-  logit.account.info.*:
-    default: false
-    children:
-      logit.account.info: true
-      logit.account.info.ip: true
-      logit.account.info.email: true
-      logit.account.info.lastactivedate: true
-      logit.account.info.regdate: true
-      logit.account.info.islocked: true
-      logit.account.info.displayname: true
   logit.account.info:
     default: false
   logit.account.info.ip:
@@ -169,13 +145,6 @@ permissions:
     default: false
   logit.ipcount:
     default: false
-  logit.config.*:
-    default: false
-    children:
-      logit.config.get: true
-      logit.config.set: true
-      logit.config.list: true
-      logit.config.reload: true
   logit.config.get:
     default: false
   logit.config.set:
