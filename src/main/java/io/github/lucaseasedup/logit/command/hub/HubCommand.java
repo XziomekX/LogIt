@@ -15,19 +15,31 @@ public abstract class HubCommand extends LogItCoreObject
             String subcommand,
             String[] params,
             CommandAccess commandAccess,
-            CommandHelpLine helpLine
+            CommandHelpLine helpLine,
+            HelpVisibility helpVisibility
     )
     {
-        if (subcommand == null || params == null
-                || commandAccess == null || helpLine == null)
+        if (subcommand == null || params == null || commandAccess == null
+                || helpLine == null || helpVisibility == null)
         {
             throw new IllegalArgumentException();
         }
-                    
+        
         this.subcommand = subcommand;
         this.params = Arrays.asList(params);
         this.commandAccess = commandAccess;
         this.helpLine = helpLine;
+        this.helpVisibility = helpVisibility;
+    }
+    
+    public HubCommand(
+            String subcommand,
+            String[] params,
+            CommandAccess commandAccess,
+            CommandHelpLine helpLine
+    )
+    {
+        this(subcommand, params, commandAccess, helpLine, HelpVisibility.SHOWN);
     }
     
     public abstract void execute(CommandSender sender, String[] args);
@@ -70,8 +82,19 @@ public abstract class HubCommand extends LogItCoreObject
         return helpLine;
     }
     
+    public HelpVisibility getHelpVisibility()
+    {
+        return helpVisibility;
+    }
+    
+    public static enum HelpVisibility
+    {
+        SHOWN, HIDDEN
+    }
+    
     private final String subcommand;
     private final List<String> params;
     private final CommandAccess commandAccess;
     private final CommandHelpLine helpLine;
+    private final HelpVisibility helpVisibility;
 }

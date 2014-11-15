@@ -31,35 +31,55 @@ public final class HelpHubCommand extends HubCommand
         {
             HubCommand hubCommand = it.next();
             
-            if ((!(sender instanceof Player) || sender.hasPermission(hubCommand.getPermission()))
-                    && !(hubCommand.isPlayerOnly() && !(sender instanceof Player))
-                    && (getCore().isStarted() || !hubCommand.isRunningCoreRequired()))
+            if (sender instanceof Player)
             {
-                StringBuilder params = new StringBuilder();
-                
-                for (String param : hubCommand.getParams())
+                if (!sender.hasPermission(hubCommand.getPermission()))
                 {
-                    params.append(" <");
-                    params.append(param);
-                    params.append(">");
+                    continue;
                 }
-                
-                if (hubCommand.getHelpLine().hasOptionalParam())
-                {
-                    params.append(" [");
-                    params.append(hubCommand.getHelpLine().getOptionalParam());
-                    params.append("]");
-                }
-                
-                String helpLine = t("subCmdHelpLine");
-                String command = hubCommand.getHelpLine().getCommand();
-                String description = t(hubCommand.getHelpLine().getDescriptionLabel());
-                
-                helpLine = helpLine.replace("{0}", command + params);
-                helpLine = helpLine.replace("{1}", description);
-                
-                sendMsg(sender, helpLine);
             }
+            else
+            {
+                if (hubCommand.isPlayerOnly())
+                {
+                    continue;
+                }
+            }
+            
+            if (!getCore().isStarted() && hubCommand.isRunningCoreRequired())
+            {
+                continue;
+            }
+            
+            if (hubCommand.getHelpVisibility() == HelpVisibility.HIDDEN)
+            {
+                continue;
+            }
+            
+            StringBuilder params = new StringBuilder();
+            
+            for (String param : hubCommand.getParams())
+            {
+                params.append(" <");
+                params.append(param);
+                params.append(">");
+            }
+            
+            if (hubCommand.getHelpLine().hasOptionalParam())
+            {
+                params.append(" [");
+                params.append(hubCommand.getHelpLine().getOptionalParam());
+                params.append("]");
+            }
+            
+            String helpLine = t("subCmdHelpLine");
+            String command = hubCommand.getHelpLine().getCommand();
+            String description = t(hubCommand.getHelpLine().getDescriptionLabel());
+            
+            helpLine = helpLine.replace("{0}", command + params);
+            helpLine = helpLine.replace("{1}", description);
+            
+            sendMsg(sender, helpLine);
         }
     }
 }
