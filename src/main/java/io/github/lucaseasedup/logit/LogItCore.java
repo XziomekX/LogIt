@@ -162,6 +162,11 @@ public final class LogItCore
         
         firstRun = !getDataFile("config.yml").exists();
         
+        if (isFirstRun())
+        {
+            doFirstRunStuff();
+        }
+        
         // =======================================
         timing.startConfigurationManager();
         
@@ -192,11 +197,6 @@ public final class LogItCore
         
         timing.endMessages();
         // =======================================
-        
-        if (isFirstRun())
-        {
-            doFirstRunStuff();
-        }
         
         if (getConfig("secret.yml").getBoolean("debug.enableSelfTests"))
         {
@@ -305,6 +305,15 @@ public final class LogItCore
         return CancelledState.NOT_CANCELLED;
     }
     
+    private void doFirstRunStuff()
+    {
+        getDataFile("backup").mkdir();
+        getDataFile("lib").mkdir();
+        getDataFile("mail").mkdir();
+
+        extractMailTemplate("password-recovery.html");
+    }
+    
     private void setUpConfiguration() throws FatalReportedException
     {
         String configHeader = "# # # # # # # # # # # # # # #\n"
@@ -381,15 +390,6 @@ public final class LogItCore
                 getPlugin().getCommand("loginhistory")
         ));
         commandSilencer.registerFilters();
-    }
-    
-    private void doFirstRunStuff()
-    {
-        getDataFile("backup").mkdir();
-        getDataFile("lib").mkdir();
-        getDataFile("mail").mkdir();
-        
-        extractMailTemplate("password-recovery.html");
     }
     
     private void extractMailTemplate(String filename)
