@@ -159,6 +159,8 @@ permissions:
     default: false
   logit.import:
     default: false
+  logit.selftest:
+    default: false
   logit.login:
     default: false
     children:

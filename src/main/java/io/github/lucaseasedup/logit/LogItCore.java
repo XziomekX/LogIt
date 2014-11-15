@@ -198,6 +198,25 @@ public final class LogItCore
             doFirstRunStuff();
         }
         
+        if (getConfig("secret.yml").getBoolean("debug.enableSelfTests"))
+        {
+            log(Level.WARNING, "Self-tests for LogIt have been enabled." +
+                    " Using them will DESTROY ALL YOUR DATA!");
+            
+            tellConsole("");
+            tellConsole(ChatColor.RED + "()()()()()()()()()()()()()()()()()()()()");
+            tellConsole(ChatColor.RED + "========================================");
+            tellConsole("");
+            tellConsole(ChatColor.RED + "          !!! ATTENTION !!!");
+            tellConsole("");
+            tellConsole(ChatColor.RED + " Self-tests for LogIt have been enabled.");
+            tellConsole(ChatColor.RED + " Using them will DESTROY ALL YOUR DATA!");
+            tellConsole("");
+            tellConsole(ChatColor.RED + "========================================");
+            tellConsole(ChatColor.RED + "()()()()()()()()()()()()()()()()()()()()");
+            tellConsole("");
+        }
+        
         // =======================================
         timing.startCraftReflect();
         

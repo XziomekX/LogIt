@@ -63,5 +63,6 @@ public final class HubCommands
         hubCommands.add(new ConvertHubCommand());
         hubCommands.add(new StatsHubCommand());
         hubCommands.add(new ImportAuthMeHubCommand());
+        hubCommands.add(new SelftestHubCommand());
     }
 }
