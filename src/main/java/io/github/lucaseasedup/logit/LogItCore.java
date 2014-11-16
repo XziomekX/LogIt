@@ -198,6 +198,20 @@ public final class LogItCore
         timing.endMessages();
         // =======================================
         
+        if (getConfig("config.yml").getBoolean("passwordRecovery.enabled"))
+        {
+            File bodyFile = getDataFile(
+                    getConfig("config.yml").getString("passwordRecovery.bodyTemplate")
+            );
+            
+            if (!bodyFile.isFile())
+            {
+                log(Level.SEVERE, "File " + bodyFile + " not found");
+                
+                FatalReportedException.throwNew();
+            }
+        }
+        
         if (getConfig("secret.yml").getBoolean("debug.enableSelfTests"))
         {
             log(Level.WARNING, "Self-tests for LogIt have been enabled." +
