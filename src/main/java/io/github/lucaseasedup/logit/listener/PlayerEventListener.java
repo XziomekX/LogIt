@@ -82,6 +82,60 @@ public final class PlayerEventListener extends LogItCoreObject
         if (player == null || address == null || kicker == null)
             throw new IllegalArgumentException();
         
+        String username = player.getName().toLowerCase();
+        
+        int minUsernameLength = getConfig("secret.yml")
+                .getInt("username.minLength");
+        int maxUsernameLength = getConfig("secret.yml")
+                .getInt("username.maxLength");
+        
+        if (usernamePattern == null)
+        {
+            usernamePattern = Pattern.compile(
+                    getConfig("secret.yml").getString("username.regex")
+            );
+        }
+        
+        if (StringUtils.isBlank(username))
+        {
+            kicker.kick(player, t("usernameBlank"));
+        }
+        else if (username.length() < minUsernameLength)
+        {
+            kicker.kick(player, t("usernameTooShort")
+                    .replace("{0}", String.valueOf(minUsernameLength)));
+        }
+        else if (username.length() > maxUsernameLength)
+        {
+            kicker.kick(player, t("usernameTooLong")
+                    .replace("{0}", String.valueOf(maxUsernameLength)));
+        }
+        else if (!usernamePattern.matcher(player.getName()).matches())
+        {
+            kicker.kick(player, t("usernameInvalid"));
+        }
+        else if (CollectionUtils.containsIgnoreCase(username,
+                getConfig("config.yml").getStringList("prohibitedUsernames")))
+        {
+            kicker.kick(player, t("usernameProhibited"));
+        }
+        else if (PlayerUtils.isAnotherPlayerOnline(player))
+        {
+            kicker.kick(player, t("usernameAlreadyUsed"));
+        }
+        else
+        {
+            onValidLogin(player, address, kicker);
+        }
+    }
+    
+    private void onValidLogin(
+            Player player, InetAddress address, PlayerKicker kicker
+    )
+    {
+        if (player == null || address == null || kicker == null)
+            throw new IllegalArgumentException();
+        
         PlayerLoginTiming timing = new PlayerLoginTiming();
         timing.start();
         
@@ -140,46 +194,7 @@ public final class PlayerEventListener extends LogItCoreObject
             }
         }
         
-        int minUsernameLength = getConfig("secret.yml")
-                .getInt("username.minLength");
-        int maxUsernameLength = getConfig("secret.yml")
-                .getInt("username.maxLength");
-        
-        if (usernamePattern == null)
-        {
-            usernamePattern = Pattern.compile(
-                    getConfig("secret.yml").getString("username.regex")
-            );
-        }
-        
-        if (StringUtils.isBlank(username))
-        {
-            kicker.kick(player, t("usernameBlank"));
-        }
-        else if (username.length() < minUsernameLength)
-        {
-            kicker.kick(player, t("usernameTooShort")
-                    .replace("{0}", String.valueOf(minUsernameLength)));
-        }
-        else if (username.length() > maxUsernameLength)
-        {
-            kicker.kick(player, t("usernameTooLong")
-                    .replace("{0}", String.valueOf(maxUsernameLength)));
-        }
-        else if (!usernamePattern.matcher(player.getName()).matches())
-        {
-            kicker.kick(player, t("usernameInvalid"));
-        }
-        else if (CollectionUtils.containsIgnoreCase(username,
-                getConfig("config.yml").getStringList("prohibitedUsernames")))
-        {
-            kicker.kick(player, t("usernameProhibited"));
-        }
-        else if (PlayerUtils.isAnotherPlayerOnline(player))
-        {
-            kicker.kick(player, t("usernameAlreadyUsed"));
-        }
-        else if (getConfig("config.yml").getBoolean("kickUnregistered")
+        if (getConfig("config.yml").getBoolean("kickUnregistered")
                 && account == null)
         {
             kicker.kick(player, t("kickUnregistered"));
@@ -192,10 +207,13 @@ public final class PlayerEventListener extends LogItCoreObject
                     .getStringList("reserveSlots.forPlayers");
             int reservedSlots = 0;
             
-            // Calculate how many players for which slots should be reserved are online.
+            // Calculate how many players for which slots should be reserved
+            // are online.
             for (Player p : Bukkit.getOnlinePlayers())
             {
-                if (CollectionUtils.containsIgnoreCase(p.getName(), reserveForPlayers))
+                if (CollectionUtils.containsIgnoreCase(
+                        p.getName(), reserveForPlayers
+                ))
                 {
                     reservedSlots++;
                 }
@@ -206,8 +224,9 @@ public final class PlayerEventListener extends LogItCoreObject
             int unusedReservedSlots = maxReservedSlots - reservedSlots;
             int actualFreeSlots = freeSlots - unusedReservedSlots;
             
-            if (actualFreeSlots <= 0
-                    && !CollectionUtils.containsIgnoreCase(username, reserveForPlayers))
+            if (actualFreeSlots <= 0 && !CollectionUtils.containsIgnoreCase(
+                    username, reserveForPlayers
+            ))
             {
                 kicker.kick(player, t("noSlotsFree"));
             }
