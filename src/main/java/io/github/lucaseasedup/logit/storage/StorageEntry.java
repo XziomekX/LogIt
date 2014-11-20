@@ -127,8 +127,9 @@ public final class StorageEntry implements Iterable<StorageDatum>
         return copyList(entries, new SelectorConstant(true));
     }
     
-    public static List<StorageEntry> copyList(List<StorageEntry> entries,
-                                               Selector selector)
+    public static List<StorageEntry> copyList(
+            List<StorageEntry> entries, Selector selector
+    )
     {
         if (entries == null || selector == null)
             throw new IllegalArgumentException();
@@ -146,9 +147,9 @@ public final class StorageEntry implements Iterable<StorageDatum>
         return copies;
     }
     
-    public static List<StorageEntry> copyList(List<StorageEntry> entries,
-                                               List<String> keys,
-                                               Selector selector)
+    public static List<StorageEntry> copyList(
+            List<StorageEntry> entries, List<String> keys, Selector selector
+    )
     {
         if (entries == null || selector == null)
             throw new IllegalArgumentException();

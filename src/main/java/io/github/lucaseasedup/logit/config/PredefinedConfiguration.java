@@ -632,9 +632,11 @@ public final class PredefinedConfiguration extends PropertyObserver
                 
                 if (rgb.length == 3)
                 {
-                    defaultValue = Color.fromRGB(Integer.parseInt(rgb[0]),
-                                                 Integer.parseInt(rgb[1]),
-                                                 Integer.parseInt(rgb[2]));
+                    defaultValue = Color.fromRGB(
+                            Integer.parseInt(rgb[0]),
+                            Integer.parseInt(rgb[1]),
+                            Integer.parseInt(rgb[2])
+                    );
                 }
                 else
                 {

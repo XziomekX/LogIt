@@ -277,8 +277,9 @@ public final class AccountManager extends LogItCoreObject implements Runnable
         return cachedAccount;
     }
     
-    public synchronized List<Account> selectAccounts(List<String> queryKeys,
-                                                     Selector selector)
+    public synchronized List<Account> selectAccounts(
+            List<String> queryKeys, Selector selector
+    )
     {
         if (queryKeys == null || selector == null)
             throw new IllegalArgumentException();

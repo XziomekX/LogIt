@@ -35,7 +35,8 @@ public final class ConfigSetHubCommand extends HubCommand
     public void execute(CommandSender sender, String[] args)
     {
         String hyphenatedPath = args[0];
-        String camelCasePath = PredefinedConfiguration.getCamelCasePath(hyphenatedPath);
+        String camelCasePath =
+                PredefinedConfiguration.getCamelCasePath(hyphenatedPath);
         Property property;
         
         if (!getConfig("config.yml").contains(hyphenatedPath))
@@ -66,7 +67,9 @@ public final class ConfigSetHubCommand extends HubCommand
             {
             case CONFIGURATION_SECTION:
             case OBJECT:
-                throw new RuntimeException("Unsupported property type conversion.");
+                throw new RuntimeException(
+                        "Unsupported property type conversion"
+                );
                 
             case BOOLEAN:
                 outputValue = Boolean.valueOf(inputValue);
@@ -98,13 +101,19 @@ public final class ConfigSetHubCommand extends HubCommand
                     String[] rgb = inputValue.split(" ");
                     
                     if (rgb.length != 3)
-                        throw new RuntimeException("Malformed color representation.");
+                    {
+                        throw new RuntimeException(
+                                "Malformed color representation"
+                        );
+                    }
                     
                     try
                     {
-                        outputValue = Color.fromRGB(Integer.parseInt(rgb[0]),
-                                                    Integer.parseInt(rgb[1]),
-                                                    Integer.parseInt(rgb[2]));
+                        outputValue = Color.fromRGB(
+                                Integer.parseInt(rgb[0]),
+                                Integer.parseInt(rgb[1]),
+                                Integer.parseInt(rgb[2])
+                        );
                     }
                     catch (NumberFormatException ex)
                     {
@@ -128,7 +137,9 @@ public final class ConfigSetHubCommand extends HubCommand
                 break;
                 
             case ITEM_STACK:
-                throw new RuntimeException("Unsupported property type conversion.");
+                throw new RuntimeException(
+                        "Unsupported property type conversion"
+                );
                 
             case LONG:
                 outputValue = Long.valueOf(inputValue);
@@ -147,22 +158,30 @@ public final class ConfigSetHubCommand extends HubCommand
                     
                     Player player = ((Player) sender);
                     
-                    outputValue = new Vector(player.getLocation().getX(),
-                                             player.getLocation().getY(),
-                                             player.getLocation().getZ());
+                    outputValue = new Vector(
+                            player.getLocation().getX(),
+                            player.getLocation().getY(),
+                            player.getLocation().getZ()
+                    );
                 }
                 else
                 {
                     String[] axes = inputValue.split(" ");
                     
                     if (axes.length != 3)
-                        throw new RuntimeException("Malformed vector representation.");
+                    {
+                        throw new RuntimeException(
+                                "Malformed vector representation"
+                        );
+                    }
                     
                     try
                     {
-                        outputValue = new Vector(Double.parseDouble(axes[0]),
-                                                 Double.parseDouble(axes[1]),
-                                                 Double.parseDouble(axes[2]));
+                        outputValue = new Vector(
+                                Double.parseDouble(axes[0]),
+                                Double.parseDouble(axes[1]),
+                                Double.parseDouble(axes[2])
+                        );
                     }
                     catch (NumberFormatException ex)
                     {
@@ -187,7 +206,9 @@ public final class ConfigSetHubCommand extends HubCommand
             case MAP_LIST:
             case SHORT_LIST:
             case STRING_LIST:
-                throw new RuntimeException("Unsupported property type conversion.");
+                throw new RuntimeException(
+                        "Unsupported property type conversion"
+                );
                 
             case LOCATION:
             {
@@ -198,20 +219,26 @@ public final class ConfigSetHubCommand extends HubCommand
                     
                     Location loc = ((Player) sender).getLocation();
                     
-                    outputValue = new LocationSerializable(loc.getWorld().getName(),
+                    outputValue = new LocationSerializable(
+                            loc.getWorld().getName(),
                             loc.getX(), loc.getY(), loc.getZ(),
-                            loc.getYaw(), loc.getPitch());
+                            loc.getYaw(), loc.getPitch()
+                    );
                 }
                 else
                 {
-                    throw new RuntimeException("Unsupported property type conversion.");
+                    throw new RuntimeException(
+                            "Unsupported property type conversion"
+                    );
                 }
                 
                 break;
             }
             
             default:
-                throw new RuntimeException("Unknown property type.");
+                throw new RuntimeException(
+                        "Unsupported property type: " + property.getType()
+                );
             }
             
             property.set(outputValue);

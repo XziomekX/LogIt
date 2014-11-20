@@ -336,19 +336,22 @@ public final class LogItCore
     
     private void setUpConfiguration() throws FatalReportedException
     {
-        String configHeader = "# # # # # # # # # # # # # # #\n"
-                            + " LogIt Configuration File   #\n"
-                            + "# # # # # # # # # # # # # # #\n";
+        String configHeader =
+                "# # # # # # # # # # # # # # #\n"
+              + " LogIt Configuration File   #\n"
+              + "# # # # # # # # # # # # # # #\n";
         
-        String statsHeader = "# # # # # # # # # # # # # # #\n"
-                           + "  LogIt Statistics File     #\n"
-                           + "# # # # # # # # # # # # # # #\n";
+        String statsHeader =
+                "# # # # # # # # # # # # # # #\n"
+              + "  LogIt Statistics File     #\n"
+              + "# # # # # # # # # # # # # # #\n";
         
-        String secretHeader = "# # # # # # # # # # # # # # # # # # # # # # # # # # # #\n"
-                            + "             LogIt Secret Settings File               #\n"
-                            + "                                                      #\n"
-                            + " Do not touch unless you are 100% what you're doing!  #\n"
-                            + "# # # # # # # # # # # # # # # # # # # # # # # # # # # #\n";
+        String secretHeader =
+                "# # # # # # # # # # # # # # # # # # # # # # # # # # # #\n"
+              + "             LogIt Secret Settings File               #\n"
+              + "                                                      #\n"
+              + " Do not touch unless you are 100% what you're doing!  #\n"
+              + "# # # # # # # # # # # # # # # # # # # # # # # # # # # #\n";
         
         File oldConfigDefFile = getDataFile("config-def.b64");
         

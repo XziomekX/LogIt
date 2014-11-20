@@ -222,14 +222,19 @@ public final class ImportAuthMeHubCommand extends HubCommand
                     String dataSourceMySqlPath =
                             dataSourceMySqlHost + ":" + dataSourceMySqlPort;
                     
-                    storage = new MySqlStorage(dataSourceMySqlPath,
-                            dataSourceMySqlUsername, dataSourceMySqlPassword,
-                            dataSourceMySqlDatabase);
+                    storage = new MySqlStorage(
+                            dataSourceMySqlPath,
+                            dataSourceMySqlUsername,
+                            dataSourceMySqlPassword,
+                            dataSourceMySqlDatabase
+                    );
                 }
                 else
                 {
-                    storage = new SqliteStorage("jdbc:sqlite:plugins/AuthMe/"
-                                             + dataSourceMySqlDatabase + ".db");
+                    storage = new SqliteStorage(
+                            "jdbc:sqlite:plugins/AuthMe/"
+                                    + dataSourceMySqlDatabase + ".db"
+                    );
                 }
                 
                 try
