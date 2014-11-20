@@ -259,6 +259,12 @@ public final class LogItCore
         
         securityHelper = new SecurityHelper();
         backupManager = new BackupManager(getAccountManager());
+        
+        if (getConfig("config.yml").getBoolean("backup.forceAtStart"))
+        {
+            backupManager.createBackup();
+        }
+        
         sessionManager = new SessionManager();
         messageDispatcher = new LogItMessageDispatcher();
         tabCompleter = new LogItTabCompleter();
