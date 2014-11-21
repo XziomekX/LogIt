@@ -130,49 +130,41 @@ public final class LogItPlugin extends JavaPlugin
     
     /**
      * Loads message files.
-     * 
-     * <p> First, it tries to load local <i>messages_{prefix}.properties</i>
-     * from the plugin JAR. If the file does not exist, it tries to load global
-     * <i>messages.properties</i>. If this fails too,
-     * {@code FileNotFoundException} will be thrown.
-     * 
+     *
      * <p> This method will also try to load custom
      * global/local message files from the <i>lang</i> directory if present,
-     * that will be merged with built-in message files.
-     * 
-     * @param prefix the locale prefix.
-     * 
+     * that will be transparently merged with built-in message files.
+     *
+     * @param suffix the locale suffix.
+     *
      * @throws IOException if there was an error while reading.
      */
-    public void loadMessages(String prefix) throws IOException
+    public void loadMessages(String suffix) throws IOException
     {
-        if (prefix == null)
+        if (suffix == null)
             throw new IllegalArgumentException();
         
         messages = null;
         
         try (JarFile jarFile = new JarFile(getFile()))
         {
-            JarEntry jarEntry = jarFile.getJarEntry("messages_" + prefix + ".properties");
+            JarEntry jarEntry = jarFile.getJarEntry(
+                    "messages_" + suffix + ".properties"
+            );
             
-            if (jarEntry == null)
+            if (jarEntry != null)
             {
-                jarEntry = jarFile.getJarEntry("messages.properties");
-            }
-            
-            if (jarEntry == null)
-                throw new FileNotFoundException("No message file found.");
-            
-            InputStream messagesInputStream = jarFile.getInputStream(jarEntry);
-            
-            try (Reader messagesReader = new InputStreamReader(messagesInputStream, "UTF-8"))
-            {
-                messages = new PropertyResourceBundle(messagesReader);
+                InputStream inputStream = jarFile.getInputStream(jarEntry);
+                
+                try (Reader reader = new InputStreamReader(inputStream, "UTF-8"))
+                {
+                    messages = new PropertyResourceBundle(reader);
+                }
             }
         }
         
         loadCustomGlobalMessages("lang/messages.properties");
-        loadCustomLocalMessages("lang/messages_" + prefix + ".properties");
+        loadCustomLocalMessages("lang/messages_" + suffix + ".properties");
     }
     
     private void loadCustomGlobalMessages(String path) throws IOException
@@ -223,14 +215,15 @@ public final class LogItPlugin extends JavaPlugin
         if (getInstance() == null)
             return label;
         
-        if (getInstance().messages == null)
-            return label;
-        
-        String message;
+        String message = null;
         
         try
         {
-            message = getInstance().messages.getString(label);
+            if (getInstance().messages != null
+                    && getInstance().messages.containsKey(label))
+            {
+                message = getInstance().messages.getString(label);
+            }
             
             if (getInstance().customGlobalMessages != null
                     && getInstance().customGlobalMessages.containsKey(label))
@@ -244,14 +237,16 @@ public final class LogItPlugin extends JavaPlugin
                 message = getInstance().customLocalMessages.getString(label);
             }
         }
-        catch (MissingResourceException | ClassCastException ex)
+        catch (ClassCastException ex)
         {
-            return label;
         }
         
-        message = ChatColor.translateAlternateColorCodes('&', message);
+        if (message == null)
+            return label;
         
-        return getInstance().replaceGlobalTokens(message);
+        return getInstance().replaceGlobalTokens(
+                ChatColor.translateAlternateColorCodes('&', message)
+        );
     }
     
     public String replaceGlobalTokens(String message)
