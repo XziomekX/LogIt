@@ -262,12 +262,6 @@ public final class LogItCore
 
         disposables.add(securityHelper = new SecurityHelper());
         disposables.add(backupManager = new BackupManager(getAccountManager()));
-        
-        if (getConfig("config.yml").getBoolean("backup.forceAtStart"))
-        {
-            backupManager.createBackup();
-        }
-
         disposables.add(sessionManager = new SessionManager());
         disposables.add(messageDispatcher = new LogItMessageDispatcher());
         disposables.add(tabCompleter = new LogItTabCompleter());
@@ -777,6 +771,11 @@ public final class LogItCore
     
     private void doPostStartDuties()
     {
+        if (getConfig("config.yml").getBoolean("backup.forceAtStart"))
+        {
+            backupManager.createBackup();
+        }
+        
         File sessionsFile = getDataFile(
                 getConfig("config.yml").getString("storage.sessions.filename")
         );
