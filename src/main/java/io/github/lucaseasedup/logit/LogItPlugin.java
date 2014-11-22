@@ -17,7 +17,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
-import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -111,9 +110,9 @@ public final class LogItPlugin extends JavaPlugin
         getCommand("$logit-nop-command")
                 .setExecutor(new DisabledCommandExecutor());
         
-        messages = null;
-        customGlobalMessages = null;
-        customLocalMessages = null;
+        packageLocalMessages = null;
+        userGlobalMessages = null;
+        userLocalMessages = null;
     }
     
     private void enable()
@@ -131,7 +130,7 @@ public final class LogItPlugin extends JavaPlugin
     /**
      * Loads message files.
      *
-     * <p> This method will also try to load custom
+     * <p> This method will also try to load user
      * global/local message files from the <i>lang</i> directory if present,
      * that will be transparently merged with built-in message files.
      *
@@ -144,66 +143,64 @@ public final class LogItPlugin extends JavaPlugin
         if (suffix == null)
             throw new IllegalArgumentException();
         
-        messages = null;
-        
+        loadPackageLocalMessages("messages_" + suffix + ".properties");
+        loadUserGlobalMessages("lang/messages.properties");
+        loadUserLocalMessages("lang/messages_" + suffix + ".properties");
+    }
+    
+    private void loadPackageLocalMessages(String entryName) throws IOException
+    {
+        packageLocalMessages = null;
+
         try (JarFile jarFile = new JarFile(getFile()))
         {
-            JarEntry jarEntry = jarFile.getJarEntry(
-                    "messages_" + suffix + ".properties"
-            );
-            
+            JarEntry jarEntry = jarFile.getJarEntry(entryName);
+
             if (jarEntry != null)
             {
                 InputStream inputStream = jarFile.getInputStream(jarEntry);
-                
+
                 try (Reader reader = new InputStreamReader(inputStream, "UTF-8"))
                 {
-                    messages = new PropertyResourceBundle(reader);
+                    packageLocalMessages = new PropertyResourceBundle(reader);
                 }
             }
         }
-        
-        loadCustomGlobalMessages("lang/messages.properties");
-        loadCustomLocalMessages("lang/messages_" + suffix + ".properties");
     }
     
-    private void loadCustomGlobalMessages(String path) throws IOException
+    private void loadUserGlobalMessages(String path) throws IOException
     {
         if (path == null)
             throw new IllegalArgumentException();
-        
+
+        userGlobalMessages = null;
+
         File file = new File(getDataFolder(), path);
-        
+
         if (!file.isFile())
-        {
-            customGlobalMessages = null;
-            
             return;
-        }
-        
+
         try (InputStream is = new FileInputStream(file))
         {
-            customGlobalMessages = new PropertyResourceBundle(is);
+            userGlobalMessages = new PropertyResourceBundle(is);
         }
     }
-    
-    private void loadCustomLocalMessages(String path) throws IOException
+
+    private void loadUserLocalMessages(String path) throws IOException
     {
         if (path == null)
             throw new IllegalArgumentException();
-        
+
+        userLocalMessages = null;
+
         File file = new File(getDataFolder(), path);
-        
+
         if (!file.isFile())
-        {
-            customLocalMessages = null;
-            
             return;
-        }
-        
+
         try (InputStream is = new FileInputStream(file))
         {
-            customLocalMessages = new PropertyResourceBundle(is);
+            userLocalMessages = new PropertyResourceBundle(is);
         }
     }
     
@@ -219,22 +216,22 @@ public final class LogItPlugin extends JavaPlugin
         
         try
         {
-            if (getInstance().messages != null
-                    && getInstance().messages.containsKey(label))
+            if (getInstance().packageLocalMessages != null
+                    && getInstance().packageLocalMessages.containsKey(label))
             {
-                message = getInstance().messages.getString(label);
+                message = getInstance().packageLocalMessages.getString(label);
             }
             
-            if (getInstance().customGlobalMessages != null
-                    && getInstance().customGlobalMessages.containsKey(label))
+            if (getInstance().userGlobalMessages != null
+                    && getInstance().userGlobalMessages.containsKey(label))
             {
-                message = getInstance().customGlobalMessages.getString(label);
+                message = getInstance().userGlobalMessages.getString(label);
             }
             
-            if (getInstance().customLocalMessages != null
-                    && getInstance().customLocalMessages.containsKey(label))
+            if (getInstance().userLocalMessages != null
+                    && getInstance().userLocalMessages.containsKey(label))
             {
-                message = getInstance().customLocalMessages.getString(label);
+                message = getInstance().userLocalMessages.getString(label);
             }
         }
         catch (ClassCastException ex)
@@ -377,8 +374,8 @@ public final class LogItPlugin extends JavaPlugin
     public static final String PACKAGE = "io.github.lucaseasedup.logit";
     
     private static LogItPlugin instance = null;
-    private PropertyResourceBundle messages;
-    private PropertyResourceBundle customGlobalMessages;
-    private PropertyResourceBundle customLocalMessages;
+    private PropertyResourceBundle packageLocalMessages;
+    private PropertyResourceBundle userGlobalMessages;
+    private PropertyResourceBundle userLocalMessages;
     private LogItCore core;
 }
