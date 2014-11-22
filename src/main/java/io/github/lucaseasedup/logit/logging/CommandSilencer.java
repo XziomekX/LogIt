@@ -38,7 +38,7 @@ public final class CommandSilencer extends LogItCoreObject
             @Override
             public boolean isLoggable(LogRecord record)
             {
-                if (isFiltersRegistered())
+                if (!isFiltersRegistered())
                     return true;
                 
                 if (!"Minecraft-Server".equals(record.getLoggerName()))
