@@ -31,18 +31,6 @@ public final class CommandSilencer extends LogItCoreObject
         this.silencedCommands = new HashSet<>(silencedCommands);
     }
     
-    @Override
-    public void dispose()
-    {
-        if (silencedCommands != null)
-        {
-            silencedCommands.clear();
-            silencedCommands = null;
-        }
-        
-        Bukkit.getLogger().setFilter(null);
-    }
-    
     public void registerFilters()
     {
         Bukkit.getLogger().setFilter(new Filter()
@@ -50,7 +38,7 @@ public final class CommandSilencer extends LogItCoreObject
             @Override
             public boolean isLoggable(LogRecord record)
             {
-                if (isDisposed())
+                if (isFiltersRegistered())
                     return true;
                 
                 if (!"Minecraft-Server".equals(record.getLoggerName()))
@@ -99,6 +87,8 @@ public final class CommandSilencer extends LogItCoreObject
             // If the class was not found, it means we're running an old
             // version of CraftBukkit. Standard logger will be used instead.
         }
+        
+        filtersRegistered = true;
     }
     
     /* package */ boolean isCommandSilenced(String label)
@@ -128,11 +118,6 @@ public final class CommandSilencer extends LogItCoreObject
         return CollectionUtils.containsIgnoreCase(label, command.getAliases());
     }
     
-    /* package */ boolean isDisposed()
-    {
-        return silencedCommands == null;
-    }
-    
     /* package */ Matcher getMatcherForMsg(String msg)
     {
         if (msg == null)
@@ -141,8 +126,21 @@ public final class CommandSilencer extends LogItCoreObject
         return SERVER_COMMAND_PATTERN.matcher(msg);
     }
     
+    public void unregisterFilters()
+    {
+        filtersRegistered = false;
+        
+        Bukkit.getLogger().setFilter(null);
+    }
+    
+    /* package */ boolean isFiltersRegistered()
+    {
+        return filtersRegistered;
+    }
+    
     private static final Pattern SERVER_COMMAND_PATTERN = Pattern
             .compile("(.+) issued server command: /([A-Za-z]+)");
     
-    private Collection<PluginCommand> silencedCommands;
+    private boolean filtersRegistered = false;
+    private final Collection<PluginCommand> silencedCommands;
 }

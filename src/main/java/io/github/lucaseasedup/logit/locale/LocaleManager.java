@@ -6,19 +6,6 @@ import java.util.Map;
 
 public final class LocaleManager extends LogItCoreObject
 {
-    @Override
-    public void dispose()
-    {
-        activeLocaleObj = null;
-        fallbackLocaleObj = null;
-        
-        if (locales != null)
-        {
-            locales.clear();
-            locales = null;
-        }
-    }
-    
     public Locale getActiveLocale()
     {
         return activeLocaleObj;
@@ -140,7 +127,8 @@ public final class LocaleManager extends LogItCoreObject
         return locale.getAnnotation(LocaleTag.class).value();
     }
     
-    private Map<Class<? extends Locale>, Locale> locales = new HashMap<>();
+    private final Map<Class<? extends Locale>, Locale> locales =
+            new HashMap<>();
     private Locale activeLocaleObj;
     private Locale fallbackLocaleObj;
 }

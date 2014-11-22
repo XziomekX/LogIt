@@ -3,6 +3,7 @@ package io.github.lucaseasedup.logit.cooldown;
 import io.github.lucaseasedup.logit.LogItCoreObject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,21 +11,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public final class CooldownManager extends LogItCoreObject implements Listener
 {
-    @Override
-    public void dispose()
-    {
-        if (cooldowns != null)
-        {
-            for (Map<Cooldown, Long> cooldown : cooldowns.values())
-            {
-                cooldown.clear();
-            }
-            
-            cooldowns.clear();
-            cooldowns = null;
-        }
-    }
-    
     public boolean isCooldownActive(Player player, Cooldown cooldown)
     {
         if (player == null || cooldown == null)
@@ -78,7 +64,9 @@ public final class CooldownManager extends LogItCoreObject implements Listener
         return cooldownExpirationMillis - System.currentTimeMillis();
     }
     
-    public void activateCooldown(Player player, Cooldown cooldown, long cooldownMillis)
+    public void activateCooldown(
+            Player player, Cooldown cooldown, long cooldownMillis
+    )
     {
         if (player == null || cooldown == null || cooldownMillis < 0)
             throw new IllegalArgumentException();
@@ -88,7 +76,9 @@ public final class CooldownManager extends LogItCoreObject implements Listener
             cooldowns.put(player, new HashMap<Cooldown, Long>());
         }
         
-        cooldowns.get(player).put(cooldown, System.currentTimeMillis() + cooldownMillis);
+        cooldowns.get(player).put(
+                cooldown, System.currentTimeMillis() + cooldownMillis
+        );
     }
     
     public void deactivateCooldown(Player player, Cooldown cooldown)
@@ -108,5 +98,5 @@ public final class CooldownManager extends LogItCoreObject implements Listener
         cooldowns.remove(event.getPlayer());
     }
     
-    private Map<Player, Map<Cooldown, Long>> cooldowns = new HashMap<>();
+    private Map<Player, Map<Cooldown, Long>> cooldowns = new WeakHashMap<>();
 }

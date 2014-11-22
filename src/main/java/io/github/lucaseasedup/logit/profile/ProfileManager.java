@@ -57,30 +57,6 @@ public final class ProfileManager extends LogItCoreObject
         }
     }
     
-    @Override
-    public void dispose()
-    {
-        path = null;
-        
-        if (definedFields != null)
-        {
-            definedFields.clear();
-            definedFields = null;
-        }
-        
-        if (fileCache != null)
-        {
-            fileCache.clear();
-            fileCache = null;
-        }
-        
-        if (configurationCache != null)
-        {
-            configurationCache.clear();
-            configurationCache = null;
-        }
-    }
-    
     public boolean containsProfile(String playerName)
     {
         if (StringUtils.isBlank(playerName))
@@ -422,8 +398,9 @@ public final class ProfileManager extends LogItCoreObject
     private static final Pattern SET_SPLIT_PATTERN =
             Pattern.compile("(?<!\\\\),\\s*");
     
-    private File path;
-    private List<Field> definedFields = new LinkedList<>();
-    private Map<String, File> fileCache = new HashMap<>();
-    private Map<String, YamlConfiguration> configurationCache = new HashMap<>();
+    private final File path;
+    private final List<Field> definedFields = new LinkedList<>();
+    private final Map<String, File> fileCache = new HashMap<>();
+    private final Map<String, YamlConfiguration> configurationCache =
+            new HashMap<>();
 }

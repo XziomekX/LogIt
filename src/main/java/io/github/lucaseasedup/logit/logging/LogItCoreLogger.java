@@ -1,6 +1,7 @@
 package io.github.lucaseasedup.logit.logging;
 
 import io.github.lucaseasedup.logit.LogItCore;
+import io.github.lucaseasedup.logit.common.Disposable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,7 +13,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import org.bukkit.ChatColor;
 
-public final class LogItCoreLogger
+public final class LogItCoreLogger implements Disposable
 {
     public LogItCoreLogger(LogItCore core)
     {
@@ -20,6 +21,11 @@ public final class LogItCoreLogger
             throw new IllegalArgumentException();
         
         this.core = core;
+    }
+    
+    @Override
+    public void dispose()
+    {
     }
     
     public synchronized void open()

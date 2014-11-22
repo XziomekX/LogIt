@@ -21,6 +21,7 @@ import io.github.lucaseasedup.logit.command.RegisterCommand;
 import io.github.lucaseasedup.logit.command.RememberCommand;
 import io.github.lucaseasedup.logit.command.UnregisterCommand;
 import io.github.lucaseasedup.logit.common.CancellableEvent;
+import io.github.lucaseasedup.logit.common.Disposable;
 import io.github.lucaseasedup.logit.common.FatalReportedException;
 import io.github.lucaseasedup.logit.common.PlayerCollections;
 import io.github.lucaseasedup.logit.common.Timer;
@@ -77,8 +78,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
@@ -256,32 +259,34 @@ public final class LogItCore
         
         timing.endPersistenceManager();
         // =======================================
-        
-        securityHelper = new SecurityHelper();
-        backupManager = new BackupManager(getAccountManager());
+
+        disposables.add(securityHelper = new SecurityHelper());
+        disposables.add(backupManager = new BackupManager(getAccountManager()));
         
         if (getConfig("config.yml").getBoolean("backup.forceAtStart"))
         {
             backupManager.createBackup();
         }
-        
-        sessionManager = new SessionManager();
-        messageDispatcher = new LogItMessageDispatcher();
-        tabCompleter = new LogItTabCompleter();
+
+        disposables.add(sessionManager = new SessionManager());
+        disposables.add(messageDispatcher = new LogItMessageDispatcher());
+        disposables.add(tabCompleter = new LogItTabCompleter());
         
         if (getConfig("config.yml").getBoolean("profiles.enabled"))
         {
             setUpProfileManager();
         }
         
-        globalPasswordManager = new GlobalPasswordManager();
-        cooldownManager = new CooldownManager();
-        accountWatcher = new AccountWatcher();
+        disposables.add(globalPasswordManager = new GlobalPasswordManager());
+        disposables.add(cooldownManager = new CooldownManager());
+        disposables.add(accountWatcher = new AccountWatcher());
         tabApiWrapper = new Wrapper<>();
         
         if (getConfig("config.yml").getBoolean("forceLogin.hideFromTabList"))
         {
-            tabListUpdater = new TabListUpdater(tabApiWrapper, craftReflect);
+            disposables.add(tabListUpdater = new TabListUpdater(
+                    tabApiWrapper, craftReflect
+            ));
             
             new BukkitRunnable()
             {
@@ -371,7 +376,7 @@ public final class LogItCore
             }
         }
         
-        configurationManager = new ConfigurationManager();
+        disposables.add(configurationManager = new ConfigurationManager());
         configurationManager.registerConfiguration("config.yml",
                 ".doNotTouch/config-def.b64", "config-def.ini", configHeader);
         configurationManager.registerConfiguration("stats.yml",
@@ -399,10 +404,10 @@ public final class LogItCore
     
     private void setUpLogger()
     {
-        logger = new LogItCoreLogger(this);
+        disposables.add(logger = new LogItCoreLogger(this));
         logger.open();
-        
-        commandSilencer = new CommandSilencer(Arrays.asList(
+
+        disposables.add(commandSilencer = new CommandSilencer(Arrays.asList(
                 getPlugin().getCommand("login"),
                 getPlugin().getCommand("logout"),
                 getPlugin().getCommand("register"),
@@ -411,7 +416,7 @@ public final class LogItCore
                 getPlugin().getCommand("changeemail"),
                 getPlugin().getCommand("recoverpass"),
                 getPlugin().getCommand("loginhistory")
-        ));
+        )));
         commandSilencer.registerFilters();
     }
     
@@ -462,7 +467,7 @@ public final class LogItCore
     
     private void setUpLocaleManager()
     {
-        localeManager = new LocaleManager();
+        disposables.add(localeManager = new LocaleManager());
         localeManager.registerLocale(EnglishLocale.getInstance());
         localeManager.registerLocale(PolishLocale.getInstance());
         localeManager.registerLocale(GermanLocale.getInstance());
@@ -585,9 +590,9 @@ public final class LogItCore
         
         try
         {
-            accountManager = new AccountManager(
+            disposables.add(accountManager = new AccountManager(
                     accountStorage, accountsUnit, accountKeys
-            );
+            ));
         }
         catch (IOException ex)
         {
@@ -597,7 +602,7 @@ public final class LogItCore
     
     private void setUpPersistenceManager() throws FatalReportedException
     {
-        persistenceManager = new PersistenceManager();
+        disposables.add(persistenceManager = new PersistenceManager());
         
         setSerializerEnabled(LocationSerializer.class,
                 getConfig("config.yml").getBoolean("waitingRoom.enabled"));
@@ -664,8 +669,10 @@ public final class LogItCore
             profilesPath.mkdir();
         }
         
-        profileManager = new ProfileManager(profilesPath,
-                getConfig("config.yml").getValues("profiles.fields"));
+        disposables.add(profileManager = new ProfileManager(
+                profilesPath,
+                getConfig("config.yml").getValues("profiles.fields")
+        ));
     }
     
     private void startTasks()
@@ -903,6 +910,17 @@ public final class LogItCore
             }
         }
         
+        if (commandSilencer != null)
+        {
+            commandSilencer.unregisterFilters();
+        }
+        
+        if (tabApiWrapper != null && tabApiWrapper.get() != null)
+        {
+            tabApiWrapper.get().onDisable();
+            tabApiWrapper.set(null);
+        }
+        
         Bukkit.getScheduler().cancelTasks(getPlugin());
         tasks.clear();
         
@@ -961,106 +979,33 @@ public final class LogItCore
         if (isStarted())
         {
             throw new IllegalStateException(
-                    "Cannot dispose the LogIt core while it's running."
+                    "Cannot dispose the LogIt core while it's running"
             );
         }
         
-        if (configurationManager != null)
+        Disposable disposable;
+        
+        while ((disposable = disposables.poll()) != null)
         {
-            configurationManager.dispose();
-            configurationManager = null;
+            disposable.dispose();
         }
         
-        if (commandSilencer != null)
-        {
-            commandSilencer.dispose();
-            commandSilencer = null;
-        }
-        
-        if (localeManager != null)
-        {
-            localeManager.dispose();
-            localeManager = null;
-        }
-        
-        if (accountManager != null)
-        {
-            accountManager.dispose();
-            accountManager = null;
-        }
-        
-        if (persistenceManager != null)
-        {
-            persistenceManager.dispose();
-            persistenceManager = null;
-        }
-        
-        if (securityHelper != null)
-        {
-            securityHelper.dispose();
-            securityHelper = null;
-        }
-        
-        if (backupManager != null)
-        {
-            backupManager.dispose();
-            backupManager = null;
-        }
-        
-        if (sessionManager != null)
-        {
-            sessionManager.dispose();
-            sessionManager = null;
-        }
-        
-        if (messageDispatcher != null)
-        {
-            messageDispatcher.dispose();
-            messageDispatcher = null;
-        }
-        
-        if (tabCompleter != null)
-        {
-            tabCompleter.dispose();
-            tabCompleter = null;
-        }
-        
-        if (profileManager != null)
-        {
-            profileManager.dispose();
-            profileManager = null;
-        }
-        
-        if (globalPasswordManager != null)
-        {
-            globalPasswordManager.dispose();
-            globalPasswordManager = null;
-        }
-        
-        if (cooldownManager != null)
-        {
-            cooldownManager.dispose();
-            cooldownManager = null;
-        }
-        
-        if (accountWatcher != null)
-        {
-            accountWatcher.dispose();
-            accountWatcher = null;
-        }
-        
-        if (tabApiWrapper.get() != null)
-        {
-            tabApiWrapper.get().onDisable();
-            tabApiWrapper.set(null);
-            tabApiWrapper = null;
-        }
-        
-        if (tabListUpdater != null)
-        {
-            tabListUpdater.dispose();
-            tabListUpdater = null;
-        }
+        configurationManager = null;
+        commandSilencer = null;
+        localeManager = null;
+        accountManager = null;
+        persistenceManager = null;
+        securityHelper = null;
+        backupManager = null;
+        sessionManager = null;
+        messageDispatcher = null;
+        tabCompleter = null;
+        profileManager = null;
+        globalPasswordManager = null;
+        cooldownManager = null;
+        accountWatcher = null;
+        tabApiWrapper = null;
+        tabListUpdater = null;
     }
     
     /**
@@ -1490,6 +1435,7 @@ public final class LogItCore
     private Wrapper<TabAPI> tabApiWrapper;
     private TabListUpdater tabListUpdater;
     
+    private final Queue<Disposable> disposables = new LinkedList<>();
     private final Set<BukkitTask> tasks = new LinkedHashSet<>();
     private final Map<Class<? extends Listener>, Listener> eventListeners =
             new HashMap<>();

@@ -18,16 +18,6 @@ import org.bukkit.entity.Player;
  */
 public final class PersistenceManager extends LogItCoreObject
 {
-    @Override
-    public void dispose()
-    {
-        if (serializers != null)
-        {
-            serializers.clear();
-            serializers = null;
-        }
-    }
-    
     /**
      * Serializes player data using the specified persistence serializer
      * 
@@ -240,8 +230,9 @@ public final class PersistenceManager extends LogItCoreObject
      * @throws IllegalArgumentException     if {@code clazz} is {@code null}.
      * 
      */
-    public boolean registerSerializer(Class<? extends PersistenceSerializer> clazz)
-            throws ReflectiveOperationException
+    public boolean registerSerializer(
+            Class<? extends PersistenceSerializer> clazz
+    ) throws ReflectiveOperationException
     {
         if (clazz == null)
             throw new IllegalArgumentException();
@@ -264,7 +255,9 @@ public final class PersistenceManager extends LogItCoreObject
      * 
      * @throws IllegalArgumentException if {@code clazz} is {@code null}.
      */
-    public boolean unregisterSerializer(Class<? extends PersistenceSerializer> clazz)
+    public boolean unregisterSerializer(
+            Class<? extends PersistenceSerializer> clazz
+    )
     {
         if (clazz == null)
             throw new IllegalArgumentException();
@@ -288,7 +281,9 @@ public final class PersistenceManager extends LogItCoreObject
      * 
      * @throws IllegalArgumentException if {@code clazz} is {@code null}.
      */
-    public PersistenceSerializer getSerializer(Class<? extends PersistenceSerializer> clazz)
+    public PersistenceSerializer getSerializer(
+            Class<? extends PersistenceSerializer> clazz
+    )
     {
         if (clazz == null)
             throw new IllegalArgumentException();
@@ -296,8 +291,9 @@ public final class PersistenceManager extends LogItCoreObject
         return serializers.get(clazz);
     }
     
-    private boolean isSerializedUsing(Map<String, String> persistence,
-                                      PersistenceSerializer serializer)
+    private boolean isSerializedUsing(
+            Map<String, String> persistence, PersistenceSerializer serializer
+    )
     {
         if (persistence == null || serializer == null)
             throw new IllegalArgumentException();
@@ -414,7 +410,9 @@ public final class PersistenceManager extends LogItCoreObject
         return result;
     }
     
-    private Key[] getSerializerKeys(Class<? extends PersistenceSerializer> clazz)
+    private Key[] getSerializerKeys(
+            Class<? extends PersistenceSerializer> clazz
+    )
     {
         if (clazz == null)
             throw new IllegalArgumentException();
@@ -427,8 +425,9 @@ public final class PersistenceManager extends LogItCoreObject
         return keys.value();
     }
     
-    private boolean containsKey(Class<? extends PersistenceSerializer> clazz,
-                                String keyName)
+    private boolean containsKey(
+            Class<? extends PersistenceSerializer> clazz, String keyName
+    )
     {
         if (clazz == null || keyName == null)
             throw new IllegalArgumentException();
@@ -446,9 +445,9 @@ public final class PersistenceManager extends LogItCoreObject
         return false;
     }
     
-    private static PersistenceSerializer
-                        constructSerializer(Class<? extends PersistenceSerializer> clazz)
-            throws ReflectiveOperationException
+    private static PersistenceSerializer constructSerializer(
+            Class<? extends PersistenceSerializer> clazz
+    ) throws ReflectiveOperationException
     {
         if (clazz == null)
             throw new IllegalArgumentException();
@@ -456,6 +455,6 @@ public final class PersistenceManager extends LogItCoreObject
         return clazz.getConstructor().newInstance();
     }
     
-    private Map<Class<? extends PersistenceSerializer>, PersistenceSerializer> serializers
+    private final Map<Class<? extends PersistenceSerializer>, PersistenceSerializer> serializers
             = new HashMap<>();
 }

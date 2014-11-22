@@ -31,7 +31,7 @@ public final class Log4jFilter extends LogItCoreObject
             @Override
             public Result filter(LogEvent event)
             {
-                if (commandSilencer.isDisposed())
+                if (commandSilencer.isFiltersRegistered())
                     return Result.NEUTRAL;
                 
                 if (event.getMessage().getFormattedMessage() == null)

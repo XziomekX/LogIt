@@ -4,6 +4,7 @@ import static io.github.lucaseasedup.logit.message.MessageHelper.broadcastMsgExc
 import static io.github.lucaseasedup.logit.message.MessageHelper.sendMsg;
 import static io.github.lucaseasedup.logit.message.MessageHelper.t;
 import io.github.lucaseasedup.logit.LogItCoreObject;
+import io.github.lucaseasedup.logit.common.PlayerCollections;
 import io.github.lucaseasedup.logit.config.TimeUnit;
 import io.github.lucaseasedup.logit.hooks.EssentialsHook;
 import io.github.lucaseasedup.logit.hooks.VanishNoPacketHook;
@@ -12,25 +13,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public final class LogItMessageDispatcher extends LogItCoreObject
         implements Listener
 {
-    @Override
-    public void dispose()
-    {
-        if (forceLoginPromptIntervals != null)
-        {
-            forceLoginPromptIntervals.clear();
-            forceLoginPromptIntervals = null;
-        }
-    }
-    
     public void dispatchMessage(
             final Player player, final String message, long delay
     )
@@ -193,18 +181,6 @@ public final class LogItMessageDispatcher extends LogItCoreObject
         }
     }
     
-    @EventHandler
-    private void onPlayerQuit(PlayerQuitEvent event)
-    {
-        forceLoginPromptIntervals.remove(event.getPlayer());
-    }
-    
-    @EventHandler
-    private void onPlayerKick(PlayerKickEvent event)
-    {
-        forceLoginPromptIntervals.remove(event.getPlayer());
-    }
-    
     private final class ForceLoginPrompter extends BukkitRunnable
     {
         public ForceLoginPrompter(Player player)
@@ -238,5 +214,6 @@ public final class LogItMessageDispatcher extends LogItCoreObject
         private final Player player;
     }
     
-    private Map<Player, Long> forceLoginPromptIntervals = new HashMap<>();
+    private final Map<Player, Long> forceLoginPromptIntervals =
+            PlayerCollections.monitoredMap(new HashMap<Player, Long>());
 }
