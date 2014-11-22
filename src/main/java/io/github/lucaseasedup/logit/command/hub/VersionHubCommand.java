@@ -32,8 +32,10 @@ public final class VersionHubCommand extends HubCommand
         }
         
         sendMsg(sender, t("aboutPlugin.header"));
-        sendMsg(sender, t("aboutPlugin.version")
+        sendMsg(sender, t("aboutPlugin.pluginVersion")
                 .replace("{0}", getPlugin().getDescription().getVersion()));
+        sendMsg(sender, t("aboutPlugin.javaVersion")
+                .replace("{0}", System.getProperty("java.version")));
         sendMsg(sender, t("aboutPlugin.author"));
     }
 }
