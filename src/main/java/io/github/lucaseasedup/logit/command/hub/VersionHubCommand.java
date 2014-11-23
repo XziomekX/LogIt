@@ -34,8 +34,16 @@ public final class VersionHubCommand extends HubCommand
         sendMsg(sender, t("aboutPlugin.header"));
         sendMsg(sender, t("aboutPlugin.pluginVersion")
                 .replace("{0}", getPlugin().getDescription().getVersion()));
-        sendMsg(sender, t("aboutPlugin.javaVersion")
-                .replace("{0}", System.getProperty("java.version")));
+        
+        if (!(sender instanceof Player)
+                || sender.hasPermission("logit.version.showall"))
+        {
+            sendMsg(sender, t("aboutPlugin.javaVersion")
+                    .replace("{0}", System.getProperty("java.version")));
+            sendMsg(sender, t("aboutPlugin.javaBitness")
+                    .replace("{0}", System.getProperty("sun.arch.data.model")));
+        }
+        
         sendMsg(sender, t("aboutPlugin.author"));
     }
 }

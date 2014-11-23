@@ -107,6 +107,8 @@ permissions:
     default: true
   logit.version:
     default: true
+  logit.version.showall:
+    default: false
   logit.start:
     default: false
   logit.stop:
